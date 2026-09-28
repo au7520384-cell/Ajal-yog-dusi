@@ -1777,11 +1777,11 @@ const Snd = (() => {
     const clacks = []; for (let v = 0; v < 10; v++) clacks.push(buf(0.085, clackFn()));
     const cues = []; for (let v = 0; v < 3; v++) {
       const k = R(0.95, 1.05), nz = N();
-      cues.push(buf(0.09, t => ds(t, 350 * k, 0.018) * 0.9 + ds(t, 690 * k, 0.012) * 0.7 + ds(t, 940 * k, 0.009) * 0.55 + ds(t, 1170 * k, 0.005) * 0.3 +
-        ds(t, 2600, 0.0025) * 0.35 + nz(t, 0.0009) * 1.1));
+      cues.push(buf(0.06, t => ds(t, 350 * k, 0.005) * 0.25 + ds(t, 690 * k, 0.006) * 0.45 + ds(t, 940 * k, 0.007) * 0.7 + ds(t, 1170 * k, 0.005) * 0.6 +
+        ds(t, 2600 * k, 0.003) * 0.7 + nz(t, 0.0007) * 1.2));
     }
     let nz = N();
-    const rail = buf(0.2, t => ds(t, 70, 0.045) + ds(t, 183, 0.02) * 0.7 + ds(t, 420, 0.008) * 0.35 + nz(t, 0.005) * 0.35 + ds(t, 2855, 0.0015) * 0.25);
+    const rail = buf(0.12, t => ds(t, 70, 0.018) * 0.6 + ds(t, 183, 0.014) * 0.8 + ds(t, 420, 0.008) * 0.35 + nz(t, 0.005) * 0.35 + ds(t, 2855, 0.0015) * 0.25);
     const drops = [[0.07, 0.6], [0.14, 0.42], [0.2, 0.34], [0.255, 0.22], [0.3, 0.15], [0.34, 0.09]];
     nz = N(); const nzs = drops.map(N);
     const pocket = buf(0.45, t => {
@@ -1827,18 +1827,17 @@ const Snd = (() => {
       const k = Math.min(1, v / 13); if (k < 0.015) return;
       play(pick(bank.clacks), 0.1 + 0.9 * Math.pow(k, 0.7), 0.97 + Math.random() * 0.06, 2000 + 14000 * k);
     },
-    // cue tip on the cue ball; hard shots (the break) get an extra low knock
+    // cue tip on the cue ball: a short, dry wooden "tak"
     cue(p) {
       if (!ok()) return;
-      play(pick(bank.cues), 0.3 + 0.7 * p, 0.96 + Math.random() * 0.08, 2500 + 9000 * p);
-      if (p > 0.7) play(pick(bank.cues), 0.4 * p, 0.8, 1400);
+      play(pick(bank.cues), 0.35 + 0.65 * p, 0.97 + Math.random() * 0.06, 5000 + 9000 * p);
     },
     rail(v) { if (!ok()) return; const k = Math.min(1, v / 16); if (k < 0.04) return; play(bank.rail, 0.9 * Math.pow(k, 0.8), 0.94 + Math.random() * 0.12, 900 + 4000 * k); },
     pocket() { if (!ok()) return; play(bank.pocket, 0.9, 0.96 + Math.random() * 0.08); },
     tray() { if (!ok()) return; play(pick(bank.clacks), 0.28, 0.72, 2200); },
     roll(sum) {
       if (!ac || !rollG) return;
-      const g = profile.muted ? 0 : Math.min(0.22, sum * 0.008);
+      const g = profile.muted ? 0 : Math.min(0.035, sum * 0.0012);
       rollG.gain.setTargetAtTime(g, ac.currentTime, 0.06);
       rollF.frequency.setTargetAtTime(110 + Math.min(480, sum * 13), ac.currentTime, 0.06);
     },
@@ -2474,7 +2473,10 @@ cv.addEventListener("pointerdown", e => {
   if (!canControl()) return;
   try { cv.setPointerCapture(e.pointerId); } catch (_) {}
   if (G.type !== "lucky" && Math.hypot(p.x - SPIN_BTN.x, p.y - SPIN_BTN.y) < SPIN_BTN.r + 8) { G.spinOpen = true; Snd.click(); return; }
-  if (inRect(p, POWER_BAR)) { input.drag = "power"; input.y0 = p.y; input.power = 0; return; }
+  if (inRect(p, POWER_BAR)) {                  // full power at the bottom of the bar, wherever the finger starts
+    input.drag = "power"; input.y0 = p.y; input.power = 0;
+    input.span = clamp(Math.min(H - 12, POWER_BAR.y + POWER_BAR.h) - p.y, 100, POWER_BAR.h * 0.85); return;
+  }
   if (opt("fine") && inRect(p, FINE)) { input.drag = "fine"; input.lastY = p.y; return; }
   const c = G.balls[0], fx = p.x - FX, fy = p.y - FY;
   if (G.ballInHand && Math.hypot(fx - c.x, fy - c.y) < R * 3) { input.drag = "place"; return; }
@@ -2486,7 +2488,7 @@ cv.addEventListener("pointermove", e => {
   const p = toWorld(e), G = game;
   if (input.drag === "spin") { setSpinFrom(p); return; }
   if (!canControl()) { input.drag = null; return; }
-  if (input.drag === "power") input.power = clamp((p.y - input.y0) / (POWER_BAR.h * 0.85), 0, 1);
+  if (input.drag === "power") input.power = clamp((p.y - input.y0) / (input.span || POWER_BAR.h * 0.85), 0, 1);
   else if (input.drag === "fine") { G.angle += (p.y - input.lastY) * 0.0016 * SENS[opt("sens")]; input.lastY = p.y; }
   else if (input.drag === "place") placeCue(p.x - FX, p.y - FY);
   else if (input.drag === "aim") {
