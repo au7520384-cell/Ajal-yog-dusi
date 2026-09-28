@@ -33,7 +33,8 @@ function pgStore(url) {
   const {Pool} = require("pg");
   const pool = new Pool({connectionString: url, max: 4, idleTimeoutMillis: 30000, connectionTimeoutMillis: 15000});
   pool.on("error", e => console.error("postgres pool:", e.message));
-  const saved = {users: new Map(), purchases: new Map()};   // id -> JSON last written
+  const TABLES = ["users", "purchases", "meta"];            // meta: small shared state (current week, last week's results)
+  const saved = {users: new Map(), purchases: new Map(), meta: new Map()};   // id -> JSON last written
   async function upsert(table, rows) {
     for (let i = 0; i < rows.length; i += 200) {
       const chunk = rows.slice(i, i + 200), params = [], values = [];
@@ -44,22 +45,18 @@ function pgStore(url) {
   return {
     kind: "postgres",
     async load() {
-      await pool.query(`CREATE TABLE IF NOT EXISTS users (id text PRIMARY KEY, data jsonb NOT NULL, updated timestamptz NOT NULL DEFAULT now())`);
-      await pool.query(`CREATE TABLE IF NOT EXISTS purchases (id text PRIMARY KEY, data jsonb NOT NULL, updated timestamptz NOT NULL DEFAULT now())`);
-      const db = {users: {}, codes: {}, purchases: {}};
-      for (const r of (await pool.query("SELECT id, data FROM users")).rows) {
-        db.users[r.id] = r.data; saved.users.set(r.id, JSON.stringify(r.data));
-        if (r.data.code) db.codes[r.data.code] = r.id;
+      const db = {users: {}, codes: {}, purchases: {}, meta: {}};
+      for (const t of TABLES) {
+        await pool.query(`CREATE TABLE IF NOT EXISTS ${t} (id text PRIMARY KEY, data jsonb NOT NULL, updated timestamptz NOT NULL DEFAULT now())`);
+        for (const r of (await pool.query(`SELECT id, data FROM ${t}`)).rows) { db[t][r.id] = r.data; saved[t].set(r.id, JSON.stringify(r.data)); }
       }
-      for (const r of (await pool.query("SELECT id, data FROM purchases")).rows) {
-        db.purchases[r.id] = r.data; saved.purchases.set(r.id, JSON.stringify(r.data));
-      }
+      for (const [id, u] of Object.entries(db.users)) if (u.code) db.codes[u.code] = id;
       return db;
     },
     async save(db) {
-      for (const table of ["users", "purchases"]) {
+      for (const table of TABLES) {
         const changed = [];
-        for (const [id, obj] of Object.entries(db[table])) {
+        for (const [id, obj] of Object.entries(db[table] || {})) {
           const s = JSON.stringify(obj);
           if (saved[table].get(id) !== s) changed.push([id, s]);
         }
