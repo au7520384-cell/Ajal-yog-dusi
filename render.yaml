@@ -1,4 +1,5 @@
 # Render Blueprint: Dashboard → New → Blueprint → pick this repo.
+# Runs on the free plan; player data lives in a free Postgres database (e.g. Neon) given as DATABASE_URL.
 services:
   - type: web
     name: bilyard8
@@ -6,17 +7,13 @@ services:
     rootDir: server
     buildCommand: npm install
     startCommand: npm start
-    plan: starter            # persistent disks need a paid instance
+    plan: free
     healthCheckPath: /api/health
-    disk:
-      name: data
-      mountPath: /data
-      sizeGB: 1
     envVars:
-      - key: DATA_DIR
-        value: /data
       - key: NODE_VERSION
         value: "20"
+      - key: DATABASE_URL     # postgresql://…?sslmode=require  (from neon.tech → Connection string)
+        sync: false
       - key: APP_URL          # e.g. https://bilyard8.onrender.com
         sync: false
       - key: STRIPE_SECRET_KEY
