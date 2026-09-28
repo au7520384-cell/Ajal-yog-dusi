@@ -1,0 +1,16 @@
+{
+  "name": "bilyard8-server",
+  "version": "1.0.0",
+  "description": "Backend for Bilyard 8: accounts, friends & referrals, global leaderboard, online 1v1 matchmaking, payments",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}
