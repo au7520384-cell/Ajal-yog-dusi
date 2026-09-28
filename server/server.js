@@ -226,11 +226,14 @@ const routes = {
       "line_items[0][price_data][unit_amount]": String(Math.round(sku.usd * 100)),
       "line_items[0][price_data][product_data][name]": `Bilyard 8 — ${sku.name}`,
     });
-    const r = await fetch("https://api.stripe.com/v1/checkout/sessions", {
-      method: "POST", headers: {Authorization: `Bearer ${STRIPE_KEY}`, "Content-Type": "application/x-www-form-urlencoded"}, body: form,
-    });
-    const s = await r.json();
-    if (!r.ok) { console.error("stripe", s); return [502, {error: "stripe_error"}]; }
+    let r, s;
+    try {
+      r = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+        method: "POST", headers: {Authorization: `Bearer ${STRIPE_KEY}`, "Content-Type": "application/x-www-form-urlencoded"}, body: form,
+      });
+      s = await r.json();
+    } catch (e) { console.error("stripe unreachable:", e.message); return [502, {error: "stripe_error"}]; }
+    if (!r.ok) { console.error("stripe", s.error ? s.error.message : s); return [502, {error: "stripe_error"}]; }
     return {url: s.url};
   },
 };
