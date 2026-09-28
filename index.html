@@ -659,7 +659,7 @@
   @media (max-width:760px){ .tiles{grid-template-columns:repeat(3,1fr)} }
   @media (max-height:520px){                 /* phone landscape: compact city card so the banner and PLAY button always fit */
     #cities .head{margin-bottom:0} #cities .head h2{font-size:22px} #cities .carousel{padding:4px 16px 6px}
-    .city{gap:4px;padding:8px} .city .cban{flex:0 0 auto;aspect-ratio:auto;height:clamp(34px,13vh,50px);margin:-8px -8px 0}
+    .city{gap:4px;padding:8px} .city .cban{flex:0 0 auto;aspect-ratio:auto;height:44px;margin:-8px -8px 0}
     .city .ctro{padding:2px 5px;gap:4px} .ctro span{font-size:9px} .ctro span b{font-size:12px} .cring .ringimg,.cring .ring{width:28px!important;height:28px!important}
     .city .cbar em{font-size:11px} .ctip,.city .crow:has([data-online]){display:none}
     .city .prize{padding:2px 6px;flex:0 0 auto} .prize .pl{display:none} .prize .pv{font-size:22px} .prize .pv .coin{width:20px!important;height:20px!important} .cpass{font-size:11px;padding:2px 6px}
@@ -2536,11 +2536,31 @@ let ctx = cv.getContext("2d");
 let scale = 1, offX = 0, offY = 0, dpr = 1;
 // Landscape everywhere: when a touch device is held upright, the page itself is rotated 90°.
 let rotated = false, vw = innerWidth, vh = innerHeight;
+// The page's size rules (@media max-width / max-height) must follow the game's own landscape size, not the
+// upright phone's, so they are turned into classes (html.mw760, html.mh520 …) that resize() switches on.
+const MQ = (() => {
+  const list = [], css = [];
+  for (const sh of document.styleSheets) {
+    let rules; try { rules = sh.cssRules; } catch (e) { continue; }
+    for (let i = rules.length - 1; i >= 0; i--) {
+      const r = rules[i]; if (!(r instanceof CSSMediaRule)) continue;
+      const q = (r.conditionText || r.media.mediaText).match(/^\(\s*max-(width|height)\s*:\s*(\d+)px\s*\)$/); if (!q) continue;
+      const cls = "m" + q[1][0] + q[2];
+      const inner = [...r.cssRules].map(x => x.selectorText ? x.selectorText.split(",").map(t => { t = t.trim();
+        return t.startsWith("html") ? `html.${cls}${t.slice(4)}` : `html.${cls} ${t}`; }).join(",") + `{${x.style.cssText}}` : "").join("\n");
+      css.unshift(inner); sh.deleteRule(i);
+      if (!list.some(l => l.cls === cls)) list.push({cls, w: q[1] === "width", v: +q[2]});
+    }
+  }
+  const st = document.createElement("style"); st.textContent = css.join("\n"); document.head.appendChild(st);
+  return list;
+})();
 function resize() {
   const touch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
   rotated = touch && innerHeight > innerWidth;
   document.documentElement.classList.toggle("rot", rotated);
   vw = rotated ? innerHeight : innerWidth; vh = rotated ? innerWidth : innerHeight;
+  for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) <= q.v);
   document.body.style.width = rotated ? vw + "px" : ""; document.body.style.height = rotated ? vh + "px" : "";
   dpr = Math.min(window.devicePixelRatio || 1, 2);
   cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
