@@ -20,7 +20,7 @@
     font-family:Nunito,"Trebuchet MS","Segoe UI",system-ui,sans-serif;font-weight:800;overflow:hidden;
     user-select:none;-webkit-user-select:none;touch-action:none}
   button{font:inherit;color:inherit}
-  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block}
   .h{font-family:var(--fh);font-weight:400;letter-spacing:.5px}
 
   /* ---------- Menu backdrop over the live demo game ---------- */
@@ -166,6 +166,11 @@
   .tab{flex:1;padding:10px;border-radius:10px;border:0;background:#141c30;color:#a7b2cc;cursor:pointer;font-family:var(--fh);font-size:18px}
   .tab.on{background:linear-gradient(#3b8cff,#1553b3);color:#fff}
 
+  .cuelist{display:flex;flex-direction:column;gap:10px}
+  .cuerow{display:grid;grid-template-columns:minmax(0,1fr) 200px 150px;gap:14px;align-items:center;background:linear-gradient(#2d3a5e,#1b2440);border:2px solid #3e4f7c;border-radius:14px;padding:10px 14px}
+  .cuerow.sel{border-color:var(--gold);box-shadow:0 0 0 2px #ffcf3d55,0 0 22px #ffcf3d44}
+  .cuecv{width:100%;height:auto;display:block;margin-top:6px}
+  @media (max-width:700px){ .cuerow{grid-template-columns:1fr} }
   /* reward route */
   .route{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:18px 14px;max-width:860px;width:100%}
   .rw{position:relative;border-radius:14px;padding:12px 8px 10px;text-align:center;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;
@@ -240,11 +245,17 @@
   #gameUi{position:fixed;left:max(10px,env(safe-area-inset-left));top:10px;z-index:15;display:none;flex-direction:column;gap:8px}
   #gameUi.on{display:flex}
   .gbtn{width:48px;height:48px;border-radius:12px;border:0;cursor:pointer;font-size:22px;box-shadow:inset 0 2px 0 #fff6,0 3px 0 #0009}
-  #chatPanel{position:fixed;left:70px;top:10px;z-index:16;display:none;flex-wrap:wrap;gap:6px;max-width:330px;
+  #chatPanel{position:fixed;left:70px;top:10px;z-index:16;display:none;flex-direction:column;gap:8px;width:300px;
     background:#0d1426ee;border:2px solid #34436a;border-radius:14px;padding:8px}
   #chatPanel.on{display:flex}
   #chatPanel button{border:0;border-radius:10px;padding:8px 10px;background:#243052;color:#fff;cursor:pointer;font-size:14px}
   #chatPanel button:hover{background:#34457a}
+  #chatPanel .ctabs{display:flex;gap:6px}
+  #chatPanel .ctabs button{flex:1;font-size:20px;padding:6px;background:#141c30}
+  #chatPanel .ctabs button.on{background:linear-gradient(#3b8cff,#1553b3)}
+  #chatPanel .citems{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  #chatPanel .citems.p{grid-template-columns:1fr}
+  #chatPanel .citems.e button{font-size:26px;padding:6px}
   #cheerBar{position:fixed;bottom:12px;right:12px;z-index:15;display:none;gap:6px;background:#0d1426dd;border:2px solid #34436a;border-radius:14px;padding:6px}
   #cheerBar.on{display:flex}
   #cheerBar button{width:46px;height:46px;border-radius:10px;border:0;background:#243052;font-size:24px;cursor:pointer}
@@ -415,21 +426,21 @@
 
 // ---------------------------------------------------------------- geometry
 const W = 1280, H = 720;
-const FX = 140, FY = 164, FW = 1000, FH = 500, RAIL = 44, R = 11;
+const FX = 140, FY = 164, FW = 1000, FH = 500, RAIL = 44, R = 13;
 const POWER_BAR = {x: 42, y: 184, w: 46, h: 440};
-const TRAY = {x: 1193, y: 184, w: 28, h: 440};
+const TRAY = {x: 1190, y: 184, w: 32, h: 440};
 const FINE = {x: 1232, y: 184, w: 38, h: 440};
 const SPIN_BTN = {x: 1232, y: 56, r: 30};
 const SPIN_UI = {x: W / 2, y: H / 2 + 20, r: 150};
 const FONT = '"Lilita One","Arial Black",Impact,sans-serif';
 
 const POCKETS = [
-  {x: 0, y: 0, r: 28, dx: -7, dy: -7, dr: 25},
-  {x: FW / 2, y: -5, r: 24, dx: 0, dy: -12, dr: 22, mid: true},
-  {x: FW, y: 0, r: 28, dx: 7, dy: -7, dr: 25},
-  {x: 0, y: FH, r: 28, dx: -7, dy: 7, dr: 25},
-  {x: FW / 2, y: FH + 5, r: 24, dx: 0, dy: 12, dr: 22, mid: true},
-  {x: FW, y: FH, r: 28, dx: 7, dy: 7, dr: 25},
+  {x: 0, y: 0, r: 31, dx: -8, dy: -8, dr: 27},
+  {x: FW / 2, y: -6, r: 27, dx: 0, dy: -14, dr: 24, mid: true},
+  {x: FW, y: 0, r: 31, dx: 8, dy: -8, dr: 27},
+  {x: 0, y: FH, r: 31, dx: -8, dy: 8, dr: 27},
+  {x: FW / 2, y: FH + 6, r: 27, dx: 0, dy: 14, dr: 24, mid: true},
+  {x: FW, y: FH, r: 31, dx: 8, dy: 8, dr: 27},
 ];
 const POCKET_AIMS = [
   {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
@@ -454,12 +465,16 @@ const CUPS = [
   {id: "c3", name: "Oltin Kubok",      fee: 10000, prize: 50000, lvl: 6, city: 3, skill: 0.005},
 ];
 const CUES = [
-  {id: "start",  name: "Boshlang'ich",    price: 0,     cur: "coin", st: [3, 3, 3, 3],     c: ["#f1dcae", "#c8904f", "#5a2d0c", "#2b1405"], band: "#1d1d1d"},
-  {id: "chinor", name: "Chinor",          price: 1500,  cur: "coin", st: [4, 5, 4, 4],     c: ["#f3e3bb", "#b98a4e", "#2f6d2a", "#12331a"], band: "#f3cf85"},
-  {id: "kok",    name: "Samarqand Ko'ki", price: 6000,  cur: "coin", st: [6, 6, 5, 5],     c: ["#eef5ff", "#8fb8e8", "#0b4fa0", "#062a57"], band: "#ffd24d"},
-  {id: "orda",   name: "Oltin O'rda",     price: 25000, cur: "coin", st: [7, 7, 7, 6],     c: ["#fff3c4", "#e0b04a", "#8a5a10", "#3a2404"], band: "#ffffff"},
-  {id: "ajdar",  name: "Ajdarho",         price: 60,    cur: "cash", st: [9, 8, 8, 8],     c: ["#ffe1d4", "#ff6a3d", "#a01818", "#2a0505"], band: "#ffcf3d"},
-  {id: "afsona", name: "Afsona",          price: 180,   cur: "cash", st: [10, 10, 10, 10], c: ["#f6eeff", "#b58cff", "#5b1fb8", "#12002e"], band: "#7ff7ff"},
+  {id: "start",     name: "Boshlang'ich",    price: 0,     cur: "coin", st: [3, 3, 3, 3],     shaft: ["#f5e2b8", "#d9b074"], butt: ["#7a4318", "#2b1405"], metal: "#2a2a2a", deco: "plain"},
+  {id: "chinor",    name: "Chinor",          price: 1500,  cur: "coin", st: [4, 5, 4, 4],     shaft: ["#f5e6c0", "#d4ae72"], butt: ["#2f6d2a", "#0f2a12"], metal: "#e8c77a", deco: "points", dc: "#e8c77a"},
+  {id: "konfet",    name: "Konfet",          price: 3000,  cur: "coin", st: [5, 4, 5, 4],     shaft: ["#ffffff", "#ffe3f1"], butt: ["#ffffff", "#ffd1e8"], metal: "#ff4fa0", deco: "spiral", dc: "#ff4fa0"},
+  {id: "kok",       name: "Samarqand Ko'ki", price: 6000,  cur: "coin", st: [6, 6, 5, 5],     shaft: ["#eef5ff", "#c7dcf5"], butt: ["#1060c0", "#062a57"], metal: "#ffd24d", deco: "rings", dc: "#ffd24d"},
+  {id: "kumush",    name: "Kumush Oy",       price: 12000, cur: "coin", st: [6, 7, 6, 6],     shaft: ["#f6f8fc", "#c9ced8"], butt: ["#4a505c", "#15181e"], metal: "#e6ecf5", deco: "gems", dc: "#5fd0ff"},
+  {id: "orda",      name: "Oltin O'rda",     price: 25000, cur: "coin", st: [7, 7, 7, 6],     shaft: ["#fff3c4", "#e8c46a"], butt: ["#9a6414", "#3a2404"], metal: "#ffe08a", deco: "chevron", dc: "#ffe08a", gem: "#e0201b"},
+  {id: "olov",      name: "Olov",            price: 40,    cur: "cash", st: [8, 7, 7, 7],     shaft: ["#fff0dc", "#ffcf9a"], butt: ["#2a0e05", "#050202"], metal: "#ff9d00", deco: "flame", dc: "#ff6a00"},
+  {id: "ajdar",     name: "Ajdarho",         price: 80,    cur: "cash", st: [9, 8, 8, 8],     shaft: ["#ffe6d9", "#ffb39a"], butt: ["#b01c1c", "#2a0505"], metal: "#ffcf3d", deco: "scales", dc: "#ffcf3d"},
+  {id: "galaktika", name: "Galaktika",       price: 120,   cur: "cash", st: [9, 9, 9, 8],     shaft: ["#f0f2ff", "#c8c6ff"], butt: ["#3a1880", "#05021a"], metal: "#9fe8ff", deco: "stars", dc: "#ffffff"},
+  {id: "afsona",    name: "Afsona",          price: 200,   cur: "cash", st: [10, 10, 10, 10], shaft: ["#fff7e0", "#f5dc9a"], butt: ["#4b1488", "#12002e"], metal: "#ffd24d", deco: "legend", dc: "#7ff7ff", gem: "#7ff7ff", glow: "#b58cff"},
 ];
 const STAT_NAMES = ["Kuch", "Nishon", "Aylanish", "Vaqt"];
 const AVATARS = ["😎", "🦁", "🐯", "🦅", "🐺", "🐉", "🧔", "👩", "🤠", "👑", "🦊", "🐼", "🥷", "👨‍🚀", "🧕", "🤖"];
@@ -497,7 +512,7 @@ const ACHS = {
   rich:      {icon: "💰", name: "Boy", d: "10 000 tanga to'plang"},
   collector: {icon: "🎱", name: "Kolleksioner", d: "3 ta kiy sotib oling"},
 };
-const CHAT = ["Salom! 👋", "Omad! 🍀", "Zo'r zarba! 👏", "Voy! 😮", "Rahmat! 🙏", "Yaxshi o'yin! 🤝", "Ha-ha 😂", "😎", "🔥", "😅", "😡", "🤔"];
+const CHAT = ["Salom! 👋", "Omad! 🍀", "Zo'r zarba! 👏", "Voy! 😮", "Rahmat! 🙏", "Yaxshi o'yin! 🤝", "Ha-ha 😂", "Kechirasiz 😅", "Qoyil! 🔥"];
 const AI_REPLY = {
   "Salom! 👋": ["Salom! 👋", "Assalomu alaykum!"], "Omad! 🍀": ["Sizga ham! 🍀"], "Zo'r zarba! 👏": ["Rahmat! 🙏", "😎"],
   "Yaxshi o'yin! 🤝": ["Yaxshi o'yin! 🤝"], "Ha-ha 😂": ["😂"], "😡": ["😅"], "Rahmat! 🙏": ["👍"],
@@ -554,21 +569,68 @@ function unlock(id) {
 
 // ---------------------------------------------------------------- audio (fully synthesised, no samples)
 const Snd = (() => {
-  let ac = null, master, nb, rollG, rollF, lastClack = 0;
+  // Everything is synthesised at start-up into short PCM buffers (no recorded samples).
+  // The ball "click" was modelled on measured pool-ball impacts: a ~3 ms transient
+  // with inharmonic modes around 1.9–2.5 kHz plus a tiny low body.
+  let ac = null, master, nb, rollG, rollF, lastClack = 0, bank = null;
   function init() {
-    if (ac) { if (ac.state === "suspended") ac.resume(); return; }
-    try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
-    const comp = ac.createDynamicsCompressor(); comp.threshold.value = -12; comp.ratio.value = 4;
+    try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}   // iOS: play even in silent mode
+    if (ac) { if (ac.state !== "running") ac.resume(); return; }
+    try { ac = new (window.AudioContext || window.webkitAudioContext)({latencyHint: "interactive"}); } catch (e) { return; }
+    const comp = ac.createDynamicsCompressor(); comp.threshold.value = -10; comp.knee.value = 6; comp.ratio.value = 5; comp.attack.value = 0.001; comp.release.value = 0.08;
     master = ac.createGain(); master.gain.value = profile.muted ? 0 : 1;
     master.connect(comp); comp.connect(ac.destination);
+    const unlock = ac.createBufferSource(); unlock.buffer = ac.createBuffer(1, 1, 22050); unlock.connect(ac.destination); unlock.start(0);
     nb = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
     const d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     const src = ac.createBufferSource(); src.buffer = nb; src.loop = true;
     rollF = ac.createBiquadFilter(); rollF.type = "lowpass"; rollF.frequency.value = 200; rollF.Q.value = 0.8;
     rollG = ac.createGain(); rollG.gain.value = 0;
     src.connect(rollF); rollF.connect(rollG); rollG.connect(master); src.start();
+    bank = buildBank();
+    if (ac.state !== "running") ac.resume();
   }
-  const ok = () => ac && !profile.muted;
+  function buf(dur, fn) {
+    const sr = ac.sampleRate, n = Math.ceil(dur * sr), b = ac.createBuffer(1, n, sr), d = b.getChannelData(0);
+    let pk = 0;
+    for (let i = 0; i < n; i++) { d[i] = fn(i / sr); pk = Math.max(pk, Math.abs(d[i])); }
+    const k = 0.95 / (pk || 1), fade = Math.min(n, Math.round(sr * 0.003));
+    for (let i = 0; i < n; i++) d[i] *= k * (i > n - fade ? (n - i) / fade : 1);
+    return b;
+  }
+  const ds = (t, f, tau, ph = 0) => Math.sin(6.283185 * f * t + ph) * Math.exp(-t / tau);
+  const nz = (t, tau) => (Math.random() * 2 - 1) * Math.exp(-t / tau);
+  function buildBank() {
+    const clacks = [];
+    for (let v = 0; v < 8; v++) {
+      const base = [1921, 2109, 2343, 2484, 2906, 3650, 5230];
+      const amp = [1, 0.85, 0.9, 0.8, 0.45, 0.3, 0.18];
+      const modes = base.map((f, i) => ({f: f * (1 + (Math.random() - 0.5) * 0.05), a: amp[i] * (0.7 + Math.random() * 0.6),
+        tau: (0.0014 + Math.random() * 0.0011) * (i > 4 ? 0.6 : 1), ph: Math.random() * 6.28}));
+      clacks.push(buf(0.028, t => {
+        let s = 0; for (const m of modes) s += m.a * ds(t, m.f, m.tau, m.ph);
+        return s + nz(t, 0.00035) * 2.2 + ds(t, 930 + v * 25, 0.0035) * 0.35;
+      }));
+    }
+    const cue = buf(0.1, t => ds(t, 703, 0.006) * 0.8 + ds(t, 843, 0.005) * 0.6 + ds(t, 890, 0.004) * 0.45 +
+      ds(t, 187, 0.016) * 0.9 + nz(t, 0.0012) * 1.2);
+    const rail = buf(0.16, t => ds(t, 118, 0.032) + ds(t, 236, 0.012) * 0.45 + ds(t, 520, 0.004) * 0.3 + nz(t, 0.005) * 0.6);
+    const drops = [[0.1, 0.55], [0.17, 0.45], [0.235, 0.36], [0.3, 0.28], [0.37, 0.2], [0.45, 0.13], [0.54, 0.08]];
+    const pocket = buf(0.7, t => {
+      let s = ds(t, 92, 0.05) + ds(t, 187, 0.03) * 0.7 + nz(t, 0.008) * 0.6;
+      for (const [t0, a] of drops) if (t > t0) { const u = t - t0; s += a * (ds(u, 1480, 0.0022) + ds(u, 1730, 0.0016) * 0.7 + ds(u, 250, 0.012) * 0.9 + nz(u, 0.0006)); }
+      return s;
+    });
+    return {clacks, cue, rail, pocket};
+  }
+  function play(b, vol, rate = 1, cutoff = 0) {
+    const s = ac.createBufferSource(); s.buffer = b; s.playbackRate.value = rate;
+    const g = ac.createGain(); g.gain.value = vol;
+    let node = s;
+    if (cutoff) { const f = ac.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = cutoff; f.Q.value = 0.5; s.connect(f); node = f; }
+    node.connect(g); g.connect(master); s.start();
+  }
+  const ok = () => ac && bank && !profile.muted && ac.state === "running";
   function tone(t, f, dur, vol, type = "sine", f2) {
     const o = ac.createOscillator(), g = ac.createGain();
     o.type = type; o.frequency.setValueAtTime(f, t);
@@ -589,48 +651,22 @@ const Snd = (() => {
   return {
     init,
     setMuted(m) { if (master) master.gain.setTargetAtTime(m ? 0 : 1, ac.currentTime, 0.02); },
-    // phenolic ball-on-ball click: very short bright transient + ringing partials
+    // ball on ball: the sharp "piq"
     clack(v) {
       if (!ok()) return; const t = now();
-      if (t - lastClack < 0.012) return; lastClack = t;
-      const k = Math.min(1, v / 15); if (k < 0.03) return;
-      const vol = 0.1 + 0.9 * Math.pow(k, 0.8), f = 2750 + Math.random() * 650;
-      noise(t, 0.012, vol * 0.7, "highpass", 2500, 0.7);
-      tone(t, f, 0.035 + 0.03 * k, vol * 0.42);
-      tone(t, f * 2.12, 0.018, vol * 0.16);
-      tone(t, 1250 + Math.random() * 200, 0.03, vol * 0.14, "triangle");
+      if (t - lastClack < 0.008) return; lastClack = t;
+      const k = Math.min(1, v / 13); if (k < 0.015) return;
+      play(pick(bank.clacks), 0.12 + 0.88 * Math.pow(k, 0.65), 0.96 + Math.random() * 0.08, 2600 + 14000 * k);
     },
-    // leather tip on the cue ball: a dull woody "tok"
-    cue(p) {
-      if (!ok()) return; const t = now();
-      noise(t, 0.03, 0.3 + 0.55 * p, "bandpass", 1800, 0.9);
-      tone(t, 240, 0.07, 0.25 + 0.4 * p, "sine", 110);
-      tone(t, 900, 0.025, 0.1 + 0.15 * p, "triangle", 600);
-    },
-    // cushion: soft low rubber thump
-    rail(v) {
-      if (!ok()) return; const k = Math.min(1, v / 16); if (k < 0.05) return; const t = now();
-      noise(t, 0.09, 0.4 * k, "lowpass", 420, 0.9);
-      tone(t, 105, 0.1, 0.32 * k, "sine", 70);
-    },
-    // ball drops into the pocket and rattles down the gully
-    pocket() {
-      if (!ok()) return; const t = now();
-      tone(t, 120, 0.25, 0.6, "sine", 48);
-      noise(t, 0.14, 0.45, "lowpass", 700, 1);
-      for (let i = 0; i < 5; i++) {
-        const tt = t + 0.1 + i * 0.07 + Math.random() * 0.02, v = 0.25 * (1 - i * 0.17);
-        tone(tt, 1100 + Math.random() * 400, 0.035, v * 0.5, "triangle");
-        noise(tt, 0.02, v * 0.5, "bandpass", 2400, 2);
-      }
-    },
-    tray() { if (!ok()) return; const t = now(); tone(t, 1700 + Math.random() * 300, 0.04, 0.14, "triangle"); noise(t, 0.02, 0.1, "bandpass", 3000, 2); },
-    // continuous felt rumble while balls roll
+    cue(p) { if (!ok()) return; play(bank.cue, 0.35 + 0.65 * p, 0.95 + Math.random() * 0.1, 3000 + 6000 * p); },
+    rail(v) { if (!ok()) return; const k = Math.min(1, v / 16); if (k < 0.04) return; play(bank.rail, 0.9 * Math.pow(k, 0.8), 0.95 + Math.random() * 0.1, 700 + 900 * k); },
+    pocket() { if (!ok()) return; play(bank.pocket, 0.95, 0.96 + Math.random() * 0.08); },
+    tray() { if (!ok()) return; play(pick(bank.clacks), 0.3, 0.72, 2400); },
     roll(sum) {
-      if (!ac) return;
-      const g = profile.muted ? 0 : Math.min(0.2, sum * 0.007);
+      if (!ac || !rollG) return;
+      const g = profile.muted ? 0 : Math.min(0.22, sum * 0.008);
       rollG.gain.setTargetAtTime(g, ac.currentTime, 0.06);
-      rollF.frequency.setTargetAtTime(120 + Math.min(520, sum * 14), ac.currentTime, 0.06);
+      rollF.frequency.setTargetAtTime(110 + Math.min(480, sum * 13), ac.currentTime, 0.06);
     },
     click() { if (!ok()) return; const t = now(); tone(t, 620, 0.07, 0.16, "triangle", 1250); noise(t, 0.015, 0.08, "highpass", 3000); },
     pop() { if (!ok()) return; tone(now(), 420, 0.12, 0.22, "sine", 1500); },
@@ -657,8 +693,8 @@ const Snd = (() => {
     banner() { if (!ok()) return; const t = now(); noise(t, 0.3, 0.12, "bandpass", 600, 1.2, 3000); tone(t, 660, 0.18, 0.08, "triangle", 990); },
   };
 })();
-addEventListener("pointerdown", () => Snd.init(), true);
-addEventListener("keydown", () => Snd.init(), true);
+for (const ev of ["pointerdown", "touchend", "click", "keydown"]) addEventListener(ev, () => Snd.init(), true);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) Snd.init(); });
 
 // ---------------------------------------------------------------- 3D ball orientation
 // p = where the number sits, q = axis of the stripe caps. Rolling rotates both.
@@ -1171,6 +1207,8 @@ function placeCue(fx, fy) {
   const c = G.balls[0]; c.x = fx; c.y = fy;
 }
 const cv = $("c");
+// Aiming works like mobile pool games: drag anywhere and the cue turns with your finger
+// around the cue ball (relative), a quick tap aims straight at the tapped point.
 cv.addEventListener("pointerdown", e => {
   if (mode !== "game" || !game) return;
   closeChat();
@@ -1186,9 +1224,9 @@ cv.addEventListener("pointerdown", e => {
   if (inRect(p, POWER_BAR)) { input.drag = "power"; input.y0 = p.y; input.power = 0; return; }
   if (inRect(p, FINE)) { input.drag = "fine"; input.lastY = p.y; return; }
   const c = G.balls[0], fx = p.x - FX, fy = p.y - FY;
-  if (G.ballInHand && Math.hypot(fx - c.x, fy - c.y) < R * 3.2) { input.drag = "place"; return; }
-  input.drag = "aim";
-  G.angle = Math.atan2(fy - c.y, fx - c.x);
+  if (G.ballInHand && Math.hypot(fx - c.x, fy - c.y) < R * 3) { input.drag = "place"; return; }
+  input.drag = "aim"; input.sx = p.x; input.sy = p.y; input.moved = false; input.t0 = performance.now();
+  input.lastA = Math.atan2(fy - c.y, fx - c.x);
 });
 cv.addEventListener("pointermove", e => {
   if (!input.drag || !game) return;
@@ -1198,10 +1236,23 @@ cv.addEventListener("pointermove", e => {
   if (input.drag === "power") input.power = clamp((p.y - input.y0) / (POWER_BAR.h * 0.85), 0, 1);
   else if (input.drag === "fine") { G.angle += (p.y - input.lastY) * 0.0016; input.lastY = p.y; }
   else if (input.drag === "place") placeCue(p.x - FX, p.y - FY);
-  else if (input.drag === "aim") { const c = G.balls[0]; G.angle = Math.atan2(p.y - FY - c.y, p.x - FX - c.x); }
+  else if (input.drag === "aim") {
+    if (!input.moved && Math.hypot(p.x - input.sx, p.y - input.sy) < 7) return;
+    input.moved = true;
+    const c = G.balls[0], fx = p.x - FX, fy = p.y - FY, d = Math.hypot(fx - c.x, fy - c.y);
+    const a = Math.atan2(fy - c.y, fx - c.x);
+    let da = a - input.lastA; input.lastA = a;
+    if (da > Math.PI) da -= 2 * Math.PI; if (da < -Math.PI) da += 2 * Math.PI;
+    G.angle += da * clamp(d / 170, 0.12, 1);   // slower (more precise) when the finger is near the cue ball
+  }
 });
-function endDrag() {
+function endDrag(e) {
+  const G = game;
   if (input.drag === "power") { if (canControl()) requestShot(input.power); input.power = 0; }
+  else if (input.drag === "aim" && !input.moved && G && canControl() && performance.now() - input.t0 < 350 && e) {
+    const p = toWorld(e), c = G.balls[0];
+    G.angle = Math.atan2(p.y - FY - c.y, p.x - FX - c.x);
+  }
   input.drag = null;
 }
 cv.addEventListener("pointerup", endDrag);
@@ -1228,7 +1279,7 @@ cv.addEventListener("wheel", e => {
 }, {passive: false});
 
 // ---------------------------------------------------------------- canvas setup
-const ctx = cv.getContext("2d");
+let ctx = cv.getContext("2d");
 let scale = 1, offX = 0, offY = 0, dpr = 1;
 function resize() {
   dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1264,8 +1315,9 @@ function capPath(q, alpha, r, x, y) {
 function drawBall(b, x, y, sc = 1, alpha = 1) {
   const r = R * sc, n = b.n, p = b.p, gold = n === "gold";
   ctx.save(); ctx.globalAlpha = alpha;
-  ctx.fillStyle = "rgba(0,0,0,.38)";
-  ctx.beginPath(); ctx.ellipse(x + r * 0.25, y + r * 0.35, r * 1.02, r * 0.9, 0, 0, 7); ctx.fill();
+  const shg = ctx.createRadialGradient(x + r * 0.3, y + r * 0.45, r * 0.2, x + r * 0.3, y + r * 0.45, r * 1.3);
+  shg.addColorStop(0, "rgba(0,0,0,.5)"); shg.addColorStop(0.6, "rgba(0,0,0,.25)"); shg.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = shg; ctx.beginPath(); ctx.arc(x + r * 0.3, y + r * 0.45, r * 1.3, 0, 7); ctx.fill();
   ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.save(); ctx.clip();
   ctx.fillStyle = gold ? "#f5b800" : n === 0 ? "#f6f3ea" : colorOf(n);
   ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
@@ -1295,11 +1347,15 @@ function drawBall(b, x, y, sc = 1, alpha = 1) {
     const q = [-p[0], -p[1], -p[2]]; if (q[2] > -0.2) { capPath(q, 0.17, r, x, y); ctx.fill(); }
   }
   const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.35, r * 0.1, x, y, r * 1.08);
-  g.addColorStop(0, "rgba(255,255,255,.32)"); g.addColorStop(0.35, "rgba(255,255,255,0)");
-  g.addColorStop(0.72, "rgba(0,0,0,.06)"); g.addColorStop(1, "rgba(0,0,0,.55)");
+  g.addColorStop(0, "rgba(255,255,255,.3)"); g.addColorStop(0.35, "rgba(255,255,255,0)");
+  g.addColorStop(0.7, "rgba(0,0,0,.05)"); g.addColorStop(1, "rgba(0,0,0,.6)");
   ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
-  ctx.fillStyle = "rgba(255,255,255,.85)";
-  ctx.beginPath(); ctx.ellipse(x - r * 0.36, y - r * 0.42, r * 0.24, r * 0.14, -0.6, 0, 7); ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = r * 0.12;                       // bounce light from the cloth
+  ctx.beginPath(); ctx.arc(x, y, r * 0.88, 0.15 * Math.PI, 0.75 * Math.PI); ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,.35)";                                                    // lamp reflection
+  ctx.beginPath(); ctx.ellipse(x - r * 0.33, y - r * 0.4, r * 0.42, r * 0.28, -0.6, 0, 7); ctx.fill();
+  ctx.fillStyle = "rgba(255,255,255,.95)";
+  ctx.beginPath(); ctx.ellipse(x - r * 0.35, y - r * 0.42, r * 0.2, r * 0.12, -0.6, 0, 7); ctx.fill();
   ctx.restore(); ctx.restore();
 }
 function star8(x, y, r) {
@@ -1329,25 +1385,60 @@ function drawBackground() {
   for (let i = -H; i < W; i += 28) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + H, H); ctx.stroke(); }
   ctx.restore();
 }
+// ---------------------------------------------------------------- table (pre-rendered once per city/resolution)
+let tableCache = null, feltNoise = null;
 function railBand(x1, y1, len, horizontal, fn) {
   for (let s = 0; s < len; s += 16) fn(horizontal ? x1 + s : x1, horizontal ? y1 : y1 + s, s / 16 | 0);
 }
 function drawTable(city) {
-  const [r1, r2] = city.rail, trim = city.trim;
-  ctx.save();
-  ctx.shadowColor = "rgba(0,0,0,.7)"; ctx.shadowBlur = 50; ctx.shadowOffsetY = 18;
-  const wg = ctx.createLinearGradient(0, FY - RAIL, 0, FY + FH + RAIL);
-  wg.addColorStop(0, shade(r1, 45)); wg.addColorStop(0.07, r1); wg.addColorStop(0.5, r2); wg.addColorStop(0.93, r1); wg.addColorStop(1, shade(r2, -10));
-  ctx.fillStyle = wg; rr(FX - RAIL - 8, FY - RAIL - 8, FW + 2 * RAIL + 16, FH + 2 * RAIL + 16, 30); ctx.fill();
-  ctx.restore();
-  ctx.strokeStyle = "rgba(255,255,255,.25)"; ctx.lineWidth = 2;
-  rr(FX - RAIL - 6, FY - RAIL - 6, FW + 2 * RAIL + 12, FH + 2 * RAIL + 12, 28); ctx.stroke();
-  ctx.strokeStyle = trim; ctx.globalAlpha = 0.55; ctx.lineWidth = 1.5;
-  rr(FX - RAIL + 4, FY - RAIL + 4, FW + 2 * RAIL - 8, FH + 2 * RAIL - 8, 20); ctx.stroke();
+  const k = scale * dpr, key = (city.id || city.pat) + city.felt[0];
+  if (!tableCache || tableCache.key !== key || tableCache.k !== k) {
+    const x0 = FX - RAIL - 80, y0 = FY - RAIL - 80, w = FW + 2 * RAIL + 160, h = FH + 2 * RAIL + 160;
+    const oc = document.createElement("canvas"); oc.width = Math.ceil(w * k); oc.height = Math.ceil(h * k);
+    const saved = ctx; ctx = oc.getContext("2d"); ctx.setTransform(k, 0, 0, k, -x0 * k, -y0 * k);
+    try { paintTable(city); } finally { ctx = saved; }
+    tableCache = {cv: oc, x0, y0, w, h, k, key};
+  }
+  const c = tableCache;
+  ctx.drawImage(c.cv, c.x0, c.y0, c.w, c.h);
+}
+function paintTable(city) {
+  const [r1, r2] = city.rail, trim = city.trim, lucky = city.pat === "lucky";
+  const OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
+  let seed = 11; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  // body + floor shadow
+  ctx.save(); ctx.shadowColor = "rgba(0,0,0,.8)"; ctx.shadowBlur = 60; ctx.shadowOffsetY = 24;
+  ctx.fillStyle = r2; rr(OX, OY, OW, OH, 30); ctx.fill(); ctx.restore();
+  const wg = ctx.createLinearGradient(0, OY, 0, OY + OH);
+  wg.addColorStop(0, shade(r1, 50)); wg.addColorStop(0.06, r1); wg.addColorStop(0.5, r2); wg.addColorStop(0.94, r1); wg.addColorStop(1, shade(r2, -10));
+  ctx.fillStyle = wg; rr(OX, OY, OW, OH, 30); ctx.fill();
+  // wood grain, following each rail
+  const grain = (x, y, w, h, horiz) => {
+    ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+    for (let i = 0; i < 90; i++) {
+      ctx.strokeStyle = rn() < 0.55 ? `rgba(0,0,0,${0.05 + rn() * 0.1})` : `rgba(255,235,190,${0.03 + rn() * 0.06})`;
+      ctx.lineWidth = 0.5 + rn() * 1.8; ctx.beginPath();
+      if (horiz) { const yy = y + rn() * h, a = rn() * 6 - 3; ctx.moveTo(x, yy); ctx.bezierCurveTo(x + w * 0.3, yy + a, x + w * 0.7, yy - a, x + w, yy + a * 0.5); }
+      else { const xx = x + rn() * w, a = rn() * 6 - 3; ctx.moveTo(xx, y); ctx.bezierCurveTo(xx + a, y + h * 0.3, xx - a, y + h * 0.7, xx + a * 0.5, y + h); }
+      ctx.stroke();
+    }
+    ctx.restore();
+  };
+  if (!lucky) {
+    grain(OX, OY, OW, RAIL + 8, true); grain(OX, FY + FH, OW, RAIL + 8, true);
+    grain(OX, FY, RAIL + 8, FH, false); grain(FX + FW, FY, RAIL + 8, FH, false);
+  }
+  // lacquer sheen + bevels
+  const sh = ctx.createLinearGradient(0, OY, 0, OY + RAIL);
+  sh.addColorStop(0, "rgba(255,255,255,.28)"); sh.addColorStop(0.5, "rgba(255,255,255,.06)"); sh.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = sh; rr(OX, OY, OW, RAIL, 30); ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 2; rr(OX + 1, OY + 1, OW - 2, OH - 2, 29); ctx.stroke();
+  ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 3; rr(OX + 3, OY + 5, OW - 6, OH - 8, 27); ctx.stroke();
+  ctx.strokeStyle = trim; ctx.globalAlpha = 0.5; ctx.lineWidth = 1.5; rr(FX - RAIL + 4, FY - RAIL + 4, FW + 2 * RAIL - 8, FH + 2 * RAIL - 8, 20); ctx.stroke();
   ctx.globalAlpha = 1;
-  // decorative bands along the rails
-  const my = FY - 30, by = FY + FH + 30, lx = FX - 30, rx = FX + FW + 30;
-  const segH = [[FX + 44, FW / 2 - 88], [FX + FW / 2 + 44, FW / 2 - 88]], segV = [[FY + 44, FH - 88]];
+  // decorative bands + sights
+  const my = FY - 31, by = FY + FH + 31, lx = FX - 31, rx = FX + FW + 31;
+  const segH = [[FX + 50, FW / 2 - 100], [FX + FW / 2 + 50, FW / 2 - 100]], segV = [[FY + 50, FH - 100]];
   const band = fn => {
     for (const [a, l] of segH) { railBand(a, my, l, true, fn); railBand(a, by, l, true, fn); }
     for (const [a, l] of segV) { railBand(lx, a, l, false, fn); railBand(rx, a, l, false, fn); }
@@ -1356,49 +1447,78 @@ function drawTable(city) {
     const cols = [trim, city.felt[0], "#ffffff", shade(city.felt[1], 30)];
     band((x, y, i) => { ctx.fillStyle = cols[i % 4]; ctx.beginPath(); ctx.moveTo(x, y - 6); ctx.lineTo(x + 6, y); ctx.lineTo(x, y + 6); ctx.lineTo(x - 6, y); ctx.fill(); });
   } else if (city.pat === "gold") {
-    const gg = ctx.createLinearGradient(0, FY - RAIL, 0, FY);
-    ctx.fillStyle = "#d9a63a";
-    band((x, y) => { ctx.beginPath(); ctx.arc(x, y, 3, 0, 7); ctx.fill(); }); void gg;
+    ctx.fillStyle = "#d9a63a"; band((x, y) => { ctx.beginPath(); ctx.arc(x, y, 3, 0, 7); ctx.fill(); });
   }
-  ctx.fillStyle = trim;
   const sight = (x, y) => {
-    if (city.pat === "stars" || city.pat === "gold") star8(x, y, 6);
-    else { ctx.beginPath(); ctx.moveTo(x, y - 5); ctx.lineTo(x + 4, y); ctx.lineTo(x, y + 5); ctx.lineTo(x - 4, y); ctx.fill(); }
+    if (city.pat === "stars" || city.pat === "gold") { ctx.fillStyle = trim; star8(x, y, 7); }
+    else {
+      const g = ctx.createRadialGradient(x - 1.5, y - 1.5, 0, x, y, 6);
+      g.addColorStop(0, "#ffffff"); g.addColorStop(0.5, trim); g.addColorStop(1, shade(trim, -80));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x, y - 6); ctx.lineTo(x + 4.5, y); ctx.lineTo(x, y + 6); ctx.lineTo(x - 4.5, y); ctx.fill();
+    }
   };
   if (city.pat !== "ikat") {
     for (let i = 1; i < 8; i++) { if (i === 4) continue; sight(FX + FW * i / 8, my); sight(FX + FW * i / 8, by); }
     for (let i = 1; i < 4; i++) { sight(lx, FY + FH * i / 4); sight(rx, FY + FH * i / 4); }
   }
-  // cushions
-  const cg = ctx.createLinearGradient(0, FY - 16, 0, FY + FH + 16);
-  cg.addColorStop(0, shade(city.felt[1], -35)); cg.addColorStop(0.5, shade(city.felt[1], -15)); cg.addColorStop(1, shade(city.felt[1], -35));
-  ctx.fillStyle = cg; rr(FX - 15, FY - 15, FW + 30, FH + 30, 8); ctx.fill();
   // felt
-  const fg = ctx.createRadialGradient(FX + FW / 2, FY + FH / 2, 30, FX + FW / 2, FY + FH / 2, FW * 0.62);
-  fg.addColorStop(0, shade(city.felt[0], 18)); fg.addColorStop(0.55, city.felt[0]); fg.addColorStop(1, city.felt[1]);
-  ctx.fillStyle = fg; ctx.fillRect(FX, FY, FW, FH);
-  ctx.save(); ctx.globalAlpha = 0.035; ctx.fillStyle = "#000";
-  for (let i = 0; i < 600; i++) ctx.fillRect(FX + (i * 7919) % FW, FY + (i * 104729) % FH, 2, 2);
-  ctx.restore();
-  ctx.save(); ctx.strokeStyle = "rgba(0,0,0,.32)"; ctx.lineWidth = 8; ctx.strokeRect(FX + 4, FY + 4, FW - 8, FH - 8); ctx.restore();
-  if (city.pat !== "lucky") {
-    ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(FX + FW * 0.25, FY); ctx.lineTo(FX + FW * 0.25, FY + FH); ctx.stroke();
+  ctx.save(); ctx.translate(FX, FY);
+  ctx.fillStyle = shade(city.felt[1], -45); ctx.fillRect(-18, -18, FW + 36, FH + 36);   // under-cushion / pocket mouths
+  const fg = ctx.createRadialGradient(FW / 2, FH / 2, 20, FW / 2, FH / 2, FW * 0.62);
+  fg.addColorStop(0, shade(city.felt[0], 22)); fg.addColorStop(0.5, city.felt[0]); fg.addColorStop(1, city.felt[1]);
+  ctx.fillStyle = fg; ctx.fillRect(0, 0, FW, FH);
+  if (!feltNoise) {
+    feltNoise = document.createElement("canvas"); feltNoise.width = feltNoise.height = 128;
+    const ng = feltNoise.getContext("2d"), id = ng.createImageData(128, 128);
+    for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 22; }
+    ng.putImageData(id, 0, 0);
+  }
+  ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(0, 0, FW, FH); ctx.globalAlpha = 1;
+  // shadow cast by the cushions onto the cloth
+  const edge = (x, y, w, h, x1, y1, x2, y2) => { const g = ctx.createLinearGradient(x1, y1, x2, y2); g.addColorStop(0, "rgba(0,0,0,.38)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(x, y, w, h); };
+  edge(0, 0, FW, 22, 0, 0, 0, 22); edge(0, FH - 14, FW, 14, 0, FH, 0, FH - 14); edge(0, 0, 16, FH, 0, 0, 16, 0); edge(FW - 16, 0, 16, FH, FW, 0, FW - 16, 0);
+  if (!lucky) {
+    ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(FW * 0.25, 0); ctx.lineTo(FW * 0.25, FH); ctx.stroke();
     ctx.fillStyle = "rgba(255,255,255,.35)";
-    ctx.beginPath(); ctx.arc(FX + FW * 0.72, FY + FH / 2, 3, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.arc(FX + FW * 0.25, FY + FH / 2, 3, 0, 7); ctx.fill();
-    ctx.save(); ctx.globalAlpha = 0.08; ctx.fillStyle = "#fff"; ctx.font = `64px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText((city.name || "").toUpperCase(), FX + FW / 2, FY + FH / 2); ctx.restore();
+    for (const sx of [FW * 0.25, FW * 0.72]) { ctx.beginPath(); ctx.arc(sx, FH / 2, 3, 0, 7); ctx.fill(); }
+    ctx.save(); ctx.globalAlpha = 0.07; ctx.fillStyle = "#fff"; ctx.font = `68px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText((city.name || "").toUpperCase(), FW / 2, FH / 2); ctx.restore();
+    // pocket holes
     for (const p of POCKETS) {
-      const x = FX + p.x + p.dx, y = FY + p.y + p.dy;
-      const mg = ctx.createLinearGradient(x - p.dr, y - p.dr, x + p.dr, y + p.dr);
-      mg.addColorStop(0, "#f4f4f4"); mg.addColorStop(0.5, "#9ba1ad"); mg.addColorStop(1, "#e3e5ea");
-      ctx.fillStyle = mg; ctx.beginPath(); ctx.arc(x, y, p.dr + 6, 0, 7); ctx.fill();
-      const pg = ctx.createRadialGradient(x, y + 3, 2, x, y, p.dr);
-      pg.addColorStop(0, "#000"); pg.addColorStop(0.75, "#070707"); pg.addColorStop(1, "#2a2a2a");
-      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, y, p.dr, 0, 7); ctx.fill();
+      const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
+      ctx.fillStyle = "#1a0f08"; ctx.beginPath(); ctx.arc(x, y, r + 5, 0, 7); ctx.fill();
+      const pg = ctx.createRadialGradient(x - p.dx * 0.6, y - p.dy * 0.6, 2, x, y, r + 2);
+      pg.addColorStop(0, "#000"); pg.addColorStop(0.65, "#040302"); pg.addColorStop(0.9, "#2a1a10"); pg.addColorStop(1, "#4a2e1c");
+      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
     }
   }
+  // cushions with angled jaws at the pockets
+  const C = 16, cA = 32, mA = 26;
+  const segs = lucky ? [
+    [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
+    [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
+  ] : [
+    [[cA, 0], [FW / 2 - mA, 0], [FW / 2 - mA + 7, -C], [cA - C, -C], "t"],
+    [[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + mA - 7, -C], "t"],
+    [[cA, FH], [FW / 2 - mA, FH], [FW / 2 - mA + 7, FH + C], [cA - C, FH + C], "b"],
+    [[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + mA - 7, FH + C], "b"],
+    [[0, cA], [0, FH - cA], [-C, FH - cA + C], [-C, cA - C], "l"],
+    [[FW, cA], [FW, FH - cA], [FW + C, FH - cA + C], [FW + C, cA - C], "r"],
+  ];
+  for (const s of segs) {
+    const side = s[4], d = {t: [0, 0, 0, -C], b: [0, FH, 0, FH + C], l: [0, 0, -C, 0], r: [FW, 0, FW + C, 0]}[side];
+    const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
+    g.addColorStop(0, shade(city.felt[0], 25)); g.addColorStop(0.35, city.felt[0]); g.addColorStop(1, shade(city.felt[1], -25));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
+    ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
+  }
+  // soft overhead lamp
+  const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
+  lamp.addColorStop(0, "rgba(255,255,240,.10)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
+  ctx.fillStyle = lamp; ctx.fillRect(0, 0, FW, FH);
+  ctx.restore();
 }
 
 // ---------------------------------------------------------------- aim / cue
@@ -1430,29 +1550,137 @@ function drawGuide(G) {
 }
 function drawCue(G, pull) {
   const cue = G.balls[0], cd = cueDef(curP().cue);
-  const dx = Math.cos(G.angle), dy = Math.sin(G.angle), px = -dy, py = dx;
-  const start = R + 5 + pull * 115, len = 470;
-  const tx = FX + cue.x - dx * start, ty = FY + cue.y - dy * start;
-  const bx = tx - dx * len, by = ty - dy * len;
-  const quad = o => {
-    ctx.beginPath();
-    ctx.moveTo(tx + px * 3.2 + o, ty + py * 3.2 + o * 1.3); ctx.lineTo(bx + px * 7 + o, by + py * 7 + o * 1.3);
-    ctx.lineTo(bx - px * 7 + o, by - py * 7 + o * 1.3); ctx.lineTo(tx - px * 3.2 + o, ty - py * 3.2 + o * 1.3); ctx.closePath();
-  };
+  const dx = Math.cos(G.angle), dy = Math.sin(G.angle), start = R + 3 + pull * 125, L = 540;
+  const tx = FX + cue.x - dx * start, ty = FY + cue.y - dy * start, th = G.angle + Math.PI;
   ctx.save();
-  ctx.fillStyle = "rgba(0,0,0,.35)"; quad(8); ctx.fill();
-  const g = ctx.createLinearGradient(tx, ty, bx, by), c = cd.c;
-  g.addColorStop(0, "#2f6fd6"); g.addColorStop(0.012, "#2f6fd6");
-  g.addColorStop(0.014, "#f7f3e6"); g.addColorStop(0.045, "#f7f3e6");
-  g.addColorStop(0.047, c[0]); g.addColorStop(0.5, c[1]);
-  g.addColorStop(0.505, cd.band); g.addColorStop(0.52, cd.band);
-  g.addColorStop(0.525, c[2]); g.addColorStop(0.7, c[2]);
-  g.addColorStop(0.705, cd.band); g.addColorStop(0.715, cd.band);
-  g.addColorStop(0.72, c[3]); g.addColorStop(0.97, c[3]); g.addColorStop(0.975, "#111"); g.addColorStop(1, "#111");
-  ctx.fillStyle = g; quad(0); ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.2;
-  ctx.beginPath(); ctx.moveTo(tx + px * 1.5, ty + py * 1.5); ctx.lineTo(bx + px * 3.5, by + py * 3.5); ctx.stroke();
+  ctx.translate(tx + 10, ty + 14); ctx.rotate(th);                    // shadow on the cloth
+  ctx.fillStyle = "rgba(0,0,0,.28)"; ctx.beginPath(); ctx.moveTo(0, -3.5); ctx.lineTo(L, -8); ctx.lineTo(L, 8); ctx.lineTo(0, 3.5); ctx.fill();
   ctx.restore();
+  ctx.save(); ctx.translate(tx, ty); ctx.rotate(th);
+  if (Math.cos(th) < 0) ctx.scale(1, -1);                              // keep the lit side facing the lamp
+  drawCueStick(ctx, L, cd, 1);
+  ctx.restore();
+}
+// ---------------------------------------------------------------- 3D cue rendering
+// Draws a cue lying along +x: tip at x=0, butt at x=L, on context g (world units * wm for thickness).
+function metalBand(g, x, w, rb, col) {
+  const mg = g.createLinearGradient(x, 0, x + w, 0);
+  mg.addColorStop(0, shade(col, -70)); mg.addColorStop(0.45, shade(col, 70)); mg.addColorStop(1, shade(col, -70));
+  g.fillStyle = mg; g.fillRect(x, -rb, w, 2 * rb);
+}
+function hash(i) { const s = Math.sin(i * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); }
+const CUE_DECO = {
+  plain() {},
+  points(g, L, J, F, rad, cd) {
+    g.fillStyle = cd.butt[0]; g.strokeStyle = cd.dc; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(J + 1, -rad(J)); g.lineTo(J - 0.17 * L, 0); g.lineTo(J + 1, rad(J)); g.closePath(); g.fill(); g.stroke();
+    g.globalAlpha = 0.7;
+    g.beginPath(); g.moveTo(J + 1, -rad(J)); g.lineTo(J - 0.12 * L, -rad(J) * 0.55); g.lineTo(J + 1, -rad(J) * 0.3); g.fill();
+    g.beginPath(); g.moveTo(J + 1, rad(J)); g.lineTo(J - 0.12 * L, rad(J) * 0.55); g.lineTo(J + 1, rad(J) * 0.3); g.fill();
+    g.globalAlpha = 1;
+  },
+  rings(g, L, J, F, rad, cd) {
+    for (let x = J + 0.035 * L; x < 0.95 * L; x += 0.05 * L) metalBand(g, x, 0.008 * L, rad(L), cd.dc);
+  },
+  spiral(g, L, J, F, rad, cd, wm) {
+    g.fillStyle = cd.dc;
+    for (let x = -20 * wm; x < L; x += 16 * wm) { g.beginPath(); g.moveTo(x, -9 * wm); g.lineTo(x + 7 * wm, -9 * wm); g.lineTo(x + 17 * wm, 9 * wm); g.lineTo(x + 10 * wm, 9 * wm); g.fill(); }
+  },
+  gems(g, L, J, F, rad, cd) {
+    for (let i = 0; i < 5; i++) {
+      const x = J + 0.04 * L + i * 0.05 * L, r = rad(x) * 0.62;
+      g.fillStyle = shade(cd.metal, -40); g.beginPath(); g.ellipse(x, 0, r * 1.6, r + 1, 0, 0, 7); g.fill();
+      const gg = g.createRadialGradient(x - r * 0.4, -r * 0.4, 0, x, 0, r * 1.4);
+      gg.addColorStop(0, "#ffffff"); gg.addColorStop(0.3, cd.dc); gg.addColorStop(1, shade(cd.dc, -90));
+      g.fillStyle = gg; g.beginPath(); g.ellipse(x, 0, r * 1.3, r * 0.8, 0, 0, 7); g.fill();
+    }
+  },
+  chevron(g, L, J, F, rad, cd) {
+    g.fillStyle = cd.dc;
+    const chev = (x, r, dir) => { g.beginPath(); g.moveTo(x, -r); g.lineTo(x + 7 * dir, 0); g.lineTo(x, r); g.lineTo(x - 3 * dir, r); g.lineTo(x + 4 * dir, 0); g.lineTo(x - 3 * dir, -r); g.closePath(); g.fill(); };
+    for (const x of [0.3 * L, 0.36 * L, 0.62 * L, 0.68 * L]) chev(x, rad(x), 1);
+    for (const x of [0.46 * L, 0.52 * L, 0.88 * L]) chev(x, rad(x), -1);
+    const x = 0.75 * L, r = rad(x) * 0.6;
+    const gg = g.createLinearGradient(0, -r, 0, r); gg.addColorStop(0, "#ff8a7a"); gg.addColorStop(1, shade(cd.gem || "#e0201b", -60));
+    g.fillStyle = shade(cd.metal, -30); g.beginPath(); g.ellipse(x, 0, 0.045 * L, r + 1.5, 0, 0, 7); g.fill();
+    g.fillStyle = gg; g.beginPath(); g.ellipse(x, 0, 0.04 * L, r, 0, 0, 7); g.fill();
+  },
+  flame(g, L, J, F, rad, cd) {
+    for (let i = 0; i < 9; i++) {
+      const y = (i / 8 - 0.5) * 2 * rad(L) * 0.9, len = (0.18 + hash(i) * 0.14) * L;
+      g.fillStyle = i % 2 ? "#ffcf3d" : cd.dc;
+      g.beginPath(); g.moveTo(0.97 * L, y - 3); g.quadraticCurveTo(0.97 * L - len * 0.6, y - 6, 0.97 * L - len, y + (hash(i + 9) - 0.5) * 6);
+      g.quadraticCurveTo(0.97 * L - len * 0.5, y + 4, 0.97 * L, y + 3); g.fill();
+    }
+  },
+  scales(g, L, J, F, rad, cd, wm) {
+    g.strokeStyle = cd.dc; g.globalAlpha = 0.75; g.lineWidth = 0.9 * wm;
+    for (let x = J + 6 * wm, row = 0; x < 0.95 * L; x += 6 * wm, row++)
+      for (let y = -rad(x) + (row % 2) * 2.5 * wm; y < rad(x); y += 5 * wm) { g.beginPath(); g.arc(x, y, 3 * wm, -1.4, 1.4); g.stroke(); }
+    g.globalAlpha = 1;
+  },
+  stars(g, L, J, F, rad, cd, wm) {
+    for (let i = 0; i < 5; i++) {
+      const x = J + hash(i) * (L - J), gg = g.createRadialGradient(x, 0, 0, x, 0, 0.12 * L);
+      gg.addColorStop(0, i % 2 ? "rgba(255,80,200,.55)" : "rgba(80,160,255,.55)"); gg.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = gg; g.fillRect(x - 0.12 * L, -rad(L), 0.24 * L, 2 * rad(L));
+    }
+    g.fillStyle = cd.dc;
+    for (let i = 0; i < 70; i++) { const x = J + hash(i + 3) * (L - J), y = (hash(i + 77) - 0.5) * 2 * rad(x); g.globalAlpha = 0.4 + hash(i + 5) * 0.6; g.fillRect(x, y, 1.2 * wm, 1.2 * wm); }
+    g.globalAlpha = 1;
+  },
+  legend(g, L, J, F, rad, cd, wm) {
+    CUE_DECO.stars(g, L, J, F, rad, cd, wm);
+    CUE_DECO.chevron(g, L, J, F, rad, {...cd, dc: cd.metal});
+    for (const x of [0.62 * L, 0.84 * L]) {
+      const r = rad(x) * 0.55, gg = g.createRadialGradient(x - r * 0.3, -r * 0.3, 0, x, 0, r * 1.3);
+      gg.addColorStop(0, "#fff"); gg.addColorStop(0.35, cd.gem); gg.addColorStop(1, shade(cd.gem, -110));
+      g.fillStyle = gg; g.beginPath(); g.arc(x, 0, r, 0, 7); g.fill();
+    }
+  },
+};
+function drawCueStick(g, L, cd, wm = 1) {
+  const rt = 3.4 * wm, rb = 7.8 * wm, rad = x => rt + (rb - rt) * clamp(x / L, 0, 1);
+  const J = 0.56 * L, F = 0.8 * L;
+  const outline = () => {
+    g.beginPath(); g.moveTo(0, -rt); g.lineTo(L - rb * 0.5, -rb); g.quadraticCurveTo(L, -rb, L, 0);
+    g.quadraticCurveTo(L, rb, L - rb * 0.5, rb); g.lineTo(0, rt); g.closePath();
+  };
+  g.save();
+  if (cd.glow) { g.shadowColor = cd.glow; g.shadowBlur = 16 * wm; }
+  outline(); g.fillStyle = cd.butt[1]; g.fill();
+  g.shadowBlur = 0; g.shadowColor = "transparent";
+  outline(); g.clip();
+  let lg = g.createLinearGradient(0, 0, J, 0); lg.addColorStop(0, cd.shaft[0]); lg.addColorStop(1, cd.shaft[1]);
+  g.fillStyle = lg; g.fillRect(0, -rb, J, 2 * rb);
+  lg = g.createLinearGradient(J, 0, L, 0); lg.addColorStop(0, cd.butt[0]); lg.addColorStop(1, cd.butt[1]);
+  g.fillStyle = lg; g.fillRect(J, -rb, L - J, 2 * rb);
+  g.globalAlpha = 0.13; g.strokeStyle = "#6a4a20"; g.lineWidth = 0.6 * wm;          // wood grain
+  for (let i = 0; i < 7; i++) { const y0 = (hash(i) - 0.5) * rt * 1.6, y1 = (hash(i + 20) - 0.5) * rb * 1.6; g.beginPath(); g.moveTo(0.05 * L, y0); g.bezierCurveTo(0.2 * L, y0 + 1, 0.4 * L, y1 - 1, J, y1); g.stroke(); }
+  g.globalAlpha = 1;
+  CUE_DECO[cd.deco](g, L, J, F, rad, cd, wm);
+  g.fillStyle = "#2f6fd6"; g.fillRect(0, -rb, 0.011 * L, 2 * rb);                     // chalked tip
+  const fg = g.createLinearGradient(0.011 * L, 0, 0.042 * L, 0); fg.addColorStop(0, "#fffdf5"); fg.addColorStop(1, "#e6e0cc");
+  g.fillStyle = fg; g.fillRect(0.011 * L, -rb, 0.031 * L, 2 * rb);                    // ferrule
+  metalBand(g, J - 0.012 * L, 0.022 * L, rb, cd.metal);                                // joint
+  metalBand(g, F, 0.012 * L, rb, cd.metal);
+  metalBand(g, 0.962 * L, 0.014 * L, rb, cd.metal);
+  g.fillStyle = "#0d0d0d"; g.fillRect(0.984 * L, -rb, 0.02 * L, 2 * rb);                // bumper
+  const N = 12;                                                                         // cylindrical shading
+  for (let s = 0; s < N; s++) {
+    const x0 = L * s / N, r = rad(x0 + L / N / 2);
+    const sg = g.createLinearGradient(0, -r, 0, r);
+    sg.addColorStop(0, "rgba(0,0,0,.6)"); sg.addColorStop(0.16, "rgba(255,255,255,.55)"); sg.addColorStop(0.3, "rgba(255,255,255,.12)");
+    sg.addColorStop(0.6, "rgba(0,0,0,0)"); sg.addColorStop(0.85, "rgba(0,0,0,.35)"); sg.addColorStop(1, "rgba(0,0,0,.7)");
+    g.fillStyle = sg; g.fillRect(x0, -rb, L / N + 1, 2 * rb);
+  }
+  g.restore();
+}
+function cueCanvas(cd) {
+  const c = document.createElement("canvas"); c.width = 900; c.height = 60; c.className = "cuecv";
+  const g = c.getContext("2d"); g.translate(890, 30); g.scale(-1, 1);
+  drawCueStick(g, 875, cd, 2.6);
+  return c;
 }
 
 // ---------------------------------------------------------------- HUD
@@ -1498,13 +1726,13 @@ function drawPanel(G, i, side) {
   const nums = g === "solid" ? [1, 2, 3, 4, 5, 6, 7] : g === "stripe" ? [9, 10, 11, 12, 13, 14, 15] : [];
   const cleared = g && remaining(g) === 0;
   for (let k = 0; k < 7; k++) {
-    const sx = side < 0 ? nx - 12 - k * 27 : nx + 12 + k * 27, sy = 64;
-    ctx.fillStyle = "#0b1020"; ctx.beginPath(); ctx.arc(sx, sy, 12, 0, 7); ctx.fill();
+    const sx = side < 0 ? nx - 13 - k * 29 : nx + 13 + k * 29, sy = 64;
+    ctx.fillStyle = "#0b1020"; ctx.beginPath(); ctx.arc(sx, sy, 13.5, 0, 7); ctx.fill();
     ctx.strokeStyle = "#2c3a60"; ctx.lineWidth = 1.5; ctx.stroke();
     let n = null;
     if (cleared) { if (k === 0) n = 8; }
     else if (g) { const b = G.balls.find(q => q.n === nums[k]); if (b && !b.out) n = nums[k]; }
-    if (n !== null) drawBall(iconBall(n), sx, sy, 0.95);
+    if (n !== null) drawBall(iconBall(n), sx, sy, 0.92);
   }
   const bb = G.bubbles[i];
   if (bb && performance.now() < bb.until) {
@@ -1533,7 +1761,7 @@ function drawHUD(G) {
     for (let i = 0; i < 4; i++) drawCoin(cx - 11 + (i % 2) * 22, 46 - (i >> 1) * 9 + (i % 2) * 4, 13);
     ctx.fillStyle = "#ffe27a"; ctx.font = `20px ${FONT}`; ctx.fillText(fmt(G.pot), cx, 74);
   } else {
-    ctx.fillStyle = G.type === "watch" ? "#ff4b3e" : "#ffcf3d"; ctx.font = `${G.type === "watch" ? 22 : 28}px ${FONT}`;
+    ctx.fillStyle = G.type === "watch" ? "#ff4b3e" : "#ffcf3d"; ctx.font = `${G.type === "pvp" ? 28 : 21}px ${FONT}`;
     ctx.fillText(G.type === "pvp" ? "VS" : G.type === "watch" ? "● JONLI" : "MASHQ", cx, 49);
   }
   ctx.restore();
@@ -1576,10 +1804,11 @@ function drawControls(G, show) {
     ctx.fillStyle = g; ctx.shadowColor = "#ff9d00"; ctx.shadowBlur = 12;
     rr(x + 5, y + 5, w - 10, (h - 10) * power, 8); ctx.fill(); ctx.shadowBlur = 0;
   }
-  const cy = y + 14 + (h - 150) * power, cxm = x + w / 2, cd = cueDef(profile.cue);
-  const cg = ctx.createLinearGradient(0, cy, 0, cy + 130);
-  cg.addColorStop(0, "#f7f3e6"); cg.addColorStop(0.06, cd.c[0]); cg.addColorStop(0.5, cd.c[1]); cg.addColorStop(0.52, cd.band); cg.addColorStop(0.56, cd.c[2]); cg.addColorStop(1, cd.c[3]);
-  ctx.fillStyle = cg; ctx.beginPath(); ctx.moveTo(cxm - 3, cy); ctx.lineTo(cxm + 3, cy); ctx.lineTo(cxm + 6, cy + 130); ctx.lineTo(cxm - 6, cy + 130); ctx.fill();
+  ctx.save(); rr(x, y, w, h, 12); ctx.clip();
+  ctx.translate(x + w / 2, y + 12 + (h - 190) * power); ctx.rotate(Math.PI / 2); ctx.scale(1, -1);
+  drawCueStick(ctx, 420, cueDef(profile.cue), 1.25);
+  ctx.restore();
+  ctx.textAlign = "center";
   ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.fillText(show ? "▼ torting" : "", x + w / 2, y + h + 10);
   ctx.restore();
   const f = FINE;
@@ -1991,7 +2220,6 @@ function tourAfterMatch(won, why, winner) {
 }
 
 // ---------------------------------------------------------------- shop
-function cueGradient(c) { return `linear-gradient(90deg,#2f6fd6 0 1.5%,#f7f3e6 1.5% 5%,${c.c[0]} 5%,${c.c[1]} 50%,${c.band} 50% 52%,${c.c[2]} 52% 70%,${c.band} 70% 71.5%,${c.c[3]} 71.5% 97%,#111 97%)`; }
 function buildShop(tab) {
   document.querySelectorAll("#shop .tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
   const body = $("shopBody"); body.innerHTML = "";
@@ -2008,16 +2236,16 @@ function buildShop(tab) {
     });
     return;
   }
-  const grid = document.createElement("div"); grid.className = "grid";
+  const grid = document.createElement("div"); grid.className = "cuelist";
   CUES.forEach(c => {
     const owned = profile.cues.includes(c.id), sel = profile.cue === c.id;
-    const el = document.createElement("div"); el.className = "card" + (sel ? " sel" : "");
-    el.innerHTML = `<div class="h" style="font-size:20px">${c.name}</div>
-      <div class="cuebar" style="background:${cueGradient(c)}"></div>
-      ${c.st.map((v, i) => `<div class="stat"><span>${STAT_NAMES[i]}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}
-      <div style="margin-top:10px">${sel ? `<button class="btn gray" disabled style="width:100%">✓ TANLANGAN</button>`
+    const el = document.createElement("div"); el.className = "cuerow" + (sel ? " sel" : "");
+    el.innerHTML = `<div class="cuemain"><div class="h" style="font-size:20px">${c.name} <small style="font-size:12px;color:${c.cur === "cash" ? "#d9b3ff" : "#ffe27a"}">${c.cur === "cash" ? "Premium" : "Standart"}</small></div><div class="cuecvw"></div></div>
+      <div>${c.st.map((v, i) => `<div class="stat"><span>${STAT_NAMES[i]}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
+      <div>${sel ? `<button class="btn gray" disabled style="width:100%">✓ TANLANGAN</button>`
         : owned ? `<button class="btn blue" style="width:100%">TANLASH</button>`
         : `<button class="btn ${c.cur === "cash" ? "purple" : "green"}" style="width:100%">${c.cur === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} ${fmt(c.price)}</button>`}</div>`;
+    el.querySelector(".cuecvw").appendChild(cueCanvas(c));
     const btn = el.querySelector("button");
     if (!sel) btn.onclick = () => {
       if (!owned) {
@@ -2160,16 +2388,24 @@ function buildProfile() {
 
 // ---------------------------------------------------------------- chat & cheers
 function closeChat() { $("chatPanel").classList.remove("on"); }
-$("chatPanel").innerHTML = CHAT.map(c => `<button>${c}</button>`).join("");
-$("chatPanel").querySelectorAll("button").forEach(b => b.onclick = () => {
+const EMOJIS = ["😀", "😂", "😍", "😎", "😮", "😢", "😡", "🤔", "👍", "👏", "🔥", "🎉"];
+function buildChat(tab = "p") {
+  const list = tab === "e" ? EMOJIS : CHAT.filter(c => /[a-z]/i.test(c));
+  $("chatPanel").innerHTML = `<div class="ctabs"><button data-ct="e" class="${tab === "e" ? "on" : ""}">😀</button><button data-ct="p" class="${tab === "p" ? "on" : ""}">💬</button></div>
+    <div class="citems ${tab}">${list.map(c => `<button data-msg="${esc(c)}">${c}</button>`).join("")}</div>`;
+  $("chatPanel").querySelectorAll("[data-ct]").forEach(b => b.onclick = () => buildChat(b.dataset.ct));
+  $("chatPanel").querySelectorAll("[data-msg]").forEach(b => b.onclick = () => sendChat(b.dataset.msg));
+}
+function sendChat(msg) {
   const G = game; if (!G || mode !== "game") return;
   const who = G.type === "pvp" ? G.cur : 0;
-  bubble(who, b.textContent); closeChat();
+  bubble(who, msg); closeChat();
   if (G.players[1] && G.players[1].isAI && who === 0) {
-    const rep = AI_REPLY[b.textContent];
+    const rep = AI_REPLY[msg];
     if (rep || Math.random() < 0.3) setTimeout(() => game === G && bubble(1, pick(rep || ["😅", "👍", "😎"])), rnd(900, 1800));
   }
-});
+}
+buildChat();
 $("gChat").onclick = () => $("chatPanel").classList.toggle("on");
 $("cheerBar").querySelectorAll("button").forEach(b => b.onclick = () => {
   const G = game; if (!G) return;
