@@ -147,7 +147,12 @@
   .city .ttl{text-align:center;line-height:.9;margin-top:4px}
   .city .ttl b{display:block;font-family:var(--fh);font-weight:400;font-size:40px;letter-spacing:1px;filter:drop-shadow(0 3px 0 #0009)}
   .city .ttl i{font-style:italic;font-family:var(--fh);font-size:20px;color:#fff;text-shadow:0 2px 0 #0009}
-  .city .cban{margin:-12px -12px 4px;border-radius:18px 18px 0 0;overflow:hidden;aspect-ratio:364/110;box-shadow:0 4px 10px #0008}.city .cban img{width:100%;height:100%;object-fit:cover;display:block}
+  .city{overflow:hidden;background:#0a0e1a!important;border:3px solid #ffcf3d88!important;box-shadow:0 0 18px #ffb30033,0 10px 30px #000b!important}
+  .city::before{content:"";position:absolute;inset:-20px;background:var(--cb) center/cover;filter:blur(14px) brightness(.55) saturate(1.3);z-index:0}
+  .city::after{content:"";position:absolute;inset:0;background:linear-gradient(#0000 30%,#050818cc 70%,#050818 100%);z-index:0}
+  .city>*{position:relative;z-index:1}
+  .city .cban{margin:-12px -12px 2px;overflow:hidden;aspect-ratio:364/110;box-shadow:0 6px 14px #000a}.city .cban img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
+  .city .prize{background:#0a1030cc!important;backdrop-filter:blur(2px)}.city .crow{background:#0a1030b0!important}
   .city .felt{height:70px;border-radius:12px;border:7px solid;position:relative;box-shadow:inset 0 0 20px #0008}
   .city .felt::before,.city .felt::after{content:"";position:absolute;top:50%;width:12px;height:12px;border-radius:50%;transform:translateY(-50%)}
   .city .felt::before{left:18%;background:#fff}
@@ -3543,15 +3548,94 @@ function resultModal(humanWon, why, winner, prize, buttons) {
 }
 
 // ---------------------------------------------------------------- cities
+// banners for cities without the owner's art: sunset sky, landmark skyline, water, gold title (drawn once, cached)
+const BANNER_META = {
+  lon: {t: ["LONDON", "Thames Pub"], sky: ["#1a2a6a", "#8a3a8a", "#ff9a4a"], lm: "london"},
+  veg: {t: ["LAS VEGAS", "Royal Flush"], sky: ["#12002a", "#6a0a6a", "#ff3a8a"], lm: "vegas"},
+  cai: {t: ["CAIRO", "Pyramid Hall"], sky: ["#2a1a4a", "#c85a2a", "#ffcf6a"], lm: "cairo"},
+  rom: {t: ["ROMA", "Colosseo"], sky: ["#1a1a4a", "#a04a5a", "#ffb36a"], lm: "rome"},
+  ist: {t: ["ISTANBUL", "Bosphorus Palace"], sky: ["#0a1a4a", "#6a2a8a", "#ff8a5a"], lm: "istanbul"},
+  osa: {t: ["OSAKA", "Skyline"], sky: ["#0a0a2a", "#3a1a6a", "#ff5a8a"], lm: "osaka"},
+  gm: {t: ["GRANDMASTER", "Event Table"], sky: ["#0a0a0a", "#3a2a0a", "#ffcf3d"], lm: "vegas"},
+};
+const bannerCache = {};
+function cityBanner(c) {
+  if (IMG["cb_" + c.id]) return IMG["cb_" + c.id];
+  if (bannerCache[c.id]) return bannerCache[c.id];
+  const m = BANNER_META[c.id] || {t: [c.name.toUpperCase(), c.sub], sky: ["#0a1a4a", shade(c.felt[0], -30), c.col[1]], lm: "vegas"};
+  const W = 728, H = 220, cv = document.createElement("canvas"); cv.width = W; cv.height = H; const g = cv.getContext("2d");
+  const r = avRng(c.id.charCodeAt(0) * 31 + c.id.charCodeAt(1));
+  let gr = g.createLinearGradient(0, 0, 0, H * 0.7); gr.addColorStop(0, m.sky[0]); gr.addColorStop(0.6, m.sky[1]); gr.addColorStop(1, m.sky[2]);
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  gr = g.createRadialGradient(W * 0.72, H * 0.62, 5, W * 0.72, H * 0.62, 140); gr.addColorStop(0, "#fff6c0"); gr.addColorStop(0.2, m.sky[2] + "cc"); gr.addColorStop(1, "#0000");
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);                                        // sun glow
+  for (let i = 0; i < 60; i++) { g.fillStyle = `rgba(255,255,255,${r() * 0.7})`; g.fillRect(r() * W, r() * H * 0.35, 1.5, 1.5); }
+  const base = H * 0.72, dark = "#0a0816";
+  g.fillStyle = shade(m.sky[1], -70);                                              // far skyline
+  for (let x = 0; x < W; x += 18 + r() * 20) { const h = 20 + r() * 50; g.fillRect(x, base - h, 14 + r() * 16, h); }
+  g.fillStyle = dark;
+  const lit = (x, y, w, h) => { g.save(); g.fillStyle = "#ffd88a"; for (let yy = y + 6; yy < y + h - 4; yy += 8) for (let xx = x + 4; xx < x + w - 4; xx += 7) if (r() < 0.45) g.fillRect(xx, yy, 3, 4); g.restore(); };
+  const L = m.lm;
+  g.save(); g.translate(W * 0.84 - 520 * 0.72, base * 0.28); g.scale(0.72, 0.72);
+  if (L === "london") {
+    g.fillRect(540, base - 150, 34, 150); g.beginPath(); g.moveTo(536, base - 150); g.lineTo(557, base - 200); g.lineTo(578, base - 150); g.fill();
+    g.fillStyle = "#ffe8a0"; g.beginPath(); g.arc(557, base - 128, 11, 0, 7); g.fill(); g.fillStyle = dark;
+    g.fillRect(380, base - 60, 150, 60); for (let x = 385; x < 525; x += 22) g.fillRect(x, base - 80, 8, 20);
+    g.lineWidth = 6; g.strokeStyle = dark; g.beginPath(); g.arc(470, base - 70, 58, 0, 7); g.stroke();
+    for (let a = 0; a < 16; a++) { g.beginPath(); g.moveTo(470, base - 70); g.lineTo(470 + Math.cos(a * Math.PI / 8) * 58, base - 70 + Math.sin(a * Math.PI / 8) * 58); g.lineWidth = 1.5; g.stroke(); }
+    g.fillRect(610, base - 40, 118, 40);
+  } else if (L === "cairo") {
+    for (const [x, s] of [[430, 150], [560, 110], [650, 70]]) { const gg = g.createLinearGradient(x - s, 0, x + s, 0); gg.addColorStop(0, "#3a1a08"); gg.addColorStop(0.5, "#8a4a18"); gg.addColorStop(1, "#1a0a02");
+      g.fillStyle = gg; g.beginPath(); g.moveTo(x - s, base); g.lineTo(x, base - s * 0.85); g.lineTo(x + s, base); g.fill(); }
+    g.fillStyle = dark; g.fillRect(0, base - 18, W, 18);
+  } else if (L === "rome") {
+    g.beginPath(); g.ellipse(520, base, 200, 110, 0, Math.PI, 0); g.fill();
+    g.fillStyle = "#ffcf8a"; for (let row = 0; row < 3; row++) for (let k = -8; k <= 8; k++) { const x = 520 + k * 22 * (1 - row * 0.08), y = base - 22 - row * 30; if (Math.abs(k) * 22 < 180 - row * 20) { g.beginPath(); g.moveTo(x - 6, y + 12); g.lineTo(x - 6, y); g.arc(x, y, 6, Math.PI, 0); g.lineTo(x + 6, y + 12); g.fill(); } }
+    g.fillStyle = dark;
+  } else if (L === "istanbul") {
+    const dome = (x, rr) => { g.beginPath(); g.arc(x, base - 50, rr, Math.PI, 0); g.fill(); g.fillRect(x - rr, base - 50, rr * 2, 50); };
+    dome(520, 70); dome(450, 36); dome(590, 36); g.fillRect(420, base - 30, 200, 30);
+    for (const x of [370, 400, 640, 670]) { g.fillRect(x, base - 170, 8, 170); g.beginPath(); g.moveTo(x - 2, base - 170); g.lineTo(x + 4, base - 200); g.lineTo(x + 10, base - 170); g.fill(); }
+    g.fillStyle = "#ffe08a"; g.beginPath(); g.arc(520, base - 128, 5, 0, 7); g.fill(); g.fillStyle = dark;
+  } else if (L === "osaka") {
+    const tier = (y, w) => { g.beginPath(); g.moveTo(520 - w, y); g.quadraticCurveTo(520, y - 26, 520 + w, y); g.fill(); g.fillRect(520 - w * 0.7, y, w * 1.4, 24); };
+    tier(base - 24, 110); tier(base - 58, 84); tier(base - 92, 60); tier(base - 124, 40);
+    g.fillStyle = "#ffcf3d"; g.fillRect(516, base - 150, 8, 14); g.fillStyle = dark;
+    for (let x = 620; x < W; x += 26) { const h = 60 + r() * 90; g.fillRect(x, base - h, 20, h); lit(x, base - h, 20, h); }
+    g.fillStyle = dark;
+  } else {                                                                            // vegas: towers + neon
+    for (let x = 330; x < W; x += 34 + r() * 18) { const h = 70 + r() * 110, w = 26 + r() * 16; g.fillStyle = dark; g.fillRect(x, base - h, w, h); lit(x, base - h, w, h);
+      if (r() < 0.5) { g.fillStyle = ["#ff3a8a", "#3affff", "#ffcf3d"][x % 3 | 0]; g.shadowColor = g.fillStyle; g.shadowBlur = 10; g.fillRect(x, base - h - 4, w, 4); g.shadowBlur = 0; } }
+  }
+  g.restore();
+  g.fillStyle = dark; g.fillRect(0, base, W, 2);
+  gr = g.createLinearGradient(0, base, 0, H); gr.addColorStop(0, shade(m.sky[2], -60)); gr.addColorStop(1, "#050818");
+  g.fillStyle = gr; g.fillRect(0, base + 2, W, H - base);                            // water
+  g.globalAlpha = 0.5; for (let i = 0; i < 40; i++) { g.fillStyle = r() < 0.5 ? m.sky[2] : "#ffe8a0"; g.fillRect(W * 0.72 - 80 + r() * 160, base + 6 + r() * (H - base - 8), 10 + r() * 30, 2); } g.globalAlpha = 1;
+  // title plate
+  const tx = W * 0.36, ty = 104;
+  g.save(); g.shadowColor = "#000c"; g.shadowBlur = 12;
+  g.fillStyle = "#0a0a1acc"; g.beginPath(); g.roundRect ? g.roundRect(tx - 160, ty - 62, 320, 124, 22) : g.rect(tx - 160, ty - 62, 320, 124); g.fill(); g.restore();
+  g.lineWidth = 4; const gold = g.createLinearGradient(0, ty - 62, 0, ty + 62); gold.addColorStop(0, "#fff1b8"); gold.addColorStop(0.5, "#ffcf3d"); gold.addColorStop(1, "#8a5a00");
+  g.strokeStyle = gold; g.beginPath(); g.roundRect ? g.roundRect(tx - 160, ty - 62, 320, 124, 22) : g.rect(tx - 160, ty - 62, 320, 124); g.stroke();
+  g.fillStyle = "#111"; g.beginPath(); g.arc(tx, ty - 62, 20, 0, 7); g.fill(); g.strokeStyle = gold; g.lineWidth = 3; g.stroke();
+  g.fillStyle = "#fff"; g.beginPath(); g.arc(tx, ty - 62, 9, 0, 7); g.fill(); g.fillStyle = "#111"; g.font = "900 12px Arial"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("8", tx, ty - 61);
+  let fs = 60; g.font = `${fs}px ${FONT}`; while (g.measureText(m.t[0]).width > 290 && fs > 20) { fs -= 2; g.font = `${fs}px ${FONT}`; }
+  g.lineWidth = 8; g.strokeStyle = "#3a1a00"; g.lineJoin = "round"; g.strokeText(m.t[0], tx, ty - 6);
+  const tg = g.createLinearGradient(0, ty - 36, 0, ty + 20); tg.addColorStop(0, "#fffbe0"); tg.addColorStop(0.45, "#ffd24d"); tg.addColorStop(1, "#c07a00");
+  g.fillStyle = tg; g.fillText(m.t[0], tx, ty - 6);
+  g.font = `italic 30px ${FONT}`; g.lineWidth = 6; g.strokeStyle = "#0a1a4a"; g.strokeText(m.t[1], tx, ty + 38);
+  g.fillStyle = "#8fd8ff"; g.fillText(m.t[1], tx, ty + 38);
+  return bannerCache[c.id] = cv.toDataURL("image/jpeg", 0.88);
+}
 function buildCities() {
   const box = $("cityList"); box.innerHTML = "";
   CITIES.forEach(c => {
     const locked = profile.level < c.lvl;
     const el = document.createElement("div"); el.className = "city";
-    el.style.background = `linear-gradient(170deg,${shade(c.felt[0], 10)},${c.felt[1]} 60%,${shade(c.felt[1], -40)})`;
+    el.style.setProperty("--cb", `url(${cityBanner(c)})`);
     el.innerHTML = `
-      ${IMG["cb_" + c.id] ? `<div class="cban"><img src="${IMG["cb_" + c.id]}" alt="${esc(c.name)}"></div>` : `<div class="ttl"><b style="background:linear-gradient(${c.col[0]},${c.col[1]});-webkit-background-clip:text;background-clip:text;color:transparent">${c.name}</b><i>${c.sub}</i></div>
-      <div class="felt" style="background:radial-gradient(${c.felt[0]},${c.felt[1]});border-color:${c.rail[0]}"></div>`}
+      <div class="cban"><img src="${cityBanner(c)}" alt="${esc(c.name)}"></div>
       <div class="prize"><div class="pl">${T("Yutuq")}</div><div class="pv"><span class="coin" style="width:28px;height:28px"></span>${fmtS(c.prize)}</div></div>
       <div class="crow"><span>${T("Kirish narxi")}</span><span><span class="coin" style="width:14px;height:14px"></span> ${fmtS(c.fee)}</span></div>
       <div class="crow"><span>${T("O'yinchilar onlayn")}</span><span style="color:#8dff9a" data-online="${c.id}">● —</span></div>
