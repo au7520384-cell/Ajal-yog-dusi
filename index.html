@@ -654,13 +654,7 @@ cv.addEventListener("pointerdown", e => {
 cv.addEventListener("pointermove", e => {
   const p = toWorld(e);
   if (!input.drag) {
-    // mouse hover aims (desktop)
-    if (e.pointerType === "mouse" && canControl() && !inRect(p, POWER_BAR) && !inRect(p, FINE)
-        && p.x > FX - RAIL && p.x < FX + FW + RAIL && p.y > FY - RAIL && p.y < FY + FH + RAIL) {
-      const c = cueBall();
-      if (!(mode === "game" && game.ballInHand && Math.hypot(p.x - FX - c.x, p.y - FY - c.y) < R * 3))
-        setAngle(Math.atan2(p.y - FY - c.y, p.x - FX - c.x));
-    }
+    // aim only changes while the button is held, so moving the mouse to the power bar keeps the aim
     return;
   }
   if (!canControl()) { input.drag = null; return; }
@@ -669,28 +663,44 @@ cv.addEventListener("pointermove", e => {
   else if (input.drag === "place") placeCue(p.x - FX, p.y - FY);
   else if (input.drag === "aim") { const c = cueBall(); setAngle(Math.atan2(p.y - FY - c.y, p.x - FX - c.x)); }
 });
-function endDrag() {
-  if (input.drag === "power" && canControl()) {
-    if (input.power > 0.03) {
-      if (mode === "game") shoot(input.power);
-      else {
-        const b = lucky.balls[0], sp = input.power * MAXS * 0.8;
-        b.vx = Math.cos(lucky.angle) * sp; b.vy = Math.sin(lucky.angle) * sp;
-        lucky.moving = true; cueHit(input.power);
-      }
+function fire() {
+  if (canControl() && input.power > 0.03) {
+    if (mode === "game") shoot(input.power);
+    else {
+      const b = lucky.balls[0], sp = input.power * MAXS * 0.8;
+      b.vx = Math.cos(lucky.angle) * sp; b.vy = Math.sin(lucky.angle) * sp;
+      lucky.moving = true; cueHit(input.power);
     }
-    input.power = 0;
   }
+  input.power = 0;
+}
+function endDrag() {
+  if (input.drag === "power") fire();
   input.drag = null;
 }
 cv.addEventListener("pointerup", endDrag);
 cv.addEventListener("pointercancel", () => { input.drag = null; input.power = 0; });
+addEventListener("blur", () => { input.charging = false; input.drag = null; input.power = 0; });
 addEventListener("keydown", e => {
+  if (e.code === "Space") e.preventDefault();
   if (!canControl()) return;
   const step = e.shiftKey ? 0.02 : 0.003;
   if (e.key === "ArrowLeft" || e.key === "ArrowUp") { setAngle(getAngle() - step); e.preventDefault(); }
   if (e.key === "ArrowRight" || e.key === "ArrowDown") { setAngle(getAngle() + step); e.preventDefault(); }
+  // hold Space to charge power, release to shoot
+  if (e.code === "Space" && !e.repeat && !input.drag) { input.charging = true; input.power = 0; }
 });
+addEventListener("keyup", e => {
+  if (e.code !== "Space" || !input.charging) return;
+  input.charging = false;
+  fire();
+});
+// mouse wheel = fine aim
+cv.addEventListener("wheel", e => {
+  e.preventDefault();
+  if (!canControl()) return;
+  setAngle(getAngle() + Math.sign(e.deltaY) * (e.shiftKey ? 0.02 : 0.002));
+}, {passive: false});
 
 // ---------- Drawing ----------
 function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
@@ -994,6 +1004,7 @@ function drawParticles() {
 
 // ---------- Main loop ----------
 function frame() {
+  if (input.charging) { if (canControl()) input.power = Math.min(1, input.power + 0.012); else { input.charging = false; input.power = 0; } }
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, cv.width, cv.height);
   ctx.setTransform(scale * dpr, 0, 0, scale * dpr, offX * dpr, offY * dpr);
