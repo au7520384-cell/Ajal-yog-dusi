@@ -227,6 +227,8 @@ const routes = {
     if (b.won !== undefined) { const d = int(b.won) - (u.won || 0); if (d > 0) addWeekly(u, Math.min(d, 2e8)); }
     for (const k of ["level", "won", "wins", "games"]) if (b[k] !== undefined) u[k] = Math.max(u[k] || 0, int(b[k]));
     if (b.xp !== undefined) u.xp = int(b.xp);
+    // Showdown event points (weekly): the device reports this week's total, the server keeps the highest value
+    if (b.sd && b.sd.week === curWeek()) { if (u.sdWeek !== curWeek()) { u.sdWeek = curWeek(); u.sdPts = 0; } u.sdPts = Math.max(u.sdPts || 0, int(b.sd.pts, 1e7)); lbCache.clear(); }
     if (b.prefs && typeof b.prefs === "object") u.prefs = {allowFriend: b.prefs.allowFriend !== false, showOnline: b.prefs.showOnline !== false};
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
@@ -263,6 +265,13 @@ const routes = {
     markDirty();
     return {ok: true, friend: publicUser(f)};
   },
+  "GET /api/friends/suggested"(req, u) {
+    const now = Date.now();
+    const list = Object.values(db.users).filter(x => x.id !== u.id && !u.friends.includes(x.id) && !(x.prefs && x.prefs.allowFriend === false))
+      .sort((a, b) => (clients.has(b.id) - clients.has(a.id)) || (b.lastSeen || 0) - (a.lastSeen || 0) || ((b.country === u.country) - (a.country === u.country)))
+      .slice(0, 20).map(x => ({...publicUser(x), ago: x.lastSeen ? now - x.lastSeen : null}));
+    return {players: list};
+  },
   "GET /api/friends"(req, u) {
     const d = today();
     return {friends: u.friends.map(id => db.users[id]).filter(Boolean).map(f => ({...publicUser(f), canGift: (u.gifted || {})[f.id] !== d}))};
@@ -289,7 +298,19 @@ const routes = {
     markDirty();
     return {sent};
   },
-  async "POST /api/inbox/clear"(req, u) { u.inbox = []; markDirty(); return {ok: true}; },
+  async "POST /api/inbox/clear"(req, u) { const b = await jsonBody(req); u.inbox = b.kind ? (u.inbox || []).filter(m => m.kind !== b.kind) : []; markDirty(); return {ok: true}; },
+  // challenge a friend: the friend gets an inbox message (and a live ping when online) with a private lobby code
+  async "POST /api/challenge"(req, u) {
+    const b = await jsonBody(req), f = db.users[String(b.to || "")];
+    if (!f) return [404, {error: "not_found"}];
+    const code = String(b.code || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8), city = String(b.city || "lon").slice(0, 8);
+    if (code.length < 4) return [400, {error: "bad_code"}];
+    f.inbox = (f.inbox || []).filter(m => !(m.kind === "challenge" && m.fromId === u.id)).slice(-50);
+    f.inbox.push({kind: "challenge", fromId: u.id, from: u.name, avatar: u.avatar, code, city, at: Date.now()});
+    wsSend(clients.get(f.id), {t: "challenge", from: u.name, code, city});
+    markDirty();
+    return {ok: true};
+  },
 
   // ?scope=world | country | friends | league   — ranked by this week's winnings
   // ---------------- clubs: unlocked at level 6, up to 50 members, ranked by the members' weekly winnings
@@ -348,6 +369,16 @@ const routes = {
   "GET /api/leaderboard"(req, u) {
     const scope = new URL(req.url, "http://x").searchParams.get("scope") || "world";
     const lg = u.league || 0, cc = u.country || "";
+    if (scope === "showdown") {
+      const w = curWeek(), pts = x => x.sdWeek === w ? x.sdPts || 0 : 0;
+      const c = lbCache.get("sd"); let list;
+      if (c && Date.now() - c.at < 20000) list = c.list;
+      else { list = Object.values(db.users).filter(x => pts(x) > 0 || x.id === u.id).sort((a, b) => pts(b) - pts(a)); lbCache.set("sd", {at: Date.now(), list}); }
+      if (!list.includes(u)) list = [...list, u];
+      const rank = list.indexOf(u);
+      const row = x => ({...publicUser(x), sd: pts(x)});
+      return {scope, week: w, endsAt: weekEndsAt(), top: list.slice(0, 100).map(row), me: {...row(u), rank: rank + 1}, total: list.length};
+    }
     const all = scope === "country" ? board("c:" + cc, x => (x.country || "") === cc)
       : scope === "league" ? board("l:" + lg, x => (x.league || 0) === lg)
       : scope === "friends" ? Object.values(db.users).filter(x => x.id === u.id || u.friends.includes(x.id))
@@ -475,10 +506,12 @@ wss.on("connection", (ws, req) => {
       leaveQueue(ws);
       if (ws.room) return;
       const city = String(m.city || "lon").slice(0, 8);
+      const code = m.code ? String(m.code).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8) : "";
       ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), code: u.code};
-      const q = queues.get(city) || []; queues.set(city, q);
+      const qk = code ? "code:" + code : city;
+      const q = queues.get(qk) || []; queues.set(qk, q);
       const opp = q.find(o => o.uid !== ws.uid && o.readyState === 1);
-      if (!opp) { q.push(ws); return wsSend(ws, {t: "queued", city, waiting: q.length}); }
+      if (!opp) { if (code && m.join) return wsSend(ws, {t: "nocode"}); q.push(ws); return wsSend(ws, {t: "queued", city, waiting: q.length}); }
       q.splice(q.indexOf(opp), 1);
       const room = {id: crypto.randomUUID(), city, p: [opp, ws], seed: crypto.randomInt(2 ** 31), over: false, reports: {}};
       rooms.set(room.id, room);
