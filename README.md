@@ -21,7 +21,7 @@ An 8-ball pool game for phones and computers. The game is `index.html`; the onli
 - **Settings:** sound, vibration, cue sensitivity, tap to aim, aiming wheel, guideline in offline games, power bar side, cheering, friend requests, online status, friend-online notifications. Coin cues go up to **5 billion**; premium cash (💵) cues go up to **1 500 cash**. Cash is hard to earn (1–5 at a time).
 - **Currencies:** coins, cash and gems, with the game's own artwork.
 - **Shop:** Special Offers (starter pack, gem packs), Coins & Cash packs with bonus ribbons and VIP points, Free Rewards, Minigames, Cues & More. Real money via Stripe; cash→coins and gems→cash exchange.
-- **Gameplay:** 3D rolling balls, spin, synthesized click sounds, 3D cues, a tournament bracket, the daily reward route, lucky shot, wheel, watch mode, achievements, and levels.
+- **Gameplay:** 3D rolling balls, spin, recorded pool sounds (ball clacks, cue tip, cushion, pocket), 3D cues, a tournament bracket, the daily reward route, lucky shot, wheel, watch mode, achievements, and levels.
 
 ## Run it yourself
 ```bash
@@ -76,3 +76,12 @@ Prices live in `SKUS` in `server/server.js` (the server is the source of truth).
 - **Fine aim:** use the ANIQ/FINE wheel, the mouse wheel, or ←/→.
 - **Shoot:** pull the power bar down and release, or hold **Space**.
 - **Spin:** tap the white ball in the top-right corner.
+
+## Sound credits
+The ball, cue, cushion and pocket sounds are short clips cut from recordings on [Freesound](https://freesound.org):
+- "Pool balls.wav" by bsumusictech
+- "pool_break.wav" by reg7783
+- "BILLIARD pool shots-CsG.wav" by csaszi
+- "Sinking many snooker balls.wav" by Angie81Dee
+
+Before release, check each sound's license on its Freesound page. CC0 and CC-BY can be used in a paid game (CC-BY needs this credit). CC-BY-NC cannot be used, so replace any such sound.
