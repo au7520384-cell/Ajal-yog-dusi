@@ -185,6 +185,13 @@
   .avcard{background:linear-gradient(#2d3a5e,#1b2440);border:2px solid #3e4f7c;border-radius:12px;padding:8px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
   .avcard.sel{border-color:var(--gold);box-shadow:0 0 16px #ffcf3d55}
   .avcard .btn{padding:5px 8px;font-size:14px;width:100%}
+  .tblgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+  .tblcard{background:linear-gradient(#2d3a5e,#1b2440);border:2px solid #3e4f7c;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:5px;position:relative}
+  .tblcard.sel{border-color:var(--gold);box-shadow:0 0 16px #ffcf3d55}
+  .tblcard .tprev{width:100%;aspect-ratio:1116/612;border-radius:8px;background:#0b1220 center/cover no-repeat}
+  .tblcard b{font-size:14px}.tblcard small{font-size:11px;line-height:1.2}
+  .tblcard .btn{padding:5px 8px;font-size:14px}
+  .tblcard .ttag{position:absolute;top:12px;left:12px;background:#000a;border-radius:6px;padding:1px 6px;font-size:11px;color:#ffe27a}
   .pack{overflow:hidden}
   .ptag{position:absolute;top:10px;right:-30px;transform:rotate(35deg);background:#ff3b30;color:#fff;font-size:10px;padding:2px 34px;font-weight:900;text-transform:uppercase}
   .frow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:#1a2340;border:1px solid #2c3a60;border-radius:12px;padding:8px 10px;margin-bottom:6px}
@@ -727,7 +734,7 @@
 <div class="screen" id="shop">
   <div class="head"><button class="back" data-go="home">‹</button><h2>Do'kon</h2></div>
   <div class="panel">
-    <div class="tabs" id="cueTabs"><button class="tab on" data-tab="cues">🎱 Kiylar</button><button class="tab" data-tab="avatars">🙂 Avatarlar</button><button class="tab" data-tab="frames">🖼 Ramkalar</button></div>
+    <div class="tabs" id="cueTabs"><button class="tab on" data-tab="cues">🎱 Kiylar</button><button class="tab" data-tab="avatars">🙂 Avatarlar</button><button class="tab" data-tab="frames">🖼 Ramkalar</button><button class="tab" data-tab="tables">🎱 Stollar</button></div>
     <div id="shopBody"></div>
   </div>
   <div class="shopnav">
@@ -1372,6 +1379,19 @@ const DICT = {
   "Bugun bepul!": ["Free today!", "Сегодня бесплатно!"],
   "Olmos yetmaydi": ["Not enough gems", "Недостаточно кристаллов"],
   "Maxsus takliflar": ["Special Offers", "Спецпредложения"],
+  "🎱 Stollar": ["🎱 Tables", "🎱 Столы"],
+  "Tanlangan stol hamma o'yinlaringizda chiqadi. Shahar uzugini yutsangiz, o'sha shahar stoli bepul.": ["Your chosen table is used in all your games. Win a city's ring and that city's table is free.", "Выбранный стол будет во всех ваших играх. Выиграйте кольцо города — и его стол бесплатно."],
+  "Shahar stoli": ["City table", "Стол города"],
+  "Har shaharda o'z stoli": ["Each city has its own table", "В каждом городе свой стол"],
+  "Maxsus stol": ["Special table", "Особый стол"],
+  "Olmos": ["Diamond", "Бриллиант"],
+  "Galaktika": ["Galaxy", "Галактика"],
+  "Ajdaho": ["Dragon", "Дракон"],
+  "Qutb nuri": ["Aurora", "Северное сияние"],
+  "Lava": ["Lava", "Лава"],
+  "Qirollik": ["Royal", "Королевский"],
+  "Muz saroyi": ["Ice Palace", "Ледяной дворец"],
+  "Qora oltin": ["Black Gold", "Чёрное золото"],
   "Tanga va pul": ["Coins & Cash", "Монеты и кэш"],
   "Bepul mukofotlar": ["Free Rewards", "Бесплатные награды"],
   "Kiylar va boshqalar": ["Cues & More", "Кии и другое"],
@@ -1663,7 +1683,7 @@ const store = {
 const profile = Object.assign({
   coins: 1500, cash: 5, xp: 0, level: 1, wins: 0, games: 0, won: 0, name: "Siz", avatar: 0,
   cue: "start", cues: ["start"], lastLucky: "", luckyTries: 0, lastWheel: "", wheelTries: 0,
-  streak: 0, lastClaim: "", ach: {}, muted: false, tours: 0, avs: [], frames: [0], frame: 0, country: "", pieces: {}, gems: 0, vip: 0,
+  streak: 0, lastClaim: "", ach: {}, muted: false, tours: 0, avs: [], frames: [0], frame: 0, tables: [], tableSkin: "", country: "", pieces: {}, gems: 0, vip: 0,
 }, store.get("bilyard8v2", {}));
 const ownsAvatar = i => avPrice(i).v === 0 || profile.avs.includes(i);
 let cloudSaveHook = null;   // set by the Y8 integration when a Y8 player is logged in
@@ -2683,7 +2703,7 @@ function drawCoin(x, y, r) {
 
 // ---------------------------------------------------------------- table
 function drawBackground() {
-  const bg = game && game.city && tblOf(game.city).bg;
+  const bg = game && game.city && tblOf(tableLook(game.city)).bg;
   const g = ctx.createRadialGradient(W / 2, H * 0.55, 80, W / 2, H * 0.5, W * 0.8);
   if (bg) { g.addColorStop(0, bg[0]); g.addColorStop(0.55, shade(bg[1], 14)); g.addColorStop(1, shade(bg[1], -12)); }
   else { g.addColorStop(0, "#26324f"); g.addColorStop(0.55, "#151d33"); g.addColorStop(1, "#070a14"); }
@@ -2713,9 +2733,48 @@ const TBL = {
   ber: {mat: "metal",   motif: "hex",     mc: "#ffffff", ma: 0.1, bg: ["#2a3a3a", "#080e0e"], glow: "#2af0e0"},
   ist: {mat: "ebony",   motif: "girih",   mc: "#40d8ff", ma: 0.11, bg: ["#3a0a1a", "#0e0206"]},
   osa: {mat: "carbon",  motif: "sakura",  mc: "#ffb0d8", ma: 0.13, bg: ["#2a1a4a", "#08041a"], glow: "#ff5ab0"},
+  x_dia: {mat: "metal",  motif: "star8",   mc: "#ffffff", ma: 0.12, bg: ["#2a4a6a", "#061220"], glow: "#bfe8ff"},
+  x_gal: {mat: "carbon", motif: "stars",   mc: "#ffffff", ma: 0.5,  bg: ["#1a1040", "#04020e"], glow: "#8a5aff"},
+  x_drg: {mat: "lacquer",motif: "cloud",   mc: "#ffd24d", ma: 0.16, bg: ["#4a0a0a", "#0e0202"]},
+  x_aur: {mat: "ebony",  motif: "aurora",  mc: "#40ffb0", ma: 0.22, bg: ["#0a2a3a", "#02080e"], glow: "#40ffb0"},
+  x_lav: {mat: "stone",  motif: "hex",     mc: "#ff6a1a", ma: 0.14, bg: ["#3a0a02", "#0a0200"], glow: "#ff5a1a"},
+  x_roy: {mat: "gold",   motif: "damask",  mc: "#ffd24d", ma: 0.14, bg: ["#3a0a4a", "#0a0210"]},
+  x_ice: {mat: "marble", motif: "hex",     mc: "#ffffff", ma: 0.12, bg: ["#3a6a8a", "#0a1a2a"], vein: "#6ab0e0", glow: "#9fe8ff"},
+  x_blk: {mat: "gold",   motif: "girih",   mc: "#ffd24d", ma: 0.12, bg: ["#2a2208", "#060400"], glow: "#ffcf3d"},
   gm:  {mat: "ebony",   motif: "argyle",  mc: "#ffd24d", ma: 0.06, bg: ["#1f3a2a", "#040a06"]},
 };
 const tblOf = city => TBL[city && city.id] || {mat: "wood"};
+// Table designs sold in the shop. The equipped one is used in every normal match (the city's ring stays in the middle).
+const EXTRA_TABLES = [
+  {id: "x_dia", name: "Olmos",       felt: ["#3a8ad8", "#0a2a5a"], rail: ["#dfe6f0", "#7a8698"], trim: "#ffffff", pat: "medal",   cash: 150},
+  {id: "x_gal", name: "Galaktika",   felt: ["#2a1a6a", "#08041e"], rail: ["#1a1a24", "#050508"], trim: "#b89aff", pat: "gold",    cash: 200},
+  {id: "x_drg", name: "Ajdaho",      felt: ["#0e7a4a", "#03301a"], rail: ["#a01010", "#3a0202"], trim: "#ffd24d", pat: "medal",   cash: 250},
+  {id: "x_aur", name: "Qutb nuri",   felt: ["#0a5a6a", "#021e2a"], rail: ["#1a1c22", "#050608"], trim: "#40ffb0", pat: "classic", cash: 300},
+  {id: "x_lav", name: "Lava",        felt: ["#3a1008", "#120302"], rail: ["#3a3432", "#100c0a"], trim: "#ff8a3a", pat: "tribal",  cash: 350},
+  {id: "x_roy", name: "Qirollik",    felt: ["#5a1a8a", "#1e0636"], rail: ["#e8c05a", "#7a5410"], trim: "#fff1b8", pat: "gold",    cash: 450},
+  {id: "x_ice", name: "Muz saroyi",  felt: ["#3a8ab8", "#0e3050"], rail: ["#f4f8fc", "#a8c0d4"], trim: "#6ab0e0", pat: "ikat",    cash: 500},
+  {id: "x_blk", name: "Qora oltin",  felt: ["#1a1a1a", "#050505"], rail: ["#f0c850", "#6a4a08"], trim: "#fff1b8", pat: "gold",    cash: 600},
+];
+const TABLE_SKINS = () => [
+  ...CITIES.map(c => ({id: c.id, name: c.name, felt: c.felt, rail: c.rail, trim: c.trim, pat: c.pat, coins: Math.max(2000, c.fee * 10), lvl: c.lvl, city: c})),
+  ...EXTRA_TABLES,
+];
+const ownsTable = t => !!(profile.tables || []).includes(t.id) || (t.city && ringOf(t.city));
+function tableLook(city) {
+  const sk = profile.tableSkin && TABLE_SKINS().find(t => t.id === profile.tableSkin);
+  if (!sk || !city || !city.id || city.id === "golden" || city.pat === "lucky" || sk.id === city.id) return city;
+  return {id: sk.id, name: city.name, felt: sk.felt, rail: sk.rail, trim: sk.trim, pat: sk.pat, ring: city.id};
+}
+const tblThumbs = {};
+function tableThumb(t) {
+  if (tblThumbs[t.id]) return tblThumbs[t.id];
+  const k = 0.5, x0 = FX - RAIL - 14, y0 = FY - RAIL - 14, w = FW + 2 * RAIL + 28, h = FH + 2 * RAIL + 28;
+  const oc = document.createElement("canvas"); oc.width = Math.ceil(w * k); oc.height = Math.ceil(h * k);
+  const saved = ctx; ctx = oc.getContext("2d"); ctx.fillStyle = "#0b1220"; ctx.fillRect(0, 0, oc.width, oc.height);
+  ctx.setTransform(k, 0, 0, k, -x0 * k, -y0 * k);
+  try { paintTable({id: t.id, name: t.city ? t.name : "", felt: t.felt, rail: t.rail, trim: t.trim, pat: t.pat, thumb: 1}); } finally { ctx = saved; }
+  return (tblThumbs[t.id] = oc.toDataURL("image/jpeg", 0.85));
+}
 let tableCache = null, feltNoise = null;
 function railBand(x1, y1, len, horizontal, fn) {
   for (let s = 0; s < len; s += 16) fn(horizontal ? x1 + s : x1, horizontal ? y1 : y1 + s, s / 16 | 0, horizontal);
@@ -2889,6 +2948,22 @@ function clothMotif(st, rn) {
     }
     case "girih":
       grid(76, 76, (x, y) => { star(x, y, 30, 20, 8, Math.PI / 8); ctx.stroke(); star(x, y, 12, 6, 4); ctx.fill(); }); break;
+    case "stars":                                // starfield with a few bright ones
+      for (let i = 0; i < 260; i++) { const r = rn() < 0.06 ? 2.2 : 0.5 + rn(); ctx.globalAlpha = (st.ma || 0.5) * (0.2 + rn() * 0.8); ctx.beginPath(); ctx.arc(rn() * FW, rn() * FH, r, 0, 7); ctx.fill(); }
+      ctx.globalAlpha = 0.12; for (const [x, y, r, col] of [[FW * 0.25, FH * 0.3, 190, "#8a5aff"], [FW * 0.75, FH * 0.7, 230, "#ff4fa0"]]) {
+        const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, col); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+      }
+      break;
+    case "aurora":                               // soft curtains of light
+      for (let i = 0; i < 5; i++) {
+        const y0 = FH * (0.15 + i * 0.17), g = ctx.createLinearGradient(0, y0 - 40, 0, y0 + 40);
+        g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(0.5, i % 2 ? "#40ffb0" : "#40c8ff"); g.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, y0 - 40);
+        for (let x = 0; x <= FW; x += 50) ctx.lineTo(x, y0 - 40 + Math.sin(x / 130 + i) * 26);
+        for (let x = FW; x >= 0; x -= 50) ctx.lineTo(x, y0 + 40 + Math.sin(x / 130 + i) * 26);
+        ctx.fill();
+      }
+      break;
     case "sakura":
       for (let i = 0; i < 46; i++) {
         const x = rn() * FW, y = rn() * FH, r = 7 + rn() * 9, rot = rn() * 6;
@@ -2899,7 +2974,7 @@ function clothMotif(st, rn) {
   ctx.globalAlpha = 1;
 }
 function drawTable(city) {
-  const k = scale * dpr, key = (city.id || city.pat) + city.felt[0] + (typeof ringOf === "function" && city.id && ringOf(city) ? "R" : "");
+  const rid = city.ring || city.id, k = scale * dpr, key = (city.id || city.pat) + (city.ring || "") + city.felt[0] + (typeof ringOf === "function" && rid && ringOf({id: rid}) ? "R" : "");
   if (!tableCache || tableCache.key !== key || tableCache.k !== k) {
     const x0 = FX - RAIL - 80, y0 = FY - RAIL - 80, w = FW + 2 * RAIL + 160, h = FH + 2 * RAIL + 160;
     const oc = document.createElement("canvas"); oc.width = Math.ceil(w * k); oc.height = Math.ceil(h * k);
@@ -2990,6 +3065,31 @@ function paintTable(city) {
     for (let i = 1; i < 8; i++) { if (i === 4) continue; sight(FX + FW * i / 8, my); sight(FX + FW * i / 8, by); }
     for (let i = 1; i < 4; i++) { sight(lx, FY + FH * i / 4); sight(rx, FY + FH * i / 4); }
   }
+  // metal moulding round the outside, a dark lip where the rail meets the cushion, engraved corner plates
+  if (!lucky) {
+    const mg = ctx.createLinearGradient(OX, OY, OX + OW * 0.3, OY + OH);
+    mg.addColorStop(0, shade(trim, 70)); mg.addColorStop(0.35, trim); mg.addColorStop(0.55, shade(trim, -60)); mg.addColorStop(0.8, shade(trim, 40)); mg.addColorStop(1, shade(trim, -40));
+    ctx.strokeStyle = mg; ctx.lineWidth = 4; rr(OX + 2.5, OY + 2.5, OW - 5, OH - 5, 28); ctx.stroke();
+    ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1; rr(OX + 5, OY + 5, OW - 10, OH - 10, 26); ctx.stroke();
+    ctx.strokeStyle = shade(r2, -55); ctx.lineWidth = 7; ctx.strokeRect(FX - 21, FY - 21, FW + 42, FH + 42);
+    ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1; ctx.strokeRect(FX - 25, FY - 25, FW + 50, FH + 50);
+    const plate = (x, y, w, h, rot) => {
+      ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+      const g = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
+      g.addColorStop(0, shade(trim, 80)); g.addColorStop(0.45, trim); g.addColorStop(1, shade(trim, -85));
+      ctx.shadowColor = "rgba(0,0,0,.55)"; ctx.shadowBlur = 5; ctx.shadowOffsetY = 2;
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-w / 2, h / 2); ctx.quadraticCurveTo(-w / 2, -h / 2, 0, -h / 2); ctx.quadraticCurveTo(w / 2, -h / 2, w / 2, h / 2); ctx.closePath(); ctx.fill();
+      ctx.shadowColor = "transparent"; ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(-w / 2 + 6, h / 2); ctx.quadraticCurveTo(-w / 2 + 6, -h / 2 + 6, 0, -h / 2 + 6); ctx.quadraticCurveTo(w / 2 - 6, -h / 2 + 6, w / 2 - 6, h / 2); ctx.stroke();
+      ctx.fillStyle = shade(trim, 90); for (const sx of [-w / 2 + 9, w / 2 - 9]) { ctx.beginPath(); ctx.arc(sx, h / 2 - 7, 1.8, 0, 7); ctx.fill(); }
+      ctx.restore();
+    };
+    for (const p of POCKETS) {
+      const x = FX + p.x + p.dx, y = FY + p.y + p.dy, ax = Math.sign(x - (FX + FW / 2)), ay = Math.sign(y - (FY + FH / 2));
+      if (!p.mid) plate(x + ax * 6, y + ay * 6, 78, 60, Math.atan2(ax, -ay));
+      else plate(x, y + ay * 8, 84, 44, ay < 0 ? 0 : Math.PI);
+    }
+  }
   // leather pocket cups with a metal edge, sitting in the rail around every pocket
   if (!lucky) for (const p of POCKETS) {
     const x = FX + p.x + p.dx, y = FY + p.y + p.dy, r = p.dr + 13;
@@ -3022,9 +3122,9 @@ function paintTable(city) {
     ctx.beginPath(); ctx.moveTo(FW * 0.25, 0); ctx.lineTo(FW * 0.25, FH); ctx.stroke();
     ctx.fillStyle = "rgba(255,255,255,.35)";
     for (const sx of [FW * 0.25, FW * 0.72]) { ctx.beginPath(); ctx.arc(sx, FH / 2, 3, 0, 7); ctx.fill(); }
-    const rim = city.id && ringPicSoft(city.id);
+    const rid = city.ring || city.id, rim = rid && ringPicSoft(rid);
     if (rim) {                                  // the city's ring printed on the cloth, like a table logo
-      ctx.save(); ctx.globalAlpha = typeof ringOf === "function" && ringOf(city) ? 0.4 : 0.2; ctx.globalCompositeOperation = "luminosity";
+      ctx.save(); ctx.globalAlpha = typeof ringOf === "function" && ringOf({id: rid}) ? 0.4 : 0.2; ctx.globalCompositeOperation = "luminosity";
       ctx.drawImage(rim, FW / 2 - 70, FH / 2 - 86, 140, 140); ctx.restore();
       ctx.save(); ctx.globalAlpha = 0.09; ctx.fillStyle = "#fff"; ctx.font = `34px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText((city.name || "").toUpperCase(), FW / 2, FH / 2 + 74); ctx.restore();
@@ -3753,7 +3853,7 @@ function render() {
   if (!G) { drawConfetti(); return; }
   ctx.save();
   if (G.shake > 0.3) ctx.translate(rnd(-G.shake, G.shake), rnd(-G.shake, G.shake));
-  drawTable(G.city);
+  drawTable(tableLook(G.city));
   if (G.type === "lucky") drawLuckyTarget(G);
   ctx.save(); ctx.translate(FX, FY);
   G.flashes = G.flashes.filter(f => f.t < 24);
@@ -4150,7 +4250,7 @@ function tourAfterMatch(won, why, winner) {
 // ---------------------------------------------------------------- shop
 function buildShop(tab) {
   if (tab === "bank") tab = "money";
-  const sec = ["cues", "avatars", "frames"].includes(tab) ? "cues" : tab;
+  const sec = ["cues", "avatars", "frames", "tables"].includes(tab) ? "cues" : tab;
   document.querySelectorAll("#cueTabs .tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
   document.querySelectorAll(".shopnav button").forEach(t => t.classList.toggle("on", t.dataset.tab === sec));
   $("cueTabs").style.display = sec === "cues" ? "" : "none";
@@ -4196,6 +4296,36 @@ function buildShop(tab) {
       };
       grid.appendChild(el);
     });
+    return;
+  }
+  if (tab === "tables") {
+    const list = TABLE_SKINS(), owned = list.filter(ownsTable).length;
+    body.innerHTML = `<p class="muted" style="margin:0 0 10px">${T("Tanlangan stol hamma o'yinlaringizda chiqadi. Shahar uzugini yutsangiz, o'sha shahar stoli bepul.")} · ${owned}/${list.length}</p>
+      <div class="tblgrid" id="tblGrid"></div>`;
+    const grid = $("tblGrid"), cards = [];
+    const add = (t, own, sel, label, sub, btnHTML, fn) => {
+      const el = document.createElement("div"); el.className = "tblcard" + (sel ? " sel" : "");
+      el.innerHTML = `<div class="tprev"></div>${label}<small class="muted">${sub}</small>${btnHTML}`;
+      const btn = el.querySelector("button"); if (fn) btn.onclick = fn;
+      grid.appendChild(el); cards.push([el.querySelector(".tprev"), t]);
+    };
+    add(null, true, !profile.tableSkin, `<b>🌍 ${T("Shahar stoli")}</b>`, T("Har shaharda o'z stoli"),
+      !profile.tableSkin ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue">${T("TANLASH")}</button>`,
+      profile.tableSkin ? () => { profile.tableSkin = ""; tableCache = null; save(); buildShop("tables"); } : null);
+    for (const t of list) {
+      const own = ownsTable(t), sel = profile.tableSkin === t.id, p = t.cash ? {cur: "cash", v: t.cash} : {cur: "coins", v: t.coins};
+      const locked = !own && t.lvl && profile.level < t.lvl;
+      const btnHTML = locked ? `<button class="btn gray" disabled>🔒 ${T("Daraja")} ${t.lvl}</button>` : priceBtn(p, own, sel);
+      add(t, own, sel, `<b>${t.city ? "🏙 " : "💎 "}${T(t.name)}</b>`, t.city ? esc(T(t.city.sub)) : T("Maxsus stol"), btnHTML, sel || locked ? null : () => {
+        const use = () => { profile.tableSkin = t.id; tableCache = null; save(); buildShop("tables"); };
+        if (own) use(); else buy(p, T(t.name), () => { (profile.tables = profile.tables || []).push(t.id); use(); });
+      });
+    }
+    // previews are painted one by one so the tab opens instantly
+    const next = () => { const c = cards.shift(); if (!c || !c[0].isConnected) return;
+      c[0].style.backgroundImage = `url(${c[1] ? tableThumb(c[1]) : IMG.cb_lon || ""})`; setTimeout(next, 0); };
+    if (!cards[0][1]) { cards[0][0].innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:40px">🌍</div>'; cards.shift(); }
+    setTimeout(next, 0);
     return;
   }
   // cues: Standard / Victory / Surprise / Country / Owned
