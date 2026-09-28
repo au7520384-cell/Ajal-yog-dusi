@@ -12,8 +12,9 @@ Open `index.html` in a browser (phone or computer). Holding the phone sideways i
 - **Mashq** (practice): no rules, just play.
 
 ## Controls
-- **Aim:** touch the table or move the mouse. For fine aim, drag the **ANIQ** wheel on the right (or use the ←/→ keys).
-- **Shoot:** pull the **KUCH** bar on the left downward and release.
+- **Aim:** press (click) the table and drag. Aim changes only while the button is held, so moving the mouse around does not break it.
+- **Fine aim:** mouse wheel, the ←/→ keys (faster with Shift), or the **ANIQ** wheel on the right.
+- **Shoot:** pull the **KUCH** bar on the left downward and release, or hold **Space** and release it.
 - **Ball in hand:** after a foul, drag the white ball to a new spot.
 
 ## Rules (8-ball)
