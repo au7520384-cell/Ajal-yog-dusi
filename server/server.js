@@ -114,7 +114,7 @@ setInterval(() => buckets.clear(), 10 * 60000);
 let lbCache = null, lbAt = 0;
 function leaderboard() {
   if (lbCache && Date.now() - lbAt < 30000) return lbCache;
-  lbCache = Object.values(db.users).filter(u => u.games > 0).sort((a, b) => b.won - a.won || b.level - a.level);
+  lbCache = Object.values(db.users).sort((a, b) => b.won - a.won || b.level - a.level);
   lbAt = Date.now();
   return lbCache;
 }
