@@ -43,6 +43,12 @@ const SKUS = {
   gems_60:     {gems: 60,       vip: 364,   usd: 4.99,  name: "60 Gems"},
   gems_140:    {gems: 140,      vip: 832,   usd: 9.99,  name: "140 Gems"},
   starter:     {cash: 50, coins: 100000, gems: 20, vip: 200, usd: 2.99, name: "Starter Pack", once: true},
+  try_lucky:   {items: {luckyTries: 1},   vip: 60,  usd: 0.99, name: "Lucky Shot +1"},
+  try_wheel:   {items: {wheelTries: 1},   vip: 60,  usd: 0.99, name: "Spin & Win +1"},
+  try_scratch: {items: {scratchTries: 1}, vip: 60,  usd: 0.99, name: "Scratch & Win +1"},
+  golden_3:    {items: {goldShots: 3},    vip: 130, usd: 1.99, name: "Golden Shot x3"},
+  sbox_1:      {items: {sboxes: 1},       vip: 60,  usd: 0.99, name: "Surprise Box"},
+  sbox_5:      {items: {sboxes: 5},       vip: 260, usd: 3.99, name: "Surprise Box x5"},
 };
 const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
 const GIFT = {coins: 500};
@@ -433,7 +439,7 @@ async function stripeWebhook(req, res) {
     const s = ev.data.object, u = db.users[s.metadata && s.metadata.userId], sku = SKUS[s.metadata && s.metadata.sku];
     if (u && sku && !db.purchases[s.id]) {
       db.purchases[s.id] = {user: u.id, sku: s.metadata.sku, at: Date.now(), amount: s.amount_total};
-      grant(u, {cash: sku.cash || 0, coins: sku.coins || 0, gems: sku.gems || 0, vip: sku.vip || 0, kind: "purchase", from: sku.name});
+      grant(u, {cash: sku.cash || 0, coins: sku.coins || 0, gems: sku.gems || 0, vip: sku.vip || 0, items: sku.items || null, kind: "purchase", from: sku.name});
       const skuId = s.metadata.sku; u.bought = {...(u.bought || {}), [skuId]: (u.bought && u.bought[skuId] || 0) + 1};
       if (saving) await saving;
       await flush();   // money: write it down before telling Stripe we got it

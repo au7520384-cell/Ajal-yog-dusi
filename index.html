@@ -1292,6 +1292,17 @@ const DICT = {
   "Yana": ["Again", "Ещё"],
   "Do'stlar bilan o'ynash": ["Play with friends", "Игра с друзьями"],
   "OLISH!": ["COLLECT!", "ЗАБРАТЬ!"],
+  "Keyingi bepul urinish": ["Next free try", "Следующая бесплатная попытка"],
+  "Hozir yana o'ynash uchun reklama ko'ring yoki urinish sotib oling.": ["Watch an ad or buy a try to play again now.", "Посмотрите рекламу или купите попытку, чтобы сыграть снова."],
+  "Reklama ko'rish": ["Watch ad", "Смотреть рекламу"],
+  "Yana (bepul)": ["Again (free)", "Ещё (бесплатно)"],
+  "24 soatda 1 ta bepul": ["1 free every 24 hours", "1 бесплатно каждые 24 часа"],
+  "Reklama yoki $0.99 bilan yana aylantiring": ["Spin again with an ad or $0.99", "Крутите снова за рекламу или $0.99"],
+  "Bepul — 24 soatda 1 marta": ["Free — once every 24 hours", "Бесплатно — раз в 24 часа"],
+  "Pullik": ["Paid", "Платно"],
+  "qutilar": ["boxes", "ящиков"],
+  "Katta sovrinlar uchun pullik o'yin: 3 ta zarba.": ["Paid game with big prizes: 3 shots.", "Платная игра с большими призами: 3 удара."],
+  "Omadli zarba": ["Lucky Shot", "Удачный удар"],
 };
 // More languages. Each list follows XL_KEYS; strings not listed here fall back to English.
 const XL_KEYS = ["siz", "1 ga 1", "USTALAR LIGASI", "O'ynash", "Tanga tikib yuting", "Turnir", "8 o'yinchi, 3 raund", "Mini o'yinlar", "Do'st bilan", "Bitta qurilmada 2 kishi",
@@ -2087,15 +2098,30 @@ const GOLDEN_RINGS = [
   {r: 146, t: "coins", v: 50000, color: "#dfe6f5", label: "50k"},
 ];
 let LUCKY_RINGS = LUCKY_BASE, goldenMode = false;
-const luckyFree = () => profile.lastLucky !== today();
+// minigames: one free try every 24 hours; after that a rewarded video or a $0.99 purchase gives one more try
+const DAY_MS = 864e5, TRY_KEY = {lucky: "luckyTries", wheel: "wheelTries", scratch: "scratchTries"};
+const freeLeftMs = k => Math.max(0, ((profile.freeT || {})[k] || 0) + DAY_MS - Date.now());
+const freeReady = k => freeLeftMs(k) === 0;
+const luckyFree = () => freeReady("lucky");
+function takeTry(k) {                  // uses the free try or a bought/earned one; false = none left
+  if (freeReady(k)) { profile.freeT = {...(profile.freeT || {}), [k]: Date.now()}; save(); return true; }
+  const t = TRY_KEY[k]; if ((profile[t] | 0) > 0) { profile[t]--; save(); return true; }
+  return false;
+}
+const hasTry = k => freeReady(k) || (profile[TRY_KEY[k]] | 0) > 0;
+const TRY_NAME = {lucky: "Omadli zarba", wheel: "Aylantirib yuting", scratch: "Qirib yuting"};
+function noTries(k, again) {
+  const ad = Y8.sdk && Y8.adsReady, pay = !ON_PORTAL;
+  openModal({icon: "⏳", title: T(TRY_NAME[k]), text: `${T("Keyingi bepul urinish")}: ${fmtDur(freeLeftMs(k))}`,
+    extra: `<p class="muted" style="margin:0">${T("Hozir yana o'ynash uchun reklama ko'ring yoki urinish sotib oling.")}</p>`,
+    buttons: [...(ad ? [{label: `📺 ${T("Reklama ko'rish")}`, cls: "green", fn: () => y8Rewarded("try-" + k, () => { profile[TRY_KEY[k]] = (profile[TRY_KEY[k]] | 0) + 1; save(); again && again(); })}] : []),
+      ...(pay ? [{label: `💳 $0.99 · +1`, cls: "purple", fn: () => Net.checkout("try_" + k)}] : []),
+      {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+}
 function startLucky(golden) {
   goldenMode = golden === true; LUCKY_RINGS = goldenMode ? GOLDEN_RINGS : LUCKY_BASE;
   mission("lucky");
-  if (goldenMode) {}
-  else if (luckyFree()) profile.lastLucky = today();
-  else if (profile.luckyTries > 0) profile.luckyTries--;
-  else if (profile.coins >= 200) profile.coins -= 200;
-  else return openModal({icon: "😕", title: "Tanga yetmaydi", text: "Qo'shimcha urinish 200 tanga turadi.", buttons: [{label: "OK", cls: "gray", fn: () => toMenu("mini")}]});
+  if (!goldenMode && !takeTry("lucky")) { if (mode !== "menu") toMenu("mini"); return noTries("lucky", () => startLucky()); }
   save(); updateNav();
   const city = goldenMode ? {id: "golden", felt: ["#2a2008", "#0e0a02"], rail: ["#ffd24d", "#8a5a00"], trim: "#fff1b8", pat: "lucky", skill: 0}
     : {felt: ["#1c2a4a", "#0b1328"], rail: ["#aab4c8", "#5b6680"], trim: "#dfe6f5", pat: "lucky", skill: 0};
@@ -2127,8 +2153,8 @@ function luckyFinish() {
     icon, title, text: ring ? "Oltin shar nishonga tushdi!" : "Tasalli sovg'asi",
     extra: `<div class="reward">${ring && ring.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(amount)}</div>`,
     buttons: [
-      goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : "3 × 💎 25", cls: "orange", fn: goldenShot}
-        : {label: luckyFree() || profile.luckyTries ? "Yana (bepul)" : "Yana (200 🪙)", cls: "orange", fn: () => startLucky()},
+      goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : "3 × $1.99", cls: "orange", fn: goldenShot}
+        : {label: hasTry("lucky") ? T("Yana (bepul)") : `⏳ ${fmtDur(freeLeftMs("lucky"))}`, cls: "orange", fn: () => startLucky()},
       {label: "Menyu", cls: "gray", fn: () => toMenu("mini")}],
   }), 900);
 }
@@ -3306,7 +3332,7 @@ function updateNav() {
   $("navAv").style.boxShadow = fr.c ? `0 0 0 3px ${fr.c[1]}${fr.glow ? `,0 0 10px ${fr.glow}` : ""}` : "";
   $("dotRw").style.display = $("dotRw2").style.display = profile.lastClaim !== today() ? "" : "none";
   const ib = (Net.inbox || []).length; $("dotMail").style.display = ib ? "" : "none"; $("dotMail").textContent = ib;
-  const minis = (luckyFree() ? 1 : 0) + (profile.lastWheel !== today() ? 1 : 0) + profile.luckyTries + profile.wheelTries;
+  const minis = ["lucky", "wheel", "scratch"].filter(freeReady).length + (profile.luckyTries | 0) + (profile.wheelTries | 0) + (profile.scratchTries | 0);
   for (const id of ["dotMini", "dotMini2"]) { $(id).style.display = minis ? "" : "none"; $(id).textContent = minis; }
   $("muteBtn").textContent = profile.muted ? "🔇" : "🔊";
 }
@@ -3584,11 +3610,11 @@ function buildShop(tab) {
       .map(([k, n]) => `<button class="tab${k === cueCat ? " on" : ""}" data-cc="${k}">${T(n)}</button>`).join("")}</div>
     ${cueCat === "surprise" ? `<div class="card surbox"><div style="font-size:44px">🎁</div><div style="flex:1"><b>${T("Syurpriz qutisi")}</b>
       <div class="muted">${T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.")}</div></div>
-      <button class="btn purple" id="surBtn"><span class="cash"></span> ${SURPRISE_BOX}</button></div>` : ""}
+      <button class="btn purple" id="surBtn">${profile.sboxes ? `${T("Ochish")} (${profile.sboxes})` : "$0.99 / 💵 " + SURPRISE_BOX}</button></div>` : ""}
     ${cueCat === "victory" ? `<p class="muted" style="margin:0 0 10px">${T("Shaharda yoki undan yuqorida yutib, kiy bo'laklarini yig'ing. 4 bo'lak = kiy.")}</p>` : ""}`);
   body.querySelectorAll("[data-cc]").forEach(b => b.onclick = () => { cueCat = b.dataset.cc; buildShop("cues"); });
   $("cueInfo").onclick = cueInfoModal; $("cpBtn").onclick = collectionTrack; updateHomeDots();
-  if ($("surBtn")) $("surBtn").onclick = openSurpriseBox;
+  if ($("surBtn")) $("surBtn").onclick = () => openSurpriseBox();
   const grid = document.createElement("div"); grid.className = "cuelist";
   const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { io.unobserve(e.target); e.target.appendChild(cueCanvas(e.target._cue)); }
@@ -3650,14 +3676,21 @@ function victoryPiece(city) {
   addCuePiece(c);
   return c;
 }
-function openSurpriseBox() {
-  if (profile.cash < SURPRISE_BOX) { toast("😕", T("Pul yetmaydi"), T("Syurpriz qutisi")); return; }
+function openSurpriseBox(payWithCash) {
+  if (!(profile.sboxes > 0) && payWithCash !== true) {
+    return openModal({icon: "🎁", title: T("Syurpriz qutisi"), text: T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy."), extra: "",
+      buttons: [...(ON_PORTAL ? [] : [{label: "💳 $0.99", cls: "green", fn: () => Net.checkout("sbox_1")}, {label: "💳 5 × $3.99", cls: "green", fn: () => Net.checkout("sbox_5")}]),
+        {label: `💵 ${SURPRISE_BOX}`, cls: "purple", fn: () => openSurpriseBox(true)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+  }
+  if (profile.sboxes > 0) profile.sboxes--;
+  else if (profile.cash < SURPRISE_BOX) { toast("😕", T("Pul yetmaydi"), T("Syurpriz qutisi")); return; }
+  else profile.cash -= SURPRISE_BOX;
+  save();
   const pool = CUES.filter(c => c.cat === "surprise" && !profile.cues.includes(c.id));
-  profile.cash -= SURPRISE_BOX;
   if (!pool.length) { addCoins(500000); toast("🎁", "+500 000", T("Syurpriz qutisi")); updateNav(); return; }
   const c = pick(pool), n = addCuePiece(c); updateNav(); Snd.win(); burst();
   openModal({icon: "🎁", title: T("Syurpriz qutisi"), text: `${cueName(c)} — ${Math.min(n, c.pieces)}/${c.pieces}`, extra: `<div class="cuecvw" id="surCue"></div>`,
-    buttons: [{label: T("Yana ochish"), cls: "purple", fn: () => { buildShop("cues"); setTimeout(openSurpriseBox, 50); }}, {label: T("Yopish"), cls: "gray", fn: () => buildShop("cues")}]});
+    buttons: [{label: T("Yana ochish"), cls: "purple", fn: () => setTimeout(openSurpriseBox, 50)}, {label: T("Yopish"), cls: "gray", fn: () => { if ($("shop").classList.contains("on")) buildShop("cues"); if ($("mini").classList.contains("on")) buildMini(); }}]});
   $("surCue").appendChild(cueCanvas(c));
 }
 function cueInfoModal() {
@@ -3848,16 +3881,13 @@ function buildWheel() {
   w.style.background = `conic-gradient(${WHEEL.map((s, i) => `${s.color} ${i * seg}deg ${(i + 1) * seg}deg`).join(",")})`;
   w.innerHTML = WHEEL.map((s, i) => `<div class="lbl" style="transform:rotate(${i * seg + seg / 2 - 90}deg)">${s.label}</div>`).join("") +
     WHEEL.map((s, i) => `<div style="position:absolute;left:50%;top:50%;width:50%;height:2px;background:#fff6;transform-origin:0 50%;transform:rotate(${i * seg - 90}deg)"></div>`).join("");
-  const free = profile.lastWheel !== today();
-  $("spinBtn").textContent = free || profile.wheelTries ? "AYLANTIRISH (BEPUL)" : "AYLANTIRISH · 300 🪙";
-  $("wheelNote").textContent = free ? "Kunlik bepul aylantirish" : profile.wheelTries ? `Qo'shimcha bepul: ${profile.wheelTries}` : "";
+  const free = freeReady("wheel");
+  $("spinBtn").textContent = free || profile.wheelTries ? T("AYLANTIRISH") + " (" + T("Bepul") + ")" : `⏳ ${fmtDur(freeLeftMs("wheel"))}`;
+  $("wheelNote").textContent = free ? T("24 soatda 1 ta bepul") : profile.wheelTries ? `${T("Bepul")}: ${profile.wheelTries}` : T("Reklama yoki $0.99 bilan yana aylantiring");
 }
 $("spinBtn").onclick = () => {
   if (wheelBusy) return;
-  if (profile.lastWheel !== today()) profile.lastWheel = today();
-  else if (profile.wheelTries > 0) profile.wheelTries--;
-  else if (profile.coins >= 300) profile.coins -= 300;
-  else { toast("😕", "Tanga yetmaydi", "G'ildirak"); return; }
+  if (!takeTry("wheel")) return noTries("wheel", () => buildWheel());
   save(); updateNav(); wheelBusy = true; $("spinBtn").disabled = true;
   const total = WHEEL_WEIGHTS.reduce((a, b) => a + b, 0);
   let r = Math.random() * total, idx = 0;
@@ -4038,7 +4068,9 @@ const Net = (() => {
     return registering;
   }
   function applyGrant(g) {
-    profile.cash += g.cash || 0; profile.coins += g.coins || 0; profile.gems = (profile.gems || 0) + (g.gems || 0); profile.vip = (profile.vip || 0) + (g.vip || 0); save();
+    profile.cash += g.cash || 0; profile.coins += g.coins || 0; profile.gems = (profile.gems || 0) + (g.gems || 0); profile.vip = (profile.vip || 0) + (g.vip || 0);
+    for (const [k, v] of Object.entries(g.items || {})) if (["luckyTries", "wheelTries", "scratchTries", "goldShots", "sboxes"].includes(k)) profile[k] = (profile[k] | 0) + (v | 0);
+    save(); if (g.items && $("mini").classList.contains("on")) buildMini();
     const why = {purchase: T("Xarid uchun rahmat!"), referral: T("Taklif bonusi"), invited: T("Do'stingiz qo'shildi"), gift: T("Sovg'a"),
       weekly: T("Haftalik reyting sovrini"), club: T("Klub mukofoti")}[g.kind] || "";
     toast(g.kind === "gift" ? "🎁" : "💰", `${g.cash ? "+" + fmt(g.cash) + " 💵 " : ""}${g.coins ? "+" + fmt(g.coins) + " 🪙 " : ""}${g.gems ? "+" + fmt(g.gems) + " 💎" : ""}`, `${why}${g.from ? " · " + g.from : ""}`);
@@ -4250,8 +4282,8 @@ function buildShopSection(sec, body) {
       ${card("♞", "Shoh gambiti", T("Missiyalarni bajaring"), "Ochish", "pass")}</div>`;
   } else if (sec === "mini") {
     body.innerHTML = `<div class="freegrid">
-      <div class="card freec"><div style="font-size:60px">🎯</div><b>${T("Omadli zarba")}</b><div class="muted">${T("Omadli")} ${T("zarba")}: ${luckyFree() ? T("Bugun bepul!") : "200 🪙"}</div><button class="btn orange" data-act="lucky">${T("O'ynash")}</button></div>
-      <div class="card freec"><div style="font-size:60px">🎡</div><b>${T("Omad g'ildiragi")}</b><div class="muted">${profile.lastWheel !== today() ? T("Bugun bepul!") : "300 🪙"}</div><button class="btn orange" data-act="wheel">${T("AYLANTIRISH")}</button></div>
+      <div class="card freec"><div style="font-size:60px">🎯</div><b>${T("Omadli zarba")}</b><div class="muted">${T("Omadli")} ${T("zarba")}: ${luckyFree() ? T("Bepul — 24 soatda 1 marta") : "⏳ " + fmtDur(freeLeftMs("lucky"))}</div><button class="btn orange" data-act="lucky">${T("O'ynash")}</button></div>
+      <div class="card freec"><div style="font-size:60px">🎡</div><b>${T("Omad g'ildiragi")}</b><div class="muted">${freeReady("wheel") ? T("Bepul — 24 soatda 1 marta") : "⏳ " + fmtDur(freeLeftMs("wheel"))}</div><button class="btn orange" data-act="wheel">${T("AYLANTIRISH")}</button></div>
       <div class="card freec"><div style="font-size:60px">🏆</div><b>${T("Turnirlar")}</b><div class="muted">32–60 ${T("o'yinchi")}</div><button class="btn orange" data-act="tour">${T("O'ynash")}</button></div></div>`;
   }
   body.querySelectorAll("[data-sku]").forEach(b => b.onclick = () => Net.checkout(b.dataset.sku, b));
@@ -4361,32 +4393,33 @@ function bindHub(box, acts) { box.querySelectorAll("[data-hact]").forEach(el => 
 
 // ---- minigames: Lucky Shot, Scratch & Win, Spin & Win, Golden Shot, Surprise Boxes
 function buildMini() {
-  const box = $("miniBody"), luck = luckyFree(), wh = profile.lastWheel !== today(), sc = profile.lastScratch !== today();
+  const box = $("miniBody");
+  const sub = k => freeReady(k) ? T("Bepul — 24 soatda 1 marta") : (profile[TRY_KEY[k]] | 0) ? `${T("Bepul")}: ${profile[TRY_KEY[k]]}` : `⏳ ${fmtDur(freeLeftMs(k))} · 📺 / $0.99`;
+  const btn = k => hasTry(k) ? T("Bepul o'ynash") : T("Yana o'ynash");
   box.innerHTML = `<div class="hgrid">
-    ${hubCard({cls: "c-gold", act: "lucky", img: "🎯", title: T("Omadli zarba"), sub: luck ? T("Bugun bepul!") : profile.luckyTries ? `${T("Bepul")}: ${profile.luckyTries}` : `⏱ ${hms(nextMidnight())} · 200 🪙`, btn: luck || profile.luckyTries ? T("Bepul o'ynash") : T("O'ynash"), badge: luck ? 1 : ""})}
-    ${hubCard({cls: "c-pink", act: "scratch", img: "🎟", title: T("Qirib yuting"), sub: sc ? T("Bugun bepul!") : `⏱ ${hms(nextMidnight())} · 💎 3`, btn: sc ? T("Bepul o'ynash") : T("O'ynash"), badge: sc ? 1 : ""})}
-    ${hubCard({cls: "c-teal", act: "wheel", img: "🎡", title: T("Aylantirib yuting"), sub: wh ? T("Bugun bepul!") : profile.wheelTries ? `${T("Bepul")}: ${profile.wheelTries}` : `⏱ ${hms(nextMidnight())} · 300 🪙`, btn: T("AYLANTIRISH"), badge: wh ? 1 : ""})}
-    ${hubCard({cls: "c-golden", act: "golden", img: "🏆", title: T("Oltin zarba"), sub: `${T("Katta sovrinlar")}: 💵 100 · 🪙 75k · ${T("urinish")}: ${profile.goldShots || 0}`, btn: profile.goldShots ? T("O'ynash") : "3 × 💎 25", btnCls: "orange"})}
-    ${hubCard({cls: "c-lime", act: "boxes", img: "🎁", title: T("Syurpriz qutilar"), sub: T("Afsonaviy kiy bo'laklari"), btn: `💵 ${SURPRISE_BOX}`, btnCls: "purple"})}
-    ${Y8.sdk && Y8.adsReady ? hubCard({cls: "c-blue", act: "ad", img: "📺", title: T("Reklama ko'ring"), sub: T("+1 zarba · +1 g'ildirak"), btn: T("Ko'rish")}) : ""}
+    ${hubCard({cls: "c-gold", act: "lucky", img: "🎯", title: T("Omadli zarba"), sub: sub("lucky"), btn: btn("lucky"), btnCls: hasTry("lucky") ? "green" : "purple", badge: freeReady("lucky") ? 1 : ""})}
+    ${hubCard({cls: "c-pink", act: "scratch", img: "🎟", title: T("Qirib yuting"), sub: sub("scratch"), btn: btn("scratch"), btnCls: hasTry("scratch") ? "green" : "purple", badge: freeReady("scratch") ? 1 : ""})}
+    ${hubCard({cls: "c-teal", act: "wheel", img: "🎡", title: T("Aylantirib yuting"), sub: sub("wheel"), btn: btn("wheel"), btnCls: hasTry("wheel") ? "green" : "purple", badge: freeReady("wheel") ? 1 : ""})}
+    ${hubCard({cls: "c-golden", act: "golden", img: "🏆", title: T("Oltin zarba"), sub: `${T("Katta sovrinlar")}: 💵 100 · 🪙 75k${profile.goldShots ? ` · ${T("urinish")}: ${profile.goldShots}` : ""}`, btn: profile.goldShots ? T("O'ynash") : T("Pullik") + " · 3 × $1.99", btnCls: "orange"})}
+    ${hubCard({cls: "c-lime", act: "boxes", img: "🎁", title: T("Syurpriz qutilar"), sub: `${T("Afsonaviy kiy bo'laklari")}${profile.sboxes ? ` · ${T("qutilar")}: ${profile.sboxes}` : ""}`, btn: profile.sboxes ? T("Ochish") : T("Pullik") + " · $0.99", btnCls: "purple"})}
   </div>`;
-  bindHub(box, {lucky: () => startLucky(), scratch: scratchGame, wheel: () => go("wheelScr"), golden: goldenShot, boxes: () => { cueCat = "surprise"; go("shop", "cues"); },
+  bindHub(box, {lucky: () => startLucky(), scratch: scratchGame, wheel: () => hasTry("wheel") ? go("wheelScr") : noTries("wheel", () => go("wheelScr")), golden: goldenShot, boxes: openSurpriseBox,
     ad: () => y8Rewarded("mini-tries", () => { profile.luckyTries++; profile.wheelTries++; save(); buildMini(); toast("📺", T("+1 zarba · +1 g'ildirak"), T("Rahmat!")); })});
 }
 function goldenShot() {
   if (!profile.goldShots) {
-    if ((profile.gems || 0) < 25) return openModal({icon: "🏆", title: T("Oltin zarba"), text: T("3 ta urinish 25 olmos turadi."), buttons: [{label: T("Olmos olish"), cls: "purple", fn: () => go("shop", "offers")}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
-    profile.gems -= 25; profile.goldShots = 3; save(); updateNav();
+    if (mode !== "menu") toMenu("mini");
+    return openModal({icon: "🏆", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 100 · 💵 60 · 🪙 75 000 · 🪙 50 000</div>`,
+      buttons: [...(ON_PORTAL ? [] : [{label: "💳 3 × $1.99", cls: "green", fn: () => Net.checkout("golden_3")}]),
+        {label: "💎 25", cls: "purple", fn: () => { if ((profile.gems || 0) < 25) return toast("😕", T("Olmos yetmaydi"), T("Oltin zarba")); profile.gems -= 25; profile.goldShots = 3; save(); updateNav(); goldenShot(); }},
+        {label: T("Yopish"), cls: "gray", fn: () => {}}]});
   }
   profile.goldShots--; save(); startLucky(true);
 }
 // ---- Scratch & Win: 9 hidden prizes, three of a kind wins
 const SCRATCH = [{i: "🪙", t: "coins", v: 500, w: 34}, {i: "💰", t: "coins", v: 5000, w: 20}, {i: "💵", t: "cash", v: 3, w: 16}, {i: "🎡", t: "spin", v: 1, w: 14}, {i: "🎯", t: "lucky", v: 1, w: 10}, {i: "💎", t: "gems", v: 5, w: 6}];
 function scratchGame() {
-  if (profile.lastScratch === today()) {
-    if ((profile.gems || 0) < 3) return toast("😕", T("Olmos yetmaydi"), T("Qirib yuting"));
-    profile.gems -= 3;
-  } else profile.lastScratch = today();
+  if (!takeTry("scratch")) return noTries("scratch", scratchGame);
   save(); updateNav();
   let tot = SCRATCH.reduce((a, s) => a + s.w, 0), r = Math.random() * tot, win = SCRATCH[0];
   for (const s of SCRATCH) { if ((r -= s.w) < 0) { win = s; break; } }
