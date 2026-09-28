@@ -17,6 +17,7 @@ An 8-ball pool game for phones and computers. The game is `index.html`; the onli
 - **Tournaments:** Asia Cup (32 players), South America Cup (32), Europe Cup (48), World Cup (60) — knockout brackets with byes, 5–6 rounds.
 - **Clubs** (unlocked at level 6): create or join a club (up to 50 members), club chat, members ranked by weekly winnings; members of the week's top 3 clubs get 💵 50 / 25 / 10.
 - **Season pass ("King's Gambit"):** a monthly season with 30 tiers, a free and a premium track (300 cash), daily missions, exclusive cues and frame.
+- **Cloud save:** the whole progress is saved on the server (Postgres) a few seconds after every change and when the page is hidden; a newer save on the server is restored on start. Settings → *Get key* gives a recovery key; on a new phone *Restore* with the ID + key signs in to the same account.
 - **Settings:** sound, vibration, cue sensitivity, tap to aim, aiming wheel, guideline in offline games, power bar side, cheering, friend requests, online status, friend-online notifications. Coin cues go up to **5 billion**; premium cash (💵) cues go up to **1 500 cash**. Cash is hard to earn (1–5 at a time).
 - **Currencies:** coins, cash and gems, with the game's own artwork.
 - **Shop:** Special Offers (starter pack, gem packs), Coins & Cash packs with bonus ribbons and VIP points, Free Rewards, Minigames, Cues & More. Real money via Stripe; cash→coins and gems→cash exchange.
