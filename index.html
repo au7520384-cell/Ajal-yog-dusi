@@ -195,7 +195,6 @@
   .cuettl{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;font-weight:700}
   .cuettl b{font-size:20px;display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pcs{background:#000a;color:#fff;border-radius:8px;padding:2px 8px;margin-left:4px}
-  .cuerow.locked .cuecvw{filter:saturate(.35) brightness(.75)}
   .cpts{text-align:center;color:#ffcf3d;font-size:13px;margin-top:4px;font-weight:700}
   .cuehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
   .cpow{background:linear-gradient(#5b2c9a,#3a1670);border:2px solid #8a5ad0;border-radius:12px;padding:4px 14px;display:flex;flex-direction:column;font-size:13px}
@@ -507,6 +506,7 @@ const POWER_BAR = {x: 42, y: 184, w: 46, h: 440};
 const TRAY = {x: 1190, y: 184, w: 32, h: 440};
 const FINE = {x: 1232, y: 184, w: 38, h: 440};
 const SPIN_BTN = {x: 1232, y: 56, r: 30};
+const CUE_BTN = {x: 1232, y: 130, r: 24};
 const SPIN_UI = {x: W / 2, y: H / 2 + 20, r: 150};
 const FONT = '"Lilita One","Arial Black",Impact,sans-serif';
 
@@ -528,39 +528,36 @@ const groupOf = n => n === 0 ? "cue" : n < 8 ? "solid" : n === 8 ? "eight" : "st
 
 // ---------------------------------------------------------------- content
 const CITIES = [
-  {id: "tash", name: "Toshkent",  sub: "Choyxona",        fee: 50,        prize: 100,       lvl: 1,  felt: ["#27e06a", "#0a8a36"], rail: ["#9a6634", "#5a3414"], trim: "#f3cf85", pat: "classic", skill: 0.018,  col: ["#ffe14d", "#ff8a00"]},
-  {id: "lon",  name: "London",    sub: "Big Ben Club",    fee: 100,       prize: 200,       lvl: 2,  felt: ["#2f7cf0", "#0d3a8a"], rail: ["#6b2a1a", "#2e0f08"], trim: "#ffffff", pat: "classic", skill: 0.017,  col: ["#ffffff", "#e0352b"]},
-  {id: "syd",  name: "Sidney",    sub: "Harbour Lounge",  fee: 250,       prize: 500,       lvl: 3,  felt: ["#1ed4a0", "#067a5a"], rail: ["#d9a066", "#8a5a2a"], trim: "#ffffff", pat: "classic", skill: 0.016,  col: ["#fffbd0", "#1ed4a0"]},
-  {id: "sam",  name: "Samarqand", sub: "Registon",        fee: 500,       prize: 1000,      lvl: 4,  felt: ["#36a8ff", "#0f4f9a"], rail: ["#4a2c16", "#231208"], trim: "#ffd24d", pat: "stars",   skill: 0.015,  col: ["#8fe3ff", "#1f7cf0"]},
-  {id: "lis",  name: "Lissabon",  sub: "Alfama Bar",      fee: 1000,      prize: 2000,      lvl: 5,  felt: ["#3e6df0", "#15307a"], rail: ["#f0e0c0", "#b09a70"], trim: "#1f4fd1", pat: "ikat",    skill: 0.014,  col: ["#ffffff", "#3e6df0"]},
-  {id: "bux",  name: "Buxoro",    sub: "Saroyi",          fee: 1500,      prize: 3000,      lvl: 6,  felt: ["#ec4b52", "#7d1420"], rail: ["#3a2210", "#160b04"], trim: "#ffcf5a", pat: "ikat",    skill: 0.013,  col: ["#ffe0c0", "#ff4b3e"]},
-  {id: "tok",  name: "Tokio",     sub: "Neon Dojo",       fee: 2500,      prize: 5000,      lvl: 7,  felt: ["#ff3fa4", "#6a0a44"], rail: ["#141420", "#050508"], trim: "#3ff7ff", pat: "ikat",    skill: 0.012,  col: ["#ffd6f0", "#ff3fa4"]},
-  {id: "veg",  name: "Las-Vegas", sub: "Jackpot Hall",    fee: 10000,     prize: 20000,     lvl: 8,  felt: ["#2b2b3a", "#0a0a12"], rail: ["#d9b34a", "#6a4e10"], trim: "#ffffff", pat: "gold",    skill: 0.011,  col: ["#fff6c8", "#ffcf3d"]},
-  {id: "xiv",  name: "Xiva",      sub: "Ichan-Qal'a",     fee: 25000,     prize: 50000,     lvl: 9,  felt: ["#22d6c4", "#086b63"], rail: ["#7a4c26", "#3a220f"], trim: "#9ff3ff", pat: "stars",   skill: 0.0095, col: ["#d0fffa", "#12b3a6"]},
-  {id: "jak",  name: "Jakarta",   sub: "Vulqon Arena",    fee: 50000,     prize: 100000,    lvl: 10, felt: ["#ff7a1a", "#8a2e05"], rail: ["#2a1a10", "#0a0604"], trim: "#ffd24d", pat: "ikat",    skill: 0.0085, col: ["#ffe6a0", "#ff5a1a"]},
-  {id: "tor",  name: "Toronto",   sub: "Maple Club",      fee: 100000,    prize: 200000,    lvl: 12, felt: ["#d93a3a", "#6a0e0e"], rail: ["#e8e8e8", "#9a9a9a"], trim: "#d93a3a", pat: "stars",   skill: 0.0075, col: ["#ffffff", "#ff3b30"]},
-  {id: "cai",  name: "Qohira",    sub: "Piramida Zal",    fee: 250000,    prize: 500000,    lvl: 14, felt: ["#e0b040", "#7a5510"], rail: ["#3a2a18", "#140c04"], trim: "#40c8ff", pat: "gold",    skill: 0.0065, col: ["#fff2c0", "#e0b040"]},
-  {id: "dub",  name: "Dubay",     sub: "Oltin Minora",    fee: 500000,    prize: 1000000,   lvl: 16, felt: ["#d9a63a", "#7a5310"], rail: ["#2a2a2a", "#0c0c0c"], trim: "#fff1b8", pat: "gold",    skill: 0.0055, col: ["#fff6c8", "#ffb300"]},
-  {id: "sha",  name: "Shanxay",   sub: "Sharq Marvaridi", fee: 1000000,   prize: 2000000,   lvl: 18, felt: ["#c8102e", "#5a0412"], rail: ["#1a1a1a", "#050505"], trim: "#ffd24d", pat: "stars",   skill: 0.0048, col: ["#fff0a0", "#ffcf3d"]},
-  {id: "par",  name: "Parij",     sub: "Eyfel Klubi",     fee: 2500000,   prize: 5000000,   lvl: 20, felt: ["#4b6cff", "#1b2a7a"], rail: ["#e8e2d6", "#9a9282"], trim: "#1b2a7a", pat: "classic", skill: 0.0042, col: ["#ffffff", "#8fa6ff"]},
-  {id: "rom",  name: "Rim",       sub: "Kolizey",         fee: 4000000,   prize: 8000000,   lvl: 22, felt: ["#b8742a", "#5a320a"], rail: ["#e6dccb", "#9a8e78"], trim: "#7a1a1a", pat: "classic", skill: 0.0036, col: ["#fff0d8", "#c87a2a"]},
-  {id: "bkk",  name: "Bangkok",   sub: "Oltin Ibodatxona",fee: 5000000,   prize: 10000000,  lvl: 24, felt: ["#1fb86a", "#064a26"], rail: ["#8a1a1a", "#3a0606"], trim: "#ffd24d", pat: "ikat",    skill: 0.0031, col: ["#fff6c8", "#1fb86a"]},
-  {id: "seo",  name: "Seul",      sub: "Neon Minora",     fee: 10000000,  prize: 20000000,  lvl: 27, felt: ["#7a5cff", "#2a1a8a"], rail: ["#101018", "#030306"], trim: "#ff4fa0", pat: "ikat",    skill: 0.0026, col: ["#ffd6f0", "#7a5cff"]},
-  {id: "mum",  name: "Mumbay",    sub: "Maharaja Saroyi", fee: 15000000,  prize: 30000000,  lvl: 30, felt: ["#ff8a1f", "#8a3a05"], rail: ["#5a0a2a", "#20020e"], trim: "#ffd24d", pat: "gold",    skill: 0.0022, col: ["#ffe6a0", "#ff8a1f"]},
-  {id: "ber",  name: "Berlin",    sub: "Platz Club",      fee: 25000000,  prize: 50000000,  lvl: 33, felt: ["#3a3a44", "#101014"], rail: ["#8a8a92", "#3a3a40"], trim: "#ffcf3d", pat: "classic", skill: 0.0018, col: ["#ffffff", "#ffcf3d"]},
-  {id: "ist",  name: "Istanbul",  sub: "Bosfor Saroyi",   fee: 50000000,  prize: 100000000, lvl: 36, felt: ["#a86bff", "#3f1d86"], rail: ["#24243a", "#0a0a14"], trim: "#e2c2ff", pat: "ikat",    skill: 0.0014, col: ["#f5e8ff", "#a45cff"]},
-  {id: "osa",  name: "Osaka",     sub: "Samurai Qasri",   fee: 100000000, prize: 200000000, lvl: 40, felt: ["#1f3aa8", "#081244"], rail: ["#101010", "#000000"], trim: "#ffd24d", pat: "gold",    skill: 0.001,  col: ["#fff6c8", "#ffcf3d"]},
+  {id: "lon", name: "London",    sub: "Thames Pub",        fee: 50,        prize: 100,       lvl: 1,  felt: ["#2f86f0", "#0c3a8e"], rail: ["#7a3a1c", "#34130a"], trim: "#ffffff", pat: "classic", skill: 0.018,  col: ["#ffffff", "#e0352b"]},
+  {id: "syd", name: "Sidney",    sub: "Harbour Bar",       fee: 100,       prize: 200,       lvl: 2,  felt: ["#23c94a", "#07702a"], rail: ["#d9a066", "#8a5a2a"], trim: "#ffffff", pat: "tribal",  skill: 0.017,  col: ["#fffbd0", "#1ed45a"]},
+  {id: "lis", name: "Lissabon",  sub: "Summer Terrace",    fee: 500,       prize: 1000,      lvl: 3,  felt: ["#3e6df0", "#15307a"], rail: ["#f0e0c0", "#b09a70"], trim: "#1f4fd1", pat: "ikat",    skill: 0.016,  col: ["#ffffff", "#3e6df0"]},
+  {id: "tok", name: "Tokio",     sub: "Samurai Dojo",      fee: 2500,      prize: 5000,      lvl: 5,  felt: ["#d8283a", "#6a0612"], rail: ["#141420", "#050508"], trim: "#ffd24d", pat: "medal",   skill: 0.015,  col: ["#ffd6d0", "#ff3b30"]},
+  {id: "veg", name: "Las-Vegas", sub: "Royal Flush",       fee: 10000,     prize: 20000,     lvl: 7,  felt: ["#2b2b3a", "#0a0a12"], rail: ["#d9b34a", "#6a4e10"], trim: "#ffffff", pat: "gold",    skill: 0.013,  col: ["#fff6c8", "#ffcf3d"]},
+  {id: "jak", name: "Jakarta",   sub: "Volcano Arena",     fee: 50000,     prize: 100000,    lvl: 9,  felt: ["#ff7a1a", "#8a2e05"], rail: ["#2a1a10", "#0a0604"], trim: "#ffd24d", pat: "tribal",  skill: 0.012,  col: ["#ffe6a0", "#ff5a1a"]},
+  {id: "tor", name: "Toronto",   sub: "Maple Lounge",      fee: 100000,    prize: 200000,    lvl: 11, felt: ["#5a6272", "#1e232c"], rail: ["#c8102e", "#5a0412"], trim: "#ffffff", pat: "medal",   skill: 0.011,  col: ["#ffffff", "#ff3b30"]},
+  {id: "cai", name: "Qohira",    sub: "Pyramid Hall",      fee: 250000,    prize: 500000,    lvl: 13, felt: ["#e0b040", "#7a5510"], rail: ["#3a2a18", "#140c04"], trim: "#40c8ff", pat: "gold",    skill: 0.0095, col: ["#fff2c0", "#e0b040"]},
+  {id: "dub", name: "Dubay",     sub: "Golden Tower",      fee: 500000,    prize: 1000000,   lvl: 15, felt: ["#1f5fd0", "#0a2466"], rail: ["#d9b34a", "#6a4e10"], trim: "#fff1b8", pat: "gold",    skill: 0.0085, col: ["#fff6c8", "#ffb300"]},
+  {id: "sha", name: "Shanxay",   sub: "Pearl Club",        fee: 1000000,   prize: 2000000,   lvl: 17, felt: ["#12a86a", "#04492a"], rail: ["#8a1a1a", "#2a0404"], trim: "#ffd24d", pat: "medal",   skill: 0.0075, col: ["#fff0a0", "#ffcf3d"]},
+  {id: "par", name: "Parij",     sub: "Château Royal",     fee: 2500000,   prize: 5000000,   lvl: 19, felt: ["#2aa6a0", "#0b4a48"], rail: ["#e8e2d6", "#9a9282"], trim: "#1b2a7a", pat: "classic", skill: 0.0065, col: ["#ffffff", "#8fe0ff"]},
+  {id: "rom", name: "Rim",       sub: "Colosseo",          fee: 4000000,   prize: 8000000,   lvl: 21, felt: ["#b8742a", "#5a320a"], rail: ["#e6dccb", "#9a8e78"], trim: "#7a1a1a", pat: "medal",   skill: 0.0055, col: ["#fff0d8", "#c87a2a"]},
+  {id: "bkk", name: "Bangkok",   sub: "Golden Temple",     fee: 5000000,   prize: 10000000,  lvl: 23, felt: ["#7a9a2a", "#2e3e08"], rail: ["#8a1a1a", "#3a0606"], trim: "#ffd24d", pat: "ikat",    skill: 0.0048, col: ["#fff6c8", "#a6d62a"]},
+  {id: "seo", name: "Seul",      sub: "Neon Tower",        fee: 10000000,  prize: 20000000,  lvl: 25, felt: ["#7a5cff", "#2a1a8a"], rail: ["#101018", "#030306"], trim: "#ff4fa0", pat: "tribal",  skill: 0.0042, col: ["#ffd6f0", "#7a5cff"]},
+  {id: "mum", name: "Mumbay",    sub: "Maharaja Palace",   fee: 15000000,  prize: 30000000,  lvl: 28, felt: ["#c0392b", "#5a0a08"], rail: ["#5a0a2a", "#20020e"], trim: "#ffd24d", pat: "gold",    skill: 0.0036, col: ["#ffe6a0", "#ff8a1f"]},
+  {id: "ber", name: "Berlin",    sub: "Platz Arena",       fee: 25000000,  prize: 50000000,  lvl: 31, felt: ["#1e8a8a", "#073a3a"], rail: ["#8a8a92", "#3a3a40"], trim: "#ffcf3d", pat: "medal",   skill: 0.003,  col: ["#ffffff", "#ffcf3d"]},
+  {id: "ist", name: "Istanbul",  sub: "Bosphorus Palace",  fee: 50000000,  prize: 100000000, lvl: 34, felt: ["#a86bff", "#3f1d86"], rail: ["#24243a", "#0a0a14"], trim: "#e2c2ff", pat: "ikat",    skill: 0.0022, col: ["#f5e8ff", "#a45cff"]},
+  {id: "osa", name: "Osaka",     sub: "Skyline",           fee: 100000000, prize: 200000000, lvl: 38, felt: ["#1f3aa8", "#081244"], rail: ["#101010", "#000000"], trim: "#ffd24d", pat: "gold",    skill: 0.001,  col: ["#fff6c8", "#ffcf3d"]},
 ];
 const CUPS = [
-  {id: "c1", name: "Toshkent Kubogi",  fee: 300,   prize: 1500,  lvl: 1, city: 0, skill: 0.016},
-  {id: "c2", name: "Samarqand Kubogi", fee: 1500,  prize: 7500,  lvl: 3, city: 3, skill: 0.010},
-  {id: "c3", name: "Oltin Kubok",      fee: 10000, prize: 50000, lvl: 6, city: 8, skill: 0.005},
+  {id: "c1", name: "Osiyo Kubogi",             fee: 500,    prize: 2500,    lvl: 1,  city: 3,  skill: 0.016, icon: "🌏", bg: ["#ffcf3d", "#d8283a", "#4a0808"]},
+  {id: "c2", name: "Janubiy Amerika Kubogi",   fee: 2500,   prize: 12500,   lvl: 4,  city: 1,  skill: 0.011, icon: "🌎", bg: ["#6be36b", "#0a8a36", "#032a10"]},
+  {id: "c3", name: "Yevropa Kubogi",           fee: 20000,  prize: 100000,  lvl: 8,  city: 10, skill: 0.007, icon: "🌍", bg: ["#6fa8ff", "#1f3aa8", "#081244"]},
+  {id: "c4", name: "Jahon Kubogi",             fee: 200000, prize: 1000000, lvl: 13, city: 8,  skill: 0.004, icon: "🏆", bg: ["#fff1b8", "#d9a63a", "#5a3a04"]},
 ];
 const CUES = [
   {id: "start",     name: "Boshlang'ich",    price: 0,     cur: "coin", st: [3, 3, 3, 3],     shaft: ["#f5e2b8", "#d9b074"], butt: ["#7a4318", "#2b1405"], metal: "#2a2a2a", deco: "plain"},
   {id: "chinor",    name: "Chinor",          price: 5000,       cur: "coin", st: [4, 4, 3, 4],     shaft: ["#f5e6c0", "#d4ae72"], butt: ["#2f6d2a", "#0f2a12"], metal: "#e8c77a", deco: "points", dc: "#e8c77a"},
   {id: "konfet",    name: "Konfet",          price: 25000,      cur: "coin", st: [4, 5, 4, 4],     shaft: ["#ffffff", "#ffe3f1"], butt: ["#ffffff", "#ffd1e8"], metal: "#ff4fa0", deco: "spiral", dc: "#ff4fa0"},
-  {id: "kok",       name: "Samarqand Ko'ki", price: 100000,     cur: "coin", st: [5, 5, 5, 5],     shaft: ["#eef5ff", "#c7dcf5"], butt: ["#1060c0", "#062a57"], metal: "#ffd24d", deco: "rings", dc: "#ffd24d"},
+  {id: "kok",       name: "Moviy Osmon", price: 100000,     cur: "coin", st: [5, 5, 5, 5],     shaft: ["#eef5ff", "#c7dcf5"], butt: ["#1060c0", "#062a57"], metal: "#ffd24d", deco: "rings", dc: "#ffd24d"},
   {id: "kumush",    name: "Kumush Oy",       price: 500000,     cur: "coin", st: [6, 6, 5, 6],     shaft: ["#f6f8fc", "#c9ced8"], butt: ["#4a505c", "#15181e"], metal: "#e6ecf5", deco: "gems", dc: "#5fd0ff"},
   {id: "orda",      name: "Oltin O'rda",     price: 2500000,    cur: "coin", st: [7, 6, 6, 6],     shaft: ["#fff3c4", "#e8c46a"], butt: ["#9a6414", "#3a2404"], metal: "#ffe08a", deco: "chevron", dc: "#ffe08a", gem: "#e0201b"},
   {id: "multimln",  name: "Multimillioner",  price: 50000000,   cur: "coin", st: [7, 8, 7, 7],     shaft: ["#fff8e6", "#f0d9a0"], butt: ["#0f5c3a", "#03200f"], metal: "#ffe08a", deco: "gems", dc: "#39ff9a"},
@@ -889,6 +886,8 @@ const DICT = {
   "Shaharda yoki undan yuqorida yutib, kiy bo'laklarini yig'ing. 4 bo'lak = kiy.": ["Win in the city or above to collect pieces. 4 pieces = the cue.", "Побеждайте в этом городе или выше, чтобы собрать части. 4 части = кий."],
   "Kiy bo'lagi": ["Cue piece", "Часть кия"], "Yana ochish": ["Open another", "Открыть ещё"], "Oddiy": ["Basic", "Базовый"], "Yuqori": ["Advanced", "Продвинутый"],
   "Ekspert": ["Expert", "Эксперт"], "Afsonaviy": ["Legendary", "Легендарный"],
+  "Osiyo Kubogi": ["Asia Cup", "Кубок Азии"], "Janubiy Amerika Kubogi": ["South America Cup", "Кубок Южной Америки"], "Yevropa Kubogi": ["Europe Cup", "Кубок Европы"],
+  "Jahon Kubogi": ["World Cup", "Кубок мира"], "Bosh sovrin": ["Grand prize", "Главный приз"],
 };
 // More languages. Each list follows XL_KEYS; strings not listed here fall back to English.
 const XL_KEYS = ["siz", "1 ga 1", "USTALAR LIGASI", "O'ynash", "Tanga tikib yuting", "Turnir", "8 o'yinchi, 3 raund", "Mini o'yinlar", "Do'st bilan", "Bitta qurilmada 2 kishi",
@@ -935,33 +934,46 @@ function gauss() { return (Math.random() + Math.random() + Math.random() - 1.5) 
 //  country: a flag cue for every country (cash)
 CUES.forEach(c => { c.cat = "standard"; c.tier = c.cur === "cash" ? "Premium" : "Standart"; });
 const cueRand = seed => { let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; };
-const CUE_PAL = [["#1d1d1d", "#000000", "#e8c77a"], ["#7a1010", "#240303", "#ffd24d"], ["#0e4a8a", "#031a36", "#9fe8ff"], ["#0f6b3a", "#02230f", "#b8ffcf"],
-  ["#5b1c8f", "#16022e", "#e0b3ff"], ["#8a5a14", "#2a1804", "#ffe08a"], ["#b0b8c6", "#3a414e", "#ffffff"], ["#c2185b", "#3a0418", "#ffd1e8"],
-  ["#00838f", "#00262a", "#7ff7ff"], ["#e65100", "#3a1400", "#ffcf3d"], ["#263238", "#07090a", "#ff5252"], ["#f5f5f5", "#9e9e9e", "#1e88e5"]];
-const STD_DECOS = ["points", "rings", "spiral", "gems", "chevron", "hex", "carbon", "wave", "marble", "tiger", "dots", "scales", "flame", "stars", "neon"];
+// every generated cue gets its own colour (golden-ratio hues) and its own pair of patterns, so no two look alike
+const hsl = (h, sat, lig) => {
+  h = ((h % 1) + 1) % 1; const f = n => { const k = (n + h * 12) % 12, a = sat * Math.min(lig, 1 - lig); return Math.round(255 * (lig - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)))); };
+  return "#" + [f(0), f(8), f(4)].map(v => v.toString(16).padStart(2, "0")).join("");
+};
+const BUTT_PAT = ["argyle", "hex", "carbon", "marble", "tiger", "dots", "scales", "vines", "checker", "camo", "circuit", "runes", "points", "gems", "chevron", "rings"];
+const FULL_PAT = ["pinstripe", "wave", "lightning", "zebra", "galaxy", "fire", "neon", "stars", "spiral", "crystal"];
+const COMBOS = (() => { const all = [], r = cueRand(2024); BUTT_PAT.forEach(b => FULL_PAT.forEach(f => all.push([b, f])));
+  for (let i = all.length - 1; i > 0; i--) { const j = r() * (i + 1) | 0; [all[i], all[j]] = [all[j], all[i]]; } return all; })();
+const METALS = ["#ffd24d", "#e6ecf5", "#f0a882", "#9aa3b0", "#ffe9a8", "#7ff7ff"];
+let cueGenN = 0;
+function cueLook(kind) {           // kind: 0 standard, 1 victory, 2 legendary
+  const k = cueGenN++, h = (k * 0.618034 + 0.13) % 1, [bp, fp] = COMBOS[k % COMBOS.length], style = k % 3;
+  const a1 = hsl(h + 0.5, 0.95, 0.62), a2 = hsl(h + 0.12, 0.9, 0.55);
+  const butt = style === 0 ? [hsl(h, 0.85, 0.52), hsl(h, 0.85, 0.24)] : style === 1 ? [hsl(h, 0.75, 0.38), hsl(h + 0.05, 0.8, 0.13)] : [hsl(h, 0.6, 0.9), hsl(h, 0.7, 0.62)];
+  const shaft = kind === 2 ? (style === 1 ? [hsl(h + 0.5, 0.5, 0.3), hsl(h + 0.5, 0.6, 0.12)] : [hsl(h + 0.04, 0.85, 0.72), hsl(h + 0.1, 0.85, 0.45)])
+    : kind === 1 && style !== 0 ? [hsl(h + 0.05, 0.6, 0.9), hsl(h + 0.05, 0.65, 0.7)] : ["#f7ecd0", "#d9b87e"];
+  const layers = kind === 0 ? [{d: bp, c: a1, c2: a2}] : [{d: bp, c: a1, c2: a2}, {d: fp, c: kind === 2 ? a2 : hsl(h + 0.5, 0.8, 0.75), c2: a1}];
+  if (kind === 2) layers.push({d: "gems", c: hsl(h + 0.33, 1, 0.6)});
+  return {shaft, butt, metal: METALS[k % METALS.length], dc: a1, gem: a2, deco: "combo", layers, glow: kind === 2 ? a1 : kind === 1 && k % 4 === 0 ? a2 : undefined};
+}
 const STD_NAMES = ["Klassik", "Qora Marvarid", "Zumrad", "Yoqut", "Safir", "Bo'ron", "Chaqmoq", "Kobra", "Burgut", "Qoplon", "Karbon", "To'lqin", "Marmar",
   "Yo'lbars", "Nuqta", "Neon", "Vulqon", "Muz", "Sahro", "O'rmon", "Okean", "Tun", "Tong", "Shafaq", "Kumush Tulki", "Oltin Burgut", "Qirol", "Malika",
   "Samuray", "Viking", "Gladiator", "Ritsar", "Pirat", "Ninja", "Sfinks", "Feniks", "Grifon", "Pegas", "Titan", "Kometa", "Meteor", "Orbita", "Nebula",
   "Kvazar", "Pulsar", "Supernova"];
 STD_NAMES.forEach((name, i) => {
-  const rnd = cueRand(i * 97 + 13), t = i / (STD_NAMES.length - 1), cash = i % 5 === 4;
-  const pal = CUE_PAL[(i * 5) % CUE_PAL.length], lv = 3 + t * 6.5;
+  const rnd = cueRand(i * 97 + 13), t = i / (STD_NAMES.length - 1), cash = i % 5 === 4, lv = 3 + t * 6.5;
   const st = [0, 0, 0, 0].map(() => clamp(Math.round(lv + (rnd() - 0.5) * 2.4), 1, 10));
   const price = cash ? Math.round(20 + t * t * 1100) : Math.round(2000 * Math.pow(1.6e6, t) / 1000) * 1000;
-  CUES.push({id: "s" + i, name, cat: "standard", tier: cash ? "Premium" : "Standart", price, cur: cash ? "cash" : "coin", st,
-    shaft: ["#f7ecd0", "#d9b87e"], butt: [pal[0], pal[1]], metal: pal[2], deco: STD_DECOS[i % STD_DECOS.length], dc: pal[2], gem: pal[2], glow: t > 0.85 ? pal[2] : undefined});
+  CUES.push({id: "s" + i, name, cat: "standard", tier: cash ? "Premium" : "Standart", price, cur: cash ? "cash" : "coin", st, ...cueLook(t > 0.6 ? 1 : 0)});
 });
-// victory cues: two per city (from London up); each win in that city or a higher one gives a piece, 4 pieces unlock it
+// victory cues: two per city (from Sydney up); each win in that city or a higher one gives a piece, 4 pieces unlock it
 const VIC_NAMES = ["G'alaba", "Qora Tuynuk", "Chor", "Olmos", "Granat", "Oltin", "Grandioz", "Muz", "Temir", "Lazer", "Shamol", "Qum", "Yashin", "Fazo",
   "Kristall", "Jade", "Obsidian", "Rubin", "Ametist", "Topaz", "Opal", "Onix", "Nefrit", "Korall", "Kobalt", "Platina", "Titan", "Iridiy", "Xrom", "Plazma",
-  "Quyosh", "Oy", "Yulduz", "Galaktika Pro", "Samum", "Tayfun", "Tornado", "Sunami", "Magma", "Aysberg", "Zenit", "Apogey"];
+  "Quyosh", "Oy", "Yulduz", "Galaktika Pro"];
 CITIES.slice(1).forEach((city, k) => {
   for (let j = 0; j < 2; j++) {
-    const i = k * 2 + j, rnd = cueRand(i * 31 + 7), lv = 2 + (k / (CITIES.length - 2)) * 7.5, pal = CUE_PAL[(i * 7 + 3) % CUE_PAL.length];
-    CUES.push({id: "v" + i, name: VIC_NAMES[i % VIC_NAMES.length], cat: "victory", tier: k < 6 ? "Oddiy" : k < 14 ? "Yuqori" : "Ekspert", city: k + 1, pieces: 4,
-      st: [0, 0, 0, 0].map(() => clamp(Math.round(lv + (rnd() - 0.5) * 2.4), 1, 10)),
-      shaft: ["#fff6de", "#e2c48c"], butt: [city.felt[0], shade(city.felt[1], -50).replace(/rgb\((\d+),(\d+),(\d+)\)/, (_, r, g, b) => "#" + [r, g, b].map(v => (+v).toString(16).padStart(2, "0")).join(""))],
-      metal: city.trim, dc: city.col[0], gem: city.col[1], deco: ["chevron", "gems", "hex", "neon", "wave", "rings"][i % 6], glow: k >= 14 ? city.col[0] : undefined});
+    const i = k * 2 + j, rnd = cueRand(i * 31 + 7), lv = 2 + (k / (CITIES.length - 2)) * 7.5;
+    CUES.push({id: "v" + i, name: VIC_NAMES[i % VIC_NAMES.length], cat: "victory", tier: k < 5 ? "Oddiy" : k < 11 ? "Yuqori" : "Ekspert", city: k + 1, pieces: 4,
+      st: [0, 0, 0, 0].map(() => clamp(Math.round(lv + (rnd() - 0.5) * 2.4), 1, 10)), ...cueLook(1)});
   }
 });
 // surprise (legendary) cues: pieces come from Surprise Boxes bought with cash
@@ -969,10 +981,8 @@ const SUR_NAMES = ["Aksion", "Kristall Tig'", "Ekskalibur", "Ajdar Olovi", "Muz 
   "Nur", "Sehrgar", "Imperiya", "Samurai Pro", "Vikinglar", "Firavn", "Poseydon", "Zevs", "Anubis", "Tengri", "Simurg", "Humo", "Afrosiyob", "Registon",
   "Tomiris", "Spitamen", "Ulug'bek", "Amir Temur", "Bobur", "Alpomish"];
 SUR_NAMES.forEach((name, i) => {
-  const rnd = cueRand(i * 53 + 5), pal = CUE_PAL[(i * 3 + 1) % CUE_PAL.length];
-  CUES.push({id: "x" + i, name, cat: "surprise", tier: "Afsonaviy", pieces: 4, st: [0, 0, 0, 0].map(() => clamp(Math.round(8 + rnd() * 2.4), 7, 10)),
-    shaft: ["#fffaf0", "#f0dcaa"], butt: [pal[0], pal[1]], metal: pal[2], dc: pal[2], gem: ["#ff3b30", "#39c6ff", "#7ff7ff", "#39ff9a", "#ffd24d"][i % 5],
-    deco: ["crystal", "legend", "neon", "crystal", "stars"][i % 5], glow: pal[2]});
+  const rnd = cueRand(i * 53 + 5);
+  CUES.push({id: "x" + i, name, cat: "surprise", tier: "Afsonaviy", pieces: 4, st: [0, 0, 0, 0].map(() => clamp(Math.round(8 + rnd() * 2.4), 7, 10)), ...cueLook(2)});
 });
 const SURPRISE_BOX = 60;    // cash
 // country cues: flag colours wrapped around the cue (h = stripes along the cue, v = bands across it) + an emblem
@@ -1731,6 +1741,7 @@ cv.addEventListener("pointerdown", e => {
     else G.spinOpen = false;
     return;
   }
+  if (G.type !== "watch" && !G.moving && Math.hypot(p.x - CUE_BTN.x, p.y - CUE_BTN.y) < CUE_BTN.r + 6) { Snd.click(); cuePicker(); return; }
   if (!canControl()) return;
   try { cv.setPointerCapture(e.pointerId); } catch (_) {}
   if (G.type !== "lucky" && Math.hypot(p.x - SPIN_BTN.x, p.y - SPIN_BTN.y) < SPIN_BTN.r + 8) { G.spinOpen = true; Snd.click(); return; }
@@ -1946,7 +1957,7 @@ function drawBackground() {
 // ---------------------------------------------------------------- table (pre-rendered once per city/resolution)
 let tableCache = null, feltNoise = null;
 function railBand(x1, y1, len, horizontal, fn) {
-  for (let s = 0; s < len; s += 16) fn(horizontal ? x1 + s : x1, horizontal ? y1 : y1 + s, s / 16 | 0);
+  for (let s = 0; s < len; s += 16) fn(horizontal ? x1 + s : x1, horizontal ? y1 : y1 + s, s / 16 | 0, horizontal);
 }
 function drawTable(city) {
   const k = scale * dpr, key = (city.id || city.pat) + city.felt[0];
@@ -2006,9 +2017,29 @@ function paintTable(city) {
     band((x, y, i) => { ctx.fillStyle = cols[i % 4]; ctx.beginPath(); ctx.moveTo(x, y - 6); ctx.lineTo(x + 6, y); ctx.lineTo(x, y + 6); ctx.lineTo(x - 6, y); ctx.fill(); });
   } else if (city.pat === "gold") {
     ctx.fillStyle = "#d9a63a"; band((x, y) => { ctx.beginPath(); ctx.arc(x, y, 3, 0, 7); ctx.fill(); });
+  } else if (city.pat === "tribal") {       // zig-zag inlay with dots, painted-wood style
+    band((x, y, i, h) => {
+      ctx.fillStyle = i % 2 ? trim : shade(r2, -30); ctx.beginPath();
+      if (h !== false) { ctx.moveTo(x - 8, y + 7); ctx.lineTo(x, y - 7); ctx.lineTo(x + 8, y + 7); }
+      else { ctx.moveTo(x - 7, y - 8); ctx.lineTo(x + 7, y); ctx.lineTo(x - 7, y + 8); }
+      ctx.fill(); ctx.fillStyle = "#fff"; ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.arc(x, y + (h !== false ? 3 : 0), 1.4, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+    });
+  } else if (city.pat === "medal") {        // thin gold lines along the rail between the medallion sights
+    ctx.strokeStyle = trim; ctx.globalAlpha = 0.55; ctx.lineWidth = 1.2;
+    for (const [a, l] of segH) for (const y of [my, by]) for (const d of [-9, 9]) { ctx.beginPath(); ctx.moveTo(a - 30, y + d); ctx.lineTo(a + l + 30, y + d); ctx.stroke(); }
+    for (const [a, l] of segV) for (const x of [lx, rx]) for (const d of [-9, 9]) { ctx.beginPath(); ctx.moveTo(x + d, a - 30); ctx.lineTo(x + d, a + l + 30); ctx.stroke(); }
+    ctx.globalAlpha = 1;
   }
   const sight = (x, y) => {
     if (city.pat === "stars" || city.pat === "gold") { ctx.fillStyle = trim; star8(x, y, 7); }
+    else if (city.pat === "medal") {       // round medallion: metal ring, lacquered centre, pearl dots
+      const g = ctx.createRadialGradient(x - 3, y - 3, 1, x, y, 13);
+      g.addColorStop(0, shade(trim, 80)); g.addColorStop(0.6, trim); g.addColorStop(1, shade(trim, -90));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 12.5, 0, 7); ctx.fill();
+      ctx.fillStyle = shade(r2, -20); ctx.beginPath(); ctx.arc(x, y, 8.5, 0, 7); ctx.fill();
+      ctx.fillStyle = "#fff"; for (let k = 0; k < 8; k++) { ctx.beginPath(); ctx.arc(x + Math.cos(k * Math.PI / 4) * 6, y + Math.sin(k * Math.PI / 4) * 6, 1.1, 0, 7); ctx.fill(); }
+      ctx.fillStyle = trim; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 7); ctx.fill();
+    }
     else {
       const g = ctx.createRadialGradient(x - 1.5, y - 1.5, 0, x, y, 6);
       g.addColorStop(0, "#ffffff"); g.addColorStop(0.5, trim); g.addColorStop(1, shade(trim, -80));
@@ -2018,6 +2049,16 @@ function paintTable(city) {
   if (city.pat !== "ikat") {
     for (let i = 1; i < 8; i++) { if (i === 4) continue; sight(FX + FW * i / 8, my); sight(FX + FW * i / 8, by); }
     for (let i = 1; i < 4; i++) { sight(lx, FY + FH * i / 4); sight(rx, FY + FH * i / 4); }
+  }
+  // leather pocket cups with a metal edge, sitting in the rail around every pocket
+  if (!lucky) for (const p of POCKETS) {
+    const x = FX + p.x + p.dx, y = FY + p.y + p.dy, r = p.dr + 13;
+    const lg = ctx.createRadialGradient(x - 4, y - 4, 2, x, y, r);
+    lg.addColorStop(0, "#5a1a14"); lg.addColorStop(0.7, "#2a0806"); lg.addColorStop(1, "#120302");
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 8;
+    ctx.fillStyle = lg; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.restore();
+    ctx.strokeStyle = shade(trim, -30); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x, y, r - 1, 0, 7); ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r - 1, Math.PI * 1.05, Math.PI * 1.6); ctx.stroke();
   }
   // felt
   ctx.save(); ctx.translate(FX, FY);
@@ -2074,8 +2115,11 @@ function paintTable(city) {
   }
   // soft overhead lamp
   const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
-  lamp.addColorStop(0, "rgba(255,255,240,.10)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
+  lamp.addColorStop(0, "rgba(255,255,240,.16)"); lamp.addColorStop(0.6, "rgba(255,255,240,.04)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
   ctx.fillStyle = lamp; ctx.fillRect(0, 0, FW, FH);
+  const vig = ctx.createRadialGradient(FW / 2, FH / 2, FH * 0.45, FW / 2, FH / 2, FW * 0.62);
+  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.22)");
+  ctx.fillStyle = vig; ctx.fillRect(0, 0, FW, FH);
   ctx.restore();
 }
 
@@ -2257,6 +2301,20 @@ const CUE_DECO = {
     };
     if (f.t === "v") f.c.forEach((c, i) => band(x0 + len * i / n, x0 + len * (i + 1) / n + 0.5, -1.05, 1.05, c));
     else f.c.forEach((c, i) => band(x0, x1, -1.05 + 2.1 * i / n, -1.05 + 2.1 * (i + 1) / n, c));
+    // the grip: a dark linen wrap cross-stitched in the flag's colours, a lacquered sleeve and a butt cap in the main colour
+    const g0 = 0.78 * L, g1 = 0.93 * L, main = f.c[0] === "#ffffff" && f.c[1] ? f.c[1] : f.c[0], second = f.c.find(c => c !== main) || "#ffffff";
+    band(x1, L, -1.05, 1.05, "#16110d");
+    g.save(); g.beginPath(); g.rect(g0, -rad(L) - 1, g1 - g0, 2 * rad(L) + 2); g.clip();
+    const st = 5 * wm; g.lineWidth = 1.1 * wm;
+    for (let x = g0 - 30 * wm, i = 0; x < g1; x += st, i++) {
+      g.strokeStyle = i % 2 ? main : second; g.globalAlpha = 0.75;
+      g.beginPath(); g.moveTo(x, -rad(L)); g.lineTo(x + 2 * rad(L), rad(L)); g.stroke();
+      g.beginPath(); g.moveTo(x + 2 * rad(L), -rad(L)); g.lineTo(x, rad(L)); g.stroke();
+    }
+    g.restore(); g.globalAlpha = 1;
+    band(x1, g0, -1.05, 1.05, main); band(x1 + (g0 - x1) * 0.35, x1 + (g0 - x1) * 0.65, -1.05, 1.05, second);
+    band(g1, 0.985 * L, -1.05, 1.05, main);
+    for (const x of [x1, g0, g1]) metalBand(g, x - 0.004 * L, 0.008 * L, rad(x) + 1, "#ffd24d");
     const e = f.em; if (!e) return;
     const cx = x0 + len * 0.55, r = rad(cx);
     g.fillStyle = e[1];
@@ -2274,6 +2332,91 @@ const CUE_DECO = {
     }
     else if (e[0] === "t") { g.beginPath(); g.moveTo(x1, -rad(x1) * 1.05); g.lineTo(x1 - len * 0.16, 0); g.lineTo(x1, rad(x1) * 1.05); g.closePath(); g.fill(); }
     else if (e[0] === "o") { g.beginPath(); g.arc(x0 + len * 0.85, 0, r * 0.5, 0, 7); g.fill(); }
+  },
+  argyle(g, L, J, F, rad, cd, wm) {
+    const s = 9 * wm;
+    for (let x = J, i = 0; x < 0.95 * L; x += s, i++) {
+      const r = rad(x); g.fillStyle = i % 2 ? cd.dc : cd.dc2 || shade(cd.dc, -80); g.globalAlpha = 0.85;
+      g.beginPath(); g.moveTo(x, 0); g.lineTo(x + s / 2, -r); g.lineTo(x + s, 0); g.lineTo(x + s / 2, r); g.closePath(); g.fill();
+    }
+    g.globalAlpha = 1; g.strokeStyle = "#ffffff"; g.lineWidth = 0.6 * wm; g.setLineDash([2 * wm, 2 * wm]);
+    for (let x = J; x < 0.95 * L; x += s) { g.beginPath(); g.moveTo(x, -rad(x)); g.lineTo(x + s, rad(x)); g.moveTo(x, rad(x)); g.lineTo(x + s, -rad(x)); g.stroke(); }
+    g.setLineDash([]);
+  },
+  pinstripe(g, L, J, F, rad, cd, wm) {
+    g.lineWidth = 0.9 * wm;
+    for (let k = -3; k <= 3; k++) { g.strokeStyle = k % 2 ? cd.dc : "#ffffff"; g.globalAlpha = 0.8; g.beginPath(); g.moveTo(0.05 * L, k / 4 * rad(0.05 * L)); g.lineTo(0.97 * L, k / 4 * rad(0.97 * L)); g.stroke(); }
+    g.globalAlpha = 1;
+  },
+  lightning(g, L, J, F, rad, cd, wm) {
+    g.save(); g.shadowColor = cd.dc; g.shadowBlur = 5 * wm; g.strokeStyle = "#ffffff"; g.lineWidth = 1.3 * wm;
+    for (let k = 0; k < 3; k++) {
+      g.beginPath(); let y = 0; g.moveTo(0.06 * L + k * 0.3 * L, 0);
+      for (let x = 0.06 * L + k * 0.3 * L; x < 0.06 * L + (k + 1) * 0.3 * L; x += 6 * wm) { y = (hash(x + k) - 0.5) * 1.6 * rad(x); g.lineTo(x, y); }
+      g.stroke(); g.strokeStyle = cd.dc;
+    }
+    g.restore();
+  },
+  vines(g, L, J, F, rad, cd, wm) {
+    g.strokeStyle = cd.dc; g.lineWidth = 1.1 * wm; g.fillStyle = cd.dc;
+    for (let x = J; x < 0.94 * L; x += 14 * wm) {
+      const r = rad(x); g.beginPath(); g.moveTo(x, r * 0.8); g.bezierCurveTo(x + 4 * wm, -r, x + 10 * wm, r, x + 14 * wm, -r * 0.8); g.stroke();
+      g.beginPath(); g.ellipse(x + 7 * wm, 0, 2.2 * wm, 1.2 * wm, 0.6, 0, 7); g.fill();
+    }
+  },
+  checker(g, L, J, F, rad, cd, wm) {
+    const s = 5 * wm;
+    for (let x = J, i = 0; x < 0.95 * L; x += s, i++) for (let y = -rad(L), j = 0; y < rad(L); y += s, j++) if ((i + j) % 2) { g.fillStyle = cd.dc; g.globalAlpha = 0.8; g.fillRect(x, y, s, s); }
+    g.globalAlpha = 1;
+  },
+  zebra(g, L, J, F, rad, cd, wm) {
+    g.fillStyle = cd.dc;
+    for (let i = 0; i < 30; i++) {
+      const x = 0.08 * L + i / 30 * 0.88 * L, r = rad(x), w = (1.2 + hash(i) * 2.2) * wm;
+      g.beginPath(); g.moveTo(x, -r); g.bezierCurveTo(x + w * 2, -r * 0.3, x - w, r * 0.3, x + w, r); g.lineTo(x + w * 2.2, r); g.bezierCurveTo(x + w * 0.5, r * 0.3, x + w * 3, -r * 0.3, x + w * 1.4, -r); g.fill();
+    }
+  },
+  camo(g, L, J, F, rad, cd, wm) {
+    const cols = [cd.dc, cd.dc2 || shade(cd.dc, -60), shade(cd.dc, 50)];
+    for (let i = 0; i < 40; i++) { const x = J + hash(i) * (L - J), y = (hash(i + 50) - 0.5) * 2 * rad(x); g.fillStyle = cols[i % 3]; g.globalAlpha = 0.85; g.beginPath(); g.ellipse(x, y, (3 + hash(i + 9) * 6) * wm, (1.5 + hash(i + 4) * 2.5) * wm, hash(i + 2) * 3, 0, 7); g.fill(); }
+    g.globalAlpha = 1;
+  },
+  galaxy(g, L, J, F, rad, cd, wm) {
+    for (let i = 0; i < 7; i++) {
+      const x = 0.05 * L + hash(i + 30) * 0.9 * L, gg = g.createRadialGradient(x, 0, 0, x, 0, 0.1 * L);
+      gg.addColorStop(0, i % 2 ? cd.dc + "cc" : (cd.dc2 || "#ff4fd8") + "cc"); gg.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = gg; g.fillRect(x - 0.1 * L, -rad(L), 0.2 * L, 2 * rad(L));
+    }
+    g.fillStyle = "#ffffff"; for (let i = 0; i < 120; i++) { const x = 0.05 * L + hash(i + 7) * 0.92 * L; g.globalAlpha = 0.3 + hash(i) * 0.7; g.fillRect(x, (hash(i + 99) - 0.5) * 2 * rad(x), 1.1 * wm, 1.1 * wm); }
+    g.globalAlpha = 1;
+  },
+  circuit(g, L, J, F, rad, cd, wm) {
+    g.save(); g.strokeStyle = cd.dc; g.fillStyle = cd.dc; g.lineWidth = 0.9 * wm; g.shadowColor = cd.dc; g.shadowBlur = 3 * wm;
+    for (let i = 0; i < 22; i++) {
+      const x = J + hash(i) * (0.92 * L - J), y = (hash(i + 3) - 0.5) * 1.5 * rad(x), l = (6 + hash(i + 8) * 14) * wm;
+      g.beginPath(); g.moveTo(x, y); g.lineTo(x + l, y); g.lineTo(x + l + 3 * wm, y + (hash(i + 5) > 0.5 ? 3 : -3) * wm); g.stroke();
+      g.beginPath(); g.arc(x, y, 1.3 * wm, 0, 7); g.fill();
+    }
+    g.restore();
+  },
+  runes(g, L, J, F, rad, cd, wm) {
+    g.strokeStyle = cd.dc; g.lineWidth = 1 * wm;
+    for (let x = J + 4 * wm, i = 0; x < 0.93 * L; x += 9 * wm, i++) {
+      const r = rad(x) * 0.6; g.beginPath(); g.moveTo(x, -r); g.lineTo(x, r);
+      if (i % 3 === 0) { g.moveTo(x, -r); g.lineTo(x + 4 * wm, 0); } else if (i % 3 === 1) { g.moveTo(x - 3 * wm, -r * 0.3); g.lineTo(x + 3 * wm, r * 0.3); } else { g.moveTo(x, 0); g.lineTo(x + 3 * wm, -r); }
+      g.stroke();
+    }
+  },
+  fire(g, L, J, F, rad, cd, wm) {
+    const lg = g.createLinearGradient(0.35 * L, 0, 0.97 * L, 0); lg.addColorStop(0, "rgba(0,0,0,0)"); lg.addColorStop(0.4, cd.dc2 || "#ff3b00"); lg.addColorStop(1, cd.dc);
+    g.fillStyle = lg;
+    for (let i = 0; i < 12; i++) {
+      const y = (i / 11 - 0.5) * 2 * rad(L), len = (0.25 + hash(i + 1) * 0.35) * L;
+      g.beginPath(); g.moveTo(0.97 * L, y - 4 * wm); g.bezierCurveTo(0.97 * L - len * 0.5, y - 6 * wm, 0.97 * L - len * 0.8, y + 5 * wm, 0.97 * L - len, y); g.bezierCurveTo(0.97 * L - len * 0.6, y + 3 * wm, 0.97 * L - len * 0.3, y + 4 * wm, 0.97 * L, y + 4 * wm); g.fill();
+    }
+  },
+  combo(g, L, J, F, rad, cd, wm) {
+    for (const ly of cd.layers) CUE_DECO[ly.d](g, L, J, F, rad, {...cd, dc: ly.c, dc2: ly.c2}, wm);
   },
   legend(g, L, J, F, rad, cd, wm) {
     CUE_DECO.stars(g, L, J, F, rad, cd, wm);
@@ -2293,7 +2436,7 @@ function drawCueStick(g, L, cd, wm = 1) {
     g.quadraticCurveTo(L, rb, L - rb * 0.5, rb); g.lineTo(0, rt); g.closePath();
   };
   g.save();
-  if (cd.glow) { g.shadowColor = cd.glow; g.shadowBlur = 16 * wm; }
+  if (cd.glow) { g.shadowColor = cd.glow; g.shadowBlur = Math.min(16 * wm, 14); }
   outline(); g.fillStyle = cd.butt[1]; g.fill();
   g.shadowBlur = 0; g.shadowColor = "transparent";
   outline(); g.clip();
@@ -2316,16 +2459,16 @@ function drawCueStick(g, L, cd, wm = 1) {
   for (let s = 0; s < N; s++) {
     const x0 = L * s / N, r = rad(x0 + L / N / 2);
     const sg = g.createLinearGradient(0, -r, 0, r);
-    sg.addColorStop(0, "rgba(0,0,0,.6)"); sg.addColorStop(0.16, "rgba(255,255,255,.55)"); sg.addColorStop(0.3, "rgba(255,255,255,.12)");
-    sg.addColorStop(0.6, "rgba(0,0,0,0)"); sg.addColorStop(0.85, "rgba(0,0,0,.35)"); sg.addColorStop(1, "rgba(0,0,0,.7)");
+    sg.addColorStop(0, "rgba(0,0,0,.45)"); sg.addColorStop(0.16, "rgba(255,255,255,.6)"); sg.addColorStop(0.3, "rgba(255,255,255,.15)");
+    sg.addColorStop(0.6, "rgba(0,0,0,0)"); sg.addColorStop(0.85, "rgba(0,0,0,.25)"); sg.addColorStop(1, "rgba(0,0,0,.55)");
     g.fillStyle = sg; g.fillRect(x0, -rb, L / N + 1, 2 * rb);
   }
   g.restore();
 }
 function cueCanvas(cd) {
-  const c = document.createElement("canvas"); c.width = 900; c.height = 60; c.className = "cuecv";
-  const g = c.getContext("2d"); g.translate(890, 30); g.scale(-1, 1);
-  drawCueStick(g, 875, cd, 2.6);
+  const c = document.createElement("canvas"); c.width = 1100; c.height = 76; c.className = "cuecv";
+  const g = c.getContext("2d"); g.translate(1088, 38); g.scale(-1, 1);
+  drawCueStick(g, 1076, cd, 3.3);
   return c;
 }
 
@@ -2426,6 +2569,40 @@ function drawHUD(G) {
   drawBall({n: 0, p: [0, 0, 1], plain: true}, sb.x, sb.y, sb.r / R);
   ctx.fillStyle = "#e11d1d"; ctx.beginPath(); ctx.arc(sb.x + G.spin.x * sb.r * 0.7, sb.y + G.spin.y * sb.r * 0.7, 5, 0, 7); ctx.fill();
   ctx.restore();
+  if (G.type !== "watch") {   // cue button: pick or buy a cue without leaving the table
+    const b = CUE_BTN, bg = ctx.createLinearGradient(0, b.y - b.r, 0, b.y + b.r);
+    bg.addColorStop(0, "#5aa8ff"); bg.addColorStop(1, "#1a4fb0");
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 3;
+    ctx.fillStyle = bg; rr(b.x - b.r, b.y - b.r, 2 * b.r, 2 * b.r, 10); ctx.fill(); ctx.restore();
+    ctx.strokeStyle = "rgba(255,255,255,.45)"; ctx.lineWidth = 1.5; rr(b.x - b.r + 1, b.y - b.r + 1, 2 * b.r - 2, 2 * b.r - 2, 9); ctx.stroke();
+    for (const [ox, cd] of [[-5, CUES[1]], [5, cueDef(profile.cue)]]) {
+      ctx.save(); ctx.translate(b.x + 13 + ox * 0.7, b.y - 13 + ox * 0.7); ctx.rotate(Math.PI * 0.75); drawCueStick(ctx, 38, cd, 0.5); ctx.restore();
+    }
+  }
+}
+function cuePicker() {
+  const G = game; if (!G || G.moving) return;
+  const owned = profile.cues.map(cueDef), offer = CUES.filter(c => c.cat === "standard" && !profile.cues.includes(c.id)).slice(0, 4);
+  const row = (c, buy) => `<div class="card" data-pick="${c.id}" style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-bottom:8px;cursor:pointer;${c.id === profile.cue ? "border-color:#ffcf3d" : ""}">
+    <div style="text-align:left"><b>${esc(cueName(c))}</b> <small class="muted">⚡${c.st[0]} 🎯${c.st[1]} 🌀${c.st[2]} ⏱${c.st[3]}</small><div class="cvslot"></div></div>
+    ${buy ? `<button class="btn ${c.cur === "cash" ? "purple" : "green"}" style="padding:6px 12px">${c.cur === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} ${fmtS(c.price)}</button>`
+      : c.id === profile.cue ? `<span style="color:#ffcf3d">✓</span>` : `<button class="btn blue" style="padding:6px 12px">${T("TANLASH")}</button>`}</div>`;
+  openModal({icon: "🎱", title: T("Kiylar"), text: "", extra: `<div style="max-height:52vh;overflow:auto">${owned.map(c => row(c)).join("")}
+    ${offer.length ? `<div class="muted" style="margin:10px 0 6px;text-align:left">🛍 ${T("Do'kon")}</div>${offer.map(c => row(c, true)).join("")}` : ""}</div>`,
+    buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
+  document.querySelectorAll("#modal [data-pick]").forEach(el => {
+    const c = cueDef(el.dataset.pick); el.querySelector(".cvslot").appendChild(cueCanvas(c));
+    el.onclick = () => {
+      if (!profile.cues.includes(c.id)) {
+        const bal = c.cur === "cash" ? profile.cash : profile.coins;
+        if (bal < c.price) { toast("😕", T(c.cur === "cash" ? "Pul yetmaydi" : "Tanga yetmaydi"), cueName(c)); return; }
+        if (c.cur === "cash") profile.cash -= c.price; else profile.coins -= c.price;
+        profile.cues.push(c.id); Snd.coin(6); toast("🎱", cueName(c), T("Yangi kiy!"));
+      }
+      profile.cue = c.id; if (G.players[0] && !G.players[0].isAI) G.players[0].cue = c.id;
+      save(); updateNav(); $("modal").classList.remove("on"); Snd.click();
+    };
+  });
 }
 function drawLuckyHUD() {
   ctx.save(); ctx.textAlign = "center"; ctx.textBaseline = "middle";
@@ -2852,9 +3029,9 @@ function buildTour() {
     CUPS.forEach(c => {
       const locked = profile.level < c.lvl, city = CITIES[c.city];
       const el = document.createElement("div"); el.className = "city";
-      el.style.background = "linear-gradient(170deg,#ff8a5e,#b01e14 55%,#4a0a05)";
-      el.innerHTML = `<div class="ttl"><b style="font-size:44px">🏆</b><i>${c.name}</i></div>
-        <div class="prize"><div class="pl">Bosh sovrin</div><div class="pv"><span class="coin" style="width:28px;height:28px"></span>${fmt(c.prize)}</div></div>
+      el.style.background = `linear-gradient(170deg,${c.bg[0]},${c.bg[1]} 55%,${c.bg[2]})`;
+      el.innerHTML = `<div class="ttl"><b style="font-size:40px;display:block;margin-bottom:6px">${c.icon}</b><i>${T(c.name)}</i></div>
+        <div class="prize"><div class="pl">${T("Bosh sovrin")}</div><div class="pv"><span class="coin" style="width:28px;height:28px"></span>${fmt(c.prize)}</div></div>
         <div class="crow"><span>Kirish</span><span><span class="coin" style="width:14px;height:14px"></span> ${fmt(c.fee)}</span></div>
         <div class="crow"><span>Stol</span><span>${city.name}</span></div>
         <div class="crow"><span>Format</span><span>8 o'yinchi · 3 raund</span></div>
@@ -2867,7 +3044,7 @@ function buildTour() {
     return;
   }
   const c = CUPS.find(q => q.id === tour.cup);
-  $("tourTitle").textContent = c.name;
+  $("tourTitle").textContent = T(c.name);
   const P = tour.players, r = tour.round;
   const nm = i => `${avHTML(P[i].avatar, P[i].frame, 22)}${esc(P[i].name)}`;
   const row = (i, w) => `<div class="${i === 0 ? "me " : ""}${w === undefined ? "" : w === i ? "w" : "l"}">${nm(i)}</div>`;

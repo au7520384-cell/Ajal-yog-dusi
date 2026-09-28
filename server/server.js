@@ -40,9 +40,8 @@ const SKUS = {
 };
 const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
 const GIFT = {coins: 500};
-const CITY_PRIZE = {tash: 100, lon: 200, syd: 500, sam: 1000, lis: 2000, bux: 3000, tok: 5000, veg: 20000, xiv: 50000, jak: 100000,
-  tor: 200000, cai: 500000, dub: 1000000, sha: 2000000, par: 5000000, rom: 8000000, bkk: 10000000, seo: 20000000, mum: 30000000,
-  ber: 50000000, ist: 100000000, osa: 200000000};
+const CITY_PRIZE = {lon: 100, syd: 200, lis: 1000, tok: 5000, veg: 20000, jak: 100000, tor: 200000, cai: 500000, dub: 1000000,
+  sha: 2000000, par: 5000000, rom: 8000000, bkk: 10000000, seo: 20000000, mum: 30000000, ber: 50000000, ist: 100000000, osa: 200000000};
 
 // ---------------------------------------------------------------- storage
 const store = createStore({databaseUrl: process.env.DATABASE_URL, dataDir: DATA_DIR});
@@ -399,7 +398,7 @@ wss.on("connection", (ws, req) => {
     if (m.t === "queue") {
       leaveQueue(ws);
       if (ws.room) return;
-      const city = String(m.city || "tash").slice(0, 8);
+      const city = String(m.city || "lon").slice(0, 8);
       ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), code: u.code};
       const q = queues.get(city) || []; queues.set(city, q);
       const opp = q.find(o => o.uid !== ws.uid && o.readyState === 1);
