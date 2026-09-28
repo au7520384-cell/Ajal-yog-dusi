@@ -21,13 +21,14 @@ npm start            # http://localhost:8080
 ```
 Open `http://localhost:8080` and the game connects to the server automatically. Opening `index.html` as a plain file also works, but online features are then off.
 
-## Put it on the internet (for real players)
-Any Node.js host works (Render, Railway, Fly.io, a VPS):
-1. Create a new **Web Service** from this GitHub repo.
-2. Set the root directory to `server`, the build command to `npm install`, and the start command to `npm start`.
-3. Add a **persistent disk** mounted at `/data` and set `DATA_DIR=/data`. Otherwise accounts are lost on every redeploy.
-4. Set `APP_URL=https://your-domain`.
-5. Open the URL. Players, friends, the leaderboard and online matches now work.
+## Put it on the internet for free (Render + Neon)
+Player data is stored in Postgres when `DATABASE_URL` is set; without it the server uses a JSON file (local use).
+1. **Database:** create a free project at neon.tech and copy the connection string (`postgresql://…?sslmode=require`). The server creates its tables itself.
+2. **Server:** on render.com choose **New → Blueprint** and pick this repo. `render.yaml` sets everything up (free plan, root `server`).
+3. Fill in `DATABASE_URL` (the Neon string) and `APP_URL` (`https://bilyard8.onrender.com`). Leave the Stripe keys empty for now.
+4. The log should say `storage postgres`. Open the URL and play.
+
+The free Render plan sleeps after ~15 minutes without visitors; the first visitor then waits about 30 s. Data is safe in Neon either way. A paid instance removes the sleep.
 
 ### Real-money payments (Stripe)
 1. Create a Stripe account and get your **Secret key**.
@@ -39,7 +40,7 @@ Prices live in `SKUS` in `server/server.js` (the server is the source of truth).
 > ⚠️ **App stores:** if you publish to Google Play or the App Store, their rules require their own in-app billing for digital goods (Google Play Billing / Apple IAP), not Stripe. Stripe is fine for the web version.
 
 ## Before a large launch
-- The server stores data in a JSON file, which is fine for thousands of players. Move to Postgres + Redis for more.
+- The server keeps all players in memory and saves changed rows to Postgres every 2 s — fine for tens of thousands of players on one instance.
 - Coins earned in matches are currently counted by the player's device. For a competitive economy, make the server the authority for match results and balances.
 - Add a Privacy Policy and Terms of Service page (required by the stores and by Stripe).
 

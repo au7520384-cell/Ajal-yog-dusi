@@ -7,14 +7,14 @@
  *  - online 1v1 matchmaking over WebSocket (shots are relayed between the two players)
  *  - real-money purchases through Stripe Checkout (enabled when STRIPE_SECRET_KEY is set)
  *
- * Storage is a JSON file (good for a first launch / a few thousand players).
- * Move to Postgres/Redis before large scale — see README.
+ * Storage: Postgres when DATABASE_URL is set (e.g. a free Neon database), otherwise a JSON file.
  */
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const {WebSocketServer} = require("ws");
+const createStore = require("./storage");
 
 const PORT = +process.env.PORT || 8080;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
@@ -43,21 +43,26 @@ const GIFT = {coins: 500};
 const CITY_PRIZE = {tash: 100, sam: 400, bux: 2000, xiv: 10000, ist: 40000, dub: 200000, par: 1000000, tok: 5000000, nyc: 20000000, veg: 100000000};
 
 // ---------------------------------------------------------------- storage
-fs.mkdirSync(DATA_DIR, {recursive: true});
-const DB_FILE = path.join(DATA_DIR, "db.json");
+const store = createStore({databaseUrl: process.env.DATABASE_URL, dataDir: DATA_DIR});
 let db = {users: {}, codes: {}, purchases: {}};
-try { db = Object.assign(db, JSON.parse(fs.readFileSync(DB_FILE, "utf8"))); } catch (e) { /* fresh start */ }
-let dirty = false;
+let dirty = false, saving = null;
 const markDirty = () => { dirty = true; };
 function flush() {
-  if (!dirty) return;
+  if (!dirty || saving) return saving || Promise.resolve();
   dirty = false;
-  const tmp = DB_FILE + ".tmp";
-  fs.writeFileSync(tmp, JSON.stringify(db));
-  fs.renameSync(tmp, DB_FILE);
+  saving = store.save(db)
+    .catch(e => { dirty = true; console.error("save failed:", e.message); })
+    .finally(() => { saving = null; });
+  return saving;
 }
 setInterval(flush, 2000);
-for (const sig of ["SIGINT", "SIGTERM"]) process.on(sig, () => { flush(); process.exit(0); });
+for (const sig of ["SIGINT", "SIGTERM"]) process.on(sig, async () => {
+  dirty = true;
+  if (saving) await saving;
+  await flush();
+  await store.close().catch(() => {});
+  process.exit(0);
+});
 
 const today = () => new Date().toISOString().slice(0, 10);
 const cleanName = s => String(s || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 16) || "Player";
@@ -244,6 +249,9 @@ async function stripeWebhook(req, res) {
     if (u && sku && !db.purchases[s.id]) {
       db.purchases[s.id] = {user: u.id, sku: s.metadata.sku, at: Date.now(), amount: s.amount_total};
       grant(u, {cash: sku.cash || 0, coins: sku.coins || 0, kind: "purchase", from: sku.name});
+      if (saving) await saving;
+      await flush();   // money: write it down before telling Stripe we got it
+      if (dirty) return send(res, 500, {error: "save failed"});   // Stripe retries the webhook
     }
   }
   send(res, 200, {received: true});
@@ -351,4 +359,7 @@ setInterval(() => {
   for (const ws of wss.clients) { if (!ws.alive) { ws.terminate(); continue; } ws.alive = false; ws.ping(); }
 }, 30000);
 
-server.listen(PORT, () => console.log(`Bilyard 8 server on :${PORT} (payments ${STRIPE_KEY ? "ON" : "off"})`));
+store.load().then(loaded => {
+  if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}}, loaded);
+  server.listen(PORT, () => console.log(`Bilyard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${STRIPE_KEY ? "ON" : "off"})`));
+}).catch(e => { console.error("Could not load the database:", e.message); process.exit(1); });
