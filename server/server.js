@@ -400,7 +400,7 @@ wss.on("connection", (ws, req) => {
       leaveQueue(ws);
       if (ws.room) return;
       const city = String(m.city || "tash").slice(0, 8);
-      ws.profile = {name: u.name, avatar: u.avatar, level: u.level, cue: String(m.cue || "start").slice(0, 16), code: u.code};
+      ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), code: u.code};
       const q = queues.get(city) || []; queues.set(city, q);
       const opp = q.find(o => o.uid !== ws.uid && o.readyState === 1);
       if (!opp) { q.push(ws); return wsSend(ws, {t: "queued", city, waiting: q.length}); }

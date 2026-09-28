@@ -174,6 +174,12 @@
   .tab{flex:1;padding:10px;border-radius:10px;border:0;background:#141c30;color:#a7b2cc;cursor:pointer;font-family:var(--fh);font-size:18px}
   .tab.on{background:linear-gradient(#3b8cff,#1553b3);color:#fff}
 
+  .avx{display:inline-block;border-radius:10px;overflow:hidden;flex:none;vertical-align:middle;background:#0003}
+  .avx img{width:100%;height:100%;display:block}
+  .avgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+  .avcard{background:linear-gradient(#2d3a5e,#1b2440);border:2px solid #3e4f7c;border-radius:12px;padding:8px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+  .avcard.sel{border-color:var(--gold);box-shadow:0 0 16px #ffcf3d55}
+  .avcard .btn{padding:5px 8px;font-size:14px;width:100%}
   .pack{overflow:hidden}
   .ptag{position:absolute;top:10px;right:-30px;transform:rotate(35deg);background:#ff3b30;color:#fff;font-size:10px;padding:2px 34px;font-weight:900;text-transform:uppercase}
   .frow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:#1a2340;border:1px solid #2c3a60;border-radius:12px;padding:8px 10px;margin-bottom:6px}
@@ -200,8 +206,23 @@
   .dayn{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#0c1222;border:2px solid #6ff08a;border-radius:10px;font-size:11px;padding:1px 8px;white-space:nowrap}
 
   /* leaderboard */
-  .lb{width:100%;max-width:720px}
-  .lbr{display:grid;grid-template-columns:44px 44px 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;background:#1a2340;margin-bottom:6px;border:1px solid #2c3a60}
+  .flag{vertical-align:middle;border-radius:3px;box-shadow:0 0 0 1px #0006}
+  .lbtabs{flex:1;margin:0}
+  .lbtabs .tab{font-size:16px;padding:8px 6px;white-space:nowrap}
+  .lbhead{width:100%;max-width:980px;display:flex;align-items:center;gap:14px;background:linear-gradient(#2d3a5e,#1b2440);border:2px solid #3e4f7c;border-radius:14px;padding:10px 16px;margin-bottom:6px;flex-wrap:wrap}
+  .lbhead .ttl{font-family:var(--fh);font-size:30px;color:var(--gold);line-height:1}
+  .lbhead .ends{font-size:13px;color:#cfd8ee}
+  .lbhead .pz{margin-left:auto;font-size:12px;line-height:1.3;color:#cfd8ee}
+  .lbcols{width:100%;max-width:980px;display:grid;grid-template-columns:70px 1fr auto;padding:0 18px;font-size:12px;color:#8a96b4;text-transform:uppercase;letter-spacing:1px}
+  .lb{width:100%;max-width:980px}
+  .lbr .nm{display:flex;align-items:center;gap:8px;min-width:0}
+  .lbr .nm b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lbr small.sub{display:block;color:#ffcf3d;font-size:12px}
+  .lvstar{position:relative;display:inline-grid;place-items:center;width:30px;height:30px;font-family:var(--fh);font-size:12px;color:#fff;flex:none;
+    clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+  .lbr.up{box-shadow:inset 4px 0 0 #3fe052}
+  .lbr.down{box-shadow:inset 4px 0 0 #ff4b3e}
+  .lbr{display:grid;grid-template-columns:64px 52px 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;background:#1a2340;margin-bottom:6px;border:1px solid #2c3a60}
   .lbr.me{background:linear-gradient(90deg,#3b2f08,#1a2340);border-color:var(--gold)}
   .lbr .rk{font-family:var(--fh);font-size:22px;text-align:center}
   .lbr .av{width:40px;height:40px;border-radius:9px;display:grid;place-items:center;font-size:24px}
@@ -312,7 +333,7 @@
 <!-- ============ TOP NAV ============ -->
 <div id="nav">
   <div class="pchip" id="pchip">
-    <div class="pav" id="navAv"><span id="navAvE">😎</span><div class="star" id="navLvl">1</div></div>
+    <div class="pav" id="navAv"><img id="navAvE" alt="" style="width:100%;height:100%;border-radius:9px"><div class="star" id="navLvl">1</div></div>
     <div class="pinfo"><b id="navName">Siz</b><div class="xpbar"><i id="navXp"></i></div></div>
   </div>
   <div class="navbtns">
@@ -360,7 +381,7 @@
 <div class="screen" id="shop">
   <div class="head"><button class="back" data-go="home">‹</button><h2>Do'kon</h2></div>
   <div class="panel">
-    <div class="tabs"><button class="tab on" data-tab="cues">🎱 Kiylar</button><button class="tab" data-tab="bank">💱 Almashtirish</button></div>
+    <div class="tabs"><button class="tab on" data-tab="cues">🎱 Kiylar</button><button class="tab" data-tab="avatars">🙂 Avatarlar</button><button class="tab" data-tab="frames">🖼 Ramkalar</button><button class="tab" data-tab="bank">💱 Almashtirish</button></div>
     <div id="shopBody"></div>
   </div>
 </div>
@@ -377,8 +398,14 @@
 
 <!-- ============ LEADERBOARD ============ -->
 <div class="screen" id="leader">
-  <div class="head"><button class="back" data-go="home">‹</button><h2>Haftalik reyting</h2>
-    <button class="btn orange y8ad" id="y8Lb" style="margin-left:auto;display:none;padding:8px 14px;font-size:16px">🏆 Y8</button></div>
+  <div class="head"><button class="back" data-go="home">‹</button>
+    <div class="tabs lbtabs">
+      <button class="tab" data-lb="league">⭐ Ligam</button><button class="tab" data-lb="friends">👥 Do'stlar</button>
+      <button class="tab" data-lb="country"><span id="lbFlag">🏳️</span> Davlat</button><button class="tab on" data-lb="world">🌍 Dunyo</button>
+    </div>
+    <button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 14px;font-size:16px">🏆 Y8</button></div>
+  <div class="lbhead" id="lbInfo"></div>
+  <div class="lbcols"><span>#</span><span>Ism</span><span>Haftalik yutuq</span></div>
   <div class="lb" id="lbList"></div>
 </div>
 
@@ -485,21 +512,33 @@ const groupOf = n => n === 0 ? "cue" : n < 8 ? "solid" : n === 8 ? "eight" : "st
 
 // ---------------------------------------------------------------- content
 const CITIES = [
-  {id: "tash", name: "Toshkent",  sub: "Choyxona",     fee: 50,     prize: 100,    lvl: 1,  felt: ["#27e06a", "#0a8a36"], rail: ["#9a6634", "#5a3414"], trim: "#f3cf85", pat: "classic", skill: 0.018,  col: ["#ffe14d", "#ff8a00"], online: 4146},
-  {id: "sam",  name: "Samarqand", sub: "Registon",     fee: 200,    prize: 400,    lvl: 2,  felt: ["#36a8ff", "#0f4f9a"], rail: ["#4a2c16", "#231208"], trim: "#ffd24d", pat: "stars",   skill: 0.012,  col: ["#8fe3ff", "#1f7cf0"], online: 3120},
-  {id: "bux",  name: "Buxoro",    sub: "Saroyi",       fee: 1000,   prize: 2000,   lvl: 4,  felt: ["#ec4b52", "#7d1420"], rail: ["#3a2210", "#160b04"], trim: "#ffcf5a", pat: "ikat",    skill: 0.008,  col: ["#ffe0c0", "#ff4b3e"], online: 2034},
-  {id: "xiv",  name: "Xiva",      sub: "Ichan-Qal'a",  fee: 5000,   prize: 10000,  lvl: 6,  felt: ["#22d6c4", "#086b63"], rail: ["#7a4c26", "#3a220f"], trim: "#9ff3ff", pat: "stars",   skill: 0.005,  col: ["#d0fffa", "#12b3a6"], online: 1288},
-  {id: "ist",  name: "Istanbul",  sub: "Bosfor",       fee: 20000,  prize: 40000,  lvl: 9,  felt: ["#a86bff", "#3f1d86"], rail: ["#24243a", "#0a0a14"], trim: "#e2c2ff", pat: "ikat",    skill: 0.0035, col: ["#f5e8ff", "#a45cff"], online: 812},
-  {id: "dub",  name: "Dubay",     sub: "Oltin Minora", fee: 100000, prize: 200000, lvl: 13, felt: ["#d9a63a", "#7a5310"], rail: ["#2a2a2a", "#0c0c0c"], trim: "#fff1b8", pat: "gold",    skill: 0.002,  col: ["#fff6c8", "#ffb300"], online: 390},
-  {id: "par",  name: "Parij",     sub: "Eyfel Klubi",  fee: 500000,   prize: 1000000,   lvl: 17, felt: ["#4b6cff", "#1b2a7a"], rail: ["#e8e2d6", "#9a9282"], trim: "#1b2a7a", pat: "classic", skill: 0.0018, col: ["#ffffff", "#8fa6ff"], online: 244},
-  {id: "tok",  name: "Tokio",     sub: "Neon Arena",   fee: 2500000,  prize: 5000000,   lvl: 22, felt: ["#ff3fa4", "#6a0a44"], rail: ["#141420", "#050508"], trim: "#3ff7ff", pat: "ikat",    skill: 0.0015, col: ["#ffd6f0", "#ff3fa4"], online: 131},
-  {id: "nyc",  name: "Nyu-York",  sub: "Manxetten",    fee: 10000000, prize: 20000000,  lvl: 28, felt: ["#1fb86a", "#064a26"], rail: ["#3a3a3a", "#101010"], trim: "#ffd24d", pat: "stars",   skill: 0.0012, col: ["#e0ffe9", "#1fb86a"], online: 76},
-  {id: "veg",  name: "Las-Vegas", sub: "Brilliant Zal",fee: 50000000, prize: 100000000, lvl: 35, felt: ["#2b2b3a", "#0a0a12"], rail: ["#d9b34a", "#6a4e10"], trim: "#ffffff", pat: "gold",    skill: 0.001,  col: ["#fff6c8", "#ffcf3d"], online: 38},
+  {id: "tash", name: "Toshkent",  sub: "Choyxona",        fee: 50,        prize: 100,       lvl: 1,  felt: ["#27e06a", "#0a8a36"], rail: ["#9a6634", "#5a3414"], trim: "#f3cf85", pat: "classic", skill: 0.018,  col: ["#ffe14d", "#ff8a00"]},
+  {id: "lon",  name: "London",    sub: "Big Ben Club",    fee: 100,       prize: 200,       lvl: 2,  felt: ["#2f7cf0", "#0d3a8a"], rail: ["#6b2a1a", "#2e0f08"], trim: "#ffffff", pat: "classic", skill: 0.017,  col: ["#ffffff", "#e0352b"]},
+  {id: "syd",  name: "Sidney",    sub: "Harbour Lounge",  fee: 250,       prize: 500,       lvl: 3,  felt: ["#1ed4a0", "#067a5a"], rail: ["#d9a066", "#8a5a2a"], trim: "#ffffff", pat: "classic", skill: 0.016,  col: ["#fffbd0", "#1ed4a0"]},
+  {id: "sam",  name: "Samarqand", sub: "Registon",        fee: 500,       prize: 1000,      lvl: 4,  felt: ["#36a8ff", "#0f4f9a"], rail: ["#4a2c16", "#231208"], trim: "#ffd24d", pat: "stars",   skill: 0.015,  col: ["#8fe3ff", "#1f7cf0"]},
+  {id: "lis",  name: "Lissabon",  sub: "Alfama Bar",      fee: 1000,      prize: 2000,      lvl: 5,  felt: ["#3e6df0", "#15307a"], rail: ["#f0e0c0", "#b09a70"], trim: "#1f4fd1", pat: "ikat",    skill: 0.014,  col: ["#ffffff", "#3e6df0"]},
+  {id: "bux",  name: "Buxoro",    sub: "Saroyi",          fee: 1500,      prize: 3000,      lvl: 6,  felt: ["#ec4b52", "#7d1420"], rail: ["#3a2210", "#160b04"], trim: "#ffcf5a", pat: "ikat",    skill: 0.013,  col: ["#ffe0c0", "#ff4b3e"]},
+  {id: "tok",  name: "Tokio",     sub: "Neon Dojo",       fee: 2500,      prize: 5000,      lvl: 7,  felt: ["#ff3fa4", "#6a0a44"], rail: ["#141420", "#050508"], trim: "#3ff7ff", pat: "ikat",    skill: 0.012,  col: ["#ffd6f0", "#ff3fa4"]},
+  {id: "veg",  name: "Las-Vegas", sub: "Jackpot Hall",    fee: 10000,     prize: 20000,     lvl: 8,  felt: ["#2b2b3a", "#0a0a12"], rail: ["#d9b34a", "#6a4e10"], trim: "#ffffff", pat: "gold",    skill: 0.011,  col: ["#fff6c8", "#ffcf3d"]},
+  {id: "xiv",  name: "Xiva",      sub: "Ichan-Qal'a",     fee: 25000,     prize: 50000,     lvl: 9,  felt: ["#22d6c4", "#086b63"], rail: ["#7a4c26", "#3a220f"], trim: "#9ff3ff", pat: "stars",   skill: 0.0095, col: ["#d0fffa", "#12b3a6"]},
+  {id: "jak",  name: "Jakarta",   sub: "Vulqon Arena",    fee: 50000,     prize: 100000,    lvl: 10, felt: ["#ff7a1a", "#8a2e05"], rail: ["#2a1a10", "#0a0604"], trim: "#ffd24d", pat: "ikat",    skill: 0.0085, col: ["#ffe6a0", "#ff5a1a"]},
+  {id: "tor",  name: "Toronto",   sub: "Maple Club",      fee: 100000,    prize: 200000,    lvl: 12, felt: ["#d93a3a", "#6a0e0e"], rail: ["#e8e8e8", "#9a9a9a"], trim: "#d93a3a", pat: "stars",   skill: 0.0075, col: ["#ffffff", "#ff3b30"]},
+  {id: "cai",  name: "Qohira",    sub: "Piramida Zal",    fee: 250000,    prize: 500000,    lvl: 14, felt: ["#e0b040", "#7a5510"], rail: ["#3a2a18", "#140c04"], trim: "#40c8ff", pat: "gold",    skill: 0.0065, col: ["#fff2c0", "#e0b040"]},
+  {id: "dub",  name: "Dubay",     sub: "Oltin Minora",    fee: 500000,    prize: 1000000,   lvl: 16, felt: ["#d9a63a", "#7a5310"], rail: ["#2a2a2a", "#0c0c0c"], trim: "#fff1b8", pat: "gold",    skill: 0.0055, col: ["#fff6c8", "#ffb300"]},
+  {id: "sha",  name: "Shanxay",   sub: "Sharq Marvaridi", fee: 1000000,   prize: 2000000,   lvl: 18, felt: ["#c8102e", "#5a0412"], rail: ["#1a1a1a", "#050505"], trim: "#ffd24d", pat: "stars",   skill: 0.0048, col: ["#fff0a0", "#ffcf3d"]},
+  {id: "par",  name: "Parij",     sub: "Eyfel Klubi",     fee: 2500000,   prize: 5000000,   lvl: 20, felt: ["#4b6cff", "#1b2a7a"], rail: ["#e8e2d6", "#9a9282"], trim: "#1b2a7a", pat: "classic", skill: 0.0042, col: ["#ffffff", "#8fa6ff"]},
+  {id: "rom",  name: "Rim",       sub: "Kolizey",         fee: 4000000,   prize: 8000000,   lvl: 22, felt: ["#b8742a", "#5a320a"], rail: ["#e6dccb", "#9a8e78"], trim: "#7a1a1a", pat: "classic", skill: 0.0036, col: ["#fff0d8", "#c87a2a"]},
+  {id: "bkk",  name: "Bangkok",   sub: "Oltin Ibodatxona",fee: 5000000,   prize: 10000000,  lvl: 24, felt: ["#1fb86a", "#064a26"], rail: ["#8a1a1a", "#3a0606"], trim: "#ffd24d", pat: "ikat",    skill: 0.0031, col: ["#fff6c8", "#1fb86a"]},
+  {id: "seo",  name: "Seul",      sub: "Neon Minora",     fee: 10000000,  prize: 20000000,  lvl: 27, felt: ["#7a5cff", "#2a1a8a"], rail: ["#101018", "#030306"], trim: "#ff4fa0", pat: "ikat",    skill: 0.0026, col: ["#ffd6f0", "#7a5cff"]},
+  {id: "mum",  name: "Mumbay",    sub: "Maharaja Saroyi", fee: 15000000,  prize: 30000000,  lvl: 30, felt: ["#ff8a1f", "#8a3a05"], rail: ["#5a0a2a", "#20020e"], trim: "#ffd24d", pat: "gold",    skill: 0.0022, col: ["#ffe6a0", "#ff8a1f"]},
+  {id: "ber",  name: "Berlin",    sub: "Platz Club",      fee: 25000000,  prize: 50000000,  lvl: 33, felt: ["#3a3a44", "#101014"], rail: ["#8a8a92", "#3a3a40"], trim: "#ffcf3d", pat: "classic", skill: 0.0018, col: ["#ffffff", "#ffcf3d"]},
+  {id: "ist",  name: "Istanbul",  sub: "Bosfor Saroyi",   fee: 50000000,  prize: 100000000, lvl: 36, felt: ["#a86bff", "#3f1d86"], rail: ["#24243a", "#0a0a14"], trim: "#e2c2ff", pat: "ikat",    skill: 0.0014, col: ["#f5e8ff", "#a45cff"]},
+  {id: "osa",  name: "Osaka",     sub: "Samurai Qasri",   fee: 100000000, prize: 200000000, lvl: 40, felt: ["#1f3aa8", "#081244"], rail: ["#101010", "#000000"], trim: "#ffd24d", pat: "gold",    skill: 0.001,  col: ["#fff6c8", "#ffcf3d"]},
 ];
 const CUPS = [
   {id: "c1", name: "Toshkent Kubogi",  fee: 300,   prize: 1500,  lvl: 1, city: 0, skill: 0.016},
-  {id: "c2", name: "Samarqand Kubogi", fee: 1500,  prize: 7500,  lvl: 3, city: 1, skill: 0.010},
-  {id: "c3", name: "Oltin Kubok",      fee: 10000, prize: 50000, lvl: 6, city: 3, skill: 0.005},
+  {id: "c2", name: "Samarqand Kubogi", fee: 1500,  prize: 7500,  lvl: 3, city: 3, skill: 0.010},
+  {id: "c3", name: "Oltin Kubok",      fee: 10000, prize: 50000, lvl: 6, city: 8, skill: 0.005},
 ];
 const CUES = [
   {id: "start",     name: "Boshlang'ich",    price: 0,     cur: "coin", st: [3, 3, 3, 3],     shaft: ["#f5e2b8", "#d9b074"], butt: ["#7a4318", "#2b1405"], metal: "#2a2a2a", deco: "plain"},
@@ -532,6 +571,176 @@ const SKUS = {
 const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
 const STAT_NAMES = ["Kuch", "Nishon", "Aylanish", "Vaqt"];
 const AVATARS = ["😎", "🦁", "🐯", "🦅", "🐺", "🐉", "🧔", "👩", "🤠", "👑", "🦊", "🐼", "🥷", "👨‍🚀", "🧕", "🤖"];
+// ---------------------------------------------------------------- avatars: 16 emoji + 84 drawn characters (generated from a seed)
+const AV_N = 100;
+const AV_NAMES = ["Leo", "Mia", "Kai", "Zara", "Omar", "Yuki", "Ivan", "Lara", "Diego", "Aisha", "Chen", "Nora", "Raj", "Elif", "Tariq", "Sofia", "Max", "Amir",
+  "Hana", "Luca", "Maya", "Jin", "Rosa", "Arjun", "Nadia", "Felix", "Leila", "Mateo", "Suki", "Bruno", "Amara", "Kenji", "Ines", "Viktor", "Selin", "Dante",
+  "Priya", "Oskar", "Yara", "Hugo", "Mei", "Samir", "Freya", "Tomas", "Ayla", "Rico", "Nia", "Boris", "Lina", "Axel", "Zoe", "Emir", "Kira", "Paolo",
+  "Dilnoza", "Jasur", "Malika", "Temur", "Sevara", "Bobur", "Kamila", "Sardor", "Madina", "Rustam", "Laylo", "Otabek", "Gulnoza", "Aziz", "Nigora", "Farrux",
+  "Captain", "Doc", "Ace", "Duke", "Ninja", "Baron", "Queen", "King", "Shadow", "Viper", "Blaze", "Storm", "Ghost", "Titan"];
+// ---------------------------------------------------------------- countries & flags
+const COUNTRY_CODES = ("AF AL DZ AD AO AG AR AM AU AT AZ BS BH BD BB BY BE BZ BJ BT BO BA BW BR BN BG BF BI KH CM CA CV CF TD CL CN CO KM CG CD CR CI HR CU CY CZ " +
+  "DK DJ DM DO EC EG SV GQ ER EE SZ ET FJ FI FR GA GM GE DE GH GR GD GT GN GW GY HT HN HK HU IS IN ID IR IQ IE IL IT JM JP JO KZ KE KI KW KG LA LV LB LS LR LY LI " +
+  "LT LU MO MG MW MY MV ML MT MH MR MU MX FM MD MC MN ME MA MZ MM NA NR NP NL NZ NI NE NG KP MK NO OM PK PW PS PA PG PY PE PH PL PT PR QA RO RU RW KN LC VC WS " +
+  "SM ST SA SN RS SC SL SG SK SI SB SO ZA KR SS ES LK SD SR SE CH SY TW TJ TZ TH TL TG TO TT TN TR TM TV UG UA AE GB US UY UZ VU VA VE VN YE ZM ZW").split(" ");
+// time zone → country, used to guess where the player is (no location permission needed)
+const TZ_CC = Object.fromEntries(("Asia/Tashkent UZ|Asia/Samarkand UZ|Europe/Moscow RU|Europe/Samara RU|Asia/Yekaterinburg RU|Asia/Novosibirsk RU|Asia/Krasnoyarsk RU|" +
+  "Asia/Irkutsk RU|Asia/Vladivostok RU|Europe/Kaliningrad RU|Asia/Almaty KZ|Asia/Qostanay KZ|Asia/Aqtobe KZ|Asia/Aqtau KZ|Asia/Oral KZ|Asia/Bishkek KG|Asia/Dushanbe TJ|" +
+  "Asia/Ashgabat TM|Asia/Baku AZ|Asia/Tbilisi GE|Asia/Yerevan AM|Europe/Kiev UA|Europe/Kyiv UA|Europe/Minsk BY|Europe/Istanbul TR|Asia/Kabul AF|Asia/Tehran IR|" +
+  "Asia/Karachi PK|Asia/Kolkata IN|Asia/Calcutta IN|Asia/Dhaka BD|Asia/Kathmandu NP|Asia/Colombo LK|Asia/Dubai AE|Asia/Riyadh SA|Asia/Qatar QA|Asia/Kuwait KW|" +
+  "Asia/Bahrain BH|Asia/Muscat OM|Asia/Baghdad IQ|Asia/Amman JO|Asia/Beirut LB|Asia/Damascus SY|Asia/Jerusalem IL|Asia/Gaza PS|Asia/Hebron PS|Asia/Aden YE|" +
+  "Africa/Cairo EG|Africa/Casablanca MA|Africa/Algiers DZ|Africa/Tunis TN|Africa/Tripoli LY|Africa/Khartoum SD|Africa/Lagos NG|Africa/Accra GH|Africa/Nairobi KE|" +
+  "Africa/Addis_Ababa ET|Africa/Johannesburg ZA|Africa/Dar_es_Salaam TZ|Africa/Kampala UG|Africa/Dakar SN|Africa/Abidjan CI|Africa/Kinshasa CD|Africa/Luanda AO|" +
+  "Asia/Shanghai CN|Asia/Urumqi CN|Asia/Hong_Kong HK|Asia/Taipei TW|Asia/Tokyo JP|Asia/Seoul KR|Asia/Pyongyang KP|Asia/Ulaanbaatar MN|Asia/Bangkok TH|" +
+  "Asia/Ho_Chi_Minh VN|Asia/Saigon VN|Asia/Jakarta ID|Asia/Makassar ID|Asia/Jayapura ID|Asia/Kuala_Lumpur MY|Asia/Singapore SG|Asia/Manila PH|Asia/Yangon MM|" +
+  "Asia/Phnom_Penh KH|Asia/Vientiane LA|Australia/Sydney AU|Australia/Melbourne AU|Australia/Brisbane AU|Australia/Perth AU|Australia/Adelaide AU|Pacific/Auckland NZ|" +
+  "Europe/London GB|Europe/Dublin IE|Europe/Lisbon PT|Europe/Madrid ES|Europe/Paris FR|Europe/Brussels BE|Europe/Amsterdam NL|Europe/Luxembourg LU|Europe/Berlin DE|" +
+  "Europe/Zurich CH|Europe/Vienna AT|Europe/Rome IT|Europe/Malta MT|Europe/Prague CZ|Europe/Bratislava SK|Europe/Warsaw PL|Europe/Budapest HU|Europe/Ljubljana SI|" +
+  "Europe/Zagreb HR|Europe/Belgrade RS|Europe/Sarajevo BA|Europe/Skopje MK|Europe/Tirane AL|Europe/Athens GR|Europe/Sofia BG|Europe/Bucharest RO|Europe/Chisinau MD|" +
+  "Europe/Vilnius LT|Europe/Riga LV|Europe/Tallinn EE|Europe/Helsinki FI|Europe/Stockholm SE|Europe/Oslo NO|Europe/Copenhagen DK|Atlantic/Reykjavik IS|" +
+  "America/New_York US|America/Chicago US|America/Denver US|America/Phoenix US|America/Los_Angeles US|America/Anchorage US|Pacific/Honolulu US|America/Detroit US|" +
+  "America/Toronto CA|America/Vancouver CA|America/Edmonton CA|America/Winnipeg CA|America/Halifax CA|America/Mexico_City MX|America/Monterrey MX|America/Tijuana MX|" +
+  "America/Cancun MX|America/Guatemala GT|America/El_Salvador SV|America/Tegucigalpa HN|America/Managua NI|America/Costa_Rica CR|America/Panama PA|America/Havana CU|" +
+  "America/Santo_Domingo DO|America/Puerto_Rico PR|America/Jamaica JM|America/Bogota CO|America/Caracas VE|America/Lima PE|America/Guayaquil EC|America/La_Paz BO|" +
+  "America/Santiago CL|America/Argentina/Buenos_Aires AR|America/Buenos_Aires AR|America/Montevideo UY|America/Asuncion PY|America/Sao_Paulo BR|America/Manaus BR|" +
+  "America/Fortaleza BR|America/Recife BR|America/Bahia BR").split("|").map(s => s.split(" ")));
+function detectCountry() {
+  try { const tz = Intl.DateTimeFormat().resolvedOptions().timeZone; if (TZ_CC[tz]) return TZ_CC[tz]; } catch (e) {}
+  for (const l of navigator.languages || [navigator.language || ""]) { const m = /[-_]([A-Za-z]{2})$/.exec(l); if (m) return m[1].toUpperCase(); }
+  return "";
+}
+function countryName(cc) {
+  try { return new Intl.DisplayNames([LANG, "en"], {type: "region"}).of(cc); } catch (e) { return cc; }
+}
+const flagEmoji = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 0x1F1A5 + c.charCodeAt(0))) : "🏳️";
+// flag picture (emoji flags don't show on Windows); falls back to the emoji if the image can't load
+const flagHTML = (cc, h = 18) => cc ? `<img class="flag" src="https://flagcdn.com/h40/${cc.toLowerCase()}.png" alt="${flagEmoji(cc)}" style="height:${h}px" onerror="this.replaceWith(document.createTextNode(this.alt))">` : "";
+function countryOptions() {
+  const list = COUNTRY_CODES.map(cc => [cc, countryName(cc)]).sort((a, b) => a[1].localeCompare(b[1]));
+  return `<option value="">🌍 —</option>` + list.map(([cc, n]) => `<option value="${cc}" ${cc === profile.country ? "selected" : ""}>${flagEmoji(cc)} ${esc(n)}</option>`).join("");
+}
+const avName = i => i < AVATARS.length ? AVATARS[i] : AV_NAMES[(i - AVATARS.length) % AV_NAMES.length];
+// price: emoji free; a few drawn ones free; then coins; the rarest cost cash
+function avPrice(i) {
+  if (i < 20) return {cur: "coin", v: 0};
+  if (i < 64) return {cur: "coin", v: Math.round(50 * Math.pow(1.28, i - 20) / 50) * 50};
+  return {cur: "cash", v: Math.max(2, Math.round(2 * Math.pow(1.165, i - 64)))};
+}
+const FRAMES = [
+  {name: "Yo'q", cur: "coin", v: 0},
+  {name: "Bronza", c: ["#ffd0a0", "#b8702a", "#5a3010"], cur: "coin", v: 5000},
+  {name: "Kumush", c: ["#ffffff", "#aab4c8", "#4a5268"], cur: "coin", v: 25000},
+  {name: "Oltin", c: ["#fff6c8", "#ffcf3d", "#8a5a00"], cur: "coin", v: 150000},
+  {name: "Zumrad", c: ["#b8ffd8", "#1fd87a", "#065a2a"], cur: "coin", v: 1000000},
+  {name: "Neon", c: ["#b8f8ff", "#2ad8ff", "#1553b3"], cur: "cash", v: 50, glow: "#2ad8ff"},
+  {name: "Olov", c: ["#fff0a0", "#ff8a00", "#b01e14"], cur: "cash", v: 150, glow: "#ff6a00"},
+  {name: "Olmos", c: ["#ffffff", "#9fe8ff", "#5a7cff"], cur: "cash", v: 400, glow: "#9fe8ff"},
+  {name: "Qirollik", c: ["#fff2a0", "#b47bff", "#3a0a7a"], cur: "cash", v: 1000, glow: "#ffcf3d"},
+];
+const avCache = new Map(), avUrlCache = new Map();
+function avRng(seed) { let s = (seed * 2654435761) % 2147483647 || 1; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+function avatarCanvas(i) {
+  i = ((i | 0) % AV_N + AV_N) % AV_N;
+  if (avCache.has(i)) return avCache.get(i);
+  const cv = document.createElement("canvas"); cv.width = cv.height = 128;
+  const g = cv.getContext("2d"), r = avRng(i + 7), P = a => a[Math.floor(r() * a.length)], chance = p => r() < p;
+  const BGS = [["#ffb08a", "#e0352b"], ["#8ac8ff", "#1553b3"], ["#9af09a", "#10a524"], ["#d8b0ff", "#5a1fb3"], ["#ffe88a", "#e08a00"],
+    ["#8ff6ea", "#0a8b82"], ["#ffa8e0", "#b0206e"], ["#c8d0e0", "#3a4668"], ["#ffd8b0", "#b86a2a"], ["#4a4a6a", "#0a0a14"]];
+  const [b1, b2] = BGS[i % BGS.length];
+  const bg = g.createRadialGradient(64, 40, 10, 64, 64, 96); bg.addColorStop(0, b1); bg.addColorStop(1, b2);
+  g.fillStyle = bg; g.fillRect(0, 0, 128, 128);
+  g.globalAlpha = 0.12; g.fillStyle = "#fff";                       // light rays
+  for (let k = 0; k < 12; k++) { g.beginPath(); g.moveTo(64, 50); const a = k / 12 * Math.PI * 2; g.arc(64, 50, 120, a, a + 0.18); g.fill(); }
+  g.globalAlpha = 1;
+  if (i < AVATARS.length) {                                          // emoji avatars
+    g.font = '78px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; g.textAlign = "center"; g.textBaseline = "middle";
+    g.fillText(AVATARS[i], 64, 70);
+    avCache.set(i, cv); return cv;
+  }
+  const skin = P(["#ffdbb4", "#f6c89f", "#e8b48a", "#d09a6a", "#a86b3e", "#7a4a26", "#5a341a"]);
+  const hairC = P(["#161616", "#2e1a0e", "#5a3014", "#8a4a1a", "#c88a3a", "#f0d890", "#b82a1a", "#7a3ab0", "#2a7ae0", "#e8e8f0", "#ff6fae", "#22a860"]);
+  const shirt = P(["#e0352b", "#1f6fe0", "#10a524", "#8a3cf0", "#ff8a1f", "#14c8c8", "#ff4fa0", "#222", "#f4f4f4", "#1a3a6a", "#6a1a2a", "#e0b040"]);
+  const eyeC = P(["#3a2410", "#1a4a8a", "#2a7a3a", "#5a5a5a", "#0a0a0a"]);
+  const fem = chance(0.45), style = fem ? P([2, 2, 3, 6, 7, 0, 8]) : P([0, 0, 1, 4, 5, 6, 8, 1]);
+  const hat = chance(0.3) ? P(["cap", "beanie", "cowboy", "crown", "bandana", "headphones", "top"]) : null;
+  const glasses = chance(0.22) ? "sun" : chance(0.15) ? "specs" : null;
+  const beard = !fem && chance(0.35) ? P(["full", "goatee", "stubble"]) : null, stache = !fem && !beard && chance(0.25);
+  const E = (x, y, rx, ry, c) => { g.fillStyle = c; g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, 7); g.fill(); };
+  // long hair behind the head
+  if (style === 2 || style === 7) E(64, 84, 38, 50, hairC);
+  // shoulders + shirt
+  g.fillStyle = shirt; g.beginPath(); g.ellipse(64, 150, 60, 52, 0, 0, 7); g.fill();
+  g.fillStyle = "rgba(0,0,0,.18)"; g.beginPath(); g.moveTo(50, 100); g.lineTo(64, 122); g.lineTo(78, 100); g.fill();
+  if (chance(0.3)) { g.fillStyle = P(["#ffcf3d", "#fff", "#111", "#e0352b"]); g.beginPath(); g.moveTo(60, 106); g.lineTo(68, 106); g.lineTo(66, 128); g.lineTo(62, 128); g.fill(); }   // tie
+  // neck, ears, head
+  g.fillStyle = shade(skin, -25); g.fillRect(54, 86, 20, 22);
+  E(35, 66, 7, 10, shade(skin, -10)); E(93, 66, 7, 10, shade(skin, -10));
+  E(64, 62, 29, 34, skin);
+  const hs = g.createRadialGradient(54, 48, 4, 64, 64, 40); hs.addColorStop(0, "rgba(255,255,255,.25)"); hs.addColorStop(1, "rgba(0,0,0,.18)");
+  g.fillStyle = hs; g.beginPath(); g.ellipse(64, 62, 29, 34, 0, 0, 7); g.fill();
+  if (chance(0.3)) { E(46, 76, 6, 4, "rgba(255,90,90,.25)"); E(82, 76, 6, 4, "rgba(255,90,90,.25)"); }   // blush
+  // hair on top
+  g.fillStyle = hairC;
+  const cap = () => { g.beginPath(); g.ellipse(64, 46, 31, 22, 0, Math.PI, 0); g.lineTo(95, 56); g.quadraticCurveTo(64, 36, 33, 56); g.closePath(); g.fill(); };
+  if (style === 0 || style === 2 || style === 7) cap();
+  if (style === 1) { g.beginPath(); g.moveTo(33, 56); for (let k = 0; k <= 8; k++) g.lineTo(34 + k * 7.5, k % 2 ? 22 + r() * 6 : 38); g.lineTo(95, 56); g.quadraticCurveTo(64, 40, 33, 56); g.fill(); }
+  if (style === 3) { cap(); E(64, 20, 13, 12, hairC); }
+  if (style === 4) { g.fillRect(56, 12, 16, 36); g.beginPath(); g.ellipse(64, 30, 8, 20, 0, 0, 7); g.fill(); }
+  if (style === 6) for (let k = 0; k < 11; k++) E(36 + k * 5.6, 36 + Math.sin(k * 1.3) * 5, 8, 8, hairC);
+  if (style === 7) { E(98, 70, 9, 20, hairC); }
+  if (style === 8) { g.beginPath(); g.ellipse(64, 44, 31, 20, -0.15, Math.PI, 0); g.quadraticCurveTo(80, 50, 40, 58); g.closePath(); g.fill(); }
+  if (style === 5) { g.fillStyle = "rgba(255,255,255,.35)"; g.beginPath(); g.ellipse(56, 36, 8, 4, -0.5, 0, 7); g.fill(); }
+  // eyebrows
+  g.strokeStyle = shade(hairC === "#e8e8f0" ? "#999999" : hairC, -10); g.lineWidth = 3.5; g.lineCap = "round";
+  const tilt = (r() - 0.4) * 5;
+  g.beginPath(); g.moveTo(45, 54 + tilt); g.lineTo(57, 53 - tilt * 0.3); g.moveTo(71, 53 - tilt * 0.3); g.lineTo(83, 54 + tilt); g.stroke();
+  // eyes
+  if (glasses === "sun") {
+    g.fillStyle = "#111"; g.beginPath(); g.roundRect ? g.roundRect(41, 58, 20, 12, 5) : g.rect(41, 58, 20, 12); g.fill();
+    g.beginPath(); g.roundRect ? g.roundRect(67, 58, 20, 12, 5) : g.rect(67, 58, 20, 12); g.fill();
+    g.fillRect(60, 61, 8, 2.5); g.fillStyle = "rgba(255,255,255,.5)"; g.fillRect(44, 60, 6, 2); g.fillRect(70, 60, 6, 2);
+  } else {
+    for (const ex of [51, 77]) { E(ex, 64, 6.5, 5, "#fff"); E(ex, 64.5, 3.6, 3.8, eyeC); E(ex, 64.5, 1.8, 1.8, "#000"); E(ex + 1.3, 63, 1, 1, "#fff"); }
+    if (fem) { g.strokeStyle = "#111"; g.lineWidth = 1.6; g.beginPath(); g.moveTo(44, 61); g.lineTo(41, 58); g.moveTo(84, 61); g.lineTo(87, 58); g.stroke(); }
+    if (glasses === "specs") { g.strokeStyle = "#222"; g.lineWidth = 2; g.beginPath(); g.arc(51, 64, 9, 0, 7); g.moveTo(86, 64); g.arc(77, 64, 9, 0, 7); g.moveTo(60, 64); g.lineTo(68, 64); g.stroke(); }
+  }
+  // nose + mouth
+  g.strokeStyle = shade(skin, -45); g.lineWidth = 2; g.beginPath(); g.moveTo(64, 68); g.quadraticCurveTo(60, 76, 65, 77); g.stroke();
+  const mouth = P(["smile", "grin", "smirk", "flat", "open"]);
+  g.strokeStyle = "#7a2a1a"; g.lineWidth = 2.6;
+  if (mouth === "grin") { g.fillStyle = "#fff"; g.beginPath(); g.moveTo(54, 83); g.quadraticCurveTo(64, 94, 74, 83); g.closePath(); g.fill(); g.stroke(); }
+  else if (mouth === "open") { E(64, 86, 6, 4.5, "#5a1a10"); }
+  else { g.beginPath(); if (mouth === "smile") { g.moveTo(55, 84); g.quadraticCurveTo(64, 91, 73, 84); } else if (mouth === "smirk") { g.moveTo(56, 86); g.quadraticCurveTo(66, 88, 74, 82); } else { g.moveTo(57, 86); g.lineTo(71, 86); } g.stroke(); }
+  if (fem && chance(0.6)) { g.strokeStyle = P(["#d0304a", "#b0206e", "#e05a6a"]); g.lineWidth = 3; g.beginPath(); g.moveTo(57, 85); g.quadraticCurveTo(64, 89, 71, 85); g.stroke(); }
+  // facial hair
+  g.fillStyle = hairC;
+  if (beard === "full") { g.beginPath(); g.moveTo(35, 66); g.quadraticCurveTo(36, 100, 64, 100); g.quadraticCurveTo(92, 100, 93, 66); g.quadraticCurveTo(88, 90, 64, 92); g.quadraticCurveTo(40, 90, 35, 66); g.fill(); }
+  if (beard === "goatee") { g.beginPath(); g.moveTo(56, 90); g.quadraticCurveTo(64, 104, 72, 90); g.fill(); }
+  if (beard === "stubble") { g.globalAlpha = 0.25; g.beginPath(); g.ellipse(64, 86, 24, 14, 0, 0, Math.PI); g.fill(); g.globalAlpha = 1; }
+  if (stache || beard === "full" || beard === "goatee") { g.beginPath(); g.moveTo(54, 81); g.quadraticCurveTo(64, 75, 74, 81); g.quadraticCurveTo(64, 79, 54, 81); g.fill(); }
+  if (chance(0.18)) { E(35, 76, 2.6, 2.6, "#ffcf3d"); }                                  // earring
+  // hats
+  const hatC = P(["#e0352b", "#1f6fe0", "#111", "#10a524", "#ff8a1f", "#8a3cf0", "#f4f4f4"]);
+  if (hat === "cap") { E(64, 40, 32, 20, hatC); g.fillStyle = hatC; g.fillRect(32, 38, 64, 6); g.fillStyle = shade(hatC, -30); g.beginPath(); g.ellipse(84, 44, 22, 6, 0.1, 0, 7); g.fill(); }
+  if (hat === "beanie") { g.fillStyle = hatC; g.beginPath(); g.ellipse(64, 42, 32, 26, 0, Math.PI, 0); g.fill(); g.fillStyle = shade(hatC, -25); g.fillRect(32, 38, 64, 9); E(64, 14, 7, 7, "#fff"); }
+  if (hat === "cowboy") { g.fillStyle = "#8a5a2a"; g.beginPath(); g.ellipse(64, 38, 50, 9, 0, 0, 7); g.fill(); g.fillRect(40, 14, 48, 26); g.fillStyle = "#5a3a1a"; g.fillRect(40, 30, 48, 5); }
+  if (hat === "crown") { g.fillStyle = "#ffcf3d"; g.beginPath(); g.moveTo(40, 36); g.lineTo(40, 16); g.lineTo(50, 26); g.lineTo(64, 10); g.lineTo(78, 26); g.lineTo(88, 16); g.lineTo(88, 36); g.fill(); E(64, 24, 3.5, 3.5, "#e0352b"); }
+  if (hat === "bandana") { g.fillStyle = hatC; g.beginPath(); g.ellipse(64, 40, 31, 16, 0, Math.PI, 0); g.fill(); g.fillRect(33, 38, 62, 8); g.beginPath(); g.moveTo(94, 42); g.lineTo(108, 50); g.lineTo(100, 56); g.fill(); }
+  if (hat === "headphones") { g.strokeStyle = "#222"; g.lineWidth = 6; g.beginPath(); g.arc(64, 60, 34, Math.PI * 1.05, Math.PI * 1.95); g.stroke(); E(32, 66, 8, 12, hatC); E(96, 66, 8, 12, hatC); }
+  if (hat === "top") { g.fillStyle = "#111"; g.beginPath(); g.ellipse(64, 34, 40, 7, 0, 0, 7); g.fill(); g.fillRect(44, 4, 40, 30); g.fillStyle = hatC; g.fillRect(44, 26, 40, 5); }
+  avCache.set(i, cv); return cv;
+}
+function avatarURL(i) {
+  i = ((i | 0) % AV_N + AV_N) % AV_N;
+  if (!avUrlCache.has(i)) avUrlCache.set(i, avatarCanvas(i).toDataURL());
+  return avUrlCache.get(i);
+}
+// DOM avatar with its frame: <span class="avx"><img></span>
+function avHTML(i, frame = 0, size = 44) {
+  const f = FRAMES[frame | 0] || FRAMES[0];
+  const border = f.c ? `border:3px solid ${f.c[1]};box-shadow:0 0 0 2px ${f.c[2]}${f.glow ? `,0 0 12px ${f.glow}` : ""}` : "border:2px solid #0006";
+  return `<span class="avx" style="width:${size}px;height:${size}px;${border}"><img src="${avatarURL(i)}" alt=""></span>`;
+}
 const AV_COLORS = ["#ff5b4f", "#3b8cff", "#2ecc40", "#a45cff", "#ff8a1f", "#14c8c8", "#ff4fa0", "#ffcf3d"];
 const BOT_NAMES = ["Ali", "Madina", "Jasur", "Dilnoza", "Bobur", "Kamola", "Sardor", "Nigora", "Rustam", "Zarina", "Tomas", "Aziz", "Shoxrux", "Malika", "Temur", "Laylo", "Farrux", "Sevara", "Otabek", "Gulnoza", "Kuro", "Majd", "Badr", "Elif"];
 const REWARDS = [
@@ -577,7 +786,8 @@ const $ = id => document.getElementById(id);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 // ---------------------------------------------------------------- languages (Uzbek text is the key)
-const LANGS = {uz: "O'zbekcha", en: "English", ru: "Русский"};
+const LANGS = {uz: "O'zbekcha", en: "English", ru: "Русский", tr: "Türkçe", es: "Español", pt: "Português", fr: "Français", de: "Deutsch",
+  id: "Bahasa Indonesia", ar: "العربية", hi: "हिन्दी"};
 const DICT = {
   "USTALAR LIGASI": ["MASTERS LEAGUE", "ЛИГА МАСТЕРОВ"],
   "1 ga 1": ["1 on 1", "1 на 1"], "O'ynash": ["Play", "Играть"], "Tanga tikib yuting": ["Bet coins, win big", "Ставь монеты и выигрывай"],
@@ -646,9 +856,45 @@ const DICT = {
   "Saqlangan o'yin yuklandi": ["Cloud save loaded", "Сохранение загружено"], "o'yin bulutda saqlanadi": ["progress saved to the cloud", "прогресс в облаке"],
   "Y8 bilan kiring — o'yiningiz bulutda saqlanadi": ["Log in with Y8 to save your progress in the cloud", "Войдите через Y8 — прогресс сохранится в облаке"],
   "Yutuqlar": ["Achievements", "Достижения"], "Kirish": ["Log in", "Войти"],
+  "TANLANGAN": ["IN USE", "ВЫБРАН"], "Sotib olindi!": ["Purchased!", "Куплено!"], "Dunyo": ["World", "Мир"], "Davlat": ["Country", "Страна"],
+  "Tugashiga": ["Ends in", "До конца"], "Sovrin": ["Prizes", "Призы"], "Top": ["Top", "Топ"], "keyingi ligaga chiqadi": ["move up a league", "поднимутся в лиге"],
+  "Oxirgi": ["Bottom", "Последние"], "pastga tushadi": ["move down", "опустятся"], "O'tgan hafta": ["Last week", "Прошлая неделя"],
+  "k": ["d", "д"], "s": ["h", "ч"], "d": ["m", "м"], "Hali natija yo'q": ["No results yet", "Пока нет результатов"], "Sizning o'rningiz": ["Your rank", "Ваше место"],
+  "Ligangiz ko'tarildi!": ["You moved up a league!", "Вы поднялись в лиге!"], "Ligangiz tushdi": ["You moved down a league", "Вы опустились в лиге"],
+  "Yana ko'p avatarlar": ["More avatars", "Больше аватаров"], "Haftalik reyting sovrini": ["Weekly leaderboard prize", "Приз недельного рейтинга"],
+  "🙂 Avatarlar": ["🙂 Avatars", "🙂 Аватары"], "🖼 Ramkalar": ["🖼 Frames", "🖼 Рамки"], "⭐ Ligam": ["⭐ My League", "⭐ Моя лига"], "👥 Do'stlar": ["👥 Friends", "👥 Друзья"],
+  "🌍 Dunyo": ["🌍 World", "🌍 Мир"], "Ism": ["Name", "Имя"], "Haftalik yutuq": ["Weekly winnings", "Выигрыш за неделю"], "Liga": ["League", "Лига"],
+  "Bronza": ["Bronze", "Бронза"], "Kumush": ["Silver", "Серебро"], "Oltin": ["Gold", "Золото"], "Platina": ["Platinum", "Платина"], "Olmos": ["Diamond", "Алмаз"],
+  "Usta": ["Master", "Мастер"], "Grandmaster": ["Grandmaster", "Гроссмейстер"], "Daraja": ["Level", "Уровень"], "O'yinlar": ["Games", "Игры"],
+  "G'alabalar": ["Wins", "Победы"], "G'alaba %": ["Win %", "Побед %"], "Jami yutuq": ["Total winnings", "Всего выиграно"],
 };
+// More languages. Each list follows XL_KEYS; strings not listed here fall back to English.
+const XL_KEYS = ["siz", "1 ga 1", "USTALAR LIGASI", "O'ynash", "Tanga tikib yuting", "Turnir", "8 o'yinchi, 3 raund", "Mini o'yinlar", "Do'st bilan", "Bitta qurilmada 2 kishi",
+  "Tomosha", "Mashq", "Do'stlar", "Sovg'alar", "Kiylar", "Reyting", "Do'kon", "Stolni tanlang", "Turnirlar", "Profil", "Yutuq", "Kirish narxi",
+  "O'YNASH", "Sizning navbatingiz", "QOIDA BUZILDI!", "VAQT TUGADI!", "G'ALABA!", "MAG'LUBIYAT", "Yana o'ynash", "Menyu", "Davom etish", "Pauza",
+  "Taslim bo'lish", "Chiqish", "Onlayn raqib qidirilmoqda…", "Raqib topildi!", "Do'stlarni taklif qiling", "Til", "Yuklanmoqda…", "Dunyo", "Davlat", "⭐ Ligam",
+  "Bronza", "Kumush", "Oltin", "Platina", "Olmos", "Usta", "Grandmaster", "Tugashiga", "Sotib olindi!", "Pul yetmaydi",
+  "Tanga yetmaydi", "TANLASH", "✓ TANLANGAN", "Sizning o'rningiz", "Ligangiz ko'tarildi!", "Ligangiz tushdi", "O'tgan hafta", "Omad g'ildiragi", "Sovg'alar yo'li", "Keyingi o'yin",
+  "Qayta o'ynash", "Raqib o'yinni tark etdi", "Kunlik sovg'a tayyor!", "Navbat raqibga o'tdi", "SIZ YAXLIT SHARLARSIZ!", "SIZ YO'L-YO'L SHARLARSIZ!", "Siz sindirasiz — omad!", "Qidirilmoqda…", "O'yinchilar onlayn", "Ism",
+  "Haftalik yutuq", "Liga", "Yopish", "Sovrin", "🙂 Avatarlar", "🖼 Ramkalar", "🌍 Dunyo", "👥 Do'stlar", "Yutuqlar", "Daraja",
+  "O'yinlar", "G'alabalar", "Jami yutuq", "Haftalik reyting", "Profil_", "Kuch", "Nishon", "Aylanish", "Vaqt", "Bank"];
+const XL = {
+  tr: `sen|1'e 1|USTALAR LİGİ|Oyna|Jeton koy, büyük kazan|Turnuva|8 oyuncu, 3 tur|Mini oyunlar|Arkadaşla|Tek cihazda 2 oyuncu|İzle|Antrenman|Arkadaşlar|Ödüller|Istakalar|Sıralama|Mağaza|Masa seç|Turnuvalar|Profil|Ödül|Giriş ücreti|OYNA|Sıra sende|FAUL!|SÜRE DOLDU!|ZAFER!|YENİLGİ|Tekrar oyna|Menü|Devam|Duraklatıldı|Pes et|Çıkış|Çevrimiçi rakip aranıyor…|Rakip bulundu!|Arkadaşlarını davet et|Dil|Yükleniyor…|Dünya|Ülke|⭐ Ligim|Bronz|Gümüş|Altın|Platin|Elmas|Usta|Büyükusta|Bitişe|Satın alındı!|Nakit yetersiz|Jeton yetersiz|SEÇ|✓ SEÇİLİ|Sıralaman|Ligin yükseldi!|Ligin düştü|Geçen hafta|Şans çarkı|Ödül yolu|Sonraki oyun|Rövanş|Rakip oyundan ayrıldı|Günlük ödül hazır!|Sıra rakibe geçti|DÜZ TOPLARSIN!|ÇİZGİLİ TOPLARSIN!|Açılış sende, bol şans!|Aranıyor…|Çevrimiçi oyuncular|İsim|Haftalık kazanç|Lig|Kapat|Ödül|🙂 Avatarlar|🖼 Çerçeveler|🌍 Dünya|👥 Arkadaşlar|Başarılar|Seviye|Oyunlar|Galibiyetler|Toplam kazanç|Sıralama|Profil|Güç|Nişan|Falso|Süre|Banka`,
+  es: `tú|1 contra 1|LIGA DE MAESTROS|Jugar|Apuesta monedas, gana a lo grande|Torneo|8 jugadores, 3 rondas|Minijuegos|Con un amigo|2 jugadores, un dispositivo|Ver|Práctica|Amigos|Premios|Tacos|Clasificación|Tienda|Elige una mesa|Torneos|Perfil|Premio|Entrada|JUGAR|Tu turno|¡FALTA!|¡SE ACABÓ EL TIEMPO!|¡VICTORIA!|DERROTA|Jugar de nuevo|Menú|Continuar|Pausa|Rendirse|Salir|Buscando rival en línea…|¡Rival encontrado!|Invita a tus amigos|Idioma|Cargando…|Mundo|País|⭐ Mi liga|Bronce|Plata|Oro|Platino|Diamante|Maestro|Gran maestro|Termina en|¡Comprado!|No tienes suficiente efectivo|No tienes suficientes monedas|USAR|✓ EN USO|Tu posición|¡Subiste de liga!|Bajaste de liga|Semana pasada|Rueda de la suerte|Ruta de premios|Siguiente partida|Revancha|Tu rival abandonó la partida|¡Premio diario listo!|Turno del rival|¡ERES LISAS!|¡ERES RAYADAS!|Tú sacas, ¡suerte!|Buscando…|Jugadores en línea|Nombre|Ganancias semanales|Liga|Cerrar|Premio|🙂 Avatares|🖼 Marcos|🌍 Mundo|👥 Amigos|Logros|Nivel|Partidas|Victorias|Ganancias totales|Clasificación|Perfil|Fuerza|Puntería|Efecto|Tiempo|Banco`,
+  pt: `você|1 contra 1|LIGA DOS MESTRES|Jogar|Aposte moedas, ganhe muito|Torneio|8 jogadores, 3 rodadas|Minijogos|Com um amigo|2 jogadores, um aparelho|Assistir|Treino|Amigos|Prêmios|Tacos|Ranking|Loja|Escolha uma mesa|Torneios|Perfil|Prêmio|Entrada|JOGAR|Sua vez|FALTA!|TEMPO ESGOTADO!|VITÓRIA!|DERROTA|Jogar de novo|Menu|Continuar|Pausado|Desistir|Sair|Procurando adversário online…|Adversário encontrado!|Convide amigos|Idioma|Carregando…|Mundo|País|⭐ Minha liga|Bronze|Prata|Ouro|Platina|Diamante|Mestre|Grão-mestre|Termina em|Comprado!|Dinheiro insuficiente|Moedas insuficientes|USAR|✓ EM USO|Sua posição|Você subiu de liga!|Você caiu de liga|Semana passada|Roda da sorte|Rota de prêmios|Próximo jogo|Revanche|O adversário saiu do jogo|Prêmio diário pronto!|Vez do adversário|VOCÊ É LISAS!|VOCÊ É LISTRADAS!|Você abre, boa sorte!|Procurando…|Jogadores online|Nome|Ganhos da semana|Liga|Fechar|Prêmio|🙂 Avatares|🖼 Molduras|🌍 Mundo|👥 Amigos|Conquistas|Nível|Jogos|Vitórias|Ganhos totais|Ranking|Perfil|Força|Mira|Efeito|Tempo|Banco`,
+  ar: `أنت|1 ضد 1|دوري الأساتذة|العب|راهن بالعملات واربح|بطولة|8 لاعبين، 3 جولات|ألعاب مصغرة|مع صديق|لاعبان على جهاز واحد|شاهد|تدريب|الأصدقاء|الجوائز|العصي|الترتيب|المتجر|اختر طاولة|البطولات|الملف الشخصي|الجائزة|رسوم الدخول|العب|دورك|خطأ!|انتهى الوقت!|فوز!|خسارة|العب مجددًا|القائمة|متابعة|إيقاف مؤقت|استسلام|خروج|جارٍ البحث عن خصم…|تم العثور على خصم!|ادعُ أصدقاءك|اللغة|جارٍ التحميل…|العالم|الدولة|⭐ دوريّ|برونزي|فضي|ذهبي|بلاتيني|ماسي|أستاذ|أستاذ كبير|ينتهي بعد|تم الشراء!|النقود غير كافية|العملات غير كافية|اختيار|✓ مُختار|ترتيبك|صعدت إلى دوري أعلى!|هبطت إلى دوري أدنى|الأسبوع الماضي|عجلة الحظ|طريق الجوائز|المباراة التالية|إعادة المباراة|غادر الخصم اللعبة|الجائزة اليومية جاهزة!|الدور للخصم|أنت الكرات المصمتة!|أنت الكرات المخططة!|أنت تبدأ، حظًا موفقًا!|جارٍ البحث…|لاعبون متصلون|الاسم|أرباح الأسبوع|الدوري|إغلاق|الجائزة|🙂 الصور الرمزية|🖼 الإطارات|🌍 العالم|👥 الأصدقاء|الإنجازات|المستوى|المباريات|الانتصارات|إجمالي الأرباح|الترتيب|الملف الشخصي|القوة|التصويب|الدوران|الوقت|البنك`,
+  id: `kamu|1 lawan 1|LIGA MASTER|Main|Pasang koin, menang besar|Turnamen|8 pemain, 3 babak|Mini game|Dengan teman|2 pemain, satu perangkat|Tonton|Latihan|Teman|Hadiah|Stik|Peringkat|Toko|Pilih meja|Turnamen|Profil|Hadiah|Biaya masuk|MAIN|Giliranmu|PELANGGARAN!|WAKTU HABIS!|MENANG!|KALAH|Main lagi|Menu|Lanjut|Jeda|Menyerah|Keluar|Mencari lawan online…|Lawan ditemukan!|Undang teman|Bahasa|Memuat…|Dunia|Negara|⭐ Ligaku|Perunggu|Perak|Emas|Platinum|Berlian|Master|Grandmaster|Berakhir dalam|Dibeli!|Uang tidak cukup|Koin tidak cukup|PAKAI|✓ DIPAKAI|Peringkatmu|Liga naik!|Liga turun|Minggu lalu|Roda keberuntungan|Rute hadiah|Game berikutnya|Tanding ulang|Lawan keluar dari game|Hadiah harian siap!|Giliran lawan|KAMU BOLA POLOS!|KAMU BOLA BELANG!|Kamu break, semoga beruntung!|Mencari…|Pemain online|Nama|Kemenangan mingguan|Liga|Tutup|Hadiah|🙂 Avatar|🖼 Bingkai|🌍 Dunia|👥 Teman|Pencapaian|Level|Game|Kemenangan|Total kemenangan|Peringkat|Profil|Tenaga|Bidikan|Putaran|Waktu|Bank`,
+  hi: `आप|1 बनाम 1|मास्टर्स लीग|खेलें|सिक्के लगाएँ, बड़ा जीतें|टूर्नामेंट|8 खिलाड़ी, 3 राउंड|मिनी गेम|दोस्त के साथ|एक डिवाइस पर 2 खिलाड़ी|देखें|अभ्यास|दोस्त|इनाम|क्यू|लीडरबोर्ड|दुकान|टेबल चुनें|टूर्नामेंट|प्रोफ़ाइल|इनाम|प्रवेश शुल्क|खेलें|आपकी बारी|फ़ाउल!|समय समाप्त!|जीत!|हार|फिर से खेलें|मेनू|जारी रखें|रुका हुआ|हार मानें|बाहर|ऑनलाइन प्रतिद्वंद्वी खोजा जा रहा है…|प्रतिद्वंद्वी मिल गया!|दोस्तों को बुलाएँ|भाषा|लोड हो रहा है…|दुनिया|देश|⭐ मेरी लीग|कांस्य|रजत|स्वर्ण|प्लैटिनम|हीरा|मास्टर|ग्रैंडमास्टर|समाप्ति में|खरीदा गया!|नकद कम है|सिक्के कम हैं|चुनें|✓ चुना गया|आपका स्थान|लीग ऊपर गई!|लीग नीचे गई|पिछला सप्ताह|भाग्य चक्र|इनाम मार्ग|अगला गेम|दोबारा मुकाबला|प्रतिद्वंद्वी ने गेम छोड़ दिया|दैनिक इनाम तैयार है!|प्रतिद्वंद्वी की बारी|आप सॉलिड हैं!|आप स्ट्राइप्स हैं!|आप ब्रेक करेंगे, शुभकामनाएँ!|खोज रहे हैं…|ऑनलाइन खिलाड़ी|नाम|साप्ताहिक जीत|लीग|बंद करें|इनाम|🙂 अवतार|🖼 फ़्रेम|🌍 दुनिया|👥 दोस्त|उपलब्धियाँ|स्तर|गेम|जीतें|कुल जीत|लीडरबोर्ड|प्रोफ़ाइल|शक्ति|निशाना|स्पिन|समय|बैंक`,
+  fr: `vous|1 contre 1|LIGUE DES MAÎTRES|Jouer|Misez des pièces, gagnez gros|Tournoi|8 joueurs, 3 tours|Mini-jeux|Avec un ami|2 joueurs, un appareil|Regarder|Entraînement|Amis|Récompenses|Queues|Classement|Boutique|Choisissez une table|Tournois|Profil|Gain|Mise|JOUER|À vous de jouer|FAUTE !|TEMPS ÉCOULÉ !|VICTOIRE !|DÉFAITE|Rejouer|Menu|Continuer|Pause|Abandonner|Quitter|Recherche d'un adversaire…|Adversaire trouvé !|Invitez des amis|Langue|Chargement…|Monde|Pays|⭐ Ma ligue|Bronze|Argent|Or|Platine|Diamant|Maître|Grand maître|Fin dans|Acheté !|Pas assez d'argent|Pas assez de pièces|UTILISER|✓ UTILISÉ|Votre rang|Promotion de ligue !|Relégation de ligue|Semaine dernière|Roue de la chance|Route des récompenses|Partie suivante|Revanche|Votre adversaire a quitté la partie|Récompense du jour prête !|Au tour de l'adversaire|VOUS ÊTES LES PLEINES !|VOUS ÊTES LES RAYÉES !|Vous cassez, bonne chance !|Recherche…|Joueurs en ligne|Nom|Gains de la semaine|Ligue|Fermer|Prix|🙂 Avatars|🖼 Cadres|🌍 Monde|👥 Amis|Succès|Niveau|Parties|Victoires|Gains totaux|Classement|Profil|Force|Visée|Effet|Temps|Banque`,
+  de: `du|1 gegen 1|MEISTERLIGA|Spielen|Setze Münzen, gewinne groß|Turnier|8 Spieler, 3 Runden|Minispiele|Mit einem Freund|2 Spieler, ein Gerät|Zuschauen|Training|Freunde|Belohnungen|Queues|Rangliste|Shop|Tisch wählen|Turniere|Profil|Gewinn|Einsatz|SPIELEN|Du bist dran|FOUL!|ZEIT ABGELAUFEN!|SIEG!|NIEDERLAGE|Nochmal spielen|Menü|Weiter|Pause|Aufgeben|Beenden|Suche Online-Gegner…|Gegner gefunden!|Freunde einladen|Sprache|Lädt…|Welt|Land|⭐ Meine Liga|Bronze|Silber|Gold|Platin|Diamant|Meister|Großmeister|Endet in|Gekauft!|Nicht genug Geld|Nicht genug Münzen|NUTZEN|✓ AKTIV|Dein Rang|Liga aufgestiegen!|Liga abgestiegen|Letzte Woche|Glücksrad|Belohnungsweg|Nächstes Spiel|Revanche|Dein Gegner hat das Spiel verlassen|Tägliche Belohnung bereit!|Gegner ist dran|DU HAST DIE VOLLEN!|DU HAST DIE HALBEN!|Du stößt an, viel Glück!|Suche…|Spieler online|Name|Wochengewinn|Liga|Schließen|Preis|🙂 Avatare|🖼 Rahmen|🌍 Welt|👥 Freunde|Erfolge|Level|Spiele|Siege|Gesamtgewinn|Rangliste|Profil|Kraft|Zielen|Effet|Zeit|Bank`,
+};
+for (const k in XL) { const v = XL[k].split("|"); XL[k] = {}; XL_KEYS.forEach((key, i) => { XL[k][key] = v[i]; }); }
 let LANG = "uz";
-function T(s) { const i = LANG === "en" ? 0 : LANG === "ru" ? 1 : -1; const e = DICT[s]; return i < 0 || !e ? s : e[i]; }
+function T(s) {
+  if (LANG === "uz") return s;
+  const x = XL[LANG]; if (x && x[s]) return x[s];
+  const e = DICT[s]; return !e ? s : LANG === "ru" ? e[1] : e[0];
+}
 const fmtS = n => n >= 1e9 ? +(n / 1e9).toFixed(1) + "B" : n >= 1e6 ? +(n / 1e6).toFixed(1) + "M" : n >= 1e5 ? +(n / 1e3).toFixed(0) + "k" : fmt(n);
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[Math.random() * a.length | 0];
@@ -666,8 +912,9 @@ const store = {
 const profile = Object.assign({
   coins: 1500, cash: 5, xp: 0, level: 1, wins: 0, games: 0, won: 0, name: "Siz", avatar: 0,
   cue: "start", cues: ["start"], lastLucky: "", luckyTries: 0, lastWheel: "", wheelTries: 0,
-  streak: 0, lastClaim: "", ach: {}, muted: false, tours: 0,
+  streak: 0, lastClaim: "", ach: {}, muted: false, tours: 0, avs: [], frames: [0], frame: 0, country: "",
 }, store.get("bilyard8v2", {}));
+const ownsAvatar = i => avPrice(i).v === 0 || profile.avs.includes(i);
 let cloudSaveHook = null;   // set by the Y8 integration when a Y8 player is logged in
 const save = () => { profile.savedAt = Date.now(); store.set("bilyard8v2", profile); if (cloudSaveHook) cloudSaveHook(); };
 const xpNeed = l => 100 + (l - 1) * 80;
@@ -979,11 +1226,11 @@ function rack(seed) {
   return balls;
 }
 function botPlayer(minL, maxL) {
-  return {name: pick(BOT_NAMES), avatar: Math.random() * AVATARS.length | 0, color: pick(AV_COLORS),
+  return {name: pick(BOT_NAMES), avatar: Math.random() * AV_N | 0, frame: Math.random() < 0.3 ? 1 + (Math.random() * 5 | 0) : 0, color: pick(AV_COLORS),
     level: Math.round(rnd(minL, maxL)), isAI: true, cue: pick(CUES).id};
 }
 function mePlayer(name) {
-  return {name: name || profile.name, avatar: profile.avatar, color: AV_COLORS[profile.avatar % AV_COLORS.length], level: profile.level, isAI: false, cue: profile.cue};
+  return {name: name || profile.name, avatar: profile.avatar, frame: profile.frame || 0, color: AV_COLORS[profile.avatar % AV_COLORS.length], level: profile.level, isAI: false, cue: profile.cue};
 }
 function baseGame(type, city, players) {
   const G = {
@@ -1886,14 +2133,17 @@ function cueCanvas(cd) {
 function drawAvatar(x, y, s, pl, active, frac) {
   ctx.save();
   if (active) { ctx.shadowColor = "#3fe052"; ctx.shadowBlur = 22; }
-  ctx.fillStyle = "#1a2238"; rr(x - 4, y - 4, s + 8, s + 8, 14); ctx.fill();
+  const fr = FRAMES[pl.frame | 0] || FRAMES[0];
+  if (fr.c) {   // purchased frame: metallic gradient ring (+ glow)
+    const fg = ctx.createLinearGradient(x, y - 5, x + s, y + s + 5);
+    fg.addColorStop(0, fr.c[0]); fg.addColorStop(0.5, fr.c[1]); fg.addColorStop(1, fr.c[2]);
+    if (fr.glow && !active) { ctx.shadowColor = fr.glow; ctx.shadowBlur = 16 + Math.sin(performance.now() / 300) * 6; }
+    ctx.fillStyle = fg; rr(x - 6, y - 6, s + 12, s + 12, 15); ctx.fill();
+  } else { ctx.fillStyle = "#1a2238"; rr(x - 4, y - 4, s + 8, s + 8, 14); ctx.fill(); }
   ctx.shadowBlur = 0;
-  const g = ctx.createLinearGradient(x, y, x, y + s);
-  g.addColorStop(0, shade(pl.color, 60)); g.addColorStop(1, shade(pl.color, -30));
-  ctx.fillStyle = g; rr(x, y, s, s, 10); ctx.fill();
-  ctx.font = `${s * 0.6}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
-  ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillText(AVATARS[pl.avatar] || "🙂", x + s / 2, y + s * 0.56);
+  ctx.save(); rr(x, y, s, s, 10); ctx.clip();
+  ctx.drawImage(avatarCanvas(pl.avatar), x, y, s, s);
+  ctx.restore();
   if (active && frac !== undefined) {
     const per = 4 * (s + 6);
     ctx.lineWidth = 5; ctx.lineCap = "round";
@@ -2266,9 +2516,10 @@ function updateNav() {
   $("navName").textContent = profile.name;
   $("navLvl").textContent = profile.level;
   $("navXp").style.width = (profile.xp / xpNeed(profile.level) * 100) + "%";
-  const col = AV_COLORS[profile.avatar % AV_COLORS.length];
-  $("navAv").style.background = `linear-gradient(${shade(col, 50)},${col})`;
-  $("navAvE").textContent = AVATARS[profile.avatar];
+  const img = $("navAvE"), url = avatarURL(profile.avatar);
+  if (img.getAttribute("src") !== url) img.src = url;
+  const fr = FRAMES[profile.frame | 0] || FRAMES[0];
+  $("navAv").style.boxShadow = fr.c ? `0 0 0 3px ${fr.c[1]}${fr.glow ? `,0 0 10px ${fr.glow}` : ""}` : "";
   $("dotRw").style.display = profile.lastClaim !== today() ? "" : "none";
   const minis = (luckyFree() ? 1 : 0) + (profile.lastWheel !== today() ? 1 : 0) + profile.luckyTries + profile.wheelTries;
   for (const id of ["dotMini", "dotMini2"]) { $(id).style.display = minis ? "" : "none"; $(id).textContent = minis; }
@@ -2342,7 +2593,7 @@ function findOpponent(c) {
         if (done) { Net.send({t: "resign"}); return; }   // matched after we already started a bot game
         done = true; clearTimeout(timer);
         const o = m.opp || {};
-        resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: (o.avatar | 0) % AVATARS.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
+        resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: (o.avatar | 0) % AV_N, frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
           level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start"}});
       });
       Net.send({t: "queue", city: c.id, cue: profile.cue});
@@ -2358,8 +2609,11 @@ function playCity(c) {
   vsScreen(c, c.prize, () => findOpponent(c), f => startMatch("ai", c, f.opp, f.net));
 }
 function avatarHTML(el, pl) {
-  el.style.background = `linear-gradient(${shade(pl.color, 60)},${shade(pl.color, -30)})`;
-  el.innerHTML = `${AVATARS[pl.avatar]}<div class="star">${pl.level}</div>`;
+  const fr = FRAMES[pl.frame | 0] || FRAMES[0];
+  el.style.background = "#0006";
+  el.style.borderColor = fr.c ? fr.c[1] : "#3a4668";
+  el.style.boxShadow = fr.glow ? `0 0 24px ${fr.glow}` : "";
+  el.innerHTML = `<img src="${avatarURL(pl.avatar)}" alt="" style="width:100%;height:100%;border-radius:12px"><div class="star">${pl.level}</div>`;
 }
 function vsScreen(city, pot, find, done) {
   mode = "menu";
@@ -2384,7 +2638,7 @@ function vsScreen(city, pot, find, done) {
       setTimeout(() => { Snd.whoosh(); done(found); }, 1500);
       return;
     }
-    avatarHTML(b, {avatar: Math.random() * AVATARS.length | 0, color: pick(AV_COLORS), level: "?"});
+    avatarHTML(b, {avatar: Math.random() * AV_N | 0, color: pick(AV_COLORS), level: "?"});
     if (++n % 2) Snd.wheelTick();
   }, 90);
 }
@@ -2415,7 +2669,7 @@ function buildTour() {
   const c = CUPS.find(q => q.id === tour.cup);
   $("tourTitle").textContent = c.name;
   const P = tour.players, r = tour.round;
-  const nm = i => `<span>${AVATARS[P[i].avatar]}</span>${esc(P[i].name)}`;
+  const nm = i => `${avHTML(P[i].avatar, P[i].frame, 22)}${esc(P[i].name)}`;
   const row = (i, w) => `<div class="${i === 0 ? "me " : ""}${w === undefined ? "" : w === i ? "w" : "l"}">${nm(i)}</div>`;
   const mt = (a, b, w) => `<div class="match">${row(a, w)}${row(b, w)}</div>`;
   const tbd = '<div class="match"><div>?</div><div>?</div></div>';
@@ -2461,6 +2715,47 @@ function tourAfterMatch(won, why, winner) {
 function buildShop(tab) {
   document.querySelectorAll("#shop .tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
   const body = $("shopBody"); body.innerHTML = "";
+  const priceBtn = (p, owned, sel) => sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>`
+    : owned ? `<button class="btn blue">${T("TANLASH")}</button>`
+    : `<button class="btn ${p.cur === "cash" ? "purple" : "green"}">${p.cur === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} ${fmtS(p.v)}</button>`;
+  const buy = (p, what, onOwned) => {
+    const bal = p.cur === "cash" ? profile.cash : profile.coins;
+    if (bal < p.v) { toast("😕", T(p.cur === "cash" ? "Pul yetmaydi" : "Tanga yetmaydi"), what); return; }
+    if (p.cur === "cash") profile.cash -= p.v; else profile.coins -= p.v;
+    onOwned(); Snd.coin(6); toast("🛍", what, T("Sotib olindi!"));
+  };
+  if (tab === "avatars") {
+    body.innerHTML = `<div class="muted" style="margin-bottom:10px">${T("Kolleksiya")}: ${Array.from({length: AV_N}, (_, i) => i).filter(ownsAvatar).length}/${AV_N}</div><div class="avgrid" id="avGrid"></div>`;
+    const grid = $("avGrid");
+    for (let i = 0; i < AV_N; i++) {
+      const p = avPrice(i), owned = ownsAvatar(i), sel = profile.avatar === i;
+      const el = document.createElement("div"); el.className = "avcard" + (sel ? " sel" : "");
+      el.innerHTML = `${avHTML(i, sel ? profile.frame : 0, 76)}<small class="muted">${esc(avName(i))}</small>${priceBtn(p, owned, sel)}`;
+      const btn = el.querySelector("button");
+      if (!sel) btn.onclick = () => {
+        const use = () => { profile.avatar = i; save(); updateNav(); Net.sync(); buildShop("avatars"); };
+        if (owned) use(); else buy(p, avName(i), () => { profile.avs.push(i); use(); });
+      };
+      grid.appendChild(el);
+    }
+    return;
+  }
+  if (tab === "frames") {
+    body.innerHTML = `<div class="avgrid" id="frGrid"></div>`;
+    const grid = $("frGrid");
+    FRAMES.forEach((f, i) => {
+      const owned = f.v === 0 || profile.frames.includes(i), sel = (profile.frame | 0) === i;
+      const el = document.createElement("div"); el.className = "avcard" + (sel ? " sel" : "");
+      el.innerHTML = `${avHTML(profile.avatar, i, 76)}<small class="muted">${T(f.name)}</small>${priceBtn(f, owned, sel)}`;
+      const btn = el.querySelector("button");
+      if (!sel) btn.onclick = () => {
+        const use = () => { profile.frame = i; save(); updateNav(); Net.sync(); buildShop("frames"); };
+        if (owned) use(); else buy(f, T(f.name), () => { profile.frames.push(i); use(); });
+      };
+      grid.appendChild(el);
+    });
+    return;
+  }
   if (tab === "bank") {
     const packs = Object.entries(SKUS);
     body.innerHTML = `<div class="h" style="font-size:22px;color:var(--gold);margin-bottom:8px">${T("Naqd pulga sotib olish")}</div>
@@ -2569,23 +2864,56 @@ function claimReward(r) {
 }
 
 // ---------------------------------------------------------------- leaderboard
-// Real global ranking from the server (total coins won in 1-on-1 matches).
+// Weekly leaderboards from the server: my league, friends, my country, the whole world.
+const LEAGUE_UI = [{n: "Bronza", i: "🥉", c: "#cd7f32"}, {n: "Kumush", i: "🥈", c: "#b8c4d8"}, {n: "Oltin", i: "🥇", c: "#ffcf3d"}, {n: "Platina", i: "💠", c: "#7fe8ff"},
+  {n: "Olmos", i: "💎", c: "#9fb8ff"}, {n: "Usta", i: "🏅", c: "#ff8a5e"}, {n: "Grandmaster", i: "👑", c: "#ffd24d"}];
+const leagueName = l => { const x = LEAGUE_UI[l | 0] || LEAGUE_UI[0]; return `${x.i} ${T(x.n)}`; };
+let lbScope = "world", lbTimer = null;
+function lbStar(level) {
+  const c = level >= 100 ? "#e0352b" : level >= 50 ? "#3fe052" : level >= 20 ? "#3b8cff" : level >= 10 ? "#a45cff" : "#e0a060";
+  return `<span class="lvstar" style="background:radial-gradient(circle at 40% 35%,${shade(c, 70)},${c} 60%,${shade(c, -60)})">${level | 0}</span>`;
+}
 function buildLeader() {
-  const medal = i => i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1;
-  const row = (r, rank, me) => `<div class="lbr${me ? " me" : ""}"><div class="rk">${medal(rank)}</div>
-    <div class="av" style="background:${AV_COLORS[(r.avatar | 0) % AV_COLORS.length]}">${AVATARS[(r.avatar | 0) % AVATARS.length]}</div>
-    <div>${esc(r.name)}${me ? ` <small class="muted">(${T("siz")})</small>` : ""} <small class="muted">⭐${r.level | 0}</small></div>
-    <div class="h" style="color:#ffe27a"><span class="coin" style="width:16px;height:16px"></span> ${fmtS(r.won | 0)}</div></div>`;
-  $("lbList").innerHTML = `<div class="muted" style="text-align:center;padding:20px">${T("Yuklanmoqda…")}</div>`;
-  Net.sync().then(() => Net.api("/api/leaderboard")).then(r => {
-    let html = r.top.map((u, i) => row(u, i, u.id === r.me.id)).join("");
-    if (!r.top.some(u => u.id === r.me.id)) html += `<div class="muted" style="text-align:center">…</div>` + row(r.me, (r.me.rank || r.total + 1) - 1, true);
-    $("lbList").innerHTML = `<div class="muted" style="text-align:center;margin-bottom:8px">🌍 ${T("Global reyting")} · ${fmt(r.total)} ${T("o'yinchi")}</div>` + (html || `<div class="muted" style="text-align:center">${T("Hali hech kim yo'q — birinchi bo'ling!")}</div>`);
+  document.querySelectorAll("[data-lb]").forEach(t => t.classList.toggle("on", t.dataset.lb === lbScope));
+  $("lbFlag").innerHTML = profile.country ? flagHTML(profile.country, 16) : "🏳️";
+  const medal = i => i < 3 ? ["🥇", "🥈", "🥉"][i] : fmt(i + 1);
+  const row = (u, rank, me, cls = "") => `<div class="lbr${me ? " me" : ""} ${cls}"><div class="rk">${medal(rank)}</div>
+    ${avHTML(u.avatar, u.frame, 48)}
+    <div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<div style="min-width:0"><b>${esc(u.name)}</b>${me ? ` <small class="muted">(${T("siz")})</small>` : ""}<small class="sub">${leagueName(u.league)}</small></div></div>
+    <div class="h" style="color:#ffe27a;font-size:20px;white-space:nowrap">${fmtS(u.weekWon | 0)} <span class="coin"></span></div></div>`;
+  $("lbInfo").innerHTML = ""; $("lbList").innerHTML = `<div class="muted" style="text-align:center;padding:20px">${T("Yuklanmoqda…")}</div>`;
+  clearInterval(lbTimer);
+  Net.sync().then(r => { if (!r) throw new Error("offline"); return Net.api("/api/leaderboard?scope=" + lbScope); }).then(r => {
+    const title = {world: `🌍 ${T("Dunyo")}`, country: `${flagHTML(r.country, 26)} ${esc(r.country ? countryName(r.country) : T("Davlat"))}`,
+      friends: `👥 ${T("Do'stlar")}`, league: leagueName(r.league)}[r.scope];
+    $("lbInfo").innerHTML = `<div><div class="ttl">${title}</div><div class="ends">⏱ ${T("Tugashiga")}: <span id="lbEnds"></span></div></div>
+      ${r.scope === "world" ? `<div class="pz"><b>${T("Sovrin")}:</b><br>🥇 💵 ${fmt(r.prizes[0])} · 🥈 💵 ${fmt(r.prizes[1])} · 🥉 💵 ${fmt(r.prizes[2])}</div>` : ""}
+      ${r.scope === "league" ? `<div class="pz">⬆ ${T("Top")} ${r.promote} ${T("keyingi ligaga chiqadi")}${r.demote ? `<br>⬇ ${T("Oxirgi")} ${r.demote} ${T("pastga tushadi")}` : ""}</div>` : ""}
+      <button class="btn blue" id="lbLast" style="padding:6px 12px;font-size:14px">${T("O'tgan hafta")}</button>`;
+    const tick = () => { const s = Math.max(0, (r.endsAt - Date.now()) / 1000); const el = $("lbEnds"); if (el) el.textContent = `${Math.floor(s / 86400)}${T("k")} ${Math.floor(s % 86400 / 3600)}${T("s")} ${Math.floor(s % 3600 / 60)}${T("d")} ${Math.floor(s % 60)}s`; };
+    tick(); lbTimer = setInterval(tick, 1000);
+    $("lbLast").onclick = showLastWeek;
+    const n = r.top.length;
+    let html = r.top.map((u, i) => row(u, i, u.id === r.me.id, r.scope === "league" && u.weekWon > 0 && i < r.promote ? "up" : r.scope === "league" && r.demote && i >= r.total - r.demote ? "down" : "")).join("");
+    if (!r.top.some(u => u.id === r.me.id) && r.me.rank) html += `<div class="muted" style="text-align:center">⋮</div>` + row(r.me, r.me.rank - 1, true);
+    $("lbList").innerHTML = html || `<div class="muted" style="text-align:center;padding:20px">${T("Hali hech kim yo'q — birinchi bo'ling!")}</div>`;
+    void n;
   }).catch(() => {
     $("lbList").innerHTML = `<div class="muted" style="text-align:center;margin-bottom:10px">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>` +
-      row({name: profile.name, avatar: profile.avatar, level: profile.level, won: profile.won}, 0, true);
+      row({name: profile.name, avatar: profile.avatar, frame: profile.frame, level: profile.level, country: profile.country, weekWon: 0, league: 0}, 0, true);
   });
 }
+function showLastWeek() {
+  Net.api("/api/leaderboard/lastweek").then(r => {
+    const me = r.me, lw = r.lastWeek;
+    const list = lw && lw.top.length ? lw.top.map((u, i) => `<div class="lbr" style="grid-template-columns:40px 40px 1fr auto"><div class="rk">${i < 3 ? ["🥇", "🥈", "🥉"][i] : i + 1}</div>${avHTML(u.avatar, u.frame, 36)}
+      <div class="nm">${flagHTML(u.country)}<b>${esc(u.name)}</b></div><div class="h" style="color:#ffe27a">${fmtS(u.won)}</div></div>`).join("") : `<div class="muted">${T("Hali natija yo'q")}</div>`;
+    const mine = me ? `<div class="card" style="margin-bottom:10px">${T("Sizning o'rningiz")}: <b>#${fmt(me.rank)}</b> · ${fmtS(me.won)} 🪙 ·
+      ${me.move > 0 ? "⬆ " + T("Ligangiz ko'tarildi!") : me.move < 0 ? "⬇ " + T("Ligangiz tushdi") : leagueName(me.league)}</div>` : "";
+    openModal({icon: "📅", title: T("O'tgan hafta"), text: "", extra: `<div style="max-height:50vh;overflow:auto;text-align:left">${mine}${list}</div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
+  }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), ""));
+}
+document.querySelectorAll("[data-lb]").forEach(t => t.addEventListener("click", () => { lbScope = t.dataset.lb; buildLeader(); }));
 
 // ---------------------------------------------------------------- friends, invites, gifts
 function buildFriends() {
@@ -2651,7 +2979,7 @@ function loadFriends() {
   Net.api("/api/friends").then(r => {
     Net.friends = r.friends;
     $("frList").innerHTML = r.friends.length ? r.friends.map(f => `<div class="frow">
-      <div class="av" style="background:${AV_COLORS[f.avatar % AV_COLORS.length]}">${AVATARS[f.avatar % AVATARS.length]}${f.online ? '<i class="on"></i>' : ""}</div>
+      <div class="av">${avHTML(f.avatar, f.frame, 44)}${f.online ? '<i class="on"></i>' : ""}</div>
       <div><b>${esc(f.name)}</b> <small class="muted">⭐${f.level}</small><div class="muted">${f.online ? "🟢 " + T("onlayn") : T("oflayn")} · ${T("Yutgan")}: ${fmtS(f.won)}</div></div>
       <button class="btn ${f.canGift ? "green" : "gray"}" data-gift="${f.id}" ${f.canGift ? "" : "disabled"} style="padding:6px 10px;font-size:14px">🎁</button></div>`).join("")
       : `<div class="muted" style="padding:10px">${T("Hali do'stlaringiz yo'q. Kodingizni ulashing!")}</div>`;
@@ -2714,21 +3042,25 @@ function buildProfile() {
   const wr = profile.games ? Math.round(profile.wins / profile.games * 100) : 0;
   $("profBody").innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
-      <div><div class="muted">Ism</div><input class="name" id="pName" maxlength="14" value="${esc(profile.name)}">
+      <div><div class="muted">${T("Ism")}</div><input class="name" id="pName" maxlength="14" value="${esc(profile.name)}">
         <div class="muted" style="margin-top:10px">Avatar</div>
-        <div class="avs">${AVATARS.map((a, i) => `<button data-a="${i}" class="${i === profile.avatar ? "on" : ""}" style="background:${AV_COLORS[i % AV_COLORS.length]}">${a}</button>`).join("")}</div></div>
+        <div class="avs">${Array.from({length: AV_N}, (_, i) => i).filter(ownsAvatar).map(i => `<button data-a="${i}" class="${i === profile.avatar ? "on" : ""}" style="padding:0;overflow:hidden"><img src="${avatarURL(i)}" alt="" style="width:100%;height:100%"></button>`).join("")}</div>
+        <button class="btn purple" data-go="shop" data-tab="avatars" style="width:100%">🛍 ${T("Yana ko'p avatarlar")} (${AV_N})</button>
+        <div class="muted" style="margin-top:10px">${T("Davlat")}</div>
+        <select class="name" id="pCountry">${countryOptions()}</select></div>
       <div><div class="grid" style="grid-template-columns:1fr 1fr">
-        ${[["⭐", "Daraja", profile.level], ["🎱", "O'yinlar", profile.games], ["🏆", "G'alabalar", profile.wins], ["📈", "G'alaba %", wr + "%"], ["💰", "Jami yutuq", fmt(profile.won)], ["👑", "Turnirlar", profile.tours]]
-          .map(([i, n, v]) => `<div class="card" style="text-align:center;padding:8px"><div style="font-size:24px">${i}</div><div class="muted">${n}</div><div class="h" style="font-size:22px">${v}</div></div>`).join("")}
+        ${[["⭐", "Daraja", profile.level], ["🎱", "O'yinlar", profile.games], ["🏆", "G'alabalar", profile.wins], ["📈", "G'alaba %", wr + "%"], ["💰", "Jami yutuq", fmt(profile.won)], ["👑", "Turnirlar", profile.tours], ["🏅", "Liga", leagueName(profile.league)], ["🌍", "Davlat", profile.country ? flagHTML(profile.country, 20) + " " + esc(profile.country) : "—"]]
+          .map(([i, n, v]) => `<div class="card" style="text-align:center;padding:8px"><div style="font-size:24px">${i}</div><div class="muted">${T(n)}</div><div class="h" style="font-size:22px">${v}</div></div>`).join("")}
       </div></div>
     </div>
     ${Y8.sdk ? `<div class="card" style="display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap">
       <b style="font-size:20px">Y8</b><span class="muted" style="flex:1">${Y8.user ? `✅ ${esc(Y8.user.nickname || "")} · ${T("o'yin bulutda saqlanadi")}` : T("Y8 bilan kiring — o'yiningiz bulutda saqlanadi")}</span>
       ${Y8.user ? `<button class="btn blue" id="y8Ach" style="padding:6px 12px;font-size:15px">🏅 ${T("Yutuqlar")}</button>` : `<button class="btn green" id="y8Login" style="padding:6px 12px;font-size:15px">${T("Kirish")}</button>`}</div>` : ""}
-    <h3 class="h" style="font-weight:400;margin:16px 0 8px;color:var(--gold)">Yutuqlar</h3>
+    <h3 class="h" style="font-weight:400;margin:16px 0 8px;color:var(--gold)">${T("Yutuqlar")}</h3>
     <div class="achs">${Object.entries(ACHS).map(([id, a]) => `<div class="ach${profile.ach[id] ? "" : " off"}"><span>${a.icon}</span><div>${a.name}<small>${a.d}</small></div></div>`).join("")}</div>`;
   $("pName").oninput = e => { profile.name = e.target.value.trim() || "Siz"; save(); updateNav(); };
-  $("profBody").querySelectorAll("[data-a]").forEach(b => b.onclick = () => { profile.avatar = +b.dataset.a; save(); updateNav(); buildProfile(); });
+  $("profBody").querySelectorAll("[data-a]").forEach(b => b.onclick = () => { profile.avatar = +b.dataset.a; save(); updateNav(); Net.sync(); buildProfile(); });
+  $("pCountry").onchange = e => { profile.country = e.target.value; profile.countryManual = true; save(); Net.sync(); };
   if ($("y8Login")) $("y8Login").onclick = () => { try { Y8.sdk.login(); } catch (e) {} };
   if ($("y8Ach")) $("y8Ach").onclick = () => Y8.sdk.showAchievements().catch(() => {});
 }
@@ -2851,20 +3183,23 @@ const Net = (() => {
   }
   function ensure() {
     if (acct) return Promise.resolve(acct);
-    if (!registering) registering = api("/api/register", {name: profile.name, avatar: profile.avatar, country: (navigator.language || "").slice(-2)})
+    if (!registering) registering = api("/api/register", {name: profile.name, avatar: profile.avatar, country: profile.country})
       .then(r => { acct = r; store.set("b8acct", acct); return acct; }).finally(() => { registering = null; });
     return registering;
   }
   function applyGrant(g) {
     profile.cash += g.cash || 0; profile.coins += g.coins || 0; save();
-    const why = {purchase: T("Xarid uchun rahmat!"), referral: T("Taklif bonusi"), invited: T("Do'stingiz qo'shildi"), gift: T("Sovg'a")}[g.kind] || "";
+    const why = {purchase: T("Xarid uchun rahmat!"), referral: T("Taklif bonusi"), invited: T("Do'stingiz qo'shildi"), gift: T("Sovg'a"),
+      weekly: T("Haftalik reyting sovrini")}[g.kind] || "";
     toast(g.kind === "gift" ? "🎁" : "💰", `${g.cash ? "+" + fmt(g.cash) + " 💵 " : ""}${g.coins ? "+" + fmt(g.coins) + " 🪙" : ""}`, `${why}${g.from ? " · " + g.from : ""}`);
     Snd.coin(6);
   }
   async function sync() {
     try {
       await ensure();
-      const r = await api("/api/sync", {name: profile.name, avatar: profile.avatar, level: profile.level, xp: profile.xp, won: profile.won, wins: profile.wins, games: profile.games});
+      const r = await api("/api/sync", {name: profile.name, avatar: profile.avatar, frame: profile.frame | 0, country: profile.country,
+        level: profile.level, xp: profile.xp, won: profile.won, wins: profile.wins, games: profile.games});
+      if (r.me) profile.league = r.me.league;
       online = true;
       for (const g of r.grants || []) applyGrant(g);
       Net.inbox = r.inbox || []; Net.me = r.me;
@@ -3007,11 +3342,20 @@ for (let i = 0; i < 18; i++) {
 }
 
 // ---------------------------------------------------------------- language
+// language: saved choice → device language (if we have it) → the language of the player's country → English
+const CC_LANG = {UZ: "uz", RU: "ru", BY: "ru", KZ: "ru", KG: "ru", TJ: "ru", TM: "ru", UA: "ru", TR: "tr", AZ: "tr", CY: "tr",
+  ES: "es", MX: "es", AR: "es", CO: "es", CL: "es", PE: "es", VE: "es", EC: "es", GT: "es", CU: "es", BO: "es", DO: "es", HN: "es", PY: "es", SV: "es", NI: "es", CR: "es", PA: "es", UY: "es",
+  BR: "pt", PT: "pt", AO: "pt", MZ: "pt", FR: "fr", BE: "fr", SN: "fr", CI: "fr", CM: "fr", ML: "fr", DE: "de", AT: "de", CH: "de", LI: "de", ID: "id", IN: "hi",
+  SA: "ar", AE: "ar", EG: "ar", IQ: "ar", JO: "ar", KW: "ar", QA: "ar", BH: "ar", OM: "ar", YE: "ar", SY: "ar", LB: "ar", LY: "ar", DZ: "ar", MA: "ar", TN: "ar", SD: "ar", PS: "ar"};
 function detectLang() {
   const saved = profile.lang;
   if (saved && LANGS[saved]) return saved;
-  const n = (navigator.language || "en").slice(0, 2);
-  return n === "uz" ? "uz" : n === "ru" || n === "kk" || n === "ky" || n === "tg" ? "ru" : "en";
+  const dev = (navigator.languages || [navigator.language || ""]).map(l => l.slice(0, 2).toLowerCase());
+  const cl = CC_LANG[profile.country || detectCountry()];
+  if (dev[0] && LANGS[dev[0]] && !(dev[0] === "en" && cl)) return dev[0];   // browsers often default to English; the country is a better hint then
+  if (cl) return cl;
+  for (const l of dev) { if (LANGS[l]) return l; if (["kk", "ky", "tg", "be", "uk"].includes(l)) return "ru"; }
+  return "en";
 }
 const staticText = [];   // [textNode, original Uzbek text]
 (function collectStatic() {
@@ -3028,6 +3372,8 @@ function applyLang(l) {
 }
 $("langBtn").onclick = () => openModal({icon: "🌐", title: T("Til"), text: "", buttons: Object.entries(LANGS).map(([k, name]) => ({
   label: name, cls: k === LANG ? "green" : "gray", fn: () => { profile.lang = k; save(); applyLang(k); go(document.querySelector(".screen.on") ? document.querySelector(".screen.on").id : "home"); }}))});
+// the player's country (flag on the leaderboards) is detected automatically unless they picked one in the profile
+if (!profile.countryManual) { const cc = detectCountry(); if (cc && cc !== profile.country) { profile.country = cc; save(); } }
 applyLang(detectLang());
 
 toMenu();
