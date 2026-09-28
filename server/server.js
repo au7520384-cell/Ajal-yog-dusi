@@ -188,6 +188,7 @@ setInterval(() => buckets.clear(), 10 * 60000);
 
 // ---------------------------------------------------------------- leaderboard cache (per scope, 20 s)
 const lbCache = new Map();
+const recoverTries = new Map();
 function board(key, filter) {
   const c = lbCache.get(key);
   if (c && Date.now() - c.at < 20000) return c.list;
@@ -270,6 +271,35 @@ const routes = {
     if (!f.friends.includes(u.id)) f.friends.push(u.id);
     markDirty();
     return {ok: true, friend: publicUser(f)};
+  },
+  // ---------------- cloud save: the whole game progress, so a player keeps it on a new phone or browser
+  async "POST /api/save"(req, u) {
+    const raw = (await readBody(req, 256 * 1024)).toString("utf8");
+    let b; try { b = JSON.parse(raw); } catch (e) { return [400, {error: "bad_json"}]; }
+    if (!b.save || typeof b.save !== "object") return [400, {error: "no_save"}];
+    const at = int(b.save.savedAt);
+    if (u.save && at < (u.saveAt || 0)) return {ok: false, newer: true, savedAt: u.saveAt};   // never overwrite a newer save
+    u.save = b.save; u.saveAt = at || Date.now(); markDirty();
+    return {ok: true, savedAt: u.saveAt};
+  },
+  "GET /api/save"(req, u) { return {save: u.save || null, savedAt: u.saveAt || 0}; },
+  // a recovery key lets the player sign in to the same account on another device (ID code + key)
+  async "POST /api/recovery/key"(req, u) {
+    const A = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let k = ""; for (let i = 0; i < 10; i++) k += A[crypto.randomInt(A.length)];
+    u.rkey = crypto.createHash("sha256").update(u.id + ":" + k).digest("hex"); markDirty();
+    return {key: k.slice(0, 5) + "-" + k.slice(5)};
+  },
+  async "POST /api/recover"(req) {
+    const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
+    const t = recoverTries.get(ip) || {n: 0, at: Date.now()};
+    if (Date.now() - t.at > 3600e3) { t.n = 0; t.at = Date.now(); }
+    if (++t.n > 10) { recoverTries.set(ip, t); return [429, {error: "too_many"}]; }
+    recoverTries.set(ip, t);
+    const b = await jsonBody(req), id = db.codes[String(b.code || "").toUpperCase().trim()], u = id && db.users[id];
+    const key = String(b.key || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (!u || !u.rkey || crypto.createHash("sha256").update(u.id + ":" + key).digest("hex") !== u.rkey) return [403, {error: "bad_key"}];
+    return {id: u.id, token: u.token, code: u.code, save: u.save || null, savedAt: u.saveAt || 0};
   },
   "GET /api/friends/suggested"(req, u) {
     const now = Date.now();
@@ -457,7 +487,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "POST /api/register"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "POST /api/register", "POST /api/recover"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);

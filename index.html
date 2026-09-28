@@ -1361,6 +1361,22 @@ const DICT = {
   "qutilar": ["boxes", "ящиков"],
   "Katta sovrinlar uchun pullik o'yin: 3 ta zarba.": ["Paid game with big prizes: 3 shots.", "Платная игра с большими призами: 3 удара."],
   "Omadli zarba": ["Lucky Shot", "Удачный удар"],
+  "Progress bulutdan tiklandi": ["Progress restored from the cloud", "Прогресс восстановлен из облака"],
+  "Tiklash kaliti": ["Recovery key", "Ключ восстановления"],
+  "Buni yozib qo'ying! Yangi telefonda ID va shu kalit bilan kirasiz.": ["Write this down! On a new phone you sign in with your ID and this key.", "Запишите! На новом телефоне войдёте по ID и этому ключу."],
+  "Kalit": ["Key", "Ключ"],
+  "Yangi kalit olsangiz, eskisi ishlamay qoladi.": ["Getting a new key disables the old one.", "Новый ключ отменяет старый."],
+  "Hisobni tiklash": ["Restore account", "Восстановить аккаунт"],
+  "Eski qurilmadagi ID va tiklash kalitini kiriting.": ["Enter the ID and recovery key from your old device.", "Введите ID и ключ со старого устройства."],
+  "Juda ko'p urinish. 1 soatdan keyin qayting.": ["Too many tries. Come back in an hour.", "Слишком много попыток. Вернитесь через час."],
+  "ID yoki kalit noto'g'ri": ["Wrong ID or key", "Неверный ID или ключ"],
+  "Hisob tiklandi!": ["Account restored!", "Аккаунт восстановлен!"],
+  "Hisob va saqlash": ["Account & saving", "Аккаунт и сохранение"],
+  "Progress serverga saqlanadi": ["Progress is saved to the server", "Прогресс сохраняется на сервере"],
+  "Yangi telefonga o'tish uchun kalit": ["Key to move to a new phone", "Ключ для перехода на новый телефон"],
+  "Kalit olish": ["Get key", "Получить ключ"],
+  "Boshqa qurilmadagi hisobga kirish": ["Sign in to an account from another device", "Войти в аккаунт с другого устройства"],
+  "Tiklash": ["Restore", "Восстановить"],
 };
 // More languages. Each list follows XL_KEYS; strings not listed here fall back to English.
 const XL_KEYS = ["siz", "1 ga 1", "USTALAR LIGASI", "O'ynash", "Tanga tikib yuting", "Turnir", "8 o'yinchi, 3 raund", "Mini o'yinlar", "Do'st bilan", "Bitta qurilmada 2 kishi",
@@ -1496,7 +1512,7 @@ const profile = Object.assign({
 }, store.get("bilyard8v2", {}));
 const ownsAvatar = i => avPrice(i).v === 0 || profile.avs.includes(i);
 let cloudSaveHook = null;   // set by the Y8 integration when a Y8 player is logged in
-const save = () => { profile.savedAt = Date.now(); store.set("bilyard8v2", profile); if (cloudSaveHook) cloudSaveHook(); };
+const save = () => { profile.savedAt = Date.now(); store.set("bilyard8v2", profile); if (cloudSaveHook) cloudSaveHook(); if (typeof cloudQueue === "function") cloudQueue(); };
 const xpNeed = l => 100 + (l - 1) * 80;
 const cueDef = id => CUES.find(c => c.id === id) || CUES[0];
 const cueMax = c => 26 + c.st[0] * 0.9;
@@ -4179,7 +4195,8 @@ const Net = (() => {
     });
   }
   const send = m => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); };
-  return {api, ensure, sync, checkout, connect, send, on: (t, f) => { handlers[t] = f; },
+  const setAcct = a => { acct = a; store.set("b8acct", a); if (ws) try { ws.close(); } catch (e) {} };
+  return {api, ensure, sync, checkout, connect, send, setAcct, on: (t, f) => { handlers[t] = f; },
     get acct() { return acct; }, get online() { return online; }, get base() { return BASE; }, inbox: [], me: null, friends: []};
 })();
 // Messages from the online opponent during a match
@@ -4717,6 +4734,67 @@ function errText(e) {
     friends_closed: T("Bu o'yinchi do'st so'rovlarini yopgan"), level: `${CLUB_LEVEL}-${T("darajada ochiladi")}`, in_club: T("Siz allaqachon klubdasiz"), name: T("Nom kamida 3 harf bo'lsin"),
     name_taken: T("Bu nom band"), full: T("Klub to'la"), not_found: T("Klub topilmadi"), slow: T("Sekinroq yozing"), no_club: T("Klub topilmadi")}[e.message] || T("Server bilan aloqa yo'q. Internetni tekshiring.");
 }
+
+// ---------------------------------------------------------------- cloud save (server) + account recovery on another device
+let cloudReady = false, cloudTimer = null, cloudBusy = false, cloudAt = 0;
+function applySave(sv) {
+  for (const k of Object.keys(profile)) delete profile[k];
+  Object.assign(profile, sv);
+  store.set("bilyard8v2", profile);
+  updateNav(); applySettings(); if (profile.lang && LANGS[profile.lang]) applyLang(profile.lang);
+  const on = document.querySelector(".screen.on"); if (mode === "menu" && on) go(on.id);
+}
+async function cloudPull() {
+  try {
+    if (!Net.base) return;
+    await Net.ensure();
+    const r = await Net.api("/api/save");
+    if (r.save && (r.savedAt || 0) > (profile.savedAt || 0) + 1000) { applySave(r.save); toast("☁️", T("Progress bulutdan tiklandi"), ""); }
+    cloudAt = r.savedAt || 0;
+  } catch (e) {}
+  cloudReady = true; cloudQueue();
+}
+function cloudQueue() {
+  if (!cloudReady || !Net.acct) return;
+  clearTimeout(cloudTimer); cloudTimer = setTimeout(cloudPush, 4000);
+}
+async function cloudPush(keepalive) {
+  if (!cloudReady || !Net.acct || !Net.base || cloudBusy || (profile.savedAt || 0) <= cloudAt) return;
+  cloudBusy = true;
+  try {
+    const r = await fetch(Net.base + "/api/save", {method: "POST", keepalive: !!keepalive, headers: {"Content-Type": "application/json", Authorization: `Bearer ${Net.acct.id}:${Net.acct.token}`},
+      body: JSON.stringify({save: profile})}).then(x => x.json());
+    if (r.ok) cloudAt = r.savedAt;
+    else if (r.newer) { const g = await Net.api("/api/save"); if (g.save) { applySave(g.save); cloudAt = g.savedAt; } }
+  } catch (e) {}
+  cloudBusy = false;
+}
+addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") cloudPush(true); });
+addEventListener("pagehide", () => cloudPush(true));
+function recoveryKey() {
+  Net.ensure().then(() => Net.api("/api/recovery/key", {})).then(r => {
+    openModal({icon: "🔑", title: T("Tiklash kaliti"), text: T("Buni yozib qo'ying! Yangi telefonda ID va shu kalit bilan kirasiz."),
+      extra: `<div class="card" style="font-family:var(--fh);font-size:22px;line-height:1.6">ID: <b style="color:#ffe27a">${esc(Net.acct.code)}</b><br>${T("Kalit")}: <b style="color:#7ff7ff">${esc(r.key)}</b></div>
+        <p class="muted" style="margin:6px 0 0">${T("Yangi kalit olsangiz, eskisi ishlamay qoladi.")}</p>`,
+      buttons: [{label: T("Nusxalash"), cls: "blue", fn: () => { try { navigator.clipboard.writeText(`Bilyard 8 · ID ${Net.acct.code} · ${r.key}`); toast("📋", T("Nusxalandi!"), ""); } catch (e) {} }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+  }).catch(e => toast("⚠️", errText(e), T("Tiklash kaliti")));
+}
+function recoverAccount() {
+  openModal({icon: "📲", title: T("Hisobni tiklash"), text: T("Eski qurilmadagi ID va tiklash kalitini kiriting."),
+    extra: `<input class="name" id="rcCode" maxlength="10" placeholder="ID (ABC1234)" style="text-transform:uppercase;margin-bottom:8px">
+      <input class="name" id="rcKey" maxlength="12" placeholder="${T("Kalit")} (ABCDE-12345)" style="text-transform:uppercase">`,
+    buttons: [{label: T("Kirish"), cls: "green", fn: () => {
+      const code = $("rcCode").value.trim(), key = $("rcKey").value.trim();
+      fetch(Net.base + "/api/recover", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({code, key})}).then(async x => {
+        const r = await x.json().catch(() => ({}));
+        if (!x.ok) return toast("⚠️", r.error === "too_many" ? T("Juda ko'p urinish. 1 soatdan keyin qayting.") : T("ID yoki kalit noto'g'ri"), T("Hisobni tiklash"));
+        Net.setAcct({id: r.id, token: r.token, code: r.code});
+        if (r.save) { r.save.savedAt = Math.max(r.save.savedAt || 0, r.savedAt || 0); applySave(r.save); }
+        cloudAt = r.savedAt || 0; Snd.win(); toast("✅", T("Hisob tiklandi!"), r.code);
+        Net.sync(); setTimeout(() => location.reload(), 1200);
+      }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), ""));
+    }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+}
 // ---------------------------------------------------------------- settings
 const SET_DEF = {vib: true, sens: "normal", tapAim: true, fine: true, guideOff: false, power: "left", cheer: "all", allowFriend: true, showOnline: true, notifyFr: true};
 const opt = k => profile.set && k in profile.set ? profile.set[k] : SET_DEF[k];
@@ -4745,6 +4823,10 @@ function buildSettings() {
     ${row("Do'st qo'shishga ruxsat", seg("allowFriend", [[true, "Hamma"], [false, "Hech kim"]]))}
     ${row("Onlayn holatimni do'stlarga ko'rsatish", tg("showOnline", opt("showOnline")))}
     ${row("Do'stlar onlayn bo'lganda xabar berish", tg("notifyFr", opt("notifyFr")))}
+    <div class="setsec">☁️ ${T("Hisob va saqlash")}</div>
+    ${row("Progress serverga saqlanadi", `<span class="muted">${Net.acct ? "ID " + esc(Net.acct.code) + (cloudAt ? " · ✅ " + new Date(cloudAt).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}) : "") : T("oflayn")}</span>`)}
+    ${row("Yangi telefonga o'tish uchun kalit", `<button class="btn orange" id="setKey" style="padding:6px 14px">🔑 ${T("Kalit olish")}</button>`)}
+    ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setRecover" style="padding:6px 14px">📲 ${T("Tiklash")}</button>`)}
     <div class="setsec">${T("Boshqa")}</div>
     ${row("Til", `<button class="btn blue" id="setLang" style="padding:6px 14px">🌐 ${LANGS[LANG]}</button>`)}
     ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:6px 14px">👤 ${esc(profile.name)}</button>`)}
@@ -4757,6 +4839,7 @@ function buildSettings() {
   });
   $("setBody").querySelectorAll("[data-s]").forEach(b => b.onclick = () => { setOpt(b.dataset.s, JSON.parse(b.dataset.v)); Snd.click(); buildSettings(); });
   $("setLang").onclick = () => $("langBtn").click();
+  $("setKey").onclick = recoveryKey; $("setRecover").onclick = recoverAccount;
 }
 // friends coming online (setting "notifyFr")
 let frOnline = null;
@@ -5021,6 +5104,7 @@ if (profile.lastClaim !== today()) setTimeout(() => toast("🎁", T("Kunlik sovg
 // online: register / sync in the background, accept invite links (?ref=CODE) and return from checkout (?paid=1)
 (async () => {
   const qs = new URLSearchParams(location.search);
+  await cloudPull();
   const r = await Net.sync();
   if (!r) return;
   const ref = (qs.get("ref") || "").toUpperCase();
