@@ -897,22 +897,22 @@ const groupOf = n => n === 0 ? "cue" : n < 8 ? "solid" : n === 8 ? "eight" : "st
 const CITIES = [
   {id: "lon", name: "London",    sub: "Thames Pub",        fee: 50,        prize: 100,       lvl: 1,  felt: ["#2f86f0", "#0c3a8e"], rail: ["#7a3a1c", "#34130a"], trim: "#ffffff", pat: "classic", skill: 0.018,  col: ["#ffffff", "#e0352b"]},
   {id: "syd", name: "Sidney",    sub: "Harbour Bar",       fee: 100,       prize: 200,       lvl: 2,  felt: ["#23c94a", "#07702a"], rail: ["#d9a066", "#8a5a2a"], trim: "#ffffff", pat: "tribal",  skill: 0.017,  col: ["#fffbd0", "#1ed45a"]},
-  {id: "lis", name: "Lissabon",  sub: "Summer Terrace",    fee: 500,       prize: 1000,      lvl: 3,  felt: ["#3e6df0", "#15307a"], rail: ["#f0e0c0", "#b09a70"], trim: "#1f4fd1", pat: "ikat",    skill: 0.016,  col: ["#ffffff", "#3e6df0"]},
+  {id: "lis", name: "Lissabon",  sub: "Summer Terrace",    fee: 500,       prize: 1000,      lvl: 3,  felt: ["#2cb5d8", "#0a5270"], rail: ["#f4f1ea", "#c9c2b2"], trim: "#1f4fd1", pat: "ikat",    skill: 0.016,  col: ["#ffffff", "#3e6df0"]},
   {id: "tok", name: "Tokio",     sub: "Samurai Dojo",      fee: 2500,      prize: 5000,      lvl: 5,  felt: ["#d8283a", "#6a0612"], rail: ["#141420", "#050508"], trim: "#ffd24d", pat: "medal",   skill: 0.015,  col: ["#ffd6d0", "#ff3b30"]},
   {id: "veg", name: "Las-Vegas", sub: "Royal Flush",       fee: 10000,     prize: 20000,     lvl: 7,  felt: ["#2b2b3a", "#0a0a12"], rail: ["#d9b34a", "#6a4e10"], trim: "#ffffff", pat: "gold",    skill: 0.013,  col: ["#fff6c8", "#ffcf3d"]},
-  {id: "jak", name: "Jakarta",   sub: "Volcano Arena",     fee: 50000,     prize: 100000,    lvl: 9,  felt: ["#ff7a1a", "#8a2e05"], rail: ["#2a1a10", "#0a0604"], trim: "#ffd24d", pat: "tribal",  skill: 0.012,  col: ["#ffe6a0", "#ff5a1a"]},
-  {id: "tor", name: "Toronto",   sub: "Maple Lounge",      fee: 100000,    prize: 200000,    lvl: 11, felt: ["#5a6272", "#1e232c"], rail: ["#c8102e", "#5a0412"], trim: "#ffffff", pat: "medal",   skill: 0.011,  col: ["#ffffff", "#ff3b30"]},
-  {id: "cai", name: "Qohira",    sub: "Pyramid Hall",      fee: 250000,    prize: 500000,    lvl: 13, felt: ["#e0b040", "#7a5510"], rail: ["#3a2a18", "#140c04"], trim: "#40c8ff", pat: "gold",    skill: 0.0095, col: ["#fff2c0", "#e0b040"]},
-  {id: "dub", name: "Dubay",     sub: "Golden Tower",      fee: 500000,    prize: 1000000,   lvl: 15, felt: ["#1f5fd0", "#0a2466"], rail: ["#d9b34a", "#6a4e10"], trim: "#fff1b8", pat: "gold",    skill: 0.0085, col: ["#fff6c8", "#ffb300"]},
+  {id: "jak", name: "Jakarta",   sub: "Volcano Arena",     fee: 50000,     prize: 100000,    lvl: 9,  felt: ["#ff7a1a", "#8a2e05"], rail: ["#3a3432", "#141110"], trim: "#ffd24d", pat: "tribal",  skill: 0.012,  col: ["#ffe6a0", "#ff5a1a"]},
+  {id: "tor", name: "Toronto",   sub: "Maple Lounge",      fee: 100000,    prize: 200000,    lvl: 11, felt: ["#6a86a8", "#243650"], rail: ["#8a1a1a", "#3a0606"], trim: "#ffffff", pat: "medal",   skill: 0.011,  col: ["#ffffff", "#ff3b30"]},
+  {id: "cai", name: "Qohira",    sub: "Pyramid Hall",      fee: 250000,    prize: 500000,    lvl: 13, felt: ["#e0b040", "#7a5510"], rail: ["#e2c48a", "#a88450"], trim: "#40c8ff", pat: "gold",    skill: 0.0095, col: ["#fff2c0", "#e0b040"]},
+  {id: "dub", name: "Dubay",     sub: "Golden Tower",      fee: 500000,    prize: 1000000,   lvl: 15, felt: ["#1a3f8e", "#061a4a"], rail: ["#d9b34a", "#6a4e10"], trim: "#fff1b8", pat: "gold",    skill: 0.0085, col: ["#fff6c8", "#ffb300"]},
   {id: "sha", name: "Shanxay",   sub: "Pearl Club",        fee: 1000000,   prize: 2000000,   lvl: 17, felt: ["#12a86a", "#04492a"], rail: ["#8a1a1a", "#2a0404"], trim: "#ffd24d", pat: "medal",   skill: 0.0075, col: ["#fff0a0", "#ffcf3d"]},
-  {id: "par", name: "Parij",     sub: "Château Royal",     fee: 2500000,   prize: 5000000,   lvl: 19, felt: ["#2aa6a0", "#0b4a48"], rail: ["#e8e2d6", "#9a9282"], trim: "#1b2a7a", pat: "classic", skill: 0.0065, col: ["#ffffff", "#8fe0ff"]},
+  {id: "par", name: "Parij",     sub: "Château Royal",     fee: 2500000,   prize: 5000000,   lvl: 19, felt: ["#c85a7a", "#5a1a32"], rail: ["#f3f0ea", "#b8b2a6"], trim: "#1b2a7a", pat: "classic", skill: 0.0065, col: ["#ffffff", "#8fe0ff"]},
   {id: "rom", name: "Rim",       sub: "Colosseo",          fee: 4000000,   prize: 8000000,   lvl: 21, felt: ["#b8742a", "#5a320a"], rail: ["#e6dccb", "#9a8e78"], trim: "#7a1a1a", pat: "medal",   skill: 0.0055, col: ["#fff0d8", "#c87a2a"]},
   {id: "bkk", name: "Bangkok",   sub: "Golden Temple",     fee: 5000000,   prize: 10000000,  lvl: 23, felt: ["#7a9a2a", "#2e3e08"], rail: ["#8a1a1a", "#3a0606"], trim: "#ffd24d", pat: "ikat",    skill: 0.0048, col: ["#fff6c8", "#a6d62a"]},
   {id: "seo", name: "Seul",      sub: "Neon Tower",        fee: 10000000,  prize: 20000000,  lvl: 25, felt: ["#7a5cff", "#2a1a8a"], rail: ["#101018", "#030306"], trim: "#ff4fa0", pat: "tribal",  skill: 0.0042, col: ["#ffd6f0", "#7a5cff"]},
-  {id: "mum", name: "Mumbay",    sub: "Maharaja Palace",   fee: 15000000,  prize: 30000000,  lvl: 28, felt: ["#c0392b", "#5a0a08"], rail: ["#5a0a2a", "#20020e"], trim: "#ffd24d", pat: "gold",    skill: 0.0036, col: ["#ffe6a0", "#ff8a1f"]},
-  {id: "ber", name: "Berlin",    sub: "Platz Arena",       fee: 25000000,  prize: 50000000,  lvl: 31, felt: ["#1e8a8a", "#073a3a"], rail: ["#8a8a92", "#3a3a40"], trim: "#ffcf3d", pat: "medal",   skill: 0.003,  col: ["#ffffff", "#ffcf3d"]},
-  {id: "ist", name: "Istanbul",  sub: "Bosphorus Palace",  fee: 50000000,  prize: 100000000, lvl: 34, felt: ["#a86bff", "#3f1d86"], rail: ["#24243a", "#0a0a14"], trim: "#e2c2ff", pat: "ikat",    skill: 0.0022, col: ["#f5e8ff", "#a45cff"]},
-  {id: "osa", name: "Osaka",     sub: "Skyline",           fee: 100000000, prize: 200000000, lvl: 38, felt: ["#1f3aa8", "#081244"], rail: ["#101010", "#000000"], trim: "#ffd24d", pat: "gold",    skill: 0.001,  col: ["#fff6c8", "#ffcf3d"]},
+  {id: "mum", name: "Mumbay",    sub: "Maharaja Palace",   fee: 15000000,  prize: 30000000,  lvl: 28, felt: ["#c0287a", "#50082e"], rail: ["#5a0a2a", "#20020e"], trim: "#ffd24d", pat: "gold",    skill: 0.0036, col: ["#ffe6a0", "#ff8a1f"]},
+  {id: "ber", name: "Berlin",    sub: "Platz Arena",       fee: 25000000,  prize: 50000000,  lvl: 31, felt: ["#1e8a8a", "#073a3a"], rail: ["#b8bcc4", "#5a5e66"], trim: "#ffcf3d", pat: "medal",   skill: 0.003,  col: ["#ffffff", "#ffcf3d"]},
+  {id: "ist", name: "Istanbul",  sub: "Bosphorus Palace",  fee: 50000000,  prize: 100000000, lvl: 34, felt: ["#8a1434", "#3a0414"], rail: ["#1c1a22", "#060508"], trim: "#e2c2ff", pat: "ikat",    skill: 0.0022, col: ["#f5e8ff", "#a45cff"]},
+  {id: "osa", name: "Osaka",     sub: "Skyline",           fee: 100000000, prize: 200000000, lvl: 38, felt: ["#3a2aa0", "#120a44"], rail: ["#1a1a22", "#050508"], trim: "#ffd24d", pat: "gold",    skill: 0.001,  col: ["#fff6c8", "#ffcf3d"]},
 ];
 // city trophies (like 8BP): a win adds, a loss takes away; reaching the goal wins the city's ring for good
 const TROPHY = {lon: [4, 0, 15], syd: [6, 13, 30], lis: [8, 17, 60], tok: [10, 2, 75], veg: [12, 6, 90], jak: [16, 6, 125], tor: [20, 9, 160], cai: [24, 12, 200],
@@ -2683,17 +2683,220 @@ function drawCoin(x, y, r) {
 
 // ---------------------------------------------------------------- table
 function drawBackground() {
+  const bg = game && game.city && tblOf(game.city).bg;
   const g = ctx.createRadialGradient(W / 2, H * 0.55, 80, W / 2, H * 0.5, W * 0.8);
-  g.addColorStop(0, "#26324f"); g.addColorStop(0.55, "#151d33"); g.addColorStop(1, "#070a14");
+  if (bg) { g.addColorStop(0, bg[0]); g.addColorStop(0.55, shade(bg[1], 14)); g.addColorStop(1, shade(bg[1], -12)); }
+  else { g.addColorStop(0, "#26324f"); g.addColorStop(0.55, "#151d33"); g.addColorStop(1, "#070a14"); }
   ctx.fillStyle = g; ctx.fillRect(-3000, -3000, W + 6000, H + 6000);
   ctx.save(); ctx.globalAlpha = 0.05; ctx.strokeStyle = "#9fb4ff"; ctx.lineWidth = 1;
   for (let i = -H; i < W; i += 28) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + H, H); ctx.stroke(); }
   ctx.restore();
 }
 // ---------------------------------------------------------------- table (pre-rendered once per city/resolution)
+// Every city has its own table: rail material, a pattern woven into the cloth, the room light and (some) neon.
+const TBL = {
+  lon: {mat: "wood",    motif: "argyle",  mc: "#ffffff", ma: 0.11, bg: ["#2a3a5c", "#0c1426"]},
+  syd: {mat: "wood",    motif: "dots",    mc: "#fff3c0", ma: 0.12, bg: ["#1f5a6a", "#06202a"]},
+  lis: {mat: "tile",    motif: "azulejo", mc: "#ffffff", ma: 0.09, bg: ["#2a5a8a", "#081a30"], tile: "#1f4fd1"},
+  tok: {mat: "lacquer", motif: "wave",    mc: "#ffffff", ma: 0.1,  bg: ["#5a1a22", "#14040a"]},
+  veg: {mat: "gold",    motif: "suits",   mc: "#ffcf3d", ma: 0.08, bg: ["#3a2a5a", "#0a0614"], glow: "#ffcf3d"},
+  jak: {mat: "stone",   motif: "kawung",  mc: "#2a0a00", ma: 0.16, bg: ["#6a2a10", "#140502"], glow: "#ff6a1a"},
+  tor: {mat: "leather", motif: "maple",   mc: "#ffffff", ma: 0.09, bg: ["#3a4a5c", "#0c1018"]},
+  cai: {mat: "stone",   motif: "pyramid", mc: "#5a3a08", ma: 0.14, bg: ["#6a5020", "#1a1004"]},
+  dub: {mat: "gold",    motif: "star8",   mc: "#ffe7a0", ma: 0.13, bg: ["#2a3a6a", "#060a1a"]},
+  sha: {mat: "lacquer", motif: "cloud",   mc: "#ffe7a0", ma: 0.13,  bg: ["#5a1a1a", "#120404"]},
+  par: {mat: "marble",  motif: "damask",  mc: "#ffffff", ma: 0.08, bg: ["#4a3a5a", "#140a1a"], vein: "#c9a24a"},
+  rom: {mat: "marble",  motif: "meander", mc: "#fff0d8", ma: 0.16, bg: ["#5a3a20", "#180c04"], vein: "#8a7050"},
+  bkk: {mat: "wood",    motif: "lotus",   mc: "#fff0a0", ma: 0.11, bg: ["#5a4a10", "#141002"]},
+  seo: {mat: "carbon",  motif: "grid",    mc: "#ff4fa0", ma: 0.14, bg: ["#2a1a5a", "#06041a"], glow: "#ff4fa0"},
+  mum: {mat: "lacquer", motif: "mandala", mc: "#ffd24d", ma: 0.12, bg: ["#5a1040", "#16020e"]},
+  ber: {mat: "metal",   motif: "hex",     mc: "#ffffff", ma: 0.1, bg: ["#2a3a3a", "#080e0e"], glow: "#2af0e0"},
+  ist: {mat: "ebony",   motif: "girih",   mc: "#40d8ff", ma: 0.11, bg: ["#3a0a1a", "#0e0206"]},
+  osa: {mat: "carbon",  motif: "sakura",  mc: "#ffb0d8", ma: 0.13, bg: ["#2a1a4a", "#08041a"], glow: "#ff5ab0"},
+  gm:  {mat: "ebony",   motif: "argyle",  mc: "#ffd24d", ma: 0.06, bg: ["#1f3a2a", "#040a06"]},
+};
+const tblOf = city => TBL[city && city.id] || {mat: "wood"};
 let tableCache = null, feltNoise = null;
 function railBand(x1, y1, len, horizontal, fn) {
   for (let s = 0; s < len; s += 16) fn(horizontal ? x1 + s : x1, horizontal ? y1 : y1 + s, s / 16 | 0, horizontal);
+}
+function railMaterial(st, city, OX, OY, OW, OH, rn, woodGrain) {
+  const [r1, r2] = city.rail, trim = city.trim;
+  ctx.save(); rr(OX, OY, OW, OH, 30); ctx.clip();
+  const lines = (n, horiz, col) => {            // brushed metal: fine parallel lines along each rail
+    for (let i = 0; i < n; i++) {
+      ctx.strokeStyle = col(rn()); ctx.lineWidth = 0.4 + rn() * 0.8; ctx.beginPath();
+      if (horiz) { const y = OY + rn() * OH; ctx.moveTo(OX, y); ctx.lineTo(OX + OW, y); } else { const x = OX + rn() * OW; ctx.moveTo(x, OY); ctx.lineTo(x, OY + OH); }
+      ctx.stroke();
+    }
+  };
+  const railsOnly = fn => {                     // clip to the four rails, one direction each
+    ctx.save(); ctx.beginPath(); ctx.rect(OX, OY, OW, FY - OY); ctx.rect(OX, FY + FH, OW, OY + OH - FY - FH); ctx.clip(); fn(true); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.rect(OX, FY, FX - OX, FH); ctx.rect(FX + FW, FY, OX + OW - FX - FW, FH); ctx.clip(); fn(false); ctx.restore();
+  };
+  switch (st.mat) {
+    case "marble": {
+      for (let i = 0; i < 55; i++) {
+        const gold = st.vein && rn() < 0.3;
+        ctx.strokeStyle = gold ? st.vein : `rgba(60,55,70,${0.08 + rn() * 0.22})`; ctx.globalAlpha = gold ? 0.6 : 1;
+        ctx.lineWidth = gold ? 1.2 : 0.4 + rn() * 1.6; ctx.beginPath();
+        let x = OX + rn() * OW, y = OY + rn() * OH; ctx.moveTo(x, y);
+        for (let k = 0; k < 5; k++) { const nx = x + (rn() - 0.5) * 180, ny = y + (rn() - 0.5) * 90; ctx.quadraticCurveTo((x + nx) / 2 + (rn() - 0.5) * 40, (y + ny) / 2 + (rn() - 0.5) * 40, nx, ny); x = nx; y = ny; }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1; break;
+    }
+    case "metal": case "gold":
+      railsOnly(h => lines(260, h, v => v < 0.5 ? `rgba(0,0,0,${0.05 + v * 0.1})` : `rgba(255,255,255,${0.04 + (v - 0.5) * 0.18})`));
+      for (const f of [0.18, 0.62]) {           // polished highlight bands
+        const g = ctx.createLinearGradient(OX, OY, OX + OW, OY + OH);
+        g.addColorStop(Math.max(0, f - 0.08), "rgba(255,255,255,0)"); g.addColorStop(f, "rgba(255,255,255,.28)"); g.addColorStop(f + 0.08, "rgba(255,255,255,0)");
+        ctx.fillStyle = g; ctx.fillRect(OX, OY, OW, OH);
+      }
+      if (st.mat === "metal") {                 // bolted plates
+        ctx.fillStyle = "#2a2c30"; for (const [x, y] of [[OX + 20, OY + 20], [OX + OW - 20, OY + 20], [OX + 20, OY + OH - 20], [OX + OW - 20, OY + OH - 20]]) { ctx.beginPath(); ctx.arc(x, y, 4, 0, 7); ctx.fill(); }
+      }
+      break;
+    case "carbon":
+      for (let y = OY; y < OY + OH; y += 6) for (let x = OX; x < OX + OW; x += 6) {
+        const a = ((x - OX) / 6 + (y - OY) / 6) % 2 < 1;
+        ctx.fillStyle = a ? "rgba(255,255,255,.07)" : "rgba(0,0,0,.35)"; ctx.fillRect(x, y, a ? 6 : 3, a ? 3 : 6);
+      }
+      break;
+    case "stone":
+      for (let i = 0; i < 2600; i++) {
+        const v = rn(); ctx.fillStyle = v < 0.5 ? `rgba(0,0,0,${0.08 + v * 0.3})` : `rgba(255,240,210,${(v - 0.5) * 0.25})`;
+        ctx.fillRect(OX + rn() * OW, OY + rn() * OH, 1 + rn() * 2.5, 1 + rn() * 2.5);
+      }
+      if (st.glow) {                             // glowing lava cracks
+        ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 6; ctx.lineWidth = 1.3; ctx.globalAlpha = 0.75;
+        for (let i = 0; i < 26; i++) {
+          let x = OX + rn() * OW, y = OY + rn() * OH; ctx.beginPath(); ctx.moveTo(x, y);
+          for (let k = 0; k < 4; k++) { x += (rn() - 0.5) * 40; y += (rn() - 0.5) * 24; ctx.lineTo(x, y); }
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+      }
+      break;
+    case "leather": {
+      for (let i = 0; i < 1800; i++) { ctx.fillStyle = `rgba(0,0,0,${rn() * 0.18})`; ctx.fillRect(OX + rn() * OW, OY + rn() * OH, 2, 2); }
+      ctx.setLineDash([6, 4]); ctx.strokeStyle = "rgba(255,240,220,.55)"; ctx.lineWidth = 1.4;
+      rr(OX + 8, OY + 8, OW - 16, OH - 16, 24); ctx.stroke();
+      rr(FX - RAIL + 10, FY - RAIL + 10, FW + 2 * RAIL - 20, FH + 2 * RAIL - 20, 16); ctx.stroke(); ctx.setLineDash([]);
+      break;
+    }
+    case "tile": {                              // Portuguese azulejo tiles
+      const T = 26, blue = st.tile || trim;
+      for (let y = OY; y < OY + OH; y += T) for (let x = OX; x < OX + OW; x += T) {
+        ctx.fillStyle = "#f7f4ee"; ctx.fillRect(x, y, T, T);
+        ctx.fillStyle = blue;
+        for (const [cx, cy] of [[x, y], [x + T, y], [x, y + T], [x + T, y + T]]) { ctx.beginPath(); ctx.arc(cx, cy, 7, 0, 7); ctx.fill(); }
+        const m = T / 2; ctx.beginPath(); ctx.moveTo(x + m, y + 4); ctx.lineTo(x + T - 4, y + m); ctx.lineTo(x + m, y + T - 4); ctx.lineTo(x + 4, y + m); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = "#f7f4ee"; ctx.beginPath(); ctx.arc(x + m, y + m, 3.5, 0, 7); ctx.fill();
+        ctx.strokeStyle = "rgba(0,0,40,.18)"; ctx.lineWidth = 0.8; ctx.strokeRect(x, y, T, T);
+      }
+      break;
+    }
+    case "lacquer": case "ebony": {
+      if (st.mat === "ebony") woodGrain();
+      ctx.strokeStyle = trim; ctx.globalAlpha = 0.8; ctx.lineWidth = 1.2;   // gold pinstripes
+      rr(OX + 10, OY + 10, OW - 20, OH - 20, 22); ctx.stroke(); rr(OX + 14, OY + 14, OW - 28, OH - 28, 20); ctx.stroke(); ctx.globalAlpha = 1;
+      if (st.mat === "ebony") {                 // mother-of-pearl inlay dots
+        for (let i = 0; i < 70; i++) {
+          const t = i / 70, per = 2 * (OW + OH), d = t * per;
+          const x = d < OW ? OX + d : d < OW + OH ? OX + OW : d < 2 * OW + OH ? OX + OW - (d - OW - OH) : OX, y = d < OW ? OY : d < OW + OH ? OY + d - OW : d < 2 * OW + OH ? OY + OH : OY + OH - (d - 2 * OW - OH);
+          const px = x + (x <= OX ? 22 : x >= OX + OW ? -22 : 0), py = y + (y <= OY ? 22 : y >= OY + OH ? -22 : 0);
+          const g = ctx.createRadialGradient(px - 1, py - 1, 0, px, py, 3); g.addColorStop(0, "#fff"); g.addColorStop(0.6, "#bfe8ff"); g.addColorStop(1, "#8a9ad8");
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, 2.6, 0, 7); ctx.fill();
+        }
+      }
+      const g = ctx.createLinearGradient(0, OY, 0, OY + OH);     // deep gloss
+      g.addColorStop(0, "rgba(255,255,255,.35)"); g.addColorStop(0.04, "rgba(255,255,255,0)"); g.addColorStop(0.96, "rgba(255,255,255,0)"); g.addColorStop(1, "rgba(255,255,255,.18)");
+      ctx.fillStyle = g; ctx.fillRect(OX, OY, OW, OH);
+      break;
+    }
+    default: woodGrain();
+  }
+  ctx.restore();
+}
+// Pattern woven into the cloth (faint, so the balls stay easy to read).
+function clothMotif(st, rn) {
+  const c = st.mc || "#fff";
+  ctx.globalAlpha = st.ma || 0.08; ctx.fillStyle = c; ctx.strokeStyle = c; ctx.lineWidth = 1.5;
+  const grid = (sx, sy, fn, stag) => { for (let j = 0, y = sy / 2; y < FH + sy; y += sy, j++) for (let x = (stag && j % 2 ? sx : 0) + sx / 2 - sx; x < FW + sx; x += sx) fn(x, y, j); };
+  const star = (x, y, r1, r2, n, rot = 0) => { ctx.beginPath(); for (let i = 0; i < 2 * n; i++) { const a = rot + i * Math.PI / n, r = i % 2 ? r2 : r1; ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); } ctx.closePath(); };
+  switch (st.motif) {
+    case "argyle":
+      for (let x = -FH; x < FW + FH; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + FH, FH); ctx.moveTo(x + FH, 0); ctx.lineTo(x, FH); ctx.stroke(); }
+      break;
+    case "dots":                                 // dot-painting circles
+      for (let i = 0; i < 14; i++) {
+        const x = rn() * FW, y = rn() * FH;
+        for (let r = 8; r < 58; r += 11) for (let a = 0; a < 6.28; a += 7 / r) { ctx.beginPath(); ctx.arc(x + Math.cos(a) * r, y + Math.sin(a) * r, 2, 0, 7); ctx.fill(); }
+      }
+      break;
+    case "azulejo":
+      grid(90, 90, (x, y) => { for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.ellipse(x + Math.cos(k * 1.5708) * 14, y + Math.sin(k * 1.5708) * 14, 14, 7, k * 1.5708, 0, 7); ctx.stroke(); } ctx.beginPath(); ctx.arc(x, y, 30, 0, 7); ctx.stroke(); });
+      break;
+    case "wave":                                 // seigaiha
+      grid(60, 30, (x, y) => { for (let r = 28; r > 4; r -= 8) { ctx.beginPath(); ctx.arc(x, y, r, Math.PI, 0); ctx.stroke(); } }, true);
+      break;
+    case "suits": {
+      ctx.font = "28px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; const S = ["♠", "♥", "♦", "♣"];
+      grid(80, 70, (x, y, j) => ctx.fillText(S[(Math.round(x / 80) + j) & 3], x, y), true); break;
+    }
+    case "kawung":
+      grid(56, 56, (x, y) => { for (let k = 0; k < 4; k++) { const a = k * 1.5708 + 0.785; ctx.beginPath(); ctx.ellipse(x + Math.cos(a) * 13, y + Math.sin(a) * 13, 12, 6.5, a, 0, 7); ctx.fill(); } });
+      break;
+    case "maple":
+      grid(110, 100, (x, y, j) => { star(x, y, 22, 9, 5, -Math.PI / 2 + j * 0.3); ctx.fill(); ctx.fillRect(x - 1, y + 8, 2, 16); }, true); break;
+    case "pyramid":
+      grid(70, 60, (x, y) => { ctx.beginPath(); ctx.moveTo(x, y - 20); ctx.lineTo(x + 24, y + 18); ctx.lineTo(x - 24, y + 18); ctx.closePath(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x - 12, y); ctx.lineTo(x + 12, y); ctx.stroke(); }, true); break;
+    case "star8":
+      grid(80, 80, (x, y) => { star(x, y, 26, 18, 8); ctx.stroke(); ctx.beginPath(); ctx.rect(x - 10, y - 10, 20, 20); ctx.stroke(); }); break;
+    case "cloud":
+      grid(120, 70, (x, y) => { for (const [dx, r] of [[-18, 12], [0, 17], [18, 12]]) { ctx.beginPath(); ctx.arc(x + dx, y, r, Math.PI, 0); ctx.stroke(); } ctx.beginPath(); ctx.moveTo(x - 34, y); ctx.lineTo(x + 34, y); ctx.stroke(); ctx.beginPath(); ctx.arc(x, y - 4, 6, 0, 5); ctx.stroke(); }, true); break;
+    case "damask":
+      grid(70, 90, (x, y) => { ctx.beginPath(); ctx.moveTo(x, y - 30); ctx.quadraticCurveTo(x + 22, y, x, y + 30); ctx.quadraticCurveTo(x - 22, y, x, y - 30); ctx.stroke(); ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(x, y - 36, 2.5, 0, 7); ctx.fill(); }, true); break;
+    case "meander": {                            // Greek key border around the cloth
+      const s = 12, run = (L, fn) => { for (let i = 0; i + 4 * s <= L; i += 4 * s) fn(i); };
+      ctx.lineWidth = 3;
+      const key = (x, y) => { ctx.beginPath(); ctx.moveTo(x, y + 3 * s); ctx.lineTo(x, y); ctx.lineTo(x + 3 * s, y); ctx.lineTo(x + 3 * s, y + 2 * s); ctx.lineTo(x + s, y + 2 * s); ctx.lineTo(x + s, y + s); ctx.lineTo(x + 2 * s, y + s); ctx.stroke(); };
+      run(FW - 60, i => { key(30 + i, 22); key(30 + i, FH - 22 - 3 * s); });
+      ctx.lineWidth = 1.5; ctx.strokeRect(20, 16, FW - 40, FH - 32); break;
+    }
+    case "lotus":
+      grid(100, 80, (x, y) => { for (let k = -2; k <= 2; k++) { ctx.save(); ctx.translate(x, y + 14); ctx.rotate(k * 0.42); ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(9, -16, 0, -30); ctx.quadraticCurveTo(-9, -16, 0, 0); ctx.fill(); ctx.restore(); } }, true); break;
+    case "grid":
+      ctx.shadowColor = c; ctx.shadowBlur = 8;
+      for (let x = 0; x <= FW; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, FH); ctx.stroke(); }
+      for (let y = 0; y <= FH; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(FW, y); ctx.stroke(); }
+      ctx.shadowBlur = 0; break;
+    case "mandala":
+      ctx.save(); ctx.translate(FW / 2, FH / 2 - 16);
+      for (const [r, n, L] of [[100, 16, 26], [140, 24, 30], [185, 32, 30], [228, 40, 24]]) {
+        ctx.beginPath(); ctx.arc(0, 0, r - 4, 0, 7); ctx.stroke();
+        for (let k = 0; k < n; k++) { ctx.save(); ctx.rotate(k * 6.2832 / n); ctx.beginPath(); ctx.moveTo(r, -L * 0.28); ctx.quadraticCurveTo(r + L, 0, r, L * 0.28); ctx.fill(); ctx.restore(); }
+      }
+      ctx.restore();
+      grid(250, 250, (x, y) => { if (Math.hypot(x - FW / 2, y - FH / 2) > 280) { star(x, y, 18, 8, 8); ctx.fill(); } }); break;
+    case "hex": {
+      const r = 26, hw = r * Math.sqrt(3);
+      for (let j = 0, y = 0; y < FH + r * 2; y += r * 1.5, j++) for (let x = j % 2 ? hw / 2 : 0; x < FW + hw; x += hw) {
+        ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); } ctx.closePath(); ctx.stroke();
+      }
+      break;
+    }
+    case "girih":
+      grid(76, 76, (x, y) => { star(x, y, 30, 20, 8, Math.PI / 8); ctx.stroke(); star(x, y, 12, 6, 4); ctx.fill(); }); break;
+    case "sakura":
+      for (let i = 0; i < 46; i++) {
+        const x = rn() * FW, y = rn() * FH, r = 7 + rn() * 9, rot = rn() * 6;
+        for (let k = 0; k < 5; k++) { const a = rot + k * 1.2566; ctx.beginPath(); ctx.ellipse(x + Math.cos(a) * r, y + Math.sin(a) * r, r, r * 0.6, a, 0, 7); ctx.fill(); }
+      }
+      break;
+  }
+  ctx.globalAlpha = 1;
 }
 function drawTable(city) {
   const k = scale * dpr, key = (city.id || city.pat) + city.felt[0] + (typeof ringOf === "function" && city.id && ringOf(city) ? "R" : "");
@@ -2729,10 +2932,11 @@ function paintTable(city) {
     }
     ctx.restore();
   };
-  if (!lucky) {
+  const st = tblOf(city);
+  if (!lucky) railMaterial(st, city, OX, OY, OW, OH, rn, () => {
     grain(OX, OY, OW, RAIL + 8, true); grain(OX, FY + FH, OW, RAIL + 8, true);
     grain(OX, FY, RAIL + 8, FH, false); grain(FX + FW, FY, RAIL + 8, FH, false);
-  }
+  });
   // lacquer sheen + bevels
   const sh = ctx.createLinearGradient(0, OY, 0, OY + RAIL);
   sh.addColorStop(0, "rgba(255,255,255,.28)"); sh.addColorStop(0.5, "rgba(255,255,255,.06)"); sh.addColorStop(1, "rgba(255,255,255,0)");
@@ -2809,6 +3013,7 @@ function paintTable(city) {
     ng.putImageData(id, 0, 0);
   }
   ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(0, 0, FW, FH); ctx.globalAlpha = 1;
+  if (!lucky && st.motif) { ctx.save(); ctx.beginPath(); ctx.rect(0, 0, FW, FH); ctx.clip(); clothMotif(st, rn); ctx.restore(); }
   // shadow cast by the cushions onto the cloth
   const edge = (x, y, w, h, x1, y1, x2, y2) => { const g = ctx.createLinearGradient(x1, y1, x2, y2); g.addColorStop(0, "rgba(0,0,0,.38)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(x, y, w, h); };
   edge(0, 0, FW, 22, 0, 0, 0, 22); edge(0, FH - 14, FW, 14, 0, FH, 0, FH - 14); edge(0, 0, 16, FH, 0, 0, 16, 0); edge(FW - 16, 0, 16, FH, FW, 0, FW - 16, 0);
@@ -2856,6 +3061,10 @@ function paintTable(city) {
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
     ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
+  }
+  if (st.glow && !lucky) {                     // neon strip under the cushion nose
+    ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
+    rr(-C - 3, -C - 3, FW + 2 * C + 6, FH + 2 * C + 6, 10); ctx.stroke(); ctx.restore();
   }
   // soft overhead lamp
   const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
