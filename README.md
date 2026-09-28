@@ -4,12 +4,15 @@ An 8-ball pool game for phones and computers. The game is `index.html`; the onli
 
 ## Features
 - **Always landscape and full screen:** on the first tap the game goes full screen and locks to landscape. On phones that can't lock (iPhone Safari), the game rotates itself. When installed as an app (PWA), it opens full screen in landscape.
-- **Languages:** O'zbekcha / English / Русский (🌐 button; picked automatically from the device language).
+- **Languages:** O'zbekcha, English, Русский, Türkçe, Español, Português, Français, Deutsch, Bahasa Indonesia, العربية, हिन्दी (🌐 button). Picked automatically from the player's device language, or from their country when the device is set to English.
+- **Country:** detected automatically (time zone, then browser region) and shown as a flag on the leaderboards; players can change it in the profile.
 - **Online 1 on 1:** real players are matched per city. Both devices get the same rack, shots and aim are streamed live, and chat works between players. If nobody is found within 15 s, a computer opponent (marked 🤖) plays instead.
 - **Friends:** each player has a unique ID code. You can add friends by code, send one gift a day to each friend, request gifts, and see who is online.
 - **Invite bonus:** the inviter gets 💵 25 + 🪙 15 000 and the invited friend gets 💵 10 + 🪙 5 000. It works with an invite link (`?ref=CODE`) or by entering the code in the first 7 days.
-- **Global leaderboard:** real players ranked by coins won.
-- **Expensive economy:** 10 cities, from Toshkent (50 coins) to Las-Vegas (50 000 000 entry / 100 000 000 prize). Coin cues go up to **5 billion**; premium cash (💵) cues go up to **1 500 cash**. Cash is hard to earn (1–5 at a time).
+- **Weekly leaderboards (like 8 Ball Pool):** My League / Friends / Country / World tabs, ranked by coins won this week (Monday–Sunday UTC). Prizes for the world top 3 each week: 💵 1500 / 750 / 400.
+- **Leagues:** Bronze → Silver → Gold → Platinum → Diamond → Master → Grandmaster. Everyone starts in Bronze; each week the top 20% of a league move up and the bottom 20% move down.
+- **Avatars and frames:** 100 avatars (20 free, the rest for coins or cash) and 9 avatar frames.
+- **Expensive economy:** 22 cities, from Toshkent (50 coins) through London, Paris, Jakarta, Seoul and more, up to Osaka (100 000 000 entry / 200 000 000 prize). Coin cues go up to **5 billion**; premium cash (💵) cues go up to **1 500 cash**. Cash is hard to earn (1–5 at a time).
 - **Bank:** buy cash or coins with real money (Stripe), or exchange cash for coins.
 - **Gameplay:** 3D rolling balls, spin, synthesized click sounds, 3D cues, a tournament bracket, the daily reward route, lucky shot, wheel, watch mode, achievements, and levels.
 
