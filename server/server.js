@@ -49,6 +49,25 @@ const SKUS = {
   golden_3:    {items: {goldShots: 3},    vip: 130, usd: 1.99, name: "Golden Shot x3"},
   sbox_1:      {items: {sboxes: 1},       vip: 60,  usd: 0.99, name: "Surprise Box"},
   sbox_5:      {items: {sboxes: 5},       vip: 260, usd: 3.99, name: "Surprise Box x5"},
+  // VIP bundles: exclusive cues that are never sold in the cue shop
+  sport_1:     {coins: 120000,  cash: 60,   vip: 332,  items: {cues: ["vip_under"], sboxes: 2},    usd: 3.99,  name: "Sports Madness: Underdog"},
+  sport_2:     {coins: 258000,  cash: 90,   vip: 582,  items: {cues: ["vip_champ"], sboxes: 2},    usd: 6.99,  name: "Sports Madness: Champion"},
+  sport_3:     {coins: 540000,  cash: 440,  vip: 2708, items: {cues: ["vip_mvp"], sboxes: 4},      usd: 24.99, name: "Sports Madness: M.V.P."},
+  atom_1:      {coins: 140000,  cash: 140,  vip: 400,  items: {cues: ["vip_geiger"], goldShots: 4},  usd: 4.99,  name: "Atomic Blast: Geiger"},
+  atom_2:      {coins: 360000,  cash: 360,  vip: 832,  items: {cues: ["vip_kaboom"], goldShots: 9},  usd: 9.99,  name: "Atomic Blast: Kaboom"},
+  atom_3:      {coins: 1728000, cash: 1720, vip: 5000, items: {cues: ["vip_nemesis"], goldShots: 36}, usd: 39.99, name: "Atomic Blast: Nuclear Nemesis"},
+  zod_0:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z0"], avs: [200], sboxes: 5}, usd: 24.99, name: "Zodiac: Aries"},
+  zod_1:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z1"], avs: [201], sboxes: 5}, usd: 24.99, name: "Zodiac: Taurus"},
+  zod_2:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z2"], avs: [202], sboxes: 5}, usd: 24.99, name: "Zodiac: Gemini"},
+  zod_3:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z3"], avs: [203], sboxes: 5}, usd: 24.99, name: "Zodiac: Cancer"},
+  zod_4:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z4"], avs: [204], sboxes: 5}, usd: 24.99, name: "Zodiac: Leo"},
+  zod_5:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z5"], avs: [205], sboxes: 5}, usd: 24.99, name: "Zodiac: Virgo"},
+  zod_6:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z6"], avs: [206], sboxes: 5}, usd: 24.99, name: "Zodiac: Libra"},
+  zod_7:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z7"], avs: [207], sboxes: 5}, usd: 24.99, name: "Zodiac: Scorpio"},
+  zod_8:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z8"], avs: [208], sboxes: 5}, usd: 24.99, name: "Zodiac: Sagittarius"},
+  zod_9:      {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z9"], avs: [209], sboxes: 5}, usd: 24.99, name: "Zodiac: Capricorn"},
+  zod_10:     {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z10"], avs: [210], sboxes: 5}, usd: 24.99, name: "Zodiac: Aquarius"},
+  zod_11:     {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z11"], avs: [211], sboxes: 5}, usd: 24.99, name: "Zodiac: Pisces"},
 };
 const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
 const GIFT = {coins: 500};
