@@ -377,7 +377,8 @@
 
 <!-- ============ LEADERBOARD ============ -->
 <div class="screen" id="leader">
-  <div class="head"><button class="back" data-go="home">‹</button><h2>Haftalik reyting</h2></div>
+  <div class="head"><button class="back" data-go="home">‹</button><h2>Haftalik reyting</h2>
+    <button class="btn orange y8ad" id="y8Lb" style="margin-left:auto;display:none;padding:8px 14px;font-size:16px">🏆 Y8</button></div>
   <div class="lb" id="lbList"></div>
 </div>
 
@@ -387,6 +388,7 @@
   <div class="minis">
     <button class="tile t-blue" id="mLucky" style="min-height:180px"><span class="ic" style="font-size:80px">🎯</span><b>Omadli<br>zarba</b><small id="luckyInfo">Har kuni 1 ta bepul</small></button>
     <button class="tile t-purple" id="mWheel" style="min-height:180px"><span class="ic" style="font-size:80px">🎡</span><b>Omad<br>g'ildiragi</b><small id="wheelInfo">Har kuni 1 ta bepul</small></button>
+    <button class="tile t-green y8ad" id="mAd" style="min-height:180px;display:none"><span class="ic" style="font-size:80px">📺</span><b>Reklama<br>ko'ring</b><small>+1 zarba · +1 g'ildirak</small></button>
   </div>
 </div>
 
@@ -444,6 +446,16 @@
    Bitta faylli 8-shar bilyard: 3D aylanadigan sharlar, aylanish (spin),
    sintez qilingan realistik tovushlar, AI raqiblar, turnir, sovg'alar.
    ===================================================================== */
+
+// ---------------------------------------------------------------- publishing config (edit these)
+const CONFIG = {
+  server: "https://bilyard8.onrender.com",   // your Render URL: online play when the game runs on another site (Y8, itch.io, a file)
+  y8AppId: "",                                // Y8 account App ID — https://account.y8.com/applications/
+  y8GameId: "",                               // Y8 ads Game ID — given by the Y8 team after your game is approved
+  y8Leaderboard: "Leaderboard",               // leaderboard table name created in the Y8 dashboard
+};
+// On game portals (Y8 etc.) real-money payments go through the portal, so our own Stripe shop is hidden there.
+const ON_PORTAL = /(^|\.)y8\.com$|(^|\.)id\.net$/.test(location.hostname) || /y8\.com/.test(document.referrer) || (window.top !== window.self && !!CONFIG.y8AppId);
 
 // ---------------------------------------------------------------- geometry
 const W = 1280, H = 720;
@@ -627,6 +639,13 @@ const DICT = {
   "Hech bir shar bortga tegmadi": ["No ball hit a cushion", "Ни один шар не коснулся борта"], "8-sharni tushirdi!": ["Potted the 8 ball!", "Забил 8-й шар!"],
   "SIZ YAXLIT SHARLARSIZ!": ["YOU ARE SOLIDS!", "ВЫ — СПЛОШНЫЕ!"], "SIZ YO'L-YO'L SHARLARSIZ!": ["YOU ARE STRIPES!", "ВЫ — ПОЛОСАТЫЕ!"],
   "Mashq: istalgancha urishingiz mumkin": ["Practice: shoot as much as you like", "Тренировка: бейте сколько угодно"],
+  "Reklama": ["Watch", "Смотри"], "ko'ring": ["an ad", "рекламу"], "+1 zarba · +1 g'ildirak": ["+1 shot · +1 spin", "+1 удар · +1 вращение"],
+  "Reklama ko'rib pul oling": ["Watch an ad, get cash", "Смотри рекламу — получай кэш"], "kuniga 10 marta": ["10 times a day", "10 раз в день"],
+  "Ko'rish": ["Watch", "Смотреть"], "Rahmat!": ["Thanks!", "Спасибо!"], "Bugungi reklamalar tugadi": ["No more ads today", "На сегодня реклама закончилась"],
+  "Ertaga qayting": ["Come back tomorrow", "Возвращайтесь завтра"], "Reklama oxirigacha ko'rilmadi": ["Ad was not watched to the end", "Реклама не досмотрена"],
+  "Saqlangan o'yin yuklandi": ["Cloud save loaded", "Сохранение загружено"], "o'yin bulutda saqlanadi": ["progress saved to the cloud", "прогресс в облаке"],
+  "Y8 bilan kiring — o'yiningiz bulutda saqlanadi": ["Log in with Y8 to save your progress in the cloud", "Войдите через Y8 — прогресс сохранится в облаке"],
+  "Yutuqlar": ["Achievements", "Достижения"], "Kirish": ["Log in", "Войти"],
 };
 let LANG = "uz";
 function T(s) { const i = LANG === "en" ? 0 : LANG === "ru" ? 1 : -1; const e = DICT[s]; return i < 0 || !e ? s : e[i]; }
@@ -649,7 +668,8 @@ const profile = Object.assign({
   cue: "start", cues: ["start"], lastLucky: "", luckyTries: 0, lastWheel: "", wheelTries: 0,
   streak: 0, lastClaim: "", ach: {}, muted: false, tours: 0,
 }, store.get("bilyard8v2", {}));
-const save = () => store.set("bilyard8v2", profile);
+let cloudSaveHook = null;   // set by the Y8 integration when a Y8 player is logged in
+const save = () => { profile.savedAt = Date.now(); store.set("bilyard8v2", profile); if (cloudSaveHook) cloudSaveHook(); };
 const xpNeed = l => 100 + (l - 1) * 80;
 const cueDef = id => CUES.find(c => c.id === id) || CUES[0];
 const cueMax = c => 26 + c.st[0] * 0.9;
@@ -674,6 +694,7 @@ function unlock(id) {
   profile.ach[id] = today(); profile.coins += 200; save();
   const a = ACHS[id]; toast(a.icon, a.name, "Yutuq ochildi · +200 tanga");
   Snd.coin(4);
+  if (typeof y8Achievement === "function") y8Achievement(id);
 }
 
 // ---------------------------------------------------------------- audio (fully synthesised, no samples)
@@ -1203,6 +1224,7 @@ function endGame(winner, why) {
     profile.games++;
     if (humanWon) {
       profile.wins++; profile.won += G.city.prize; addXp(40 + Math.round(Math.log10(G.city.prize) * 15));
+      y8Score(); y8Event("match_win", G.city.prize);
       unlock("first_win"); if (!G.oppHadPot) unlock("runout");
     } else addXp(12);
     save(); Net.sync();
@@ -2270,6 +2292,7 @@ function openModal({icon = "", title, text = "", extra = "", buttons = []}) {
 function resultModal(humanWon, why, winner, prize, buttons) {
   const title = humanWon === null ? `${winner.name} yutdi!` : humanWon ? "G'ALABA!" : "MAG'LUBIYAT";
   const extra = prize ? `<div class="reward"><span class="coin"></span><span id="countUp">+0</span></div>` : "";
+  buttons = buttons.map(b => ({...b, fn: () => y8Break(b.fn)}));   // Y8: occasional ad between matches
   openModal({icon: humanWon === false ? "😞" : "🏆", title, text: why, extra, buttons});
   if (prize) {
     const el = $("countUp");
@@ -2428,7 +2451,7 @@ function tourAfterMatch(won, why, winner) {
   }
   tour.round++; addXp(30);
   if (tour.round >= 3) {
-    tour = null; profile.tours++; profile.won += c.prize; save(); unlock("champ"); addXp(100);
+    tour = null; profile.tours++; profile.won += c.prize; save(); unlock("champ"); addXp(100); y8Score(); y8Event("tournament_win", c.prize);
     return resultModal(true, `Siz ${c.name} chempionisiz! 👑`, mePlayer(), c.prize, [{label: "Menyu", cls: "green", fn: () => toMenu()}]);
   }
   openModal({icon: "✅", title: "Raund yutildi!", text: `Keyingi bosqich: ${["", "Yarim final", "Final"][tour.round]}`, buttons: [{label: "Davom etish", cls: "green", fn: () => toMenu("tourScr")}]});
@@ -2458,6 +2481,14 @@ function buildShop(tab) {
       profile.cash -= cash; addCoins(coins); Snd.coin(6); toast("💱", `+${fmt(coins)} ${T("tanga")}`, T("Almashtirildi"));
     });
     body.querySelectorAll("[data-sku]").forEach(b => b.onclick = () => Net.checkout(b.dataset.sku, b));
+    if (ON_PORTAL) {   // portals handle money themselves: no Stripe packs there
+      body.firstElementChild.remove(); body.firstElementChild.remove();
+      body.lastElementChild.remove();
+    }
+    body.insertAdjacentHTML("afterbegin", `<div class="card y8ad" style="display:${Y8.sdk && Y8.adsReady ? "flex" : "none"};align-items:center;gap:12px;margin-bottom:14px">
+      <div style="font-size:40px">📺</div><div style="flex:1"><b>${T("Reklama ko'rib pul oling")}</b><div class="muted">+1 💵 · ${T("kuniga 10 marta")}</div></div>
+      <button class="btn green" id="adCash">${T("Ko'rish")}</button></div>`);
+    $("adCash").onclick = () => y8Rewarded("bank-cash", () => { profile.cash += 1; toast("💵", "+1", T("Rahmat!")); });
     return;
   }
   const grid = document.createElement("div"); grid.className = "cuelist";
@@ -2691,18 +2722,122 @@ function buildProfile() {
           .map(([i, n, v]) => `<div class="card" style="text-align:center;padding:8px"><div style="font-size:24px">${i}</div><div class="muted">${n}</div><div class="h" style="font-size:22px">${v}</div></div>`).join("")}
       </div></div>
     </div>
+    ${Y8.sdk ? `<div class="card" style="display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap">
+      <b style="font-size:20px">Y8</b><span class="muted" style="flex:1">${Y8.user ? `✅ ${esc(Y8.user.nickname || "")} · ${T("o'yin bulutda saqlanadi")}` : T("Y8 bilan kiring — o'yiningiz bulutda saqlanadi")}</span>
+      ${Y8.user ? `<button class="btn blue" id="y8Ach" style="padding:6px 12px;font-size:15px">🏅 ${T("Yutuqlar")}</button>` : `<button class="btn green" id="y8Login" style="padding:6px 12px;font-size:15px">${T("Kirish")}</button>`}</div>` : ""}
     <h3 class="h" style="font-weight:400;margin:16px 0 8px;color:var(--gold)">Yutuqlar</h3>
     <div class="achs">${Object.entries(ACHS).map(([id, a]) => `<div class="ach${profile.ach[id] ? "" : " off"}"><span>${a.icon}</span><div>${a.name}<small>${a.d}</small></div></div>`).join("")}</div>`;
   $("pName").oninput = e => { profile.name = e.target.value.trim() || "Siz"; save(); updateNav(); };
   $("profBody").querySelectorAll("[data-a]").forEach(b => b.onclick = () => { profile.avatar = +b.dataset.a; save(); updateNav(); buildProfile(); });
+  if ($("y8Login")) $("y8Login").onclick = () => { try { Y8.sdk.login(); } catch (e) {} };
+  if ($("y8Ach")) $("y8Ach").onclick = () => Y8.sdk.showAchievements().catch(() => {});
+}
+
+// ---------------------------------------------------------------- Y8 platform SDK (y8.com)
+// Loaded only when CONFIG.y8AppId / y8GameId are filled in. Everything degrades gracefully without it.
+const Y8 = {sdk: null, user: null, adsReady: false, busy: false, matches: 0, lastBreak: 0, saveTimer: null};
+// Names must match the achievements created in the Y8 dashboard exactly (key = our id).
+const Y8_ACH = {first_win: "First Win", double: "Double Pot", breakpot: "Power Break", runout: "Clean Table", champ: "Tournament Champion",
+  lucky: "Bullseye", streak7: "Loyal Player", rich: "Rich", collector: "Collector"};
+function y8Init() {
+  if (!CONFIG.y8AppId && !CONFIG.y8GameId) return;
+  window.addEventListener("y8sdk.ready", () => {
+    try {
+      Y8.sdk = window.y8.sdk();
+      Y8.sdk.init({appId: CONFIG.y8AppId, autoLogin: true},
+        {gameId: CONFIG.y8GameId, preloadAdBreaks: "auto", sound: profile.muted ? "off" : "on", onReady: () => { Y8.adsReady = true; updateY8Ui(); }});
+      Y8.sdk.onAuth((user, error) => {
+        if (error) return;
+        Y8.user = user || null;
+        cloudSaveHook = Y8.user ? y8QueueSave : null;
+        if (Y8.user) y8LoadCloud();
+        updateY8Ui();
+      });
+      if (!profile.lang) Y8.sdk.getPlatformLocale().then(l => { const k = String(l || "").slice(0, 2); if (LANGS[k]) applyLang(k); }).catch(() => {});
+    } catch (e) { console.warn("Y8 SDK init failed", e); }
+  }, {once: true});
+  const s = document.createElement("script");
+  s.src = "https://cdn.y8.com/minimal-sdk/2-0/y8.min.js"; s.async = true;
+  s.onload = () => { if (window.y8 && window.y8.emitReadyEvent) window.y8.emitReadyEvent(); };
+  document.head.appendChild(s);
+}
+// Cloud save for logged-in Y8 players: newest save wins.
+function y8LoadCloud() {
+  if (!profile.name || profile.name === "Siz" || profile.name === "Player") { profile.name = String(Y8.user.nickname || profile.name).slice(0, 14); }
+  Y8.sdk.loadData({key: "save"}).then(v => {
+    const cloud = v ? JSON.parse(v) : null;
+    if (cloud && (cloud.savedAt || 0) > (profile.savedAt || 0)) {
+      Object.assign(profile, cloud); store.set("bilyard8v2", profile); updateNav();
+      toast("☁️", T("Saqlangan o'yin yuklandi"), "Y8");
+    } else y8QueueSave();
+  }).catch(() => {});
+}
+function y8QueueSave() {
+  if (!Y8.sdk || !Y8.user) return;
+  clearTimeout(Y8.saveTimer);
+  Y8.saveTimer = setTimeout(() => Y8.sdk.saveData({key: "save", value: JSON.stringify(profile), retries: true}).catch(() => {}), 4000);
+}
+function y8Achievement(id) {
+  if (!Y8.sdk || !Y8.user || !Y8_ACH[id]) return;
+  Y8.sdk.awardAchievement({achievement: Y8_ACH[id], achievementKey: id, overwrite: false, allowDuplicates: false}).catch(() => {});
+}
+function y8Score() {
+  if (!Y8.sdk || !Y8.user) return;
+  Y8.sdk.saveLeaderboardScore({table: CONFIG.y8Leaderboard, points: profile.won, allowDuplicates: false, highest: true}).catch(() => {});
+}
+function y8Event(name, value) { try { if (Y8.sdk) Y8.sdk.trackCustomEvent(name, value); } catch (e) {} }
+// Shows an ad. Resolves true only when a rewarded ad was watched to the end.
+function y8Ad(type, name) {
+  return new Promise(resolve => {
+    if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);
+    Y8.busy = true;
+    let viewed = false, finished = false;
+    const wasMuted = profile.muted;
+    const done = () => { if (finished) return; finished = true; Y8.busy = false; if (!wasMuted) Snd.setMuted(false); resolve(viewed); };
+    Y8.sdk.showAd({type, name,
+      beforeAd: () => Snd.setMuted(true),
+      beforeReward: showAdFn => showAdFn(),
+      adViewed: () => { viewed = true; },
+      adDismissed: () => {},
+      adBreakDone: () => done(),
+    }).catch(done);
+    setTimeout(done, 90000);   // never leave the game stuck
+  });
+}
+// Interstitial between matches: at most every 2nd match and 90 s apart.
+function y8Break(then) {
+  Y8.matches++;
+  if (Y8.sdk && Y8.adsReady && Y8.matches % 2 === 0 && Date.now() - Y8.lastBreak > 90000) {
+    Y8.lastBreak = Date.now(); y8Ad("next", "between-matches").then(then);
+  } else then();
+}
+// Rewarded ad with a daily cap; gives the reward only if the ad was watched.
+function y8Rewarded(name, give) {
+  const d = today();
+  if (profile.adDay !== d) { profile.adDay = d; profile.adCount = 0; }
+  if (profile.adCount >= 10) return toast("📺", T("Bugungi reklamalar tugadi"), T("Ertaga qayting"));
+  y8Ad("reward", name).then(ok => {
+    if (!ok) return toast("📺", T("Reklama oxirigacha ko'rilmadi"), "");
+    profile.adCount++; give(); save(); updateNav(); Snd.coin(6);
+  });
+}
+function updateY8Ui() {
+  const show = !!(Y8.sdk && Y8.adsReady);
+  for (const el of document.querySelectorAll(".y8ad")) el.style.display = show ? "" : "none";
+  if (mode === "menu") {
+    const on = document.querySelector(".screen.on");
+    if (on && on.id === "profileScr") buildProfile();
+  }
 }
 
 // ---------------------------------------------------------------- server connection
-// Works when the game is served by server/server.js (same origin) or when ?server=https://… is given once.
+// Same origin when served by server/server.js (or on localhost); CONFIG.server when running anywhere else (Y8, a file…).
+// ?server=https://… overrides it once.
 const Net = (() => {
   const qs = new URLSearchParams(location.search);
   if (qs.get("server")) store.set("b8server", qs.get("server"));
-  const BASE = (store.get("b8server", "") || (location.protocol.startsWith("http") ? location.origin : "")).replace(/\/$/, "");
+  const sameOrigin = location.protocol.startsWith("http") && !ON_PORTAL;
+  const BASE = (store.get("b8server", "") || (sameOrigin ? location.origin : CONFIG.server) || "").replace(/\/$/, "");
   let acct = store.get("b8acct", null), ws = null, online = false, registering = null;
   const handlers = {};
   async function api(path, body) {
@@ -2851,7 +2986,10 @@ document.querySelectorAll("#shop .tab").forEach(t => t.addEventListener("click",
 $("pchip").onclick = () => go("profileScr");
 $("muteBtn").onclick = toggleMute;
 $("fsBtn").onclick = toggleFullscreen;
-if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
+if ("serviceWorker" in navigator && location.protocol.startsWith("http") && !ON_PORTAL && window.top === window.self) navigator.serviceWorker.register("sw.js").catch(() => {});
+$("mAd").onclick = () => y8Rewarded("mini-tries", () => { profile.luckyTries++; profile.wheelTries++; buildMini(); toast("📺", T("+1 zarba · +1 g'ildirak"), T("Rahmat!")); });
+$("y8Lb").onclick = () => { if (Y8.sdk) Y8.sdk.showLeaderboard({table: CONFIG.y8Leaderboard, mode: "alltime", highest: true}).catch(() => {}); };
+y8Init();
 $("tPlay").onclick = () => go("cities");
 $("tTour").onclick = () => go("tourScr");
 $("tMini").onclick = () => go("mini");
