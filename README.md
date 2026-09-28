@@ -14,7 +14,10 @@ An 8-ball pool game for phones and computers. The game is `index.html`; the onli
 - **322 cues in 5 tabs** (every generated cue has its own colour and pattern pair; a cue button next to the spin ball lets you switch or buy cues during a match): Standard (coins or cash), Victory (collect 4 pieces by winning in a city or higher), Surprise (legendary cues, pieces from Surprise Boxes), Country (a flag cue for each of 199 countries) and Owned. Collection power grows with every cue.
 - **Avatars and frames:** 100 avatars (20 free, the rest for coins or cash) and 9 avatar frames.
 - **Expensive economy:** 18 cities like 8 Ball Pool — London, Sydney, Lisbon, Tokyo, Las Vegas, Jakarta, Toronto, Cairo, Dubai, Shanghai, Paris, Rome, Bangkok, Seoul, Mumbai, Berlin, Istanbul, Osaka (100 000 000 entry / 200 000 000 prize).
-- **Tournaments:** Asia Cup, South America Cup, Europe Cup, World Cup. Coin cues go up to **5 billion**; premium cash (💵) cues go up to **1 500 cash**. Cash is hard to earn (1–5 at a time).
+- **Tournaments:** Asia Cup (32 players), South America Cup (32), Europe Cup (48), World Cup (60) — knockout brackets with byes, 5–6 rounds.
+- **Clubs** (unlocked at level 6): create or join a club (up to 50 members), club chat, members ranked by weekly winnings; members of the week's top 3 clubs get 💵 50 / 25 / 10.
+- **Season pass ("King's Gambit"):** a monthly season with 30 tiers, a free and a premium track (300 cash), daily missions, exclusive cues and frame.
+- **Settings:** sound, vibration, cue sensitivity, tap to aim, aiming wheel, guideline in offline games, power bar side, cheering, friend requests, online status, friend-online notifications. Coin cues go up to **5 billion**; premium cash (💵) cues go up to **1 500 cash**. Cash is hard to earn (1–5 at a time).
 - **Bank:** buy cash or coins with real money (Stripe), or exchange cash for coins.
 - **Gameplay:** 3D rolling balls, spin, synthesized click sounds, 3D cues, a tournament bracket, the daily reward route, lucky shot, wheel, watch mode, achievements, and levels.
 
