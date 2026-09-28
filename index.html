@@ -6,7 +6,15 @@
 <meta name="theme-color" content="#0b1220">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>Bilyard 8 — Ustalar Ligasi</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="screen-orientation" content="landscape">
+<meta name="x5-orientation" content="landscape">
+<meta name="full-screen" content="yes">
+<meta name="x5-fullscreen" content="true">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Bilyard 8 — Masters League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
@@ -166,6 +174,12 @@
   .tab{flex:1;padding:10px;border-radius:10px;border:0;background:#141c30;color:#a7b2cc;cursor:pointer;font-family:var(--fh);font-size:18px}
   .tab.on{background:linear-gradient(#3b8cff,#1553b3);color:#fff}
 
+  .pack{overflow:hidden}
+  .ptag{position:absolute;top:10px;right:-30px;transform:rotate(35deg);background:#ff3b30;color:#fff;font-size:10px;padding:2px 34px;font-weight:900;text-transform:uppercase}
+  .frow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:#1a2340;border:1px solid #2c3a60;border-radius:12px;padding:8px 10px;margin-bottom:6px}
+  .frow .av{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-size:26px;position:relative}
+  .frow .on{position:absolute;right:-3px;bottom:-3px;width:12px;height:12px;border-radius:50%;background:#3fe052;border:2px solid #1a2340}
+  .codebox{display:flex;gap:8px;align-items:center;background:#0d1426;border:2px dashed #ffcf3d;border-radius:12px;padding:10px 14px;font-family:var(--fh);font-size:28px;letter-spacing:3px;color:#ffe27a;justify-content:space-between}
   .cuelist{display:flex;flex-direction:column;gap:10px}
   .cuerow{display:grid;grid-template-columns:minmax(0,1fr) 200px 150px;gap:14px;align-items:center;background:linear-gradient(#2d3a5e,#1b2440);border:2px solid #3e4f7c;border-radius:14px;padding:10px 14px}
   .cuerow.sel{border-color:var(--gold);box-shadow:0 0 0 2px #ffcf3d55,0 0 22px #ffcf3d44}
@@ -283,9 +297,9 @@
   .ach small{display:block;color:#a7b2cc;font-size:11px;font-weight:700}
   .muted{color:var(--muted);font-size:13px}
 
-  #rotate{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:60;background:#000d;border:1px solid #fff3;
-    border-radius:10px;padding:8px 14px;font-size:13px;display:none;pointer-events:none;text-align:center}
-  @media (orientation:portrait) and (max-width:760px){ #rotate{display:block} }
+  /* Phone held upright and the browser can't lock orientation (e.g. iPhone Safari):
+     turn the whole game 90° so it always plays in landscape, filling the screen. */
+  html.rot body{position:fixed;top:0;left:0;transform-origin:0 0;transform:rotate(90deg) translateY(-100%)}
   @media (max-width:760px){ .tiles{grid-template-columns:repeat(3,1fr)} .nb{min-width:52px;padding:3px 6px} .pinfo b{max-width:70px} .xpbar{width:64px} .mchip{min-width:70px;font-size:13px} }
   @media (max-height:520px){ .screen{padding-top:62px} .logo{margin:0 0 8px} .tile small{display:none} .rw{min-height:104px} .rw .ri{font-size:30px} }
   @media (max-width:560px){ .route{grid-template-columns:repeat(2,1fr)} .bracket{grid-template-columns:1fr} }
@@ -294,7 +308,6 @@
 <body>
 <canvas id="c"></canvas>
 <div id="shade"></div>
-<div id="rotate">📱 Telefonni yotqizing — o'yin gorizontal rejimda zo'r ko'rinadi</div>
 
 <!-- ============ TOP NAV ============ -->
 <div id="nav">
@@ -307,12 +320,15 @@
     <button class="nb" data-go="shop"><span>🎱</span>Kiylar</button>
     <button class="nb" data-go="leader"><span>🏆</span>Reyting</button>
     <button class="nb" data-go="mini"><span>🎯</span>Mini<i class="dot" id="dotMini" style="display:none">!</i></button>
+    <button class="nb" data-go="friendsScr"><span>👥</span>Do'stlar<i class="dot" id="dotFr" style="display:none">!</i></button>
   </div>
   <div class="money">
     <div class="mchip" data-go="shop" data-tab="bank"><span class="cash"></span><span id="cashTxt">0</span><span class="plus">+</span></div>
     <div class="mchip" data-go="shop" data-tab="bank"><span class="coin"></span><span id="coinTxt">0</span><span class="plus">+</span></div>
   </div>
-  <button class="iconbtn" id="muteBtn" title="Ovoz">🔊</button>
+  <button class="iconbtn" id="langBtn" title="Language">🌐</button>
+  <button class="iconbtn" id="fsBtn" title="Fullscreen">⛶</button>
+  <button class="iconbtn" id="muteBtn" title="Sound">🔊</button>
 </div>
 
 <!-- ============ HOME ============ -->
@@ -383,6 +399,11 @@
 </div>
 
 <!-- ============ PROFILE ============ -->
+<div class="screen" id="friendsScr">
+  <div class="head"><button class="back" data-go="home">‹</button><h2>Do'stlar</h2></div>
+  <div class="panel" id="friendsBody"></div>
+</div>
+
 <div class="screen" id="profileScr">
   <div class="head"><button class="back" data-go="home">‹</button><h2>Profil</h2></div>
   <div class="panel" id="profBody"></div>
@@ -458,6 +479,10 @@ const CITIES = [
   {id: "xiv",  name: "Xiva",      sub: "Ichan-Qal'a",  fee: 5000,   prize: 10000,  lvl: 6,  felt: ["#22d6c4", "#086b63"], rail: ["#7a4c26", "#3a220f"], trim: "#9ff3ff", pat: "stars",   skill: 0.005,  col: ["#d0fffa", "#12b3a6"], online: 1288},
   {id: "ist",  name: "Istanbul",  sub: "Bosfor",       fee: 20000,  prize: 40000,  lvl: 9,  felt: ["#a86bff", "#3f1d86"], rail: ["#24243a", "#0a0a14"], trim: "#e2c2ff", pat: "ikat",    skill: 0.0035, col: ["#f5e8ff", "#a45cff"], online: 812},
   {id: "dub",  name: "Dubay",     sub: "Oltin Minora", fee: 100000, prize: 200000, lvl: 13, felt: ["#d9a63a", "#7a5310"], rail: ["#2a2a2a", "#0c0c0c"], trim: "#fff1b8", pat: "gold",    skill: 0.002,  col: ["#fff6c8", "#ffb300"], online: 390},
+  {id: "par",  name: "Parij",     sub: "Eyfel Klubi",  fee: 500000,   prize: 1000000,   lvl: 17, felt: ["#4b6cff", "#1b2a7a"], rail: ["#e8e2d6", "#9a9282"], trim: "#1b2a7a", pat: "classic", skill: 0.0018, col: ["#ffffff", "#8fa6ff"], online: 244},
+  {id: "tok",  name: "Tokio",     sub: "Neon Arena",   fee: 2500000,  prize: 5000000,   lvl: 22, felt: ["#ff3fa4", "#6a0a44"], rail: ["#141420", "#050508"], trim: "#3ff7ff", pat: "ikat",    skill: 0.0015, col: ["#ffd6f0", "#ff3fa4"], online: 131},
+  {id: "nyc",  name: "Nyu-York",  sub: "Manxetten",    fee: 10000000, prize: 20000000,  lvl: 28, felt: ["#1fb86a", "#064a26"], rail: ["#3a3a3a", "#101010"], trim: "#ffd24d", pat: "stars",   skill: 0.0012, col: ["#e0ffe9", "#1fb86a"], online: 76},
+  {id: "veg",  name: "Las-Vegas", sub: "Brilliant Zal",fee: 50000000, prize: 100000000, lvl: 35, felt: ["#2b2b3a", "#0a0a12"], rail: ["#d9b34a", "#6a4e10"], trim: "#ffffff", pat: "gold",    skill: 0.001,  col: ["#fff6c8", "#ffcf3d"], online: 38},
 ];
 const CUPS = [
   {id: "c1", name: "Toshkent Kubogi",  fee: 300,   prize: 1500,  lvl: 1, city: 0, skill: 0.016},
@@ -466,16 +491,33 @@ const CUPS = [
 ];
 const CUES = [
   {id: "start",     name: "Boshlang'ich",    price: 0,     cur: "coin", st: [3, 3, 3, 3],     shaft: ["#f5e2b8", "#d9b074"], butt: ["#7a4318", "#2b1405"], metal: "#2a2a2a", deco: "plain"},
-  {id: "chinor",    name: "Chinor",          price: 1500,  cur: "coin", st: [4, 5, 4, 4],     shaft: ["#f5e6c0", "#d4ae72"], butt: ["#2f6d2a", "#0f2a12"], metal: "#e8c77a", deco: "points", dc: "#e8c77a"},
-  {id: "konfet",    name: "Konfet",          price: 3000,  cur: "coin", st: [5, 4, 5, 4],     shaft: ["#ffffff", "#ffe3f1"], butt: ["#ffffff", "#ffd1e8"], metal: "#ff4fa0", deco: "spiral", dc: "#ff4fa0"},
-  {id: "kok",       name: "Samarqand Ko'ki", price: 6000,  cur: "coin", st: [6, 6, 5, 5],     shaft: ["#eef5ff", "#c7dcf5"], butt: ["#1060c0", "#062a57"], metal: "#ffd24d", deco: "rings", dc: "#ffd24d"},
-  {id: "kumush",    name: "Kumush Oy",       price: 12000, cur: "coin", st: [6, 7, 6, 6],     shaft: ["#f6f8fc", "#c9ced8"], butt: ["#4a505c", "#15181e"], metal: "#e6ecf5", deco: "gems", dc: "#5fd0ff"},
-  {id: "orda",      name: "Oltin O'rda",     price: 25000, cur: "coin", st: [7, 7, 7, 6],     shaft: ["#fff3c4", "#e8c46a"], butt: ["#9a6414", "#3a2404"], metal: "#ffe08a", deco: "chevron", dc: "#ffe08a", gem: "#e0201b"},
-  {id: "olov",      name: "Olov",            price: 40,    cur: "cash", st: [8, 7, 7, 7],     shaft: ["#fff0dc", "#ffcf9a"], butt: ["#2a0e05", "#050202"], metal: "#ff9d00", deco: "flame", dc: "#ff6a00"},
-  {id: "ajdar",     name: "Ajdarho",         price: 80,    cur: "cash", st: [9, 8, 8, 8],     shaft: ["#ffe6d9", "#ffb39a"], butt: ["#b01c1c", "#2a0505"], metal: "#ffcf3d", deco: "scales", dc: "#ffcf3d"},
-  {id: "galaktika", name: "Galaktika",       price: 120,   cur: "cash", st: [9, 9, 9, 8],     shaft: ["#f0f2ff", "#c8c6ff"], butt: ["#3a1880", "#05021a"], metal: "#9fe8ff", deco: "stars", dc: "#ffffff"},
-  {id: "afsona",    name: "Afsona",          price: 200,   cur: "cash", st: [10, 10, 10, 10], shaft: ["#fff7e0", "#f5dc9a"], butt: ["#4b1488", "#12002e"], metal: "#ffd24d", deco: "legend", dc: "#7ff7ff", gem: "#7ff7ff", glow: "#b58cff"},
+  {id: "chinor",    name: "Chinor",          price: 5000,       cur: "coin", st: [4, 4, 3, 4],     shaft: ["#f5e6c0", "#d4ae72"], butt: ["#2f6d2a", "#0f2a12"], metal: "#e8c77a", deco: "points", dc: "#e8c77a"},
+  {id: "konfet",    name: "Konfet",          price: 25000,      cur: "coin", st: [4, 5, 4, 4],     shaft: ["#ffffff", "#ffe3f1"], butt: ["#ffffff", "#ffd1e8"], metal: "#ff4fa0", deco: "spiral", dc: "#ff4fa0"},
+  {id: "kok",       name: "Samarqand Ko'ki", price: 100000,     cur: "coin", st: [5, 5, 5, 5],     shaft: ["#eef5ff", "#c7dcf5"], butt: ["#1060c0", "#062a57"], metal: "#ffd24d", deco: "rings", dc: "#ffd24d"},
+  {id: "kumush",    name: "Kumush Oy",       price: 500000,     cur: "coin", st: [6, 6, 5, 6],     shaft: ["#f6f8fc", "#c9ced8"], butt: ["#4a505c", "#15181e"], metal: "#e6ecf5", deco: "gems", dc: "#5fd0ff"},
+  {id: "orda",      name: "Oltin O'rda",     price: 2500000,    cur: "coin", st: [7, 6, 6, 6],     shaft: ["#fff3c4", "#e8c46a"], butt: ["#9a6414", "#3a2404"], metal: "#ffe08a", deco: "chevron", dc: "#ffe08a", gem: "#e0201b"},
+  {id: "multimln",  name: "Multimillioner",  price: 50000000,   cur: "coin", st: [7, 8, 7, 7],     shaft: ["#fff8e6", "#f0d9a0"], butt: ["#0f5c3a", "#03200f"], metal: "#ffe08a", deco: "gems", dc: "#39ff9a"},
+  {id: "mlrd",      name: "Milliarder",      price: 1000000000, cur: "coin", st: [8, 8, 8, 8],     shaft: ["#fff7e0", "#f5dc9a"], butt: ["#1a1a1a", "#000000"], metal: "#ffd24d", deco: "chevron", dc: "#ffd24d", gem: "#39c6ff"},
+  {id: "imperator", name: "Imperator",       price: 5000000000, cur: "coin", st: [9, 9, 8, 9],     shaft: ["#fffaf0", "#f7e4b0"], butt: ["#6a0f14", "#1a0204"], metal: "#ffd24d", deco: "legend", dc: "#ffd24d", gem: "#ff3b30", glow: "#ffcf3d"},
+  {id: "olov",      name: "Olov",            price: 150,        cur: "cash", st: [8, 7, 7, 7],     shaft: ["#fff0dc", "#ffcf9a"], butt: ["#2a0e05", "#050202"], metal: "#ff9d00", deco: "flame", dc: "#ff6a00"},
+  {id: "ajdar",     name: "Ajdarho",         price: 400,        cur: "cash", st: [9, 8, 8, 8],     shaft: ["#ffe6d9", "#ffb39a"], butt: ["#b01c1c", "#2a0505"], metal: "#ffcf3d", deco: "scales", dc: "#ffcf3d"},
+  {id: "galaktika", name: "Galaktika",       price: 900,        cur: "cash", st: [9, 9, 9, 9],     shaft: ["#f0f2ff", "#c8c6ff"], butt: ["#3a1880", "#05021a"], metal: "#9fe8ff", deco: "stars", dc: "#ffffff"},
+  {id: "afsona",    name: "Afsona",          price: 1500,       cur: "cash", st: [10, 10, 10, 10], shaft: ["#fff7e0", "#f5dc9a"], butt: ["#4b1488", "#12002e"], metal: "#ffd24d", deco: "legend", dc: "#7ff7ff", gem: "#7ff7ff", glow: "#b58cff"},
 ];
+// Real-money packs (prices are enforced by the server; this list is for display)
+const SKUS = {
+  cash_25:     {cash: 25,       usd: 0.99},
+  cash_150:    {cash: 150,      usd: 4.99},
+  cash_350:    {cash: 350,      usd: 9.99,  tag: "Mashhur"},
+  cash_800:    {cash: 800,      usd: 19.99},
+  cash_2000:   {cash: 2000,     usd: 49.99, tag: "Eng foydali"},
+  cash_5000:   {cash: 5000,     usd: 99.99},
+  coins_250k:  {coins: 250000,   usd: 0.99},
+  coins_1500k: {coins: 1500000,  usd: 4.99},
+  coins_4m:    {coins: 4000000,  usd: 9.99,  tag: "Mashhur"},
+  coins_10m:   {coins: 10000000, usd: 19.99},
+};
+const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
 const STAT_NAMES = ["Kuch", "Nishon", "Aylanish", "Vaqt"];
 const AVATARS = ["😎", "🦁", "🐯", "🦅", "🐺", "🐉", "🧔", "👩", "🤠", "👑", "🦊", "🐼", "🥷", "👨‍🚀", "🧕", "🤖"];
 const AV_COLORS = ["#ff5b4f", "#3b8cff", "#2ecc40", "#a45cff", "#ff8a1f", "#14c8c8", "#ff4fa0", "#ffcf3d"];
@@ -484,20 +526,20 @@ const REWARDS = [
   {t: "coins", v: 100,  icon: "🪙", label: "100 tanga"},
   {t: "lucky", v: 1,    icon: "🎯", label: "Omadli zarba x1"},
   {t: "coins", v: 300,  icon: "💰", label: "300 tanga"},
-  {t: "cash",  v: 3,    icon: "💵", label: "3 pul"},
+  {t: "cash",  v: 1,    icon: "💵", label: "1 pul"},
   {t: "wheel", v: 1,    icon: "🎡", label: "G'ildirak x1"},
   {t: "coins", v: 1000, icon: "💎", label: "1 000 tanga"},
-  {t: "cash",  v: 10,   icon: "🎁", label: "10 pul — katta sovg'a"},
+  {t: "cash",  v: 3,    icon: "🎁", label: "3 pul — katta sovg'a"},
   {t: "coins", v: 2500, icon: "👑", label: "2 500 tanga"},
 ];
 const WHEEL = [
   {t: "coins", v: 100,  label: "100",   color: "#2a7cf0"},
   {t: "coins", v: 500,  label: "500",   color: "#e0351b"},
-  {t: "cash",  v: 2,    label: "💵 2",  color: "#16b52a"},
+  {t: "cash",  v: 1,    label: "💵 1",  color: "#16b52a"},
   {t: "coins", v: 250,  label: "250",   color: "#8a3cf0"},
   {t: "coins", v: 2500, label: "2 500", color: "#ff9d00"},
   {t: "coins", v: 150,  label: "150",   color: "#14b3a6"},
-  {t: "cash",  v: 10,   label: "💵 10", color: "#d62c7a"},
+  {t: "cash",  v: 3,    label: "💵 3",  color: "#d62c7a"},
   {t: "coins", v: 1000, label: "1 000", color: "#3b4a74"},
 ];
 const WHEEL_WEIGHTS = [26, 12, 10, 20, 3, 22, 2, 5];
@@ -522,6 +564,73 @@ const AI_REPLY = {
 const $ = id => document.getElementById(id);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+// ---------------------------------------------------------------- languages (Uzbek text is the key)
+const LANGS = {uz: "O'zbekcha", en: "English", ru: "Русский"};
+const DICT = {
+  "USTALAR LIGASI": ["MASTERS LEAGUE", "ЛИГА МАСТЕРОВ"],
+  "1 ga 1": ["1 on 1", "1 на 1"], "O'ynash": ["Play", "Играть"], "Tanga tikib yuting": ["Bet coins, win big", "Ставь монеты и выигрывай"],
+  "Turnir": ["Tournament", "Турнир"], "8 o'yinchi, 3 raund": ["8 players, 3 rounds", "8 игроков, 3 раунда"],
+  "Mini": ["Mini", "Мини"], "o'yinlar": ["games", "игры"], "Mini o'yinlar": ["Minigames", "Мини-игры"], "Omadli zarba, g'ildirak": ["Lucky shot, wheel", "Удачный удар, колесо"],
+  "Do'st bilan": ["With a friend", "С другом"], "Bitta qurilmada 2 kishi": ["2 players, one device", "2 игрока на одном устройстве"],
+  "Tomosha": ["Watch", "Смотреть"], "Ustalar o'yinini ko'ring": ["Watch the pros play", "Смотрите игру мастеров"], "● JONLI": ["● LIVE", "● LIVE"],
+  "Mashq": ["Practice", "Тренировка"], "Qoidalarsiz, oflayn": ["No rules, offline", "Без правил, офлайн"],
+  "Do'stlar": ["Friends", "Друзья"], "Taklif qiling, bonus oling": ["Invite & earn bonuses", "Приглашай и получай бонусы"],
+  "Sovg'alar": ["Rewards", "Награды"], "Kiylar": ["Cues", "Кии"], "Reyting": ["Leaderboard", "Рейтинг"], "Do'kon": ["Shop", "Магазин"],
+  "Stolni tanlang": ["Choose a table", "Выберите стол"], "Turnirlar": ["Tournaments", "Турниры"], "Sovg'alar yo'li": ["Reward route", "Путь наград"],
+  "Haftalik reyting": ["Leaderboard", "Рейтинг"], "Omad g'ildiragi": ["Lucky wheel", "Колесо удачи"], "Profil": ["Profile", "Профиль"],
+  "Omadli": ["Lucky", "Удачный"], "zarba": ["shot", "удар"], "Omad": ["Lucky", "Колесо"], "g'ildiragi": ["wheel", "удачи"],
+  "Har kuni 1 ta bepul": ["1 free every day", "1 бесплатно каждый день"], "AYLANTIRISH": ["SPIN", "КРУТИТЬ"],
+  "Kiylar_tab": ["Cues", "Кии"], "Almashtirish": ["Exchange", "Обмен"], "Bank": ["Bank", "Банк"],
+  "🔥 Kunlik seriya:": ["🔥 Daily streak:", "🔥 Серия дней:"], "kun": ["days", "дн."],
+  "Qidirilmoqda…": ["Searching…", "Поиск…"], "Yutuq": ["Prize", "Приз"], "Kirish narxi": ["Entry fee", "Вход"], "O'yinchilar onlayn": ["Players online", "Игроков онлайн"],
+  "O'YNASH": ["PLAY", "ИГРАТЬ"], "Naqd pulga sotib olish": ["Buy with real money", "Купить за деньги"], "Pulni tangaga almashtirish": ["Exchange cash for coins", "Обмен кэша на монеты"],
+  "ALMASHTIRISH": ["EXCHANGE", "ОБМЕНЯТЬ"], "Mashhur": ["Popular", "Популярно"], "Eng foydali": ["Best value", "Выгоднее всего"],
+  "To'lovlar xavfsiz Stripe orqali. Xarid qilingan pul va tangalar hisobingizga avtomatik tushadi.": ["Payments are processed securely by Stripe. Purchases are added to your account automatically.", "Оплата через Stripe. Покупки зачисляются на счёт автоматически."],
+  "Pul yetmaydi": ["Not enough cash", "Недостаточно кэша"], "Tanga yetmaydi": ["Not enough coins", "Недостаточно монет"], "Almashtirildi": ["Exchanged", "Обменено"], "tanga": ["coins", "монет"],
+  "Kolleksiya": ["Collection", "Коллекция"], "Kiy ko'rsatkichlari": ["Cue stats", "Характеристики кия"], "Yopish": ["Close", "Закрыть"],
+  "Kuch": ["Force", "Сила"], "Nishon": ["Aim", "Прицел"], "Aylanish": ["Spin", "Вращение"], "Vaqt": ["Time", "Время"],
+  "Zarba kuchini oshiradi": ["Increases the force of your shot", "Увеличивает силу удара"], "Yo'naltiruvchi chiziqni uzaytiradi": ["Increases the guideline length", "Удлиняет линию прицела"],
+  "Aylanish (spin) ta'sirini kuchaytiradi": ["Increases the spin of your shot", "Усиливает вращение"], "Har bir zarba uchun qo'shimcha vaqt beradi": ["Gives you more time per shot", "Даёт больше времени на удар"],
+  "TANLASH": ["USE", "ВЫБРАТЬ"], "✓ TANLANGAN": ["✓ IN USE", "✓ ВЫБРАН"], "Premium": ["Premium", "Премиум"], "Standart": ["Standard", "Стандарт"], "Yangi kiy!": ["New cue!", "Новый кий!"],
+  "KUCH": ["POWER", "СИЛА"], "ANIQ": ["FINE", "ТОЧНО"], "▼ torting": ["▼ pull", "▼ тяни"], "▲▼ bur": ["▲▼ turn", "▲▼ крути"],
+  "Sizning navbatingiz": ["Your turn", "Ваш ход"], "Siz sindirasiz — omad!": ["You are breaking, good luck!", "Вы разбиваете, удачи!"],
+  "QOIDA BUZILDI!": ["FOUL!", "ФОЛ!"], "VAQT TUGADI!": ["TIME'S UP!", "ВРЕМЯ ВЫШЛО!"], "G'ALABA!": ["VICTORY!", "ПОБЕДА!"], "MAG'LUBIYAT": ["DEFEAT", "ПОРАЖЕНИЕ"],
+  "ZO'R!": ["NICE!", "КЛАСС!"], "AJOYIB!": ["AMAZING!", "ПОТРЯСАЮЩЕ!"], "MASHQ": ["PRACTICE", "ТРЕНИРОВКА"],
+  "Yana o'ynash": ["Play again", "Ещё раз"], "Menyu": ["Menu", "Меню"], "Davom etish": ["Continue", "Продолжить"], "Pauza": ["Paused", "Пауза"],
+  "Taslim bo'lish": ["Resign", "Сдаться"], "Chiqish": ["Exit", "Выход"], "Keyingi o'yin": ["Next game", "Следующая игра"], "Qayta o'ynash": ["Rematch", "Реванш"],
+  "Onlayn raqib qidirilmoqda…": ["Looking for an online opponent…", "Ищем соперника онлайн…"], "Raqib topildi!": ["Opponent found!", "Соперник найден!"],
+  "Raqib o'yinni tark etdi": ["Your opponent left the game", "Соперник покинул игру"],
+  "Do'stlarni taklif qiling": ["Invite friends", "Пригласите друзей"], "Sizning ID-kodingiz": ["Your unique ID", "Ваш уникальный ID"],
+  "Nusxalash": ["Copy", "Копировать"], "Ulashish": ["Share", "Поделиться"], "Nusxalandi!": ["Copied!", "Скопировано!"],
+  "Do'st kodini kiriting": ["Enter a friend's code", "Введите код друга"], "Qo'shish": ["Add", "Добавить"], "Kodni ishlatish": ["Redeem code", "Активировать код"],
+  "Sovg'a yuborish": ["Send gift", "Отправить подарок"], "Sovg'a so'rash": ["Request gifts", "Запросить подарки"], "Yuborildi": ["Sent", "Отправлено"],
+  "Hali do'stlaringiz yo'q. Kodingizni ulashing!": ["No friends yet. Share your code!", "Пока нет друзей. Поделитесь кодом!"],
+  "onlayn": ["online", "онлайн"], "oflayn": ["offline", "офлайн"],
+  "Server bilan aloqa yo'q. Internetni tekshiring.": ["Can't reach the server. Check your internet connection.", "Нет связи с сервером. Проверьте интернет."],
+  "To'lov tizimi hali ulanmagan": ["Payments are not enabled yet", "Платежи ещё не подключены"],
+  "Global reyting": ["Global leaderboard", "Мировой рейтинг"], "Til": ["Language", "Язык"],
+  "🎱 Kiylar": ["🎱 Cues", "🎱 Кии"], "💱 Almashtirish": ["💱 Bank", "💱 Банк"], "kutmoqda": ["waiting", "ждут"], "siz": ["you", "вы"],
+  "Yuklanmoqda…": ["Loading…", "Загрузка…"], "o'yinchi": ["players", "игроков"], "Hali hech kim yo'q — birinchi bo'ling!": ["Nobody yet — be the first!", "Пока никого — будьте первым!"],
+  "Har bir taklif qilingan do'st uchun siz olasiz": ["For every friend you invite you get", "За каждого приглашённого друга вы получаете"],
+  "Do'stingiz ham oladi": ["Your friend gets", "Ваш друг получает"], "Taklif kodini ishlatish": ["Redeem invite code", "Активировать код приглашения"],
+  "Hammaga": ["All", "Всем"], "Men bilan Bilyard 8 o'ynang! Kodim": ["Play Bilyard 8 with me! My code", "Сыграй со мной в Bilyard 8! Мой код"],
+  "Bunday kod topilmadi": ["Code not found", "Код не найден"], "Bu sizning kodingiz": ["That's your own code", "Это ваш код"],
+  "Siz allaqachon taklif kodini ishlatgansiz": ["You already used an invite code", "Вы уже активировали код"], "Taklif kodi faqat birinchi 7 kunda ishlaydi": ["Invite codes work only in your first 7 days", "Код действует только первые 7 дней"],
+  "Do'st qo'shildi": ["Friend added", "Друг добавлен"], "Sovg'a so'rovlari": ["Gift requests", "Запросы подарков"], "Hammasiga yuborish": ["Send to all", "Отправить всем"],
+  "Yutgan": ["Won", "Выиграно"], "Xarid uchun rahmat!": ["Thanks for your purchase!", "Спасибо за покупку!"], "Taklif bonusi": ["Invite bonus", "Бонус за приглашение"],
+  "Do'stingiz qo'shildi": ["Your friend joined", "Ваш друг присоединился"], "Sovg'a": ["Gift", "Подарок"],
+  "Chiqsangiz, o'yin mag'lubiyat hisoblanadi.": ["If you leave, you lose the match.", "Если выйдете, будет засчитано поражение."],
+  "🔊 Ovozni yoqish": ["🔊 Sound on", "🔊 Включить звук"], "🔇 Ovozni o'chirish": ["🔇 Sound off", "🔇 Выключить звук"],
+  "Kunlik sovg'a tayyor!": ["Daily reward is ready!", "Ежедневная награда готова!"], "Navbat raqibga o'tdi": ["Turn passes to your opponent", "Ход переходит сопернику"],
+  "Oq shar lunkaga tushdi": ["Cue ball potted", "Биток в лузе"], "Hech bir sharga tegmadi": ["No ball was hit", "Не задет ни один шар"],
+  "Avval o'z sharingizga tegish kerak": ["You must hit your own ball first", "Сначала нужно попасть в свой шар"], "Avval 8-sharga tegish kerak": ["You must hit the 8 ball first", "Сначала нужно попасть в 8-й шар"],
+  "Hech bir shar bortga tegmadi": ["No ball hit a cushion", "Ни один шар не коснулся борта"], "8-sharni tushirdi!": ["Potted the 8 ball!", "Забил 8-й шар!"],
+  "SIZ YAXLIT SHARLARSIZ!": ["YOU ARE SOLIDS!", "ВЫ — СПЛОШНЫЕ!"], "SIZ YO'L-YO'L SHARLARSIZ!": ["YOU ARE STRIPES!", "ВЫ — ПОЛОСАТЫЕ!"],
+  "Mashq: istalgancha urishingiz mumkin": ["Practice: shoot as much as you like", "Тренировка: бейте сколько угодно"],
+};
+let LANG = "uz";
+function T(s) { const i = LANG === "en" ? 0 : LANG === "ru" ? 1 : -1; const e = DICT[s]; return i < 0 || !e ? s : e[i]; }
+const fmtS = n => n >= 1e9 ? +(n / 1e9).toFixed(1) + "B" : n >= 1e6 ? +(n / 1e6).toFixed(1) + "M" : n >= 1e5 ? +(n / 1e3).toFixed(0) + "k" : fmt(n);
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[Math.random() * a.length | 0];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
@@ -733,13 +842,13 @@ function physicsFrame(G) {
     for (const b of balls) {
       if (b.out) continue;
       if (b.x < R || b.x > FW - R) {
-        const sp = Math.hypot(b.vx, b.vy), hit = Math.abs(b.vx); let kick = 0;
+        const sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy), hit = Math.abs(b.vx); let kick = 0;
         if (b.side && sp) { kick = (b.vx / sp) * b.side * hit * 0.45; b.side *= 0.6; }
         const left = b.x < R; b.x = left ? R : FW - R; b.vx = (left ? 1 : -1) * hit * RE; b.vy += kick;
         onRail(G, b, hit);
       }
       if (b.y < R || b.y > FH - R) {
-        const sp = Math.hypot(b.vx, b.vy), hit = Math.abs(b.vy); let kick = 0;
+        const sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy), hit = Math.abs(b.vy); let kick = 0;
         if (b.side && sp) { kick = (-b.vy / sp) * b.side * hit * 0.45; b.side *= 0.6; }
         const top = b.y < R; b.y = top ? R : FH - R; b.vy = (top ? 1 : -1) * hit * RE; b.vx += kick;
         onRail(G, b, hit);
@@ -768,7 +877,7 @@ function physicsFrame(G) {
   }
   for (const b of balls) {
     if (b.out) continue;
-    const sp = Math.hypot(b.vx, b.vy); if (!sp) continue;
+    const sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy); if (!sp) continue;   // sqrt (not hypot): identical results on every browser for online play
     rollBall(b, b.vx, b.vy);
     let ns = sp * 0.987 - 0.012; if (ns < 0.03) ns = 0;
     b.vx *= ns / sp; b.vy *= ns / sp;
@@ -832,16 +941,20 @@ let tour = null;
 const input = {drag: null, power: 0, y0: 0, lastY: 0, charging: false};
 let confetti = [];
 
-function rack() {
+// seed → identical rack on both players' devices in online games
+function seededRandom(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function rack(seed) {
+  const rand = seed === undefined ? Math.random : seededRandom(seed), jit = () => (rand() - 0.5) * 0.3;
+  const mix = a => { for (let i = a.length - 1; i > 0; i--) { const j = rand() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const balls = [mkBall(0, FW * 0.25, FH / 2)];
   const foot = FW * 0.72, gap = 2 * R + 0.6;
-  const solids = shuffle([2, 3, 4, 5, 6, 7]), stripes = shuffle([9, 10, 11, 12, 13, 14, 15]);
+  const solids = mix([2, 3, 4, 5, 6, 7]), stripes = mix([9, 10, 11, 12, 13, 14, 15]);
   const layout = []; for (let row = 0; row < 5; row++) for (let i = 0; i <= row; i++) layout.push([row, i]);
   const order = new Array(15).fill(null);
   order[0] = 1; order[4] = 8; order[10] = solids.pop(); order[14] = stripes.pop();
-  const rest = shuffle(solids.concat(stripes));
+  const rest = mix(solids.concat(stripes));
   for (let k = 0; k < 15; k++) if (order[k] === null) order[k] = rest.pop();
-  layout.forEach(([row, i], k) => balls.push(mkBall(order[k], foot + row * gap * 0.866 + rnd(-0.15, 0.15), FH / 2 + (i - row / 2) * gap + rnd(-0.15, 0.15))));
+  layout.forEach(([row, i], k) => balls.push(mkBall(order[k], foot + row * gap * 0.866 + jit(), FH / 2 + (i - row / 2) * gap + jit())));
   return balls;
 }
 function botPlayer(minL, maxL) {
@@ -872,7 +985,7 @@ function enterGameUi(type) {
   $("cheerBar").classList.toggle("on", type === "watch");
   $("shade").classList.remove("on");
 }
-function startMatch(type, city, opp) {
+function startMatch(type, city, opp, net) {
   let players;
   if (type === "ai" || type === "tour") players = [mePlayer(), opp || botPlayer(city.lvl, city.lvl + 3)];
   else if (type === "pvp") players = [mePlayer("1-o'yinchi"), {name: "2-o'yinchi", avatar: 5, color: AV_COLORS[1], level: 1, isAI: false, cue: profile.cue}];
@@ -883,12 +996,18 @@ function startMatch(type, city, opp) {
   if (type === "tour") { const cup = CUPS.find(c => c.id === tour.cup); G.skill = cup.skill * (1 - tour.round * 0.25); G.pot = cup.prize; }
   if (type === "watch") G.skill = 0.004;
   if (type === "ai" || type === "tour" || type === "watch") G.cur = Math.random() < 0.5 ? 0 : 1;
+  if (net) {   // real opponent: same rack from the shared seed, the server picks who breaks
+    G.net = {seat: net.seat, lastAim: 0, sentA: null};
+    G.balls = rack(net.seed);
+    G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
+    G.cur = net.first === net.seat ? 0 : 1;
+  }
   setGame(G); enterGameUi(type);
   nextTurn(true);
-  if (type === "practice") setPill("Mashq: istalgancha urishingiz mumkin", 3000);
-  else if (isHuman(G.cur)) setPill(type === "pvp" ? `${curP().name} sindiradi — omad!` : "Siz sindirasiz — omad!", 3000);
+  if (type === "practice") setPill(T("Mashq: istalgancha urishingiz mumkin"), 3000);
+  else if (isHuman(G.cur) && !curP().remote) setPill(type === "pvp" ? `${curP().name} sindiradi — omad!` : T("Siz sindirasiz — omad!"), 3000);
   else setPill(`${curP().name} sindiradi`, 3000);
-  if (type === "ai" || type === "tour") setTimeout(() => { if (game === G && !G.over) bubble(1, pick(["Salom! 👋", "Omad! 🍀", "😎", "Boshladik!"])); }, 1500);
+  if ((type === "ai" || type === "tour") && !net) setTimeout(() => { if (game === G && !G.over) bubble(1, pick(["Salom! 👋", "Omad! 🍀", "😎", "Boshladik!"])); }, 1500);
 }
 function startDemo() {
   const G = baseGame("watch", CITIES[Math.random() * 3 | 0], [botPlayer(5, 20), botPlayer(5, 20)]);
@@ -901,7 +1020,23 @@ const isHuman = i => !game.players[i].isAI;
 const timed = () => ["ai", "tour", "pvp"].includes(game.type);
 function canControl() {
   const G = game;
-  return mode === "game" && G && !G.demo && !G.over && !G.moving && !G.strike && G.type !== "watch" && !curP().isAI && !G.aiTask;
+  return mode === "game" && G && !G.demo && !G.over && !G.moving && !G.strike && G.type !== "watch" && !curP().isAI && !curP().remote && !G.aiTask;
+}
+// ---- online sync helpers (local player index 0 = me, 1 = opponent; server uses seats)
+const seatOf = i => i === 0 ? game.net.seat : 1 - game.net.seat;
+const localOf = s => s === game.net.seat ? 0 : 1;
+function sendState() {
+  const G = game; if (!G || !G.net) return;
+  const groups = []; groups[seatOf(0)] = G.groups[0]; groups[seatOf(1)] = G.groups[1];
+  Net.send({t: "state", balls: G.balls.map(b => [b.x, b.y, b.out ? 1 : 0]), turn: seatOf(G.cur), groups, bih: G.ballInHand, brk: G.isBreak});
+}
+function applyState(m) {
+  const G = game; if (!G || !G.net) return;
+  m.balls.forEach((s, i) => { const b = G.balls[i]; if (!b) return; b.x = s[0]; b.y = s[1]; b.vx = b.vy = 0; if (s[2] && !b.out) b.out = true; else if (!s[2]) b.out = false; });
+  G.groups = [m.groups[seatOf(0)] || null, m.groups[seatOf(1)] || null];
+  G.ballInHand = !!m.bih; G.isBreak = !!m.brk;
+  const cur = localOf(m.turn);
+  if (cur !== G.cur) { G.cur = cur; nextTurn(); }
 }
 function legalTargets(p) {
   const G = game, g = G.groups[p];
@@ -932,23 +1067,31 @@ function nextTurn(first) {
   G.turnLimit = pl.isAI ? 0 : cueTime(cueDef(pl.cue));
   if (!first && !G.over && G.type !== "practice") {
     if (G.type === "watch" || G.type === "pvp") setPill(`${pl.name} navbati`, 1400);
-    else setPill(pl.isAI ? `${pl.name} o'ylamoqda…` : "Sizning navbatingiz", 1400);
+    else setPill(pl.isAI || pl.remote ? `${pl.name} …` : T("Sizning navbatingiz"), 1400);
   }
 }
 
 // ---------------------------------------------------------------- shooting
-function requestShot(power) {
+function requestShot(power, remote) {
   const G = game; if (!G || power < 0.03) return;
-  G.strike = {t: 0, power}; G.spinOpen = false;
+  G.strike = {t: 0, power, remote}; G.spinOpen = false;
 }
-function doShoot(power) {
+function doShoot(power, remote) {
   const G = game, cue = G.balls[0], pl = curP(), cd = cueDef(pl.cue);
-  const maxS = pl.isAI ? 30.5 : cueMax(cd);
-  const sp = Math.max(0.6, power * maxS) * (G.isBreak ? 1.35 : 1) * (G.type === "lucky" ? 0.8 : 1);
-  const dx = Math.cos(G.angle), dy = Math.sin(G.angle);
-  cue.vx = dx * sp; cue.vy = dy * sp; cue.dir = [dx, dy];
-  const k = pl.isAI ? 0.7 : cueSpin(cd);
-  cue.follow = -G.spin.y * k; cue.side = G.spin.x * k; cue.followDone = false;
+  if (remote) {   // opponent's shot, reproduced with the exact numbers they used
+    cue.x = remote.x; cue.y = remote.y; cue.vx = remote.vx; cue.vy = remote.vy; cue.dir = remote.dir;
+    cue.follow = remote.follow; cue.side = remote.side;
+  } else {
+    const maxS = pl.isAI ? 30.5 : cueMax(cd);
+    const sp = Math.max(0.6, power * maxS) * (G.isBreak ? 1.35 : 1) * (G.type === "lucky" ? 0.8 : 1);
+    const dx = Math.cos(G.angle), dy = Math.sin(G.angle);
+    cue.vx = dx * sp; cue.vy = dy * sp; cue.dir = [dx, dy];
+    const k = pl.isAI ? 0.7 : cueSpin(cd);
+    cue.follow = -G.spin.y * k; cue.side = G.spin.x * k;
+    if (G.net && G.cur === 0) Net.send({t: "shot", power, x: cue.x, y: cue.y, vx: cue.vx, vy: cue.vy, dir: cue.dir, follow: cue.follow, side: cue.side, a: G.angle});
+  }
+  cue.followDone = false;
+  G.shotBy = G.cur;
   const g = G.groups[G.cur];
   G.shot = {firstHit: null, potted: [], ownBefore: g ? remaining(g) : -1, rails: 0, power};
   G.moving = true; G.ballInHand = false; input.power = 0; G.aiPull = 0;
@@ -989,13 +1132,13 @@ function resolveShot() {
   }
 
   let foul = null; const g = G.groups[p];
-  if (s.firstHit === null) foul = "Hech bir sharga tegmadi";
+  if (s.firstHit === null) foul = T("Hech bir sharga tegmadi");
   else if (g) {
     const ok = s.ownBefore > 0 ? groupOf(s.firstHit) === g : s.firstHit === 8;
     if (!ok) foul = s.ownBefore > 0 ? "Avval o'z sharingizga tegish kerak" : "Avval 8-sharga tegish kerak";
   } else if (s.firstHit === 8 && !G.isBreak) foul = "Birinchi 8-sharga tegildi";
-  if (!foul && !potted.length && s.rails === 0 && !G.isBreak) foul = "Hech bir shar bortga tegmadi";
-  if (cueP) foul = "Oq shar lunkaga tushdi";
+  if (!foul && !potted.length && s.rails === 0 && !G.isBreak) foul = T("Hech bir shar bortga tegmadi");
+  if (cueP) foul = T("Oq shar lunkaga tushdi");
 
   if (eightP) {
     if (G.isBreak) {
@@ -1003,7 +1146,7 @@ function resolveShot() {
       Object.assign(b8, {out: false, x: sp.x, y: sp.y, vx: 0, vy: 0});
       G.sinking = G.sinking.filter(q => q.b.n !== 8); G.tray = G.tray.filter(q => q.b.n !== 8);
       setPill("8-shar joyiga qaytarildi");
-    } else if (g && s.ownBefore === 0 && !foul) return endGame(p, "8-sharni tushirdi!");
+    } else if (g && s.ownBefore === 0 && !foul) return endGame(p, T("8-sharni tushirdi!"));
     else return endGame(o, foul ? "8-shar tushdi va qoida buzildi" : "8-shar vaqtidan oldin tushdi");
   }
 
@@ -1011,7 +1154,7 @@ function resolveShot() {
     const first = groupOf(obj[0]);
     G.groups[p] = first; G.groups[o] = first === "solid" ? "stripe" : "solid";
     const nm = first === "solid" ? "YAXLIT" : "YO'L-YO'L";
-    if (isHuman(p) && G.type !== "pvp") setBanner(`SIZ ${nm} SHARLARSIZ!`);
+    if (isHuman(p) && !G.players[p].remote && G.type !== "pvp") setBanner(T(`SIZ ${nm} SHARLARSIZ!`));
     else setBanner(`${G.players[p].name.toUpperCase()}: ${nm}`);
   }
   const own = G.groups[p];
@@ -1026,7 +1169,7 @@ function resolveShot() {
   if (foul) {
     if (cueP) respawnCue();
     G.cur = o; G.ballInHand = true;
-    setBanner("QOIDA BUZILDI!", "#ff6b5e", foul);
+    setBanner(T("QOIDA BUZILDI!"), "#ff6b5e", foul);
     Snd.foul();
     if (G.players[o].isAI && Math.random() < 0.4) setTimeout(() => game === G && bubble(o, pick(["😏", "Rahmat 😅", "😎"])), 900);
     if (G.players[p].isAI && Math.random() < 0.4) setTimeout(() => game === G && bubble(p, pick(["😡", "Eh! 😅", "🤦"])), 900);
@@ -1041,18 +1184,20 @@ function resolveShot() {
 function timeoutFoul() {
   const G = game, o = 1 - G.cur;
   G.cur = o; G.ballInHand = true;
-  setBanner("VAQT TUGADI!", "#ff6b5e", "Navbat raqibga o'tdi");
+  setBanner(T("VAQT TUGADI!"), "#ff6b5e", "Navbat raqibga o'tdi");
   Snd.foul(); input.power = 0; input.drag = null; input.charging = false;
   nextTurn();
+  if (G.net) sendState();
 }
 function endGame(winner, why) {
-  const G = game; G.over = true; Snd.roll(0);
+  const G = game; if (G.over) return; G.over = true; Snd.roll(0);
   if (G.demo) { setTimeout(() => { if (game === G && mode === "menu") startDemo(); }, 2500); return; }
+  if (G.net) Net.send({t: "result", winner: seatOf(winner)});
   const humanWon = G.type === "ai" || G.type === "tour" ? winner === 0 : true;
   if (humanWon) { burst(); Snd.win(); } else Snd.lose();
   if (G.players[1 - winner].isAI) bubble(1 - winner, pick(["Yaxshi o'yin! 🤝", "Tabriklayman 👏"]));
   if (G.players[winner].isAI) bubble(winner, pick(["GG 😎", "Yaxshi o'yin! 🤝"]));
-  setBanner(G.type === "pvp" || G.type === "watch" ? `${G.players[winner].name.toUpperCase()} YUTDI!` : humanWon ? "G'ALABA!" : "MAG'LUBIYAT", humanWon ? "#ffe27a" : "#ff6b5e");
+  setBanner(G.type === "pvp" || G.type === "watch" ? `${G.players[winner].name.toUpperCase()} YUTDI!` : humanWon ? T("G'ALABA!") : T("MAG'LUBIYAT"), humanWon ? "#ffe27a" : "#ff6b5e");
 
   if (G.type === "ai") {
     profile.games++;
@@ -1060,10 +1205,10 @@ function endGame(winner, why) {
       profile.wins++; profile.won += G.city.prize; addXp(40 + Math.round(Math.log10(G.city.prize) * 15));
       unlock("first_win"); if (!G.oppHadPot) unlock("runout");
     } else addXp(12);
-    save();
+    save(); Net.sync();
     setTimeout(() => resultModal(humanWon, why, G.players[winner], humanWon ? G.city.prize : 0, [
-      {label: "Yana o'ynash", cls: "green", fn: () => playCity(G.city)},
-      {label: "Menyu", cls: "gray", fn: () => toMenu()},
+      {label: T("Yana o'ynash"), cls: "green", fn: () => playCity(G.city)},
+      {label: T("Menyu"), cls: "gray", fn: () => toMenu()},
     ]), 1600);
   } else if (G.type === "tour") {
     profile.games++; if (humanWon) profile.wins++; save();
@@ -1146,7 +1291,7 @@ function aiUpdate() {
 
 // ---------------------------------------------------------------- lucky shot
 const LUCKY_RINGS = [
-  {r: 18,  t: "cash",  v: 10,   color: "#ffd34d", label: "💵 10"},
+  {r: 18,  t: "cash",  v: 5,    color: "#ffd34d", label: "💵 5"},
   {r: 52,  t: "coins", v: 2500, color: "#ff4b3e", label: "2 500"},
   {r: 96,  t: "coins", v: 1000, color: "#3b8cff", label: "1 000"},
   {r: 146, t: "coins", v: 500,  color: "#dfe6f5", label: "500"},
@@ -1193,7 +1338,10 @@ function luckyFinish() {
 }
 
 // ---------------------------------------------------------------- input
-function toWorld(e) { return {x: (e.clientX - offX) / scale, y: (e.clientY - offY) / scale}; }
+function toWorld(e) {
+  const lx = rotated ? e.clientY : e.clientX, ly = rotated ? innerWidth - e.clientX : e.clientY;
+  return {x: (lx - offX) / scale, y: (ly - offY) / scale};
+}
 const inRect = (p, r) => p.x >= r.x - 12 && p.x <= r.x + r.w + 12 && p.y >= r.y - 12 && p.y <= r.y + r.h + 12;
 function setSpinFrom(p) {
   let x = (p.x - SPIN_UI.x) / (SPIN_UI.r * 0.8), y = (p.y - SPIN_UI.y) / (SPIN_UI.r * 0.8);
@@ -1281,13 +1429,42 @@ cv.addEventListener("wheel", e => {
 // ---------------------------------------------------------------- canvas setup
 let ctx = cv.getContext("2d");
 let scale = 1, offX = 0, offY = 0, dpr = 1;
+// Landscape everywhere: when a touch device is held upright, the page itself is rotated 90°.
+let rotated = false, vw = innerWidth, vh = innerHeight;
 function resize() {
+  const touch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+  rotated = touch && innerHeight > innerWidth;
+  document.documentElement.classList.toggle("rot", rotated);
+  vw = rotated ? innerHeight : innerWidth; vh = rotated ? innerWidth : innerHeight;
+  document.body.style.width = rotated ? vw + "px" : ""; document.body.style.height = rotated ? vh + "px" : "";
   dpr = Math.min(window.devicePixelRatio || 1, 2);
-  cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr);
-  scale = Math.min(innerWidth / W, innerHeight / H);
-  offX = (innerWidth - W * scale) / 2; offY = (innerHeight - H * scale) / 2;
+  cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
+  scale = Math.min(vw / W, vh / H);
+  offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
 }
-addEventListener("resize", resize); resize();
+addEventListener("resize", resize);
+addEventListener("orientationchange", () => setTimeout(resize, 250));
+resize();
+
+// Full screen + landscape lock on the first tap/click (browsers only allow it after a user gesture).
+let fsTried = false;
+function goFullscreen(force) {
+  if (fsTried && !force) return;
+  fsTried = true;
+  const el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+  const lock = () => { try { const p = screen.orientation && screen.orientation.lock && screen.orientation.lock("landscape"); if (p && p.catch) p.catch(() => {}); } catch (e) {} };
+  if (document.fullscreenElement || document.webkitFullscreenElement) return lock();
+  try {
+    const p = req && req.call(el, {navigationUI: "hide"});
+    if (p && p.then) p.then(lock).catch(lock); else lock();
+  } catch (e) { lock(); }
+}
+function toggleFullscreen() {
+  if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  else goFullscreen(true);
+}
+addEventListener("pointerup", () => goFullscreen(false), true);
+document.addEventListener("fullscreenchange", () => setTimeout(resize, 100));
 
 // ---------------------------------------------------------------- drawing primitives
 function rr(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
@@ -1762,7 +1939,7 @@ function drawHUD(G) {
     ctx.fillStyle = "#ffe27a"; ctx.font = `20px ${FONT}`; ctx.fillText(fmt(G.pot), cx, 74);
   } else {
     ctx.fillStyle = G.type === "watch" ? "#ff4b3e" : "#ffcf3d"; ctx.font = `${G.type === "pvp" ? 28 : 21}px ${FONT}`;
-    ctx.fillText(G.type === "pvp" ? "VS" : G.type === "watch" ? "● JONLI" : "MASHQ", cx, 49);
+    ctx.fillText(G.type === "pvp" ? "VS" : G.type === "watch" ? T("● JONLI") : T("MASHQ"), cx, 49);
   }
   ctx.restore();
   drawPanel(G, 0, -1);
@@ -1795,7 +1972,7 @@ function drawControls(G, show) {
   ctx.save();
   ctx.fillStyle = "#0b1020"; rr(x - 7, y - 32, w + 14, h + 48, 16); ctx.fill();
   ctx.strokeStyle = "#2c3a60"; ctx.lineWidth = 2; ctx.stroke();
-  ctx.fillStyle = "#a7b2cc"; ctx.font = `14px ${FONT}`; ctx.textAlign = "center"; ctx.fillText("KUCH", x + w / 2, y - 14);
+  ctx.fillStyle = "#a7b2cc"; ctx.font = `14px ${FONT}`; ctx.textAlign = "center"; ctx.fillText(T("KUCH"), x + w / 2, y - 14);
   const tg = ctx.createLinearGradient(x, 0, x + w, 0); tg.addColorStop(0, "#050810"); tg.addColorStop(0.5, "#1a2238"); tg.addColorStop(1, "#050810");
   ctx.fillStyle = tg; rr(x, y, w, h, 12); ctx.fill();
   if (power > 0) {
@@ -1809,13 +1986,13 @@ function drawControls(G, show) {
   drawCueStick(ctx, 420, cueDef(profile.cue), 1.25);
   ctx.restore();
   ctx.textAlign = "center";
-  ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.fillText(show ? "▼ torting" : "", x + w / 2, y + h + 10);
+  ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.fillText(show ? T("▼ torting") : "", x + w / 2, y + h + 10);
   ctx.restore();
   const f = FINE;
   ctx.save();
   ctx.fillStyle = "#0b1020"; rr(f.x - 6, f.y - 32, f.w + 12, f.h + 48, 16); ctx.fill();
   ctx.strokeStyle = "#2c3a60"; ctx.lineWidth = 2; ctx.stroke();
-  ctx.fillStyle = "#a7b2cc"; ctx.font = `14px ${FONT}`; ctx.textAlign = "center"; ctx.fillText("ANIQ", f.x + f.w / 2, f.y - 14);
+  ctx.fillStyle = "#a7b2cc"; ctx.font = `14px ${FONT}`; ctx.textAlign = "center"; ctx.fillText(T("ANIQ"), f.x + f.w / 2, f.y - 14);
   const fg = ctx.createLinearGradient(f.x, 0, f.x + f.w, 0);
   fg.addColorStop(0, "#1a2238"); fg.addColorStop(0.5, "#6a7898"); fg.addColorStop(1, "#1a2238");
   ctx.fillStyle = fg; rr(f.x, f.y, f.w, f.h, 12); ctx.fill();
@@ -1830,7 +2007,7 @@ function drawControls(G, show) {
   sh.addColorStop(0, "rgba(0,0,0,.7)"); sh.addColorStop(0.2, "rgba(0,0,0,0)"); sh.addColorStop(0.8, "rgba(0,0,0,0)"); sh.addColorStop(1, "rgba(0,0,0,.7)");
   ctx.fillStyle = sh; ctx.fillRect(f.x, f.y, f.w, f.h);
   ctx.restore();
-  ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.textAlign = "center"; ctx.fillText(show ? "▲▼ bur" : "", f.x + f.w / 2, f.y + f.h + 10);
+  ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.textAlign = "center"; ctx.fillText(show ? T("▲▼ bur") : "", f.x + f.w / 2, f.y + f.h + 10);
   ctx.restore();
 }
 function drawTray(G) {
@@ -1948,16 +2125,26 @@ function update() {
   if (input.charging) { if (canControl()) input.power = Math.min(1, input.power + 0.012); else { input.charging = false; input.power = 0; } }
   if (G.strike) {
     G.strike.t++;
-    if (G.strike.t >= 5) { const p = G.strike.power; G.strike = null; doShoot(p); }
+    if (G.strike.t >= 5) { const s = G.strike; G.strike = null; doShoot(s.power, s.remote); }
   } else if (G.moving) {
     physicsFrame(G);
     if (!G.demo) Snd.roll(G.balls.reduce((s, b) => s + (b.out ? 0 : Math.hypot(b.vx, b.vy)), 0));
     if (!anyMoving(G.balls)) {
       G.moving = false; if (!G.demo) Snd.roll(0);
       if (G.type === "lucky") luckyFinish(); else resolveShot();
+      if (G.net) {   // the shooter is the authority: it sends the settled table, the other side snaps to it
+        if (G.shotBy === 0) sendState();
+        else if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; }
+      }
     }
   } else if (!G.over) {
-    if (curP().isAI) {
+    if (G.net && G.cur === 0 && performance.now() - G.net.lastAim > 90) {   // stream my aim so the opponent sees the cue move
+      const c = G.balls[0], key = `${G.angle.toFixed(3)}|${c.x | 0}|${c.y | 0}|${input.power.toFixed(2)}`;
+      if (key !== G.net.sentA) { G.net.sentA = key; G.net.lastAim = performance.now(); Net.send({t: "aim", a: G.angle, x: c.x, y: c.y, p: input.power}); }
+    }
+    if (curP().remote) {
+      /* opponent's turn — their device runs the clock */
+    } else if (curP().isAI) {
       if (!G.aiTask && !G.aiWait) {
         G.aiWait = setTimeout(() => { G.aiWait = null; if (game === G && !G.over && !G.moving) aiThink(); }, G.demo ? 500 : rnd(700, 1300));
       }
@@ -1999,10 +2186,10 @@ function render() {
   ctx.globalAlpha = 1;
   ctx.restore();
   const cue = G.balls[0];
-  const human = !curP().isAI && !G.demo && G.type !== "watch";
+  const human = !curP().isAI && !curP().remote && !G.demo && G.type !== "watch";
   if (!G.moving && !G.over && !cue.out) {
     if (G.ballInHand && human && !G.strike) drawHand(FX + cue.x, FY + cue.y);
-    if ((human && !G.strike) || (G.aiTask && !G.demo)) drawGuide(G);
+    if ((human && !G.strike) || (G.aiTask && !G.demo) || (curP().remote && !G.strike)) drawGuide(G);
     const pull = G.strike ? G.strike.power * Math.max(0, 1 - G.strike.t / 4) : human ? input.power : G.aiPull;
     drawCue(G, pull);
   }
@@ -2023,7 +2210,7 @@ function render() {
 function frame() { update(); render(); requestAnimationFrame(frame); }
 
 // ---------------------------------------------------------------- UI: screens
-const MENU_SCREENS = ["home", "cities", "tourScr", "shop", "rewards", "leader", "mini", "wheelScr", "profileScr"];
+const MENU_SCREENS = ["home", "cities", "tourScr", "shop", "rewards", "leader", "mini", "wheelScr", "profileScr", "friendsScr"];
 function showScreen(id) {
   for (const s of document.querySelectorAll(".screen")) s.classList.toggle("on", s.id === id);
   $("nav").classList.toggle("on", MENU_SCREENS.includes(id));
@@ -2040,6 +2227,7 @@ function go(id, opt) {
   if (id === "wheelScr") buildWheel();
   if (id === "profileScr") buildProfile();
   if (id === "tourScr") buildTour();
+  if (id === "friendsScr") buildFriends();
   updateNav();
 }
 function toMenu(screen = "home", opt) {
@@ -2107,13 +2295,35 @@ function buildCities() {
     el.innerHTML = `
       <div class="ttl"><b style="background:linear-gradient(${c.col[0]},${c.col[1]});-webkit-background-clip:text;background-clip:text;color:transparent">${c.name}</b><i>${c.sub}</i></div>
       <div class="felt" style="background:radial-gradient(${c.felt[0]},${c.felt[1]});border-color:${c.rail[0]}"></div>
-      <div class="prize"><div class="pl">Yutuq</div><div class="pv"><span class="coin" style="width:28px;height:28px"></span>${fmt(c.prize)}</div></div>
-      <div class="crow"><span>Kirish narxi</span><span><span class="coin" style="width:14px;height:14px"></span> ${fmt(c.fee)}</span></div>
-      <div class="crow"><span>O'yinchilar onlayn</span><span style="color:#8dff9a">● ${fmt(c.online + Math.round(rnd(-80, 80)))}</span></div>
-      <button class="btn green" ${locked ? "disabled" : ""}>O'YNASH</button>
+      <div class="prize"><div class="pl">${T("Yutuq")}</div><div class="pv"><span class="coin" style="width:28px;height:28px"></span>${fmtS(c.prize)}</div></div>
+      <div class="crow"><span>${T("Kirish narxi")}</span><span><span class="coin" style="width:14px;height:14px"></span> ${fmtS(c.fee)}</span></div>
+      <div class="crow"><span>${T("O'yinchilar onlayn")}</span><span style="color:#8dff9a" data-online="${c.id}">● —</span></div>
+      <button class="btn green" ${locked ? "disabled" : ""}>${T("O'YNASH")}</button>
       ${locked ? `<div class="lock"><div><div>🔒</div>${c.lvl}-daraja kerak</div></div>` : ""}`;
     el.querySelector("button").onclick = () => playCity(c);
     box.appendChild(el);
+  });
+  // real online counts from the server (hidden when offline)
+  Net.api("/api/online").then(r => {
+    for (const el of box.querySelectorAll("[data-online]")) el.textContent = `● ${fmt(r.total)} · ${T("kutmoqda")}: ${r.byCity[el.dataset.online] || 0}`;
+  }).catch(() => { for (const el of box.querySelectorAll("[data-online]")) el.textContent = `● ${T("oflayn")}`; });
+}
+// Look for a real opponent on the server; if nobody shows up in time (or no server), play a computer opponent.
+function findOpponent(c) {
+  return new Promise(resolve => {
+    let done = false;
+    const bot = () => { if (!done) { done = true; resolve({opp: botPlayer(c.lvl, c.lvl + 4)}); } };
+    const timer = setTimeout(() => { Net.send({t: "cancel"}); bot(); }, 15000);
+    Net.ensure().then(() => Net.connect()).then(() => {
+      Net.on("match", m => {
+        if (done) { Net.send({t: "resign"}); return; }   // matched after we already started a bot game
+        done = true; clearTimeout(timer);
+        const o = m.opp || {};
+        resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: (o.avatar | 0) % AVATARS.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
+          level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start"}});
+      });
+      Net.send({t: "queue", city: c.id, cue: profile.cue});
+    }).catch(() => { clearTimeout(timer); bot(); });
   });
 }
 function playCity(c) {
@@ -2122,13 +2332,13 @@ function playCity(c) {
       buttons: [{label: "Mini o'yinlar", cls: "orange", fn: () => toMenu("mini")}, {label: "Orqaga", cls: "gray", fn: () => toMenu("cities")}]});
   }
   profile.coins -= c.fee; save(); updateNav();
-  vsScreen(c, c.prize, botPlayer(c.lvl, c.lvl + 4), opp => startMatch("ai", c, opp));
+  vsScreen(c, c.prize, () => findOpponent(c), f => startMatch("ai", c, f.opp, f.net));
 }
 function avatarHTML(el, pl) {
   el.style.background = `linear-gradient(${shade(pl.color, 60)},${shade(pl.color, -30)})`;
   el.innerHTML = `${AVATARS[pl.avatar]}<div class="star">${pl.level}</div>`;
 }
-function vsScreen(city, pot, opp, done) {
+function vsScreen(city, pot, find, done) {
   mode = "menu";
   $("gameUi").classList.remove("on"); $("cheerBar").classList.remove("on"); closeChat();
   $("shade").classList.add("on");
@@ -2138,16 +2348,21 @@ function vsScreen(city, pot, opp, done) {
   avatarHTML($("vsA"), me); $("vsAn").textContent = me.name;
   $("vsCity").textContent = `${city.name} ${city.sub}`;
   $("vsPot").textContent = fmt(pot);
-  const b = $("vsB"), bn = $("vsBn"); bn.textContent = "Qidirilmoqda…";
+  const b = $("vsB"), bn = $("vsBn"); bn.textContent = T("Qidirilmoqda…");
   for (const el of document.querySelectorAll("#vs .vsL,#vs .vsR,#vs .vstxt")) { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }
   Snd.whoosh();
-  let n = 0;
+  let found = null, n = 0;
+  const minEnd = performance.now() + 1600;
+  Promise.resolve(typeof find === "function" ? find() : {opp: find}).then(r => { found = r; });
   const iv = setInterval(() => {
-    avatarHTML(b, {avatar: Math.random() * AVATARS.length | 0, color: pick(AV_COLORS), level: "?"}); Snd.wheelTick();
-    if (++n > 16) {
-      clearInterval(iv); avatarHTML(b, opp); bn.textContent = opp.name; Snd.pop(); Snd.coin(4);
-      setTimeout(() => { Snd.whoosh(); done(opp); }, 1500);
+    if (found && performance.now() > minEnd) {
+      clearInterval(iv); const o = found.opp;
+      avatarHTML(b, o); bn.textContent = o.name + (o.isAI ? " 🤖" : ""); Snd.pop(); Snd.coin(4);
+      setTimeout(() => { Snd.whoosh(); done(found); }, 1500);
+      return;
     }
+    avatarHTML(b, {avatar: Math.random() * AVATARS.length | 0, color: pick(AV_COLORS), level: "?"});
+    if (++n % 2) Snd.wheelTick();
   }, 90);
 }
 
@@ -2193,7 +2408,7 @@ function buildTour() {
   <button class="btn green" id="tourNext" style="margin-top:16px;font-size:24px;padding:12px 40px">${["CHORAK FINAL", "YARIM FINAL", "FINAL"][r]} — O'YNASH</button>`;
   $("tourNext").onclick = () => {
     const opp = P[[1, tour.w[0], tour.w[3]][r]];
-    vsScreen(CITIES[c.city], c.prize, opp, o => startMatch("tour", CITIES[c.city], o));
+    vsScreen(CITIES[c.city], c.prize, opp, f => startMatch("tour", CITIES[c.city], f.opp));
   };
 }
 function joinTour(c) {
@@ -2224,16 +2439,25 @@ function buildShop(tab) {
   document.querySelectorAll("#shop .tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
   const body = $("shopBody"); body.innerHTML = "";
   if (tab === "bank") {
-    body.innerHTML = `<div class="grid">${[[5, 2000], [20, 9000], [60, 30000]].map(([cash, coins]) => `
-      <div class="card" style="text-align:center"><div style="font-size:44px">💱</div>
-        <div class="h" style="font-size:22px;margin:6px 0"><span class="cash"></span> ${cash} → <span class="coin"></span> ${fmt(coins)}</div>
-        <button class="btn green" data-x="${cash},${coins}">ALMASHTIRISH</button></div>`).join("")}</div>
-      <p class="muted" style="text-align:center;margin-top:14px">💵 Pul — sovg'alar yo'li, omadli zarba va g'ildirakdan olinadi. Hech qanday haqiqiy to'lov yo'q.</p>`;
+    const packs = Object.entries(SKUS);
+    body.innerHTML = `<div class="h" style="font-size:22px;color:var(--gold);margin-bottom:8px">${T("Naqd pulga sotib olish")}</div>
+      <div class="grid">${packs.map(([id, s]) => `
+      <div class="card pack" style="text-align:center">${s.tag ? `<span class="ptag">${T(s.tag)}</span>` : ""}
+        <div style="font-size:46px;line-height:1.1">${s.cash ? (s.cash >= 2000 ? "💰" : "💵") : (s.coins >= 4e6 ? "🏦" : "🪙")}</div>
+        <div class="h" style="font-size:24px;margin:4px 0">${s.cash ? '<span class="cash"></span> ' + fmt(s.cash) : '<span class="coin"></span> ' + fmtS(s.coins)}</div>
+        <button class="btn green" data-sku="${id}" style="width:100%">$${s.usd.toFixed(2)}</button></div>`).join("")}</div>
+      <div class="h" style="font-size:22px;color:var(--gold);margin:18px 0 8px">${T("Pulni tangaga almashtirish")}</div>
+      <div class="grid">${[[10, 10000], [50, 60000], [250, 350000], [1000, 1600000]].map(([cash, coins]) => `
+      <div class="card" style="text-align:center"><div style="font-size:40px">💱</div>
+        <div class="h" style="font-size:20px;margin:6px 0"><span class="cash"></span> ${cash} → <span class="coin"></span> ${fmtS(coins)}</div>
+        <button class="btn blue" data-x="${cash},${coins}" style="width:100%">${T("ALMASHTIRISH")}</button></div>`).join("")}</div>
+      <p class="muted" style="text-align:center;margin-top:14px">${T("To'lovlar xavfsiz Stripe orqali. Xarid qilingan pul va tangalar hisobingizga avtomatik tushadi.")}</p>`;
     body.querySelectorAll("[data-x]").forEach(b => b.onclick = () => {
       const [cash, coins] = b.dataset.x.split(",").map(Number);
-      if (profile.cash < cash) { toast("😕", "Pul yetmaydi", "Almashtirish"); return; }
-      profile.cash -= cash; addCoins(coins); Snd.coin(6); toast("💱", `+${fmt(coins)} tanga`, "Almashtirildi");
+      if (profile.cash < cash) { toast("😕", T("Pul yetmaydi"), T("Almashtirish")); return; }
+      profile.cash -= cash; addCoins(coins); Snd.coin(6); toast("💱", `+${fmt(coins)} ${T("tanga")}`, T("Almashtirildi"));
     });
+    body.querySelectorAll("[data-sku]").forEach(b => b.onclick = () => Net.checkout(b.dataset.sku, b));
     return;
   }
   const grid = document.createElement("div"); grid.className = "cuelist";
@@ -2244,7 +2468,7 @@ function buildShop(tab) {
       <div>${c.st.map((v, i) => `<div class="stat"><span>${STAT_NAMES[i]}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
       <div>${sel ? `<button class="btn gray" disabled style="width:100%">✓ TANLANGAN</button>`
         : owned ? `<button class="btn blue" style="width:100%">TANLASH</button>`
-        : `<button class="btn ${c.cur === "cash" ? "purple" : "green"}" style="width:100%">${c.cur === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} ${fmt(c.price)}</button>`}</div>`;
+        : `<button class="btn ${c.cur === "cash" ? "purple" : "green"}" style="width:100%">${c.cur === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} ${fmtS(c.price)}</button>`}</div>`;
     el.querySelector(".cuecvw").appendChild(cueCanvas(c));
     const btn = el.querySelector("button");
     if (!sel) btn.onclick = () => {
@@ -2259,8 +2483,17 @@ function buildShop(tab) {
     };
     grid.appendChild(el);
   });
+  body.insertAdjacentHTML("beforeend", `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div class="muted">${T("Kolleksiya")}: ${profile.cues.length}/${CUES.length}</div><button class="btn blue" id="cueInfo" style="padding:6px 14px">ℹ ${T("Kiy ko'rsatkichlari")}</button></div>`);
+  $("cueInfo").onclick = cueInfoModal;
   body.appendChild(grid);
-  body.insertAdjacentHTML("beforeend", `<p class="muted" style="margin-top:12px">Kuch — zarba kuchi · Nishon — yo'naltiruvchi chiziq uzunligi · Aylanish — spin ta'siri · Vaqt — har bir zarba uchun soniyalar</p>`);
+}
+function cueInfoModal() {
+  const rows = [["⚡", "Kuch", "Zarba kuchini oshiradi", 7], ["🎯", "Nishon", "Yo'naltiruvchi chiziqni uzaytiradi", 4], ["🌀", "Aylanish", "Aylanish (spin) ta'sirini kuchaytiradi", 2], ["⏱", "Vaqt", "Har bir zarba uchun qo'shimcha vaqt beradi", 9]];
+  openModal({icon: "🎱", title: T("Kiy ko'rsatkichlari"), text: "",
+    extra: rows.map(([i, n, d, v]) => `<div class="card" style="display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;text-align:left;margin-bottom:8px">
+      <div style="font-size:30px">${i}</div><div><b>${T(n)}</b><div class="stat" style="grid-template-columns:1fr;margin:4px 0"><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div><small class="muted">${T(d)}</small></div></div>`).join(""),
+    buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
 
 // ---------------------------------------------------------------- rewards (daily streak)
@@ -2305,16 +2538,94 @@ function claimReward(r) {
 }
 
 // ---------------------------------------------------------------- leaderboard
+// Real global ranking from the server (total coins won in 1-on-1 matches).
 function buildLeader() {
-  let seed = Math.floor(Date.now() / (7 * 864e5)) % 233280;
-  const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-  const rows = BOT_NAMES.slice(0, 20).map((n, i) => ({name: n, av: (i * 7) % AVATARS.length, col: AV_COLORS[i % AV_COLORS.length], won: Math.round(Math.pow(rand(), 2.2) * 180000 + 300)}));
-  rows.push({name: profile.name + " (siz)", av: profile.avatar, col: AV_COLORS[profile.avatar % AV_COLORS.length], won: profile.won, me: true});
-  rows.sort((a, b) => b.won - a.won);
   const medal = i => i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1;
-  $("lbList").innerHTML = rows.map((r, i) => `<div class="lbr${r.me ? " me" : ""}"><div class="rk">${medal(i)}</div>
-    <div class="av" style="background:${r.col}">${AVATARS[r.av]}</div><div>${esc(r.name)}</div>
-    <div class="h" style="color:#ffe27a"><span class="coin" style="width:16px;height:16px"></span> ${fmt(r.won)}</div></div>`).join("");
+  const row = (r, rank, me) => `<div class="lbr${me ? " me" : ""}"><div class="rk">${medal(rank)}</div>
+    <div class="av" style="background:${AV_COLORS[(r.avatar | 0) % AV_COLORS.length]}">${AVATARS[(r.avatar | 0) % AVATARS.length]}</div>
+    <div>${esc(r.name)}${me ? ` <small class="muted">(${T("siz")})</small>` : ""} <small class="muted">⭐${r.level | 0}</small></div>
+    <div class="h" style="color:#ffe27a"><span class="coin" style="width:16px;height:16px"></span> ${fmtS(r.won | 0)}</div></div>`;
+  $("lbList").innerHTML = `<div class="muted" style="text-align:center;padding:20px">${T("Yuklanmoqda…")}</div>`;
+  Net.sync().then(() => Net.api("/api/leaderboard")).then(r => {
+    let html = r.top.map((u, i) => row(u, i, u.id === r.me.id)).join("");
+    if (!r.top.some(u => u.id === r.me.id)) html += `<div class="muted" style="text-align:center">…</div>` + row(r.me, (r.me.rank || r.total + 1) - 1, true);
+    $("lbList").innerHTML = `<div class="muted" style="text-align:center;margin-bottom:8px">🌍 ${T("Global reyting")} · ${fmt(r.total)} ${T("o'yinchi")}</div>` + (html || `<div class="muted" style="text-align:center">${T("Hali hech kim yo'q — birinchi bo'ling!")}</div>`);
+  }).catch(() => {
+    $("lbList").innerHTML = `<div class="muted" style="text-align:center;margin-bottom:10px">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>` +
+      row({name: profile.name, avatar: profile.avatar, level: profile.level, won: profile.won}, 0, true);
+  });
+}
+
+// ---------------------------------------------------------------- friends, invites, gifts
+function buildFriends() {
+  const box = $("friendsBody");
+  const code = Net.acct ? Net.acct.code : "…";
+  const inv = REFERRAL.inviter, got = REFERRAL.invitee;
+  box.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+      <div>
+        <div class="h" style="font-size:22px;color:var(--gold)">🎁 ${T("Do'stlarni taklif qiling")}</div>
+        <p class="muted" style="margin:6px 0 10px">${T("Har bir taklif qilingan do'st uchun siz olasiz")}: <b style="color:#8dff9a">💵 ${inv.cash} + 🪙 ${fmt(inv.coins)}</b>.
+          ${T("Do'stingiz ham oladi")}: <b style="color:#8dff9a">💵 ${got.cash} + 🪙 ${fmt(got.coins)}</b></p>
+        <div class="muted">${T("Sizning ID-kodingiz")}</div>
+        <div class="codebox"><span id="myCode">${esc(code)}</span><span style="display:flex;gap:6px">
+          <button class="btn blue" id="copyCode" style="padding:6px 12px;font-size:15px">${T("Nusxalash")}</button>
+          <button class="btn green" id="shareCode" style="padding:6px 12px;font-size:15px">${T("Ulashish")}</button></span></div>
+        <div class="muted" style="margin-top:14px">${T("Do'st kodini kiriting")}</div>
+        <div style="display:flex;gap:8px;margin-top:6px"><input class="name" id="frCode" maxlength="10" placeholder="ABC1234" style="text-transform:uppercase">
+          <button class="btn green" id="addFr" style="white-space:nowrap">${T("Qo'shish")}</button></div>
+        <button class="btn orange" id="useRef" style="margin-top:8px;width:100%">🎁 ${T("Taklif kodini ishlatish")}</button>
+        <div id="inboxBox" style="margin-top:14px"></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div class="h" style="font-size:22px">👥 ${T("Do'stlar")}</div>
+          <span style="display:flex;gap:6px"><button class="btn purple" id="reqGifts" style="padding:6px 10px;font-size:14px">${T("Sovg'a so'rash")}</button>
+          <button class="btn green" id="giftAll" style="padding:6px 10px;font-size:14px">🎁 ${T("Hammaga")}</button></span></div>
+        <div id="frList"><div class="muted">${T("Yuklanmoqda…")}</div></div>
+      </div>
+    </div>`;
+  const link = () => `${Net.base || location.origin + location.pathname}?ref=${Net.acct ? Net.acct.code : ""}`;
+  $("copyCode").onclick = () => { navigator.clipboard && navigator.clipboard.writeText(Net.acct ? Net.acct.code : "").then(() => toast("📋", T("Nusxalandi!"), "ID")); };
+  $("shareCode").onclick = () => {
+    const text = `${T("Men bilan Bilyard 8 o'ynang! Kodim")}: ${Net.acct ? Net.acct.code : ""}`;
+    if (navigator.share) navigator.share({title: "Bilyard 8", text, url: link()}).catch(() => {});
+    else navigator.clipboard && navigator.clipboard.writeText(`${text} ${link()}`).then(() => toast("📋", T("Nusxalandi!"), T("Ulashish")));
+  };
+  const codeVal = () => $("frCode").value.trim().toUpperCase();
+  const errText = e => ({code_not_found: T("Bunday kod topilmadi"), own_code: T("Bu sizning kodingiz"), already_used: T("Siz allaqachon taklif kodini ishlatgansiz"), too_late: T("Taklif kodi faqat birinchi 7 kunda ishlaydi")}[e.message] || T("Server bilan aloqa yo'q. Internetni tekshiring."));
+  $("addFr").onclick = () => Net.api("/api/friends/add", {code: codeVal()}).then(r => { toast("👥", r.friend.name, T("Do'st qo'shildi")); loadFriends(); }).catch(e => toast("⚠️", errText(e), T("Do'stlar")));
+  $("useRef").onclick = () => Net.api("/api/referral", {code: codeVal()}).then(() => { Net.sync(); loadFriends(); }).catch(e => toast("⚠️", errText(e), T("Do'stlar")));
+  $("reqGifts").onclick = () => {
+    const ids = (Net.friends || []).map(f => f.id);
+    Net.api("/api/gift/request", {to: ids}).then(r => toast("📨", `${T("Yuborildi")}: ${r.sent}`, T("Sovg'a so'rash"))).catch(() => {});
+  };
+  $("giftAll").onclick = () => {
+    const ids = (Net.friends || []).filter(f => f.canGift).map(f => f.id);
+    Net.api("/api/gift", {to: ids}).then(r => { toast("🎁", `${T("Yuborildi")}: ${r.sent}`, T("Sovg'a yuborish")); loadFriends(); }).catch(() => {});
+  };
+  Net.sync().then(r => {
+    if (!r) { $("frList").innerHTML = `<div class="muted">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>`; return; }
+    $("myCode").textContent = Net.acct.code;
+    const reqs = (Net.inbox || []).filter(m => m.kind === "request");
+    if (reqs.length) $("inboxBox").innerHTML = `<div class="card"><b>📨 ${T("Sovg'a so'rovlari")}</b>${reqs.map(m => `<div class="muted">${esc(m.from)}</div>`).join("")}
+      <button class="btn green" id="answerReq" style="margin-top:8px;width:100%">🎁 ${T("Hammasiga yuborish")}</button></div>`;
+    if (reqs.length) $("answerReq").onclick = () => Net.api("/api/gift", {to: reqs.map(m => m.fromId)}).then(r => {
+      toast("🎁", `${T("Yuborildi")}: ${r.sent}`, T("Sovg'a yuborish")); Net.api("/api/inbox/clear", {}); $("inboxBox").innerHTML = "";
+    });
+    loadFriends();
+  });
+}
+function loadFriends() {
+  Net.api("/api/friends").then(r => {
+    Net.friends = r.friends;
+    $("frList").innerHTML = r.friends.length ? r.friends.map(f => `<div class="frow">
+      <div class="av" style="background:${AV_COLORS[f.avatar % AV_COLORS.length]}">${AVATARS[f.avatar % AVATARS.length]}${f.online ? '<i class="on"></i>' : ""}</div>
+      <div><b>${esc(f.name)}</b> <small class="muted">⭐${f.level}</small><div class="muted">${f.online ? "🟢 " + T("onlayn") : T("oflayn")} · ${T("Yutgan")}: ${fmtS(f.won)}</div></div>
+      <button class="btn ${f.canGift ? "green" : "gray"}" data-gift="${f.id}" ${f.canGift ? "" : "disabled"} style="padding:6px 10px;font-size:14px">🎁</button></div>`).join("")
+      : `<div class="muted" style="padding:10px">${T("Hali do'stlaringiz yo'q. Kodingizni ulashing!")}</div>`;
+    $("frList").querySelectorAll("[data-gift]").forEach(b => b.onclick = () => Net.api("/api/gift", {to: [b.dataset.gift]}).then(() => { toast("🎁", T("Yuborildi"), T("Sovg'a yuborish")); loadFriends(); }));
+  }).catch(() => { $("frList").innerHTML = `<div class="muted">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>`; });
 }
 
 // ---------------------------------------------------------------- mini games
@@ -2386,6 +2697,104 @@ function buildProfile() {
   $("profBody").querySelectorAll("[data-a]").forEach(b => b.onclick = () => { profile.avatar = +b.dataset.a; save(); updateNav(); buildProfile(); });
 }
 
+// ---------------------------------------------------------------- server connection
+// Works when the game is served by server/server.js (same origin) or when ?server=https://… is given once.
+const Net = (() => {
+  const qs = new URLSearchParams(location.search);
+  if (qs.get("server")) store.set("b8server", qs.get("server"));
+  const BASE = (store.get("b8server", "") || (location.protocol.startsWith("http") ? location.origin : "")).replace(/\/$/, "");
+  let acct = store.get("b8acct", null), ws = null, online = false, registering = null;
+  const handlers = {};
+  async function api(path, body) {
+    if (!BASE) throw new Error("offline");
+    const r = await fetch(BASE + path, {method: body ? "POST" : "GET",
+      headers: {"Content-Type": "application/json", ...(acct ? {Authorization: `Bearer ${acct.id}:${acct.token}`} : {})},
+      body: body ? JSON.stringify(body) : undefined});
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { const e = new Error(j.error || String(r.status)); e.status = r.status; throw e; }
+    return j;
+  }
+  function ensure() {
+    if (acct) return Promise.resolve(acct);
+    if (!registering) registering = api("/api/register", {name: profile.name, avatar: profile.avatar, country: (navigator.language || "").slice(-2)})
+      .then(r => { acct = r; store.set("b8acct", acct); return acct; }).finally(() => { registering = null; });
+    return registering;
+  }
+  function applyGrant(g) {
+    profile.cash += g.cash || 0; profile.coins += g.coins || 0; save();
+    const why = {purchase: T("Xarid uchun rahmat!"), referral: T("Taklif bonusi"), invited: T("Do'stingiz qo'shildi"), gift: T("Sovg'a")}[g.kind] || "";
+    toast(g.kind === "gift" ? "🎁" : "💰", `${g.cash ? "+" + fmt(g.cash) + " 💵 " : ""}${g.coins ? "+" + fmt(g.coins) + " 🪙" : ""}`, `${why}${g.from ? " · " + g.from : ""}`);
+    Snd.coin(6);
+  }
+  async function sync() {
+    try {
+      await ensure();
+      const r = await api("/api/sync", {name: profile.name, avatar: profile.avatar, level: profile.level, xp: profile.xp, won: profile.won, wins: profile.wins, games: profile.games});
+      online = true;
+      for (const g of r.grants || []) applyGrant(g);
+      Net.inbox = r.inbox || []; Net.me = r.me;
+      const d = $("dotFr"); if (d) { d.style.display = Net.inbox.length ? "" : "none"; d.textContent = Net.inbox.length; }
+      updateNav();
+      return r;
+    } catch (e) {
+      online = false;
+      if (e.status === 401) { acct = null; store.set("b8acct", null); }
+      return null;
+    }
+  }
+  async function checkout(sku, btn) {
+    try {
+      if (btn) btn.disabled = true;
+      await ensure();
+      const r = await api("/api/checkout", {sku});
+      location.href = r.url;
+    } catch (e) {
+      toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
+    } finally { if (btn) btn.disabled = false; }
+  }
+  function connect() {
+    return new Promise((resolve, reject) => {
+      if (ws && ws.readyState === 1) return resolve(ws);
+      if (!BASE || !acct) return reject(new Error("offline"));
+      const sock = new WebSocket(BASE.replace(/^http/, "ws") + `/ws?id=${encodeURIComponent(acct.id)}&token=${encodeURIComponent(acct.token)}`);
+      const t = setTimeout(() => { reject(new Error("timeout")); try { sock.close(); } catch (e) {} }, 6000);
+      sock.onopen = () => { clearTimeout(t); ws = sock; resolve(sock); };
+      sock.onerror = () => { clearTimeout(t); reject(new Error("ws")); };
+      sock.onclose = () => { if (ws === sock) ws = null; if (handlers.close) handlers.close(); };
+      sock.onmessage = ev => { let m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (handlers[m.t]) handlers[m.t](m); };
+    });
+  }
+  const send = m => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); };
+  return {api, ensure, sync, checkout, connect, send, on: (t, f) => { handlers[t] = f; },
+    get acct() { return acct; }, get online() { return online; }, get base() { return BASE; }, inbox: [], me: null, friends: []};
+})();
+// Messages from the online opponent during a match
+Net.on("aim", m => {
+  const G = game; if (!G || !G.net || G.cur !== 1 || G.moving) return;
+  G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1);
+  if (G.ballInHand) { G.balls[0].x = clamp(+m.x, R, FW - R); G.balls[0].y = clamp(+m.y, R, FH - R); }
+});
+Net.on("shot", m => {
+  const G = game; if (!G || !G.net || G.cur !== 1 || G.moving || G.strike) return;
+  G.angle = +m.a || G.angle;
+  requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, follow: +m.follow || 0, side: +m.side || 0});
+});
+Net.on("state", m => {
+  const G = game; if (!G || !G.net) return;
+  if (G.moving || G.strike) G.pendingState = m; else applyState(m);
+});
+Net.on("chat", m => { if (game && game.net) bubble(1, String(m.msg || "").slice(0, 40)); });
+Net.on("end", m => {   // opponent resigned (normal endings are already handled on this device)
+  const G = game; if (!G || !G.net || G.over || m.reason === "normal") return;
+  const w = localOf(m.winner);
+  endGame(w, w === 0 ? T("Raqib o'yinni tark etdi") : T("MAG'LUBIYAT"));
+});
+Net.on("oppLeft", () => {
+  const G = game; if (!G || !G.net || G.over) return;
+  toast("🏃", T("Raqib o'yinni tark etdi"), "");
+  endGame(0, T("Raqib o'yinni tark etdi"));
+});
+
 // ---------------------------------------------------------------- chat & cheers
 function closeChat() { $("chatPanel").classList.remove("on"); }
 const EMOJIS = ["😀", "😂", "😍", "😎", "😮", "😢", "😡", "🤔", "👍", "👏", "🔥", "🎉"];
@@ -2400,6 +2809,7 @@ function sendChat(msg) {
   const G = game; if (!G || mode !== "game") return;
   const who = G.type === "pvp" ? G.cur : 0;
   bubble(who, msg); closeChat();
+  if (G.net) Net.send({t: "chat", msg});
   if (G.players[1] && G.players[1].isAI && who === 0) {
     const rep = AI_REPLY[msg];
     if (rep || Math.random() < 0.3) setTimeout(() => game === G && bubble(1, pick(rep || ["😅", "👍", "😎"])), rnd(900, 1800));
@@ -2411,7 +2821,7 @@ $("cheerBar").querySelectorAll("button").forEach(b => b.onclick = () => {
   const G = game; if (!G) return;
   for (let i = 0; i < 3; i++) {
     const el = document.createElement("div"); el.className = "floater"; el.textContent = b.textContent;
-    el.style.left = (innerWidth - 170 + rnd(-40, 40)) + "px"; el.style.top = (innerHeight - 100) + "px";
+    el.style.left = (vw - 170 + rnd(-40, 40)) + "px"; el.style.top = (vh - 100) + "px";
     el.style.setProperty("--dx", rnd(-80, 40) + "px"); el.style.animationDelay = i * 0.12 + "s";
     document.body.appendChild(el); setTimeout(() => el.remove(), 2700);
   }
@@ -2420,12 +2830,12 @@ $("cheerBar").querySelectorAll("button").forEach(b => b.onclick = () => {
 $("gMenu").onclick = () => {
   const G = game; if (!G) return;
   const money = (G.type === "ai" || G.type === "tour") && !G.over;
-  openModal({icon: "⏸️", title: "Pauza", text: money ? "Chiqsangiz, o'yin mag'lubiyat hisoblanadi." : "",
+  openModal({icon: "⏸️", title: T("Pauza"), text: money ? T("Chiqsangiz, o'yin mag'lubiyat hisoblanadi.") : "",
     buttons: [
-      {label: "Davom etish", cls: "green", fn: () => {}},
-      {label: profile.muted ? "🔊 Ovozni yoqish" : "🔇 Ovozni o'chirish", cls: "blue", fn: toggleMute},
-      {label: money ? "Taslim bo'lish" : "Chiqish", cls: "red", fn: () => {
-        if (money) { profile.games++; save(); if (G.type === "tour") tour = null; }
+      {label: T("Davom etish"), cls: "green", fn: () => {}},
+      {label: profile.muted ? T("🔊 Ovozni yoqish") : T("🔇 Ovozni o'chirish"), cls: "blue", fn: toggleMute},
+      {label: money ? T("Taslim bo'lish") : T("Chiqish"), cls: "red", fn: () => {
+        if (money) { profile.games++; save(); if (G.type === "tour") tour = null; if (G.net) { Net.send({t: "resign"}); G.over = true; } }
         toMenu(G.type === "lucky" ? "mini" : G.type === "tour" ? "tourScr" : "home");
       }},
     ]});
@@ -2440,6 +2850,8 @@ document.addEventListener("click", e => {
 document.querySelectorAll("#shop .tab").forEach(t => t.addEventListener("click", () => buildShop(t.dataset.tab)));
 $("pchip").onclick = () => go("profileScr");
 $("muteBtn").onclick = toggleMute;
+$("fsBtn").onclick = toggleFullscreen;
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js").catch(() => {});
 $("tPlay").onclick = () => go("cities");
 $("tTour").onclick = () => go("tourScr");
 $("tMini").onclick = () => go("mini");
@@ -2456,8 +2868,43 @@ for (let i = 0; i < 18; i++) {
   $("shade").appendChild(s);
 }
 
+// ---------------------------------------------------------------- language
+function detectLang() {
+  const saved = profile.lang;
+  if (saved && LANGS[saved]) return saved;
+  const n = (navigator.language || "en").slice(0, 2);
+  return n === "uz" ? "uz" : n === "ru" || n === "kk" || n === "ky" || n === "tg" ? "ru" : "en";
+}
+const staticText = [];   // [textNode, original Uzbek text]
+(function collectStatic() {
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n; (n = walker.nextNode());) {
+    const s = n.nodeValue.trim();
+    if (s && !n.parentElement.closest("script,style,#chatPanel,#cheerBar")) staticText.push([n, s, n.nodeValue]);
+  }
+})();
+function applyLang(l) {
+  LANG = l; document.documentElement.lang = l;
+  for (const [n, s, raw] of staticText) n.nodeValue = raw.replace(s, T(s));
+  buildChat();
+}
+$("langBtn").onclick = () => openModal({icon: "🌐", title: T("Til"), text: "", buttons: Object.entries(LANGS).map(([k, name]) => ({
+  label: name, cls: k === LANG ? "green" : "gray", fn: () => { profile.lang = k; save(); applyLang(k); go(document.querySelector(".screen.on") ? document.querySelector(".screen.on").id : "home"); }}))});
+applyLang(detectLang());
+
 toMenu();
-if (profile.lastClaim !== today()) setTimeout(() => toast("🎁", "Kunlik sovg'a tayyor!", "Sovg'alar yo'li"), 1200);
+if (profile.lastClaim !== today()) setTimeout(() => toast("🎁", T("Kunlik sovg'a tayyor!"), T("Sovg'alar yo'li")), 1200);
+// online: register / sync in the background, accept invite links (?ref=CODE) and return from checkout (?paid=1)
+(async () => {
+  const qs = new URLSearchParams(location.search);
+  const r = await Net.sync();
+  if (!r) return;
+  const ref = (qs.get("ref") || "").toUpperCase();
+  if (ref && !r.referredBy && ref !== Net.acct.code) Net.api("/api/referral", {code: ref}).then(() => Net.sync()).catch(() => {});
+  if (qs.get("paid") === "1") { toast("💳", T("Xarid uchun rahmat!"), T("Do'kon")); setTimeout(() => Net.sync(), 3000); }
+  if (qs.has("ref") || qs.has("paid")) history.replaceState(null, "", location.pathname);
+})();
+setInterval(() => { if (mode === "menu") Net.sync(); }, 60000);
 requestAnimationFrame(frame);
 </script>
 </body>

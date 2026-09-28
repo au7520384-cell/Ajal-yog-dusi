@@ -1,0 +1,15 @@
+{
+  "name": "Bilyard 8 — Masters League",
+  "short_name": "Bilyard 8",
+  "description": "8-ball pool: online 1v1, tournaments, 3D cues, daily rewards.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "categories": ["games", "sports"],
+  "icons": [
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}
