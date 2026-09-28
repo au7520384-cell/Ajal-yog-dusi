@@ -30,6 +30,23 @@ Player data is stored in Postgres when `DATABASE_URL` is set; without it the ser
 
 The free Render plan sleeps after ~15 minutes without visitors; the first visitor then waits about 30 s. Data is safe in Neon either way. A paid instance removes the sleep.
 
+## Publish on Y8.com
+The game has the Y8 SDK built in (login, cloud save, ads, leaderboard, achievements). It stays off until you fill in `CONFIG` at the top of the script in `index.html`:
+```js
+const CONFIG = {
+  server: "https://bilyard8.onrender.com",   // your Render URL (online play from Y8)
+  y8AppId: "…",                               // https://account.y8.com/applications/ → create an app
+  y8GameId: "…",                              // sent by the Y8 team after approval (ads)
+  y8Leaderboard: "Leaderboard",
+};
+```
+In the Y8 dashboard create a leaderboard table named `Leaderboard` and these achievements (key → name):
+`first_win` First Win · `double` Double Pot · `breakpot` Power Break · `runout` Clean Table · `champ` Tournament Champion · `lucky` Bullseye · `streak7` Loyal Player · `rich` Rich · `collector` Collector.
+
+What the game does with it: logs the player in (their Y8 name, progress saved to Y8 cloud), shows an interstitial ad after every 2nd match (at most every 90 s), offers rewarded ads (+1 cash in the bank, +1 lucky shot and +1 wheel spin in minigames; 10 per day), submits total winnings to the Y8 leaderboard and awards achievements. On Y8 the Stripe packs are hidden; online play, friends and our global leaderboard still use your Render server.
+
+Upload a zip with `index.html` and `icon.svg` at its root.
+
 ### Real-money payments (Stripe)
 1. Create a Stripe account and get your **Secret key**.
 2. Add a webhook endpoint `https://your-domain/api/stripe/webhook` for the event `checkout.session.completed` and copy its **signing secret**.
