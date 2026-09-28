@@ -45,7 +45,7 @@ const CITY_PRIZE = {lon: 100, syd: 200, lis: 1000, tok: 5000, veg: 20000, jak: 1
 
 // ---------------------------------------------------------------- storage
 const store = createStore({databaseUrl: process.env.DATABASE_URL, dataDir: DATA_DIR});
-let db = {users: {}, codes: {}, purchases: {}, meta: {}};
+let db = {users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}};
 let dirty = false, saving = null;
 const markDirty = () => { dirty = true; };
 function flush() {
@@ -78,7 +78,8 @@ function newCode() {
 function publicUser(u) {
   return {id: u.id, code: u.code, name: u.name, avatar: u.avatar, frame: u.frame || 0, level: u.level, won: u.won, wins: u.wins, games: u.games,
     country: u.country || "", league: u.league || 0, weekWon: u.week === curWeek() ? u.weekWon || 0 : 0,
-    online: clients.has(u.id), lastSeen: u.lastSeen};
+    club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "",
+    online: clients.has(u.id) && !(u.prefs && u.prefs.showOnline === false), lastSeen: u.lastSeen};
 }
 const cleanCountry = c => /^[A-Za-z]{2}$/.test(String(c || "")) ? String(c).toUpperCase() : "";
 
@@ -118,6 +119,11 @@ function rollWeek() {
       else if (i >= n - down) { u.league = t - 1; u.lastWeek.move = -1; }
     });
   }
+  // clubs: members of the three best clubs of the week get cash
+  const clubRank = Object.values(db.clubs).map(c => ({c, score: c.members.reduce((a, id) => a + (db.users[id] && db.users[id].week === prev ? db.users[id].weekWon || 0 : 0), 0)}))
+    .filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+  clubRank.slice(0, CLUB_PRIZES.length).forEach((x, i) => x.c.members.forEach(id => db.users[id] && grant(db.users[id], {cash: CLUB_PRIZES[i], coins: 0, kind: "club", from: x.c.name})));
+  clubRank.forEach((x, i) => { x.c.lastWeek = {rank: i + 1, score: x.score}; x.c.league = Math.min(6, Math.floor(Math.log10(x.score + 1) / 1.4)); });
   state.lastWeek = {week: prev, top: played.slice(0, 20).map(u => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, won: u.weekWon}))};
   state.week = curWeek();
   lbCache.clear(); markDirty();
@@ -125,6 +131,13 @@ function rollWeek() {
 }
 setInterval(rollWeek, 60000);
 function grant(u, g) { (u.grants = u.grants || []).push({...g, at: Date.now()}); markDirty(); }
+const CLUB_MAX = 50, CLUB_LEVEL = 6, CLUB_PRIZES = [50, 25, 10];
+function clubScore(c) { const w = curWeek(); return c.members.reduce((a, id) => a + (db.users[id] && db.users[id].week === w ? db.users[id].weekWon || 0 : 0), 0); }
+function clubInfo(c) { return {id: c.id, name: c.name, badge: c.badge || 0, color: c.color || 0, members: c.members.length, score: clubScore(c), league: c.league || 0}; }
+function clubSay(c, u, text) {
+  (c.chat = c.chat || []).push(u ? {from: u.id, name: u.name, avatar: u.avatar, text, at: Date.now()} : {sys: true, text, at: Date.now()});
+  if (c.chat.length > 80) c.chat.splice(0, c.chat.length - 80);
+}
 
 // ---------------------------------------------------------------- http helpers
 function send(res, code, obj) {
@@ -208,6 +221,7 @@ const routes = {
     if (b.won !== undefined) { const d = int(b.won) - (u.won || 0); if (d > 0) addWeekly(u, Math.min(d, 2e8)); }
     for (const k of ["level", "won", "wins", "games"]) if (b[k] !== undefined) u[k] = Math.max(u[k] || 0, int(b[k]));
     if (b.xp !== undefined) u.xp = int(b.xp);
+    if (b.prefs && typeof b.prefs === "object") u.prefs = {allowFriend: b.prefs.allowFriend !== false, showOnline: b.prefs.showOnline !== false};
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
@@ -236,6 +250,7 @@ const routes = {
     if (!fid) return [404, {error: "code_not_found"}];
     if (fid === u.id) return [400, {error: "own_code"}];
     const f = db.users[fid];
+    if (f.prefs && f.prefs.allowFriend === false && !f.friends.includes(u.id)) return [403, {error: "friends_closed"}];
     if (u.friends.length >= 500) return [400, {error: "too_many"}];
     if (!u.friends.includes(fid)) u.friends.push(fid);
     if (!f.friends.includes(u.id)) f.friends.push(u.id);
@@ -271,6 +286,59 @@ const routes = {
   async "POST /api/inbox/clear"(req, u) { u.inbox = []; markDirty(); return {ok: true}; },
 
   // ?scope=world | country | friends | league   — ranked by this week's winnings
+  // ---------------- clubs: unlocked at level 6, up to 50 members, ranked by the members' weekly winnings
+  "GET /api/clubs"(req, u) {
+    const q = new URL(req.url, "http://x").searchParams.get("q") || "";
+    let list = Object.values(db.clubs);
+    if (q) list = list.filter(c => c.name.toLowerCase().includes(q.toLowerCase().slice(0, 20)));
+    return {clubs: list.map(clubInfo).sort((a, b) => b.score - a.score || b.members - a.members).slice(0, 60), mine: u.club || null, max: CLUB_MAX, minLevel: CLUB_LEVEL};
+  },
+  "GET /api/clubs/mine"(req, u) {
+    const c = db.clubs[u.club]; if (!c) return {club: null};
+    const members = c.members.map(id => db.users[id]).filter(Boolean).map(m => ({...publicUser(m), role: m.id === c.owner ? "owner" : "member"}))
+      .sort((a, b) => b.weekWon - a.weekWon);
+    return {club: {...clubInfo(c), desc: c.desc || "", owner: c.owner, lastWeek: c.lastWeek || null}, members, chat: (c.chat || []).slice(-50), prizes: CLUB_PRIZES};
+  },
+  async "POST /api/clubs/create"(req, u) {
+    const b = await jsonBody(req);
+    if ((u.level || 1) < CLUB_LEVEL) return [403, {error: "level"}];
+    if (u.club && db.clubs[u.club]) return [400, {error: "in_club"}];
+    const name = String(b.name || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 20);
+    if (name.length < 3) return [400, {error: "name"}];
+    if (Object.values(db.clubs).some(c => c.name.toLowerCase() === name.toLowerCase())) return [400, {error: "name_taken"}];
+    const id = "k" + crypto.randomBytes(6).toString("hex");
+    db.clubs[id] = {id, name, badge: int(b.badge, 23), color: int(b.color, 7), desc: String(b.desc || "").replace(/[<>]/g, "").slice(0, 80), owner: u.id, members: [u.id], created: Date.now(), chat: [], league: 0};
+    u.club = id; markDirty();
+    return {ok: true, club: clubInfo(db.clubs[id])};
+  },
+  async "POST /api/clubs/join"(req, u) {
+    const b = await jsonBody(req), c = db.clubs[String(b.id || "")];
+    if (!c) return [404, {error: "not_found"}];
+    if ((u.level || 1) < CLUB_LEVEL) return [403, {error: "level"}];
+    if (u.club && db.clubs[u.club]) return [400, {error: "in_club"}];
+    if (c.members.length >= CLUB_MAX) return [400, {error: "full"}];
+    c.members.push(u.id); u.club = c.id; clubSay(c, null, "join:" + u.name); markDirty();
+    return {ok: true};
+  },
+  async "POST /api/clubs/leave"(req, u) {
+    const c = db.clubs[u.club]; u.club = null;
+    if (c) {
+      c.members = c.members.filter(id => id !== u.id);
+      if (!c.members.length) delete db.clubs[c.id];
+      else { if (c.owner === u.id) c.owner = c.members[0]; clubSay(c, null, "leave:" + u.name); }
+    }
+    markDirty();
+    return {ok: true};
+  },
+  async "POST /api/clubs/chat"(req, u) {
+    const b = await jsonBody(req), c = db.clubs[u.club];
+    if (!c) return [400, {error: "no_club"}];
+    const text = String(b.text || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 140);
+    if (!text) return [400, {error: "empty"}];
+    if (Date.now() - (u.lastChat || 0) < 1500) return [429, {error: "slow"}];
+    u.lastChat = Date.now(); clubSay(c, u, text); markDirty();
+    return {ok: true, chat: c.chat.slice(-50)};
+  },
   "GET /api/leaderboard"(req, u) {
     const scope = new URL(req.url, "http://x").searchParams.get("scope") || "world";
     const lg = u.league || 0, cc = u.country || "";
@@ -439,8 +507,8 @@ setInterval(() => {
 }, 30000);
 
 store.load().then(loaded => {
-  if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}}, loaded);
-  db.meta = db.meta || {};
+  if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}}, loaded);
+  db.meta = db.meta || {}; db.clubs = db.clubs || {};
   rollWeek();
   server.listen(PORT, () => console.log(`Bilyard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${STRIPE_KEY ? "ON" : "off"})`));
 }).catch(e => { console.error("Could not load the database:", e.message); process.exit(1); });

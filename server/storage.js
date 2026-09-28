@@ -33,8 +33,8 @@ function pgStore(url) {
   const {Pool} = require("pg");
   const pool = new Pool({connectionString: url, max: 4, idleTimeoutMillis: 30000, connectionTimeoutMillis: 15000});
   pool.on("error", e => console.error("postgres pool:", e.message));
-  const TABLES = ["users", "purchases", "meta"];            // meta: small shared state (current week, last week's results)
-  const saved = {users: new Map(), purchases: new Map(), meta: new Map()};   // id -> JSON last written
+  const TABLES = ["users", "purchases", "meta", "clubs"];            // meta: small shared state (current week, last week's results)
+  const saved = {users: new Map(), purchases: new Map(), meta: new Map(), clubs: new Map()};   // id -> JSON last written
   async function upsert(table, rows) {
     for (let i = 0; i < rows.length; i += 200) {
       const chunk = rows.slice(i, i + 200), params = [], values = [];
@@ -45,7 +45,7 @@ function pgStore(url) {
   return {
     kind: "postgres",
     async load() {
-      const db = {users: {}, codes: {}, purchases: {}, meta: {}};
+      const db = {users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}};
       for (const t of TABLES) {
         await pool.query(`CREATE TABLE IF NOT EXISTS ${t} (id text PRIMARY KEY, data jsonb NOT NULL, updated timestamptz NOT NULL DEFAULT now())`);
         for (const r of (await pool.query(`SELECT id, data FROM ${t}`)).rows) { db[t][r.id] = r.data; saved[t].set(r.id, JSON.stringify(r.data)); }
@@ -60,6 +60,8 @@ function pgStore(url) {
           const s = JSON.stringify(obj);
           if (saved[table].get(id) !== s) changed.push([id, s]);
         }
+        const gone = [...saved[table].keys()].filter(id => !(db[table] || {})[id]);
+        if (gone.length) { await pool.query(`DELETE FROM ${table} WHERE id = ANY($1)`, [gone]); gone.forEach(id => saved[table].delete(id)); }
         if (!changed.length) continue;
         await upsert(table, changed);
         for (const [id, s] of changed) saved[table].set(id, s);
