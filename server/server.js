@@ -40,11 +40,13 @@ const SKUS = {
 };
 const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
 const GIFT = {coins: 500};
-const CITY_PRIZE = {tash: 100, sam: 400, bux: 2000, xiv: 10000, ist: 40000, dub: 200000, par: 1000000, tok: 5000000, nyc: 20000000, veg: 100000000};
+const CITY_PRIZE = {tash: 100, lon: 200, syd: 500, sam: 1000, lis: 2000, bux: 3000, tok: 5000, veg: 20000, xiv: 50000, jak: 100000,
+  tor: 200000, cai: 500000, dub: 1000000, sha: 2000000, par: 5000000, rom: 8000000, bkk: 10000000, seo: 20000000, mum: 30000000,
+  ber: 50000000, ist: 100000000, osa: 200000000};
 
 // ---------------------------------------------------------------- storage
 const store = createStore({databaseUrl: process.env.DATABASE_URL, dataDir: DATA_DIR});
-let db = {users: {}, codes: {}, purchases: {}};
+let db = {users: {}, codes: {}, purchases: {}, meta: {}};
 let dirty = false, saving = null;
 const markDirty = () => { dirty = true; };
 function flush() {
@@ -75,9 +77,54 @@ function newCode() {
   }
 }
 function publicUser(u) {
-  return {id: u.id, code: u.code, name: u.name, avatar: u.avatar, level: u.level, won: u.won, wins: u.wins, games: u.games,
+  return {id: u.id, code: u.code, name: u.name, avatar: u.avatar, frame: u.frame || 0, level: u.level, won: u.won, wins: u.wins, games: u.games,
+    country: u.country || "", league: u.league || 0, weekWon: u.week === curWeek() ? u.weekWon || 0 : 0,
     online: clients.has(u.id), lastSeen: u.lastSeen};
 }
+const cleanCountry = c => /^[A-Za-z]{2}$/.test(String(c || "")) ? String(c).toUpperCase() : "";
+
+// ---------------------------------------------------------------- weekly leaderboards & leagues
+// Weeks start Monday 00:00 UTC. Every player earns "weekly winnings"; at the end of the week the world top 3 get cash,
+// and inside each league the top 20% move up, the bottom 20% move down.
+const LEAGUES = ["bronze", "silver", "gold", "platinum", "diamond", "master", "grandmaster"];
+const WEEK_PRIZES = [1500, 750, 400];
+function weekStart(t = Date.now()) {
+  const d = new Date(t), day = (d.getUTCDay() + 6) % 7;
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day);
+}
+const curWeek = () => new Date(weekStart()).toISOString().slice(0, 10);
+const weekEndsAt = () => weekStart() + 7 * 864e5;
+function addWeekly(u, amount) {
+  const w = curWeek();
+  if (u.week !== w) { u.week = w; u.weekWon = 0; }
+  u.weekWon = (u.weekWon || 0) + Math.max(0, amount);
+  lbCache.clear(); markDirty();
+}
+function rollWeek() {
+  db.meta = db.meta || {};
+  const state = db.meta.state = db.meta.state || {week: curWeek()};
+  if (state.week === curWeek()) return;
+  const prev = state.week, all = Object.values(db.users);
+  const played = all.filter(u => u.week === prev && u.weekWon > 0).sort((a, b) => b.weekWon - a.weekWon);
+  played.forEach((u, i) => {
+    u.lastWeek = {week: prev, won: u.weekWon, rank: i + 1, league: u.league || 0, move: 0};
+    if (i < WEEK_PRIZES.length) grant(u, {cash: WEEK_PRIZES[i], coins: 0, kind: "weekly", from: `#${i + 1}`});
+  });
+  for (let t = 0; t < LEAGUES.length; t++) {
+    const tier = played.filter(u => u.lastWeek.league === t), n = tier.length;   // league at the start of the week: move at most one step
+    const up = t < LEAGUES.length - 1 ? Math.max(1, Math.ceil(n * 0.2)) : 0;
+    const down = t > 0 && n >= 5 ? Math.floor(n * 0.2) : 0;
+    tier.forEach((u, i) => {
+      if (i < up) { u.league = t + 1; u.lastWeek.move = 1; }
+      else if (i >= n - down) { u.league = t - 1; u.lastWeek.move = -1; }
+    });
+  }
+  state.lastWeek = {week: prev, top: played.slice(0, 20).map(u => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, won: u.weekWon}))};
+  state.week = curWeek();
+  lbCache.clear(); markDirty();
+  console.log(`week ${prev} closed: ${played.length} players ranked`);
+}
+setInterval(rollWeek, 60000);
 function grant(u, g) { (u.grants = u.grants || []).push({...g, at: Date.now()}); markDirty(); }
 
 // ---------------------------------------------------------------- http helpers
@@ -115,13 +162,19 @@ function limited(req, key, perMin) {
 }
 setInterval(() => buckets.clear(), 10 * 60000);
 
-// ---------------------------------------------------------------- leaderboard cache
-let lbCache = null, lbAt = 0;
-function leaderboard() {
-  if (lbCache && Date.now() - lbAt < 30000) return lbCache;
-  lbCache = Object.values(db.users).sort((a, b) => b.won - a.won || b.level - a.level);
-  lbAt = Date.now();
-  return lbCache;
+// ---------------------------------------------------------------- leaderboard cache (per scope, 20 s)
+const lbCache = new Map();
+function board(key, filter) {
+  const c = lbCache.get(key);
+  if (c && Date.now() - c.at < 20000) return c.list;
+  const w = curWeek();
+  const wk = u => u.week === w ? u.weekWon || 0 : 0;
+  const list = Object.values(db.users).filter(filter).sort((a, b) => wk(b) - wk(a) || b.won - a.won || b.level - a.level);
+  lbCache.set(key, {at: Date.now(), list});
+  return list;
+}
+function geoCountry(req) {   // set by some hosts / CDNs (Cloudflare, Vercel…); Render doesn't, so the client also sends it
+  return cleanCountry(req.headers["cf-ipcountry"] || req.headers["x-vercel-ip-country"] || req.headers["x-country-code"]);
 }
 
 // ---------------------------------------------------------------- routes
@@ -138,8 +191,9 @@ const routes = {
     const b = await jsonBody(req);
     const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16), token = crypto.randomBytes(24).toString("hex");
     const code = newCode();
-    const u = {id, token, code, name: cleanName(b.name), avatar: int(b.avatar, 64), level: 1, xp: 0, won: 0, wins: 0, games: 0,
-      friends: [], referredBy: null, referrals: [], grants: [], inbox: [], gifted: {}, created: Date.now(), lastSeen: Date.now(), country: String(b.country || "").slice(0, 2)};
+    const u = {id, token, code, name: cleanName(b.name), avatar: int(b.avatar, 999), frame: 0, level: 1, xp: 0, won: 0, wins: 0, games: 0,
+      friends: [], referredBy: null, referrals: [], grants: [], inbox: [], gifted: {}, created: Date.now(), lastSeen: Date.now(),
+      country: geoCountry(req) || cleanCountry(b.country), league: 0, week: curWeek(), weekWon: 0};
     db.users[id] = u; db.codes[code] = id; markDirty();
     return {id, token, code};
   },
@@ -147,11 +201,18 @@ const routes = {
   async "POST /api/sync"(req, u) {
     const b = await jsonBody(req);
     if (b.name) u.name = cleanName(b.name);
-    if (b.avatar !== undefined) u.avatar = int(b.avatar, 64);
-    for (const k of ["level", "xp", "won", "wins", "games"]) if (b[k] !== undefined) u[k] = int(b[k]);
+    if (b.avatar !== undefined) u.avatar = int(b.avatar, 999);
+    if (b.frame !== undefined) u.frame = int(b.frame, 99);
+    if (cleanCountry(b.country)) u.country = cleanCountry(b.country);
+    else if (!u.country) u.country = geoCountry(req);
+    // coins won on this device since the last sync also count for this week's ranking
+    if (b.won !== undefined) { const d = int(b.won) - (u.won || 0); if (d > 0) addWeekly(u, Math.min(d, 2e8)); }
+    for (const k of ["level", "won", "wins", "games"]) if (b[k] !== undefined) u[k] = Math.max(u[k] || 0, int(b[k]));
+    if (b.xp !== undefined) u.xp = int(b.xp);
+    if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
-    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length};
+    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null};
   },
 
   async "POST /api/referral"(req, u) {
@@ -210,9 +271,25 @@ const routes = {
   },
   async "POST /api/inbox/clear"(req, u) { u.inbox = []; markDirty(); return {ok: true}; },
 
+  // ?scope=world | country | friends | league   — ranked by this week's winnings
   "GET /api/leaderboard"(req, u) {
-    const all = leaderboard(), rank = all.findIndex(x => x.id === u.id);
-    return {top: all.slice(0, 100).map(publicUser), me: {...publicUser(u), rank: rank < 0 ? null : rank + 1}, total: all.length};
+    const scope = new URL(req.url, "http://x").searchParams.get("scope") || "world";
+    const lg = u.league || 0, cc = u.country || "";
+    const all = scope === "country" ? board("c:" + cc, x => (x.country || "") === cc)
+      : scope === "league" ? board("l:" + lg, x => (x.league || 0) === lg)
+      : scope === "friends" ? Object.values(db.users).filter(x => x.id === u.id || u.friends.includes(x.id))
+          .sort((a, b) => publicUser(b).weekWon - publicUser(a).weekWon || b.won - a.won)
+      : board("world", () => true);
+    const rank = all.findIndex(x => x.id === u.id);
+    const n = all.length;
+    return {scope, week: curWeek(), endsAt: weekEndsAt(), prizes: WEEK_PRIZES, leagues: LEAGUES, country: cc, league: lg,
+      promote: scope === "league" && lg < LEAGUES.length - 1 ? Math.max(1, Math.ceil(n * 0.2)) : 0,
+      demote: scope === "league" && lg > 0 && n >= 5 ? Math.floor(n * 0.2) : 0,
+      top: all.slice(0, 100).map(publicUser), me: {...publicUser(u), rank: rank < 0 ? null : rank + 1}, total: n};
+  },
+  "GET /api/leaderboard/lastweek"(req, u) {
+    const s = (db.meta && db.meta.state) || {};
+    return {lastWeek: s.lastWeek || null, me: u.lastWeek || null, prizes: WEEK_PRIZES};
   },
 
   async "POST /api/checkout"(req, u) {
@@ -303,7 +380,7 @@ function finish(room, winnerSeat, reason) {
   room.over = true;
   const [a, b] = room.p, w = room.p[winnerSeat], l = room.p[1 - winnerSeat];
   const wu = w && db.users[w.uid], lu = l && db.users[l.uid];
-  if (wu) { wu.wins++; wu.games++; wu.won += CITY_PRIZE[room.city] || 0; }
+  if (wu) { wu.wins++; wu.games++; wu.won += CITY_PRIZE[room.city] || 0; addWeekly(wu, CITY_PRIZE[room.city] || 0); }
   if (lu) lu.games++;
   markDirty();
   for (const s of [a, b]) { wsSend(s, {t: "end", winner: winnerSeat, reason}); if (s) s.room = null; }
@@ -363,6 +440,8 @@ setInterval(() => {
 }, 30000);
 
 store.load().then(loaded => {
-  if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}}, loaded);
+  if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}}, loaded);
+  db.meta = db.meta || {};
+  rollWeek();
   server.listen(PORT, () => console.log(`Bilyard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${STRIPE_KEY ? "ON" : "off"})`));
 }).catch(e => { console.error("Could not load the database:", e.message); process.exit(1); });
