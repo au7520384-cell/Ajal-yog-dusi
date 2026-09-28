@@ -27,16 +27,22 @@ const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/
 
 // ---------------------------------------------------------------- catalog (server is the source of truth for prices)
 const SKUS = {
-  cash_25:     {cash: 25,       usd: 0.99,  name: "25 Cash"},
-  cash_150:    {cash: 150,      usd: 4.99,  name: "150 Cash"},
-  cash_350:    {cash: 350,      usd: 9.99,  name: "350 Cash"},
-  cash_800:    {cash: 800,      usd: 19.99, name: "800 Cash"},
-  cash_2000:   {cash: 2000,     usd: 49.99, name: "2 000 Cash"},
-  cash_5000:   {cash: 5000,     usd: 99.99, name: "5 000 Cash"},
-  coins_250k:  {coins: 250000,   usd: 0.99,  name: "250 000 Coins"},
-  coins_1500k: {coins: 1500000,  usd: 4.99,  name: "1 500 000 Coins"},
-  coins_4m:    {coins: 4000000,  usd: 9.99,  name: "4 000 000 Coins"},
-  coins_10m:   {coins: 10000000, usd: 19.99, name: "10 000 000 Coins"},
+  coins_20k:   {coins: 20000,   vip: 130,   usd: 1.99,  name: "20 000 Coins"},
+  coins_52k:   {coins: 52000,   vip: 364,   usd: 4.99,  name: "52 000 Coins"},
+  coins_112k:  {coins: 112000,  vip: 832,   usd: 9.99,  name: "112 000 Coins"},
+  coins_256k:  {coins: 256000,  vip: 1920,  usd: 19.99, name: "256 000 Coins"},
+  coins_800k:  {coins: 800000,  vip: 5590,  usd: 49.99, name: "800 000 Coins"},
+  coins_2m:    {coins: 2000000, vip: 13000, usd: 99.99, name: "2 000 000 Coins"},
+  cash_15:     {cash: 15,       vip: 130,   usd: 1.99,  name: "15 Cash"},
+  cash_50:     {cash: 50,       vip: 364,   usd: 4.99,  name: "50 Cash"},
+  cash_110:    {cash: 110,      vip: 832,   usd: 9.99,  name: "110 Cash"},
+  cash_256:    {cash: 256,      vip: 1920,  usd: 19.99, name: "256 Cash"},
+  cash_800:    {cash: 800,      vip: 5590,  usd: 49.99, name: "800 Cash"},
+  cash_2000:   {cash: 2000,     vip: 13000, usd: 99.99, name: "2 000 Cash"},
+  gems_20:     {gems: 20,       vip: 130,   usd: 1.99,  name: "20 Gems"},
+  gems_60:     {gems: 60,       vip: 364,   usd: 4.99,  name: "60 Gems"},
+  gems_140:    {gems: 140,      vip: 832,   usd: 9.99,  name: "140 Gems"},
+  starter:     {cash: 50, coins: 100000, gems: 20, vip: 200, usd: 2.99, name: "Starter Pack", once: true},
 };
 const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
 const GIFT = {coins: 500};
@@ -225,7 +231,7 @@ const routes = {
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
-    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null};
+    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}};
   },
 
   async "POST /api/referral"(req, u) {
@@ -362,6 +368,7 @@ const routes = {
   async "POST /api/checkout"(req, u) {
     const b = await jsonBody(req), sku = SKUS[b.sku];
     if (!sku) return [400, {error: "bad_sku"}];
+    if (sku.once && (u.bought || {})[b.sku]) return [400, {error: "already_bought"}];
     if (!STRIPE_KEY) return [503, {error: "payments_not_configured"}];
     const form = new URLSearchParams({
       mode: "payment", success_url: `${APP_URL}/?paid=1`, cancel_url: `${APP_URL}/?paid=0`,
@@ -395,7 +402,8 @@ async function stripeWebhook(req, res) {
     const s = ev.data.object, u = db.users[s.metadata && s.metadata.userId], sku = SKUS[s.metadata && s.metadata.sku];
     if (u && sku && !db.purchases[s.id]) {
       db.purchases[s.id] = {user: u.id, sku: s.metadata.sku, at: Date.now(), amount: s.amount_total};
-      grant(u, {cash: sku.cash || 0, coins: sku.coins || 0, kind: "purchase", from: sku.name});
+      grant(u, {cash: sku.cash || 0, coins: sku.coins || 0, gems: sku.gems || 0, vip: sku.vip || 0, kind: "purchase", from: sku.name});
+      const skuId = s.metadata.sku; u.bought = {...(u.bought || {}), [skuId]: (u.bought && u.bought[skuId] || 0) + 1};
       if (saving) await saving;
       await flush();   // money: write it down before telling Stripe we got it
       if (dirty) return send(res, 500, {error: "save failed"});   // Stripe retries the webhook
