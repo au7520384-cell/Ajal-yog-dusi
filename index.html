@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="uz">
+<html lang="uz" translate="no" class="notranslate">
 <head>
 <meta charset="utf-8">
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0b1220">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -63,9 +64,9 @@
   .pinfo b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
   .xpbar{width:100px;height:7px;border-radius:4px;background:#26314f;overflow:hidden;margin-top:3px}
   .xpbar i{display:block;height:100%;background:linear-gradient(90deg,#7ff7ff,#3b8cff);border-radius:4px}
-  .navbtns{display:flex;gap:6px;margin:0 auto;overflow-x:auto;scrollbar-width:none;padding-top:6px}
+  .navbtns{display:flex;gap:6px;flex:1 1 0;min-width:0;justify-content:safe center;overflow-x:auto;scrollbar-width:none;padding-top:6px}
   .navbtns::-webkit-scrollbar{display:none}
-  .nb{position:relative;border:0;background:linear-gradient(#2a3656,#1a233b);border:1px solid #34436a;border-radius:10px;
+  .nb{position:relative;flex:none;white-space:nowrap;border:0;background:linear-gradient(#2a3656,#1a233b);border:1px solid #34436a;border-radius:10px;
     padding:4px 10px;min-width:64px;cursor:pointer;display:flex;flex-direction:column;align-items:center;font-size:11px;color:#cfd8ee}
   .nb span{font-size:20px;line-height:1.1}
   .dot{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:9px;background:#ff3b30;color:#fff;font-style:normal;
@@ -190,6 +191,17 @@
   .cuerow{display:grid;grid-template-columns:minmax(0,1fr) 200px 150px;gap:14px;align-items:center;background:linear-gradient(#2d3a5e,#1b2440);border:2px solid #3e4f7c;border-radius:14px;padding:10px 14px}
   .cuerow.sel{border-color:var(--gold);box-shadow:0 0 0 2px #ffcf3d55,0 0 22px #ffcf3d44}
   .cuecv{width:100%;height:auto;display:block;margin-top:6px}
+  .cuecvw{min-height:34px}
+  .cuettl{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;font-weight:700}
+  .cuettl b{font-size:20px;display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pcs{background:#000a;color:#fff;border-radius:8px;padding:2px 8px;margin-left:4px}
+  .cuerow.locked .cuecvw{filter:saturate(.35) brightness(.75)}
+  .cpts{text-align:center;color:#ffcf3d;font-size:13px;margin-top:4px;font-weight:700}
+  .cuehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
+  .cpow{background:linear-gradient(#5b2c9a,#3a1670);border:2px solid #8a5ad0;border-radius:12px;padding:4px 14px;display:flex;flex-direction:column;font-size:13px}
+  .cpow span{font-family:var(--fh);font-size:18px;color:#ffe27a}
+  .subtabs{margin-bottom:10px}
+  .surbox{display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(#4a2a86,#26124a)}
   @media (max-width:700px){ .cuerow{grid-template-columns:1fr} }
   /* reward route */
   .route{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:18px 14px;max-width:860px;width:100%}
@@ -321,7 +333,11 @@
   /* Phone held upright and the browser can't lock orientation (e.g. iPhone Safari):
      turn the whole game 90° so it always plays in landscape, filling the screen. */
   html.rot body{position:fixed;top:0;left:0;transform-origin:0 0;transform:rotate(90deg) translateY(-100%)}
-  @media (max-width:760px){ .tiles{grid-template-columns:repeat(3,1fr)} .nb{min-width:52px;padding:3px 6px} .pinfo b{max-width:70px} .xpbar{width:64px} .mchip{min-width:70px;font-size:13px} }
+  @media (max-width:1000px){ .nb{min-width:50px;padding:3px 6px;font-size:10px} .nb span{font-size:17px} .money{gap:4px} .mchip{min-width:0} #nav{gap:5px} .iconbtn{width:36px;height:36px} }
+  @media (max-width:900px){ .pinfo{display:none} .pchip{padding:4px} .mchip{font-size:13px;gap:4px;padding:4px 5px} }
+  @media (max-width:700px){ .navbtns{gap:4px} .nb{min-width:34px!important;padding:4px 3px!important} .nb span{font-size:19px!important} #nav{gap:4px} .mchip .plus{display:none} .iconbtn{width:30px!important;height:30px!important} }
+  @media (max-width:820px){ .nb{min-width:40px;padding:4px 6px;font-size:0} .nb span{font-size:22px} .iconbtn{width:34px;height:34px;font-size:16px} }
+  @media (max-width:760px){ .tiles{grid-template-columns:repeat(3,1fr)} }
   @media (max-height:520px){ .screen{padding-top:62px} .logo{margin:0 0 8px} .tile small{display:none} .rw{min-height:104px} .rw .ri{font-size:30px} }
   @media (max-width:560px){ .route{grid-template-columns:repeat(2,1fr)} .bracket{grid-template-columns:1fr} }
 </style>
@@ -610,7 +626,8 @@ function detectCountry() {
   return "";
 }
 function countryName(cc) {
-  try { return new Intl.DisplayNames([LANG, "en"], {type: "region"}).of(cc); } catch (e) { return cc; }
+  for (const l of [LANG, "en"]) { try { const n = new Intl.DisplayNames([l], {type: "region", fallback: "none"}).of(cc); if (n && n !== cc) return n; } catch (e) {} }
+  return cc;
 }
 const flagEmoji = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 0x1F1A5 + c.charCodeAt(0))) : "🏳️";
 // flag picture (emoji flags don't show on Windows); falls back to the emoji if the image can't load
@@ -787,7 +804,7 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 // ---------------------------------------------------------------- languages (Uzbek text is the key)
 const LANGS = {uz: "O'zbekcha", en: "English", ru: "Русский", tr: "Türkçe", es: "Español", pt: "Português", fr: "Français", de: "Deutsch",
-  id: "Bahasa Indonesia", ar: "العربية", hi: "हिन्दी"};
+  id: "Bahasa Indonesia", ar: "العربية", hi: "हिन्दी", ko: "한국어", ja: "日本語", zh: "中文"};
 const DICT = {
   "USTALAR LIGASI": ["MASTERS LEAGUE", "ЛИГА МАСТЕРОВ"],
   "1 ga 1": ["1 on 1", "1 на 1"], "O'ynash": ["Play", "Играть"], "Tanga tikib yuting": ["Bet coins, win big", "Ставь монеты и выигрывай"],
@@ -867,6 +884,11 @@ const DICT = {
   "Bronza": ["Bronze", "Бронза"], "Kumush": ["Silver", "Серебро"], "Oltin": ["Gold", "Золото"], "Platina": ["Platinum", "Платина"], "Olmos": ["Diamond", "Алмаз"],
   "Usta": ["Master", "Мастер"], "Grandmaster": ["Grandmaster", "Гроссмейстер"], "Daraja": ["Level", "Уровень"], "O'yinlar": ["Games", "Игры"],
   "G'alabalar": ["Wins", "Победы"], "G'alaba %": ["Win %", "Побед %"], "Jami yutuq": ["Total winnings", "Всего выиграно"],
+  "Kolleksiya kuchi": ["Collection power", "Сила коллекции"], "G'alaba": ["Victory", "Победа"], "Syurpriz": ["Surprise", "Сюрприз"], "Meniki": ["Owned", "Мои"],
+  "Syurpriz qutisi": ["Surprise Box", "Сюрприз-бокс"], "Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.": ["Each box gives 1 piece of a legendary cue. 4 pieces = the cue.", "Каждый бокс даёт 1 часть легендарного кия. 4 части = кий."],
+  "Shaharda yoki undan yuqorida yutib, kiy bo'laklarini yig'ing. 4 bo'lak = kiy.": ["Win in the city or above to collect pieces. 4 pieces = the cue.", "Побеждайте в этом городе или выше, чтобы собрать части. 4 части = кий."],
+  "Kiy bo'lagi": ["Cue piece", "Часть кия"], "Yana ochish": ["Open another", "Открыть ещё"], "Oddiy": ["Basic", "Базовый"], "Yuqori": ["Advanced", "Продвинутый"],
+  "Ekspert": ["Expert", "Эксперт"], "Afsonaviy": ["Legendary", "Легендарный"],
 };
 // More languages. Each list follows XL_KEYS; strings not listed here fall back to English.
 const XL_KEYS = ["siz", "1 ga 1", "USTALAR LIGASI", "O'ynash", "Tanga tikib yuting", "Turnir", "8 o'yinchi, 3 raund", "Mini o'yinlar", "Do'st bilan", "Bitta qurilmada 2 kishi",
@@ -877,16 +899,20 @@ const XL_KEYS = ["siz", "1 ga 1", "USTALAR LIGASI", "O'ynash", "Tanga tikib yuti
   "Tanga yetmaydi", "TANLASH", "✓ TANLANGAN", "Sizning o'rningiz", "Ligangiz ko'tarildi!", "Ligangiz tushdi", "O'tgan hafta", "Omad g'ildiragi", "Sovg'alar yo'li", "Keyingi o'yin",
   "Qayta o'ynash", "Raqib o'yinni tark etdi", "Kunlik sovg'a tayyor!", "Navbat raqibga o'tdi", "SIZ YAXLIT SHARLARSIZ!", "SIZ YO'L-YO'L SHARLARSIZ!", "Siz sindirasiz — omad!", "Qidirilmoqda…", "O'yinchilar onlayn", "Ism",
   "Haftalik yutuq", "Liga", "Yopish", "Sovrin", "🙂 Avatarlar", "🖼 Ramkalar", "🌍 Dunyo", "👥 Do'stlar", "Yutuqlar", "Daraja",
-  "O'yinlar", "G'alabalar", "Jami yutuq", "Haftalik reyting", "Profil_", "Kuch", "Nishon", "Aylanish", "Vaqt", "Bank"];
+  "O'yinlar", "G'alabalar", "Jami yutuq", "Haftalik reyting", "Profil_", "Kuch", "Nishon", "Aylanish", "Vaqt", "Bank",
+  "Kolleksiya kuchi", "G'alaba", "Syurpriz", "Meniki", "Syurpriz qutisi", "Kiy bo'lagi", "Oddiy", "Yuqori", "Ekspert", "Afsonaviy", "Yangi kiy!", "🎱 Kiylar", "💱 Almashtirish"];
 const XL = {
-  tr: `sen|1'e 1|USTALAR LİGİ|Oyna|Jeton koy, büyük kazan|Turnuva|8 oyuncu, 3 tur|Mini oyunlar|Arkadaşla|Tek cihazda 2 oyuncu|İzle|Antrenman|Arkadaşlar|Ödüller|Istakalar|Sıralama|Mağaza|Masa seç|Turnuvalar|Profil|Ödül|Giriş ücreti|OYNA|Sıra sende|FAUL!|SÜRE DOLDU!|ZAFER!|YENİLGİ|Tekrar oyna|Menü|Devam|Duraklatıldı|Pes et|Çıkış|Çevrimiçi rakip aranıyor…|Rakip bulundu!|Arkadaşlarını davet et|Dil|Yükleniyor…|Dünya|Ülke|⭐ Ligim|Bronz|Gümüş|Altın|Platin|Elmas|Usta|Büyükusta|Bitişe|Satın alındı!|Nakit yetersiz|Jeton yetersiz|SEÇ|✓ SEÇİLİ|Sıralaman|Ligin yükseldi!|Ligin düştü|Geçen hafta|Şans çarkı|Ödül yolu|Sonraki oyun|Rövanş|Rakip oyundan ayrıldı|Günlük ödül hazır!|Sıra rakibe geçti|DÜZ TOPLARSIN!|ÇİZGİLİ TOPLARSIN!|Açılış sende, bol şans!|Aranıyor…|Çevrimiçi oyuncular|İsim|Haftalık kazanç|Lig|Kapat|Ödül|🙂 Avatarlar|🖼 Çerçeveler|🌍 Dünya|👥 Arkadaşlar|Başarılar|Seviye|Oyunlar|Galibiyetler|Toplam kazanç|Sıralama|Profil|Güç|Nişan|Falso|Süre|Banka`,
-  es: `tú|1 contra 1|LIGA DE MAESTROS|Jugar|Apuesta monedas, gana a lo grande|Torneo|8 jugadores, 3 rondas|Minijuegos|Con un amigo|2 jugadores, un dispositivo|Ver|Práctica|Amigos|Premios|Tacos|Clasificación|Tienda|Elige una mesa|Torneos|Perfil|Premio|Entrada|JUGAR|Tu turno|¡FALTA!|¡SE ACABÓ EL TIEMPO!|¡VICTORIA!|DERROTA|Jugar de nuevo|Menú|Continuar|Pausa|Rendirse|Salir|Buscando rival en línea…|¡Rival encontrado!|Invita a tus amigos|Idioma|Cargando…|Mundo|País|⭐ Mi liga|Bronce|Plata|Oro|Platino|Diamante|Maestro|Gran maestro|Termina en|¡Comprado!|No tienes suficiente efectivo|No tienes suficientes monedas|USAR|✓ EN USO|Tu posición|¡Subiste de liga!|Bajaste de liga|Semana pasada|Rueda de la suerte|Ruta de premios|Siguiente partida|Revancha|Tu rival abandonó la partida|¡Premio diario listo!|Turno del rival|¡ERES LISAS!|¡ERES RAYADAS!|Tú sacas, ¡suerte!|Buscando…|Jugadores en línea|Nombre|Ganancias semanales|Liga|Cerrar|Premio|🙂 Avatares|🖼 Marcos|🌍 Mundo|👥 Amigos|Logros|Nivel|Partidas|Victorias|Ganancias totales|Clasificación|Perfil|Fuerza|Puntería|Efecto|Tiempo|Banco`,
-  pt: `você|1 contra 1|LIGA DOS MESTRES|Jogar|Aposte moedas, ganhe muito|Torneio|8 jogadores, 3 rodadas|Minijogos|Com um amigo|2 jogadores, um aparelho|Assistir|Treino|Amigos|Prêmios|Tacos|Ranking|Loja|Escolha uma mesa|Torneios|Perfil|Prêmio|Entrada|JOGAR|Sua vez|FALTA!|TEMPO ESGOTADO!|VITÓRIA!|DERROTA|Jogar de novo|Menu|Continuar|Pausado|Desistir|Sair|Procurando adversário online…|Adversário encontrado!|Convide amigos|Idioma|Carregando…|Mundo|País|⭐ Minha liga|Bronze|Prata|Ouro|Platina|Diamante|Mestre|Grão-mestre|Termina em|Comprado!|Dinheiro insuficiente|Moedas insuficientes|USAR|✓ EM USO|Sua posição|Você subiu de liga!|Você caiu de liga|Semana passada|Roda da sorte|Rota de prêmios|Próximo jogo|Revanche|O adversário saiu do jogo|Prêmio diário pronto!|Vez do adversário|VOCÊ É LISAS!|VOCÊ É LISTRADAS!|Você abre, boa sorte!|Procurando…|Jogadores online|Nome|Ganhos da semana|Liga|Fechar|Prêmio|🙂 Avatares|🖼 Molduras|🌍 Mundo|👥 Amigos|Conquistas|Nível|Jogos|Vitórias|Ganhos totais|Ranking|Perfil|Força|Mira|Efeito|Tempo|Banco`,
-  ar: `أنت|1 ضد 1|دوري الأساتذة|العب|راهن بالعملات واربح|بطولة|8 لاعبين، 3 جولات|ألعاب مصغرة|مع صديق|لاعبان على جهاز واحد|شاهد|تدريب|الأصدقاء|الجوائز|العصي|الترتيب|المتجر|اختر طاولة|البطولات|الملف الشخصي|الجائزة|رسوم الدخول|العب|دورك|خطأ!|انتهى الوقت!|فوز!|خسارة|العب مجددًا|القائمة|متابعة|إيقاف مؤقت|استسلام|خروج|جارٍ البحث عن خصم…|تم العثور على خصم!|ادعُ أصدقاءك|اللغة|جارٍ التحميل…|العالم|الدولة|⭐ دوريّ|برونزي|فضي|ذهبي|بلاتيني|ماسي|أستاذ|أستاذ كبير|ينتهي بعد|تم الشراء!|النقود غير كافية|العملات غير كافية|اختيار|✓ مُختار|ترتيبك|صعدت إلى دوري أعلى!|هبطت إلى دوري أدنى|الأسبوع الماضي|عجلة الحظ|طريق الجوائز|المباراة التالية|إعادة المباراة|غادر الخصم اللعبة|الجائزة اليومية جاهزة!|الدور للخصم|أنت الكرات المصمتة!|أنت الكرات المخططة!|أنت تبدأ، حظًا موفقًا!|جارٍ البحث…|لاعبون متصلون|الاسم|أرباح الأسبوع|الدوري|إغلاق|الجائزة|🙂 الصور الرمزية|🖼 الإطارات|🌍 العالم|👥 الأصدقاء|الإنجازات|المستوى|المباريات|الانتصارات|إجمالي الأرباح|الترتيب|الملف الشخصي|القوة|التصويب|الدوران|الوقت|البنك`,
-  id: `kamu|1 lawan 1|LIGA MASTER|Main|Pasang koin, menang besar|Turnamen|8 pemain, 3 babak|Mini game|Dengan teman|2 pemain, satu perangkat|Tonton|Latihan|Teman|Hadiah|Stik|Peringkat|Toko|Pilih meja|Turnamen|Profil|Hadiah|Biaya masuk|MAIN|Giliranmu|PELANGGARAN!|WAKTU HABIS!|MENANG!|KALAH|Main lagi|Menu|Lanjut|Jeda|Menyerah|Keluar|Mencari lawan online…|Lawan ditemukan!|Undang teman|Bahasa|Memuat…|Dunia|Negara|⭐ Ligaku|Perunggu|Perak|Emas|Platinum|Berlian|Master|Grandmaster|Berakhir dalam|Dibeli!|Uang tidak cukup|Koin tidak cukup|PAKAI|✓ DIPAKAI|Peringkatmu|Liga naik!|Liga turun|Minggu lalu|Roda keberuntungan|Rute hadiah|Game berikutnya|Tanding ulang|Lawan keluar dari game|Hadiah harian siap!|Giliran lawan|KAMU BOLA POLOS!|KAMU BOLA BELANG!|Kamu break, semoga beruntung!|Mencari…|Pemain online|Nama|Kemenangan mingguan|Liga|Tutup|Hadiah|🙂 Avatar|🖼 Bingkai|🌍 Dunia|👥 Teman|Pencapaian|Level|Game|Kemenangan|Total kemenangan|Peringkat|Profil|Tenaga|Bidikan|Putaran|Waktu|Bank`,
-  hi: `आप|1 बनाम 1|मास्टर्स लीग|खेलें|सिक्के लगाएँ, बड़ा जीतें|टूर्नामेंट|8 खिलाड़ी, 3 राउंड|मिनी गेम|दोस्त के साथ|एक डिवाइस पर 2 खिलाड़ी|देखें|अभ्यास|दोस्त|इनाम|क्यू|लीडरबोर्ड|दुकान|टेबल चुनें|टूर्नामेंट|प्रोफ़ाइल|इनाम|प्रवेश शुल्क|खेलें|आपकी बारी|फ़ाउल!|समय समाप्त!|जीत!|हार|फिर से खेलें|मेनू|जारी रखें|रुका हुआ|हार मानें|बाहर|ऑनलाइन प्रतिद्वंद्वी खोजा जा रहा है…|प्रतिद्वंद्वी मिल गया!|दोस्तों को बुलाएँ|भाषा|लोड हो रहा है…|दुनिया|देश|⭐ मेरी लीग|कांस्य|रजत|स्वर्ण|प्लैटिनम|हीरा|मास्टर|ग्रैंडमास्टर|समाप्ति में|खरीदा गया!|नकद कम है|सिक्के कम हैं|चुनें|✓ चुना गया|आपका स्थान|लीग ऊपर गई!|लीग नीचे गई|पिछला सप्ताह|भाग्य चक्र|इनाम मार्ग|अगला गेम|दोबारा मुकाबला|प्रतिद्वंद्वी ने गेम छोड़ दिया|दैनिक इनाम तैयार है!|प्रतिद्वंद्वी की बारी|आप सॉलिड हैं!|आप स्ट्राइप्स हैं!|आप ब्रेक करेंगे, शुभकामनाएँ!|खोज रहे हैं…|ऑनलाइन खिलाड़ी|नाम|साप्ताहिक जीत|लीग|बंद करें|इनाम|🙂 अवतार|🖼 फ़्रेम|🌍 दुनिया|👥 दोस्त|उपलब्धियाँ|स्तर|गेम|जीतें|कुल जीत|लीडरबोर्ड|प्रोफ़ाइल|शक्ति|निशाना|स्पिन|समय|बैंक`,
-  fr: `vous|1 contre 1|LIGUE DES MAÎTRES|Jouer|Misez des pièces, gagnez gros|Tournoi|8 joueurs, 3 tours|Mini-jeux|Avec un ami|2 joueurs, un appareil|Regarder|Entraînement|Amis|Récompenses|Queues|Classement|Boutique|Choisissez une table|Tournois|Profil|Gain|Mise|JOUER|À vous de jouer|FAUTE !|TEMPS ÉCOULÉ !|VICTOIRE !|DÉFAITE|Rejouer|Menu|Continuer|Pause|Abandonner|Quitter|Recherche d'un adversaire…|Adversaire trouvé !|Invitez des amis|Langue|Chargement…|Monde|Pays|⭐ Ma ligue|Bronze|Argent|Or|Platine|Diamant|Maître|Grand maître|Fin dans|Acheté !|Pas assez d'argent|Pas assez de pièces|UTILISER|✓ UTILISÉ|Votre rang|Promotion de ligue !|Relégation de ligue|Semaine dernière|Roue de la chance|Route des récompenses|Partie suivante|Revanche|Votre adversaire a quitté la partie|Récompense du jour prête !|Au tour de l'adversaire|VOUS ÊTES LES PLEINES !|VOUS ÊTES LES RAYÉES !|Vous cassez, bonne chance !|Recherche…|Joueurs en ligne|Nom|Gains de la semaine|Ligue|Fermer|Prix|🙂 Avatars|🖼 Cadres|🌍 Monde|👥 Amis|Succès|Niveau|Parties|Victoires|Gains totaux|Classement|Profil|Force|Visée|Effet|Temps|Banque`,
-  de: `du|1 gegen 1|MEISTERLIGA|Spielen|Setze Münzen, gewinne groß|Turnier|8 Spieler, 3 Runden|Minispiele|Mit einem Freund|2 Spieler, ein Gerät|Zuschauen|Training|Freunde|Belohnungen|Queues|Rangliste|Shop|Tisch wählen|Turniere|Profil|Gewinn|Einsatz|SPIELEN|Du bist dran|FOUL!|ZEIT ABGELAUFEN!|SIEG!|NIEDERLAGE|Nochmal spielen|Menü|Weiter|Pause|Aufgeben|Beenden|Suche Online-Gegner…|Gegner gefunden!|Freunde einladen|Sprache|Lädt…|Welt|Land|⭐ Meine Liga|Bronze|Silber|Gold|Platin|Diamant|Meister|Großmeister|Endet in|Gekauft!|Nicht genug Geld|Nicht genug Münzen|NUTZEN|✓ AKTIV|Dein Rang|Liga aufgestiegen!|Liga abgestiegen|Letzte Woche|Glücksrad|Belohnungsweg|Nächstes Spiel|Revanche|Dein Gegner hat das Spiel verlassen|Tägliche Belohnung bereit!|Gegner ist dran|DU HAST DIE VOLLEN!|DU HAST DIE HALBEN!|Du stößt an, viel Glück!|Suche…|Spieler online|Name|Wochengewinn|Liga|Schließen|Preis|🙂 Avatare|🖼 Rahmen|🌍 Welt|👥 Freunde|Erfolge|Level|Spiele|Siege|Gesamtgewinn|Rangliste|Profil|Kraft|Zielen|Effet|Zeit|Bank`,
+  tr: `sen|1'e 1|USTALAR LİGİ|Oyna|Jeton koy, büyük kazan|Turnuva|8 oyuncu, 3 tur|Mini oyunlar|Arkadaşla|Tek cihazda 2 oyuncu|İzle|Antrenman|Arkadaşlar|Ödüller|Istakalar|Sıralama|Mağaza|Masa seç|Turnuvalar|Profil|Ödül|Giriş ücreti|OYNA|Sıra sende|FAUL!|SÜRE DOLDU!|ZAFER!|YENİLGİ|Tekrar oyna|Menü|Devam|Duraklatıldı|Pes et|Çıkış|Çevrimiçi rakip aranıyor…|Rakip bulundu!|Arkadaşlarını davet et|Dil|Yükleniyor…|Dünya|Ülke|⭐ Ligim|Bronz|Gümüş|Altın|Platin|Elmas|Usta|Büyükusta|Bitişe|Satın alındı!|Nakit yetersiz|Jeton yetersiz|SEÇ|✓ SEÇİLİ|Sıralaman|Ligin yükseldi!|Ligin düştü|Geçen hafta|Şans çarkı|Ödül yolu|Sonraki oyun|Rövanş|Rakip oyundan ayrıldı|Günlük ödül hazır!|Sıra rakibe geçti|DÜZ TOPLARSIN!|ÇİZGİLİ TOPLARSIN!|Açılış sende, bol şans!|Aranıyor…|Çevrimiçi oyuncular|İsim|Haftalık kazanç|Lig|Kapat|Ödül|🙂 Avatarlar|🖼 Çerçeveler|🌍 Dünya|👥 Arkadaşlar|Başarılar|Seviye|Oyunlar|Galibiyetler|Toplam kazanç|Sıralama|Profil|Güç|Nişan|Falso|Süre|Banka|Koleksiyon gücü|Zafer|Sürpriz|Sahip olunan|Sürpriz Kutu|Istaka parçası|Temel|Gelişmiş|Uzman|Efsanevi|Yeni ıstaka!|🎱 Istakalar|💱 Banka`,
+  es: `tú|1 contra 1|LIGA DE MAESTROS|Jugar|Apuesta monedas, gana a lo grande|Torneo|8 jugadores, 3 rondas|Minijuegos|Con un amigo|2 jugadores, un dispositivo|Ver|Práctica|Amigos|Premios|Tacos|Clasificación|Tienda|Elige una mesa|Torneos|Perfil|Premio|Entrada|JUGAR|Tu turno|¡FALTA!|¡SE ACABÓ EL TIEMPO!|¡VICTORIA!|DERROTA|Jugar de nuevo|Menú|Continuar|Pausa|Rendirse|Salir|Buscando rival en línea…|¡Rival encontrado!|Invita a tus amigos|Idioma|Cargando…|Mundo|País|⭐ Mi liga|Bronce|Plata|Oro|Platino|Diamante|Maestro|Gran maestro|Termina en|¡Comprado!|No tienes suficiente efectivo|No tienes suficientes monedas|USAR|✓ EN USO|Tu posición|¡Subiste de liga!|Bajaste de liga|Semana pasada|Rueda de la suerte|Ruta de premios|Siguiente partida|Revancha|Tu rival abandonó la partida|¡Premio diario listo!|Turno del rival|¡ERES LISAS!|¡ERES RAYADAS!|Tú sacas, ¡suerte!|Buscando…|Jugadores en línea|Nombre|Ganancias semanales|Liga|Cerrar|Premio|🙂 Avatares|🖼 Marcos|🌍 Mundo|👥 Amigos|Logros|Nivel|Partidas|Victorias|Ganancias totales|Clasificación|Perfil|Fuerza|Puntería|Efecto|Tiempo|Banco|Poder de colección|Victoria|Sorpresa|Míos|Caja sorpresa|Pieza de taco|Básico|Avanzado|Experto|Legendario|¡Nuevo taco!|🎱 Tacos|💱 Banco`,
+  pt: `você|1 contra 1|LIGA DOS MESTRES|Jogar|Aposte moedas, ganhe muito|Torneio|8 jogadores, 3 rodadas|Minijogos|Com um amigo|2 jogadores, um aparelho|Assistir|Treino|Amigos|Prêmios|Tacos|Ranking|Loja|Escolha uma mesa|Torneios|Perfil|Prêmio|Entrada|JOGAR|Sua vez|FALTA!|TEMPO ESGOTADO!|VITÓRIA!|DERROTA|Jogar de novo|Menu|Continuar|Pausado|Desistir|Sair|Procurando adversário online…|Adversário encontrado!|Convide amigos|Idioma|Carregando…|Mundo|País|⭐ Minha liga|Bronze|Prata|Ouro|Platina|Diamante|Mestre|Grão-mestre|Termina em|Comprado!|Dinheiro insuficiente|Moedas insuficientes|USAR|✓ EM USO|Sua posição|Você subiu de liga!|Você caiu de liga|Semana passada|Roda da sorte|Rota de prêmios|Próximo jogo|Revanche|O adversário saiu do jogo|Prêmio diário pronto!|Vez do adversário|VOCÊ É LISAS!|VOCÊ É LISTRADAS!|Você abre, boa sorte!|Procurando…|Jogadores online|Nome|Ganhos da semana|Liga|Fechar|Prêmio|🙂 Avatares|🖼 Molduras|🌍 Mundo|👥 Amigos|Conquistas|Nível|Jogos|Vitórias|Ganhos totais|Ranking|Perfil|Força|Mira|Efeito|Tempo|Banco|Poder da coleção|Vitória|Surpresa|Meus|Caixa surpresa|Peça de taco|Básico|Avançado|Especialista|Lendário|Novo taco!|🎱 Tacos|💱 Banco`,
+  ar: `أنت|1 ضد 1|دوري الأساتذة|العب|راهن بالعملات واربح|بطولة|8 لاعبين، 3 جولات|ألعاب مصغرة|مع صديق|لاعبان على جهاز واحد|شاهد|تدريب|الأصدقاء|الجوائز|العصي|الترتيب|المتجر|اختر طاولة|البطولات|الملف الشخصي|الجائزة|رسوم الدخول|العب|دورك|خطأ!|انتهى الوقت!|فوز!|خسارة|العب مجددًا|القائمة|متابعة|إيقاف مؤقت|استسلام|خروج|جارٍ البحث عن خصم…|تم العثور على خصم!|ادعُ أصدقاءك|اللغة|جارٍ التحميل…|العالم|الدولة|⭐ دوريّ|برونزي|فضي|ذهبي|بلاتيني|ماسي|أستاذ|أستاذ كبير|ينتهي بعد|تم الشراء!|النقود غير كافية|العملات غير كافية|اختيار|✓ مُختار|ترتيبك|صعدت إلى دوري أعلى!|هبطت إلى دوري أدنى|الأسبوع الماضي|عجلة الحظ|طريق الجوائز|المباراة التالية|إعادة المباراة|غادر الخصم اللعبة|الجائزة اليومية جاهزة!|الدور للخصم|أنت الكرات المصمتة!|أنت الكرات المخططة!|أنت تبدأ، حظًا موفقًا!|جارٍ البحث…|لاعبون متصلون|الاسم|أرباح الأسبوع|الدوري|إغلاق|الجائزة|🙂 الصور الرمزية|🖼 الإطارات|🌍 العالم|👥 الأصدقاء|الإنجازات|المستوى|المباريات|الانتصارات|إجمالي الأرباح|الترتيب|الملف الشخصي|القوة|التصويب|الدوران|الوقت|البنك|قوة المجموعة|النصر|مفاجأة|ممتلكاتي|صندوق المفاجأة|قطعة عصا|أساسي|متقدم|خبير|أسطوري|عصا جديدة!|🎱 العصي|💱 البنك`,
+  id: `kamu|1 lawan 1|LIGA MASTER|Main|Pasang koin, menang besar|Turnamen|8 pemain, 3 babak|Mini game|Dengan teman|2 pemain, satu perangkat|Tonton|Latihan|Teman|Hadiah|Stik|Peringkat|Toko|Pilih meja|Turnamen|Profil|Hadiah|Biaya masuk|MAIN|Giliranmu|PELANGGARAN!|WAKTU HABIS!|MENANG!|KALAH|Main lagi|Menu|Lanjut|Jeda|Menyerah|Keluar|Mencari lawan online…|Lawan ditemukan!|Undang teman|Bahasa|Memuat…|Dunia|Negara|⭐ Ligaku|Perunggu|Perak|Emas|Platinum|Berlian|Master|Grandmaster|Berakhir dalam|Dibeli!|Uang tidak cukup|Koin tidak cukup|PAKAI|✓ DIPAKAI|Peringkatmu|Liga naik!|Liga turun|Minggu lalu|Roda keberuntungan|Rute hadiah|Game berikutnya|Tanding ulang|Lawan keluar dari game|Hadiah harian siap!|Giliran lawan|KAMU BOLA POLOS!|KAMU BOLA BELANG!|Kamu break, semoga beruntung!|Mencari…|Pemain online|Nama|Kemenangan mingguan|Liga|Tutup|Hadiah|🙂 Avatar|🖼 Bingkai|🌍 Dunia|👥 Teman|Pencapaian|Level|Game|Kemenangan|Total kemenangan|Peringkat|Profil|Tenaga|Bidikan|Putaran|Waktu|Bank|Kekuatan koleksi|Kemenangan|Kejutan|Milikku|Kotak kejutan|Potongan stik|Dasar|Lanjutan|Ahli|Legendaris|Stik baru!|🎱 Stik|💱 Bank`,
+  hi: `आप|1 बनाम 1|मास्टर्स लीग|खेलें|सिक्के लगाएँ, बड़ा जीतें|टूर्नामेंट|8 खिलाड़ी, 3 राउंड|मिनी गेम|दोस्त के साथ|एक डिवाइस पर 2 खिलाड़ी|देखें|अभ्यास|दोस्त|इनाम|क्यू|लीडरबोर्ड|दुकान|टेबल चुनें|टूर्नामेंट|प्रोफ़ाइल|इनाम|प्रवेश शुल्क|खेलें|आपकी बारी|फ़ाउल!|समय समाप्त!|जीत!|हार|फिर से खेलें|मेनू|जारी रखें|रुका हुआ|हार मानें|बाहर|ऑनलाइन प्रतिद्वंद्वी खोजा जा रहा है…|प्रतिद्वंद्वी मिल गया!|दोस्तों को बुलाएँ|भाषा|लोड हो रहा है…|दुनिया|देश|⭐ मेरी लीग|कांस्य|रजत|स्वर्ण|प्लैटिनम|हीरा|मास्टर|ग्रैंडमास्टर|समाप्ति में|खरीदा गया!|नकद कम है|सिक्के कम हैं|चुनें|✓ चुना गया|आपका स्थान|लीग ऊपर गई!|लीग नीचे गई|पिछला सप्ताह|भाग्य चक्र|इनाम मार्ग|अगला गेम|दोबारा मुकाबला|प्रतिद्वंद्वी ने गेम छोड़ दिया|दैनिक इनाम तैयार है!|प्रतिद्वंद्वी की बारी|आप सॉलिड हैं!|आप स्ट्राइप्स हैं!|आप ब्रेक करेंगे, शुभकामनाएँ!|खोज रहे हैं…|ऑनलाइन खिलाड़ी|नाम|साप्ताहिक जीत|लीग|बंद करें|इनाम|🙂 अवतार|🖼 फ़्रेम|🌍 दुनिया|👥 दोस्त|उपलब्धियाँ|स्तर|गेम|जीतें|कुल जीत|लीडरबोर्ड|प्रोफ़ाइल|शक्ति|निशाना|स्पिन|समय|बैंक|संग्रह शक्ति|जीत|सरप्राइज़|मेरे|सरप्राइज़ बॉक्स|क्यू का टुकड़ा|बेसिक|एडवांस्ड|एक्सपर्ट|लीजेंडरी|नया क्यू!|🎱 क्यू|💱 बैंक`,
+  fr: `vous|1 contre 1|LIGUE DES MAÎTRES|Jouer|Misez des pièces, gagnez gros|Tournoi|8 joueurs, 3 tours|Mini-jeux|Avec un ami|2 joueurs, un appareil|Regarder|Entraînement|Amis|Récompenses|Queues|Classement|Boutique|Choisissez une table|Tournois|Profil|Gain|Mise|JOUER|À vous de jouer|FAUTE !|TEMPS ÉCOULÉ !|VICTOIRE !|DÉFAITE|Rejouer|Menu|Continuer|Pause|Abandonner|Quitter|Recherche d'un adversaire…|Adversaire trouvé !|Invitez des amis|Langue|Chargement…|Monde|Pays|⭐ Ma ligue|Bronze|Argent|Or|Platine|Diamant|Maître|Grand maître|Fin dans|Acheté !|Pas assez d'argent|Pas assez de pièces|UTILISER|✓ UTILISÉ|Votre rang|Promotion de ligue !|Relégation de ligue|Semaine dernière|Roue de la chance|Route des récompenses|Partie suivante|Revanche|Votre adversaire a quitté la partie|Récompense du jour prête !|Au tour de l'adversaire|VOUS ÊTES LES PLEINES !|VOUS ÊTES LES RAYÉES !|Vous cassez, bonne chance !|Recherche…|Joueurs en ligne|Nom|Gains de la semaine|Ligue|Fermer|Prix|🙂 Avatars|🖼 Cadres|🌍 Monde|👥 Amis|Succès|Niveau|Parties|Victoires|Gains totaux|Classement|Profil|Force|Visée|Effet|Temps|Banque|Puissance de collection|Victoire|Surprise|Possédées|Boîte surprise|Pièce de queue|Basique|Avancée|Expert|Légendaire|Nouvelle queue !|🎱 Queues|💱 Banque`,
+  de: `du|1 gegen 1|MEISTERLIGA|Spielen|Setze Münzen, gewinne groß|Turnier|8 Spieler, 3 Runden|Minispiele|Mit einem Freund|2 Spieler, ein Gerät|Zuschauen|Training|Freunde|Belohnungen|Queues|Rangliste|Shop|Tisch wählen|Turniere|Profil|Gewinn|Einsatz|SPIELEN|Du bist dran|FOUL!|ZEIT ABGELAUFEN!|SIEG!|NIEDERLAGE|Nochmal spielen|Menü|Weiter|Pause|Aufgeben|Beenden|Suche Online-Gegner…|Gegner gefunden!|Freunde einladen|Sprache|Lädt…|Welt|Land|⭐ Meine Liga|Bronze|Silber|Gold|Platin|Diamant|Meister|Großmeister|Endet in|Gekauft!|Nicht genug Geld|Nicht genug Münzen|NUTZEN|✓ AKTIV|Dein Rang|Liga aufgestiegen!|Liga abgestiegen|Letzte Woche|Glücksrad|Belohnungsweg|Nächstes Spiel|Revanche|Dein Gegner hat das Spiel verlassen|Tägliche Belohnung bereit!|Gegner ist dran|DU HAST DIE VOLLEN!|DU HAST DIE HALBEN!|Du stößt an, viel Glück!|Suche…|Spieler online|Name|Wochengewinn|Liga|Schließen|Preis|🙂 Avatare|🖼 Rahmen|🌍 Welt|👥 Freunde|Erfolge|Level|Spiele|Siege|Gesamtgewinn|Rangliste|Profil|Kraft|Zielen|Effet|Zeit|Bank|Sammlungsstärke|Sieg|Überraschung|Besitz|Überraschungsbox|Queue-Teil|Basis|Fortgeschritten|Experte|Legendär|Neues Queue!|🎱 Queues|💱 Bank`,
+  ko: `나|1대1|마스터스 리그|플레이|코인을 걸고 크게 이기세요|토너먼트|8명, 3라운드|미니 게임|친구와 함께|한 기기에서 2인|관전|연습|친구|보상|큐|순위|상점|테이블 선택|토너먼트|프로필|상금|참가비|플레이|당신 차례|파울!|시간 초과!|승리!|패배|다시 하기|메뉴|계속|일시정지|기권|나가기|온라인 상대를 찾는 중…|상대를 찾았습니다!|친구 초대|언어|로딩 중…|세계|국가|⭐ 내 리그|브론즈|실버|골드|플래티넘|다이아몬드|마스터|그랜드마스터|종료까지|구매 완료!|캐시가 부족합니다|코인이 부족합니다|사용|✓ 사용 중|내 순위|리그 승급!|리그 강등|지난주|행운의 룰렛|보상 루트|다음 게임|재대결|상대가 게임을 떠났습니다|일일 보상 준비 완료!|상대 차례|당신은 단색 공!|당신은 줄무늬 공!|당신이 브레이크, 행운을!|찾는 중…|온라인 플레이어|이름|주간 상금|리그|닫기|상품|🙂 아바타|🖼 프레임|🌍 세계|👥 친구|업적|레벨|게임|승리|총 상금|순위|프로필|파워|조준|스핀|시간|은행|컬렉션 파워|승리|서프라이즈|보유|서프라이즈 박스|큐 조각|기본|고급|전문가|전설|새 큐!|🎱 큐|💱 은행`,
+  ja: `あなた|1対1|マスターズリーグ|プレイ|コインを賭けて大勝利|トーナメント|8人・3ラウンド|ミニゲーム|友達と|1台で2人プレイ|観戦|練習|フレンド|報酬|キュー|ランキング|ショップ|テーブルを選択|トーナメント|プロフィール|賞金|参加費|プレイ|あなたの番|ファウル！|時間切れ！|勝利！|敗北|もう一度|メニュー|続ける|一時停止|降参|退出|オンライン対戦相手を検索中…|対戦相手が見つかりました！|友達を招待|言語|読み込み中…|世界|国|⭐ マイリーグ|ブロンズ|シルバー|ゴールド|プラチナ|ダイヤモンド|マスター|グランドマスター|終了まで|購入しました！|キャッシュが足りません|コインが足りません|使用|✓ 使用中|あなたの順位|リーグ昇格！|リーグ降格|先週|ラッキールーレット|報酬ルート|次のゲーム|再戦|相手がゲームを退出しました|デイリー報酬を受け取れます！|相手の番|あなたはソリッド！|あなたはストライプ！|あなたがブレイク、幸運を！|検索中…|オンラインプレイヤー|名前|週間獲得|リーグ|閉じる|賞品|🙂 アバター|🖼 フレーム|🌍 世界|👥 フレンド|実績|レベル|試合|勝利|総獲得|ランキング|プロフィール|パワー|エイム|スピン|時間|バンク|コレクションパワー|勝利|サプライズ|所持|サプライズボックス|キューのかけら|ベーシック|アドバンス|エキスパート|レジェンド|新しいキュー！|🎱 キュー|💱 バンク`,
+  zh: `你|1对1|大师联赛|开始|押注金币，赢大奖|锦标赛|8名玩家，3轮|小游戏|和朋友|同一设备2人|观战|练习|好友|奖励|球杆|排行榜|商店|选择球桌|锦标赛|个人资料|奖金|入场费|开始|轮到你了|犯规！|时间到！|胜利！|失败|再玩一次|菜单|继续|已暂停|认输|退出|正在寻找在线对手…|找到对手！|邀请好友|语言|加载中…|世界|国家|⭐ 我的联赛|青铜|白银|黄金|铂金|钻石|大师|宗师|距离结束|购买成功！|现金不足|金币不足|使用|✓ 使用中|你的排名|联赛晋级！|联赛降级|上周|幸运转盘|奖励之路|下一局|再战|对手离开了游戏|每日奖励已就绪！|轮到对手|你是全色球！|你是花色球！|你来开球，祝你好运！|搜索中…|在线玩家|名字|本周奖金|联赛|关闭|奖品|🙂 头像|🖼 头像框|🌍 世界|👥 好友|成就|等级|对局|胜场|总奖金|排行榜|个人资料|力量|瞄准|旋转|时间|银行|收藏力量|胜利|惊喜|已拥有|惊喜宝箱|球杆碎片|基础|进阶|专家|传奇|新球杆！|🎱 球杆|💱 银行`,
 };
 for (const k in XL) { const v = XL[k].split("|"); XL[k] = {}; XL_KEYS.forEach((key, i) => { XL[k][key] = v[i]; }); }
 let LANG = "uz";
@@ -904,6 +930,75 @@ const dayDiff = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function gauss() { return (Math.random() + Math.random() + Math.random() - 1.5) / 0.5; }
 
+// ---------------------------------------------------------------- the cue collection (5 tabs like 8 Ball Pool)
+//  standard: bought with coins or cash · victory: 4 pieces, won in a city or above · surprise: 4 pieces from Surprise Boxes
+//  country: a flag cue for every country (cash)
+CUES.forEach(c => { c.cat = "standard"; c.tier = c.cur === "cash" ? "Premium" : "Standart"; });
+const cueRand = seed => { let s = seed >>> 0 || 1; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; };
+const CUE_PAL = [["#1d1d1d", "#000000", "#e8c77a"], ["#7a1010", "#240303", "#ffd24d"], ["#0e4a8a", "#031a36", "#9fe8ff"], ["#0f6b3a", "#02230f", "#b8ffcf"],
+  ["#5b1c8f", "#16022e", "#e0b3ff"], ["#8a5a14", "#2a1804", "#ffe08a"], ["#b0b8c6", "#3a414e", "#ffffff"], ["#c2185b", "#3a0418", "#ffd1e8"],
+  ["#00838f", "#00262a", "#7ff7ff"], ["#e65100", "#3a1400", "#ffcf3d"], ["#263238", "#07090a", "#ff5252"], ["#f5f5f5", "#9e9e9e", "#1e88e5"]];
+const STD_DECOS = ["points", "rings", "spiral", "gems", "chevron", "hex", "carbon", "wave", "marble", "tiger", "dots", "scales", "flame", "stars", "neon"];
+const STD_NAMES = ["Klassik", "Qora Marvarid", "Zumrad", "Yoqut", "Safir", "Bo'ron", "Chaqmoq", "Kobra", "Burgut", "Qoplon", "Karbon", "To'lqin", "Marmar",
+  "Yo'lbars", "Nuqta", "Neon", "Vulqon", "Muz", "Sahro", "O'rmon", "Okean", "Tun", "Tong", "Shafaq", "Kumush Tulki", "Oltin Burgut", "Qirol", "Malika",
+  "Samuray", "Viking", "Gladiator", "Ritsar", "Pirat", "Ninja", "Sfinks", "Feniks", "Grifon", "Pegas", "Titan", "Kometa", "Meteor", "Orbita", "Nebula",
+  "Kvazar", "Pulsar", "Supernova"];
+STD_NAMES.forEach((name, i) => {
+  const rnd = cueRand(i * 97 + 13), t = i / (STD_NAMES.length - 1), cash = i % 5 === 4;
+  const pal = CUE_PAL[(i * 5) % CUE_PAL.length], lv = 3 + t * 6.5;
+  const st = [0, 0, 0, 0].map(() => clamp(Math.round(lv + (rnd() - 0.5) * 2.4), 1, 10));
+  const price = cash ? Math.round(20 + t * t * 1100) : Math.round(2000 * Math.pow(1.6e6, t) / 1000) * 1000;
+  CUES.push({id: "s" + i, name, cat: "standard", tier: cash ? "Premium" : "Standart", price, cur: cash ? "cash" : "coin", st,
+    shaft: ["#f7ecd0", "#d9b87e"], butt: [pal[0], pal[1]], metal: pal[2], deco: STD_DECOS[i % STD_DECOS.length], dc: pal[2], gem: pal[2], glow: t > 0.85 ? pal[2] : undefined});
+});
+// victory cues: two per city (from London up); each win in that city or a higher one gives a piece, 4 pieces unlock it
+const VIC_NAMES = ["G'alaba", "Qora Tuynuk", "Chor", "Olmos", "Granat", "Oltin", "Grandioz", "Muz", "Temir", "Lazer", "Shamol", "Qum", "Yashin", "Fazo",
+  "Kristall", "Jade", "Obsidian", "Rubin", "Ametist", "Topaz", "Opal", "Onix", "Nefrit", "Korall", "Kobalt", "Platina", "Titan", "Iridiy", "Xrom", "Plazma",
+  "Quyosh", "Oy", "Yulduz", "Galaktika Pro", "Samum", "Tayfun", "Tornado", "Sunami", "Magma", "Aysberg", "Zenit", "Apogey"];
+CITIES.slice(1).forEach((city, k) => {
+  for (let j = 0; j < 2; j++) {
+    const i = k * 2 + j, rnd = cueRand(i * 31 + 7), lv = 2 + (k / (CITIES.length - 2)) * 7.5, pal = CUE_PAL[(i * 7 + 3) % CUE_PAL.length];
+    CUES.push({id: "v" + i, name: VIC_NAMES[i % VIC_NAMES.length], cat: "victory", tier: k < 6 ? "Oddiy" : k < 14 ? "Yuqori" : "Ekspert", city: k + 1, pieces: 4,
+      st: [0, 0, 0, 0].map(() => clamp(Math.round(lv + (rnd() - 0.5) * 2.4), 1, 10)),
+      shaft: ["#fff6de", "#e2c48c"], butt: [city.felt[0], shade(city.felt[1], -50).replace(/rgb\((\d+),(\d+),(\d+)\)/, (_, r, g, b) => "#" + [r, g, b].map(v => (+v).toString(16).padStart(2, "0")).join(""))],
+      metal: city.trim, dc: city.col[0], gem: city.col[1], deco: ["chevron", "gems", "hex", "neon", "wave", "rings"][i % 6], glow: k >= 14 ? city.col[0] : undefined});
+  }
+});
+// surprise (legendary) cues: pieces come from Surprise Boxes bought with cash
+const SUR_NAMES = ["Aksion", "Kristall Tig'", "Ekskalibur", "Ajdar Olovi", "Muz Qiroli", "Qora Feniks", "Oltin Sher", "Kosmos", "Chaqmoq Xudosi", "Zulmat",
+  "Nur", "Sehrgar", "Imperiya", "Samurai Pro", "Vikinglar", "Firavn", "Poseydon", "Zevs", "Anubis", "Tengri", "Simurg", "Humo", "Afrosiyob", "Registon",
+  "Tomiris", "Spitamen", "Ulug'bek", "Amir Temur", "Bobur", "Alpomish"];
+SUR_NAMES.forEach((name, i) => {
+  const rnd = cueRand(i * 53 + 5), pal = CUE_PAL[(i * 3 + 1) % CUE_PAL.length];
+  CUES.push({id: "x" + i, name, cat: "surprise", tier: "Afsonaviy", pieces: 4, st: [0, 0, 0, 0].map(() => clamp(Math.round(8 + rnd() * 2.4), 7, 10)),
+    shaft: ["#fffaf0", "#f0dcaa"], butt: [pal[0], pal[1]], metal: pal[2], dc: pal[2], gem: ["#ff3b30", "#39c6ff", "#7ff7ff", "#39ff9a", "#ffd24d"][i % 5],
+    deco: ["crystal", "legend", "neon", "crystal", "stars"][i % 5], glow: pal[2]});
+});
+const SURPRISE_BOX = 60;    // cash
+// country cues: flag colours wrapped around the cue (h = stripes along the cue, v = bands across it) + an emblem
+const FC = {r: "#d52b1e", w: "#ffffff", b: "#0057b8", B: "#012169", l: "#75aadb", g: "#009a44", G: "#01411c", y: "#fcd116", k: "#111111", o: "#ff8200", m: "#8d1b3d"};
+const FLAGS = Object.fromEntries(("AF:v:krg AL:h:r:sk DZ:v:gw:mr AD:v:byr AO:h:rk:sy AG:h:kbw:tr AR:h:lwl:cy AM:h:rbo AU:h:B:sw AT:h:rwr AZ:h:lrg:mw BS:h:lyl:tk " +
+  "BH:v:wr BD:h:g:cr BB:v:byb BY:h:rrg BE:v:kyr BZ:h:rBBBr:cw BJ:v:gyr BT:h:yo BO:h:ryg BA:h:B:ty BW:h:lkl BR:h:gyg:cB BN:h:ywky BG:h:wgr BF:h:rg:sy " +
+  "BI:h:rgr:cw KH:h:BrB CM:v:gry:sy CA:v:rwr:sr CV:h:BBwrwBB:sy CF:h:Bwgy:sy TD:v:Byr CL:h:wr:tB CN:h:r:sy CO:h:yybr KM:h:ywrb:tg CG:h:gyr CD:h:lrl:sy " +
+  "CR:h:BwrrwB CI:v:owg HR:h:rwB CU:h:BwBwB:tr CY:h:w:cy CZ:h:wr:tB DK:h:r:xw DJ:h:lg:tw DM:h:g:xy DO:h:Br:xw EC:h:yybr EG:h:rwk:cy SV:h:BwB GQ:h:gwr:tB " +
+  "ER:h:grl:ty EE:h:bkw SZ:h:ByrrB ET:h:gyr:cB FJ:h:l:tB FI:h:w:xB FR:v:Bwr GA:h:gyB GM:h:rBg GE:h:w:xr DE:h:kry GH:h:ryg:sk GR:h:BwBwBwBwB:tB GD:h:ryg:sy " +
+  "GT:v:lwl GN:v:ryg GW:h:yg:tr GY:h:g:ty HT:h:Br HN:h:BwB:sB HK:h:r:cw HU:h:rwg IS:h:B:xr IN:h:owg:cB ID:h:rw IR:h:gwr IQ:h:rwk IE:v:gwo IL:h:wBw:sB " +
+  "IT:v:gwr JM:h:gkg:xy JP:h:w:cr JO:h:kwg:tr KZ:h:l:cy KE:h:krg KI:h:rl:cy KW:h:gwr:tk KG:h:r:cy LA:h:rBr:cw LV:h:mwm LB:h:rwr:sg LS:h:Bwg LR:h:rwrwr:tB " +
+  "LY:h:rkg:mw LI:h:Br:sy LT:h:ygr LU:h:rwl MO:h:g:cw MG:h:rg:tw MW:h:krg:cr MY:h:rwrw:tB MV:h:rgr ML:v:gyr MT:v:wr MH:h:B:sw MR:h:rgr:my MU:h:rByg " +
+  "MX:v:gwr:cy FM:h:l:sw MD:v:Byr MC:h:rw MN:v:rBr:sy ME:h:r:cy MA:h:r:sg MZ:h:gky:tr MM:h:ygr:sw NA:h:Brg:sy NR:h:ByB:sw NP:h:r:sw NL:h:rwB NZ:h:B:sr " +
+  "NI:h:BwB NE:h:owg:co NG:v:gwg KP:h:BrB:sr MK:h:r:cy NO:h:r:xB OM:h:wrg:tr PK:v:wGG:mw PW:h:l:cy PS:h:kwg:tr PA:v:wr:sB PG:h:rk:sy PY:h:rwB PE:v:rwr " +
+  "PH:h:Br:tw PL:h:wr PT:v:grr:cy PR:h:rwrwr:tB QA:v:wmmm RO:v:Byr RU:h:wBr RW:h:lyg:cy KN:h:gkr:sw LC:h:l:ty VC:v:Byg WS:h:r:tB SM:h:wl ST:h:gyg:sk " +
+  "SA:h:G:mw SN:v:gyr:sg RS:h:rBw SC:v:Byrwg SL:h:gwl SG:h:rw:mw SK:h:wBr:cr SI:h:wBr:sB SB:h:lg:sw SO:h:l:sw ZA:h:rgB:ty KR:h:w:cr SS:h:krg:tB " +
+  "ES:h:ryyr LK:v:gomm SD:h:rwk:tg SR:h:gwrrwg:sy SE:h:B:xy CH:h:r:pw SY:h:rwk:sg TW:h:r:tB TJ:h:rwg:cy TZ:h:gykyl TH:h:rwBBwr TL:h:r:tk TG:h:gygyg:tr " +
+  "TO:h:r:tw TT:h:rkr TN:h:r:cw TR:h:r:mw TM:h:g:tr TV:h:l:sy UG:h:kyrkyr:cw UA:h:by AE:h:gwk:tr GB:h:B:uw US:h:rwrwrwr:tB UY:h:wbwbw:cy UZ:h:lwg VU:h:rkg:ty " +
+  "VA:v:yw VE:h:yBr:sw VN:h:r:sy YE:h:rwk ZM:h:g:to ZW:h:gyrkryg:tw").split(" ").map(e => { const [cc, t, c, em] = e.split(":"); return [cc, {t, c: [...c].map(x => FC[x]), em: em && [em[0], FC[em[1]]]}]; }));
+COUNTRY_CODES.forEach(cc => {
+  const f = FLAGS[cc] || {t: "h", c: ["#" + ((hash(cc.charCodeAt(0)) * 0xffffff) | 0).toString(16).padStart(6, "0"), "#ffffff"]};
+  CUES.push({id: "c_" + cc, cc, cat: "country", tier: "Yuqori", price: 40, cur: "cash", st: [6, 6, 6, 4], flag: f,
+    shaft: ["#f7ecd0", "#d9b87e"], butt: ["#3a2210", "#0d0603"], metal: "#d9d9d9", deco: "flag"});
+});
+const cueName = c => c.cc ? `${countryName(c.cc)}` : c.name;
+const cuePower = c => c.cat === "surprise" ? 150 : c.cat === "victory" ? 40 + c.city * 8 : c.cat === "country" ? 70 : c.price ? Math.round(10 + (c.cur === "cash" ? c.price / 3 : Math.log10(c.price + 1) * 12)) : 0;
 // ---------------------------------------------------------------- profile
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
@@ -912,7 +1007,7 @@ const store = {
 const profile = Object.assign({
   coins: 1500, cash: 5, xp: 0, level: 1, wins: 0, games: 0, won: 0, name: "Siz", avatar: 0,
   cue: "start", cues: ["start"], lastLucky: "", luckyTries: 0, lastWheel: "", wheelTries: 0,
-  streak: 0, lastClaim: "", ach: {}, muted: false, tours: 0, avs: [], frames: [0], frame: 0, country: "",
+  streak: 0, lastClaim: "", ach: {}, muted: false, tours: 0, avs: [], frames: [0], frame: 0, country: "", pieces: {},
 }, store.get("bilyard8v2", {}));
 const ownsAvatar = i => avPrice(i).v === 0 || profile.avs.includes(i);
 let cloudSaveHook = null;   // set by the Y8 integration when a Y8 player is logged in
@@ -1473,6 +1568,7 @@ function endGame(winner, why) {
       profile.wins++; profile.won += G.city.prize; addXp(40 + Math.round(Math.log10(G.city.prize) * 15));
       y8Score(); y8Event("match_win", G.city.prize);
       unlock("first_win"); if (!G.oppHadPot) unlock("runout");
+      if (G.city && CITIES.includes(G.city)) setTimeout(() => victoryPiece(G.city), 2600);
     } else addXp(12);
     save(); Net.sync();
     setTimeout(() => resultModal(humanWon, why, G.players[winner], humanWon ? G.city.prize : 0, [
@@ -1760,16 +1856,20 @@ function capPath(q, alpha, r, x, y) {
 }
 function drawBall(b, x, y, sc = 1, alpha = 1) {
   const r = R * sc, n = b.n, p = b.p, gold = n === "gold";
+  const base = gold ? "#f5b800" : n === 0 ? "#f6f3ea" : colorOf(n);
   ctx.save(); ctx.globalAlpha = alpha;
-  const shg = ctx.createRadialGradient(x + r * 0.3, y + r * 0.45, r * 0.2, x + r * 0.3, y + r * 0.45, r * 1.3);
-  shg.addColorStop(0, "rgba(0,0,0,.5)"); shg.addColorStop(0.6, "rgba(0,0,0,.25)"); shg.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = shg; ctx.beginPath(); ctx.arc(x + r * 0.3, y + r * 0.45, r * 1.3, 0, 7); ctx.fill();
+  // shadows: a soft one cast away from the lamp and a tight contact shadow right under the ball
+  let shg = ctx.createRadialGradient(x + r * 0.35, y + r * 0.5, r * 0.1, x + r * 0.35, y + r * 0.5, r * 1.45);
+  shg.addColorStop(0, "rgba(0,0,0,.42)"); shg.addColorStop(0.55, "rgba(0,0,0,.2)"); shg.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = shg; ctx.beginPath(); ctx.arc(x + r * 0.35, y + r * 0.5, r * 1.45, 0, 7); ctx.fill();
+  shg = ctx.createRadialGradient(x + r * 0.12, y + r * 0.18, 0, x + r * 0.12, y + r * 0.18, r * 1.05);
+  shg.addColorStop(0, "rgba(0,0,0,.55)"); shg.addColorStop(0.8, "rgba(0,0,0,.3)"); shg.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = shg; ctx.beginPath(); ctx.arc(x + r * 0.12, y + r * 0.18, r * 1.05, 0, 7); ctx.fill();
   ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.save(); ctx.clip();
-  ctx.fillStyle = gold ? "#f5b800" : n === 0 ? "#f6f3ea" : colorOf(n);
-  ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  ctx.fillStyle = base; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
   if (!gold && n > 8) {
     const q = b.q || [0, 1, 0];
-    ctx.fillStyle = "#f6f3ea";
+    ctx.fillStyle = "#f7f4ec";
     capPath(q, 0.93, r, x, y); ctx.fill();
     capPath([-q[0], -q[1], -q[2]], 0.93, r, x, y); ctx.fill();
   }
@@ -1779,11 +1879,11 @@ function drawBall(b, x, y, sc = 1, alpha = 1) {
   } else if (n > 0) {
     if (p[2] > -0.35) {
       ctx.fillStyle = "#fbfaf5"; capPath(p, 0.56, r, x, y); ctx.fill();
-      if (p[2] > 0.3 && sc > 0.6) {
-        ctx.save(); ctx.translate(x + p[0] * r, y + p[1] * r);
-        const ang = Math.atan2(p[1], p[0]); ctx.rotate(ang); ctx.scale(p[2], 1); ctx.rotate(-ang);
-        ctx.fillStyle = "#111"; ctx.font = `900 ${r * (n > 9 ? 0.66 : 0.8)}px Arial,sans-serif`;
-        ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(String(n), 0, r * 0.06);
+      if (p[2] > 0.2 && sc > 0.6) {
+        ctx.save(); ctx.translate(x + p[0] * r * 0.97, y + p[1] * r * 0.97);
+        const ang = Math.atan2(p[1], p[0]); ctx.rotate(ang); ctx.scale(Math.max(0.25, p[2]), 1); ctx.rotate(-ang);
+        ctx.fillStyle = "#0e0e0e"; ctx.font = `900 ${r * (n > 9 ? 0.7 : 0.84)}px "Arial Black",Arial,sans-serif`;
+        ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(String(n), 0, r * 0.05);
         ctx.restore();
       }
     }
@@ -1792,17 +1892,29 @@ function drawBall(b, x, y, sc = 1, alpha = 1) {
     if (p[2] > -0.2) { capPath(p, 0.17, r, x, y); ctx.fill(); }
     const q = [-p[0], -p[1], -p[2]]; if (q[2] > -0.2) { capPath(q, 0.17, r, x, y); ctx.fill(); }
   }
-  const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.35, r * 0.1, x, y, r * 1.08);
-  g.addColorStop(0, "rgba(255,255,255,.3)"); g.addColorStop(0.35, "rgba(255,255,255,0)");
-  g.addColorStop(0.7, "rgba(0,0,0,.05)"); g.addColorStop(1, "rgba(0,0,0,.6)");
+  // sphere shading: lit from the lamp above-left, falling off into a soft terminator
+  let g = ctx.createRadialGradient(x - r * 0.38, y - r * 0.42, r * 0.05, x - r * 0.1, y - r * 0.1, r * 1.25);
+  g.addColorStop(0, "rgba(255,255,255,.28)"); g.addColorStop(0.3, "rgba(255,255,255,.06)"); g.addColorStop(0.55, "rgba(0,0,0,.04)");
+  g.addColorStop(0.8, "rgba(0,0,0,.32)"); g.addColorStop(1, "rgba(0,0,0,.72)");
   ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
-  ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = r * 0.12;                       // bounce light from the cloth
-  ctx.beginPath(); ctx.arc(x, y, r * 0.88, 0.15 * Math.PI, 0.75 * Math.PI); ctx.stroke();
-  ctx.fillStyle = "rgba(255,255,255,.35)";                                                    // lamp reflection
-  ctx.beginPath(); ctx.ellipse(x - r * 0.33, y - r * 0.4, r * 0.42, r * 0.28, -0.6, 0, 7); ctx.fill();
-  ctx.fillStyle = "rgba(255,255,255,.95)";
-  ctx.beginPath(); ctx.ellipse(x - r * 0.35, y - r * 0.42, r * 0.2, r * 0.12, -0.6, 0, 7); ctx.fill();
-  ctx.restore(); ctx.restore();
+  // light bounced up from the cloth along the lower edge
+  g = ctx.createRadialGradient(x + r * 0.2, y + r * 1.05, r * 0.2, x + r * 0.2, y + r * 1.05, r * 0.95);
+  g.addColorStop(0, "rgba(190,255,215,.28)"); g.addColorStop(1, "rgba(190,255,215,0)");
+  ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = r * 0.09;
+  ctx.beginPath(); ctx.arc(x, y, r * 0.9, 0.1 * Math.PI, 0.8 * Math.PI); ctx.stroke();
+  // lamp reflection: a soft glow plus a sharp window-shaped highlight, and a faint second lamp
+  g = ctx.createRadialGradient(x - r * 0.34, y - r * 0.4, 0, x - r * 0.34, y - r * 0.4, r * 0.55);
+  g.addColorStop(0, "rgba(255,255,255,.55)"); g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  ctx.save(); ctx.translate(x - r * 0.36, y - r * 0.43); ctx.rotate(-0.55);
+  ctx.fillStyle = "rgba(255,255,255,.97)"; rr(-r * 0.21, -r * 0.1, r * 0.42, r * 0.2, r * 0.1); ctx.fill();
+  ctx.restore();
+  ctx.fillStyle = "rgba(255,255,255,.3)"; ctx.beginPath(); ctx.ellipse(x + r * 0.42, y + r * 0.5, r * 0.12, r * 0.06, -0.6, 0, 7); ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = Math.max(0.6, r * 0.05);             // crisp edge against the cloth
+  ctx.beginPath(); ctx.arc(x, y, r - ctx.lineWidth / 2, 0, 7); ctx.stroke();
+  ctx.restore();
 }
 function star8(x, y, r) {
   ctx.beginPath();
@@ -2074,6 +2186,94 @@ const CUE_DECO = {
     g.fillStyle = cd.dc;
     for (let i = 0; i < 70; i++) { const x = J + hash(i + 3) * (L - J), y = (hash(i + 77) - 0.5) * 2 * rad(x); g.globalAlpha = 0.4 + hash(i + 5) * 0.6; g.fillRect(x, y, 1.2 * wm, 1.2 * wm); }
     g.globalAlpha = 1;
+  },
+  hex(g, L, J, F, rad, cd, wm) {
+    g.strokeStyle = cd.dc; g.globalAlpha = 0.6; g.lineWidth = 0.8 * wm; const s = 4.2 * wm;
+    for (let x = J, col = 0; x < 0.96 * L; x += s * 1.5, col++)
+      for (let y = -rad(L) + (col % 2) * s * 0.87; y < rad(L); y += s * 1.73) {
+        g.beginPath(); for (let k = 0; k < 6; k++) g.lineTo(x + s * Math.cos(k * Math.PI / 3), y + s * Math.sin(k * Math.PI / 3)); g.closePath(); g.stroke();
+      }
+    g.globalAlpha = 1;
+  },
+  carbon(g, L, J, F, rad, cd, wm) {
+    const s = 3 * wm;
+    for (let x = J, i = 0; x < 0.96 * L; x += s, i++)
+      for (let y = -rad(L), j = 0; y < rad(L); y += s, j++) { g.fillStyle = (i + j) % 2 ? "rgba(255,255,255,.08)" : "rgba(0,0,0,.25)"; g.fillRect(x, y, s, s); }
+    CUE_DECO.rings(g, L, J, F, rad, {dc: cd.dc});
+  },
+  wave(g, L, J, F, rad, cd, wm) {
+    g.lineWidth = 1.4 * wm;
+    for (let k = 0; k < 3; k++) {
+      g.strokeStyle = k === 1 ? "#ffffff" : cd.dc; g.globalAlpha = 0.85; g.beginPath();
+      for (let x = 0.08 * L; x < 0.96 * L; x += 2) g.lineTo(x, Math.sin(x / (9 * wm) + k * 2.1) * rad(x) * 0.6);
+      g.stroke();
+    }
+    g.globalAlpha = 1;
+  },
+  marble(g, L, J, F, rad, cd, wm) {
+    g.strokeStyle = cd.dc; g.lineWidth = 0.9 * wm;
+    for (let i = 0; i < 14; i++) {
+      const x0 = J + hash(i) * (L - J) * 0.8; g.globalAlpha = 0.35 + hash(i + 40) * 0.4; g.beginPath(); g.moveTo(x0, -rad(x0));
+      g.bezierCurveTo(x0 + 12 * wm, -rad(x0) * 0.3, x0 - 8 * wm, rad(x0) * 0.4, x0 + (hash(i + 3) * 30 - 5) * wm, rad(x0)); g.stroke();
+    }
+    g.globalAlpha = 1;
+  },
+  tiger(g, L, J, F, rad, cd, wm) {
+    g.fillStyle = cd.dc === "#ffffff" ? "#111" : shade(cd.butt[1].startsWith("#") ? cd.butt[1] : "#000000", -20);
+    for (let i = 0; i < 16; i++) {
+      const x = J + (i + 0.5) / 16 * (0.94 * L - J), r = rad(x), w = (2 + hash(i) * 3) * wm, side = i % 2 ? 1 : -1;
+      g.beginPath(); g.moveTo(x - w, side * r); g.quadraticCurveTo(x + w * 2, 0, x + w * 0.2, -side * r * (0.1 + hash(i + 7) * 0.5)); g.lineTo(x + w, side * r); g.fill();
+    }
+    g.fillStyle = cd.dc; g.globalAlpha = 0.25; g.fillRect(J, -rad(L), 0.94 * L - J, 2 * rad(L)); g.globalAlpha = 1;
+  },
+  dots(g, L, J, F, rad, cd, wm) {
+    g.fillStyle = cd.dc;
+    for (let x = 0.1 * L, i = 0; x < 0.95 * L; x += 7 * wm, i++) for (const y of i % 2 ? [-0.5, 0.5] : [0]) { g.beginPath(); g.arc(x, y * rad(x), 1.6 * wm, 0, 7); g.fill(); }
+  },
+  neon(g, L, J, F, rad, cd, wm) {
+    g.save(); g.shadowColor = cd.dc; g.shadowBlur = 6 * wm; g.strokeStyle = cd.dc; g.lineWidth = 1.2 * wm;
+    for (const f of [-0.5, 0.5]) { g.beginPath(); g.moveTo(0.06 * L, f * rad(0.06 * L)); g.lineTo(0.95 * L, f * rad(0.95 * L)); g.stroke(); }
+    for (let x = J; x < 0.94 * L; x += 0.06 * L) { g.beginPath(); g.moveTo(x, -rad(x) * 0.5); g.lineTo(x + 0.03 * L, 0); g.lineTo(x, rad(x) * 0.5); g.stroke(); }
+    g.restore();
+  },
+  crystal(g, L, J, F, rad, cd, wm) {
+    const n = 22;
+    for (let i = 0; i < n; i++) {
+      const x0 = 0.05 * L + i / n * 0.92 * L, x1 = x0 + 0.92 * L / n, r = rad(x1) + 1;
+      for (const s of [-1, 1]) {
+        const gg = g.createLinearGradient(x0, 0, x1, s * r);
+        gg.addColorStop(0, i % 2 ? "#ffffff" : cd.dc); gg.addColorStop(1, i % 2 ? cd.dc : shade(cd.metal, -60));
+        g.fillStyle = gg; g.globalAlpha = 0.75; g.beginPath(); g.moveTo(x0, 0); g.lineTo(x1, s * r); g.lineTo(x0, s * r); g.closePath(); g.fill();
+        g.globalAlpha = 0.45; g.beginPath(); g.moveTo(x0, 0); g.lineTo(x1, 0); g.lineTo(x1, s * r); g.closePath(); g.fill();
+      }
+    }
+    g.globalAlpha = 1;
+    CUE_DECO.legend(g, L, J, F, rad, {...cd, gem: cd.gem || cd.dc}, wm);
+  },
+  flag(g, L, J, F, rad, cd, wm) {
+    const f = cd.flag, x0 = 0.045 * L, x1 = 0.76 * L, len = x1 - x0, n = f.c.length;
+    const band = (xa, xb, ya, yb, col) => {   // ya, yb: fractions of the diameter at that x (-1 … 1)
+      g.fillStyle = col; g.beginPath(); g.moveTo(xa, ya * rad(xa)); g.lineTo(xb, ya * rad(xb)); g.lineTo(xb, yb * rad(xb)); g.lineTo(xa, yb * rad(xa)); g.closePath(); g.fill();
+    };
+    if (f.t === "v") f.c.forEach((c, i) => band(x0 + len * i / n, x0 + len * (i + 1) / n + 0.5, -1.05, 1.05, c));
+    else f.c.forEach((c, i) => band(x0, x1, -1.05 + 2.1 * i / n, -1.05 + 2.1 * (i + 1) / n, c));
+    const e = f.em; if (!e) return;
+    const cx = x0 + len * 0.55, r = rad(cx);
+    g.fillStyle = e[1];
+    if (e[0] === "c") { g.beginPath(); g.ellipse(cx, 0, r * 1.4, r * 0.62, 0, 0, 7); g.fill(); }
+    else if (e[0] === "s") for (const x of [cx - len * 0.28, cx, cx + len * 0.28]) {
+      const rr2 = rad(x) * 0.7; g.beginPath();
+      for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, q = i % 2 ? rr2 * 0.45 : rr2; g.lineTo(x + Math.cos(a) * q * 1.6, Math.sin(a) * q); }
+      g.fill();
+    }
+    else if (e[0] === "m") { g.beginPath(); g.ellipse(cx, 0, r * 1.3, r * 0.62, 0, 0, 7); g.fill(); g.fillStyle = f.c[0]; g.beginPath(); g.ellipse(cx + r * 0.5, 0, r * 1.05, r * 0.5, 0, 0, 7); g.fill(); }
+    else if (e[0] === "x" || e[0] === "p" || e[0] === "u") {
+      if (e[0] === "u") { band(x0, x1, -0.3, 0.3, "#ffffff"); for (const x of [x0 + len * 0.3, x0 + len * 0.7]) band(x - 5 * wm, x + 5 * wm, -1.05, 1.05, "#ffffff"); }
+      band(x0, x1, -0.18, 0.18, e[0] === "u" ? "#c8102e" : e[1]);
+      for (const x of e[0] === "p" ? [cx] : e[0] === "u" ? [x0 + len * 0.3, x0 + len * 0.7] : [x0 + len * 0.72, x0 + len * 0.28]) band(x - 3 * wm, x + 3 * wm, -1.05, 1.05, e[0] === "u" ? "#c8102e" : e[1]);
+    }
+    else if (e[0] === "t") { g.beginPath(); g.moveTo(x1, -rad(x1) * 1.05); g.lineTo(x1 - len * 0.16, 0); g.lineTo(x1, rad(x1) * 1.05); g.closePath(); g.fill(); }
+    else if (e[0] === "o") { g.beginPath(); g.arc(x0 + len * 0.85, 0, r * 0.5, 0, 7); g.fill(); }
   },
   legend(g, L, J, F, rad, cd, wm) {
     CUE_DECO.stars(g, L, J, F, rad, cd, wm);
@@ -2511,7 +2711,7 @@ function toMenu(screen = "home", opt) {
   go(screen, opt);
 }
 function updateNav() {
-  $("coinTxt").textContent = fmt(profile.coins);
+  $("coinTxt").textContent = profile.coins >= 1e7 ? fmtS(profile.coins) : fmt(profile.coins);
   $("cashTxt").textContent = fmt(profile.cash);
   $("navName").textContent = profile.name;
   $("navLvl").textContent = profile.level;
@@ -2786,33 +2986,93 @@ function buildShop(tab) {
     $("adCash").onclick = () => y8Rewarded("bank-cash", () => { profile.cash += 1; toast("💵", "+1", T("Rahmat!")); });
     return;
   }
+  // cues: Standard / Victory / Surprise / Country / Owned
+  const owns = c => profile.cues.includes(c.id);
+  const list = CUES.filter(c => cueCat === "owned" ? owns(c) : c.cat === cueCat);
+  if (cueCat === "country") list.sort((a, b) => (b.cc === profile.country) - (a.cc === profile.country) || cueName(a).localeCompare(cueName(b)));
+  const power = CUES.filter(owns).reduce((a, c) => a + cuePower(c), 0);
+  body.insertAdjacentHTML("beforeend", `<div class="cuehead">
+    <div class="cpow"><b>${T("Kolleksiya kuchi")}</b><span>${fmt(power)} · ${profile.cues.length}/${CUES.length}</span></div>
+    <button class="btn blue" id="cueInfo" style="padding:6px 14px">ℹ ${T("Kiy ko'rsatkichlari")}</button></div>
+    <div class="tabs subtabs">${[["standard", "Standart"], ["victory", "G'alaba"], ["surprise", "Syurpriz"], ["country", "Davlat"], ["owned", "Meniki"]]
+      .map(([k, n]) => `<button class="tab${k === cueCat ? " on" : ""}" data-cc="${k}">${T(n)}</button>`).join("")}</div>
+    ${cueCat === "surprise" ? `<div class="card surbox"><div style="font-size:44px">🎁</div><div style="flex:1"><b>${T("Syurpriz qutisi")}</b>
+      <div class="muted">${T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.")}</div></div>
+      <button class="btn purple" id="surBtn"><span class="cash"></span> ${SURPRISE_BOX}</button></div>` : ""}
+    ${cueCat === "victory" ? `<p class="muted" style="margin:0 0 10px">${T("Shaharda yoki undan yuqorida yutib, kiy bo'laklarini yig'ing. 4 bo'lak = kiy.")}</p>` : ""}`);
+  body.querySelectorAll("[data-cc]").forEach(b => b.onclick = () => { cueCat = b.dataset.cc; buildShop("cues"); });
+  $("cueInfo").onclick = cueInfoModal;
+  if ($("surBtn")) $("surBtn").onclick = openSurpriseBox;
   const grid = document.createElement("div"); grid.className = "cuelist";
-  CUES.forEach(c => {
-    const owned = profile.cues.includes(c.id), sel = profile.cue === c.id;
-    const el = document.createElement("div"); el.className = "cuerow" + (sel ? " sel" : "");
-    el.innerHTML = `<div class="cuemain"><div class="h" style="font-size:20px">${c.name} <small style="font-size:12px;color:${c.cur === "cash" ? "#d9b3ff" : "#ffe27a"}">${c.cur === "cash" ? "Premium" : "Standart"}</small></div><div class="cuecvw"></div></div>
-      <div>${c.st.map((v, i) => `<div class="stat"><span>${STAT_NAMES[i]}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
-      <div>${sel ? `<button class="btn gray" disabled style="width:100%">✓ TANLANGAN</button>`
-        : owned ? `<button class="btn blue" style="width:100%">TANLASH</button>`
-        : `<button class="btn ${c.cur === "cash" ? "purple" : "green"}" style="width:100%">${c.cur === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} ${fmtS(c.price)}</button>`}</div>`;
-    el.querySelector(".cuecvw").appendChild(cueCanvas(c));
-    const btn = el.querySelector("button");
-    if (!sel) btn.onclick = () => {
+  const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { io.unobserve(e.target); e.target.appendChild(cueCanvas(e.target._cue)); }
+  }), {rootMargin: "300px"}) : null;
+  const tierCol = {Standart: "#ffe27a", Premium: "#d9b3ff", Oddiy: "#ffe27a", Yuqori: "#ffe27a", Ekspert: "#ffb35e", Afsonaviy: "#ffcf3d"};
+  list.forEach(c => {
+    const owned = owns(c), sel = profile.cue === c.id, pcs = (profile.pieces || {})[c.id] | 0;
+    const el = document.createElement("div"); el.className = "cuerow" + (sel ? " sel" : "") + (c.pieces && !owned ? " locked" : "");
+    let btn;
+    if (sel) btn = `<button class="btn gray" disabled style="width:100%">✓ ${T("TANLANGAN")}</button>`;
+    else if (owned) btn = `<button class="btn blue" style="width:100%">${T("TANLASH")}</button>`;
+    else if (c.cat === "victory") btn = `<button class="btn blue" data-city="${c.city}" style="width:100%;font-size:15px">${T("O'ynash")}: ${CITIES[c.city].name}</button>`;
+    else if (c.cat === "surprise") btn = `<button class="btn purple" style="width:100%;font-size:15px">🎁 ${T("Syurpriz qutisi")}</button>`;
+    else btn = `<button class="btn ${c.cur === "cash" ? "purple" : "green"}" style="width:100%">${c.cur === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} ${fmtS(c.price)}</button>`;
+    el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">${c.cc ? flagHTML(c.cc, 18) + " " : ""}${esc(cueName(c))}</b>
+        <span style="color:${tierCol[c.tier] || "#ffe27a"}">${T(c.tier)}${c.pieces && !owned ? ` <span class="pcs">${pcs}/${c.pieces} 🔒</span>` : ""}</span></div><div class="cuecvw"></div></div>
+      <div>${c.st.map((v, i) => `<div class="stat"><span>${T(STAT_NAMES[i])}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
+      <div>${btn}<div class="cpts">+${cuePower(c)} ⚜</div></div>`;
+    const cvw = el.querySelector(".cuecvw"); cvw._cue = c;
+    if (io) io.observe(cvw); else cvw.appendChild(cueCanvas(c));
+    const b = el.querySelector("button");
+    if (!sel) b.onclick = () => {
+      const keep = $("shop").scrollTop;
       if (!owned) {
+        if (c.cat === "victory") { go("cities"); return; }
+        if (c.cat === "surprise") { openSurpriseBox(); return; }
         const bal = c.cur === "cash" ? profile.cash : profile.coins;
-        if (bal < c.price) { toast("😕", c.cur === "cash" ? "Pul yetmaydi" : "Tanga yetmaydi", c.name); return; }
+        if (bal < c.price) { toast("😕", T(c.cur === "cash" ? "Pul yetmaydi" : "Tanga yetmaydi"), cueName(c)); return; }
         if (c.cur === "cash") profile.cash -= c.price; else profile.coins -= c.price;
-        profile.cues.push(c.id); Snd.coin(6); toast("🎱", c.name, "Yangi kiy!");
+        profile.cues.push(c.id); Snd.coin(6); toast("🎱", cueName(c), T("Yangi kiy!"));
         if (profile.cues.length >= 4) unlock("collector");
       }
-      profile.cue = c.id; save(); updateNav(); buildShop("cues");
+      profile.cue = c.id; save(); updateNav(); Net.sync(); buildShop("cues"); $("shop").scrollTop = keep;
     };
     grid.appendChild(el);
   });
-  body.insertAdjacentHTML("beforeend", `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-    <div class="muted">${T("Kolleksiya")}: ${profile.cues.length}/${CUES.length}</div><button class="btn blue" id="cueInfo" style="padding:6px 14px">ℹ ${T("Kiy ko'rsatkichlari")}</button></div>`);
-  $("cueInfo").onclick = cueInfoModal;
+  if (!list.length) grid.innerHTML = `<div class="muted" style="text-align:center;padding:20px">—</div>`;
   body.appendChild(grid);
+}
+let cueCat = "standard";
+// a cue piece (victory or surprise); 4 pieces complete the cue
+function addCuePiece(c) {
+  profile.pieces = profile.pieces || {};
+  const n = profile.pieces[c.id] = (profile.pieces[c.id] | 0) + 1;
+  if (n >= c.pieces && !profile.cues.includes(c.id)) {
+    profile.cues.push(c.id); delete profile.pieces[c.id];
+    toast("🎱", cueName(c), T("Yangi kiy!")); if (profile.cues.length >= 4) unlock("collector");
+  } else toast("🧩", `${cueName(c)} ${n}/${c.pieces}`, T("Kiy bo'lagi"));
+  save();
+  return n;
+}
+// a win in a city gives a piece of a victory cue from that city or a lower one
+function victoryPiece(city) {
+  const ci = CITIES.indexOf(city);
+  const pool = CUES.filter(c => c.cat === "victory" && c.city <= ci && !profile.cues.includes(c.id));
+  if (!pool.length) return null;
+  pool.sort((a, b) => b.city - a.city);
+  const c = Math.random() < 0.6 ? pool[0] : pick(pool);
+  addCuePiece(c);
+  return c;
+}
+function openSurpriseBox() {
+  if (profile.cash < SURPRISE_BOX) { toast("😕", T("Pul yetmaydi"), T("Syurpriz qutisi")); return; }
+  const pool = CUES.filter(c => c.cat === "surprise" && !profile.cues.includes(c.id));
+  profile.cash -= SURPRISE_BOX;
+  if (!pool.length) { addCoins(500000); toast("🎁", "+500 000", T("Syurpriz qutisi")); updateNav(); return; }
+  const c = pick(pool), n = addCuePiece(c); updateNav(); Snd.win(); burst();
+  openModal({icon: "🎁", title: T("Syurpriz qutisi"), text: `${cueName(c)} — ${Math.min(n, c.pieces)}/${c.pieces}`, extra: `<div class="cuecvw" id="surCue"></div>`,
+    buttons: [{label: T("Yana ochish"), cls: "purple", fn: () => { buildShop("cues"); setTimeout(openSurpriseBox, 50); }}, {label: T("Yopish"), cls: "gray", fn: () => buildShop("cues")}]});
+  $("surCue").appendChild(cueCanvas(c));
 }
 function cueInfoModal() {
   const rows = [["⚡", "Kuch", "Zarba kuchini oshiradi", 7], ["🎯", "Nishon", "Yo'naltiruvchi chiziqni uzaytiradi", 4], ["🌀", "Aylanish", "Aylanish (spin) ta'sirini kuchaytiradi", 2], ["⏱", "Vaqt", "Har bir zarba uchun qo'shimcha vaqt beradi", 9]];
@@ -3345,7 +3605,7 @@ for (let i = 0; i < 18; i++) {
 // language: saved choice → device language (if we have it) → the language of the player's country → English
 const CC_LANG = {UZ: "uz", RU: "ru", BY: "ru", KZ: "ru", KG: "ru", TJ: "ru", TM: "ru", UA: "ru", TR: "tr", AZ: "tr", CY: "tr",
   ES: "es", MX: "es", AR: "es", CO: "es", CL: "es", PE: "es", VE: "es", EC: "es", GT: "es", CU: "es", BO: "es", DO: "es", HN: "es", PY: "es", SV: "es", NI: "es", CR: "es", PA: "es", UY: "es",
-  BR: "pt", PT: "pt", AO: "pt", MZ: "pt", FR: "fr", BE: "fr", SN: "fr", CI: "fr", CM: "fr", ML: "fr", DE: "de", AT: "de", CH: "de", LI: "de", ID: "id", IN: "hi",
+  BR: "pt", PT: "pt", AO: "pt", MZ: "pt", FR: "fr", BE: "fr", SN: "fr", CI: "fr", CM: "fr", ML: "fr", DE: "de", AT: "de", CH: "de", LI: "de", ID: "id", IN: "hi", KR: "ko", JP: "ja", CN: "zh", TW: "zh", HK: "zh", MO: "zh", SG: "zh",
   SA: "ar", AE: "ar", EG: "ar", IQ: "ar", JO: "ar", KW: "ar", QA: "ar", BH: "ar", OM: "ar", YE: "ar", SY: "ar", LB: "ar", LY: "ar", DZ: "ar", MA: "ar", TN: "ar", SD: "ar", PS: "ar"};
 function detectLang() {
   const saved = profile.lang;
