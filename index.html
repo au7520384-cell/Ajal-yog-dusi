@@ -559,6 +559,9 @@
   .bslot.empty b{font-family:var(--fh);font-weight:400;font-size:21px;line-height:1.05;color:#dbe8ff;text-shadow:0 2px 0 #000a;text-align:center;position:absolute;left:4px;right:4px;bottom:16px}
   .nb-cues{container-type:inline-size}.nb-cues .cb-t{position:absolute;left:64%;top:14%;width:34%;height:42%;display:grid;place-items:center;font-family:var(--fh);font-size:11cqw;color:#ffe27a;text-shadow:0 2px 0 #3a2400,0 0 6px #000;pointer-events:none;white-space:nowrap}
   .hbt-red{border-color:#d8303a;box-shadow:0 0 14px #e0303a88,inset 0 2px 0 #fff3}.hbt-cyan{border-color:#2aa8e8;box-shadow:0 0 14px #2ad8ff88,inset 0 2px 0 #fff3}
+  .hbt-gold{border-color:#f0b83a;box-shadow:0 0 14px #ffc94a88,inset 0 2px 0 #fff3}.hbt-purple{border-color:#a07ae0;box-shadow:0 0 14px #a07ae088,inset 0 2px 0 #fff3}
+  .hbt-top{width:112px;height:104px}.hbt-top .dot{top:-8px;right:-8px}.hbt-top em{top:auto;bottom:-10px}
+  .hbt .hbe{font-size:52px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 3px 4px #000a)}.hbt-tv img{-webkit-mask-image:none;mask-image:none;height:62px}
   .hbt:active{transform:scale(.96)}
   @media (max-width:1000px){ .pc-m{width:96px} #navName{font-size:13px;max-width:72px} .nb-cues{height:42px;width:113px} .nb-cues .cb-n{font-size:10px} .nb-cues .cb-r{font-size:9px} }
   @media (max-width:800px){ .pc-m{width:70px} #navName{max-width:48px} }
@@ -677,7 +680,7 @@
   .mh520 .mgc .mgart img{max-height:62px}.mh520 .mg-felt .mgart img{max-height:120px}.mh520 .mgc b{font-size:19px}.mh520 .mgc small{font-size:10px}
   .mh520 .mgbtn{padding:5px;font-size:14px}.mh520 .mggrid{gap:8px}.mh520 .mgc{padding:7px}
   .wfgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;width:100%}
-  .wfgrid .mgc{grid-column:span 2}.wfgrid .mgc:nth-child(n+4){grid-column:span 3}
+  .wfgrid .mgc{grid-column:span 3}
   .wf-teal{background:linear-gradient(135deg,#1e6a7a,#0c3d4a);border-color:#8fb0bc;box-shadow:inset 0 2px 0 #fff5,inset 0 0 40px #0006,0 8px 16px #000a}
   .wf-teal::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,#ffffff0a 0 1px,transparent 1px 3px);pointer-events:none}
   .wf-orange{background:radial-gradient(circle at 50% 30%,#f2861c,#b85808)}
@@ -690,7 +693,7 @@
   .wfgrid .mgc{gap:6px;padding-bottom:12px}.wfgrid .mgc small{line-height:1.3;margin-bottom:2px}.wfgrid .mgbtn{margin-top:4px}
   .wf-carbon{background:#1c1c1e repeating-linear-gradient(45deg,#ffffff14 0 2px,transparent 2px 5px),repeating-linear-gradient(-45deg,#0009 0 2px,transparent 2px 5px)}
   .wf-orange small,.wf-teal small{text-shadow:0 1px 3px #000c}
-  .mh520 .wfgrid{gap:6px;grid-template-columns:repeat(5,minmax(0,1fr))}.mh520 .wfgrid .mgc,.mh520 .wfgrid .mgc:nth-child(n+4){grid-column:span 1}
+  .mh520 .wfgrid{gap:6px;grid-template-columns:repeat(4,minmax(0,1fr))}.mh520 .wfgrid .mgc{grid-column:span 1}
   .mh520 .wfgrid .mgc .mgart img{max-height:52px}.mh520 .wfgrid .mgc b{font-size:15px}.mh520 .wfgrid .mgc small{font-size:9px}.mh520 .wfgrid .mgbtn{font-size:12px;padding:4px}
   .evgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;width:100%}
   .evc{--c:#3fe052;--c2:#0a3a1a;position:relative;display:flex;flex-direction:column;border-radius:18px;overflow:hidden;cursor:pointer;
@@ -826,6 +829,7 @@
   <div id="hstage">
     <img id="hbg" alt="">
     <i class="dot" id="dotRw2" style="display:none"></i>
+    <button class="hbt hbt-gold hbt-rw hbt-top" data-go="rewards" style="left:56px;top:4px"><img data-img="chest" alt=""><b>Sovg'alar yo'li</b><em id="hRwLeft"></em><i class="dot" id="dotRw" style="display:none">!</i></button>
     <button class="hs" data-go="inbox" style="left:186px;top:14px;width:76px;height:72px" title="Xat qutisi"><i class="dot" id="dotMail" style="display:none;top:-6px;right:-6px"></i></button>
     <button class="hs" data-go="passScr" style="left:1478px;top:0;width:336px;height:106px"><i class="dot" id="dotPass2" style="display:none;top:-6px;left:-6px;right:auto"></i></button>
     <span class="hpassk">♞</span>
@@ -838,8 +842,9 @@
     <button class="hs" id="tMini" style="left:1104px;top:196px;width:266px;height:200px"><span class="hl"><b>O'ynash</b><i>Mini o'yinlar</i></span><i class="dot" id="dotMini2" style="display:none;top:-8px;right:-8px"></i></button>
     <button class="hs" id="tWithFr" style="left:1390px;top:196px;width:276px;height:200px"><span class="hl"><b>O'ynash</b><i>Do'st bilan</i></span></button>
     <div id="boxSlots"></div>
-    <button class="hbt hbt-red hbt-rw" data-go="rewards" style="left:52px;top:566px"><img data-img="chest" alt=""><b>Sovg'alar yo'li</b><em id="hRwLeft"></em><i class="dot" id="dotRw" style="display:none">!</i></button>
+    <button class="hbt hbt-red hbt-gift" data-go="rewards" style="left:52px;top:566px"><span class="hbe">🎁</span><b>Sovg'alar</b></button>
     <button class="hbt hbt-cyan" data-go="friendsScr" style="left:176px;top:566px"><img data-img="nv_friends" alt=""><b>Do'stlar</b><i class="dot" id="dotFr" style="display:none">!</i></button>
+    <button class="hbt hbt-purple hbt-tv" id="hWatch" style="left:432px;top:566px"><img data-img="wf_tv" alt=""><b>Tomosha</b></button>
     <button class="hs" id="hInvite" style="left:304px;top:574px;width:114px;height:110px" title="Taklif qilish"><span class="hl sm">Taklif qilish</span></button>
     <button class="hs" id="hLimited" style="left:1466px;top:562px;width:368px;height:126px"><span class="hlim">Cheklangan nashr</span></button>
     <span class="htime" id="hLimEnds" style="left:1484px;top:640px;width:224px;height:36px;line-height:32px;background:#1a1030"></span>
@@ -6126,6 +6131,7 @@ $("tTour").onclick = () => go("tourScr");
 $("tMini").onclick = () => go("mini");
 $("tEvents").onclick = () => go("eventsScr");
 $("tWithFr").onclick = () => go("withFrScr");
+$("hWatch").onclick = () => startMatch("watch", pick(CITIES));
 $("hInvite").onclick = () => { const code = Net.acct ? Net.acct.code : ""; const url = location.origin + location.pathname + (code ? "?ref=" + code : "");
   const text = `${T("Men bilan Bilyard 8 o'ynang! Kodim")}: ${code}`;
   if (navigator.share) navigator.share({title: "Bilyard 8", text, url}).catch(() => {}); else { try { navigator.clipboard.writeText(text + " " + url); toast("📋", T("Nusxalandi!"), ""); } catch (e) {} go("friendsScr"); } };
@@ -6527,11 +6533,10 @@ function buildWithFr() {
     ${card("wf-orange", "join", "wf_code", T("Kod bilan qo'shilish"), T("Do'stingiz bergan kodni kiriting"), T("Qo'shilish"))}
     ${card("wf-gold", "pvp", "wf_two", T("Bitta qurilmada 2 kishi"), T("Navbatma-navbat o'ynang"), T("O'ynash"))}
     ${card("wf-carbon", "practice", "wf_cap", T("Mashq"), T("Qoidalarsiz, oflayn"), T("O'ynash"))}
-    ${card("wf-velvet", "watch", "wf_tv", T("Tomosha"), T("Ustalar o'yinini ko'ring"), T("Ko'rish"))}
   </div><div class="setsec">⚔️ ${T("Do'stni chaqirish")}</div><div id="wfFriends" class="muted">${T("Yuklanmoqda…")}</div>`;
   const acts = {create: lobbyCreate, join: () => openModal({icon: "🔢", title: T("Kod bilan qo'shilish"), text: "", extra: `<input class="name" id="lbCode" maxlength="8" placeholder="ABCD12" style="text-transform:uppercase;text-align:center;font-size:24px">`,
       buttons: [{label: T("Qo'shilish"), cls: "green", fn: () => lobbyJoin($("lbCode").value.trim().toUpperCase())}, {label: T("Yopish"), cls: "gray", fn: () => {}}]}),
-    pvp: () => startMatch("pvp", CITIES[1]), practice: () => startMatch("practice", CITIES[0]), watch: () => startMatch("watch", pick(CITIES))};
+    pvp: () => startMatch("pvp", CITIES[1]), practice: () => startMatch("practice", CITIES[0])};
   box.querySelectorAll(".mgc").forEach(el => el.onclick = () => acts[el.dataset.act]());
   Net.api("/api/friends").then(r => {
     $("wfFriends").innerHTML = r.friends.length ? r.friends.map(f => `<div class="lbr"><div class="rk">${f.online ? '<span style="color:#3fe052">●</span>' : "○"}</div>${avHTML(f.avatar, f.frame, 40)}
