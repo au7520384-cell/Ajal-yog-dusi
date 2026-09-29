@@ -1049,12 +1049,12 @@ const SPIN_UI = {x: W / 2, y: H / 2 + 20, r: 150};
 const FONT = '"Lilita One","Arial Black",Impact,sans-serif';
 
 const POCKETS = [
-  {x: 0, y: 0, r: 37, dx: -7, dy: -7, dr: 25},          // r = how close a ball centre must get to drop (wide mouths: jaws never make a ball bounce back out of a pocket it is visibly over)
-  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -7, dr: 21, mid: true},
-  {x: FW, y: 0, r: 37, dx: 7, dy: -7, dr: 25},
-  {x: 0, y: FH, r: 37, dx: -7, dy: 7, dr: 25},
-  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 7, dr: 21, mid: true},
-  {x: FW, y: FH, r: 37, dx: 7, dy: 7, dr: 25},
+  {x: 0, y: 0, r: 37, dx: -16, dy: -16, dr: 27},          // r = how close a ball centre must get to drop (wide mouths: jaws never make a ball bounce back out of a pocket it is visibly over)
+  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -7, dr: 22, mid: true},
+  {x: FW, y: 0, r: 37, dx: 16, dy: -16, dr: 27},
+  {x: 0, y: FH, r: 37, dx: -16, dy: 16, dr: 27},
+  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 7, dr: 22, mid: true},
+  {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
 const POCKET_AIMS = [
   {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
@@ -4131,21 +4131,42 @@ function paintTable(city) {
       else { ctx.fillStyle = shade(trim, 90); for (const sx of [-w / 2 + 9, w / 2 - 9]) { ctx.beginPath(); ctx.arc(sx, h / 2 - 7, 1.8, 0, 7); ctx.fill(); } }
       ctx.restore();
     };
+    // engraved gold scrolls running from each pocket along the rail (like the reference tables), drawn in local space: +x runs along the rail towards the table's middle, y<0 is outwards
+    const scroll = () => {
+      const gg = ctx.createLinearGradient(0, -8, 0, 8); gg.addColorStop(0, shade(trim, 95)); gg.addColorStop(0.5, trim); gg.addColorStop(1, shade(trim, -80));
+      const path = () => { ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(14, -9, 30, -9, 42, -1); ctx.bezierCurveTo(50, 5, 44, 12, 37, 8); ctx.bezierCurveTo(32, 5, 36, -1, 41, 0);
+        ctx.moveTo(22, -6); ctx.bezierCurveTo(24, -14, 33, -17, 39, -13); ctx.bezierCurveTo(34, -13, 30, -10, 30, -7);
+        ctx.moveTo(46, 1); ctx.bezierCurveTo(56, -4, 66, -3, 72, 3); ctx.bezierCurveTo(66, 1, 60, 2, 56, 5); };
+      ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 5; ctx.save(); ctx.translate(0.6, 1.4); path(); ctx.stroke(); ctx.restore();
+      ctx.strokeStyle = gg; ctx.lineWidth = 3.2; path(); ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.lineWidth = 0.9; ctx.save(); ctx.translate(-0.4, -0.9); path(); ctx.stroke(); ctx.restore();
+    };
+    const pocketOrnament = (p, x, y, sx, sy) => {
+      const r = p.dr + 4;
+      ctx.save(); ctx.translate(x, y);
+      if (!p.mid) {
+        for (const rot of [0, 1]) { ctx.save(); ctx.scale(sx, sy); if (rot) { ctx.rotate(Math.PI / 2); ctx.scale(1, -1); } ctx.translate(r - 2, -11); scroll(); ctx.restore(); }
+      } else {
+        for (const m of [1, -1]) { ctx.save(); ctx.scale(m, sy); ctx.translate(r - 2, -10); scroll(); ctx.restore(); }
+      }
+      ctx.restore();
+    };
     for (const p of POCKETS) {
       const x = FX + p.x + p.dx, y = FY + p.y + p.dy, ax = Math.sign(x - (FX + FW / 2)), ay = Math.sign(y - (FY + FH / 2));
-      if (!p.mid) plate(x + ax * 2, y + ay * 2, 62, 46, Math.atan2(ax, -ay));   // kept inside the rail's outer edge: nothing bulges out of the frame
-      else plate(x, y + ay * 3, 72, 36, ay < 0 ? 0 : Math.PI);
+      pocketOrnament(p, x, y, -ax, -ay);
     }
   }
-  // leather pocket cups with a metal edge, sitting in the rail around every pocket
+  // gold pocket ring with pearls, flush with the rail (the dark hole itself is painted with the cloth below)
   if (!lucky) for (const p of POCKETS) {
-    const x = FX + p.x + p.dx, y = FY + p.y + p.dy, r = p.dr + 7;
-    const lg = ctx.createRadialGradient(x - 3, y - 3, 2, x, y, r);
-    lg.addColorStop(0, "#4a1610"); lg.addColorStop(0.75, "#240806"); lg.addColorStop(1, "#120302");
-    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.55)"; ctx.shadowBlur = 5;
-    ctx.fillStyle = lg; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.restore();
-    ctx.strokeStyle = shade(trim, -20); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r - 1, 0, 7); ctx.stroke();
-    ctx.strokeStyle = "rgba(255,255,255,.4)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r - 1, Math.PI * 1.05, Math.PI * 1.6); ctx.stroke();
+    const x = FX + p.x + p.dx, y = FY + p.y + p.dy, r = p.dr + 4;
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 5; ctx.shadowOffsetY = 1.5;
+    const rg = ctx.createLinearGradient(x - r, y - r, x + r, y + r); rg.addColorStop(0, shade(trim, 100)); rg.addColorStop(0.5, trim); rg.addColorStop(1, shade(trim, -85));
+    ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r + 2.5, 0, 7); ctx.fill(); ctx.restore();
+    ctx.fillStyle = "#1a0606"; ctx.beginPath(); ctx.arc(x, y, r - 1.5, 0, 7); ctx.fill();
+    ctx.fillStyle = shade(trim, 120);
+    const out = Math.atan2(y - (FY + FH / 2), x - (FX + FW / 2));
+    for (let k = -5; k <= 5; k++) { const a = out + k * 0.19 * (p.mid ? 1.0 : 0.85); if (p.mid && Math.abs(Math.sin(a)) < 0.2) continue; ctx.beginPath(); ctx.arc(x + Math.cos(a) * (r + 0.6), y + Math.sin(a) * (r + 0.6), 1.35, 0, 7); ctx.fill(); }
   }
   // felt
   ctx.save(); ctx.translate(FX, FY);
@@ -4186,14 +4207,14 @@ function paintTable(city) {
     // pocket holes
     for (const p of POCKETS) {
       const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
-      ctx.fillStyle = "#1a0f08"; ctx.beginPath(); ctx.arc(x, y, r + 5, 0, 7); ctx.fill();
-      const pg = ctx.createRadialGradient(x - p.dx * 0.6, y - p.dy * 0.6, 2, x, y, r + 2);
-      pg.addColorStop(0, "#000"); pg.addColorStop(0.65, "#040302"); pg.addColorStop(0.9, "#2a1a10"); pg.addColorStop(1, "#4a2e1c");
-      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
+      ctx.fillStyle = "#12040a"; ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
+      const pg = ctx.createRadialGradient(x - p.dx * 0.25, y - p.dy * 0.25, 2, x, y, r + 1);
+      pg.addColorStop(0, "#010000"); pg.addColorStop(0.55, "#0c0202"); pg.addColorStop(0.85, "#3a0a0a"); pg.addColorStop(1, "#6a1414");
+      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, y, r + 1, 0, 7); ctx.fill();
     }
   }
   // cushions with angled jaws at the pockets
-  const C = 16, cA = 32, mA = 26;
+  const C = 16, cA = 32, mA = 28;
   const segs = lucky ? [
     [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
     [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
