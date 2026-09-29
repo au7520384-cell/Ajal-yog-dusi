@@ -2762,21 +2762,21 @@ const TBL = {
   lon: {mat: "wood",    motif: "argyle",  mc: "#ffffff", ma: 0.11, bg: ["#2a3a5c", "#0c1426"]},
   syd: {mat: "wood",    motif: "dots",    mc: "#fff3c0", ma: 0.12, bg: ["#1f5a6a", "#06202a"]},
   lis: {mat: "tile",    motif: "azulejo", mc: "#ffffff", ma: 0.09, bg: ["#2a5a8a", "#081a30"], tile: "#1f4fd1"},
-  tok: {mat: "lacquer", motif: "wave",    mc: "#ffffff", ma: 0.1,  bg: ["#5a1a22", "#14040a"]},
+  tok: {inlay: "wave", mat: "lacquer", motif: "wave",    mc: "#ffffff", ma: 0.1,  bg: ["#5a1a22", "#14040a"]},
   veg: {mat: "gold",    motif: "suits",   mc: "#ffcf3d", ma: 0.08, bg: ["#3a2a5a", "#0a0614"], glow: "#ffcf3d"},
   jak: {mat: "stone",   motif: "kawung",  mc: "#2a0a00", ma: 0.16, bg: ["#6a2a10", "#140502"], glow: "#ff6a1a"},
-  tor: {mat: "leather", motif: "maple",   mc: "#ffffff", ma: 0.09, bg: ["#3a4a5c", "#0c1018"]},
-  cai: {mat: "stone",   motif: "pyramid", mc: "#5a3a08", ma: 0.14, bg: ["#6a5020", "#1a1004"]},
-  dub: {mat: "gold",    motif: "star8",   mc: "#ffe7a0", ma: 0.13, bg: ["#2a3a6a", "#060a1a"]},
+  tor: {inlay: "wave", mat: "leather", motif: "maple",   mc: "#ffffff", ma: 0.09, bg: ["#3a4a5c", "#0c1018"]},
+  cai: {inlay: "key", mat: "stone",   motif: "pyramid", mc: "#5a3a08", ma: 0.14, bg: ["#6a5020", "#1a1004"]},
+  dub: {inlay: "rope", mat: "gold",    motif: "star8",   mc: "#ffe7a0", ma: 0.13, bg: ["#2a3a6a", "#060a1a"]},
   sha: {mat: "lacquer", motif: "cloud",   mc: "#ffe7a0", ma: 0.13,  bg: ["#5a1a1a", "#120404"]},
   par: {mat: "marble",  motif: "damask",  mc: "#ffffff", ma: 0.08, bg: ["#4a3a5a", "#140a1a"], vein: "#c9a24a"},
-  rom: {mat: "marble",  motif: "meander", mc: "#fff0d8", ma: 0.16, bg: ["#5a3a20", "#180c04"], vein: "#8a7050"},
+  rom: {inlay: "key", mat: "marble",  motif: "meander", mc: "#fff0d8", ma: 0.16, bg: ["#5a3a20", "#180c04"], vein: "#8a7050"},
   bkk: {mat: "wood",    motif: "lotus",   mc: "#fff0a0", ma: 0.11, bg: ["#5a4a10", "#141002"]},
   seo: {mat: "carbon",  motif: "grid",    mc: "#ff4fa0", ma: 0.14, bg: ["#2a1a5a", "#06041a"], glow: "#ff4fa0"},
-  mum: {mat: "lacquer", motif: "mandala", mc: "#ffd24d", ma: 0.12, bg: ["#5a1040", "#16020e"]},
-  ber: {mat: "metal",   motif: "hex",     mc: "#ffffff", ma: 0.1, bg: ["#2a3a3a", "#080e0e"], glow: "#2af0e0"},
+  mum: {inlay: "diamond", mat: "lacquer", motif: "mandala", mc: "#ffd24d", ma: 0.12, bg: ["#5a1040", "#16020e"]},
+  ber: {inlay: "key", mat: "metal",   motif: "hex",     mc: "#ffffff", ma: 0.1, bg: ["#2a3a3a", "#080e0e"], glow: "#2af0e0"},
   ist: {mat: "ebony",   motif: "girih",   mc: "#40d8ff", ma: 0.11, bg: ["#3a0a1a", "#0e0206"]},
-  osa: {mat: "carbon",  motif: "sakura",  mc: "#ffb0d8", ma: 0.13, bg: ["#2a1a4a", "#08041a"], glow: "#ff5ab0"},
+  osa: {inlay: "chev", mat: "carbon",  motif: "sakura",  mc: "#ffb0d8", ma: 0.13, bg: ["#2a1a4a", "#08041a"], glow: "#ff5ab0"},
   x_dia: {mat: "metal",  motif: "star8",   mc: "#ffffff", ma: 0.12, bg: ["#2a4a6a", "#061220"], glow: "#bfe8ff"},
   x_gal: {mat: "carbon", motif: "stars",   mc: "#ffffff", ma: 0.5,  bg: ["#1a1040", "#04020e"], glow: "#8a5aff"},
   x_drg: {mat: "lacquer",motif: "cloud",   mc: "#ffd24d", ma: 0.16, bg: ["#4a0a0a", "#0e0202"]},
@@ -2820,9 +2820,6 @@ function tableThumb(t) {
   return (tblThumbs[t.id] = oc.toDataURL("image/jpeg", 0.85));
 }
 let tableCache = null, feltNoise = null;
-function railBand(x1, y1, len, horizontal, fn) {
-  for (let s = 0; s < len; s += 16) fn(horizontal ? x1 + s : x1, horizontal ? y1 : y1 + s, s / 16 | 0, horizontal);
-}
 function railMaterial(st, city, OX, OY, OW, OH, rn, woodGrain) {
   const [r1, r2] = city.rail, trim = city.trim;
   ctx.save(); rr(OX, OY, OW, OH, 30); ctx.clip();
@@ -2991,50 +2988,97 @@ function paintTable(city) {
   ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 3; rr(OX + 3, OY + 5, OW - 6, OH - 8, 27); ctx.stroke();
   ctx.strokeStyle = trim; ctx.globalAlpha = 0.5; ctx.lineWidth = 1.5; rr(FX - RAIL + 4, FY - RAIL + 4, FW + 2 * RAIL - 8, FH + 2 * RAIL - 8, 20); ctx.stroke();
   ctx.globalAlpha = 1;
-  // decorative bands + sights
-  const my = FY - 31, by = FY + FH + 31, lx = FX - 31, rx = FX + FW + 31;
-  const segH = [[FX + 50, FW / 2 - 100], [FX + FW / 2 + 50, FW / 2 - 100]], segV = [[FY + 50, FH - 100]];
-  const band = fn => {
-    for (const [a, l] of segH) { railBand(a, my, l, true, fn); railBand(a, by, l, true, fn); }
-    for (const [a, l] of segV) { railBand(lx, a, l, false, fn); railBand(rx, a, l, false, fn); }
+  // an inlaid strip framed in metal along every rail, jewelled sights and the city's medallion
+  const INL = {classic: "wave", tribal: "chev", ikat: "diamond", gold: "dots", medal: "rope", stars: "dots"};
+  const inl = st.inlay || INL[city.pat] || "rope", gem = city.gem || (city.col && city.col[1]) || trim;
+  const my = FY - 33, by = FY + FH + 33, lx = FX - 33, rx = FX + FW + 33;
+  const segH = [[FX + 44, FW / 2 - 88], [FX + FW / 2 + 44, FW / 2 - 88]], segV = [[FY + 44, FH - 88]];
+  const pearl = (x, y, r) => {
+    const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, 0, x, y, r);
+    g.addColorStop(0, "#ffffff"); g.addColorStop(0.55, "#e6f2ff"); g.addColorStop(1, "#8a96c8");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
   };
-  if (city.pat === "ikat") {
-    const cols = [trim, city.felt[0], "#ffffff", shade(city.felt[1], 30)];
-    band((x, y, i) => { ctx.fillStyle = cols[i % 4]; ctx.beginPath(); ctx.moveTo(x, y - 6); ctx.lineTo(x + 6, y); ctx.lineTo(x, y + 6); ctx.lineTo(x - 6, y); ctx.fill(); });
-  } else if (city.pat === "gold") {
-    ctx.fillStyle = "#d9a63a"; band((x, y) => { ctx.beginPath(); ctx.arc(x, y, 3, 0, 7); ctx.fill(); });
-  } else if (city.pat === "tribal") {       // zig-zag inlay with dots, painted-wood style
-    band((x, y, i, h) => {
-      ctx.fillStyle = i % 2 ? trim : shade(r2, -30); ctx.beginPath();
-      if (h !== false) { ctx.moveTo(x - 8, y + 7); ctx.lineTo(x, y - 7); ctx.lineTo(x + 8, y + 7); }
-      else { ctx.moveTo(x - 7, y - 8); ctx.lineTo(x + 7, y); ctx.lineTo(x - 7, y + 8); }
-      ctx.fill(); ctx.fillStyle = "#fff"; ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.arc(x, y + (h !== false ? 3 : 0), 1.4, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
-    });
-  } else if (city.pat === "medal") {        // thin gold lines along the rail between the medallion sights
-    ctx.strokeStyle = trim; ctx.globalAlpha = 0.55; ctx.lineWidth = 1.2;
-    for (const [a, l] of segH) for (const y of [my, by]) for (const d of [-9, 9]) { ctx.beginPath(); ctx.moveTo(a - 30, y + d); ctx.lineTo(a + l + 30, y + d); ctx.stroke(); }
-    for (const [a, l] of segV) for (const x of [lx, rx]) for (const d of [-9, 9]) { ctx.beginPath(); ctx.moveTo(x + d, a - 30); ctx.lineTo(x + d, a + l + 30); ctx.stroke(); }
-    ctx.globalAlpha = 1;
-  }
-  const sight = (x, y) => {
-    if (city.pat === "stars" || city.pat === "gold") { ctx.fillStyle = trim; star8(x, y, 7); }
-    else if (city.pat === "medal") {       // round medallion: metal ring, lacquered centre, pearl dots
-      const g = ctx.createRadialGradient(x - 3, y - 3, 1, x, y, 13);
-      g.addColorStop(0, shade(trim, 80)); g.addColorStop(0.6, trim); g.addColorStop(1, shade(trim, -90));
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 12.5, 0, 7); ctx.fill();
-      ctx.fillStyle = shade(r2, -20); ctx.beginPath(); ctx.arc(x, y, 8.5, 0, 7); ctx.fill();
-      ctx.fillStyle = "#fff"; for (let k = 0; k < 8; k++) { ctx.beginPath(); ctx.arc(x + Math.cos(k * Math.PI / 4) * 6, y + Math.sin(k * Math.PI / 4) * 6, 1.1, 0, 7); ctx.fill(); }
-      ctx.fillStyle = trim; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 7); ctx.fill();
+  const strip = L => {                            // drawn along +x, centred on y = 0
+    const h = 6.5, mg = ctx.createLinearGradient(0, -h - 2, 0, h + 2);
+    mg.addColorStop(0, shade(trim, 90)); mg.addColorStop(0.45, trim); mg.addColorStop(1, shade(trim, -90));
+    ctx.fillStyle = "rgba(0,0,0,.4)"; rr(-2, -h, L + 4, 2 * h + 4, h + 2); ctx.fill();                  // drop shadow
+    ctx.fillStyle = mg; rr(-2, -h - 2, L + 4, 2 * h + 4, h + 2); ctx.fill();                              // metal frame
+    const bg = ctx.createLinearGradient(0, -h, 0, h);
+    bg.addColorStop(0, shade(r2, -65)); bg.addColorStop(0.5, shade(r2, -30)); bg.addColorStop(1, shade(r2, -70));
+    ctx.fillStyle = bg; rr(0, -h, L, 2 * h, h); ctx.fill();
+    ctx.save(); rr(0, -h, L, 2 * h, h); ctx.clip(); ctx.lineCap = "round";
+    switch (inl) {
+      case "rope":                                  // twisted gold rope
+        for (let x = -h, i = 0; x < L + h; x += 4.2, i++) {
+          ctx.strokeStyle = i % 2 ? shade(trim, 60) : shade(trim, -50); ctx.lineWidth = 2.6;
+          ctx.beginPath(); ctx.moveTo(x - 3, h - 1); ctx.lineTo(x + 4, -h + 1); ctx.stroke();
+        }
+        break;
+      case "chev":
+        ctx.strokeStyle = trim; ctx.lineWidth = 1.8;
+        for (let x = 2; x < L; x += 9) { ctx.beginPath(); ctx.moveTo(x, -h + 2); ctx.lineTo(x + 5, 0); ctx.lineTo(x, h - 2); ctx.stroke(); }
+        break;
+      case "diamond":
+        for (let x = 6, i = 0; x < L; x += 11, i++) {
+          const g = ctx.createLinearGradient(x - 5, -h, x + 5, h); g.addColorStop(0, shade(i % 2 ? trim : city.felt[0], 70)); g.addColorStop(1, i % 2 ? trim : city.felt[0]);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - 5.5, 0); ctx.lineTo(x, -h + 1); ctx.lineTo(x + 5.5, 0); ctx.lineTo(x, h - 1); ctx.fill();
+        }
+        break;
+      case "dots": for (let x = 5; x < L; x += 8.5) pearl(x, 0, 2.6); break;
+      case "wave":
+        ctx.lineWidth = 1.6;
+        for (const [sg, al] of [[1, 1], [-1, 0.45]]) {
+          ctx.strokeStyle = trim; ctx.globalAlpha = al; ctx.beginPath();
+          for (let x = 0; x <= L; x += 2) ctx.lineTo(x, sg * Math.sin(x / 5.5) * (h - 2.5));
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1; break;
+      case "key": {                                // small Greek key
+        ctx.strokeStyle = trim; ctx.lineWidth = 1.4; const u = 3;
+        for (let x = 1; x + 4 * u < L; x += 4 * u) { ctx.beginPath(); ctx.moveTo(x, h - 2); ctx.lineTo(x, -h + 2); ctx.lineTo(x + 3 * u, -h + 2); ctx.lineTo(x + 3 * u, 1.5); ctx.lineTo(x + u, 1.5); ctx.lineTo(x + u, -1.5); ctx.stroke(); }
+        break;
+      }
     }
-    else {
-      const g = ctx.createRadialGradient(x - 1.5, y - 1.5, 0, x, y, 6);
-      g.addColorStop(0, "#ffffff"); g.addColorStop(0.5, trim); g.addColorStop(1, shade(trim, -80));
-      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x, y - 6); ctx.lineTo(x + 4.5, y); ctx.lineTo(x, y + 6); ctx.lineTo(x - 4.5, y); ctx.fill();
-    }
+    ctx.restore();
+    const gl = ctx.createLinearGradient(0, -h, 0, 0); gl.addColorStop(0, "rgba(255,255,255,.4)"); gl.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = gl; rr(0, -h, L, h, [h, h, 0, 0]); ctx.fill();                                        // glassy lacquer
+    for (const x of [0, L]) { const cg = ctx.createRadialGradient(x - 1, -1.5, 0, x, 0, 5); cg.addColorStop(0, shade(trim, 100)); cg.addColorStop(1, shade(trim, -60)); ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(x, 0, 4.2, 0, 7); ctx.fill(); }
   };
-  if (city.pat !== "ikat") {
-    for (let i = 1; i < 8; i++) { if (i === 4) continue; sight(FX + FW * i / 8, my); sight(FX + FW * i / 8, by); }
-    for (let i = 1; i < 4; i++) { sight(lx, FY + FH * i / 4); sight(rx, FY + FH * i / 4); }
+  const along = (x, y, L, vert) => { ctx.save(); ctx.translate(x, y); if (vert) ctx.rotate(Math.PI / 2); strip(L); ctx.restore(); };
+  const jewel = (x, y, r = 5.2) => {             // faceted gem in a metal bezel
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.65)"; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1.5;
+    const bz = ctx.createLinearGradient(x, y - r - 3, x, y + r + 3); bz.addColorStop(0, shade(trim, 100)); bz.addColorStop(0.5, trim); bz.addColorStop(1, shade(trim, -90));
+    ctx.fillStyle = bz; ctx.beginPath(); ctx.arc(x, y, r + 2.6, 0, 7); ctx.fill(); ctx.restore();
+    const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, 0.3, x, y, r);
+    g.addColorStop(0, "#ffffff"); g.addColorStop(0.25, shade(gem, 80)); g.addColorStop(0.65, gem); g.addColorStop(1, shade(gem, -110));
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 0.6; ctx.beginPath();
+    for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3; ctx.moveTo(x + Math.cos(a) * r * 0.45, y + Math.sin(a) * r * 0.45); ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); }
+    ctx.stroke(); ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3; ctx.lineTo(x + Math.cos(a) * r * 0.45, y + Math.sin(a) * r * 0.45); } ctx.closePath(); ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.9)"; ctx.beginPath(); ctx.arc(x - r * 0.38, y - r * 0.42, r * 0.18, 0, 7); ctx.fill();
+  };
+  const medallion = (x, y) => {                  // the city's ring set in a round gold medallion
+    const R0 = 19;
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.7)"; ctx.shadowBlur = 7; ctx.shadowOffsetY = 2;
+    const bz = ctx.createLinearGradient(x - R0, y - R0, x + R0, y + R0); bz.addColorStop(0, shade(trim, 110)); bz.addColorStop(0.45, trim); bz.addColorStop(1, shade(trim, -100));
+    ctx.fillStyle = bz; ctx.beginPath(); ctx.arc(x, y, R0, 0, 7); ctx.fill(); ctx.restore();
+    ctx.fillStyle = shade(r2, -70); ctx.beginPath(); ctx.arc(x, y, R0 - 4, 0, 7); ctx.fill();
+    const rid = city.ring || city.id, im = rid && ringPicSoft(rid);
+    if (im) { ctx.save(); ctx.beginPath(); ctx.arc(x, y, R0 - 4.5, 0, 7); ctx.clip(); ctx.drawImage(im, x - R0 - 2, y - R0 - 3, 2 * R0 + 4, 2 * R0 + 4); ctx.restore(); }
+    else { ctx.fillStyle = trim; star8(x, y, R0 - 8); }
+    for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6; pearl(x + Math.cos(a) * (R0 - 1.8), y + Math.sin(a) * (R0 - 1.8), 1.4); }
+    const gl = ctx.createLinearGradient(0, y - R0, 0, y); gl.addColorStop(0, "rgba(255,255,255,.35)"); gl.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(x, y, R0 - 4, Math.PI, 0); ctx.fill();
+  };
+  if (!lucky) {
+    for (const [a, l] of segH) { along(a, my, l); along(a, by, l); }
+    for (const [a, l] of segV) { along(lx, a, l, true); along(rx, a, l, true); }
+    for (let i = 1; i < 8; i++) {
+      if (i === 4) continue;
+      if (i === 2 || i === 6) { medallion(FX + FW * i / 8, my); medallion(FX + FW * i / 8, by); }
+      else { jewel(FX + FW * i / 8, my); jewel(FX + FW * i / 8, by); }
+    }
+    for (const i of [1, 2, 3]) { jewel(lx, FY + FH * i / 4); jewel(rx, FY + FH * i / 4); }
   }
   // metal moulding round the outside, a dark lip where the rail meets the cushion, engraved corner plates
   if (!lucky) {
