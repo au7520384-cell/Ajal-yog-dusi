@@ -69,6 +69,10 @@ const SKUS = {
   zod_10:     {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z10"], avs: [210], sboxes: 5}, usd: 24.99, name: "Zodiac: Aquarius"},
   zod_11:     {coins: 420000,  cash: 1260, vip: 2708, items: {cues: ["vip_z11"], avs: [211], sboxes: 5}, usd: 24.99, name: "Zodiac: Pisces"},
 };
+const TABLE_NAMES = {"l_brz": "Bronze", "l_slv": "Silver", "l_gld": "Gold", "l_rgd": "Rose Gold", "l_plt": "Platinum", "l_sap": "Sapphire", "l_emr": "Emerald", "l_rby": "Ruby", "l_ame": "Amethyst", "l_dia": "Brilliant", "l_bdi": "Black Diamond", "l_opl": "Rainbow Opal", "e_sak": "Sakura Garden", "e_ros": "Rose", "e_lol": "Tulip", "e_lot": "Lotus", "e_pax": "Cotton (Rishtan)", "e_orx": "Orchid", "e_kun": "Sunflower", "e_atl": "Atlas Silk", "e_smq": "Samarkand", "e_mal": "Malachite", "e_laz": "Lapis Lazuli", "e_prl": "Pearl", "e_muz": "Ice Crystal", "e_drg": "Dragon Scale", "e_olv": "Fire", "e_kos": "Cosmos", "e_qah": "Amber", "e_tov": "Peacock"};
+// Premium table frames (real-money option; the same tables can also be bought in-game with cash or gems)
+const TABLE_SKUS = {l_brz: 4.99, l_slv: 6.99, l_gld: 9.99, l_rgd: 11.99, l_plt: 14.99, l_sap: 17.99, l_emr: 19.99, l_rby: 21.99, l_ame: 22.99, l_dia: 34.99, l_bdi: 39.99, l_opl: 49.99, e_sak: 2.99, e_ros: 3.49, e_lol: 3.79, e_lot: 3.99, e_pax: 4.19, e_orx: 4.49, e_kun: 2.99, e_atl: 4.79, e_smq: 4.99, e_mal: 5.49, e_laz: 5.79, e_prl: 5.99, e_muz: 5.99, e_drg: 6.49, e_olv: 6.49, e_kos: 6.99, e_qah: 6.99, e_tov: 7.49};
+for (const [id, usd] of Object.entries(TABLE_SKUS)) SKUS["tbl_" + id] = {items: {tables: [id]}, vip: Math.round(usd * 65), usd, name: "Table: " + TABLE_NAMES[id]};
 const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
 const GIFT = {coins: 500};
 const CITY_PRIZE = {lon: 100, syd: 200, lis: 1000, tok: 5000, veg: 20000, jak: 100000, tor: 200000, cai: 500000, dub: 1000000,

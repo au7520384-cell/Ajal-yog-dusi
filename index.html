@@ -196,6 +196,10 @@
   .tblcard.lux .tprev::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 38%,#ffffffaa 50%,transparent 62%);background-size:260% 100%;animation:luxsh 2.8s linear infinite}
   @keyframes luxsh{from{background-position:140% 0}to{background-position:-140% 0}}
   .tblcard.lux b{background:linear-gradient(90deg,#fff6b0,#ffcf3d,#fff,#ffcf3d);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tblhead{grid-column:1/-1;font-family:var(--fh);font-size:22px;color:#ffe27a;margin:8px 0 -2px;text-shadow:0 2px 0 #0008}
+  .tblhead small{font-family:Nunito,sans-serif;font-size:12px;color:#cfd8ee;font-weight:700;margin-left:6px}
+  .tpay{display:grid;grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:4px}.tpay .btn{padding:5px 4px;font-size:13px;white-space:nowrap}
+  .tblcard.lux.el{border-color:#8fe8ff;background:linear-gradient(#1e3a5e,#10172e)}
   .tblcard .ttag{position:absolute;top:12px;left:12px;background:#000a;border-radius:6px;padding:1px 6px;font-size:11px;color:#ffe27a}
   .pack{overflow:hidden}
   .ptag{position:absolute;top:10px;right:-30px;transform:rotate(35deg);background:#ff3b30;color:#fff;font-size:10px;padding:2px 34px;font-weight:900;text-transform:uppercase}
@@ -1403,6 +1407,32 @@ const DICT = {
   "Bugun bepul!": ["Free today!", "Сегодня бесплатно!"],
   "Olmos yetmaydi": ["Not enough gems", "Недостаточно кристаллов"],
   "Maxsus takliflar": ["Special Offers", "Спецпредложения"],
+  "Premium": ["Premium", "Премиум"],
+  "qimmatbaho metall va toshlar · tovlanadi": ["precious metals and stones · shimmering", "драгоценные металлы и камни · переливаются"],
+  "Eksklyuziv": ["Exclusive", "Эксклюзив"],
+  "gulli, naqshli, noyob hoshiyalar": ["floral, ornamental, one-of-a-kind frames", "цветочные, узорные, уникальные рамы"],
+  "Shahar stollari": ["City tables", "Столы городов"],
+  "Maxsus stollar": ["Special tables", "Особые столы"],
+  "Eksklyuziv hoshiya": ["Exclusive frame", "Эксклюзивная рама"],
+  "Sizniki": ["Yours", "Ваш"],
+  "Sakura bog'i": ["Sakura Garden", "Сад сакуры"],
+  "Atirgul": ["Rose", "Роза"],
+  "Lola": ["Tulip", "Тюльпан"],
+  "Lotus": ["Lotus", "Лотос"],
+  "Paxta (Rishton)": ["Cotton (Rishtan)", "Хлопок (Риштан)"],
+  "Orxideya": ["Orchid", "Орхидея"],
+  "Kungaboqar": ["Sunflower", "Подсолнух"],
+  "Atlas": ["Atlas Silk", "Атлас"],
+  "Samarqand": ["Samarkand", "Самарканд"],
+  "Malaxit": ["Malachite", "Малахит"],
+  "Lazurit": ["Lapis Lazuli", "Лазурит"],
+  "Marvarid": ["Pearl", "Жемчуг"],
+  "Muz kristall": ["Ice Crystal", "Ледяной кристалл"],
+  "Ajdar tangasi": ["Dragon Scale", "Драконья чешуя"],
+  "Olov": ["Fire", "Огонь"],
+  "Kosmos": ["Cosmos", "Космос"],
+  "Qahrabo": ["Amber", "Янтарь"],
+  "Tovus pati": ["Peacock", "Павлин"],
   "Kumush": ["Silver", "Серебро"],
   "Oltin": ["Gold", "Золото"],
   "Pushti oltin": ["Rose Gold", "Розовое золото"],
@@ -2814,6 +2844,24 @@ const TBL = {
   l_dia: {lux: 1, metal: ["#ffffff", "#dfe8f2", "#5a6878"], pave: "#eef8ff", shine: 0.6, spark: 46, sparkC: "#ffffff", mat: "lux", bg: ["#1a2e5a", "#020612"]},
   l_bdi: {lux: 1, metal: ["#9a9aaa", "#2a2a34", "#050508"], pave: "#2a2a36", shine: 0.5, spark: 42, sparkC: "#ffffff", mat: "lux", bg: ["#16161e", "#020203"]},
   l_opl: {lux: 1, metal: ["#ffffff", "#b8c2d0", "#3a4250"], pave: "opal", opal: 1, shine: 0.55, spark: 38, sparkC: "#ffffff", mat: "lux", bg: ["#1a1040", "#04020e"]},
+  e_sak: {"base": "lacquer", "metal": ["#ffe0ec", "#ec86aa", "#7a2044"], "flora": "sakura", "vine": "#ffd76a", "leaf": "#ffd76a", "lux": 1, "elite": 1, "spark": 20, "sparkC": "#ffd0e0", "shine": 0.4, "mat": "lux", "bg": ["#1a2e5a", "#060c1e"]},
+  e_ros: {"base": "lacquer", "metal": ["#8a2438", "#3a0610", "#0a0002"], "flora": "rose", "vine": "#e8c050", "leaf": "#2f8a3a", "lux": 1, "elite": 1, "spark": 18, "sparkC": "#ffd8e0", "shine": 0.4, "mat": "lux", "bg": ["#0e3a24", "#031408"]},
+  e_lol: {"base": "porcelain", "metal": ["#ffffff", "#eef2f8", "#b0bed4"], "flora": "tulip", "vine": "#1f4fd1", "leaf": "#1a9a6a", "lux": 1, "elite": 1, "spark": 14, "sparkC": "#ffffff", "shine": 0.4, "mat": "lux", "bg": ["#1a3a8a", "#061640"]},
+  e_lot: {"base": "jade", "metal": ["#b8f0d8", "#3aa87a", "#0e4a30"], "flora": "lotus", "vine": "#ffd76a", "leaf": "#1a7a4a", "lux": 1, "elite": 1, "spark": 18, "sparkC": "#fff0f8", "shine": 0.4, "mat": "lux", "bg": ["#3a0e2a", "#12040e"]},
+  e_pax: {"base": "porcelain", "metal": ["#fffcf4", "#f2e8d4", "#c4b494"], "flora": "cotton", "vine": "#1a5ad8", "leaf": "#12a0b0", "lux": 1, "elite": 1, "spark": 14, "sparkC": "#ffffff", "shine": 0.4, "mat": "lux", "bg": ["#0a6a8a", "#022a3a"]},
+  e_orx: {"base": "lacquer", "metal": ["#4a4a56", "#141418", "#000000"], "flora": "orchid", "vine": "#d8dce8", "leaf": "#2f7a4a", "lux": 1, "elite": 1, "spark": 18, "sparkC": "#f0d0ff", "shine": 0.4, "mat": "lux", "bg": ["#4a1a6a", "#160628"]},
+  e_kun: {"base": "lacquer", "metal": ["#ffe2a8", "#c88a3a", "#5a3208"], "flora": "sunflower", "vine": "#3a8a2a", "leaf": "#4aa83a", "lux": 1, "elite": 1, "spark": 16, "sparkC": "#fff0a0", "shine": 0.4, "mat": "lux", "bg": ["#1a4a8a", "#061a3a"]},
+  e_atl: {"base": "ikat", "metal": ["#ffffff", "#8a1ab0", "#2a0a3a"], "lux": 1, "elite": 1, "spark": 14, "sparkC": "#ffffff", "shine": 0.4, "mat": "lux", "bg": ["#2a0a3a", "#0a0212"]},
+  e_smq: {"base": "girih", "metal": ["#9ff4ff", "#1ab0c8", "#064a5a"], "lux": 1, "elite": 1, "spark": 18, "sparkC": "#e8fcff", "shine": 0.4, "mat": "lux", "bg": ["#0a2a6a", "#020a24"]},
+  e_mal: {"base": "malachite", "metal": ["#6ad8a8", "#0e7a4a", "#03301a"], "lux": 1, "elite": 1, "spark": 14, "sparkC": "#e0fff0", "shine": 0.4, "mat": "lux", "bg": ["#3a0e0e", "#120202"]},
+  e_laz: {"base": "lapis", "fili": 1, "filiC": ["#6a4a08", "#ffd76a"], "metal": ["#4a6ae8", "#12308a", "#061444"], "lux": 1, "elite": 1, "spark": 22, "sparkC": "#ffe8a0", "shine": 0.4, "mat": "lux", "bg": ["#0e3a2a", "#03140c"]},
+  e_prl: {"base": "pearl", "pearlrow": 1, "fili": 1, "filiC": ["#b8a8c8", "#ffffff"], "metal": ["#ffffff", "#ece6f2", "#a8a0b8"], "lux": 1, "elite": 1, "spark": 24, "sparkC": "#ffffff", "shine": 0.4, "mat": "lux", "bg": ["#0a3a5a", "#021424"]},
+  e_muz: {"base": "frost", "metal": ["#f0faff", "#9fd8f0", "#3a7aa8"], "lux": 1, "elite": 1, "spark": 26, "sparkC": "#e8fbff", "shine": 0.4, "mat": "lux", "bg": ["#0e2a5a", "#030a1e"]},
+  e_drg: {"base": "scales", "metal": ["#ffe07a", "#c8201a", "#3a0404"], "lux": 1, "elite": 1, "spark": 20, "sparkC": "#fff0a0", "shine": 0.4, "mat": "lux", "bg": ["#1a3a1a", "#061406"]},
+  e_olv: {"base": "fire", "metal": ["#ffe060", "#ff5a10", "#1a0400"], "lux": 1, "elite": 1, "spark": 26, "sparkC": "#ffb040", "shine": 0.4, "mat": "lux", "bg": ["#1a1a24", "#050508"]},
+  e_kos: {"base": "nebula", "metal": ["#c8a8ff", "#3a1a6a", "#0a0418"], "lux": 1, "elite": 1, "spark": 30, "sparkC": "#ffffff", "shine": 0.4, "mat": "lux", "bg": ["#10082a", "#04020c"]},
+  e_qah: {"base": "amber", "fili": 1, "filiC": ["#5a2a00", "#fff0b0"], "metal": ["#ffd868", "#e08a10", "#6a3000"], "lux": 1, "elite": 1, "spark": 18, "sparkC": "#fff0b0", "shine": 0.4, "mat": "lux", "bg": ["#0a2a3a", "#020c12"]},
+  e_tov: {"base": "feathers", "metal": ["#6ae8c8", "#0a6a6a", "#021a1e"], "lux": 1, "elite": 1, "spark": 20, "sparkC": "#d8fff0", "shine": 0.4, "mat": "lux", "bg": ["#083a3a", "#021414"]},
   gm:  {mat: "ebony",   motif: "argyle",  mc: "#ffd24d", ma: 0.06, bg: ["#1f3a2a", "#040a06"]},
 };
 const tblOf = city => TBL[city && city.id] || {mat: "wood"};
@@ -2826,22 +2874,41 @@ const EXTRA_TABLES = [
   {id: "x_lav", name: "Lava",        felt: ["#3a1008", "#120302"], rail: ["#3a3432", "#100c0a"], trim: "#ff8a3a", pat: "tribal",  cash: 350},
   {id: "x_roy", name: "Qirollik",    felt: ["#5a1a8a", "#1e0636"], rail: ["#e8c05a", "#7a5410"], trim: "#fff1b8", pat: "gold",    cash: 450},
   {id: "x_ice", name: "Muz saroyi",  felt: ["#3a8ab8", "#0e3050"], rail: ["#f4f8fc", "#a8c0d4"], trim: "#6ab0e0", pat: "ikat",    cash: 500},
-  {id: "l_brz", name: "Bronza", felt: ["#1f6a40", "#072a16"], rail: ["#c07a3a", "#4a2208"], trim: "#c07a3a", gem: "#ffb040", pat: "medal", cash: 120, lux: 1},
-  {id: "l_slv", name: "Kumush", felt: ["#1d5aa8", "#061a44"], rail: ["#b8c2d0", "#3a4250"], trim: "#b8c2d0", gem: "#cfefff", pat: "medal", cash: 200, lux: 1},
-  {id: "l_gld", name: "Oltin", felt: ["#8a1020", "#300408"], rail: ["#e2b23a", "#5a3a04"], trim: "#e2b23a", gem: "#ffffff", pat: "medal", cash: 350, lux: 1},
-  {id: "l_rgd", name: "Pushti oltin", felt: ["#2c2c3c", "#0c0c14"], rail: ["#e3a08a", "#6a3424"], trim: "#e3a08a", gem: "#ffc8dc", pat: "medal", cash: 420, lux: 1},
-  {id: "l_plt", name: "Platina", felt: ["#0e4a70", "#031a2c"], rail: ["#dfe8f2", "#5a6878"], trim: "#dfe8f2", gem: "#9fe8ff", pat: "medal", cash: 520, lux: 1},
-  {id: "l_sap", name: "Sapfir", felt: ["#0e1c5a", "#03081e"], rail: ["#b8c2d0", "#3a4250"], trim: "#b8c2d0", gem: "#2a5aff", pat: "medal", cash: 650, lux: 1},
-  {id: "l_emr", name: "Zumrad", felt: ["#0c4a2c", "#02160c"], rail: ["#e2b23a", "#5a3a04"], trim: "#e2b23a", gem: "#12c060", pat: "medal", cash: 750, lux: 1},
-  {id: "l_rby", name: "Yoqut", felt: ["#2a0a10", "#0a0204"], rail: ["#e2b23a", "#5a3a04"], trim: "#e2b23a", gem: "#e0102a", pat: "medal", cash: 850, lux: 1},
-  {id: "l_ame", name: "Ametist", felt: ["#3a0e5a", "#10031e"], rail: ["#b8c2d0", "#3a4250"], trim: "#b8c2d0", gem: "#a050ff", pat: "medal", cash: 950, lux: 1},
-  {id: "l_dia", name: "Brilliant", felt: ["#0c2e6a", "#020a22"], rail: ["#dfe8f2", "#5a6878"], trim: "#dfe8f2", gem: "#ffffff", pat: "medal", cash: 1200, lux: 1},
-  {id: "l_bdi", name: "Qora olmos", felt: ["#121218", "#030305"], rail: ["#2a2a34", "#050508"], trim: "#2a2a34", gem: "#9a9aaa", pat: "medal", cash: 1500, lux: 1},
-  {id: "l_opl", name: "Kamalak opal", felt: ["#1a1040", "#06031a"], rail: ["#b8c2d0", "#3a4250"], trim: "#b8c2d0", gem: "#ffffff", pat: "medal", cash: 2000, lux: 1},
+  {id: "l_brz", name: "Bronza", felt: ["#1f6a40", "#072a16"], rail: ["#c07a3a", "#4a2208"], trim: "#c07a3a", gem: "#ffb040", pat: "medal", cash: 500, gems: 60, usd: 4.99, lux: 1, tier: "premium"},
+  {id: "l_slv", name: "Kumush", felt: ["#1d5aa8", "#061a44"], rail: ["#b8c2d0", "#3a4250"], trim: "#b8c2d0", gem: "#cfefff", pat: "medal", cash: 700, gems: 80, usd: 6.99, lux: 1, tier: "premium"},
+  {id: "l_gld", name: "Oltin", felt: ["#8a1020", "#300408"], rail: ["#e2b23a", "#5a3a04"], trim: "#e2b23a", gem: "#ffffff", pat: "medal", cash: 1000, gems: 110, usd: 9.99, lux: 1, tier: "premium"},
+  {id: "l_rgd", name: "Pushti oltin", felt: ["#2c2c3c", "#0c0c14"], rail: ["#e3a08a", "#6a3424"], trim: "#e3a08a", gem: "#ffc8dc", pat: "medal", cash: 1200, gems: 130, usd: 11.99, lux: 1, tier: "premium"},
+  {id: "l_plt", name: "Platina", felt: ["#0e4a70", "#031a2c"], rail: ["#dfe8f2", "#5a6878"], trim: "#dfe8f2", gem: "#9fe8ff", pat: "medal", cash: 1500, gems: 160, usd: 14.99, lux: 1, tier: "premium"},
+  {id: "l_sap", name: "Sapfir", felt: ["#0e1c5a", "#03081e"], rail: ["#b8c2d0", "#3a4250"], trim: "#b8c2d0", gem: "#2a5aff", pat: "medal", cash: 1800, gems: 190, usd: 17.99, lux: 1, tier: "premium"},
+  {id: "l_emr", name: "Zumrad", felt: ["#0c4a2c", "#02160c"], rail: ["#e2b23a", "#5a3a04"], trim: "#e2b23a", gem: "#12c060", pat: "medal", cash: 2000, gems: 210, usd: 19.99, lux: 1, tier: "premium"},
+  {id: "l_rby", name: "Yoqut", felt: ["#2a0a10", "#0a0204"], rail: ["#e2b23a", "#5a3a04"], trim: "#e2b23a", gem: "#e0102a", pat: "medal", cash: 2200, gems: 230, usd: 21.99, lux: 1, tier: "premium"},
+  {id: "l_ame", name: "Ametist", felt: ["#3a0e5a", "#10031e"], rail: ["#b8c2d0", "#3a4250"], trim: "#b8c2d0", gem: "#a050ff", pat: "medal", cash: 2400, gems: 250, usd: 22.99, lux: 1, tier: "premium"},
+  {id: "l_dia", name: "Brilliant", felt: ["#0c2e6a", "#020a22"], rail: ["#dfe8f2", "#5a6878"], trim: "#dfe8f2", gem: "#ffffff", pat: "medal", cash: 3500, gems: 350, usd: 34.99, lux: 1, tier: "premium"},
+  {id: "l_bdi", name: "Qora olmos", felt: ["#121218", "#030305"], rail: ["#2a2a34", "#050508"], trim: "#2a2a34", gem: "#9a9aaa", pat: "medal", cash: 4200, gems: 420, usd: 39.99, lux: 1, tier: "premium"},
+  {id: "l_opl", name: "Kamalak opal", felt: ["#1a1040", "#06031a"], rail: ["#b8c2d0", "#3a4250"], trim: "#b8c2d0", gem: "#ffffff", pat: "medal", cash: 5000, gems: 500, usd: 49.99, lux: 1, tier: "premium"},
+  {id: "e_sak", name: "Sakura bog'i", felt: ["#1a2e5a", "#060c1e"], rail: ["#ec86aa", "#7a2044"], trim: "#ffd76a", gem: "#ff8ab0", pat: "medal", cash: 300, gems: 30, usd: 2.99, lux: 1, tier: "elite"},
+  {id: "e_ros", name: "Atirgul", felt: ["#0e3a24", "#031408"], rail: ["#3a0610", "#0a0002"], trim: "#e8c050", gem: "#e0203a", pat: "medal", cash: 350, gems: 35, usd: 3.49, lux: 1, tier: "elite"},
+  {id: "e_lol", name: "Lola", felt: ["#1a3a8a", "#061640"], rail: ["#eef2f8", "#b0bed4"], trim: "#1f4fd1", gem: "#d8202a", pat: "medal", cash: 380, gems: 38, usd: 3.79, lux: 1, tier: "elite"},
+  {id: "e_lot", name: "Lotus", felt: ["#3a0e2a", "#12040e"], rail: ["#3aa87a", "#0e4a30"], trim: "#ffd76a", gem: "#ff9ac8", pat: "medal", cash: 400, gems: 40, usd: 3.99, lux: 1, tier: "elite"},
+  {id: "e_pax", name: "Paxta (Rishton)", felt: ["#0a6a8a", "#022a3a"], rail: ["#f2e8d4", "#c4b494"], trim: "#1a5ad8", gem: "#1a5ad8", pat: "medal", cash: 420, gems: 42, usd: 4.19, lux: 1, tier: "elite"},
+  {id: "e_orx", name: "Orxideya", felt: ["#4a1a6a", "#160628"], rail: ["#141418", "#000000"], trim: "#d8dce8", gem: "#c060e0", pat: "medal", cash: 450, gems: 45, usd: 4.49, lux: 1, tier: "elite"},
+  {id: "e_kun", name: "Kungaboqar", felt: ["#1a4a8a", "#061a3a"], rail: ["#c88a3a", "#5a3208"], trim: "#3a8a2a", gem: "#ffc81a", pat: "medal", cash: 300, gems: 30, usd: 2.99, lux: 1, tier: "elite"},
+  {id: "e_atl", name: "Atlas", felt: ["#2a0a3a", "#0a0212"], rail: ["#8a1ab0", "#2a0a3a"], trim: "#ffffff", gem: "#ff2a8a", pat: "medal", cash: 480, gems: 48, usd: 4.79, lux: 1, tier: "elite"},
+  {id: "e_smq", name: "Samarqand", felt: ["#0a2a6a", "#020a24"], rail: ["#1ab0c8", "#064a5a"], trim: "#9ff4ff", gem: "#ffd24d", pat: "medal", cash: 520, gems: 52, usd: 4.99, lux: 1, tier: "elite"},
+  {id: "e_mal", name: "Malaxit", felt: ["#3a0e0e", "#120202"], rail: ["#0e7a4a", "#03301a"], trim: "#6ad8a8", gem: "#1ac080", pat: "medal", cash: 550, gems: 55, usd: 5.49, lux: 1, tier: "elite"},
+  {id: "e_laz", name: "Lazurit", felt: ["#0e3a2a", "#03140c"], rail: ["#12308a", "#061444"], trim: "#4a6ae8", gem: "#2a5aff", pat: "medal", cash: 580, gems: 58, usd: 5.79, lux: 1, tier: "elite"},
+  {id: "e_prl", name: "Marvarid", felt: ["#0a3a5a", "#021424"], rail: ["#ece6f2", "#a8a0b8"], trim: "#ffffff", gem: "#f4f0ff", pat: "medal", cash: 600, gems: 60, usd: 5.99, lux: 1, tier: "elite"},
+  {id: "e_muz", name: "Muz kristall", felt: ["#0e2a5a", "#030a1e"], rail: ["#9fd8f0", "#3a7aa8"], trim: "#f0faff", gem: "#bfefff", pat: "medal", cash: 620, gems: 62, usd: 5.99, lux: 1, tier: "elite"},
+  {id: "e_drg", name: "Ajdar tangasi", felt: ["#1a3a1a", "#061406"], rail: ["#c8201a", "#3a0404"], trim: "#ffe07a", gem: "#ffcf3d", pat: "medal", cash: 650, gems: 65, usd: 6.49, lux: 1, tier: "elite"},
+  {id: "e_olv", name: "Olov", felt: ["#1a1a24", "#050508"], rail: ["#ff5a10", "#1a0400"], trim: "#ffe060", gem: "#ff7a1a", pat: "medal", cash: 680, gems: 68, usd: 6.49, lux: 1, tier: "elite"},
+  {id: "e_kos", name: "Kosmos", felt: ["#10082a", "#04020c"], rail: ["#3a1a6a", "#0a0418"], trim: "#c8a8ff", gem: "#b890ff", pat: "medal", cash: 700, gems: 70, usd: 6.99, lux: 1, tier: "elite"},
+  {id: "e_qah", name: "Qahrabo", felt: ["#0a2a3a", "#020c12"], rail: ["#e08a10", "#6a3000"], trim: "#ffd868", gem: "#ffb020", pat: "medal", cash: 700, gems: 70, usd: 6.99, lux: 1, tier: "elite"},
+  {id: "e_tov", name: "Tovus pati", felt: ["#083a3a", "#021414"], rail: ["#0a6a6a", "#021a1e"], trim: "#6ae8c8", gem: "#1a8aff", pat: "medal", cash: 750, gems: 75, usd: 7.49, lux: 1, tier: "elite"},
   {id: "x_blk", name: "Qora oltin",  felt: ["#1a1a1a", "#050505"], rail: ["#f0c850", "#6a4a08"], trim: "#fff1b8", pat: "gold",    cash: 600},
 ];
 const TABLE_SKINS = () => [
-  ...EXTRA_TABLES.filter(t => t.lux),
+  ...EXTRA_TABLES.filter(t => t.tier === "premium"),
+  ...EXTRA_TABLES.filter(t => t.tier === "elite"),
   ...CITIES.map(c => ({id: c.id, name: c.name, felt: c.felt, rail: c.rail, trim: c.trim, pat: c.pat, coins: Math.max(2000, c.fee * 10), lvl: c.lvl, city: c})),
   ...EXTRA_TABLES.filter(t => !t.lux),
 ];
@@ -2874,14 +2941,195 @@ function luxGem(x, y, r, col, rn) {
   ctx.stroke();
   ctx.fillStyle = "rgba(255,255,255,.95)"; ctx.beginPath(); ctx.arc(x - r * 0.35, y - r * 0.4, r * 0.2, 0, 7); ctx.fill();
 }
+// Flowers painted along the rails (radius r, centred on x, y).
+const FLOWER = {
+  sakura(x, y, r) {
+    for (let k = 0; k < 5; k++) {
+      const a = -Math.PI / 2 + k * 1.2566, px = x + Math.cos(a) * r * 0.5, py = y + Math.sin(a) * r * 0.5;
+      const g = ctx.createRadialGradient(x, y, 0, px, py, r * 0.6); g.addColorStop(0, "#c8305a"); g.addColorStop(0.35, "#ff9cc0"); g.addColorStop(1, "#fff0f6");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(px, py, r * 0.52, r * 0.4, a, 0, 7); ctx.fill();
+      ctx.strokeStyle = "rgba(160,30,80,.35)"; ctx.lineWidth = 0.6; ctx.stroke();
+    }
+    ctx.fillStyle = "#ffd24d"; for (let k = 0; k < 7; k++) { const a = k * 0.9; ctx.beginPath(); ctx.arc(x + Math.cos(a) * r * 0.22, y + Math.sin(a) * r * 0.22, r * 0.07, 0, 7); ctx.fill(); }
+  },
+  rose(x, y, r) {
+    for (let k = 0; k < 6; k++) { const a = k * 1.047 + 0.3; const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, "#5a0010"); g.addColorStop(0.7, "#d8102a"); g.addColorStop(1, "#ff5a6a");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(x + Math.cos(a) * r * 0.45, y + Math.sin(a) * r * 0.45, r * 0.55, r * 0.42, a, 0, 7); ctx.fill(); }
+    ctx.strokeStyle = "#ff8a96"; ctx.lineWidth = 1;
+    for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(x + k * 0.6, y - k * 0.4, r * (0.55 - k * 0.15), 0.3 + k, 4 + k); ctx.stroke(); }
+    ctx.strokeStyle = "#6a0010"; ctx.beginPath(); ctx.arc(x, y, r * 0.12, 0, 5); ctx.stroke();
+  },
+  tulip(x, y, r) {
+    ctx.fillStyle = "#1f4fd1"; ctx.fillRect(x - 0.8, y + r * 0.3, 1.6, r * 0.8);
+    ctx.beginPath(); ctx.moveTo(x, y + r * 0.45);
+    ctx.bezierCurveTo(x - r * 0.95, y + r * 0.2, x - r * 0.75, y - r * 0.6, x - r * 0.45, y - r * 0.95);
+    ctx.lineTo(x - r * 0.15, y - r * 0.35); ctx.lineTo(x, y - r * 0.9); ctx.lineTo(x + r * 0.15, y - r * 0.35); ctx.lineTo(x + r * 0.45, y - r * 0.95);
+    ctx.bezierCurveTo(x + r * 0.75, y - r * 0.6, x + r * 0.95, y + r * 0.2, x, y + r * 0.45); ctx.closePath();
+    const g = ctx.createLinearGradient(x, y - r, x, y + r * 0.5); g.addColorStop(0, "#ff4a4a"); g.addColorStop(1, "#a8081a");
+    ctx.fillStyle = g; ctx.fill(); ctx.strokeStyle = "#1f3a9a"; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(x, y + r * 0.3); ctx.lineTo(x, y - r * 0.5); ctx.stroke();
+  },
+  lotus(x, y, r) {
+    for (const [a, l, w] of [[-1.2, 1, 0.3], [1.2, 1, 0.3], [-0.6, 1.1, 0.34], [0.6, 1.1, 0.34], [0, 1.2, 0.36]]) {
+      ctx.save(); ctx.translate(x, y + r * 0.4); ctx.rotate(a);
+      const g = ctx.createLinearGradient(0, 0, 0, -r * l); g.addColorStop(0, "#ffffff"); g.addColorStop(0.6, "#ffb0d0"); g.addColorStop(1, "#e04a8a");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(r * w * 2, -r * l * 0.5, 0, -r * l); ctx.quadraticCurveTo(-r * w * 2, -r * l * 0.5, 0, 0); ctx.fill();
+      ctx.strokeStyle = "rgba(180,40,100,.4)"; ctx.lineWidth = 0.6; ctx.stroke(); ctx.restore();
+    }
+    ctx.fillStyle = "#ffd24d"; ctx.beginPath(); ctx.ellipse(x, y + r * 0.35, r * 0.3, r * 0.12, 0, 0, 7); ctx.fill();
+  },
+  cotton(x, y, r) {                               // open cotton boll, Rishtan-style outlines
+    ctx.fillStyle = "#7a5a2a";
+    for (let k = 0; k < 5; k++) { const a = -Math.PI / 2 + k * 1.2566 + 0.63; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(a - 0.25) * r * 0.6, y + Math.sin(a - 0.25) * r * 0.6); ctx.lineTo(x + Math.cos(a) * r * 1.05, y + Math.sin(a) * r * 1.05); ctx.lineTo(x + Math.cos(a + 0.25) * r * 0.6, y + Math.sin(a + 0.25) * r * 0.6); ctx.fill(); }
+    for (let k = 0; k < 5; k++) {
+      const a = -Math.PI / 2 + k * 1.2566, px = x + Math.cos(a) * r * 0.36, py = y + Math.sin(a) * r * 0.36;
+      const g = ctx.createRadialGradient(px - r * 0.12, py - r * 0.15, 0, px, py, r * 0.46); g.addColorStop(0, "#ffffff"); g.addColorStop(0.7, "#f4f4fa"); g.addColorStop(1, "#c8cce0");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, r * 0.44, 0, 7); ctx.fill(); ctx.strokeStyle = "#1a5ad8"; ctx.lineWidth = 0.9; ctx.stroke();
+    }
+  },
+  orchid(x, y, r) {
+    ctx.fillStyle = "#e8b8ff"; for (const a of [-Math.PI / 2, Math.PI / 6 + 0.4, Math.PI * 5 / 6 - 0.4]) { ctx.beginPath(); ctx.ellipse(x + Math.cos(a) * r * 0.55, y + Math.sin(a) * r * 0.55, r * 0.5, r * 0.18, a, 0, 7); ctx.fill(); }
+    for (const sg of [-1, 1]) { const g = ctx.createRadialGradient(x, y, 0, x + sg * r * 0.4, y - r * 0.1, r * 0.55); g.addColorStop(0, "#ffffff"); g.addColorStop(1, "#c060e0");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(x + sg * r * 0.45, y - r * 0.05, r * 0.45, r * 0.36, sg * 0.3, 0, 7); ctx.fill(); }
+    const g = ctx.createLinearGradient(x, y, x, y + r * 0.8); g.addColorStop(0, "#ffffff"); g.addColorStop(1, "#7a0a9a");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(x, y + r * 0.4, r * 0.3, r * 0.38, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = "#ffd24d"; ctx.beginPath(); ctx.arc(x, y, r * 0.1, 0, 7); ctx.fill();
+  },
+  sunflower(x, y, r) {
+    for (let k = 0; k < 16; k++) { const a = k * Math.PI / 8; ctx.save(); ctx.translate(x, y); ctx.rotate(a);
+      const g = ctx.createLinearGradient(0, 0, 0, -r); g.addColorStop(0, "#e08a00"); g.addColorStop(1, "#ffe24a");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-r * 0.16, -r * 0.35); ctx.quadraticCurveTo(0, -r * 1.25, r * 0.16, -r * 0.35); ctx.fill(); ctx.restore(); }
+    const g = ctx.createRadialGradient(x - r * 0.1, y - r * 0.1, 0, x, y, r * 0.42); g.addColorStop(0, "#8a5a1a"); g.addColorStop(1, "#3a1a04");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 0.42, 0, 7); ctx.fill();
+    ctx.fillStyle = "rgba(255,210,120,.5)"; for (let k = 0; k < 12; k++) { const a = k * 2.4, d = Math.sqrt(k) * r * 0.1; ctx.beginPath(); ctx.arc(x + Math.cos(a) * d, y + Math.sin(a) * d, 0.7, 0, 7); ctx.fill(); }
+  },
+};
+// Rail surfaces for the exclusive tables.
+const LUX_BASE = {
+  metal(st, X, Y, W, H) {
+    const [hi, mid, lo] = st.metal, g = ctx.createLinearGradient(X, Y, X + W * 0.35, Y + H);            // mirror polish: bands of reflection
+    [[0, mid], [0.08, hi], [0.16, lo], [0.3, mid], [0.4, hi], [0.52, lo], [0.66, mid], [0.78, hi], [0.9, lo], [1, mid]].forEach(([o, c]) => g.addColorStop(o, c));
+    ctx.fillStyle = g; ctx.fillRect(X, Y, W, H);
+  },
+  lacquer(st, X, Y, W, H) {
+    const [hi, mid, lo] = st.metal, g = ctx.createLinearGradient(X, Y, X + W * 0.2, Y + H);
+    [[0, mid], [0.3, lo], [0.5, mid], [0.7, lo], [1, mid]].forEach(([o, c]) => g.addColorStop(o, c));
+    ctx.fillStyle = g; ctx.fillRect(X, Y, W, H);
+    ctx.fillStyle = hi; ctx.globalAlpha = 0.12; ctx.fillRect(X, Y, W, 8); ctx.globalAlpha = 1;
+  },
+  porcelain(st, X, Y, W, H) { const [hi, mid] = st.metal, g = ctx.createLinearGradient(X, Y, X, Y + H); g.addColorStop(0, hi); g.addColorStop(0.5, mid); g.addColorStop(1, hi); ctx.fillStyle = g; ctx.fillRect(X, Y, W, H); },
+  jade(st, X, Y, W, H, rn) {
+    const [hi, mid, lo] = st.metal; ctx.fillStyle = mid; ctx.fillRect(X, Y, W, H);
+    for (let i = 0; i < 90; i++) { const x = X + rn() * W, y = Y + rn() * H, r = 10 + rn() * 40, g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, rn() < 0.5 ? hi : lo); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.globalAlpha = 0.35; ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r); }
+    ctx.globalAlpha = 1;
+  },
+  malachite(st, X, Y, W, H, rn) {
+    const cols = ["#03301a", "#0e7a4a", "#1aa06a", "#0a5a36", "#6ad8a8", "#0e6a40"]; ctx.fillStyle = "#0e6a44"; ctx.fillRect(X, Y, W, H);
+    for (let i = 0; i < 26; i++) {
+      const x = X + rn() * W, y = rn() < 0.5 ? Y + rn() * 50 : Y + H - rn() * 50, R0 = 40 + rn() * 50;
+      for (let r = R0, k = 0; r > 2; r -= 2.6 + rn() * 2, k++) { ctx.strokeStyle = cols[k % cols.length]; ctx.lineWidth = 1.6 + rn() * 1.8; ctx.beginPath(); ctx.ellipse(x, y, r, r * 0.8, 0.4, 0, 7); ctx.stroke(); }
+    }
+  },
+  lapis(st, X, Y, W, H, rn) {
+    LUX_BASE.jade(st, X, Y, W, H, rn);
+    for (let i = 0; i < 500; i++) { ctx.fillStyle = rn() < 0.7 ? "#ffd76a" : "#fff6c8"; ctx.globalAlpha = 0.5 + rn() * 0.5; ctx.beginPath(); ctx.arc(X + rn() * W, Y + rn() * H, 0.4 + rn() * 1.1, 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  },
+  pearl(st, X, Y, W, H, rn) {
+    ctx.fillStyle = "#f2eef8"; ctx.fillRect(X, Y, W, H);
+    for (let i = 0; i < 120; i++) { const x = X + rn() * W, y = Y + rn() * H, r = 8 + rn() * 26, g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, `hsl(${170 + rn() * 170},90%,82%)`); g.addColorStop(1, "rgba(255,255,255,0)"); ctx.globalAlpha = 0.5; ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r); }
+    ctx.globalAlpha = 0.25; ctx.lineWidth = 0.8;
+    for (let i = 0; i < 60; i++) { ctx.strokeStyle = rn() < 0.5 ? "#ffffff" : "#e8b8d8"; const y = Y + rn() * H; ctx.beginPath(); for (let x = X; x < X + W; x += 12) ctx.lineTo(x, y + Math.sin(x / 30 + i) * 4); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+  },
+  frost(st, X, Y, W, H, rn) {
+    const [hi, mid, lo] = st.metal, g = ctx.createLinearGradient(X, Y, X + W * 0.3, Y + H);
+    [[0, hi], [0.25, mid], [0.5, hi], [0.75, lo], [1, mid]].forEach(([o, c]) => g.addColorStop(o, c)); ctx.fillStyle = g; ctx.fillRect(X, Y, W, H);
+    ctx.strokeStyle = "#ffffff"; ctx.lineCap = "round";
+    for (let i = 0; i < 70; i++) {
+      const x = X + rn() * W, y = rn() < 0.5 ? Y + 6 + rn() * 40 : Y + H - 6 - rn() * 40, r = 3 + rn() * 5; ctx.globalAlpha = 0.5 + rn() * 0.5; ctx.lineWidth = 0.8;
+      for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3, ex = x + Math.cos(a) * r, ey = y + Math.sin(a) * r; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(ex, ey);
+        for (const sg of [-1, 1]) { ctx.moveTo(x + Math.cos(a) * r * 0.55, y + Math.sin(a) * r * 0.55); ctx.lineTo(x + Math.cos(a) * r * 0.55 + Math.cos(a + sg * 0.8) * r * 0.35, y + Math.sin(a) * r * 0.55 + Math.sin(a + sg * 0.8) * r * 0.35); } ctx.stroke(); }
+    }
+    ctx.globalAlpha = 1;
+  },
+  amber(st, X, Y, W, H, rn) {
+    LUX_BASE.jade(st, X, Y, W, H, rn);
+    for (let i = 0; i < 60; i++) { ctx.fillStyle = "rgba(60,20,0,.5)"; ctx.beginPath(); ctx.ellipse(X + rn() * W, Y + rn() * H, 0.6 + rn() * 2, 0.4 + rn(), rn() * 3, 0, 7); ctx.fill(); }
+    for (let i = 0; i < 60; i++) { ctx.strokeStyle = "rgba(255,255,230,.6)"; ctx.lineWidth = 0.6; ctx.beginPath(); ctx.arc(X + rn() * W, Y + rn() * H, 0.6 + rn() * 1.6, 0, 7); ctx.stroke(); }
+  },
+  nebula(st, X, Y, W, H, rn) {
+    ctx.fillStyle = "#0a0418"; ctx.fillRect(X, Y, W, H);
+    for (let i = 0; i < 50; i++) { const x = X + rn() * W, y = Y + rn() * H, r = 15 + rn() * 45, g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, ["#ff4fa0", "#8a5aff", "#40c8ff", "#ff8a3a"][rn() * 4 | 0]); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.globalAlpha = 0.35; ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r); }
+    ctx.globalAlpha = 1; ctx.fillStyle = "#fff";
+    for (let i = 0; i < 400; i++) { ctx.globalAlpha = 0.3 + rn() * 0.7; ctx.beginPath(); ctx.arc(X + rn() * W, Y + rn() * H, rn() < 0.05 ? 1.4 : 0.5, 0, 7); ctx.fill(); }
+    ctx.globalAlpha = 1;
+  },
+  ikat(st, X, Y, W, H, rn, each) {                // Uzbek khan-atlas silk: feathered lozenges in bright bands
+    ctx.fillStyle = "#2a0a3a"; ctx.fillRect(X, Y, W, H);
+    const pal = ["#e0107a", "#ffd21a", "#10a060", "#1a4ad8", "#ffffff", "#ff5a1a"];
+    each(L => {
+      for (let x = -12, k = 0; x < L + 12; x += 22, k++) {
+        ctx.fillStyle = pal[k % pal.length]; ctx.fillRect(x, -20, 22, 40);
+        ctx.fillStyle = pal[(k + 3) % pal.length]; ctx.beginPath();
+        for (let t = 0; t <= 16; t++) { const a = t / 16 * Math.PI * 2, rx = 9, ry = 17, j = t % 2 ? 0.8 : 1.12; ctx.lineTo(x + 11 + Math.cos(a) * rx * j * Math.abs(Math.cos(a)) ** 0.4, Math.sin(a) * ry * j); }
+        ctx.fill();
+        ctx.fillStyle = pal[(k + 1) % pal.length]; ctx.beginPath(); ctx.moveTo(x + 11, -7); ctx.lineTo(x + 15, 0); ctx.lineTo(x + 11, 7); ctx.lineTo(x + 7, 0); ctx.fill();
+      }
+    });
+  },
+  girih(st, X, Y, W, H, rn, each) {               // Samarkand majolica: turquoise tiles, cobalt and gold stars
+    LUX_BASE.porcelain(st, X, Y, W, H);
+    const star = (x, y, r1, r2, n) => { ctx.beginPath(); for (let i = 0; i < 2 * n; i++) { const a = i * Math.PI / n, r = i % 2 ? r2 : r1; ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); } ctx.closePath(); };
+    each(L => { for (let x = 6; x < L; x += 30) {
+      star(x + 9, 0, 14, 9, 8); ctx.fillStyle = "#12309a"; ctx.fill(); ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1.2; ctx.stroke();
+      star(x + 9, 0, 7, 4, 8); ctx.fillStyle = "#ffd24d"; ctx.fill();
+      ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.moveTo(x + 24, -5); ctx.lineTo(x + 28, 0); ctx.lineTo(x + 24, 5); ctx.lineTo(x + 20, 0); ctx.fill();
+    } });
+  },
+  scales(st, X, Y, W, H, rn, each) {
+    ctx.fillStyle = "#3a0404"; ctx.fillRect(X, Y, W, H);
+    each(L => { for (let row = 0; row < 6; row++) { const y = -20 + row * 7.5; for (let x = (row % 2) * 6 - 12; x < L + 12; x += 12) {
+      const g = ctx.createRadialGradient(x, y - 2, 0.5, x, y, 8); g.addColorStop(0, "#fff0a0"); g.addColorStop(0.4, "#e8a820"); g.addColorStop(0.8, "#c8201a"); g.addColorStop(1, "#3a0404");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 7.2, 0, Math.PI); ctx.closePath(); ctx.fill(); ctx.strokeStyle = "rgba(60,0,0,.6)"; ctx.lineWidth = 0.6; ctx.stroke(); } } });
+  },
+  fire(st, X, Y, W, H, rn, each) {
+    ctx.fillStyle = "#1a0400"; ctx.fillRect(X, Y, W, H);
+    each(L => { for (const lay of [0, 1]) for (let x = -6; x < L + 6; x += lay ? 9 : 13) {
+      const h = (lay ? 22 : 34) * (0.7 + rn() * 0.4), w = lay ? 5 : 8, b = 19, xx = x + rn() * 4;
+      const g = ctx.createLinearGradient(0, b, 0, b - h); g.addColorStop(0, lay ? "#fff8c0" : "#ff8a1a"); g.addColorStop(0.5, lay ? "#ffd040" : "#ff3a00"); g.addColorStop(1, "rgba(255,40,0,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(xx - w, b); ctx.quadraticCurveTo(xx - w * 1.2, b - h * 0.5, xx + (rn() - 0.5) * 6, b - h); ctx.quadraticCurveTo(xx + w * 1.2, b - h * 0.5, xx + w, b); ctx.fill();
+    } });
+  },
+  feathers(st, X, Y, W, H, rn, each) {
+    ctx.fillStyle = "#06343a"; ctx.fillRect(X, Y, W, H);
+    each(L => { for (let x = 4; x < L; x += 28) {
+      ctx.strokeStyle = "rgba(120,220,120,.35)"; ctx.lineWidth = 0.6; for (let k = -10; k <= 10; k++) { ctx.beginPath(); ctx.moveTo(x + 14, 0); ctx.lineTo(x + 14 + k * 1.6, (k % 2 ? -1 : 1) * 19); ctx.stroke(); }
+      for (const [rx, ry, c] of [[12, 9, "#9ad83a"], [9.5, 7, "#d8a830"], [7, 5.4, "#1aa0a0"], [4.6, 3.8, "#1a3ad8"], [2.6, 2.2, "#0a0a3a"]]) {
+        ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x + 14, 0, rx, ry, 0, 0, 7); ctx.fill(); }
+      ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.beginPath(); ctx.arc(x + 12.5, -1.5, 0.9, 0, 7); ctx.fill();
+    } });
+  },
+};
 function luxRail(st, OX, OY, OW, OH, rn) {
   const [hi, mid, lo] = st.metal;
-  const g = ctx.createLinearGradient(OX, OY, OX + OW * 0.35, OY + OH);            // mirror polish: bands of reflection
-  [[0, mid], [0.08, hi], [0.16, lo], [0.3, mid], [0.4, hi], [0.52, lo], [0.66, mid], [0.78, hi], [0.9, lo], [1, mid]].forEach(([o, c]) => g.addColorStop(o, c));
-  ctx.fillStyle = g; ctx.fillRect(OX, OY, OW, OH);
   const segs = [[FX + 30, FY - 33, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY - 33, FW / 2 - 60, 0], [FX + 30, FY + FH + 33, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY + FH + 33, FW / 2 - 60, 0],
     [FX - 33, FY + 30, FH - 60, 1], [FX + FW + 33, FY + 30, FH - 60, 1]];
   const each = fn => { for (const [x, y, L, v] of segs) { ctx.save(); ctx.translate(x, y); if (v) ctx.rotate(Math.PI / 2); fn(L); ctx.restore(); } };
+  (LUX_BASE[st.base || "metal"] || LUX_BASE.metal)(st, OX, OY, OW, OH, rn, each);
+  if (st.flora) each(L => {                        // a climbing vine with leaves and flowers
+    const f = FLOWER[st.flora], yv = x => Math.sin(x / 60 * Math.PI) * 7;
+    ctx.strokeStyle = st.vine || hi; ctx.lineWidth = 1.8; ctx.beginPath(); for (let x = 0; x <= L; x += 3) ctx.lineTo(x, yv(x)); ctx.stroke();
+    for (let x = 15, k = 0; x < L; x += 15, k++) { const sg = k % 2 ? 1 : -1, y = yv(x); ctx.fillStyle = st.leaf || st.vine; ctx.beginPath(); ctx.ellipse(x + 3, y + sg * 5, 5, 2.2, sg * 0.7, 0, 7); ctx.fill(); }
+    for (let x = 30; x < L - 8; x += 60) { ctx.save(); ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = 3; ctx.shadowOffsetY = 1; f(x, yv(x), 11); ctx.restore(); }
+  });
+  each(L => {                                     // engraved border lines along both edges of the rail
+    for (const y of [-16.5, 15.5]) { ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(-20, y); ctx.lineTo(L + 20, y); ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 0.7; ctx.beginPath(); ctx.moveTo(-20, y + 1.1); ctx.lineTo(L + 20, y + 1.1); ctx.stroke(); }
+  });
   if (st.brush) each(L => { for (let i = 0; i < 70; i++) { const y = (rn() - 0.5) * 30; ctx.strokeStyle = rn() < 0.5 ? "rgba(255,255,255,.25)" : "rgba(0,0,0,.14)"; ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(-30, y); ctx.lineTo(L + 30, y); ctx.stroke(); } });
   if (st.fili) each(L => {                        // engraved acanthus scrolls
     const scroll = (col, w, dy) => {
@@ -2894,8 +3142,12 @@ function luxRail(st, OX, OY, OW, OH, rn) {
         ctx.beginPath(); ctx.ellipse(x + 6, dy - 5 * s, 3.2, 1.4, -0.6 * s, 0, 7); ctx.ellipse(x + 20, dy - 5 * s, 3.2, 1.4, 0.6 * s, 0, 7); ctx.stroke();
       }
     };
-    scroll(shade(lo, -30), 2.2, 1); scroll(shade(hi, 0), 0.9, 0);
+    const fc = st.filiC || [shade(lo, -30), hi];
+    scroll(fc[0], 2.2, 1); scroll(fc[1], 0.9, 0);
   });
+  if (st.pearlrow) each(L => { for (let x = 4; x < L; x += 9.5) {
+    const g = ctx.createRadialGradient(x - 1.3, -1.5, 0.2, x, 0, 4.4); g.addColorStop(0, "#ffffff"); g.addColorStop(0.5, "#f4eefa"); g.addColorStop(0.85, "#c8b8d8"); g.addColorStop(1, "#8a7a9a");
+    ctx.fillStyle = "rgba(0,0,0,.25)"; ctx.beginPath(); ctx.arc(x + 0.6, 1, 4.4, 0, 7); ctx.fill(); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, 0, 4.3, 0, 7); ctx.fill(); } });
   if (st.gemrow) each(L => {                      // big set stones in claw settings
     for (let x = 12; x < L; x += 26) {
       ctx.fillStyle = shade(hi, -10); ctx.beginPath(); ctx.arc(x, 0, 7.6, 0, 7); ctx.fill();
@@ -3202,7 +3454,7 @@ function paintTable(city) {
   };
   if (!lucky) {
     if (!st.lux) { for (const [a, l] of segH) { along(a, my, l); along(a, by, l); } for (const [a, l] of segV) { along(lx, a, l, true); along(rx, a, l, true); } }
-    const sights = !st.pave && !st.gemrow;
+    const sights = !st.pave && !st.gemrow && !st.elite;
     for (let i = 1; i < 8; i++) {
       if (i === 4) continue;
       if (i === 2 || i === 6) { medallion(FX + FW * i / 8, my); medallion(FX + FW * i / 8, by); }
@@ -3226,7 +3478,8 @@ function paintTable(city) {
       ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-w / 2, h / 2); ctx.quadraticCurveTo(-w / 2, -h / 2, 0, -h / 2); ctx.quadraticCurveTo(w / 2, -h / 2, w / 2, h / 2); ctx.closePath(); ctx.fill();
       ctx.shadowColor = "transparent"; ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(-w / 2 + 6, h / 2); ctx.quadraticCurveTo(-w / 2 + 6, -h / 2 + 6, 0, -h / 2 + 6); ctx.quadraticCurveTo(w / 2 - 6, -h / 2 + 6, w / 2 - 6, h / 2); ctx.stroke();
-      ctx.fillStyle = shade(trim, 90); for (const sx of [-w / 2 + 9, w / 2 - 9]) { ctx.beginPath(); ctx.arc(sx, h / 2 - 7, 1.8, 0, 7); ctx.fill(); }
+      if (st.lux) for (const sx of [-w / 2 + 10, w / 2 - 10]) luxGem(sx, h / 2 - 8, 3.4, city.gem || trim, rn);
+      else { ctx.fillStyle = shade(trim, 90); for (const sx of [-w / 2 + 9, w / 2 - 9]) { ctx.beginPath(); ctx.arc(sx, h / 2 - 7, 1.8, 0, 7); ctx.fill(); } }
       ctx.restore();
     };
     for (const p of POCKETS) {
@@ -4477,21 +4730,38 @@ function buildShop(tab) {
       <div class="tblgrid" id="tblGrid"></div>`;
     const grid = $("tblGrid"), cards = [];
     const add = (t, own, sel, label, sub, btnHTML, fn) => {
-      const el = document.createElement("div"); el.className = "tblcard" + (sel ? " sel" : "") + (t && t.lux ? " lux" : "");
+      const el = document.createElement("div"); el.className = "tblcard" + (sel ? " sel" : "") + (t && t.lux ? " lux" : "") + (t && t.tier === "elite" ? " el" : "");
       el.innerHTML = `<div class="tprev"></div>${label}<small class="muted">${sub}</small>${btnHTML}`;
       const btn = el.querySelector("button"); if (fn) btn.onclick = fn;
-      grid.appendChild(el); cards.push([el.querySelector(".tprev"), t]);
+      grid.appendChild(el); cards.push([el.querySelector(".tprev"), t]); return el;
     };
     add(null, true, !profile.tableSkin, `<b>🌍 ${T("Shahar stoli")}</b>`, T("Har shaharda o'z stoli"),
       !profile.tableSkin ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue">${T("TANLASH")}</button>`,
       profile.tableSkin ? () => { profile.tableSkin = ""; tableCache = null; save(); buildShop("tables"); } : null);
+    const head = txt => { const h = document.createElement("div"); h.className = "tblhead"; h.innerHTML = txt; grid.appendChild(h); };
+    let lastSec = "";
     for (const t of list) {
+      const sec = t.tier || (t.city ? "city" : "special");
+      if (sec !== lastSec) { lastSec = sec; head({premium: `👑 ${T("Premium")} <small>${T("qimmatbaho metall va toshlar · tovlanadi")}</small>`, elite: `✨ ${T("Eksklyuziv")} <small>${T("gulli, naqshli, noyob hoshiyalar")}</small>`,
+        city: `🏙 ${T("Shahar stollari")}`, special: `💎 ${T("Maxsus stollar")}`}[sec]); }
       const own = ownsTable(t), sel = profile.tableSkin === t.id, p = t.cash ? {cur: "cash", v: t.cash} : {cur: "coins", v: t.coins};
+      const use = () => { profile.tableSkin = t.id; tableCache = null; save(); buildShop("tables"); };
+      const got = () => { (profile.tables = profile.tables || []).push(t.id); use(); };
       const locked = !own && t.lvl && profile.level < t.lvl;
+      if (t.tier && !own) {                         // exclusive tables: pay with cash, gems or real money
+        const el = add(t, own, sel, `<b>${t.tier === "premium" ? "👑 " : "✨ "}${T(t.name)}</b>`, T(t.tier === "premium" ? "Premium hoshiya · tovlanadi" : "Eksklyuziv hoshiya"),
+          `<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(t.cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(t.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">$${t.usd}</button>`}</div>`, null);
+        el.querySelector('[data-p="cash"]').onclick = () => buy({cur: "cash", v: t.cash}, T(t.name), got);
+        el.querySelector('[data-p="gems"]').onclick = () => {
+          if ((profile.gems || 0) < t.gems) return toast("😕", T("Olmos yetmaydi"), T(t.name));
+          profile.gems -= t.gems; Snd.coin(6); toast("🛍", T(t.name), T("Sotib olindi!")); got(); updateNav();
+        };
+        const u = el.querySelector('[data-p="usd"]'); if (u) u.onclick = () => Net.checkout("tbl_" + t.id, u);
+        continue;
+      }
       const btnHTML = locked ? `<button class="btn gray" disabled>🔒 ${T("Daraja")} ${t.lvl}</button>` : priceBtn(p, own, sel);
-      add(t, own, sel, `<b>${t.city ? "🏙 " : t.lux ? "👑 " : "💎 "}${T(t.name)}</b>`, t.city ? esc(T(t.city.sub)) : T(t.lux ? "Premium hoshiya · tovlanadi" : "Maxsus stol"), btnHTML, sel || locked ? null : () => {
-        const use = () => { profile.tableSkin = t.id; tableCache = null; save(); buildShop("tables"); };
-        if (own) use(); else buy(p, T(t.name), () => { (profile.tables = profile.tables || []).push(t.id); use(); });
+      add(t, own, sel, `<b>${t.city ? "🏙 " : t.tier === "premium" ? "👑 " : t.tier ? "✨ " : "💎 "}${T(t.name)}</b>`, t.city ? esc(T(t.city.sub)) : T(t.tier ? "Sizniki" : "Maxsus stol"), btnHTML, sel || locked ? null : () => {
+        if (own) use(); else buy(p, T(t.name), got);
       });
     }
     // previews are painted one by one so the tab opens instantly
@@ -5006,6 +5276,7 @@ const Net = (() => {
     for (const [k, v] of Object.entries(g.items || {})) {
       if (["luckyTries", "wheelTries", "scratchTries", "goldShots", "sboxes"].includes(k)) profile[k] = (profile[k] | 0) + (v | 0);
       if (k === "cues") for (const id of [].concat(v)) if (CUES.some(c => c.id === id) && !profile.cues.includes(id)) { profile.cues.push(id); profile.cue = id; }
+      if (k === "tables") for (const id of [].concat(v)) if (!(profile.tables = profile.tables || []).includes(id)) { profile.tables.push(id); profile.tableSkin = id; tableCache = null; }
       if (k === "avs") for (const id of [].concat(v)) if (!profile.avs.includes(+id)) { profile.avs.push(+id); profile.avatar = +id; }
     }
     save(); if (g.items && $("mini").classList.contains("on")) buildMini();
