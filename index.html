@@ -1056,6 +1056,7 @@ const POCKETS = [
   {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 21, dr: 19, mid: true},
   {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
+const MID_MOUTH = 30;   // half-width of a middle pocket mouth at the cushion nose (the jaws angle in to the hole)
 const POCKET_AIMS = [
   {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
   {x: 5, y: FH - 5}, {x: FW / 2, y: FH - 1, mid: true}, {x: FW - 5, y: FH - 5},
@@ -2691,14 +2692,15 @@ function aiThink() {
   }
   let plan;
   if (G.isBreak) {
-    const apex = G.balls.find(b => b.n === 1);
+    const apex = G.balls.find(b => b.n === 1 && !b.out) || G.balls.find(b => !b.out && b.n !== 0) || {x: FW * 0.72, y: FH / 2};
     plan = {angle: Math.atan2(apex.y - cue.y, apex.x - cue.x) + gauss() * 0.004, power: rnd(0.93, 1)};
   } else {
     plan = bestShotFrom(cue.x, cue.y);
     if (!plan) {
       const tg = legalTargets(G.cur);
       const clear = tg.filter(t => segClear(G.balls, cue.x, cue.y, t.x, t.y, [0, t.n]));
-      const t = pick(clear.length ? clear : tg);
+      const any = G.balls.filter(b => !b.out && b.n !== 0);
+      const t = pick(clear.length ? clear : tg.length ? tg : any.length ? any : [{x: FW / 2, y: FH / 2}]);
       plan = {angle: Math.atan2(t.y - cue.y, t.x - cue.x), power: rnd(0.45, 0.65)};
     }
     plan.angle += gauss() * G.skill;
@@ -4207,10 +4209,10 @@ function paintTable(city) {
     // pocket holes
     for (const p of POCKETS) {
       const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
-      if (p.mid) {   // the hole flows into the cushion notch as one dark-red funnel that fades out into the cloth
-        const sy2 = p.y < 0 ? -1 : 1, g = ctx.createLinearGradient(0, y, 0, sy2 * 8);
-        g.addColorStop(0, "rgba(50,8,12,1)"); g.addColorStop(0.6, "rgba(34,6,10,.8)"); g.addColorStop(1, "rgba(20,4,8,0)");
-        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - r + 1, y); ctx.lineTo(x - 26, sy2 * 8); ctx.lineTo(x + 26, sy2 * 8); ctx.lineTo(x + r - 1, y); ctx.closePath(); ctx.fill();
+      if (p.mid) {   // the hole flows into the cushion notch as one dark funnel that fades out at the cushion nose
+        const ye = p.y < 0 ? 0 : FH, g = ctx.createLinearGradient(0, y, 0, ye);
+        g.addColorStop(0, "#160306"); g.addColorStop(0.45, shade(city.felt[1], -40)); g.addColorStop(1, shade(city.felt[1], -8));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - r + 1, y); ctx.lineTo(x - MID_MOUTH - 2, ye); ctx.lineTo(x + MID_MOUTH + 2, ye); ctx.lineTo(x + r - 1, y); ctx.closePath(); ctx.fill();
       }
       ctx.fillStyle = "#12040a"; ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
       const pg = ctx.createRadialGradient(x - p.dx * 0.25, y - p.dy * 0.25, 2, x, y, r + 1);
@@ -4219,15 +4221,15 @@ function paintTable(city) {
     }
   }
   // cushions with angled jaws at the pockets
-  const C = 16, cA = 32, mA = 20;
+  const C = 16, cA = 32, mA = MID_MOUTH;
   const segs = lucky ? [
     [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
     [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
   ] : [
-    [[cA, 0], [FW / 2 - mA, 0], [FW / 2 - mA + 2, -C], [cA - C, -C], "t"],
-    [[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + mA - 2, -C], "t"],
-    [[cA, FH], [FW / 2 - mA, FH], [FW / 2 - mA + 2, FH + C], [cA - C, FH + C], "b"],
-    [[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + mA - 2, FH + C], "b"],
+    [[cA, 0], [FW / 2 - mA, 0], [FW / 2 - 17, -C], [cA - C, -C], "t"],
+    [[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + 17, -C], "t"],
+    [[cA, FH], [FW / 2 - mA, FH], [FW / 2 - 17, FH + C], [cA - C, FH + C], "b"],
+    [[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + 17, FH + C], "b"],
     [[0, cA], [0, FH - cA], [-C, FH - cA + C], [-C, cA - C], "l"],
     [[FW, cA], [FW, FH - cA], [FW + C, FH - cA + C], [FW + C, cA - C], "r"],
   ];
@@ -4984,7 +4986,7 @@ function update() {
       /* opponent's turn — their device runs the clock */
     } else if (curP().isAI) {
       if (!G.aiTask && !G.aiWait) {
-        G.aiWait = setTimeout(() => { G.aiWait = null; if (game === G && !G.over && !G.moving) aiThink(); }, G.demo ? 500 : rnd(700, 1300));
+        G.aiWait = setTimeout(() => { G.aiWait = null; if (game === G && !G.over && !G.moving) try { aiThink(); } catch (e) { onFrameError(e); } }, G.demo ? 500 : rnd(700, 1300));
       }
       if (G.aiTask) aiUpdate();
     } else if (timed() && G.turnLimit && !G.spinOpen && mode === "game" && !$("modal").classList.contains("on")) {
@@ -5049,7 +5051,36 @@ function render() {
   drawIntroBanner(G);
   drawConfetti();
 }
-function frame() { update(); render(); requestAnimationFrame(frame); }
+let frameErr = 0;
+function frame() {
+  try { update(); watchdog(); } catch (e) { onFrameError(e); }
+  try { render(); } catch (e) { onFrameError(e); try { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; } catch (_) {} }
+  requestAnimationFrame(frame);
+}
+function onFrameError(e) {   // log once, then un-stick the current game so play carries on
+  if (frameErr++ < 3) console.error("frame error:", e);
+  const G = game; if (!G) return;
+  G.strike = null; G.aiTask = null; if (G.aiWait) { clearTimeout(G.aiWait); G.aiWait = null; }
+  for (const b of G.balls) if (!isFinite(b.x) || !isFinite(b.y) || !isFinite(b.vx) || !isFinite(b.vy)) { b.vx = b.vy = 0; if (!isFinite(b.x) || !isFinite(b.y)) { const sp = freeSpot(FW * 0.25, FH / 2); b.x = sp.x; b.y = sp.y; } }
+}
+// safety net: whatever happens, a turn can never hang forever
+function watchdog() {
+  const G = game; if (!G || G.demo || G.over || mode !== "game" || G.type === "lucky") return;
+  const now = performance.now();
+  if (G.moving) {
+    G.movingSince = G.movingSince || now;
+    if (now - G.movingSince > 20000) { for (const b of G.balls) b.vx = b.vy = 0; }   // balls that never settle: stop them
+    return;
+  }
+  G.movingSince = 0;
+  if (introOn(G) || G.spinOpen || $("modal").classList.contains("on") || G.strike) return;
+  const idle = (now - G.turnStart) / 1000, pl = curP();
+  if (pl.isAI && !pl.remote) {
+    if (!G.aiTask && idle > 6) { if (G.aiWait) { clearTimeout(G.aiWait); G.aiWait = null; } try { aiThink(); } catch (e) { G.aiTask = null; requestShot(0.5); } G.turnStart = now; }
+  } else if (!pl.remote && timed() && G.turnLimit && idle > G.turnLimit + 4) {   // stuck finger / lost touch-up: give the turn away like a normal timeout
+    input.drag = null; input.power = 0; input.charging = false; timeoutFoul();
+  }
+}
 
 // ---------------------------------------------------------------- UI: screens
 const MENU_SCREENS = ["eventsScr", "freeScr", "inbox", "withFrScr", "settingsScr", "clubsScr", "passScr", "home", "cities", "tourScr", "shop", "rewards", "leader", "mini", "wheelScr", "profileScr", "friendsScr"];
