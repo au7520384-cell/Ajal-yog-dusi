@@ -1050,13 +1050,13 @@ const FONT = '"Lilita One","Arial Black",Impact,sans-serif';
 
 const POCKETS = [
   {x: 0, y: 0, r: 37, dx: -16, dy: -16, dr: 27},          // r = how close a ball centre must get to drop (wide mouths: jaws never make a ball bounce back out of a pocket it is visibly over)
-  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -21, dr: 19, mid: true},
+  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -19, dr: 26, mid: true},
   {x: FW, y: 0, r: 37, dx: 16, dy: -16, dr: 27},
   {x: 0, y: FH, r: 37, dx: -16, dy: 16, dr: 27},
-  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 21, dr: 19, mid: true},
+  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 19, dr: 26, mid: true},
   {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
-const MID_MOUTH = 30;   // half-width of a middle pocket mouth at the cushion nose (the jaws angle in to the hole)
+const MID_MOUTH = 34;   // half-width of a middle pocket mouth at the cushion nose (the jaws angle in to the hole)
 const POCKET_AIMS = [
   {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
   {x: 5, y: FH - 5}, {x: FW / 2, y: FH - 1, mid: true}, {x: FW - 5, y: FH - 5},
@@ -4119,8 +4119,7 @@ function paintTable(city) {
     mg.addColorStop(0, shade(trim, 70)); mg.addColorStop(0.35, trim); mg.addColorStop(0.55, shade(trim, -60)); mg.addColorStop(0.8, shade(trim, 40)); mg.addColorStop(1, shade(trim, -40));
     ctx.strokeStyle = mg; ctx.lineWidth = 4; rr(OX + 2.5, OY + 2.5, OW - 5, OH - 5, 28); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1; rr(OX + 5, OY + 5, OW - 10, OH - 10, 26); ctx.stroke();
-    ctx.strokeStyle = shade(r2, -55); ctx.lineWidth = 7; ctx.strokeRect(FX - 21, FY - 21, FW + 42, FH + 42);
-    ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1; ctx.strokeRect(FX - 25, FY - 25, FW + 50, FH + 50);
+    ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1.5; ctx.strokeRect(FX - 19.5, FY - 19.5, FW + 39, FH + 39);
     const plate = (x, y, w, h, rot) => {
       ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
       const g = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
@@ -4209,6 +4208,12 @@ function paintTable(city) {
     // pocket holes
     for (const p of POCKETS) {
       const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
+      if (!p.mid) {  // corner mouth: the hole flows between the two angled jaws into the cloth
+        const sx = p.x ? -1 : 1, sy3 = p.y ? -1 : 1, ex = p.x + sx * 20, ey = p.y + sy3 * 20, g = ctx.createLinearGradient(x, y, ex, ey);
+        g.addColorStop(0, "#160306"); g.addColorStop(0.5, shade(city.felt[1], -40)); g.addColorStop(1, shade(city.felt[1], -8));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x, y);
+        ctx.lineTo(p.x + sx * 12, p.y - sy3 * 19); ctx.lineTo(p.x + sx * 34, p.y); ctx.lineTo(p.x, p.y + sy3 * 34); ctx.lineTo(p.x - sx * 19, p.y + sy3 * 12); ctx.closePath(); ctx.fill();
+      }
       if (p.mid) {   // the hole flows into the cushion notch as one dark funnel that fades out at the cushion nose
         const ye = p.y < 0 ? 0 : FH, g = ctx.createLinearGradient(0, y, 0, ye);
         g.addColorStop(0, "#160306"); g.addColorStop(0.45, shade(city.felt[1], -40)); g.addColorStop(1, shade(city.felt[1], -8));
@@ -4221,15 +4226,15 @@ function paintTable(city) {
     }
   }
   // cushions with angled jaws at the pockets
-  const C = 16, cA = 32, mA = MID_MOUTH;
+  const C = 19, cA = 32, mA = MID_MOUTH;
   const segs = lucky ? [
     [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
     [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
   ] : [
-    [[cA, 0], [FW / 2 - mA, 0], [FW / 2 - 17, -C], [cA - C, -C], "t"],
-    [[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + 17, -C], "t"],
-    [[cA, FH], [FW / 2 - mA, FH], [FW / 2 - 17, FH + C], [cA - C, FH + C], "b"],
-    [[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + 17, FH + C], "b"],
+    [[cA, 0], [FW / 2 - mA, 0], [FW / 2 - 26, -C], [cA - C, -C], "t"],
+    [[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + 26, -C], "t"],
+    [[cA, FH], [FW / 2 - mA, FH], [FW / 2 - 26, FH + C], [cA - C, FH + C], "b"],
+    [[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + 26, FH + C], "b"],
     [[0, cA], [0, FH - cA], [-C, FH - cA + C], [-C, cA - C], "l"],
     [[FW, cA], [FW, FH - cA], [FW + C, FH - cA + C], [FW + C, cA - C], "r"],
   ];
@@ -4284,7 +4289,7 @@ function drawGuide(G) {
 }
 function drawCue(G, pull) {
   const cue = G.balls[0], cd = cueDef(curP().cue);
-  const dx = Math.cos(G.angle), dy = Math.sin(G.angle), start = R + 3 + pull * 125, L = 540;
+  const dx = Math.cos(G.angle), dy = Math.sin(G.angle), start = R + 3 + pull * 95, L = 540;
   const tx = FX + cue.x - dx * start, ty = FY + cue.y - dy * start, th = G.angle + Math.PI;
   ctx.save();
   ctx.translate(tx + 10, ty + 14); ctx.rotate(th);                    // shadow on the cloth
