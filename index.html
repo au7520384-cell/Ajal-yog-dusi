@@ -2032,7 +2032,8 @@ const Snd = (() => {
     banner() { if (!ok()) return; const t = now(); noise(t, 0.3, 0.12, "bandpass", 600, 1.2, 3000); tone(t, 660, 0.18, 0.08, "triangle", 990); },
   };
 })();
-for (const ev of ["pointerup", "touchend", "click", "keydown", "mousedown"]) addEventListener(ev, () => Snd.init(), true);
+let lastTouch = -1e9;   // the daily VIP offer never pops up over a player who is already tapping around
+for (const ev of ["pointerup", "touchend", "click", "keydown", "mousedown"]) addEventListener(ev, () => { lastTouch = performance.now(); Snd.init(); }, true);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) Snd.init(); });
 
 // ---------------------------------------------------------------- 3D ball orientation
@@ -5064,7 +5065,7 @@ function findOpponent(c) {
   return new Promise(resolve => {
     let done = false;
     const bot = () => { if (!done) { done = true; resolve({opp: botPlayer(c.lvl, c.lvl + 4)}); } };
-    const timer = setTimeout(() => { Net.send({t: "cancel"}); bot(); }, 15000);
+    const timer = setTimeout(() => { Net.send({t: "cancel"}); bot(); }, 8000);
     Net.ensure().then(() => Net.connect()).then(() => {
       Net.on("match", m => {
         if (done) { Net.send({t: "resign"}); return; }   // matched after we already started a bot game
@@ -6200,7 +6201,7 @@ function buildHome() {
   updateHomeDots();
   const wl = weekEnds() - Date.now(); $("hLimEnds").textContent = `⏱ ${Math.floor(wl / 864e5)}${T("k")} ${Math.floor(wl % 864e5 / 36e5)}${T("s")} ${Math.floor(wl % 36e5 / 6e4)}${T("d")}`;
   $("hTourSub").textContent = `32–60 ${T("o'yinchi")}`;
-  if (profile.vipPop !== today() && !ON_PORTAL) setTimeout(() => { if ($("home").classList.contains("on") && !$("modal").classList.contains("on") && profile.vipPop !== today()) { profile.vipPop = today(); save(); vipPage = new Date().getDate() % VIP_OFFERS.length; vipOffers(); } }, 3500);
+  if (profile.vipPop !== today() && !ON_PORTAL) setTimeout(() => { if ($("home").classList.contains("on") && !$("modal").classList.contains("on") && profile.vipPop !== today() && performance.now() - lastTouch > 4000) { profile.vipPop = today(); save(); vipPage = new Date().getDate() % VIP_OFFERS.length; vipOffers(); } }, 3500);
   clearInterval(homeTimer);
   homeTimer = setInterval(() => {
     if (!$("home").classList.contains("on")) return clearInterval(homeTimer);
