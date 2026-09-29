@@ -193,13 +193,25 @@
   .tblcard .btn{padding:5px 8px;font-size:14px}
   .tblcard.lux{border-color:#ffcf3d;background:linear-gradient(#3a2e5e,#1b1433)}
   .tblcard.lux .tprev{position:relative;overflow:hidden}
-  .tblcard.lux .tprev::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 38%,#ffffffaa 50%,transparent 62%);background-size:260% 100%;animation:luxsh 2.8s linear infinite}
-  @keyframes luxsh{from{background-position:140% 0}to{background-position:-140% 0}}
+  .tblcard.lux .tprev::after{content:"";position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(110deg,transparent,#ffffff99 50%,transparent);
+    transform:translateX(-120%);animation:luxsh 2.8s linear infinite;will-change:transform}
+  @keyframes luxsh{to{transform:translateX(330%)}}
   .tblcard.lux b{background:linear-gradient(90deg,#fff6b0,#ffcf3d,#fff,#ffcf3d);-webkit-background-clip:text;background-clip:text;color:transparent}
   .tblhead{grid-column:1/-1;font-family:var(--fh);font-size:22px;color:#ffe27a;margin:8px 0 -2px;text-shadow:0 2px 0 #0008}
   .tblhead small{font-family:Nunito,sans-serif;font-size:12px;color:#cfd8ee;font-weight:700;margin-left:6px}
   .tpay{display:grid;grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:4px}.tpay .btn{padding:5px 4px;font-size:13px;white-space:nowrap}
   .tblcard.lux.el{border-color:#8fe8ff;background:linear-gradient(#1e3a5e,#10172e)}
+  .tbadge{display:inline-block;font-size:10px;font-weight:900;border-radius:7px;padding:0 6px;margin:0 4px;vertical-align:middle;line-height:16px;white-space:nowrap}
+  .tbadge.tp{background:linear-gradient(90deg,#8a5a00,#ffd24d,#8a5a00);color:#2a1800;box-shadow:0 0 8px #ffcf3d88}
+  .tbadge.te{background:linear-gradient(90deg,#10406a,#8fe8ff,#10406a);color:#04202e;box-shadow:0 0 8px #40c8ff66}
+  .tbon{color:#8dff9a;font-weight:900}
+  .tpcv{width:100%;max-width:620px;border-radius:12px;display:block;margin:6px auto;box-shadow:0 8px 24px #000a}
+  .tweek{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:center;padding:10px;border-radius:16px;
+    background:linear-gradient(120deg,#5a1a00,#2a0e3a 60%,#0e1a3a);border:2px solid #ff9d00;box-shadow:0 0 22px #ff9d0066}
+  .tweek .tpcv{margin:0}.tweek b{font-family:var(--fh);font-weight:400;font-size:26px;color:#fff}.tw1{color:#ffcf3d;font-weight:900;letter-spacing:1px}
+  .tweek .tpay{margin-top:8px}
+  .tdeal{background:#ff3b30;color:#fff;border-radius:6px;padding:0 5px;font-size:12px;-webkit-text-fill-color:#fff}
+  .tpc{background:#0008;color:#ffe27a;border-radius:6px;padding:0 5px;font-size:12px;-webkit-text-fill-color:#ffe27a}
   .tblcard .ttag{position:absolute;top:12px;left:12px;background:#000a;border-radius:6px;padding:1px 6px;font-size:11px;color:#ffe27a}
   .pack{overflow:hidden}
   .ptag{position:absolute;top:10px;right:-30px;transform:rotate(35deg);background:#ff3b30;color:#fff;font-size:10px;padding:2px 34px;font-weight:900;text-transform:uppercase}
@@ -1407,6 +1419,20 @@ const DICT = {
   "Bugun bepul!": ["Free today!", "Сегодня бесплатно!"],
   "Olmos yetmaydi": ["Not enough gems", "Недостаточно кристаллов"],
   "Maxsus takliflar": ["Special Offers", "Спецпредложения"],
+  "yutdi!": ["wins!", "побеждает!"],
+  "Haftaning stoli": ["Table of the week", "Стол недели"],
+  "Sinab ko'rish": ["Try it", "Попробовать"],
+  "Stol sizniki! Endi hamma o'yinlaringizda shu stol.": ["The table is yours! It is now used in all your games.", "Стол ваш! Теперь он во всех ваших играх."],
+  "4 ta bo'lak yig'ildi — stol sizniki!": ["4 pieces collected — the table is yours!", "Собрано 4 части — стол ваш!"],
+  "Stol bo'lagi": ["Table piece", "Часть стола"],
+  "Sizga yoqdimi? Stolni hozir 30% chegirma bilan saqlab qoling!": ["Did you like it? Keep the table now with 30% off!", "Понравилось? Оставьте стол сейчас со скидкой 30%!"],
+  "s": ["h", "ч"],
+  "d": ["m", "м"],
+  "Stol bonusi": ["Table bonus", "Бонус стола"],
+  "PREMIUM STOL": ["PREMIUM TABLE", "ПРЕМИУМ СТОЛ"],
+  "EKSKLYUZIV STOL": ["EXCLUSIVE TABLE", "ЭКСКЛЮЗИВНЫЙ СТОЛ"],
+  "{n}ning {t} stoli": ["{n}'s {t} table", "Стол {t} — {n}"],
+  "Bosing — o'tkazib yuborish": ["Tap to skip", "Нажмите, чтобы пропустить"],
   "Premium": ["Premium", "Премиум"],
   "qimmatbaho metall va toshlar · tovlanadi": ["precious metals and stones · shimmering", "драгоценные металлы и камни · переливаются"],
   "Eksklyuziv": ["Exclusive", "Эксклюзив"],
@@ -1910,6 +1936,24 @@ const Snd = (() => {
       rollG.gain.setTargetAtTime(g, ac.currentTime, 0.06);
       rollF.frequency.setTargetAtTime(110 + Math.min(480, sum * 13), ac.currentTime, 0.06);
     },
+    // signature sound of an exclusive table: bells for metal and stones, a breath of air for petals, crackle for fire…
+    tableFx(kind, v = 1) {
+      if (!ok()) return; const t = now(), bell = (tt, f, vol, d = 0.9) => { tone(tt, f, d, vol, "sine"); tone(tt, f * 2.76, d * 0.5, vol * 0.35, "sine"); tone(tt, f * 5.4, d * 0.25, vol * 0.15, "sine"); };
+      const n = (a, b) => a + Math.random() * (b - a);
+      switch (kind) {
+        case "metal": [1568, 2093, 2637].forEach((f, i) => bell(t + i * 0.07, f, 0.07 * v)); break;
+        case "gem": [2093, 2637, 3136, 4186].forEach((f, i) => bell(t + i * 0.06, f, 0.06 * v, 0.7)); break;
+        case "diamond": [2637, 3136, 3951, 5274, 6272].forEach((f, i) => bell(t + i * 0.05, f, 0.055 * v, 0.8)); noise(t, 0.5, 0.03 * v, "highpass", 7000); break;
+        case "stone": [1175, 1568, 2349].forEach((f, i) => bell(t + i * 0.08, f, 0.07 * v, 1.1)); break;
+        case "flower": case "feather": case "fluff": case "silk":
+          noise(t, 0.6, 0.09 * v, "bandpass", 2200, 0.8, 500); bell(t + 0.08, kind === "flower" ? 1318 : 988, 0.04 * v, 1.2); bell(t + 0.2, kind === "flower" ? 1760 : 1318, 0.03 * v, 1.2); break;
+        case "ice": for (let i = 0; i < 7; i++) bell(t + i * 0.045 + n(0, 0.02), n(3000, 6500), 0.04 * v, 0.35); break;
+        case "fire": noise(t, 0.7, 0.1 * v, "lowpass", 900, 0.7, 300); for (let i = 0; i < 12; i++) noise(t + n(0, 0.6), 0.02, 0.12 * v, "highpass", 2500); break;
+        case "cosmos": tone(t, 300, 0.9, 0.06 * v, "sine", 1800); [2637, 3520, 4699].forEach((f, i) => bell(t + 0.3 + i * 0.08, f, 0.04 * v, 0.9)); break;
+        case "bubble": for (let i = 0; i < 5; i++) tone(t + i * 0.07 + n(0, 0.03), n(500, 900), 0.08, 0.08 * v, "sine", n(1400, 2200)); break;
+        case "amber": [784, 1175, 1568].forEach((f, i) => bell(t + i * 0.09, f, 0.07 * v, 1.2)); break;
+      }
+    },
     click() { if (!ok()) return; const t = now(); tone(t, 620, 0.07, 0.16, "triangle", 1250); noise(t, 0.015, 0.08, "highpass", 3000); },
     pop() { if (!ok()) return; tone(now(), 420, 0.12, 0.22, "sine", 1500); },
     coin(n = 5) {
@@ -2022,6 +2066,7 @@ function onPot(G, b, p) {
   G.sinking.push({b: copy, x: b.x, y: b.y, px: p.x + p.dx, py: p.y + p.dy, t: 0});
   if (b.n !== 0) G.tray.push({b: {n: b.n, p: b.p.slice(), q: b.q.slice()}, y: TRAY.y - 6, vy: 0, delay: 16});
   G.flashes.push({x: p.x + p.dx, y: p.y + p.dy, t: 0});
+  if (!G.demo && G.tbl && fxRecipe(G.tbl)) { spawnFx(G, G.tbl, p.x + p.dx, p.y + p.dy, b.n === 8 ? 1.8 : 1); setTimeout(() => Snd.tableFx(tableFxKind(G.tbl), 0.55), 120); }
   if (!G.demo) { Snd.pocket(); vib(30); if (b.n && isHuman(G.cur) && !G.players[G.cur].remote && G.type !== "watch") mission("pot"); profile.potted = (profile.potted | 0) + 1; }
 }
 function onHit(G, a, b, rel, x, y) {
@@ -2092,10 +2137,17 @@ function rack(seed) {
 }
 function botPlayer(minL, maxL) {
   return {name: pick(Math.random() < 0.5 ? BOT_NAMES : AV_NAMES), avatar: Math.random() * AV_N | 0, frame: Math.random() < 0.3 ? 1 + (Math.random() * 5 | 0) : 0, color: pick(AV_COLORS),
-    level: Math.round(rnd(minL, maxL)), isAI: true, cue: pick(CUES).id};
+    level: Math.round(rnd(minL, maxL)), isAI: true, cue: pick(CUES).id, tbl: botTable(maxL)};
+}
+// Richer opponents sometimes own an exclusive table (cheaper ones are more common).
+function botTable(lvl) {
+  if (Math.random() > Math.min(0.4, 0.06 + lvl / 90)) return "";
+  const ex = EXTRA_TABLES.filter(t => t.tier), w = ex.map(t => 1 / t.cash), sum = w.reduce((a, b) => a + b, 0);
+  let r = Math.random() * sum; for (let i = 0; i < ex.length; i++) if ((r -= w[i]) <= 0) return ex[i].id;
+  return ex[0].id;
 }
 function mePlayer(name) {
-  return {name: name || profile.name, avatar: profile.avatar, frame: profile.frame || 0, color: AV_COLORS[profile.avatar % AV_COLORS.length], level: profile.level, isAI: false, cue: profile.cue};
+  return {name: name || profile.name, avatar: profile.avatar, frame: profile.frame || 0, color: AV_COLORS[profile.avatar % AV_COLORS.length], level: profile.level, isAI: false, cue: profile.cue, tbl: trialTable || profile.tableSkin || ""};
 }
 function baseGame(type, city, players) {
   const G = {
@@ -2135,7 +2187,12 @@ function startMatch(type, city, opp, net) {
     G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
     G.cur = net.first === net.seat ? 0 : 1;
   }
+  if (type !== "watch" && type !== "lucky") chooseTable(G); else G.tbl = "";
+  if (trialTable) { G.trial = trialTable; G.tbl = trialTable; G.tblOwner = 0; }
+  const tt = tableById(G.tbl);
+  if (tt && tt.tier) G.intro = {t0: performance.now() + 250, dur: 3600, name: G.players[G.tblOwner].name, t: tt};
   setGame(G); enterGameUi(type);
+  if (G.intro) Snd.tableFx(tableFxKind(tt.id), 1);
   nextTurn(true);
   if (type === "practice") setPill(T("Mashq: istalgancha urishingiz mumkin"), 3000);
   else if (isHuman(G.cur) && !curP().remote) setPill(type === "pvp" ? `${curP().name} sindiradi — omad!` : T("Siz sindirasiz — omad!"), 3000);
@@ -2152,9 +2209,10 @@ function startDemo() {
 const curP = () => game.players[game.cur];
 const isHuman = i => !game.players[i].isAI;
 const timed = () => ["ai", "tour", "pvp"].includes(game.type);
+const introOn = G => G && G.intro && performance.now() < G.intro.t0 + G.intro.dur;
 function canControl() {
   const G = game;
-  return mode === "game" && G && !G.demo && !G.over && !G.moving && !G.strike && G.type !== "watch" && !curP().isAI && !curP().remote && !G.aiTask;
+  return mode === "game" && G && !introOn(G) && !G.demo && !G.over && !G.moving && !G.strike && G.type !== "watch" && !curP().isAI && !curP().remote && !G.aiTask;
 }
 // ---- online sync helpers (local player index 0 = me, 1 = opponent; server uses seats)
 const seatOf = i => i === 0 ? game.net.seat : 1 - game.net.seat;
@@ -2330,6 +2388,10 @@ function endGame(winner, why) {
   if (G.net) Net.send({t: "result", winner: seatOf(winner)});
   const humanWon = G.type === "ai" || G.type === "tour" ? winner === 0 : true;
   if (humanWon) { burst(); Snd.win(); } else Snd.lose();
+  if (humanWon && G.tbl && fxRecipe(G.tbl) && G.type !== "watch") {          // the table celebrates the win
+    spawnFx(G, G.tbl, FW / 2, FH / 2, 2.6); Snd.tableFx(tableFxKind(G.tbl), 1);
+    POCKETS.forEach((p, i) => setTimeout(() => { if (game === G) spawnFx(G, G.tbl, p.x + p.dx, p.y + p.dy, 1.2); }, 250 + i * 160));
+  }
   if (G.players[1 - winner].isAI) bubble(1 - winner, pick(["Yaxshi o'yin! 🤝", "Tabriklayman 👏"]));
   if (G.players[winner].isAI) bubble(winner, pick(["GG 😎", "Yaxshi o'yin! 🤝"]));
   setBanner(G.type === "pvp" || G.type === "watch" ? `${G.players[winner].name.toUpperCase()} YUTDI!` : humanWon ? T("G'ALABA!") : T("MAG'LUBIYAT"), humanWon ? "#ffe27a" : "#ff6b5e");
@@ -2338,23 +2400,32 @@ function endGame(winner, why) {
   if (G.type === "ai") {
     profile.games++; if (G.net) profile.onlineGames = (profile.onlineGames | 0) + 1;
     if (humanWon) {
-      profile.wins++; profile.won += G.city.prize; addXp(40 + Math.round(Math.log10(G.city.prize) * 15));
+      const tb = tableBonus(profile.tableSkin), xp = 40 + Math.round(Math.log10(G.city.prize) * 15);
+      profile.wins++; profile.won += G.city.prize; addXp(Math.round(xp * (1 + tb / 100)));
+      if (tb) {                                    // exclusive-table bonus on every win
+        const extra = Math.max(1, Math.round(G.city.prize * tb / 100));
+        setTimeout(() => { addCoins(extra); updateNav(); toast("👑", `+${fmt(extra)} 🪙`, `${T("Stol bonusi")} +${tb}%`, {kind: "trophy"}); }, 2300);
+      }
       profile.wstreak = (profile.wstreak | 0) + 1; profile.bestStreak = Math.max(profile.bestStreak | 0, profile.wstreak);
       profile.cityWins = profile.cityWins || {}; profile.cityWins[G.city.id] = (profile.cityWins[G.city.id] | 0) + 1; setTimeout(checkAch, 2500);
       y8Score(); y8Event("match_win", G.city.prize);
       unlock("first_win"); if (!G.oppHadPot) unlock("runout");
-      passPoints(passOf(G.city)); mission("win"); mission("play"); if (CITIES.indexOf(G.city) >= 3) mission("bigwin");
+      passPoints(Math.round(passOf(G.city) * (1 + tb / 100))); mission("win"); mission("play"); if (CITIES.indexOf(G.city) >= 3) mission("bigwin");
       { const t = cityTrophy(G.city, true); if (t.delta) setTimeout(() => toast("🏆", `+${t.delta} ${T("kubok")}`, G.city.name, {kind: "trophy", img: IMG["rg_" + G.city.id]}), 1800);
         if (t.ring) setTimeout(() => { Snd.win(); burst(); openModal({icon: "", title: T("Yangi uzuk!"), text: `${G.city.name} — ${T("barcha kuboklar yig'ildi!")}`, extra: ringHTML(G.city, true, 150), buttons: [{label: T("Ajoyib!"), cls: "green", fn: () => {}}]}); }, 5200); }
-      setTimeout(() => addBox(G.city), 3200); addShowdown(G.city, true);
+      setTimeout(() => addBox(G.city), 3200); addShowdown(G.city, true); if (!G.trial) setTimeout(tablePieceDrop, 4200);
       if (G.city && CITIES.includes(G.city)) setTimeout(() => victoryPiece(G.city), 2600);
     } else { addXp(12); passPoints(10); mission("play"); addShowdown(G.city, false); profile.wstreak = 0;
       { const t = cityTrophy(G.city, false); if (t.delta) setTimeout(() => toast("🏆", `${t.delta} ${T("kubok")}`, G.city.name), 1800); } }
     save(); Net.sync();
-    setTimeout(() => resultModal(humanWon, why, G.players[winner], humanWon ? G.city.prize : 0, [
-      {label: T("Yana o'ynash"), cls: "green", fn: () => playCity(G.city)},
-      {label: T("Menyu"), cls: "gray", fn: () => toMenu()},
-    ]), 1600);
+    setTimeout(() => {
+      const offer = G.trial && trialOffer(G);
+      resultModal(humanWon, why, G.players[winner], humanWon ? G.city.prize : 0, offer || [
+        {label: T("Yana o'ynash"), cls: "green", fn: () => playCity(G.city)},
+        {label: T("Menyu"), cls: "gray", fn: () => toMenu()},
+      ]);
+      if (offer) { $("mText").textContent = `${T("Sizga yoqdimi? Stolni hozir 30% chegirma bilan saqlab qoling!")}`; $("mExtra").insertAdjacentHTML("beforeend", `<canvas class="tpcv" width="620" height="340"></canvas>`); previewTable(tableById(G.trial), document.querySelector("#modal .tpcv")); }
+    }, 1600);
   } else if (G.type === "tour") {
     profile.games++; if (humanWon) profile.wins++; save(); mission("play"); if (humanWon) { mission("win"); mission("round"); } else passPoints(10);
     setTimeout(() => tourAfterMatch(humanWon, why, G.players[winner]), 1600);
@@ -2531,6 +2602,7 @@ const cv = $("c");
 // around the cue ball (relative), a quick tap aims straight at the tapped point.
 cv.addEventListener("pointerdown", e => {
   if (mode !== "game" || !game) return;
+  if (introOn(game)) { game.intro.dur = Math.max(0, performance.now() - game.intro.t0); return; }
   closeChat();
   const p = toWorld(e), G = game;
   if (G.spinOpen) {
@@ -2803,6 +2875,168 @@ function drawBackground() {
   for (let i = -H; i < W; i += 28) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + H, H); ctx.stroke(); }
   ctx.restore();
 }
+
+// ---------------------------------------------------------------- exclusive-table effects
+// Every exclusive table has its own burst when a ball drops (and a bigger one on a win): metal sparks,
+// cut stones, petals, cotton fluff, silk ribbons, embers, snowflakes, stardust, amber drops, feathers…
+function tableFxKind(id) {
+  return {l_brz: "metal", l_slv: "metal", l_gld: "metal", l_rgd: "metal", l_plt: "metal", l_sap: "gem", l_emr: "gem", l_rby: "gem", l_ame: "gem",
+    l_dia: "diamond", l_bdi: "diamond", l_opl: "diamond", e_sak: "flower", e_ros: "flower", e_lol: "flower", e_lot: "flower", e_orx: "flower", e_kun: "flower",
+    e_pax: "fluff", e_atl: "silk", e_smq: "stone", e_mal: "stone", e_laz: "stone", e_prl: "bubble", e_muz: "ice", e_drg: "fire", e_olv: "fire",
+    e_kos: "cosmos", e_qah: "amber", e_tov: "feather"}[id] || "metal";
+}
+function fxRecipe(id) {
+  const st = TBL[id], t = tableById(id); if (!st || !t || !t.tier) return null;
+  const [hi, mid] = st.metal, gem = t.gem || hi;
+  return {
+    l_dia: [["ring", 1, ["#ffffff"]], ["shard", 24, ["#ffffff", "#dff4ff", "#ffe0f4", "#fff6c8"]], ["spark", 16, ["#ffffff"]], ["star", 10, ["#ffffff"]]],
+    l_bdi: [["ring", 1, ["#c8c8d8"]], ["shard", 22, ["#2a2a36", "#50505e", "#15151a"]], ["star", 12, ["#ffffff"]], ["spark", 10, ["#e8e8f0"]]],
+    l_opl: [["ring", 1, ["#ff8ad8"]], ["shard", 22, ["#ff5a8a", "#ffb040", "#ffe95a", "#5aff9a", "#40d8ff", "#8a6aff"]], ["star", 8, ["#ffffff"]]],
+    e_sak: [["petal", 22, ["#ffd0e0", "#ff9cc0", "#fff0f6"]]],
+    e_ros: [["petal", 20, ["#d8102a", "#ff4a5a", "#a00818"]]],
+    e_lol: [["petal", 12, ["#e8202a", "#ff5a4a"]], ["petal", 8, ["#2a5ae8", "#ffffff"]]],
+    e_lot: [["ring", 1, ["#ffd76a"]], ["petal", 18, ["#ffb0d0", "#ffffff", "#ff7ab0"]]],
+    e_pax: [["fluff", 18, ["#ffffff", "#f4f4fa"]]],
+    e_orx: [["petal", 18, ["#c060e0", "#e8b8ff", "#8a1ab0"]]],
+    e_kun: [["petal", 20, ["#ffd21a", "#ffb000", "#ffe24a"]]],
+    e_atl: [["ribbon", 26, ["#e0107a", "#ffd21a", "#10a060", "#1a4ad8", "#ffffff", "#ff5a1a"]]],
+    e_smq: [["ring", 1, ["#40e0ff"]], ["star", 10, ["#ffd24d"]], ["shard", 12, ["#1ab0c8", "#2a50d8", "#ffffff"]]],
+    e_mal: [["shard", 18, ["#0e7a4a", "#1aa06a", "#6ad8a8"]], ["spark", 10, ["#a8ffd8"]]],
+    e_laz: [["shard", 14, ["#3a5ae8", "#1a38a8"]], ["spark", 18, ["#ffd76a"]]],
+    e_prl: [["bubble", 18, ["#ffffff"]], ["star", 4, ["#ffffff"]]],
+    e_muz: [["ring", 1, ["#bfefff"]], ["flake", 18, ["#ffffff", "#dff6ff"]], ["star", 6, ["#ffffff"]]],
+    e_drg: [["ember", 22, ["#ffb040", "#ff5a1a"]], ["shard", 10, ["#ffd24d", "#e0301a"]]],
+    e_olv: [["flame", 12, ["#ffe060"]], ["ember", 26, ["#ffb040", "#ff5a1a", "#ffe060"]]],
+    e_kos: [["dust", 48, ["#ff4fa0", "#8a5aff", "#40c8ff", "#ffffff"]], ["star", 8, ["#ffffff"]]],
+    e_qah: [["drop", 14, ["#ffb020", "#ffd868"]], ["ember", 10, ["#ffd868"]]],
+    e_tov: [["feather", 9, ["#1aa0a0"]], ["star", 5, ["#9ad83a"]]],
+  }[id] || (st.gemrow ? [["ring", 1, [gem]], ["shard", 18, [gem, shade(gem, 70), shade(gem, -30)]], ["spark", 12, [shade(gem, 90)]], ["star", 5, ["#ffffff"]]]
+    : [["ring", 1, [hi]], ["spark", 30, [hi, mid, "#ffffff"]], ["star", 6, ["#ffffff"]]]);
+}
+function spawnFx(G, id, x, y, mult = 1) {
+  const rec = fxRecipe(id); if (!rec) return;
+  const R = (a, b) => a + Math.random() * (b - a), fx = G.fx = G.fx || [];
+  for (const [type, n, cols] of rec) for (let i = 0; i < Math.max(1, Math.round(n * (type === "ring" ? 1 : mult))); i++) {
+    const a = Math.random() * 6.283, col = cols[i % cols.length];
+    const p = {type, x, y, z: 0, vx: 0, vy: 0, vz: 0, g: 0, rot: R(0, 6.28), vr: R(-0.2, 0.2), col, s: 4, life: 60, ph: R(0, 6.28), delay: 0};
+    const sp = v => { p.vx = Math.cos(a) * v; p.vy = Math.sin(a) * v; };
+    switch (type) {
+      case "ring": p.s = 6; p.life = 24; break;
+      case "spark": sp(R(3, 8)); p.vz = R(2, 6); p.g = 0.25; p.s = R(1.2, 2.2); p.life = R(26, 42); break;
+      case "shard": sp(R(1.8, 5)); p.vz = R(3, 7); p.g = 0.32; p.s = R(4, 7.5); p.vr = R(-0.35, 0.35); p.life = R(55, 75); break;
+      case "star": p.x += R(-34, 34); p.y += R(-34, 34); p.s = R(5, 10); p.life = R(26, 44); p.delay = R(0, 22) | 0; break;
+      case "petal": sp(R(0.9, 3.2)); p.vz = R(4, 7); p.g = 0.07; p.s = R(6.5, 10.5); p.life = R(120, 160); break;
+      case "fluff": sp(R(0.8, 2.2)); p.vz = R(1.2, 2.4); p.g = -0.004; p.s = R(5, 9); p.life = R(90, 120); break;
+      case "ribbon": sp(R(1, 3.6)); p.vz = R(5, 8); p.g = 0.13; p.s = R(2.6, 3.6); p.life = R(90, 110); break;
+      case "ember": sp(R(0.6, 2.4)); p.vz = R(1, 3); p.g = -0.015; p.s = R(2, 3.8); p.life = R(50, 85); break;
+      case "flame": p.x += R(-12, 12); p.y += R(-12, 12); p.vz = R(1.5, 3); p.s = R(15, 24); p.life = R(28, 40); p.delay = R(0, 10) | 0; break;
+      case "flake": sp(R(0.8, 2.6)); p.vz = R(3, 5); p.g = 0.05; p.s = R(6, 10); p.life = R(110, 140); break;
+      case "dust": p.r = R(6, 42); p.av = R(0.07, 0.16) * (Math.random() < 0.5 ? 1 : -1); p.ang = a; p.s = R(0.8, 2); p.life = R(70, 100); p.cx = x; p.cy = y; break;
+      case "drop": sp(R(1, 2.6)); p.vz = R(3, 5); p.g = 0.25; p.s = R(2.5, 4); p.life = R(70, 90); break;
+      case "feather": sp(R(1.2, 2.6)); p.vz = R(4, 6); p.g = 0.05; p.s = R(12, 17); p.life = R(140, 170); break;
+      case "bubble": sp(R(0.6, 1.8)); p.vz = R(1, 2); p.g = -0.01; p.s = R(4.5, 9); p.life = R(80, 100); break;
+    }
+    p.max = p.life; fx.push(p);
+  }
+}
+function drawFx(G) {                              // called inside the table's coordinate system
+  if (!G.fx || !G.fx.length) return;
+  const L = [];
+  for (const p of G.fx) {
+    if (p.delay > 0) { p.delay--; L.push(p); continue; }
+    if (--p.life <= 0) continue;
+    p.x += p.vx; p.y += p.vy; p.z += p.vz; p.vz -= p.g; p.rot += p.vr; p.ph += 0.18;
+    if (p.type === "petal" || p.type === "feather" || p.type === "flake") { p.vx *= 0.985; p.vy *= 0.985; if (p.vz < -0.9) p.vz = -0.9; p.x += Math.sin(p.ph * 0.5) * 0.4; }
+    if (p.type === "dust") { p.ang += p.av; p.r += 0.35; p.x = p.cx + Math.cos(p.ang) * p.r; p.y = p.cy + Math.sin(p.ang) * p.r * 0.8; }
+    if (p.z < 0) { if (p.g > 0 && Math.abs(p.vz) > 1.2 && p.type !== "drop") { p.z = 0; p.vz *= -0.35; p.vx *= 0.6; p.vy *= 0.6; p.vr *= 0.5; } else { p.z = 0; p.vz = 0; p.vx *= 0.8; p.vy *= 0.8; p.vr *= 0.8; } }
+    L.push(p);
+  }
+  G.fx = L;
+  for (const p of L) {
+    if (p.delay > 0) continue;
+    const k = p.life / p.max, fade = Math.min(1, k * 3), sx = p.x, sy = p.y - p.z * 0.55, sc = 1 + p.z * 0.012;
+    if (p.z > 1 && p.type !== "spark" && p.type !== "star" && p.type !== "ember" && p.type !== "dust") {     // soft shadow on the cloth
+      ctx.globalAlpha = 0.22 * fade; ctx.fillStyle = "#000"; ctx.beginPath(); ctx.ellipse(p.x + p.z * 0.25, p.y + p.z * 0.1, p.s * 0.9, p.s * 0.5, 0, 0, 7); ctx.fill();
+    }
+    ctx.save(); ctx.globalAlpha = fade;
+    switch (p.type) {
+      case "ring": { const r = 6 + (1 - k) * 60; ctx.globalCompositeOperation = "lighter"; ctx.strokeStyle = p.col; ctx.lineWidth = 3 * k + 0.5;
+        ctx.beginPath(); ctx.arc(sx, sy, r, 0, 7); ctx.stroke(); break; }
+      case "spark": ctx.globalCompositeOperation = "lighter"; ctx.strokeStyle = p.col; ctx.lineCap = "round";
+        ctx.globalAlpha = fade * 0.35; ctx.lineWidth = p.s * 3; ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx - p.vx * 2.6, sy - p.vy * 2.6 + p.vz * 1.2); ctx.stroke();   // soft glow
+        ctx.globalAlpha = fade; ctx.lineWidth = p.s; ctx.stroke(); break;
+      case "shard": {
+        ctx.translate(sx, sy); ctx.rotate(p.rot); ctx.scale(sc, sc * (0.55 + 0.45 * Math.abs(Math.cos(p.ph))));
+        const g = ctx.createLinearGradient(-p.s, -p.s, p.s, p.s); g.addColorStop(0, "#ffffff"); g.addColorStop(0.35, p.col); g.addColorStop(1, shade(p.col[0] === "#" ? p.col : "#888888", -70));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, -p.s); ctx.lineTo(p.s * 0.62, 0); ctx.lineTo(0, p.s); ctx.lineTo(-p.s * 0.62, 0); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,.7)"; ctx.lineWidth = 0.6; ctx.stroke(); ctx.beginPath(); ctx.moveTo(-p.s * 0.62, 0); ctx.lineTo(p.s * 0.62, 0); ctx.stroke();
+        const gl = Math.max(0, Math.sin(p.rot * 3)); if (gl > 0.8) { ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = `rgba(255,255,255,${(gl - 0.8) * 4})`; ctx.beginPath(); ctx.arc(0, 0, p.s * 1.2, 0, 7); ctx.fill(); }
+        break; }
+      case "star": { const pul = Math.sin((1 - k) * Math.PI), r = p.s * pul; ctx.globalCompositeOperation = "lighter";
+        const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, r * 1.5); g.addColorStop(0, p.col); g.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, r * 1.5, 0, 7); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.moveTo(sx - r * 1.7, sy); ctx.lineTo(sx, sy - r * 0.15); ctx.lineTo(sx + r * 1.7, sy); ctx.lineTo(sx, sy + r * 0.15); ctx.closePath();
+        ctx.moveTo(sx, sy - r * 1.7); ctx.lineTo(sx + r * 0.15, sy); ctx.lineTo(sx, sy + r * 1.7); ctx.lineTo(sx - r * 0.15, sy); ctx.closePath(); ctx.fill(); break; }
+      case "petal": { ctx.translate(sx, sy); ctx.rotate(p.rot); ctx.scale(sc, sc * Math.max(0.15, Math.abs(Math.cos(p.ph * 0.6))));
+        const g = ctx.createRadialGradient(-p.s * 0.3, 0, 0, 0, 0, p.s); g.addColorStop(0, "#ffffff"); g.addColorStop(0.45, p.col); g.addColorStop(1, shade(p.col, -40));
+        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-p.s, 0); ctx.quadraticCurveTo(0, -p.s * 0.75, p.s, 0); ctx.quadraticCurveTo(0, p.s * 0.75, -p.s, 0); ctx.fill();
+        ctx.strokeStyle = "rgba(0,0,0,.12)"; ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(-p.s * 0.8, 0); ctx.lineTo(p.s * 0.8, 0); ctx.stroke(); break; }
+      case "fluff": { const r = p.s * sc, g = ctx.createRadialGradient(sx - r * 0.25, sy - r * 0.25, 0, sx, sy, r);
+        g.addColorStop(0, "#ffffff"); g.addColorStop(0.6, "rgba(245,245,252,.9)"); g.addColorStop(1, "rgba(230,230,245,0)"); ctx.fillStyle = g;
+        for (const [dx, dy] of [[0, 0], [r * 0.45, r * 0.2], [-r * 0.4, r * 0.25], [0.1 * r, -r * 0.4]]) { ctx.beginPath(); ctx.arc(sx + dx, sy + dy, r * 0.7, 0, 7); ctx.fill(); } break; }
+      case "ribbon": ctx.translate(sx, sy); ctx.rotate(p.rot); ctx.scale(sc * Math.cos(p.ph), sc); ctx.fillStyle = p.col; ctx.fillRect(-p.s, -p.s * 1.8, p.s * 2, p.s * 3.6);
+        ctx.fillStyle = "rgba(255,255,255,.3)"; ctx.fillRect(-p.s, -p.s * 1.8, p.s * 0.7, p.s * 3.6); break;
+      case "ember": { const r = p.s * (0.75 + 0.25 * Math.sin(p.ph * 3)); ctx.globalCompositeOperation = "lighter";
+        const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, r * 3); g.addColorStop(0, "#fff6c0"); g.addColorStop(0.3, p.col); g.addColorStop(1, "rgba(255,60,0,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, r * 3, 0, 7); ctx.fill(); break; }
+      case "flame": { const h = p.s * (0.6 + k), w = p.s * 0.45 * (0.5 + k * 0.5); ctx.globalCompositeOperation = "lighter";
+        const g = ctx.createLinearGradient(sx, sy, sx, sy - h * 2); g.addColorStop(0, "#fff8c0"); g.addColorStop(0.3, "#ffb020"); g.addColorStop(0.7, "rgba(255,70,0,.6)"); g.addColorStop(1, "rgba(255,40,0,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(sx - w, sy); ctx.quadraticCurveTo(sx - w * 1.2, sy - h, sx + Math.sin(p.ph) * w * 0.6, sy - h * 2); ctx.quadraticCurveTo(sx + w * 1.2, sy - h, sx + w, sy);
+        ctx.quadraticCurveTo(sx, sy + w * 0.8, sx - w, sy); ctx.fill(); break; }
+      case "flake": ctx.translate(sx, sy); ctx.rotate(p.rot); ctx.scale(sc, sc); ctx.strokeStyle = p.col; ctx.lineWidth = 1; ctx.lineCap = "round";
+        for (let i = 0; i < 6; i++) { ctx.rotate(Math.PI / 3); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -p.s); ctx.moveTo(0, -p.s * 0.55); ctx.lineTo(p.s * 0.28, -p.s * 0.8); ctx.moveTo(0, -p.s * 0.55); ctx.lineTo(-p.s * 0.28, -p.s * 0.8); ctx.stroke(); } break;
+      case "dust": ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = p.col; ctx.globalAlpha = fade * 0.3; ctx.beginPath(); ctx.arc(sx, sy, p.s * 2.6, 0, 7); ctx.fill();
+        ctx.globalAlpha = fade; ctx.beginPath(); ctx.arc(sx, sy, p.s, 0, 7); ctx.fill(); break;
+      case "drop": { const flat = p.z <= 0 ? 1.6 : 1, g = ctx.createRadialGradient(sx - p.s * 0.3, sy - p.s * 0.4, 0, sx, sy, p.s * flat);
+        g.addColorStop(0, "#fff6d0"); g.addColorStop(0.4, p.col); g.addColorStop(1, "#8a4000"); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(sx, sy, p.s * flat, p.s / flat * 1.1, 0, 0, 7); ctx.fill();
+        ctx.globalCompositeOperation = "lighter"; ctx.fillStyle = "rgba(255,190,60,.25)"; ctx.beginPath(); ctx.arc(sx, sy, p.s * 2.4, 0, 7); ctx.fill(); break; }
+      case "feather": { ctx.translate(sx, sy); ctx.rotate(p.rot + Math.sin(p.ph * 0.4) * 0.5); ctx.scale(sc, sc); const L2 = p.s;
+        ctx.strokeStyle = "rgba(150,230,120,.8)"; ctx.lineWidth = 0.6; for (let i = -6; i <= 6; i++) { const yy = i / 6 * L2 * 0.8; ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(-L2 * 0.35, yy - 3); ctx.moveTo(0, yy); ctx.lineTo(L2 * 0.35, yy - 3); ctx.stroke(); }
+        ctx.strokeStyle = "#e8f0d8"; ctx.lineWidth = 0.9; ctx.beginPath(); ctx.moveTo(0, L2); ctx.quadraticCurveTo(1.5, 0, 0, -L2); ctx.stroke();
+        for (const [r, c] of [[4.2, "#9ad83a"], [3.2, "#d8a830"], [2.3, "#1aa0a0"], [1.4, "#1a3ad8"]]) { ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(0, -L2 * 0.65, r * 0.8, r, 0, 0, 7); ctx.fill(); } break; }
+      case "bubble": { const r = p.s * sc, wob = 1 + Math.sin(p.ph) * 0.06; ctx.translate(sx, sy); ctx.scale(wob, 2 - wob);
+        ctx.strokeStyle = `hsla(${(p.ph * 40) % 360},90%,80%,.8)`; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.stroke();
+        ctx.strokeStyle = "rgba(255,255,255,.8)"; ctx.beginPath(); ctx.arc(0, 0, r, 3.6, 4.6); ctx.stroke(); ctx.fillStyle = "rgba(255,255,255,.9)"; ctx.beginPath(); ctx.arc(-r * 0.4, -r * 0.45, r * 0.18, 0, 7); ctx.fill(); break; }
+    }
+    ctx.restore();
+  }
+}
+// Showcase at the start of a match on an exclusive table: the camera glides along the rails and the owner's name is shown.
+function introCamera(G) {
+  if (!introOn(G)) return false;
+  const k = Math.max(0, (performance.now() - G.intro.t0) / G.intro.dur), ease = x => x < 0.5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2;
+  let z, fx, fy;
+  if (k < 0.55) { const u = ease(k / 0.55); z = 2.3; fx = FX + 60 + (FW - 120) * u; fy = FY - 26; }
+  else { const u = ease(Math.min(1, (k - 0.55) / 0.33)); z = 2.3 + (1 - 2.3) * u; fx = FX + FW - 60 + (W / 2 - (FX + FW - 60)) * u; fy = FY - 26 + (H / 2 - (FY - 26)) * u; }
+  ctx.translate(W / 2, H / 2); ctx.scale(z, z); ctx.translate(-fx, -fy);
+  return k < 0.86;
+}
+function drawIntroBanner(G) {
+  if (!introOn(G)) return;
+  const k = (performance.now() - G.intro.t0) / G.intro.dur; if (k < 0) return;
+  const a = Math.min(1, k / 0.1, (1 - k) / 0.12), t = G.intro.t, prem = t.tier === "premium";
+  ctx.save(); ctx.globalAlpha = Math.max(0, a);
+  const y = H - 128, g = ctx.createLinearGradient(0, y - 60, 0, y + 70);
+  g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(0.35, "rgba(5,6,14,.82)"); g.addColorStop(0.75, "rgba(5,6,14,.82)"); g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g; ctx.fillRect(0, y - 60, W, 130);
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.font = `20px ${FONT}`; ctx.fillStyle = prem ? "#ffcf3d" : "#8fe8ff"; ctx.fillText(prem ? `👑  ${T("PREMIUM STOL")}  👑` : `✨  ${T("EKSKLYUZIV STOL")}  ✨`, W / 2, y - 22);
+  const txt = T("{n}ning {t} stoli").replace("{n}", G.intro.name).replace("{t}", T(t.name).toUpperCase());
+  ctx.font = `44px ${FONT}`;
+  const tg = ctx.createLinearGradient(0, y, 0, y + 44); tg.addColorStop(0, "#fffbe0"); tg.addColorStop(0.5, prem ? "#ffd24d" : "#bff4ff"); tg.addColorStop(1, prem ? "#c88a10" : "#40a8d8");
+  ctx.shadowColor = prem ? "#ffb300" : "#40c8ff"; ctx.shadowBlur = 18 + Math.sin(k * 20) * 6; ctx.fillStyle = tg; ctx.fillText(txt, W / 2, y + 22, W - 80);
+  ctx.shadowBlur = 0; ctx.font = "14px Nunito,sans-serif"; ctx.fillStyle = "rgba(255,255,255,.6)"; ctx.fillText(T("Bosing — o'tkazib yuborish"), W / 2, y + 58);
+  ctx.restore();
+}
 // ---------------------------------------------------------------- table (pre-rendered once per city/resolution)
 // Every city has its own table: rail material, a pattern woven into the cloth, the room light and (some) neon.
 const TBL = {
@@ -2912,9 +3146,93 @@ const TABLE_SKINS = () => [
   ...CITIES.map(c => ({id: c.id, name: c.name, felt: c.felt, rail: c.rail, trim: c.trim, pat: c.pat, coins: Math.max(2000, c.fee * 10), lvl: c.lvl, city: c})),
   ...EXTRA_TABLES.filter(t => !t.lux),
 ];
+// Table of the week: one exclusive table 40% off (changes every Monday, same for everyone).
+const weekNo = () => Math.floor((Date.now() / 864e5 + 3) / 7);
+const weeklyTable = () => { const ex = EXTRA_TABLES.filter(t => t.tier); return ex[(weekNo() * 7 + 3) % ex.length]; };
+function tablePrice(t, off = 0) {
+  const k = (1 - off) * (weeklyTable() === t ? 0.6 : 1);
+  return {cash: Math.max(1, Math.round(t.cash * k)), gems: Math.max(1, Math.round(t.gems * k)), deal: weeklyTable() === t};
+}
+function weekLeft() { const end = (weekNo() + 1) * 7 * 864e5 - 3 * 864e5, s = Math.max(0, end - Date.now()) / 1000 | 0;
+  return `${s / 86400 | 0}${T("k")} ${(s % 86400) / 3600 | 0}${T("s")} ${(s % 3600) / 60 | 0}${T("d")}`; }
+function giveTable(id, why) {
+  (profile.tables = profile.tables || []).includes(id) || profile.tables.push(id);
+  profile.tableSkin = id; tableCache = null; save(); Net.sync();
+  const t = tableById(id); Snd.tableFx(tableFxKind(id), 1); burst();
+  openModal({icon: t.tier === "premium" ? "👑" : "✨", title: T(t.name), text: why || T("Stol sizniki! Endi hamma o'yinlaringizda shu stol."), extra: `<canvas class="tpcv" width="620" height="340"></canvas>`,
+    buttons: [{label: T("Ajoyib!"), cls: "green", fn: () => {}}]});
+  previewTable(t, document.querySelector("#modal .tpcv"));
+}
+// Pieces: wins sometimes drop a piece of an exclusive table — 4 pieces = the table.
+function tablePieceDrop() {
+  if (Math.random() > 0.12) return;
+  const ex = EXTRA_TABLES.filter(t => t.tier && !(profile.tables || []).includes(t.id)); if (!ex.length) return;
+  const w = ex.map(t => 1 / t.cash), sum = w.reduce((a, b) => a + b, 0); let r = Math.random() * sum, t = ex[0];
+  for (let i = 0; i < ex.length; i++) if ((r -= w[i]) <= 0) { t = ex[i]; break; }
+  const tp = profile.tpieces = profile.tpieces || {}; tp[t.id] = (tp[t.id] | 0) + 1; save();
+  if (tp[t.id] >= 4) { delete tp[t.id]; giveTable(t.id, T("4 ta bo'lak yig'ildi — stol sizniki!")); }
+  else toast("🧩", `${T(t.name)} ${tp[t.id]}/4`, T("Stol bo'lagi"), {kind: t.tier === "premium" ? "trophy" : "ach"});
+}
+// Free try: one match on the table (once a day per table, or after an ad), then a −30% offer to keep it.
+let trialTable = null;
+function tryTable(t) {
+  const d = today(), tr = profile.trials = profile.trials || {};
+  const go2 = () => { tr[t.id] = d; save(); trialTable = t.id; toMenu(); startMatch("ai", CITIES[0], botPlayer(1, 4)); trialTable = null; };
+  if (tr[t.id] !== d) return go2();
+  y8Rewarded("try-table", go2);
+}
+function trialOffer(G) {
+  const t = tableById(G.trial); if (!t || (profile.tables || []).includes(t.id)) return null;
+  const pr = tablePrice(t, 0.3);
+  return [
+    {label: `👑 −30% · 💵 ${fmt(pr.cash)}`, cls: "purple", fn: () => { if (profile.cash < pr.cash) return toast("😕", T("Pul yetmaydi"), T(t.name)); profile.cash -= pr.cash; giveTable(t.id); updateNav(); }},
+    {label: `💎 ${fmt(pr.gems)}`, cls: "blue", fn: () => { if ((profile.gems || 0) < pr.gems) return toast("😕", T("Olmos yetmaydi"), T(t.name)); profile.gems -= pr.gems; giveTable(t.id); updateNav(); }},
+    {label: T("Menyu"), cls: "gray", fn: () => toMenu()},
+  ];
+}
+// Animated showcase of a table (shop "View" button, purchase and trial offers).
+function previewTable(t, cv2) {
+  if (!cv2) return;
+  const look = {id: t.id, name: "", felt: t.felt, rail: t.rail, trim: t.trim, pat: t.pat, gem: t.gem};
+  const k = cv2.width / (FW + 2 * RAIL + 40), x0 = FX - RAIL - 20, y0 = FY - RAIL - 20 - ((cv2.height / k) - (FH + 2 * RAIL + 40)) / 2;
+  const off = document.createElement("canvas"); off.width = cv2.width; off.height = cv2.height;
+  const g2 = cv2.getContext("2d"), fake = {fx: []};
+  let saved = ctx; ctx = off.getContext("2d"); ctx.setTransform(k, 0, 0, k, -x0 * k, -y0 * k);
+  try { paintTable(look); } finally { ctx = saved; }
+  let last = 0, odd = false;
+  const loop = ts => {
+    if (!cv2.isConnected) return;
+    if ((odd = !odd)) return requestAnimationFrame(loop);        // 30 fps is plenty for a preview
+    if (ts - last > 1300) { last = ts; const pk = POCKETS[Math.random() * 6 | 0]; spawnFx(fake, t.id, Math.random() < 0.4 ? FW / 2 : pk.x + pk.dx, Math.random() < 0.4 ? FH / 2 : pk.y + pk.dy, 1.2); }
+    const sv = ctx; ctx = g2;
+    try {
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(off, 0, 0);
+      ctx.setTransform(k, 0, 0, k, -x0 * k, -y0 * k); drawLuxFx(look);
+      ctx.translate(FX, FY); drawFx(fake);
+    } finally { ctx = sv; }
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+}
+// Small crown/sparkle next to the name of everyone who owns an exclusive table (profile, leaderboards, match HUD).
+function tableBadge(id) {
+  const t = id && EXTRA_TABLES.find(x => x.id === id); if (!t || !t.tier) return "";
+  return `<span class="tbadge ${t.tier === "premium" ? "tp" : "te"}" title="${esc(T(t.name))}">${t.tier === "premium" ? "👑" : "✨"} ${esc(T(t.name))}</span>`;
+}
+const tableById = id => id ? TABLE_SKINS().find(t => t.id === id) : null;
+const tableRank = id => { const t = tableById(id); return !t ? 0 : t.tier === "premium" ? 2e6 + t.cash : t.tier === "elite" ? 1e6 + t.cash : 1 + (t.cash || (t.coins || 0) / 1e5); };
+const tableBonus = id => { const t = tableById(id); if (!t || !t.tier) return 0;                  // % extra win coins / pass points
+  return t.tier === "premium" ? [10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 25][EXTRA_TABLES.filter(x => x.tier === "premium").indexOf(t)] || 10 : Math.round(5 + (t.cash - 300) / 450 * 7); };
+// The match is played on the most precious table either player owns (ties: seat 0 / me) — the opponent sees it too.
+function chooseTable(G) {
+  let best = -1, rank = 0;
+  G.players.forEach((pl, i) => { const r = tableRank(pl.tbl); const seat = G.net ? (i === 0 ? G.net.seat : 1 - G.net.seat) : i; if (r > rank || (r === rank && r > 0 && seat === 0)) { rank = r; best = i; } });
+  G.tbl = best >= 0 ? G.players[best].tbl : ""; G.tblOwner = best;
+}
 const ownsTable = t => !!(profile.tables || []).includes(t.id) || (t.city && ringOf(t.city));
 function tableLook(city) {
-  const sk = profile.tableSkin && TABLE_SKINS().find(t => t.id === profile.tableSkin);
+  const id = game && game.city === city && game.tbl !== undefined ? game.tbl : profile.tableSkin;
+  const sk = id && TABLE_SKINS().find(t => t.id === id);
   if (!sk || !city || !city.id || city.id === "golden" || city.pat === "lucky" || sk.id === city.id) return city;
   return {id: sk.id, name: city.name, felt: sk.felt, rail: sk.rail, trim: sk.trim, pat: sk.pat, gem: sk.gem, ring: city.id};
 }
@@ -3173,12 +3491,13 @@ const luxSpark = {};
 function drawLuxFx(city) {
   const st = tblOf(city); if (!st.lux) return;
   const t = performance.now() / 1000, OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
-  ctx.save(); ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(OX, OY, OW, OH, 30); else ctx.rect(OX, OY, OW, OH); ctx.rect(FX - 18, FY - 18, FW + 36, FH + 36); ctx.clip("evenodd");
-  const k = (t % 4.2) / 4.2, cx = OX - 300 + (OW + 600) * k, cy = OY + OH / 2;
+  const k = (t % 4.2) / 4.2, cx = OX - 300 + (OW + 600) * k, cy = OY + OH / 2, bw = FY - 18 - OY;
+  const strips = [[OX + 20, OY, OW - 40, bw], [OX + 20, FY + FH + 18, OW - 40, bw], [OX, OY + 20, bw, OH - 40], [FX + FW + 18, OY + 20, bw, OH - 40]];
+  ctx.save();                                    // only the four rail strips are touched (cheap on phones)
   const g = ctx.createLinearGradient(cx - 110, cy - 60, cx + 110, cy + 60);
   g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(0.5, `rgba(255,255,255,${st.shine || 0.45})`); g.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = g; ctx.fillRect(OX, OY, OW, OH);
-  if (st.opal) { ctx.globalCompositeOperation = "overlay"; ctx.fillStyle = `hsla(${(t * 50) % 360},100%,60%,.35)`; ctx.fillRect(OX, OY, OW, OH); }
+  ctx.fillStyle = g; for (const [x, y, w, h] of strips) if (x + w > cx - 180 && x < cx + 180) ctx.fillRect(x, y, w, h);
+  if (st.opal) { ctx.globalCompositeOperation = "overlay"; ctx.fillStyle = `hsla(${(t * 50) % 360},100%,60%,.35)`; for (const [x, y, w, h] of strips) ctx.fillRect(x, y, w, h); }
   ctx.restore();
   let sp = luxSpark[city.id];
   if (!sp) {
@@ -3317,6 +3636,18 @@ function paintTable(city) {
   const [r1, r2] = city.rail, trim = city.trim, lucky = city.pat === "lucky";
   const OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
   let seed = 11; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  if (tblOf(city).lux) {                           // exclusive tables: an outer frame of the same precious material, with stones
+    const st0 = tblOf(city), [h0, m0, l0] = st0.metal, fg = ctx.createLinearGradient(OX, OY - 14, OX + OW * 0.3, OY + OH + 14);
+    [[0, m0], [0.12, h0], [0.25, l0], [0.45, h0], [0.6, m0], [0.8, h0], [1, l0]].forEach(([o, c]) => fg.addColorStop(o, c));
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.8)"; ctx.shadowBlur = 40; ctx.shadowOffsetY = 18;
+    ctx.fillStyle = fg; rr(OX - 13, OY - 13, OW + 26, OH + 26, 40); ctx.fill(); ctx.restore();
+    ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.lineWidth = 1.5; rr(OX - 12, OY - 12, OW + 24, OH + 24, 39); ctx.stroke();
+    ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1.5; rr(OX - 2, OY - 2, OW + 4, OH + 4, 31); ctx.stroke();
+    const gcol = st0.gemrow || (st0.pave && st0.pave !== "opal" ? st0.pave : null) || city.gem || h0; let s2 = 5;
+    const r2 = () => (s2 = (s2 * 16807) % 2147483647) / 2147483647;
+    for (let x = OX + 40; x < OX + OW - 30; x += 46) for (const y of [OY - 6.5, OY + OH + 6.5]) luxGem(x, y, 3.3, gcol === "opal" ? "#ffffff" : gcol, r2);
+    for (let y = OY + 40; y < OY + OH - 30; y += 46) for (const x of [OX - 6.5, OX + OW + 6.5]) luxGem(x, y, 3.3, gcol === "opal" ? "#ffffff" : gcol, r2);
+  }
   // body + floor shadow
   ctx.save(); ctx.shadowColor = "rgba(0,0,0,.8)"; ctx.shadowBlur = 60; ctx.shadowOffsetY = 24;
   ctx.fillStyle = r2; rr(OX, OY, OW, OH, 30); ctx.fill(); ctx.restore();
@@ -3988,6 +4319,12 @@ function drawPanel(G, i, side) {
   ctx.font = `24px ${FONT}`; ctx.fillStyle = active ? "#fff" : "#c3cbe0";
   ctx.shadowColor = "#000"; ctx.shadowBlur = 4;
   ctx.fillText(pl.name, nx, 30, 200);
+  const tb = pl.tbl && EXTRA_TABLES.find(t => t.id === pl.tbl && t.tier);
+  if (tb) {                                      // exclusive-table owner: glowing crown / sparkle next to the name
+    const w = Math.min(200, ctx.measureText(pl.name).width), ix = side < 0 ? nx - w - 18 : nx + w + 18;
+    ctx.shadowColor = tb.tier === "premium" ? "#ffcf3d" : "#40c8ff"; ctx.shadowBlur = 10 + Math.sin(performance.now() / 250) * 4;
+    ctx.font = "20px sans-serif"; ctx.textAlign = "center"; ctx.fillText(tb.tier === "premium" ? "👑" : "✨", ix, 29);
+  }
   ctx.restore();
   const g = G.groups[i];
   const nums = g === "solid" ? [1, 2, 3, 4, 5, 6, 7] : g === "stripe" ? [9, 10, 11, 12, 13, 14, 15] : [];
@@ -4243,7 +4580,9 @@ function update() {
       const c = G.balls[0], key = `${G.angle.toFixed(3)}|${c.x | 0}|${c.y | 0}|${input.power.toFixed(2)}`;
       if (key !== G.net.sentA) { G.net.sentA = key; G.net.lastAim = performance.now(); Net.send({t: "aim", a: G.angle, x: c.x, y: c.y, p: input.power}); }
     }
-    if (curP().remote) {
+    if (introOn(G)) {
+      G.turnStart += 1000 / 60;                     // the table showcase is playing
+    } else if (curP().remote) {
       /* opponent's turn — their device runs the clock */
     } else if (curP().isAI) {
       if (!G.aiTask && !G.aiWait) {
@@ -4269,6 +4608,7 @@ function render() {
   drawBackground();
   if (!G) { drawConfetti(); return; }
   ctx.save();
+  const hideHud = introCamera(G);
   if (G.shake > 0.3) ctx.translate(rnd(-G.shake, G.shake), rnd(-G.shake, G.shake));
   drawTable(tableLook(G.city)); drawLuxFx(tableLook(G.city));
   if (G.type === "lucky") drawLuckyTarget(G);
@@ -4285,10 +4625,11 @@ function render() {
   ctx.fillStyle = "#fff";
   for (const s of G.sparks) { s.x += s.vx; s.y += s.vy; ctx.globalAlpha = s.life / 16; ctx.fillRect(s.x - 1, s.y - 1, 2.5, 2.5); }
   ctx.globalAlpha = 1;
+  drawFx(G);
   ctx.restore();
   const cue = G.balls[0];
   const human = !curP().isAI && !curP().remote && !G.demo && G.type !== "watch";
-  if (!G.moving && !G.over && !cue.out) {
+  if (!G.moving && !G.over && !cue.out && !hideHud) {
     if (G.ballInHand && human && !G.strike) drawHand(FX + cue.x, FY + cue.y);
     const noGuide = opt("guideOff") && (G.type === "practice" || G.type === "pvp");
     if (!noGuide && ((human && !G.strike) || (G.aiTask && !G.demo) || (curP().remote && !G.strike))) drawGuide(G);
@@ -4296,7 +4637,7 @@ function render() {
     drawCue(G, pull);
   }
   ctx.restore();
-  if (!G.demo) {
+  if (!G.demo && !hideHud) {
     drawHUD(G);
     drawControls(G, human);
     if (G.type !== "lucky") drawTray(G);
@@ -4307,6 +4648,7 @@ function render() {
   const v = ctx.createRadialGradient(W / 2, H / 2, H * 0.45, W / 2, H / 2, W * 0.75);
   v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(0,0,0,.45)");
   ctx.fillStyle = v; ctx.fillRect(-3000, -3000, W + 6000, H + 6000);
+  drawIntroBanner(G);
   drawConfetti();
 }
 function frame() { update(); render(); requestAnimationFrame(frame); }
@@ -4393,7 +4735,7 @@ function openModal({icon = "", title, text = "", extra = "", buttons = []}) {
   $("modal").classList.add("on");
 }
 function resultModal(humanWon, why, winner, prize, buttons) {
-  const title = humanWon === null ? `${winner.name} yutdi!` : humanWon ? "G'ALABA!" : "MAG'LUBIYAT";
+  const title = humanWon === null ? `${winner.name} ${T("yutdi!")}` : humanWon ? T("G'ALABA!") : T("MAG'LUBIYAT");
   const extra = prize ? `<div class="reward"><span class="coin"></span><span id="countUp">+0</span></div>` : "";
   buttons = buttons.map(b => ({...b, fn: () => y8Break(b.fn)}));   // Y8: occasional ad between matches
   openModal({icon: humanWon === false ? "😞" : "🏆", title, text: why, extra, buttons});
@@ -4531,9 +4873,9 @@ function findOpponent(c) {
         done = true; clearTimeout(timer);
         const o = m.opp || {};
         resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: (o.avatar | 0) % AV_N, frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
-          level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start"}});
+          level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : ""}});
       });
-      Net.send({t: "queue", city: c.id, cue: profile.cue});
+      Net.send({t: "queue", city: c.id, cue: profile.cue, tbl: profile.tableSkin || ""});
     }).catch(() => { clearTimeout(timer); bot(); });
   });
 }
@@ -4738,6 +5080,18 @@ function buildShop(tab) {
     add(null, true, !profile.tableSkin, `<b>🌍 ${T("Shahar stoli")}</b>`, T("Har shaharda o'z stoli"),
       !profile.tableSkin ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue">${T("TANLASH")}</button>`,
       profile.tableSkin ? () => { profile.tableSkin = ""; tableCache = null; save(); buildShop("tables"); } : null);
+    const wk = weeklyTable();
+    if (!(profile.tables || []).includes(wk.id)) {
+      const pr = tablePrice(wk), bn = document.createElement("div"); bn.className = "tweek";
+      bn.innerHTML = `<canvas class="tpcv" width="620" height="340"></canvas><div><div class="tw1">🔥 ${T("Haftaning stoli")} · −40%</div><b>${wk.tier === "premium" ? "👑" : "✨"} ${esc(T(wk.name))}</b>
+        <div class="muted">⏳ ${weekLeft()} · <s>💵 ${fmt(wk.cash)}</s> → <b style="color:#8dff9a">💵 ${fmt(pr.cash)}</b> · <s>💎 ${wk.gems}</s> → <b style="color:#8dff9a">💎 ${pr.gems}</b></div>
+        <div class="tpay"><button class="btn purple" data-w="cash">💵 ${fmt(pr.cash)}</button><button class="btn blue" data-w="gems">💎 ${fmt(pr.gems)}</button><button class="btn orange" data-w="try">▶ ${T("Sinab ko'rish")}</button></div></div>`;
+      grid.appendChild(bn);
+      bn.querySelector('[data-w="cash"]').onclick = () => { if (profile.cash < pr.cash) return toast("😕", T("Pul yetmaydi"), T(wk.name)); profile.cash -= pr.cash; updateNav(); giveTable(wk.id); buildShop("tables"); };
+      bn.querySelector('[data-w="gems"]').onclick = () => { if ((profile.gems || 0) < pr.gems) return toast("😕", T("Olmos yetmaydi"), T(wk.name)); profile.gems -= pr.gems; updateNav(); giveTable(wk.id); buildShop("tables"); };
+      bn.querySelector('[data-w="try"]').onclick = () => tryTable(wk);
+      setTimeout(() => previewTable(wk, bn.querySelector("canvas")), 50);
+    }
     const head = txt => { const h = document.createElement("div"); h.className = "tblhead"; h.innerHTML = txt; grid.appendChild(h); };
     let lastSec = "";
     for (const t of list) {
@@ -4749,12 +5103,21 @@ function buildShop(tab) {
       const got = () => { (profile.tables = profile.tables || []).push(t.id); use(); };
       const locked = !own && t.lvl && profile.level < t.lvl;
       if (t.tier && !own) {                         // exclusive tables: pay with cash, gems or real money
-        const el = add(t, own, sel, `<b>${t.tier === "premium" ? "👑 " : "✨ "}${T(t.name)}</b>`, T(t.tier === "premium" ? "Premium hoshiya · tovlanadi" : "Eksklyuziv hoshiya"),
-          `<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(t.cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(t.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">$${t.usd}</button>`}</div>`, null);
-        el.querySelector('[data-p="cash"]').onclick = () => buy({cur: "cash", v: t.cash}, T(t.name), got);
+        const pr = tablePrice(t), pc = (profile.tpieces || {})[t.id] | 0;
+        const el = add(t, own, sel, `<b>${t.tier === "premium" ? "👑 " : "✨ "}${T(t.name)}${pr.deal ? ' <span class="tdeal">−40%</span>' : ""}${pc ? ` <span class="tpc">🧩 ${pc}/4</span>` : ""}</b>`, `${T(t.tier === "premium" ? "Premium hoshiya · tovlanadi" : "Eksklyuziv hoshiya")}<br><span class="tbon">🪙 +${tableBonus(t.id)}% · ♞ +${tableBonus(t.id)}% · XP +${tableBonus(t.id)}%</span>`,
+          `<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(pr.cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(pr.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">$${t.usd}</button>`}</div>
+           <div class="tpay"><button class="btn orange" data-p="try">▶ ${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">👁 ${T("Ko'rish")}</button></div>`, null);
+        const bought = () => { profile.tables = profile.tables || []; if (!profile.tables.includes(t.id)) profile.tables.push(t.id); updateNav(); giveTable(t.id); buildShop("tables"); };
+        el.querySelector('[data-p="cash"]').onclick = () => { if (profile.cash < pr.cash) return toast("😕", T("Pul yetmaydi"), T(t.name)); profile.cash -= pr.cash; bought(); };
         el.querySelector('[data-p="gems"]').onclick = () => {
-          if ((profile.gems || 0) < t.gems) return toast("😕", T("Olmos yetmaydi"), T(t.name));
-          profile.gems -= t.gems; Snd.coin(6); toast("🛍", T(t.name), T("Sotib olindi!")); got(); updateNav();
+          if ((profile.gems || 0) < pr.gems) return toast("😕", T("Olmos yetmaydi"), T(t.name));
+          profile.gems -= pr.gems; bought();
+        };
+        el.querySelector('[data-p="try"]').onclick = () => tryTable(t);
+        el.querySelector('[data-p="view"]').onclick = () => {
+          openModal({icon: t.tier === "premium" ? "👑" : "✨", title: T(t.name), text: `🪙 +${tableBonus(t.id)}% · ♞ +${tableBonus(t.id)}% · XP +${tableBonus(t.id)}%`, extra: `<canvas class="tpcv" width="620" height="340"></canvas>`,
+            buttons: [{label: `💵 ${fmt(pr.cash)}`, cls: "purple", fn: () => el.querySelector('[data-p="cash"]').click()}, {label: `▶ ${T("Sinab ko'rish")}`, cls: "orange", fn: () => tryTable(t)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+          previewTable(t, document.querySelector("#modal .tpcv"));
         };
         const u = el.querySelector('[data-p="usd"]'); if (u) u.onclick = () => Net.checkout("tbl_" + t.id, u);
         continue;
@@ -4931,7 +5294,7 @@ function buildLeader() {
   const medal = i => i < 3 ? ["🥇", "🥈", "🥉"][i] : fmt(i + 1);
   const row = (u, rank, me, cls = "") => `<div class="lbr${me ? " me" : ""} ${cls}"><div class="rk">${medal(rank)}</div>
     ${avHTML(u.avatar, u.frame, 48)}
-    <div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<div style="min-width:0"><b>${esc(u.name)}</b>${me ? ` <small class="muted">(${T("siz")})</small>` : ""}<small class="sub">${leagueName(u.league)}${u.club ? ` · 🛡 ${esc(u.club)}` : ""}</small></div></div>
+    <div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<div style="min-width:0"><b>${esc(u.name)}</b>${tableBadge(me ? profile.tableSkin : u.tbl)}${me ? ` <small class="muted">(${T("siz")})</small>` : ""}<small class="sub">${leagueName(u.league)}${u.club ? ` · 🛡 ${esc(u.club)}` : ""}</small></div></div>
     <div class="h" style="color:#ffe27a;font-size:20px;white-space:nowrap">${fmtS(u.weekWon | 0)} <span class="coin"></span></div></div>`;
   $("lbInfo").innerHTML = ""; $("lbList").innerHTML = `<div class="muted" style="text-align:center;padding:20px">${T("Yuklanmoqda…")}</div>`;
   clearInterval(lbTimer);
@@ -5104,7 +5467,7 @@ function buildProfile() {
   $("profBody").innerHTML = `<div class="prof2">
     <div class="pcard">
       <div class="pbig">${avHTML(profile.avatar, profile.frame, 96)}<button class="pedit" data-go="shop" data-tab="avatars">✏</button><span class="pdays">${days} ${T("kun")}</span></div>
-      <input class="name pname2" id="pName" maxlength="14" value="${esc(profile.name)}">
+      <input class="name pname2" id="pName" maxlength="14" value="${esc(profile.name)}">${tableBadge(profile.tableSkin) ? `<div style="text-align:center;margin-top:2px">${tableBadge(profile.tableSkin)}</div>` : ""}
       <div class="pline">${flagHTML(profile.country, 16)} <select id="pCountry" class="psel">${countryOptions()}</select></div>
       <div class="pline pid">${T("ID")}: <b>${esc(code)}</b> <button class="btn blue" id="pCopy" style="padding:2px 10px;font-size:13px">⧉</button></div>
       <div class="pline">🛡 ${club ? esc(club) : `<span class="muted">${T("Klub yo'q")}</span>`}</div>
@@ -5289,7 +5652,7 @@ const Net = (() => {
     try {
       await ensure();
       const r = await api("/api/sync", {name: profile.name, avatar: profile.avatar, frame: profile.frame | 0, country: profile.country,
-        level: profile.level, xp: profile.xp, won: profile.won, wins: profile.wins, games: profile.games,
+        level: profile.level, xp: profile.xp, won: profile.won, wins: profile.wins, games: profile.games, tbl: profile.tableSkin || "",
         prefs: {allowFriend: opt("allowFriend"), showOnline: opt("showOnline")}, sd: {week: sdState().week, pts: sdState().pts}});
       if (Net.friends) profile.friendsN = Net.friends.length;
       if (r.me) { profile.league = r.me.league; profile.bestLeague = Math.max(profile.bestLeague | 0, r.me.league | 0); profile.inClub = !!r.me.club; }
@@ -5709,7 +6072,7 @@ function showdownScreen() {
   box.querySelectorAll("[data-sdc]").forEach(b => b.onclick = () => { const i = +b.dataset.sdc; if (s.got[i]) return; s.got[i] = 1; giveReward2(SD_MILESTONES[i][1]); Snd.coin(6); showdownScreen(); });
   Net.sync().then(() => Net.api("/api/leaderboard?scope=showdown")).then(r => {
     const row = (u, i, me) => `<div class="lbr${me ? " me" : ""}"><div class="rk">${i < 3 ? ["🥇", "🥈", "🥉"][i] : i + 1}</div>${avHTML(u.avatar, u.frame, 40)}
-      <div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<b>${esc(u.name)}</b></div><div class="h" style="color:#ffe27a">♞ ${fmt(u.sd)}</div></div>`;
+      <div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<b>${esc(u.name)}</b>${tableBadge(u.tbl)}</div><div class="h" style="color:#ffe27a">♞ ${fmt(u.sd)}</div></div>`;
     $("sdList").innerHTML = r.top.map((u, i) => row(u, i, u.id === r.me.id)).join("") + (r.top.some(u => u.id === r.me.id) ? "" : row(r.me, r.me.rank - 1, true));
   }).catch(() => { $("sdList").innerHTML = `<div class="muted" style="text-align:center">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>`; });
 }
@@ -5826,9 +6189,9 @@ function lobbyWait(c, code, join) {
         if (done) return; done = true; clearTimeout(timer);
         const o = m.opp || {};
         resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: (o.avatar | 0) % AV_N, frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
-          level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start"}});
+          level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : ""}});
       });
-      Net.send({t: "queue", city: c.id, code, join: !!join, cue: profile.cue});
+      Net.send({t: "queue", city: c.id, code, join: !!join, cue: profile.cue, tbl: profile.tableSkin || ""});
     }).catch(() => { clearTimeout(timer); fail(T("Server bilan aloqa yo'q. Internetni tekshiring.")); });
   }), f => f ? startMatch("ai", c, f.opp, f.net) : toMenu("withFrScr"));
   if (!join) setTimeout(() => { const el = $("vsBn"); if (el) el.innerHTML = `${T("Kod")}: <b style="color:#ffe27a;font-size:1.3em">${code}</b>`; }, 300);
@@ -6204,7 +6567,7 @@ function clubHome(r) {
       <button class="btn red" id="clubLeave" style="padding:6px 14px">${T("Klubdan chiqish")}</button></div>
     <div class="tabs subtabs"><button class="tab${clubTab === "members" ? " on" : ""}" data-ct="members">👥 ${T("A'zolar")}</button><button class="tab${clubTab === "chat" ? " on" : ""}" data-ct="chat">💬 Chat</button></div>
     ${clubTab === "members" ? r.members.map((u, i) => `<div class="lbr${u.id === me ? " me" : ""}"><div class="rk">${i < 3 ? ["🥇", "🥈", "🥉"][i] : i + 1}</div>${avHTML(u.avatar, u.frame, 44)}
-        <div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<div style="min-width:0"><b>${esc(u.name)}</b> ${u.role === "owner" ? "👑" : ""}${u.online ? ' <span style="color:#3fe052">●</span>' : ""}<small class="sub">${leagueName(u.league)}</small></div></div>
+        <div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<div style="min-width:0"><b>${esc(u.name)}</b>${tableBadge(u.tbl)} ${u.role === "owner" ? "👑" : ""}${u.online ? ' <span style="color:#3fe052">●</span>' : ""}<small class="sub">${leagueName(u.league)}</small></div></div>
         <div class="h" style="color:#ffe27a;font-size:18px">${fmtS(u.weekWon)} <span class="coin"></span></div></div>`).join("")
       : `<div class="chatbox" id="clubChat">${chatHTML(r.chat)}</div><div style="display:flex;gap:8px;margin-top:8px"><input class="name" id="clubMsg" maxlength="140" placeholder="${T("Xabar yozing…")}"><button class="btn green" id="clubSend">➤</button></div>`}`;
   box.querySelectorAll("[data-ct]").forEach(b => b.onclick = () => { clubTab = b.dataset.ct; clubHome(r); });

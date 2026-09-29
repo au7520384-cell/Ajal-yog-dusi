@@ -112,7 +112,7 @@ function newCode() {
 }
 function publicUser(u) {
   return {id: u.id, code: u.code, name: u.name, avatar: u.avatar, frame: u.frame || 0, level: u.level, won: u.won, wins: u.wins, games: u.games,
-    country: u.country || "", league: u.league || 0, weekWon: u.week === curWeek() ? u.weekWon || 0 : 0,
+    country: u.country || "", league: u.league || 0, tbl: u.tbl || "", weekWon: u.week === curWeek() ? u.weekWon || 0 : 0,
     club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "",
     online: clients.has(u.id) && !(u.prefs && u.prefs.showOnline === false), lastSeen: u.lastSeen};
 }
@@ -257,6 +257,7 @@ const routes = {
     if (b.won !== undefined) { const d = int(b.won) - (u.won || 0); if (d > 0) addWeekly(u, Math.min(d, 2e8)); }
     for (const k of ["level", "won", "wins", "games"]) if (b[k] !== undefined) u[k] = Math.max(u[k] || 0, int(b[k]));
     if (b.xp !== undefined) u.xp = int(b.xp);
+    if (b.tbl !== undefined) u.tbl = /^[a-z]_[a-z]{3}$/.test(String(b.tbl)) ? String(b.tbl) : "";   // equipped exclusive table (badge)
     // Showdown event points (weekly): the device reports this week's total, the server keeps the highest value
     if (b.sd && b.sd.week === curWeek()) { if (u.sdWeek !== curWeek()) { u.sdWeek = curWeek(); u.sdPts = 0; } u.sdPts = Math.max(u.sdPts || 0, int(b.sd.pts, 1e7)); lbCache.clear(); }
     if (b.prefs && typeof b.prefs === "object") u.prefs = {allowFriend: b.prefs.allowFriend !== false, showOnline: b.prefs.showOnline !== false};
@@ -566,7 +567,7 @@ wss.on("connection", (ws, req) => {
       if (ws.room) return;
       const city = String(m.city || "lon").slice(0, 8);
       const code = m.code ? String(m.code).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8) : "";
-      ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), code: u.code};
+      ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), tbl: String(m.tbl || "").slice(0, 8), code: u.code};
       const qk = code ? "code:" + code : city;
       const q = queues.get(qk) || []; queues.set(qk, q);
       const opp = q.find(o => o.uid !== ws.uid && o.readyState === 1);
