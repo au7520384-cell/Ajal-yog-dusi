@@ -2972,7 +2972,9 @@ function drawBall(b, x, y, sc = 1, alpha = 1) {
   shg.addColorStop(0, "rgba(0,0,0,.55)"); shg.addColorStop(0.8, "rgba(0,0,0,.3)"); shg.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = shg; ctx.beginPath(); ctx.arc(x + r * 0.12, y + r * 0.18, r * 1.05, 0, 7); ctx.fill();
   ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.save(); ctx.clip();
-  ctx.fillStyle = base; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  { const bg = ctx.createRadialGradient(x - r * 0.32, y - r * 0.38, r * 0.05, x - r * 0.05, y - r * 0.05, r * 1.15);   // rich body colour: lighter under the lamp, deep at the rim
+    bg.addColorStop(0, shade(base, n === 8 ? 40 : 46)); bg.addColorStop(0.42, base); bg.addColorStop(1, shade(base, n === 8 ? -10 : -62));
+    ctx.fillStyle = bg; ctx.fillRect(x - r, y - r, 2 * r, 2 * r); }
   if (!gold && n > 8) {
     const q = b.q || [0, 1, 0];
     ctx.fillStyle = "#f7f4ec";
@@ -2984,11 +2986,12 @@ function drawBall(b, x, y, sc = 1, alpha = 1) {
     if (p[2] > 0.3) { ctx.fillStyle = "#c98a00"; ctx.font = `${r * 0.8}px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("★", x + p[0] * r, y + p[1] * r); }
   } else if (n > 0) {
     if (p[2] > -0.35) {
-      ctx.fillStyle = "#fbfaf5"; capPath(p, 0.56, r, x, y); ctx.fill();
+      ctx.fillStyle = "#fbfaf5"; capPath(p, 0.61, r, x, y); ctx.fill();
+      ctx.strokeStyle = "rgba(0,0,0,.16)"; ctx.lineWidth = Math.max(0.5, r * 0.04); ctx.stroke();
       if (p[2] > 0.2 && sc > 0.6) {
         ctx.save(); ctx.translate(x + p[0] * r * 0.97, y + p[1] * r * 0.97);
         const ang = Math.atan2(p[1], p[0]); ctx.rotate(ang); ctx.scale(Math.max(0.25, p[2]), 1); ctx.rotate(-ang);
-        ctx.fillStyle = "#0e0e0e"; ctx.font = `900 ${r * (n > 9 ? 0.7 : 0.84)}px "Arial Black",Arial,sans-serif`;
+        ctx.fillStyle = "#0e0e0e"; ctx.font = `900 ${r * (n > 9 ? 0.74 : 0.9)}px "Arial Black",Arial,sans-serif`;
         ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(String(n), 0, r * 0.05);
         ctx.restore();
       }
@@ -3017,6 +3020,10 @@ function drawBall(b, x, y, sc = 1, alpha = 1) {
   ctx.fillStyle = "rgba(255,255,255,.97)"; rr(-r * 0.21, -r * 0.1, r * 0.42, r * 0.2, r * 0.1); ctx.fill();
   ctx.restore();
   ctx.fillStyle = "rgba(255,255,255,.3)"; ctx.beginPath(); ctx.ellipse(x + r * 0.42, y + r * 0.5, r * 0.12, r * 0.06, -0.6, 0, 7); ctx.fill();
+  g = ctx.createRadialGradient(x - r * 0.5, y - r * 0.55, 0, x - r * 0.5, y - r * 0.55, r * 0.16);   // hard pinpoint of the lamp
+  g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  g = ctx.createRadialGradient(x, y, r * 0.78, x, y, r);   // thin cool rim light on the upper-left edge, dark rim on the lower-right
+  g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(1, "rgba(0,0,0,.28)"); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
   ctx.restore();
   ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = Math.max(0.6, r * 0.05);             // crisp edge against the cloth
   ctx.beginPath(); ctx.arc(x, y, r - ctx.lineWidth / 2, 0, 7); ctx.stroke();
