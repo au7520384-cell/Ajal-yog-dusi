@@ -74,7 +74,11 @@ const TABLE_NAMES = {"l_brz": "Bronze", "l_slv": "Silver", "l_gld": "Gold", "l_r
 const TABLE_SKUS = {l_brz: 4.99, l_slv: 6.99, l_gld: 9.99, l_rgd: 11.99, l_plt: 14.99, l_sap: 17.99, l_emr: 19.99, l_rby: 21.99, l_ame: 22.99, l_dia: 34.99, l_bdi: 39.99, l_opl: 49.99, e_sak: 2.99, e_ros: 3.49, e_lol: 3.79, e_lot: 3.99, e_pax: 4.19, e_orx: 4.49, e_kun: 2.99, e_atl: 4.79, e_smq: 4.99, e_mal: 5.49, e_laz: 5.79, e_prl: 5.99, e_muz: 5.99, e_drg: 6.49, e_olv: 6.49, e_kos: 6.99, e_qah: 6.99, e_tov: 7.49};
 for (const [id, usd] of Object.entries(TABLE_SKUS)) SKUS["tbl_" + id] = {items: {tables: [id]}, vip: Math.round(usd * 65), usd, name: "Table: " + TABLE_NAMES[id]};
 // Limited editions: only EDITION_CAP[id] copies of these tables will ever exist; every owner gets a serial number.
-const EDITION_CAP = {l_brz: 5000, l_slv: 4000, l_gld: 3000, l_rgd: 2500, l_plt: 2000, l_sap: 1500, l_emr: 1500, l_rby: 1200, l_ame: 1200, l_dia: 1000, l_bdi: 500, l_opl: 300};
+const EDITION_CAP = {l_brz: 5000, l_slv: 4000, l_gld: 3000, l_rgd: 2500, l_plt: 2000, l_sap: 1500, l_emr: 1500, l_rby: 1200, l_ame: 1200, l_dia: 1000, l_bdi: 500, l_opl: 300,
+  pc_brz: 5000, pc_slv: 4000, pc_gld: 3000, pc_rgd: 2500, pc_plt: 2000, pc_sap: 1500, pc_emr: 1500, pc_rby: 1200, pc_ame: 1200, pc_dia: 1000, pc_bdi: 500, pc_opl: 300};
+// Premium cues (real-money option; also sold in-game for cash or gems)
+const CUE_USD = {pc_brz: 3.99, pc_slv: 5.99, pc_gld: 8.99, pc_rgd: 10.99, pc_plt: 12.99, pc_sap: 15.99, pc_emr: 17.99, pc_rby: 19.99, pc_ame: 21.99, pc_dia: 29.99, pc_bdi: 36.99, pc_opl: 44.99};
+for (const [id, usd] of Object.entries(CUE_USD)) SKUS["cue_" + id] = {items: {cues: [id]}, vip: Math.round(usd * 65), usd, name: "Premium cue " + id.slice(3)};
 function claimEdition(u, id) {
   const cap = EDITION_CAP[id]; if (!cap) return {serial: 0};
   u.editions = u.editions || {};
@@ -481,7 +485,7 @@ const routes = {
     const b = await jsonBody(req), sku = SKUS[b.sku];
     if (!sku) return [400, {error: "bad_sku"}];
     if (sku.once && (u.bought || {})[b.sku]) return [400, {error: "already_bought"}];
-    const tid = sku.items && sku.items.tables && sku.items.tables[0];
+    const tid = sku.items && ((sku.items.tables || sku.items.cues || [])[0]);
     if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return [409, {error: "sold_out"}];
     if (!STRIPE_KEY) return [503, {error: "payments_not_configured"}];
     const form = new URLSearchParams({
@@ -517,7 +521,7 @@ async function stripeWebhook(req, res) {
     if (u && sku && !db.purchases[s.id]) {
       db.purchases[s.id] = {user: u.id, sku: s.metadata.sku, at: Date.now(), amount: s.amount_total};
       let items = sku.items || null, refund = 0;
-      const tid = items && items.tables && items.tables[0];
+      const tid = items && ((items.tables || items.cues || [])[0]);
       if (tid && EDITION_CAP[tid]) {               // the serial is handed out when the payment arrives
         const r = claimEdition(u, tid);
         if (r.error) { items = null; refund = TABLE_REFUND_CASH; }   // sold out between checkout and payment: cash instead
