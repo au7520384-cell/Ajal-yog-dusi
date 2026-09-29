@@ -1050,13 +1050,13 @@ const FONT = '"Lilita One","Arial Black",Impact,sans-serif';
 
 const POCKETS = [
   {x: 0, y: 0, r: 37, dx: -16, dy: -16, dr: 27},          // r = how close a ball centre must get to drop (wide mouths: jaws never make a ball bounce back out of a pocket it is visibly over)
-  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -19, dr: 26, mid: true},
+  {x: FW / 2, y: -9, r: 32, dx: 0, dy: -18, dr: 23, mid: true},
   {x: FW, y: 0, r: 37, dx: 16, dy: -16, dr: 27},
   {x: 0, y: FH, r: 37, dx: -16, dy: 16, dr: 27},
-  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 19, dr: 26, mid: true},
+  {x: FW / 2, y: FH + 9, r: 32, dx: 0, dy: 18, dr: 23, mid: true},
   {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
-const MID_MOUTH = 34;   // half-width of a middle pocket mouth at the cushion nose (the jaws angle in to the hole)
+const MID_MOUTH = 27;   // half-width of a middle pocket mouth at the cushion nose (the jaws angle in to the hole)
 const POCKET_AIMS = [
   {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
   {x: 5, y: FH - 5}, {x: FW / 2, y: FH - 1, mid: true}, {x: FW - 5, y: FH - 5},
@@ -4171,10 +4171,9 @@ function paintTable(city) {
   }
   // felt
   ctx.save(); ctx.translate(FX, FY);
-  ctx.fillStyle = "#1c060c"; ctx.fillRect(-18, -18, FW + 36, FH + 36);   // under-cushion / pocket mouths
   const fg = ctx.createRadialGradient(FW / 2, FH / 2, 20, FW / 2, FH / 2, FW * 0.62);
   fg.addColorStop(0, shade(city.felt[0], 2)); fg.addColorStop(0.5, shade(city.felt[0], -20)); fg.addColorStop(1, shade(city.felt[1], -22));
-  ctx.fillStyle = fg; ctx.fillRect(0, 0, FW, FH);
+  ctx.fillStyle = fg; ctx.fillRect(-21, -21, FW + 42, FH + 42);   // cloth runs under the cushions, so every pocket mouth shows cloth
   if (!feltNoise) {
     feltNoise = document.createElement("canvas"); feltNoise.width = feltNoise.height = 128;
     const ng = feltNoise.getContext("2d"), id = ng.createImageData(128, 128);
@@ -4208,17 +4207,8 @@ function paintTable(city) {
     // pocket holes
     for (const p of POCKETS) {
       const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
-      if (!p.mid) {  // corner mouth: the hole flows between the two angled jaws into the cloth
-        const sx = p.x ? -1 : 1, sy3 = p.y ? -1 : 1, ex = p.x + sx * 20, ey = p.y + sy3 * 20, g = ctx.createLinearGradient(x, y, ex, ey);
-        g.addColorStop(0, "#160306"); g.addColorStop(0.5, shade(city.felt[1], -40)); g.addColorStop(1, shade(city.felt[1], -8));
-        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x, y);
-        ctx.lineTo(p.x + sx * 12, p.y - sy3 * 19); ctx.lineTo(p.x + sx * 34, p.y); ctx.lineTo(p.x, p.y + sy3 * 34); ctx.lineTo(p.x - sx * 19, p.y + sy3 * 12); ctx.closePath(); ctx.fill();
-      }
-      if (p.mid) {   // the hole flows into the cushion notch as one dark funnel that fades out at the cushion nose
-        const ye = p.y < 0 ? 0 : FH, g = ctx.createLinearGradient(0, y, 0, ye);
-        g.addColorStop(0, "#160306"); g.addColorStop(0.45, shade(city.felt[1], -40)); g.addColorStop(1, shade(city.felt[1], -8));
-        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - r + 1, y); ctx.lineTo(x - MID_MOUTH - 2, ye); ctx.lineTo(x + MID_MOUTH + 2, ye); ctx.lineTo(x + r - 1, y); ctx.closePath(); ctx.fill();
-      }
+      { const sh = ctx.createRadialGradient(x, y, r - 2, x, y, r + 11);   // soft shadow of the drop on the cloth in the mouth
+        sh.addColorStop(0, "rgba(0,0,0,.55)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 11, 0, 7); ctx.fill(); }
       ctx.fillStyle = "#12040a"; ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
       const pg = ctx.createRadialGradient(x - p.dx * 0.25, y - p.dy * 0.25, 2, x, y, r + 1);
       pg.addColorStop(0, "#010000"); pg.addColorStop(0.55, "#0c0202"); pg.addColorStop(0.85, "#3a0a0a"); pg.addColorStop(1, "#6a1414");
@@ -4231,10 +4221,10 @@ function paintTable(city) {
     [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
     [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
   ] : [
-    [[cA, 0], [FW / 2 - mA, 0], [FW / 2 - 26, -C], [cA - C, -C], "t"],
-    [[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + 26, -C], "t"],
-    [[cA, FH], [FW / 2 - mA, FH], [FW / 2 - 26, FH + C], [cA - C, FH + C], "b"],
-    [[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + 26, FH + C], "b"],
+    [[cA, 0], [FW / 2 - mA, 0], [FW / 2 - 22, -C], [cA - C, -C], "t"],
+    [[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + 22, -C], "t"],
+    [[cA, FH], [FW / 2 - mA, FH], [FW / 2 - 22, FH + C], [cA - C, FH + C], "b"],
+    [[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + 22, FH + C], "b"],
     [[0, cA], [0, FH - cA], [-C, FH - cA + C], [-C, cA - C], "l"],
     [[FW, cA], [FW, FH - cA], [FW + C, FH - cA + C], [FW + C, cA - C], "r"],
   ];
