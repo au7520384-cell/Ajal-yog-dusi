@@ -73,6 +73,19 @@ const TABLE_NAMES = {"l_brz": "Bronze", "l_slv": "Silver", "l_gld": "Gold", "l_r
 // Premium table frames (real-money option; the same tables can also be bought in-game with cash or gems)
 const TABLE_SKUS = {l_brz: 4.99, l_slv: 6.99, l_gld: 9.99, l_rgd: 11.99, l_plt: 14.99, l_sap: 17.99, l_emr: 19.99, l_rby: 21.99, l_ame: 22.99, l_dia: 34.99, l_bdi: 39.99, l_opl: 49.99, e_sak: 2.99, e_ros: 3.49, e_lol: 3.79, e_lot: 3.99, e_pax: 4.19, e_orx: 4.49, e_kun: 2.99, e_atl: 4.79, e_smq: 4.99, e_mal: 5.49, e_laz: 5.79, e_prl: 5.99, e_muz: 5.99, e_drg: 6.49, e_olv: 6.49, e_kos: 6.99, e_qah: 6.99, e_tov: 7.49};
 for (const [id, usd] of Object.entries(TABLE_SKUS)) SKUS["tbl_" + id] = {items: {tables: [id]}, vip: Math.round(usd * 65), usd, name: "Table: " + TABLE_NAMES[id]};
+// Limited editions: only EDITION_CAP[id] copies of these tables will ever exist; every owner gets a serial number.
+const EDITION_CAP = {l_brz: 5000, l_slv: 4000, l_gld: 3000, l_rgd: 2500, l_plt: 2000, l_sap: 1500, l_emr: 1500, l_rby: 1200, l_ame: 1200, l_dia: 1000, l_bdi: 500, l_opl: 300};
+function claimEdition(u, id) {
+  const cap = EDITION_CAP[id]; if (!cap) return {serial: 0};
+  u.editions = u.editions || {};
+  if (u.editions[id]) return {serial: u.editions[id], cap};
+  const ed = db.meta.editions = db.meta.editions || {}, sold = ed[id] | 0;
+  if (sold >= cap) return {error: "sold_out", cap};
+  ed[id] = sold + 1; u.editions[id] = sold + 1; markDirty();
+  return {serial: sold + 1, cap};
+}
+const TABLE_REFUND_CASH = 1000;
+const editionsLeft = () => Object.fromEntries(Object.entries(EDITION_CAP).map(([id, cap]) => [id, {cap, sold: (db.meta.editions || {})[id] | 0}]));
 const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
 const GIFT = {coins: 500};
 const CITY_PRIZE = {lon: 100, syd: 200, lis: 1000, tok: 5000, veg: 20000, jak: 100000, tor: 200000, cai: 500000, dub: 1000000,
@@ -112,7 +125,7 @@ function newCode() {
 }
 function publicUser(u) {
   return {id: u.id, code: u.code, name: u.name, avatar: u.avatar, frame: u.frame || 0, level: u.level, won: u.won, wins: u.wins, games: u.games,
-    country: u.country || "", league: u.league || 0, tbl: u.tbl || "", weekWon: u.week === curWeek() ? u.weekWon || 0 : 0,
+    country: u.country || "", league: u.league || 0, tbl: u.tbl || "", tblNo: u.tbl && u.editions ? u.editions[u.tbl] || 0 : 0, weekWon: u.week === curWeek() ? u.weekWon || 0 : 0,
     club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "",
     online: clients.has(u.id) && !(u.prefs && u.prefs.showOnline === false), lastSeen: u.lastSeen};
 }
@@ -229,6 +242,14 @@ function geoCountry(req) {   // set by some hosts / CDNs (Cloudflare, Vercel…)
 const routes = {
   "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: !!STRIPE_KEY}),
   "GET /api/skus": () => ({skus: SKUS, payments: !!STRIPE_KEY, referral: REFERRAL}),
+  "GET /api/editions": () => editionsLeft(),
+  async "POST /api/editions/claim"(req, u) {
+    if (limited(req, "ed", 30)) return [429, {error: "slow_down"}];
+    const b = await jsonBody(req), id = String(b.id || "");
+    if (!EDITION_CAP[id]) return [400, {error: "not_limited"}];
+    const r = claimEdition(u, id);
+    return r.error ? [409, {error: r.error, ...editionsLeft()[id]}] : {id, serial: r.serial, cap: r.cap};
+  },
   "GET /api/online": () => {
     const byCity = {}; for (const [city, q] of queues) byCity[city] = q.length;
     return {total: clients.size, playing: rooms.size * 2, byCity};
@@ -460,6 +481,8 @@ const routes = {
     const b = await jsonBody(req), sku = SKUS[b.sku];
     if (!sku) return [400, {error: "bad_sku"}];
     if (sku.once && (u.bought || {})[b.sku]) return [400, {error: "already_bought"}];
+    const tid = sku.items && sku.items.tables && sku.items.tables[0];
+    if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return [409, {error: "sold_out"}];
     if (!STRIPE_KEY) return [503, {error: "payments_not_configured"}];
     const form = new URLSearchParams({
       mode: "payment", success_url: `${APP_URL}/?paid=1`, cancel_url: `${APP_URL}/?paid=0`,
@@ -493,7 +516,14 @@ async function stripeWebhook(req, res) {
     const s = ev.data.object, u = db.users[s.metadata && s.metadata.userId], sku = SKUS[s.metadata && s.metadata.sku];
     if (u && sku && !db.purchases[s.id]) {
       db.purchases[s.id] = {user: u.id, sku: s.metadata.sku, at: Date.now(), amount: s.amount_total};
-      grant(u, {cash: sku.cash || 0, coins: sku.coins || 0, gems: sku.gems || 0, vip: sku.vip || 0, items: sku.items || null, kind: "purchase", from: sku.name});
+      let items = sku.items || null, refund = 0;
+      const tid = items && items.tables && items.tables[0];
+      if (tid && EDITION_CAP[tid]) {               // the serial is handed out when the payment arrives
+        const r = claimEdition(u, tid);
+        if (r.error) { items = null; refund = TABLE_REFUND_CASH; }   // sold out between checkout and payment: cash instead
+        else items = {...items, serials: {[tid]: r.serial}};
+      }
+      grant(u, {cash: (sku.cash || 0) + refund, coins: sku.coins || 0, gems: sku.gems || 0, vip: sku.vip || 0, items, kind: "purchase", from: sku.name});
       const skuId = s.metadata.sku; u.bought = {...(u.bought || {}), [skuId]: (u.bought && u.bought[skuId] || 0) + 1};
       if (saving) await saving;
       await flush();   // money: write it down before telling Stripe we got it
@@ -511,7 +541,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "POST /api/register", "POST /api/recover"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "POST /api/register", "POST /api/recover"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
@@ -567,7 +597,7 @@ wss.on("connection", (ws, req) => {
       if (ws.room) return;
       const city = String(m.city || "lon").slice(0, 8);
       const code = m.code ? String(m.code).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8) : "";
-      ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), tbl: String(m.tbl || "").slice(0, 8), code: u.code};
+      ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), tbl: String(m.tbl || "").slice(0, 8), tblNo: (u.editions || {})[String(m.tbl || "")] || 0, code: u.code};
       const qk = code ? "code:" + code : city;
       const q = queues.get(qk) || []; queues.set(qk, q);
       const opp = q.find(o => o.uid !== ws.uid && o.readyState === 1);
