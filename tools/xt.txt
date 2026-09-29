@@ -1,0 +1,627 @@
+Har bir g'alaba Showdown ochkosi va Gambit tokeni beradi. Haftalik reytingda ko'tariling!‖Her galibiyet Showdown puanı ve Gambit jetonu kazandırır. Haftalık sıralamada yüksel!|Cada victoria da puntos de Showdown y una ficha de Gambito. ¡Sube en el ranking semanal!|Cada vitória dá pontos de Showdown e uma ficha de Gambito. Suba no ranking semanal!|كل فوز يمنحك نقاط Showdown ورمز غامبيت. ارتقِ في الترتيب الأسبوعي!|Setiap kemenangan memberi poin Showdown dan token Gambit. Naiklah di peringkat mingguan!|हर जीत पर Showdown अंक और Gambit टोकन मिलता है। साप्ताहिक रैंकिंग में ऊपर चढ़ें!|Chaque victoire rapporte des points Showdown et un jeton Gambit. Grimpez au classement hebdomadaire !|Jeder Sieg bringt Showdown-Punkte und einen Gambit-Token. Steige in der Wochenrangliste auf!|승리할 때마다 Showdown 점수와 갬빗 토큰을 얻습니다. 주간 랭킹에서 올라가세요!|勝つたびにShowdownポイントとギャンビットトークンを獲得。週間ランキングを駆け上がろう!|每场胜利都能获得Showdown积分和Gambit代币。冲上每周排行榜吧!
+60 o'yinchi, 6 raund — bosh sovrin 7,5 mln tanga!‖60 oyuncu, 6 tur — büyük ödül 7,5 milyon jeton!|60 jugadores, 6 rondas: ¡premio mayor de 7,5 M de monedas!|60 jogadores, 6 rodadas — grande prêmio de 7,5 mi de moedas!|60 لاعبًا و6 جولات — الجائزة الكبرى 7.5 مليون عملة!|60 pemain, 6 ronde — hadiah utama 7,5 juta koin!|60 खिलाड़ी, 6 राउंड — 75 लाख सिक्कों का बड़ा इनाम!|60 joueurs, 6 tours — gros lot de 7,5 M de pièces !|60 Spieler, 6 Runden — Hauptpreis 7,5 Mio. Münzen!|60명, 6라운드 — 대상 상금 750만 코인!|60人・6ラウンド — 賞金750万コイン!|60名玩家,6轮比赛 — 大奖750万金币!
+Mini o'yinlarga yangi o'yin qo'shildi: har kuni bitta bepul qirish kartasi.‖Mini oyunlara yeni bir oyun eklendi: her gün bir bedava kazı kazan kartı.|Un nuevo juego en Minijuegos: una tarjeta rasca gratis cada día.|Novo jogo nos Minijogos: uma raspadinha grátis por dia.|أُضيفت لعبة جديدة إلى الألعاب المصغرة: بطاقة حك مجانية كل يوم.|Game baru di Mini Game: satu kartu gosok gratis setiap hari.|मिनी गेम्स में नया गेम जुड़ा: हर दिन एक मुफ़्त स्क्रैच कार्ड।|Nouveau jeu dans les Mini-jeux : une carte à gratter gratuite par jour.|Neues Minispiel: jeden Tag ein kostenloses Rubbellos.|미니게임에 새 게임 추가: 매일 무료 스크래치 카드 1장.|ミニゲームに新ゲーム登場:毎日無料のスクラッチカード1枚。|小游戏新增玩法:每天一张免费刮刮卡。
+6-darajadan klub tuzing yoki qo'shiling — haftalik klub mukofotlari!‖6. seviyeden itibaren kulüp kur veya katıl — haftalık kulüp ödülleri!|Crea o únete a un club desde el nivel 6: ¡recompensas semanales del club!|Crie ou entre num clube a partir do nível 6 — recompensas semanais do clube!|أنشئ نادياً أو انضم إليه من المستوى 6 — مكافآت أسبوعية للنادي!|Buat atau gabung klub mulai level 6 — hadiah klub mingguan!|लेवल 6 से क्लब बनाएँ या जुड़ें — साप्ताहिक क्लब इनाम!|Créez ou rejoignez un club dès le niveau 6 — récompenses hebdomadaires du club !|Gründe oder betritt ab Level 6 einen Club — wöchentliche Club-Belohnungen!|레벨 6부터 클럽을 만들거나 가입하세요 — 주간 클럽 보상!|レベル6からクラブを作成・参加 — 毎週クラブ報酬!|6级起可创建或加入俱乐部 — 每周俱乐部奖励!
+Qirib yuting‖Kazı ve Kazan|Rasca y gana|Raspe e ganhe|اكشط واربح|Gosok & Menang|स्क्रैच करें और जीतें|Grattez et gagnez|Rubbeln & Gewinnen|긁고 당첨|スクラッチで当てよう|刮刮乐大奖
+Mini‖Mini|Mini|Mini|مصغرة|Mini|मिनी|Mini|Mini|미니|ミニ|小
+o'yinlar‖oyunlar|juegos|jogos|ألعاب|game|गेम्स|jeux|Spiele|게임|ゲーム|游戏
+Omadli zarba, g'ildirak‖Şanslı vuruş, çark|Tiro de la suerte, ruleta|Tacada da sorte, roleta|ضربة الحظ والعجلة|Tembakan beruntung, roda|लकी शॉट, चक्र|Coup chanceux, roue|Glücksstoß, Rad|럭키 샷, 룰렛|ラッキーショット、ルーレット|幸运一击、转盘
+Ustalar o'yinini ko'ring‖Ustaların oyununu izle|Mira jugar a los maestros|Veja os mestres jogarem|شاهد المحترفين يلعبون|Tonton para ahli bermain|प्रो खिलाड़ियों को खेलते देखें|Regardez jouer les pros|Sieh den Profis beim Spielen zu|프로들의 경기를 관전하세요|プロの対戦を観戦|观看高手对局
+● JONLI‖● CANLI|● EN VIVO|● AO VIVO|● مباشر|● LANGSUNG|● लाइव|● EN DIRECT|● LIVE|● 라이브|● ライブ|● 直播
+Qoidalarsiz, oflayn‖Kuralsız, çevrimdışı|Sin reglas, sin conexión|Sem regras, offline|بلا قواعد، بدون إنترنت|Tanpa aturan, offline|बिना नियम, ऑफ़लाइन|Sans règles, hors ligne|Ohne Regeln, offline|규칙 없음, 오프라인|ルールなし・オフライン|无规则,离线
+Taklif qiling, bonus oling‖Davet et, bonus kazan|Invita y gana bonos|Convide e ganhe bônus|ادعُ واربح مكافآت|Undang & dapatkan bonus|आमंत्रित करें, बोनस पाएँ|Invitez et gagnez des bonus|Lade ein & erhalte Boni|초대하고 보너스 받기|招待してボーナスGET|邀请好友赢奖励
+Omadli‖Şanslı|De la suerte|Da sorte|الحظ|Beruntung|लकी|Chanceux|Glücks-|럭키|ラッキー|幸运
+zarba‖vuruş|tiro|tacada|ضربة|tembakan|शॉट|coup|stoß|샷|ショット|一击
+Omad‖Şans|Rueda|Roda|عجلة|Roda|चक्र|Roue|Glücks-|행운|運命の|幸运
+g'ildiragi‖çarkı|de la suerte|da sorte|الحظ|keberuntungan|घुमाएँ|de la chance|rad|룰렛|ルーレット|转盘
+Har kuni 1 ta bepul‖Her gün 1 bedava|1 gratis al día|1 grátis por dia|واحدة مجانية يوميًا|1 gratis setiap hari|हर दिन 1 मुफ़्त|1 gratuit par jour|1 gratis pro Tag|매일 1회 무료|毎日1回無料|每天1次免费
+AYLANTIRISH‖ÇEVİR|GIRAR|GIRAR|أدِر|PUTAR|घुमाएँ|TOURNER|DREHEN|돌리기|回す|旋转
+Kiylar_tab‖Sopalar|Tacos|Tacos|العصي|Stik|क्यू|Queues|Queues|큐|キュー|球杆
+Almashtirish‖Takas|Canjear|Trocar|استبدال|Tukar|एक्सचेंज|Échanger|Tauschen|교환|交換|兑换
+🔥 Kunlik seriya:‖🔥 Günlük seri:|🔥 Racha diaria:|🔥 Sequência diária:|🔥 السلسلة اليومية:|🔥 Beruntun harian:|🔥 दैनिक स्ट्रीक:|🔥 Série quotidienne :|🔥 Tagesserie:|🔥 연속 출석:|🔥 連続ログイン:|🔥 连续登录:
+kun‖gün|días|dias|أيام|hari|दिन|jours|Tage|일|日|天
+Naqd pulga sotib olish‖Gerçek parayla satın al|Comprar con dinero real|Comprar com dinheiro real|الشراء بمال حقيقي|Beli dengan uang asli|असली पैसे से खरीदें|Acheter avec de l'argent réel|Mit echtem Geld kaufen|현금으로 구매|リアルマネーで購入|用真实货币购买
+Pulni tangaga almashtirish‖Nakiti jetona çevir|Cambiar efectivo por monedas|Trocar dinheiro por moedas|استبدال النقد بعملات|Tukar uang tunai ke koin|कैश को सिक्कों में बदलें|Échanger du cash contre des pièces|Cash in Münzen tauschen|캐시를 코인으로 교환|キャッシュをコインに交換|将现金兑换为金币
+ALMASHTIRISH‖TAKAS|CANJEAR|TROCAR|استبدال|TUKAR|एक्सचेंज|ÉCHANGER|TAUSCHEN|교환|交換する|兑换
+Mashhur‖Popüler|Popular|Popular|شائع|Populer|लोकप्रिय|Populaire|Beliebt|인기|人気|热门
+Eng foydali‖En avantajlı|Mejor valor|Melhor custo-benefício|الأفضل قيمة|Paling hemat|सबसे किफ़ायती|Meilleure offre|Bestes Angebot|최고 가성비|お得No.1|最超值
+To'lovlar xavfsiz Stripe orqali. Xarid qilingan pul va tangalar hisobingizga avtomatik tushadi.‖Ödemeler Stripe ile güvenle işlenir. Satın alınan nakit ve jetonlar hesabınıza otomatik eklenir.|Los pagos se procesan de forma segura con Stripe. El efectivo y las monedas se añaden a tu cuenta automáticamente.|Os pagamentos são processados com segurança pelo Stripe. Dinheiro e moedas são adicionados automaticamente à sua conta.|تتم معالجة المدفوعات بأمان عبر Stripe. تُضاف الأموال والعملات المشتراة إلى حسابك تلقائيًا.|Pembayaran diproses dengan aman oleh Stripe. Uang tunai dan koin yang dibeli masuk otomatis ke akun Anda.|भुगतान Stripe द्वारा सुरक्षित रूप से संसाधित होते हैं। खरीदे गए कैश और सिक्के अपने आप आपके खाते में जुड़ जाते हैं।|Les paiements sont traités en toute sécurité par Stripe. Le cash et les pièces achetés sont ajoutés automatiquement à votre compte.|Zahlungen werden sicher über Stripe abgewickelt. Gekauftes Cash und Münzen werden automatisch gutgeschrieben.|결제는 Stripe를 통해 안전하게 처리됩니다. 구매한 캐시와 코인은 자동으로 계정에 지급됩니다.|決済はStripeで安全に処理されます。購入したキャッシュとコインは自動的にアカウントへ反映されます。|支付由Stripe安全处理。购买的现金和金币会自动到账。
+Almashtirildi‖Takas edildi|Canjeado|Trocado|تم الاستبدال|Ditukar|एक्सचेंज हो गया|Échangé|Getauscht|교환 완료|交換しました|兑换成功
+tanga‖jeton|monedas|moedas|عملات|koin|सिक्के|pièces|Münzen|코인|コイン|金币
+Kolleksiya‖Koleksiyon|Colección|Coleção|المجموعة|Koleksi|कलेक्शन|Collection|Sammlung|컬렉션|コレクション|收藏
+Kiy ko'rsatkichlari‖Sopa özellikleri|Estadísticas del taco|Atributos do taco|خصائص العصا|Statistik stik|क्यू आँकड़े|Stats de la queue|Queue-Werte|큐 능력치|キューの性能|球杆属性
+Zarba kuchini oshiradi‖Vuruş gücünü artırır|Aumenta la fuerza del tiro|Aumenta a força da tacada|يزيد قوة الضربة|Meningkatkan kekuatan pukulan|शॉट की ताकत बढ़ाता है|Augmente la puissance du tir|Erhöht die Stoßkraft|샷의 힘이 증가합니다|ショットの威力が上がる|提升击球力量
+Yo'naltiruvchi chiziqni uzaytiradi‖Nişan çizgisini uzatır|Alarga la línea de guía|Aumenta a linha de mira|يطيل خط التوجيه|Memperpanjang garis bidik|गाइड लाइन को लंबा करता है|Allonge la ligne de visée|Verlängert die Zielhilfe|조준선이 길어집니다|ガイドラインが長くなる|延长瞄准线
+Aylanish (spin) ta'sirini kuchaytiradi‖Vuruşun efektini (spin) güçlendirir|Aumenta el efecto (spin) del tiro|Aumenta o efeito (spin) da tacada|يعزز دوران الضربة (سبين)|Memperkuat efek putaran (spin)|शॉट का स्पिन बढ़ाता है|Renforce l'effet (spin) du tir|Verstärkt den Spin deines Stoßes|샷의 스핀이 강해집니다|ショットのスピンが強まる|增强击球旋转
+Har bir zarba uchun qo'shimcha vaqt beradi‖Her vuruş için ek süre verir|Da más tiempo por tiro|Dá mais tempo por tacada|يمنحك وقتًا إضافيًا لكل ضربة|Memberi waktu ekstra tiap pukulan|हर शॉट के लिए अतिरिक्त समय देता है|Donne plus de temps par tir|Gibt mehr Zeit pro Stoß|샷당 추가 시간을 줍니다|1ショットあたりの時間が増える|每次击球增加时间
+Premium‖Premium|Premium|Premium|بريميوم|Premium|प्रीमियम|Premium|Premium|프리미엄|プレミアム|高级
+Standart‖Standart|Estándar|Padrão|عادي|Standar|स्टैंडर्ड|Standard|Standard|일반|スタンダード|标准
+KUCH‖GÜÇ|FUERZA|FORÇA|القوة|KEKUATAN|ताकत|PUISSANCE|KRAFT|파워|パワー|力量
+ANIQ‖HASSAS|PRECISIÓN|PRECISÃO|دقة|PRESISI|सटीक|PRÉCIS|FEIN|정밀|微調整|精调
+▼ torting‖▼ çek|▼ tira|▼ puxe|▼ اسحب|▼ tarik|▼ खींचें|▼ tirez|▼ ziehen|▼ 당기기|▼ 引く|▼ 下拉
+▲▼ bur‖▲▼ çevir|▲▼ gira|▲▼ gire|▲▼ أدِر|▲▼ putar|▲▼ घुमाएँ|▲▼ tournez|▲▼ drehen|▲▼ 돌리기|▲▼ 回す|▲▼ 旋转
+ZO'R!‖SÜPER!|¡GENIAL!|LEGAL!|رائع!|KEREN!|शानदार!|SUPER !|TOLL!|굿!|ナイス!|漂亮!
+AJOYIB!‖MUHTEŞEM!|¡INCREÍBLE!|INCRÍVEL!|مذهل!|LUAR BIASA!|कमाल!|INCROYABLE !|WUNDERBAR!|대단해요!|素晴らしい!|太棒了!
+MASHQ‖ANTRENMAN|PRÁCTICA|TREINO|تدريب|LATIHAN|अभ्यास|ENTRAÎNEMENT|ÜBUNG|연습|練習|练习
+Sizning ID-kodingiz‖Benzersiz kimliğin|Tu ID único|Seu ID único|معرّفك الفريد|ID unik Anda|आपकी यूनीक आईडी|Votre ID unique|Deine eindeutige ID|나의 고유 ID|あなたの固有ID|你的专属ID
+Nusxalash‖Kopyala|Copiar|Copiar|نسخ|Salin|कॉपी करें|Copier|Kopieren|복사|コピー|复制
+Ulashish‖Paylaş|Compartir|Compartilhar|مشاركة|Bagikan|शेयर करें|Partager|Teilen|공유|共有|分享
+Nusxalandi!‖Kopyalandı!|¡Copiado!|Copiado!|تم النسخ!|Tersalin!|कॉपी हो गया!|Copié !|Kopiert!|복사됨!|コピーしました!|已复制!
+Do'st kodini kiriting‖Arkadaşının kodunu gir|Introduce el código de un amigo|Digite o código de um amigo|أدخل رمز صديق|Masukkan kode teman|दोस्त का कोड डालें|Entrez le code d'un ami|Freundescode eingeben|친구 코드 입력|友達のコードを入力|输入好友代码
+Qo'shish‖Ekle|Añadir|Adicionar|إضافة|Tambah|जोड़ें|Ajouter|Hinzufügen|추가|追加|添加
+Kodni ishlatish‖Kodu kullan|Canjear código|Resgatar código|استخدام الرمز|Tukar kode|कोड रिडीम करें|Utiliser le code|Code einlösen|코드 사용|コードを使う|兑换代码
+Sovg'a yuborish‖Hediye gönder|Enviar regalo|Enviar presente|إرسال هدية|Kirim hadiah|उपहार भेजें|Envoyer un cadeau|Geschenk senden|선물 보내기|ギフトを送る|赠送礼物
+Sovg'a so'rash‖Hediye iste|Pedir regalos|Pedir presentes|طلب هدايا|Minta hadiah|उपहार माँगें|Demander des cadeaux|Geschenke anfragen|선물 요청|ギフトをリクエスト|索要礼物
+Yuborildi‖Gönderildi|Enviado|Enviado|تم الإرسال|Terkirim|भेज दिया|Envoyé|Gesendet|전송됨|送信済み|已发送
+Hali do'stlaringiz yo'q. Kodingizni ulashing!‖Henüz arkadaşın yok. Kodunu paylaş!|Aún no tienes amigos. ¡Comparte tu código!|Você ainda não tem amigos. Compartilhe seu código!|لا أصدقاء بعد. شارك رمزك!|Belum ada teman. Bagikan kodemu!|अभी कोई दोस्त नहीं। अपना कोड शेयर करें!|Pas encore d'amis. Partagez votre code !|Noch keine Freunde. Teile deinen Code!|아직 친구가 없어요. 코드를 공유하세요!|まだ友達がいません。コードを共有しよう!|还没有好友。分享你的代码吧!
+onlayn‖çevrimiçi|en línea|online|متصل|online|ऑनलाइन|en ligne|online|온라인|オンライン|在线
+oflayn‖çevrimdışı|desconectado|offline|غير متصل|offline|ऑफ़लाइन|hors ligne|offline|오프라인|オフライン|离线
+Server bilan aloqa yo'q. Internetni tekshiring.‖Sunucuya ulaşılamıyor. İnternet bağlantını kontrol et.|No se puede conectar al servidor. Revisa tu conexión a internet.|Não foi possível acessar o servidor. Verifique sua internet.|تعذّر الاتصال بالخادم. تحقق من اتصالك بالإنترنت.|Tidak dapat terhubung ke server. Periksa koneksi internet Anda.|सर्वर से संपर्क नहीं हो पा रहा। अपना इंटरनेट जाँचें।|Impossible de joindre le serveur. Vérifiez votre connexion internet.|Server nicht erreichbar. Prüfe deine Internetverbindung.|서버에 연결할 수 없습니다. 인터넷 연결을 확인하세요.|サーバーに接続できません。インターネット接続を確認してください。|无法连接服务器,请检查网络。
+To'lov tizimi hali ulanmagan‖Ödeme sistemi henüz etkin değil|Los pagos aún no están habilitados|Os pagamentos ainda não estão ativados|المدفوعات غير مفعّلة بعد|Pembayaran belum diaktifkan|भुगतान अभी चालू नहीं है|Les paiements ne sont pas encore activés|Zahlungen sind noch nicht aktiviert|결제가 아직 활성화되지 않았습니다|決済はまだ有効ではありません|支付功能尚未开启
+Global reyting‖Küresel sıralama|Clasificación global|Ranking global|الترتيب العالمي|Peringkat global|ग्लोबल लीडरबोर्ड|Classement mondial|Weltrangliste|글로벌 랭킹|グローバルランキング|全球排行榜
+kutmoqda‖bekliyor|esperando|aguardando|في الانتظار|menunggu|प्रतीक्षा में|en attente|wartet|대기 중|待機中|等待中
+o'yinchi‖oyuncu|jugadores|jogadores|لاعبين|pemain|खिलाड़ी|joueurs|Spieler|플레이어|プレイヤー|玩家
+Hali hech kim yo'q — birinchi bo'ling!‖Henüz kimse yok — ilk sen ol!|Nadie todavía: ¡sé el primero!|Ninguém ainda — seja o primeiro!|لا أحد بعد — كن الأول!|Belum ada siapa pun — jadilah yang pertama!|अभी कोई नहीं — पहले आप बनें!|Personne pour l'instant — soyez le premier !|Noch niemand — sei der Erste!|아직 아무도 없어요 — 첫 번째가 되세요!|まだ誰もいません — 一番乗りになろう!|还没有人 — 来当第一个吧!
+Har bir taklif qilingan do'st uchun siz olasiz‖Davet ettiğin her arkadaş için alırsın|Por cada amigo que invites recibes|Por cada amigo que você convidar, você ganha|عن كل صديق تدعوه تحصل على|Untuk setiap teman yang Anda undang, Anda mendapat|आपके हर आमंत्रित दोस्त पर आपको मिलता है|Pour chaque ami invité, vous recevez|Für jeden eingeladenen Freund erhältst du|친구를 초대할 때마다 받는 보상|友達を招待するたびにもらえる|每邀请一位好友,你将获得
+Do'stingiz ham oladi‖Arkadaşın da alır|Tu amigo también recibe|Seu amigo também ganha|صديقك يحصل أيضًا على|Teman Anda juga mendapat|आपके दोस्त को भी मिलता है|Votre ami reçoit aussi|Dein Freund erhält|친구도 받는 보상|友達ももらえる|好友也将获得
+Taklif kodini ishlatish‖Davet kodunu kullan|Usar código de invitación|Usar código de convite|استخدام رمز الدعوة|Gunakan kode undangan|आमंत्रण कोड इस्तेमाल करें|Utiliser le code d'invitation|Einladungscode einlösen|초대 코드 사용|招待コードを使う|使用邀请码
+Hammaga‖Herkes|Todos|Todos|الجميع|Semua|सभी|Tous|Alle|전체|全員|所有人
+Men bilan Bilyard 8 o'ynang! Kodim‖Benimle Bilyard 8 oyna! Kodum|¡Juega a Bilyard 8 conmigo! Mi código|Jogue Bilyard 8 comigo! Meu código|العب بيلياردو 8 معي! رمزي|Main Bilyard 8 bersamaku! Kodeku|मेरे साथ Bilyard 8 खेलो! मेरा कोड|Jouez à Bilyard 8 avec moi ! Mon code|Spiel Bilyard 8 mit mir! Mein Code|나와 Bilyard 8 하자! 내 코드|一緒にBilyard 8を遊ぼう!僕のコード|和我一起玩Bilyard 8!我的代码
+Bunday kod topilmadi‖Böyle bir kod bulunamadı|No se encontró ese código|Código não encontrado|الرمز غير موجود|Kode tidak ditemukan|कोड नहीं मिला|Code introuvable|Code nicht gefunden|코드를 찾을 수 없습니다|コードが見つかりません|未找到该代码
+Bu sizning kodingiz‖Bu senin kendi kodun|Ese es tu propio código|Esse é o seu próprio código|هذا رمزك أنت|Itu kodemu sendiri|यह आपका अपना कोड है|C'est votre propre code|Das ist dein eigener Code|내 코드입니다|それはあなた自身のコードです|这是你自己的代码
+Siz allaqachon taklif kodini ishlatgansiz‖Davet kodunu zaten kullandın|Ya usaste un código de invitación|Você já usou um código de convite|لقد استخدمت رمز دعوة من قبل|Anda sudah memakai kode undangan|आप पहले ही आमंत्रण कोड इस्तेमाल कर चुके हैं|Vous avez déjà utilisé un code d'invitation|Du hast bereits einen Einladungscode benutzt|이미 초대 코드를 사용했습니다|すでに招待コードを使用済みです|你已使用过邀请码
+Taklif kodi faqat birinchi 7 kunda ishlaydi‖Davet kodu yalnızca ilk 7 günde geçerlidir|Los códigos de invitación solo valen los primeros 7 días|Códigos de convite só valem nos primeiros 7 dias|رموز الدعوة تعمل فقط في أول 7 أيام|Kode undangan hanya berlaku 7 hari pertama|आमंत्रण कोड केवल पहले 7 दिनों में काम करते हैं|Les codes d'invitation ne fonctionnent que les 7 premiers jours|Einladungscodes gelten nur in den ersten 7 Tagen|초대 코드는 처음 7일간만 사용할 수 있습니다|招待コードは最初の7日間のみ有効です|邀请码仅在前7天内有效
+Do'st qo'shildi‖Arkadaş eklendi|Amigo añadido|Amigo adicionado|تمت إضافة الصديق|Teman ditambahkan|दोस्त जुड़ गया|Ami ajouté|Freund hinzugefügt|친구 추가됨|友達を追加しました|已添加好友
+Sovg'a so'rovlari‖Hediye istekleri|Solicitudes de regalos|Pedidos de presentes|طلبات الهدايا|Permintaan hadiah|उपहार अनुरोध|Demandes de cadeaux|Geschenkanfragen|선물 요청|ギフトリクエスト|礼物请求
+Hammasiga yuborish‖Hepsine gönder|Enviar a todos|Enviar a todos|إرسال للجميع|Kirim ke semua|सभी को भेजें|Envoyer à tous|An alle senden|모두에게 보내기|全員に送る|全部赠送
+Yutgan‖Kazanan|Ganó|Ganhou|فاز|Menang|जीता|Gagné|Gewonnen|승리|勝利|获胜
+Xarid uchun rahmat!‖Satın alımın için teşekkürler!|¡Gracias por tu compra!|Obrigado pela compra!|شكرًا على الشراء!|Terima kasih atas pembelian Anda!|खरीदारी के लिए धन्यवाद!|Merci pour votre achat !|Danke für deinen Kauf!|구매해 주셔서 감사합니다!|ご購入ありがとうございます!|感谢你的购买!
+Taklif bonusi‖Davet bonusu|Bono de invitación|Bônus de convite|مكافأة الدعوة|Bonus undangan|आमंत्रण बोनस|Bonus de parrainage|Einladungsbonus|초대 보너스|招待ボーナス|邀请奖励
+Do'stingiz qo'shildi‖Arkadaşın katıldı|Tu amigo se unió|Seu amigo entrou|انضم صديقك|Temanmu bergabung|आपका दोस्त जुड़ गया|Votre ami a rejoint|Dein Freund ist beigetreten|친구가 참여했습니다|友達が参加しました|好友已加入
+Sovg'a‖Hediye|Regalo|Presente|هدية|Hadiah|उपहार|Cadeau|Geschenk|선물|ギフト|礼物
+Chiqsangiz, o'yin mag'lubiyat hisoblanadi.‖Çıkarsan maçı kaybetmiş sayılırsın.|Si sales, pierdes la partida.|Se sair, você perde a partida.|إذا خرجت تخسر المباراة.|Jika keluar, Anda kalah dalam pertandingan.|छोड़ने पर मैच हार माना जाएगा।|Si vous quittez, vous perdez la partie.|Wenn du gehst, verlierst du das Spiel.|나가면 경기에서 패배 처리됩니다.|退出すると敗北になります。|退出将判负。
+🔊 Ovozni yoqish‖🔊 Sesi aç|🔊 Activar sonido|🔊 Ativar som|🔊 تشغيل الصوت|🔊 Nyalakan suara|🔊 आवाज़ चालू करें|🔊 Activer le son|🔊 Ton an|🔊 소리 켜기|🔊 サウンドON|🔊 开启声音
+🔇 Ovozni o'chirish‖🔇 Sesi kapat|🔇 Silenciar|🔇 Desativar som|🔇 إيقاف الصوت|🔇 Matikan suara|🔇 आवाज़ बंद करें|🔇 Couper le son|🔇 Ton aus|🔇 소리 끄기|🔇 サウンドOFF|🔇 关闭声音
+Oq shar lunkaga tushdi‖Beyaz top cebe girdi|La bola blanca entró en tronera|A bola branca caiu|دخلت الكرة البيضاء الجيب|Bola putih masuk lubang|सफ़ेद गेंद पॉकेट में गई|La blanche est empochée|Weiße Kugel versenkt|흰 공이 들어갔습니다|白球がポケットに入った|白球落袋
+Hech bir sharga tegmadi‖Hiçbir topa çarpmadı|No tocó ninguna bola|Não tocou em nenhuma bola|لم تلمس أي كرة|Tidak mengenai bola apa pun|किसी गेंद को नहीं छुआ|Aucune bille touchée|Keine Kugel getroffen|어떤 공도 맞히지 못했습니다|どの球にも当たらなかった|未击中任何球
+Avval o'z sharingizga tegish kerak‖Önce kendi topuna vurmalısın|Debes golpear primero tu propia bola|Você deve acertar primeiro a sua bola|يجب أن تضرب كرتك أولًا|Anda harus mengenai bola sendiri dulu|पहले अपनी गेंद पर मारना ज़रूरी है|Vous devez d'abord toucher votre bille|Du musst zuerst deine eigene Kugel treffen|먼저 자신의 공을 맞혀야 합니다|まず自分の球に当てる必要があります|必须先击中自己的球
+Avval 8-sharga tegish kerak‖Önce 8 numaralı topa vurmalısın|Debes golpear primero la bola 8|Você deve acertar primeiro a bola 8|يجب أن تضرب الكرة 8 أولًا|Anda harus mengenai bola 8 dulu|पहले 8 नंबर की गेंद पर मारना ज़रूरी है|Vous devez d'abord toucher la bille 8|Du musst zuerst die 8 treffen|먼저 8번 공을 맞혀야 합니다|まず8番ボールに当てる必要があります|必须先击中8号球
+Hech bir shar bortga tegmadi‖Hiçbir top bandaya çarpmadı|Ninguna bola tocó la banda|Nenhuma bola tocou a tabela|لم تلمس أي كرة الحافة|Tidak ada bola menyentuh bantalan|कोई गेंद किनारे से नहीं टकराई|Aucune bille n'a touché la bande|Keine Kugel berührte die Bande|어떤 공도 쿠션에 닿지 않았습니다|どの球もクッションに触れなかった|没有球碰到库边
+8-sharni tushirdi!‖8 numaralı topu soktu!|¡Embocó la bola 8!|Encaçapou a bola 8!|أدخل الكرة 8!|Memasukkan bola 8!|8 नंबर की गेंद पॉकेट में डाली!|A empoché la bille 8 !|Hat die 8 versenkt!|8번 공을 넣었습니다!|8番ボールを落とした!|打进了8号球!
+Mashq: istalgancha urishingiz mumkin‖Antrenman: istediğin kadar vur|Práctica: dispara cuanto quieras|Treino: jogue quanto quiser|تدريب: اضرب كما تشاء|Latihan: tembak sebanyak yang Anda mau|अभ्यास: जितना चाहें खेलें|Entraînement : tirez autant que vous voulez|Übung: Spiele so oft du willst|연습: 원하는 만큼 칠 수 있어요|練習:好きなだけ打てます|练习:想打多少就打多少
+Reklama‖Reklam|Ver|Assista|شاهد|Tonton|देखें|Regarder|Werbung|광고|広告を|观看
+ko'ring‖izle|un anuncio|um anúncio|إعلانًا|iklan|एक विज्ञापन|une pub|ansehen|보기|見る|广告
++1 zarba · +1 g'ildirak‖+1 vuruş · +1 çark|+1 tiro · +1 giro|+1 tacada · +1 giro|+1 ضربة · +1 دوران|+1 tembakan · +1 putaran|+1 शॉट · +1 स्पिन|+1 coup · +1 tour|+1 Stoß · +1 Dreh|+1 샷 · +1 회전|+1ショット · +1スピン|+1次击球 · +1次转盘
+Reklama ko'rib pul oling‖Reklam izle, nakit kazan|Mira un anuncio y gana efectivo|Assista a um anúncio e ganhe dinheiro|شاهد إعلانًا واحصل على نقود|Tonton iklan, dapat uang tunai|विज्ञापन देखें, कैश पाएँ|Regardez une pub, gagnez du cash|Sieh dir Werbung an, erhalte Cash|광고 보고 캐시 받기|広告を見てキャッシュ獲得|看广告赚现金
+kuniga 10 marta‖günde 10 kez|10 veces al día|10 vezes por dia|10 مرات يوميًا|10 kali sehari|दिन में 10 बार|10 fois par jour|10-mal pro Tag|하루 10회|1日10回|每天10次
+Ko'rish‖İzle|Ver|Assistir|شاهد|Tonton|देखें|Regarder|Ansehen|보기|見る|观看
+Rahmat!‖Teşekkürler!|¡Gracias!|Obrigado!|شكرًا!|Terima kasih!|धन्यवाद!|Merci !|Danke!|감사합니다!|ありがとう!|谢谢!
+Bugungi reklamalar tugadi‖Bugünkü reklamlar bitti|No hay más anuncios hoy|Sem mais anúncios hoje|لا مزيد من الإعلانات اليوم|Iklan hari ini habis|आज के विज्ञापन खत्म|Plus de pubs aujourd'hui|Heute keine Werbung mehr|오늘 광고가 모두 끝났습니다|今日の広告は終了しました|今日的广告已看完
+Ertaga qayting‖Yarın tekrar gel|Vuelve mañana|Volte amanhã|عُد غدًا|Kembali besok|कल फिर आएँ|Revenez demain|Komm morgen wieder|내일 다시 오세요|また明日|明天再来
+Reklama oxirigacha ko'rilmadi‖Reklam sonuna kadar izlenmedi|No se vio el anuncio completo|O anúncio não foi assistido até o fim|لم تتم مشاهدة الإعلان حتى النهاية|Iklan tidak ditonton sampai selesai|विज्ञापन पूरा नहीं देखा गया|La pub n'a pas été vue jusqu'au bout|Die Werbung wurde nicht zu Ende gesehen|광고를 끝까지 보지 않았습니다|広告が最後まで再生されませんでした|广告未看完
+Saqlangan o'yin yuklandi‖Bulut kaydı yüklendi|Partida en la nube cargada|Jogo salvo na nuvem carregado|تم تحميل الحفظ السحابي|Simpanan cloud dimuat|क्लाउड सेव लोड हुआ|Sauvegarde cloud chargée|Cloud-Spielstand geladen|클라우드 저장 불러옴|クラウドセーブを読み込みました|已载入云存档
+o'yin bulutda saqlanadi‖oyun bulutta kaydedilir|el progreso se guarda en la nube|o progresso é salvo na nuvem|يُحفظ التقدم في السحابة|progres disimpan di cloud|प्रगति क्लाउड में सेव होती है|la progression est sauvegardée dans le cloud|Fortschritt wird in der Cloud gespeichert|진행 상황이 클라우드에 저장됩니다|進行状況はクラウドに保存されます|进度保存到云端
+Y8 bilan kiring — o'yiningiz bulutda saqlanadi‖Y8 ile giriş yap — oyunun bulutta saklansın|Inicia sesión con Y8 para guardar tu progreso en la nube|Entre com o Y8 para salvar seu progresso na nuvem|سجّل الدخول عبر Y8 لحفظ تقدمك في السحابة|Masuk dengan Y8 untuk menyimpan progres di cloud|Y8 से लॉग इन करें और प्रगति क्लाउड में सेव करें|Connectez-vous avec Y8 pour sauvegarder votre progression dans le cloud|Melde dich mit Y8 an, um deinen Fortschritt in der Cloud zu speichern|Y8로 로그인하면 진행 상황이 클라우드에 저장됩니다|Y8でログインして進行状況をクラウドに保存|使用Y8登录,将进度保存到云端
+Kirish‖Giriş|Iniciar sesión|Entrar|تسجيل الدخول|Masuk|लॉग इन|Connexion|Anmelden|로그인|ログイン|登录
+TANLANGAN‖KULLANIMDA|EN USO|EM USO|قيد الاستخدام|DIPAKAI|उपयोग में|UTILISÉ|IN GEBRAUCH|사용 중|使用中|使用中
+Top‖En iyi|Top|Melhores|الأعلى|Teratas|शीर्ष|Meilleurs|Top|상위|上位|前列
+keyingi ligaga chiqadi‖bir üst lige çıkar|suben de liga|sobem de liga|يصعدون إلى دوري أعلى|naik liga|अगली लीग में जाते हैं|montent d'une ligue|steigen eine Liga auf|다음 리그로 승급|上のリーグへ昇格|晋级上一级联赛
+Oxirgi‖Son|Últimos|Últimos|الأدنى|Terbawah|अंतिम|Derniers|Letzte|하위|下位|末位
+pastga tushadi‖bir alt lige düşer|bajan de liga|descem de liga|يهبطون إلى دوري أدنى|turun liga|नीचे की लीग में जाते हैं|descendent d'une ligue|steigen eine Liga ab|하위 리그로 강등|下のリーグへ降格|降入下一级联赛
+k‖g|d|d|ي|h|दि|j|T|일|日|天
+s‖sa|h|h|س|j|घं|h|Std|시|時|时
+d‖dk|m|m|د|m|मि|min|Min|분|分|分
+Hali natija yo'q‖Henüz sonuç yok|Aún no hay resultados|Ainda sem resultados|لا نتائج بعد|Belum ada hasil|अभी कोई नतीजा नहीं|Pas encore de résultats|Noch keine Ergebnisse|아직 결과가 없습니다|まだ結果がありません|暂无结果
+Yana ko'p avatarlar‖Daha fazla avatar|Más avatares|Mais avatares|المزيد من الصور الرمزية|Lebih banyak avatar|और अवतार|Plus d'avatars|Mehr Avatare|더 많은 아바타|さらにアバター|更多头像
+Haftalik reyting sovrini‖Haftalık sıralama ödülü|Premio del ranking semanal|Prêmio do ranking semanal|جائزة الترتيب الأسبوعي|Hadiah peringkat mingguan|साप्ताहिक रैंकिंग इनाम|Récompense du classement hebdomadaire|Wochenranglisten-Preis|주간 랭킹 보상|週間ランキング賞品|每周排行榜奖励
+G'alaba %‖Kazanma %|% de victorias|% de vitórias|نسبة الفوز %|Menang %|जीत %|% de victoires|Siegquote %|승률 %|勝率 %|胜率 %
+Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.‖Her kutu efsanevi bir sopanın 1 parçasını verir. 4 parça = sopa.|Cada caja da 1 pieza de un taco legendario. 4 piezas = el taco.|Cada caixa dá 1 peça de um taco lendário. 4 peças = o taco.|كل صندوق يمنح قطعة واحدة من عصا أسطورية. 4 قطع = العصا.|Setiap kotak memberi 1 keping stik legendaris. 4 keping = stik.|हर बॉक्स से एक legendary क्यू का 1 टुकड़ा मिलता है। 4 टुकड़े = क्यू।|Chaque coffre donne 1 pièce d'une queue légendaire. 4 pièces = la queue.|Jede Kiste gibt 1 Teil eines legendären Queues. 4 Teile = der Queue.|상자마다 전설 큐 조각 1개가 나옵니다. 4조각 = 큐 1개.|各ボックスから伝説キューのパーツが1つ出ます。4個でキュー完成。|每个箱子给出传说球杆的1块碎片,集齐4块即可合成球杆。
+Shaharda yoki undan yuqorida yutib, kiy bo'laklarini yig'ing. 4 bo'lak = kiy.‖Şehirde veya daha üstünde kazanarak sopa parçalarını topla. 4 parça = sopa.|Gana en la ciudad o superior para reunir piezas. 4 piezas = el taco.|Vença na cidade ou acima para juntar peças. 4 peças = o taco.|اربح في المدينة أو أعلى لجمع القطع. 4 قطع = العصا.|Menang di kota ini atau lebih tinggi untuk mengumpulkan keping. 4 keping = stik.|इस शहर या उससे ऊपर जीतकर टुकड़े जुटाएँ। 4 टुकड़े = क्यू।|Gagnez dans la ville ou au-dessus pour récolter des pièces. 4 pièces = la queue.|Gewinne in der Stadt oder höher, um Teile zu sammeln. 4 Teile = der Queue.|이 도시 이상에서 승리해 조각을 모으세요. 4조각 = 큐.|この都市以上で勝ってパーツを集めよう。4個でキュー完成。|在该城市或更高城市获胜以收集碎片,集齐4块即得球杆。
+Yana ochish‖Bir tane daha aç|Abrir otra|Abrir outra|افتح واحدًا آخر|Buka satu lagi|एक और खोलें|En ouvrir une autre|Noch eine öffnen|하나 더 열기|もう1つ開ける|再开一个
+Osiyo Kubogi‖Asya Kupası|Copa de Asia|Copa da Ásia|كأس آسيا|Piala Asia|एशिया कप|Coupe d'Asie|Asien-Pokal|아시아 컵|アジアカップ|亚洲杯
+Janubiy Amerika Kubogi‖Güney Amerika Kupası|Copa de Sudamérica|Copa da América do Sul|كأس أمريكا الجنوبية|Piala Amerika Selatan|दक्षिण अमेरिका कप|Coupe d'Amérique du Sud|Südamerika-Pokal|남미 컵|南米カップ|南美杯
+Yevropa Kubogi‖Avrupa Kupası|Copa de Europa|Copa da Europa|كأس أوروبا|Piala Eropa|यूरोप कप|Coupe d'Europe|Europa-Pokal|유럽 컵|ヨーロッパカップ|欧洲杯
+Jahon Kubogi‖Dünya Kupası|Copa del Mundo|Copa do Mundo|كأس العالم|Piala Dunia|विश्व कप|Coupe du monde|Weltpokal|월드컵|ワールドカップ|世界杯
+Bosh sovrin‖Büyük ödül|Premio mayor|Grande prêmio|الجائزة الكبرى|Hadiah utama|बड़ा इनाम|Gros lot|Hauptpreis|대상|大賞|大奖
+Final‖Final|Final|Final|النهائي|Final|फ़ाइनल|Finale|Finale|결승|決勝|决赛
+Yarim final‖Yarı final|Semifinal|Semifinal|نصف النهائي|Semifinal|सेमीफ़ाइनल|Demi-finale|Halbfinale|준결승|準決勝|半决赛
+Chorak final‖Çeyrek final|Cuartos de final|Quartas de final|ربع النهائي|Perempat final|क्वार्टरफ़ाइनल|Quart de finale|Viertelfinale|8강|準々決勝|四分之一决赛
+final‖final|final|final|النهائي|final|फ़ाइनल|finale|Finale|결승|決勝|决赛
+Stol‖Masa|Mesa|Mesa|طاولة|Meja|टेबल|Table|Tisch|테이블|テーブル|球桌
+O'yinchilar‖Oyuncular|Jugadores|Jogadores|اللاعبون|Pemain|खिलाड़ी|Joueurs|Spieler|플레이어|プレイヤー|玩家
+raund‖tur|rondas|rodadas|جولات|ronde|राउंड|tours|Runden|라운드|ラウンド|轮
+QATNASHISH‖KATIL|UNIRSE|ENTRAR|انضم|GABUNG|जुड़ें|REJOINDRE|TEILNEHMEN|참가|参加|参加
+daraja kerak‖seviye gerekli|nivel requerido|nível necessário|المستوى المطلوب|level dibutuhkan|लेवल चाहिए|niveau requis|Level erforderlich|레벨 필요|レベルが必要|需要等级
+bo'sh‖bay|descansa|folga|إعفاء|bye|बाय|exempt|Freilos|부전승|不戦勝|轮空
+Boshqa o'yinlar‖Diğer maçlar|Otras partidas|Outras partidas|مباريات أخرى|Pertandingan lain|अन्य मैच|Autres matchs|Andere Spiele|다른 경기|その他の試合|其他比赛
+Turnirdan chiqdingiz.‖Turnuvadan elendin.|Has sido eliminado del torneo.|Você foi eliminado do torneio.|لقد خرجت من البطولة.|Anda tersingkir dari turnamen.|आप टूर्नामेंट से बाहर हो गए।|Vous êtes éliminé du tournoi.|Du bist aus dem Turnier ausgeschieden.|토너먼트에서 탈락했습니다.|トーナメントから敗退しました。|你已被淘汰出局。
+Siz chempionsiz!‖Şampiyon sensin!|¡Eres el campeón!|Você é o campeão!|أنت البطل!|Anda juaranya!|आप चैंपियन हैं!|Vous êtes le champion !|Du bist der Champion!|당신이 챔피언입니다!|あなたがチャンピオンです!|你是冠军!
+Raund yutildi!‖Tur kazanıldı!|¡Ronda ganada!|Rodada vencida!|فزت بالجولة!|Ronde dimenangkan!|राउंड जीता!|Tour gagné !|Runde gewonnen!|라운드 승리!|ラウンド勝利!|本轮获胜!
+Keyingi bosqich‖Sonraki aşama|Siguiente fase|Próxima fase|المرحلة التالية|Tahap berikutnya|अगला चरण|Étape suivante|Nächste Runde|다음 단계|次のステージ|下一阶段
+Klub mukofoti‖Kulüp ödülü|Recompensa del club|Recompensa do clube|مكافأة النادي|Hadiah klub|क्लब इनाम|Récompense du club|Club-Belohnung|클럽 보상|クラブ報酬|俱乐部奖励
+Bu o'yinchi do'st so'rovlarini yopgan‖Bu oyuncu arkadaşlık isteklerini kapatmış|Este jugador no acepta solicitudes de amistad|Este jogador não aceita pedidos de amizade|هذا اللاعب لا يقبل طلبات الصداقة|Pemain ini tidak menerima permintaan pertemanan|यह खिलाड़ी दोस्ती के अनुरोध नहीं लेता|Ce joueur n'accepte pas les demandes d'ami|Dieser Spieler nimmt keine Freundschaftsanfragen an|이 플레이어는 친구 요청을 받지 않습니다|このプレイヤーはフレンド申請を受け付けていません|该玩家不接受好友请求
+darajada ochiladi‖seviyede açılır|nivel para desbloquear|nível para desbloquear|مستوى لفتحه|level untuk dibuka|लेवल पर खुलेगा|niveau pour débloquer|Level zum Freischalten|레벨에서 해금|レベルで解放|级解锁
+Siz allaqachon klubdasiz‖Zaten bir kulüptesin|Ya estás en un club|Você já está em um clube|أنت بالفعل في نادٍ|Anda sudah berada di klub|आप पहले से किसी क्लब में हैं|Vous êtes déjà dans un club|Du bist bereits in einem Club|이미 클럽에 가입되어 있습니다|すでにクラブに所属しています|你已在俱乐部中
+Nom kamida 3 harf bo'lsin‖İsim en az 3 harf olmalı|El nombre debe tener al menos 3 letras|O nome deve ter pelo menos 3 letras|يجب أن يتكون الاسم من 3 أحرف على الأقل|Nama minimal 3 huruf|नाम कम से कम 3 अक्षर का हो|Le nom doit contenir au moins 3 lettres|Der Name muss mindestens 3 Buchstaben haben|이름은 3글자 이상이어야 합니다|名前は3文字以上にしてください|名称至少3个字符
+Bu nom band‖Bu isim alınmış|Este nombre ya está en uso|Este nome já está em uso|هذا الاسم مستخدم|Nama ini sudah dipakai|यह नाम लिया जा चुका है|Ce nom est déjà pris|Dieser Name ist vergeben|이미 사용 중인 이름입니다|この名前は使用されています|该名称已被占用
+Klub to'la‖Kulüp dolu|El club está lleno|O clube está cheio|النادي ممتلئ|Klub penuh|क्लब भर चुका है|Le club est complet|Der Club ist voll|클럽이 가득 찼습니다|クラブは満員です|俱乐部已满
+Klub topilmadi‖Kulüp bulunamadı|Club no encontrado|Clube não encontrado|النادي غير موجود|Klub tidak ditemukan|क्लब नहीं मिला|Club introuvable|Club nicht gefunden|클럽을 찾을 수 없습니다|クラブが見つかりません|未找到俱乐部
+Sekinroq yozing‖Yavaş yaz|Más despacio|Mais devagar|تمهّل|Pelan-pelan|धीरे लिखें|Doucement|Langsamer|천천히 입력하세요|ゆっくり入力してください|请慢一点
+O'yin sozlamalari‖Oyun seçenekleri|Opciones de juego|Opções do jogo|خيارات اللعبة|Opsi permainan|गेम विकल्प|Options de jeu|Spieloptionen|게임 옵션|ゲームオプション|游戏选项
+Do'stlar va maxfiylik‖Arkadaşlar ve gizlilik|Amigos y privacidad|Amigos e privacidade|الأصدقاء والخصوصية|Teman & privasi|दोस्त और गोपनीयता|Amis et confidentialité|Freunde & Datenschutz|친구 및 개인정보|フレンドとプライバシー|好友与隐私
+Boshqa‖Diğer|Otros|Outros|أخرى|Lainnya|अन्य|Autre|Sonstiges|기타|その他|其他
+Klubga qo'shiling yoki o'zingiz yarating: reyting, mukofotlar, yangi do'stlar, sovg'alar va chat!‖Bir kulübe katıl veya kendin kur: sıralama, ödüller, yeni arkadaşlar, hediyeler ve sohbet!|Únete a un club o crea el tuyo: ranking, recompensas, nuevos amigos, regalos y chat.|Entre em um clube ou crie o seu: ranking, recompensas, novos amigos, presentes e chat!|انضم إلى نادٍ أو أنشئ نادياً: ترتيب ومكافآت وأصدقاء جدد وهدايا ودردشة!|Gabung atau buat klub sendiri: peringkat, hadiah, teman baru, hadiah, dan obrolan!|क्लब से जुड़ें या खुद बनाएँ: रैंकिंग, इनाम, नए दोस्त, उपहार और चैट!|Rejoignez ou créez un club : classements, récompenses, nouveaux amis, cadeaux et chat !|Tritt einem Club bei oder gründe einen: Ranglisten, Belohnungen, neue Freunde, Geschenke und Chat!|클럽에 가입하거나 직접 만드세요: 랭킹, 보상, 새 친구, 선물, 채팅!|クラブに参加・作成しよう:ランキング、報酬、新しい友達、ギフト、チャット!|加入或创建俱乐部:排行榜、奖励、新朋友、礼物和聊天!
+Klublar‖Kulüpler|Clubes|Clubes|الأندية|Klub|क्लब|Clubs|Clubs|클럽|クラブ|俱乐部
+Klub nomi‖Kulüp adı|Nombre del club|Nome do clube|اسم النادي|Nama klub|क्लब का नाम|Nom du club|Clubname|클럽 이름|クラブ名|俱乐部名称
+Qidirish‖Ara|Buscar|Buscar|بحث|Cari|खोजें|Rechercher|Suchen|검색|検索|搜索
+Klub yaratish‖Kulüp kur|Crear club|Criar clube|إنشاء نادٍ|Buat klub|क्लब बनाएँ|Créer un club|Club gründen|클럽 만들기|クラブを作成|创建俱乐部
+A'zolar‖Üyeler|Miembros|Membros|الأعضاء|Anggota|सदस्य|Membres|Mitglieder|멤버|メンバー|成员
+Qo'shilish‖Katıl|Unirse|Entrar|انضم|Gabung|जुड़ें|Rejoindre|Beitreten|가입|参加|加入
+Hali klub yo'q — birinchisini yarating!‖Henüz kulüp yok — ilkini sen kur!|Aún no hay clubes: ¡crea el primero!|Ainda não há clubes — crie o primeiro!|لا أندية بعد — أنشئ الأول!|Belum ada klub — buat yang pertama!|अभी कोई क्लब नहीं — पहला आप बनाएँ!|Pas encore de club — créez le premier !|Noch keine Clubs — gründe den ersten!|아직 클럽이 없어요 — 첫 클럽을 만드세요!|まだクラブがありません — 最初のクラブを作ろう!|还没有俱乐部 — 来创建第一个吧!
+Yaratish‖Oluştur|Crear|Criar|إنشاء|Buat|बनाएँ|Créer|Erstellen|만들기|作成|创建
+Salomlashing! 👋‖Selam ver! 👋|¡Saluda! 👋|Diga olá! 👋|ألقِ التحية! 👋|Sapa dulu! 👋|नमस्ते कहें! 👋|Dites bonjour ! 👋|Sag Hallo! 👋|인사해 보세요! 👋|あいさつしよう! 👋|打个招呼吧! 👋
+Haftaning eng yaxshi 3 klubi a'zolari oladi‖Haftanın en iyi 3 kulübünün üyeleri alır|Los miembros de los 3 mejores clubes de la semana reciben|Membros dos 3 melhores clubes da semana ganham|أعضاء أفضل 3 أندية في الأسبوع يحصلون على|Anggota 3 klub teratas minggu ini mendapat|सप्ताह के टॉप 3 क्लब के सदस्यों को मिलता है|Les membres des 3 meilleurs clubs de la semaine reçoivent|Mitglieder der Top-3-Clubs der Woche erhalten|이번 주 상위 3개 클럽 멤버가 받는 보상|今週のトップ3クラブのメンバーがもらえる|本周前3名俱乐部成员可获得
+Klubdan chiqish‖Kulüpten ayrıl|Salir del club|Sair do clube|مغادرة النادي|Keluar dari klub|क्लब छोड़ें|Quitter le club|Club verlassen|클럽 탈퇴|クラブを退出|退出俱乐部
+Xabar yozing…‖Mesaj yaz…|Escribe un mensaje…|Digite uma mensagem…|اكتب رسالة…|Ketik pesan…|संदेश लिखें…|Écrivez un message…|Nachricht schreiben…|메시지 입력…|メッセージを入力…|输入消息…
+Rostdan ham chiqasizmi?‖Gerçekten ayrılmak istiyor musun?|¿Seguro que quieres salir?|Tem certeza de que quer sair?|هل تريد المغادرة فعلًا؟|Yakin ingin keluar?|क्या आप सच में छोड़ना चाहते हैं?|Voulez-vous vraiment quitter ?|Willst du wirklich gehen?|정말 나가시겠어요?|本当に退出しますか?|确定要退出吗?
+Ramka‖Çerçeve|Marco|Moldura|إطار|Bingkai|फ़्रेम|Cadre|Rahmen|프레임|フレーム|头像框
+Pass darajasi‖Geçiş seviyesi|Nivel del pase|Nível do passe|مستوى التذكرة|Tingkat pass|पास टियर|Palier du pass|Pass-Stufe|패스 단계|パスのティア|通行证等级
+Mukofot tayyor!‖Ödül hazır!|¡Recompensa lista!|Recompensa pronta!|المكافأة جاهزة!|Hadiah siap!|इनाम तैयार है!|Récompense prête !|Belohnung bereit!|보상 준비 완료!|報酬の準備完了!|奖励已就绪!
+Shoh gambiti‖Şah Gambiti|Gambito del Rey|Gambito do Rei|غامبيت الملك|Gambit Raja|किंग्स गैम्बिट|Gambit du Roi|Königsgambit|킹스 갬빗|キングス・ギャンビット|王者弃兵
+Olish‖Al|Reclamar|Coletar|استلام|Ambil|लें|Récupérer|Abholen|받기|受け取る|领取
+O'ynang, missiyalarni bajaring va mukofotlar oling!‖Maç kazan ve görevleri tamamla, ödülleri topla!|¡Gana partidas y completa misiones para conseguir recompensas!|Vença partidas e complete missões para ganhar recompensas!|اربح المباريات وأكمل المهام لتحصل على المكافآت!|Menangkan pertandingan dan selesaikan misi untuk mendapat hadiah!|मैच जीतें और मिशन पूरे करें, इनाम पाएँ!|Gagnez des parties et accomplissez des missions pour obtenir des récompenses !|Gewinne Spiele und erfülle Missionen, um Belohnungen zu erhalten!|경기에서 이기고 미션을 완료해 보상을 받으세요!|試合に勝ってミッションを達成し、報酬をゲット!|赢得比赛并完成任务,领取奖励!
+Mavsum tugashiga‖Sezonun bitmesine|La temporada termina en|A temporada termina em|ينتهي الموسم بعد|Musim berakhir dalam|सीज़न समाप्त होने में|La saison se termine dans|Saison endet in|시즌 종료까지|シーズン終了まで|赛季结束倒计时
+daraja‖seviye|nivel|nível|مستوى|tingkat|टियर|palier|Stufe|단계|ティア|级
+Premium pass‖Premium pass|Pase premium|Passe premium|تذكرة بريميوم|Pass premium|प्रीमियम पास|Pass premium|Premium-Pass|프리미엄 패스|プレミアムパス|高级通行证
+Bugungi missiyalar‖Bugünün görevleri|Misiones de hoy|Missões de hoje|مهام اليوم|Misi hari ini|आज के मिशन|Missions du jour|Heutige Missionen|오늘의 미션|今日のミッション|今日任务
+G'alaba: +30 ♞ · Mag'lubiyat: +10 ♞ · Turnir raundi: +25 ♞‖Galibiyet: +30 ♞ · Mağlubiyet: +10 ♞ · Turnuva turu: +25 ♞|Victoria: +30 ♞ · Derrota: +10 ♞ · Ronda de torneo: +25 ♞|Vitória: +30 ♞ · Derrota: +10 ♞ · Rodada de torneio: +25 ♞|فوز: +30 ♞ · خسارة: +10 ♞ · جولة بطولة: +25 ♞|Menang: +30 ♞ · Kalah: +10 ♞ · Ronde turnamen: +25 ♞|जीत: +30 ♞ · हार: +10 ♞ · टूर्नामेंट राउंड: +25 ♞|Victoire : +30 ♞ · Défaite : +10 ♞ · Tour de tournoi : +25 ♞|Sieg: +30 ♞ · Niederlage: +10 ♞ · Turnierrunde: +25 ♞|승리: +30 ♞ · 패배: +10 ♞ · 토너먼트 라운드: +25 ♞|勝利: +30 ♞ · 敗北: +10 ♞ · トーナメントラウンド: +25 ♞|胜利:+30 ♞ · 失败:+10 ♞ · 锦标赛一轮:+25 ♞
+Ovoz‖Ses|Sonido|Som|الصوت|Suara|आवाज़|Son|Ton|소리|サウンド|声音
+Tebranish‖Titreşim|Vibración|Vibração|الاهتزاز|Getaran|कंपन|Vibration|Vibration|진동|バイブレーション|震动
+Kiy sezgirligi‖Sopa hassasiyeti|Sensibilidad del taco|Sensibilidade do taco|حساسية العصا|Sensitivitas stik|क्यू संवेदनशीलता|Sensibilité de la queue|Queue-Empfindlichkeit|큐 감도|キューの感度|球杆灵敏度
+Sekin‖Yavaş|Lento|Lento|بطيء|Lambat|धीमा|Lent|Langsam|느림|遅い|慢
+O'rtacha‖Normal|Normal|Normal|عادي|Normal|सामान्य|Normal|Normal|보통|普通|正常
+Tez‖Hızlı|Rápido|Rápido|سريع|Cepat|तेज़|Rapide|Schnell|빠름|速い|快
+Bosib nishonga olish‖Nişan almak için dokun|Toca para apuntar|Toque para mirar|اضغط للتصويب|Ketuk untuk membidik|निशाना लगाने के लिए टैप करें|Touchez pour viser|Zum Zielen tippen|탭하여 조준|タップして狙う|点击瞄准
+Aniqlik g'ildiragi‖Nişan çarkı|Rueda de puntería|Roda de mira|عجلة التصويب|Roda bidik|एमिंग व्हील|Molette de visée|Zielrad|조준 휠|エイムホイール|瞄准轮
+Oflayn o'yinda yo'naltiruvchi chiziqni o'chirish‖Çevrimdışı oyunda nişan çizgisini kapat|Desactivar la guía en modo sin conexión|Desativar a linha de mira no modo offline|إيقاف خط التوجيه في وضع عدم الاتصال|Nonaktifkan garis bidik di mode offline|ऑफ़लाइन मोड में गाइड लाइन बंद करें|Désactiver la ligne de visée hors ligne|Zielhilfe im Offline-Modus ausschalten|오프라인 모드에서 조준선 끄기|オフラインでガイドラインを無効にする|离线模式下关闭瞄准线
+Kuch paneli joyi‖Güç çubuğu konumu|Ubicación de la barra de fuerza|Posição da barra de força|موقع شريط القوة|Lokasi bilah kekuatan|पावर बार की जगह|Position de la jauge de puissance|Position der Kraftleiste|파워 바 위치|パワーバーの位置|力度条位置
+Chap‖Sol|Izquierda|Esquerda|يسار|Kiri|बाएँ|Gauche|Links|왼쪽|左|左
+O'ng‖Sağ|Derecha|Direita|يمين|Kanan|दाएँ|Droite|Rechts|오른쪽|右|右
+Olqish animatsiyalari‖Tezahürat animasyonları|Animaciones de vítores|Animações de comemoração|رسوم التشجيع|Animasi sorak|चीयर एनिमेशन|Animations d'encouragement|Jubel-Animationen|응원 애니메이션|応援アニメーション|欢呼动画
+Hammasi‖Hepsini oynat|Jugar todo|Jogar tudo|تشغيل الكل|Putar semua|सब चलाएँ|Tout jouer|Alle abspielen|모두 재생|すべて再生|全部播放
+Faqat meniki‖Sadece benimki|Solo el mío|Só o meu|الخاص بي فقط|Hanya milik saya|सिर्फ़ मेरा|Seulement le mien|Nur meiner|내 것만|自分のみ|仅自己
+Do'st qo'shishga ruxsat‖Arkadaş olarak eklenmeye izin ver|Permitir que me añadan como amigo|Permitir ser adicionado como amigo|السماح بإضافتي كصديق|Izinkan ditambahkan sebagai teman|दोस्त के रूप में जोड़ने की अनुमति दें|Autoriser l'ajout en ami|Freundschaftsanfragen erlauben|친구 추가 허용|フレンド追加を許可|允许被添加为好友
+Hamma‖Herkes|Todos|Todos|الجميع|Semua orang|सभी|Tout le monde|Jeder|모두|全員|所有人
+Hech kim‖Hiç kimse|Nadie|Ninguém|لا أحد|Tidak ada|कोई नहीं|Personne|Niemand|아무도|なし|无人
+Onlayn holatimni do'stlarga ko'rsatish‖Çevrimiçi durumumu arkadaşlara göster|Mostrar mi estado en línea a mis amigos|Mostrar meu status online aos amigos|إظهار حالتي المتصلة للأصدقاء|Tampilkan status online saya ke teman|दोस्तों को मेरी ऑनलाइन स्थिति दिखाएँ|Montrer mon statut en ligne à mes amis|Meinen Online-Status Freunden zeigen|친구에게 내 온라인 상태 표시|オンライン状態をフレンドに表示|向好友显示我的在线状态
+Do'stlar onlayn bo'lganda xabar berish‖Arkadaşlar çevrimiçi olunca bildir|Avisar cuando mis amigos se conecten|Avisar quando amigos ficarem online|إشعاري عند اتصال الأصدقاء|Beri tahu saat teman online|दोस्तों के ऑनलाइन आने पर सूचित करें|Prévenir quand mes amis se connectent|Benachrichtigen, wenn Freunde online kommen|친구가 접속하면 알림|フレンドがオンラインになったら通知|好友上线时通知我
+Sozlamalar‖Ayarlar|Ajustes|Configurações|الإعدادات|Pengaturan|सेटिंग्स|Paramètres|Einstellungen|설정|設定|设置
+Klub‖Kulüp|Club|Clube|النادي|Klub|क्लब|Club|Club|클럽|クラブ|俱乐部
+2 ta o'yinda g'alaba qozoning‖2 oyun kazan|Gana 2 partidas|Vença 2 partidas|اربح مباراتين|Menangkan 2 pertandingan|2 गेम जीतें|Gagnez 2 parties|Gewinne 2 Spiele|2경기 승리|2試合に勝つ|赢得2场比赛
+4 ta o'yinda g'alaba qozoning‖4 oyun kazan|Gana 4 partidas|Vença 4 partidas|اربح 4 مباريات|Menangkan 4 pertandingan|4 गेम जीतें|Gagnez 4 parties|Gewinne 4 Spiele|4경기 승리|4試合に勝つ|赢得4场比赛
+3 ta o'yin o'ynang‖3 oyun oyna|Juega 3 partidas|Jogue 3 partidas|العب 3 مباريات|Mainkan 3 pertandingan|3 गेम खेलें|Jouez 3 parties|Spiele 3 Spiele|3경기 플레이|3試合プレイする|进行3场比赛
+15 ta shar tushiring‖15 top sok|Emboca 15 bolas|Encaçape 15 bolas|أدخل 15 كرة|Masukkan 15 bola|15 गेंदें पॉकेट करें|Empochez 15 billes|Versenke 15 Kugeln|공 15개 넣기|15個のボールを落とす|打进15个球
+30 ta shar tushiring‖30 top sok|Emboca 30 bolas|Encaçape 30 bolas|أدخل 30 كرة|Masukkan 30 bola|30 गेंदें पॉकेट करें|Empochez 30 billes|Versenke 30 Kugeln|공 30개 넣기|30個のボールを落とす|打进30个球
+Turnirda g'olib bo'ling‖Bir turnuva kazan|Gana un torneo|Vença um torneio|اربح بطولة|Menangkan turnamen|टूर्नामेंट जीतें|Gagnez un tournoi|Gewinne ein Turnier|토너먼트 우승|トーナメントに優勝する|赢得一场锦标赛
+Turnirda 2 raund yuting‖Turnuvada 2 tur kazan|Gana 2 rondas de torneo|Vença 2 rodadas de torneio|اربح جولتين في بطولة|Menangkan 2 ronde turnamen|टूर्नामेंट के 2 राउंड जीतें|Gagnez 2 tours de tournoi|Gewinne 2 Turnierrunden|토너먼트 2라운드 승리|トーナメントで2ラウンド勝つ|赢得2轮锦标赛
+Tokio yoki undan yuqori shaharda yuting‖Tokyo veya daha üst şehirde kazan|Gana en Tokio o superior|Vença em Tóquio ou acima|اربح في طوكيو أو أعلى|Menang di Tokyo atau lebih tinggi|टोक्यो या उससे ऊपर जीतें|Gagnez à Tokyo ou au-dessus|Gewinne in Tokio oder höher|도쿄 이상에서 승리|東京以上で勝つ|在东京或更高城市获胜
+Omadli zarbani o'ynang‖Şanslı Vuruşu oyna|Juega el Tiro de la suerte|Jogue a Tacada da sorte|العب ضربة الحظ|Mainkan Tembakan Beruntung|लकी शॉट खेलें|Jouez le Coup chanceux|Spiele den Glücksstoß|럭키 샷 플레이|ラッキーショットを遊ぶ|玩一次幸运一击
+Klubga qo'shiling yoki yarating‖Bir kulübe katıl veya kur|Únete a un club o crea uno|Entre ou crie um clube|انضم إلى نادٍ أو أنشئ واحدًا|Gabung atau buat klub|क्लब से जुड़ें या बनाएँ|Rejoignez ou créez un club|Tritt einem Club bei oder gründe einen|클럽 가입 또는 생성|クラブに参加または作成|加入或创建俱乐部
+Gambit‖Gambit|Gambito|Gambito|غامبيت|Gambit|गैम्बिट|Gambit|Gambit|갬빗|ギャンビット|Gambit
+ochko‖puan|puntos|pontos|نقاط|poin|अंक|points|Punkte|점수|ポイント|积分
+Tanga to'plamlari‖Jeton Paketleri|Paquetes de monedas|Pacotes de moedas|حزم العملات|Paket Koin|सिक्का पैक|Packs de pièces|Münzpakete|코인 패키지|コインパック|金币礼包
+Naqd pul to'plamlari‖Nakit Paketleri|Paquetes de efectivo|Pacotes de dinheiro|حزم النقد|Paket Uang Tunai|कैश पैक|Packs de cash|Cash-Pakete|캐시 패키지|キャッシュパック|现金礼包
+CHEKLANGAN‖SÜRELİ|TIEMPO LIMITADO|TEMPO LIMITADO|لفترة محدودة|WAKTU TERBATAS|सीमित समय|TEMPS LIMITÉ|ZEITLICH BEGRENZT|한정 시간|期間限定|限时
+TAKLIFLAR!‖TEKLİFLER!|¡OFERTAS!|OFERTAS!|عروض!|PENAWARAN!|ऑफ़र!|OFFRES !|ANGEBOTE!|특가!|オファー!|优惠!
+Xarid qilish‖Şimdi al|Comprar ahora|Comprar agora|تسوّق الآن|Beli sekarang|अभी खरीदें|Acheter|Jetzt kaufen|지금 구매|今すぐ購入|立即购买
+Boshlang'ich to'plam‖Başlangıç Paketi|Pack inicial|Pacote inicial|حزمة البداية|Paket Pemula|स्टार्टर पैक|Pack de départ|Starterpaket|스타터 팩|スタートパック|新手礼包
+faqat bir marta‖yalnızca bir kez|solo una vez|apenas uma vez|مرة واحدة فقط|hanya sekali|सिर्फ़ एक बार|une seule fois|nur einmal|1회 한정|1回限り|限购一次
+Olmos to'plamlari‖Elmas Paketleri|Paquetes de gemas|Pacotes de gemas|حزم الجواهر|Paket Permata|जेम पैक|Packs de gemmes|Edelstein-Pakete|보석 패키지|ジェムパック|宝石礼包
+Olmos nima uchun?‖Elmaslar ne işe yarar?|¿Para qué sirven las gemas?|Para que servem as gemas?|ما فائدة الجواهر؟|Untuk apa permata?|जेम्स किस काम के हैं?|À quoi servent les gemmes ?|Wofür sind Edelsteine?|보석은 어디에 쓰나요?|ジェムの使い道は?|宝石有什么用?
+Premium pass, syurpriz qutilar va naqd pulga almashtirish uchun.‖Premium pass, sürpriz kutular ve nakite çevirme için.|Para el pase premium, cajas sorpresa y canjear por efectivo.|Para o passe premium, caixas surpresa e trocar por dinheiro.|للتذكرة البريميوم وصناديق المفاجآت والتحويل إلى نقد.|Untuk pass premium, kotak kejutan, dan ditukar dengan uang tunai.|प्रीमियम पास, सरप्राइज़ बॉक्स और कैश में बदलने के लिए।|Pour le pass premium, les coffres surprise et l'échange contre du cash.|Für den Premium-Pass, Überraschungskisten und zum Tausch gegen Cash.|프리미엄 패스, 서프라이즈 박스, 캐시 교환에 사용합니다.|プレミアムパス、サプライズボックス、キャッシュ交換に使えます。|用于高级通行证、惊喜箱和兑换现金。
+Kunlik sovg'a‖Günlük ödül|Recompensa diaria|Recompensa diária|المكافأة اليومية|Hadiah harian|दैनिक इनाम|Récompense quotidienne|Tägliche Belohnung|일일 보상|デイリー報酬|每日奖励
+Har kuni kirib mukofot oling‖Her gün gel, ödül kazan|Vuelve cada día por una recompensa|Volte todo dia e ganhe uma recompensa|عد كل يوم للحصول على مكافأة|Kembali setiap hari untuk hadiah|हर दिन आएँ, इनाम पाएँ|Revenez chaque jour pour une récompense|Komm jeden Tag für eine Belohnung|매일 접속하고 보상 받기|毎日来て報酬をもらおう|每天回来领取奖励
+Missiyalarni bajaring‖Görevleri tamamla|Completa misiones|Complete missões|أكمل المهام|Selesaikan misi|मिशन पूरे करें|Accomplissez des missions|Erfülle Missionen|미션 완료하기|ミッションを達成|完成任务
+Ochish‖Aç|Abrir|Abrir|فتح|Buka|खोलें|Ouvrir|Öffnen|열기|開く|打开
+Bugun bepul!‖Bugün bedava!|¡Gratis hoy!|Grátis hoje!|مجاني اليوم!|Gratis hari ini!|आज मुफ़्त!|Gratuit aujourd'hui !|Heute gratis!|오늘 무료!|本日無料!|今日免费!
+Olmos yetmaydi‖Yeterli elmas yok|No hay gemas suficientes|Gemas insuficientes|جواهر غير كافية|Permata tidak cukup|पर्याप्त जेम्स नहीं|Pas assez de gemmes|Nicht genug Edelsteine|보석이 부족합니다|ジェムが足りません|宝石不足
+Maxsus takliflar‖Özel Teklifler|Ofertas especiales|Ofertas especiais|عروض خاصة|Penawaran Spesial|खास ऑफ़र|Offres spéciales|Sonderangebote|특별 오퍼|スペシャルオファー|特惠活动
+Kirish ›‖Gir ›|Entrar ›|Entrar ›|ادخل ›|Masuk ›|प्रवेश ›|Entrer ›|Betreten ›|입장 ›|入る ›|进入 ›
+Eng kuchli o'yinchilar uchun maxsus turnir. Mahoratingizni ko'rsating!‖En güçlü oyuncular için özel turnuva. Yeteneğini göster!|Un torneo especial para los jugadores más fuertes. ¡Demuestra tu habilidad!|Um torneio especial para os jogadores mais fortes. Mostre sua habilidade!|بطولة خاصة لأقوى اللاعبين. أظهر مهارتك!|Turnamen khusus untuk pemain terkuat. Tunjukkan kemampuanmu!|सबसे मज़बूत खिलाड़ियों के लिए खास टूर्नामेंट। अपना हुनर दिखाएँ!|Un tournoi spécial pour les meilleurs joueurs. Montrez votre talent !|Ein Spezialturnier für die Stärksten. Zeig dein Können!|최강자를 위한 특별 토너먼트. 실력을 보여주세요!|最強プレイヤーのための特別トーナメント。腕前を見せよう!|为最强玩家准备的特别锦标赛。展示你的实力!
+G'alabadan g'alabaga! Bu yerda faqat eng kuchlilar qoladi.‖Zaferden zafere! Burada yalnızca en güçlüler kalır.|¡De victoria en victoria! Aquí solo quedan los más fuertes.|De vitória em vitória! Aqui só ficam os mais fortes.|من فوز إلى فوز! لا يبقى هنا إلا الأقوياء.|Dari kemenangan ke kemenangan! Hanya yang terkuat bertahan di sini.|जीत दर जीत! यहाँ सिर्फ़ सबसे मज़बूत टिकते हैं।|De victoire en victoire ! Seuls les plus forts restent ici.|Von Sieg zu Sieg! Hier bleiben nur die Stärksten.|승리에서 승리로! 여기서는 최강자만 살아남습니다.|勝利から勝利へ!ここでは最強だけが残る。|一路连胜!这里只有最强者留下。
+Maxsus vazifalar, qiziqarli muammolar va noyob sovrinlar sizni kutmoqda!‖Özel görevler, eğlenceli zorluklar ve nadir ödüller seni bekliyor!|¡Te esperan tareas especiales, retos divertidos y premios únicos!|Tarefas especiais, desafios divertidos e prêmios raros esperam por você!|مهام خاصة وتحديات ممتعة وجوائز نادرة بانتظارك!|Tugas khusus, tantangan seru, dan hadiah langka menantimu!|खास टास्क, मज़ेदार चुनौतियाँ और दुर्लभ इनाम आपका इंतज़ार कर रहे हैं!|Des tâches spéciales, des défis amusants et des lots rares vous attendent !|Spezialaufgaben, spannende Herausforderungen und seltene Preise warten auf dich!|특별 과제, 재미있는 도전, 희귀 보상이 기다립니다!|特別ミッション、楽しいチャレンジ、レア報酬が待っています!|特殊任务、趣味挑战和稀有奖品等着你!
+Maxsus buyumlar va bonuslar‖Özel eşyalar ve bonuslar|Objetos especiales y bonos|Itens especiais e bônus|عناصر ومكافآت خاصة|Item dan bonus spesial|खास आइटम और बोनस|Objets spéciaux et bonus|Spezielle Items und Boni|특별 아이템과 보너스|スペシャルアイテムとボーナス|特殊道具和奖励
+O'yiningizni yanada qiziqarli qiling! Eksklyuziv buyumlar, aktsiyalar va bonuslar sizni kutmoqda!‖Oyununu daha da eğlenceli yap! Özel eşyalar, kampanyalar ve bonuslar seni bekliyor!|¡Haz tu juego aún más divertido! Te esperan objetos exclusivos, ofertas y bonos.|Deixe seu jogo ainda mais divertido! Itens exclusivos, promoções e bônus esperam por você!|اجعل لعبتك أكثر متعة! عناصر حصرية وعروض ومكافآت بانتظارك!|Buat permainanmu makin seru! Item eksklusif, promo, dan bonus menantimu!|अपने गेम को और मज़ेदार बनाएँ! खास आइटम, ऑफ़र और बोनस आपका इंतज़ार कर रहे हैं!|Rendez votre jeu encore plus fun ! Objets exclusifs, promos et bonus vous attendent !|Mach dein Spiel noch spannender! Exklusive Items, Aktionen und Boni warten auf dich!|게임을 더 재미있게! 한정 아이템, 프로모션, 보너스가 기다립니다!|ゲームをもっと楽しく!限定アイテム、セール、ボーナスが待っています!|让游戏更有趣!专属道具、优惠和奖励等着你!
+Yangi avatar!‖Yeni avatar!|¡Nuevo avatar!|Novo avatar!|صورة رمزية جديدة!|Avatar baru!|नया अवतार!|Nouvel avatar !|Neuer Avatar!|새 아바타!|新しいアバター!|新头像!
+Stol sizniki!‖Masa senin!|¡La mesa es tuya!|A mesa é sua!|الطاولة لك!|Mejanya milikmu!|टेबल आपकी है!|La table est à vous !|Der Tisch gehört dir!|테이블을 획득했어요!|テーブルをゲット!|球桌归你了!
+Premium ramkalar‖Premium çerçeveler|Marcos premium|Molduras premium|إطارات بريميوم|Bingkai premium|प्रीमियम फ़्रेम|Cadres premium|Premium-Rahmen|프리미엄 프레임|プレミアムフレーム|高级头像框
+Ramkalar‖Çerçeveler|Marcos|Molduras|الإطارات|Bingkai|फ़्रेम|Cadres|Rahmen|프레임|フレーム|头像框
+ramka‖çerçeve|marco|moldura|إطار|bingkai|फ़्रेम|cadre|Rahmen|프레임|フレーム|头像框
+👑 Premium‖👑 Premium|👑 Premium|👑 Premium|👑 بريميوم|👑 Premium|👑 प्रीमियम|👑 Premium|👑 Premium|👑 프리미엄|👑 プレミアム|👑 高级
+To'plam bonusi‖Set bonusu|Bono de conjunto|Bônus de conjunto|مكافأة المجموعة|Bonus set|सेट बोनस|Bonus de set|Set-Bonus|세트 보너스|セットボーナス|套装奖励
+kiy‖sopa|taco|taco|عصا|stik|क्यू|queue|Queue|큐|キュー|球杆
+Zarba effekti‖Vuruş efekti|Efecto de golpe|Efeito de tacada|تأثير الضربة|Efek pukulan|स्ट्राइक इफ़ेक्ट|Effet de frappe|Stoßeffekt|타격 이펙트|ストライクエフェクト|击球特效
+Har bir premium kiy — premium stolning jufti. Ikkalasi bo'lsa: to'plam bonusi +10%.‖Her premium sopa bir premium masayla eşleşir. İkisi de sende olursa: set bonusu +%10.|Cada taco premium combina con una mesa premium. Con ambos: bono de conjunto +10%.|Cada taco premium combina com uma mesa premium. Com os dois: bônus de conjunto +10%.|كل عصا بريميوم تناسب طاولة بريميوم. امتلك الاثنين: مكافأة المجموعة +10%.|Setiap stik premium berpasangan dengan meja premium. Punya keduanya: bonus set +10%.|हर प्रीमियम क्यू एक प्रीमियम टेबल से जुड़ा है। दोनों हों तो सेट बोनस +10%।|Chaque queue premium va avec une table premium. Les deux : bonus de set +10 %.|Jeder Premium-Queue passt zu einem Premium-Tisch. Beides: Set-Bonus +10 %.|프리미엄 큐마다 짝이 되는 프리미엄 테이블이 있습니다. 둘 다 있으면 세트 보너스 +10%.|プレミアムキューには対応するプレミアムテーブルがあります。両方持てばセットボーナス+10%。|每支高级球杆都有对应的高级球桌。两者兼备可获得套装奖励+10%。
+Kiy yoqdimi? Hozir 30% chegirma bilan oling!‖Sopa hoşuna gitti mi? Şimdi %30 indirimle al!|¿Te gustó el taco? ¡Cómpralo ya con 30% de descuento!|Gostou do taco? Compre agora com 30% de desconto!|أعجبتك العصا؟ احصل عليها الآن بخصم 30%!|Suka stiknya? Beli sekarang diskon 30%!|क्यू पसंद आया? अभी 30% छूट पर लें!|La queue vous plaît ? Prenez-la avec 30 % de réduction !|Gefällt dir der Queue? Jetzt mit 30 % Rabatt sichern!|큐가 마음에 드셨나요? 지금 30% 할인!|キューは気に入りましたか?今なら30%オフ!|喜欢这支球杆吗?现在购买享7折!
+Noyob‖Nadir|Raro|Raro|نادر|Langka|दुर्लभ|Rare|Selten|레어|レア|稀有
+Epik‖Epik|Épico|Épico|ملحمي|Epik|एपिक|Épique|Episch|에픽|エピック|史诗
+Mifik‖Efsanevi|Mítico|Mítico|أسطوري|Mitos|मिथिक|Mythique|Mythisch|미식|ミシック|神话
+qoldi‖kaldı|quedan|restam|متبقٍ|tersisa|बचे|restants|übrig|남음|残り|剩余
+SOTILDI‖TÜKENDİ|AGOTADO|ESGOTADO|نفدت الكمية|HABIS|बिक गया|ÉPUISÉ|AUSVERKAUFT|품절|完売|已售罄
+Sotilib bo'ldi!‖Tükendi!|¡Agotado!|Esgotado!|نفدت!|Habis!|बिक गया!|Épuisé !|Ausverkauft!|품절!|売り切れ!|已售罄!
+Cheklangan nashr uchun internet kerak‖Sınırlı sürümler için internet gerekir|Las ediciones limitadas requieren conexión a internet|Edições limitadas exigem conexão com a internet|الإصدارات المحدودة تتطلب اتصالًا بالإنترنت|Edisi terbatas memerlukan koneksi internet|सीमित संस्करणों के लिए इंटरनेट चाहिए|Les éditions limitées nécessitent une connexion internet|Limitierte Editionen erfordern eine Internetverbindung|한정판은 인터넷 연결이 필요합니다|限定版にはインターネット接続が必要です|限量版需要联网
+yutdi!‖kazandı!|¡gana!|vence!|فاز!|menang!|जीतता है!|gagne !|gewinnt!|승리!|の勝利!|获胜!
+Haftaning stoli‖Haftanın masası|Mesa de la semana|Mesa da semana|طاولة الأسبوع|Meja pekan ini|सप्ताह की टेबल|Table de la semaine|Tisch der Woche|이번 주 테이블|今週のテーブル|本周球桌
+Sinab ko'rish‖Dene|Probar|Experimentar|جرّبه|Coba|आज़माएँ|Essayer|Ausprobieren|체험하기|試してみる|试用
+Stol sizniki! Endi hamma o'yinlaringizda shu stol.‖Masa senin! Artık tüm oyunlarında bu masa kullanılır.|¡La mesa es tuya! Ahora se usa en todas tus partidas.|A mesa é sua! Agora ela é usada em todas as suas partidas.|الطاولة لك! تُستخدم الآن في جميع مبارياتك.|Mejanya milikmu! Kini dipakai di semua permainanmu.|टेबल आपकी है! अब यह आपके सभी गेम में इस्तेमाल होगी।|La table est à vous ! Elle sera utilisée dans toutes vos parties.|Der Tisch gehört dir! Er wird jetzt in allen Spielen verwendet.|테이블을 획득했습니다! 이제 모든 경기에서 사용됩니다.|テーブルはあなたのもの!すべての試合で使われます。|球桌归你了!今后所有比赛都会使用它。
+4 ta bo'lak yig'ildi — stol sizniki!‖4 parça toplandı — masa senin!|4 piezas reunidas: ¡la mesa es tuya!|4 peças reunidas — a mesa é sua!|تم جمع 4 قطع — الطاولة لك!|4 keping terkumpul — mejanya milikmu!|4 टुकड़े जुट गए — टेबल आपकी!|4 pièces réunies — la table est à vous !|4 Teile gesammelt — der Tisch gehört dir!|4조각 완성 — 테이블을 획득했습니다!|4パーツ完成 — テーブルをゲット!|集齐4块碎片 — 球桌归你!
+Stol bo'lagi‖Masa parçası|Pieza de mesa|Peça de mesa|قطعة طاولة|Keping meja|टेबल का टुकड़ा|Pièce de table|Tischteil|테이블 조각|テーブルのパーツ|球桌碎片
+Sizga yoqdimi? Stolni hozir 30% chegirma bilan saqlab qoling!‖Beğendin mi? Masayı şimdi %30 indirimle sakla!|¿Te gustó? ¡Quédate la mesa ahora con 30% de descuento!|Gostou? Fique com a mesa agora com 30% de desconto!|أعجبتك؟ احتفظ بالطاولة الآن بخصم 30%!|Suka? Simpan mejanya sekarang diskon 30%!|पसंद आई? अभी 30% छूट पर टेबल अपनी बनाएँ!|Elle vous plaît ? Gardez la table avec 30 % de réduction !|Gefällt sie dir? Sichere dir den Tisch jetzt mit 30 % Rabatt!|마음에 드셨나요? 지금 30% 할인으로 테이블을 가지세요!|気に入りましたか?今なら30%オフでテーブルをゲット!|喜欢吗?现在购买球桌享7折!
+Stol bonusi‖Masa bonusu|Bono de mesa|Bônus de mesa|مكافأة الطاولة|Bonus meja|टेबल बोनस|Bonus de table|Tisch-Bonus|테이블 보너스|テーブルボーナス|球桌奖励
+PREMIUM STOL‖PREMIUM MASA|MESA PREMIUM|MESA PREMIUM|طاولة بريميوم|MEJA PREMIUM|प्रीमियम टेबल|TABLE PREMIUM|PREMIUM-TISCH|프리미엄 테이블|プレミアムテーブル|高级球桌
+EKSKLYUZIV STOL‖ÖZEL MASA|MESA EXCLUSIVA|MESA EXCLUSIVA|طاولة حصرية|MEJA EKSKLUSIF|एक्सक्लूसिव टेबल|TABLE EXCLUSIVE|EXKLUSIVER TISCH|한정 테이블|限定テーブル|专属球桌
+{n}ning {t} stoli‖{n} adlı oyuncunun {t} masası|Mesa {t} de {n}|Mesa {t} de {n}|طاولة {t} الخاصة بـ {n}|Meja {t} milik {n}|{n} की {t} टेबल|Table {t} de {n}|{n}s {t}-Tisch|{n}의 {t} 테이블|{n}の{t}テーブル|{n}的{t}球桌
+Bosing — o'tkazib yuborish‖Geçmek için dokun|Toca para omitir|Toque para pular|اضغط للتخطي|Ketuk untuk melewati|छोड़ने के लिए टैप करें|Touchez pour passer|Zum Überspringen tippen|탭하여 건너뛰기|タップでスキップ|点击跳过
+qimmatbaho metall va toshlar · tovlanadi‖değerli madenler ve taşlar · parıldar|metales preciosos y piedras · brillantes|metais e pedras preciosas · brilhantes|معادن وأحجار ثمينة · متلألئة|logam mulia dan batu permata · berkilau|कीमती धातु और रत्न · चमकदार|métaux précieux et pierres · scintillants|Edelmetalle und Steine · glitzernd|귀금속과 보석 · 반짝임|貴金属と宝石 · きらめく|珍贵金属与宝石 · 闪耀
+Eksklyuziv‖Özel|Exclusivo|Exclusivo|حصري|Eksklusif|एक्सक्लूसिव|Exclusif|Exklusiv|한정|限定|专属
+gulli, naqshli, noyob hoshiyalar‖çiçekli, desenli, eşsiz çerçeveler|marcos florales, ornamentales y únicos|molduras florais, ornamentadas e únicas|إطارات زهرية ومزخرفة فريدة|bingkai bunga, ornamen, dan unik|फूलों वाले, सजावटी, अनोखे फ़्रेम|cadres floraux, ornés et uniques|florale, verzierte, einzigartige Rahmen|꽃무늬, 장식, 유일무이한 프레임|花柄・装飾入りの唯一無二のフレーム|花卉、雕饰、独一无二的头像框
+Shahar stollari‖Şehir masaları|Mesas de ciudades|Mesas das cidades|طاولات المدن|Meja kota|शहर की टेबल|Tables des villes|Stadt-Tische|도시 테이블|都市テーブル|城市球桌
+Maxsus stollar‖Özel masalar|Mesas especiales|Mesas especiais|طاولات خاصة|Meja spesial|खास टेबल|Tables spéciales|Spezialtische|스페셜 테이블|スペシャルテーブル|特别球桌
+Eksklyuziv hoshiya‖Özel çerçeve|Marco exclusivo|Moldura exclusiva|إطار حصري|Bingkai eksklusif|एक्सक्लूसिव फ़्रेम|Cadre exclusif|Exklusiver Rahmen|한정 프레임|限定フレーム|专属头像框
+Sizniki‖Senin|Tuyo|Seu|لك|Milikmu|आपका|À vous|Deins|내 것|あなたの|已拥有
+Sakura bog'i‖Sakura Bahçesi|Jardín de Sakura|Jardim de Sakura|حديقة الساكورا|Taman Sakura|सकुरा बाग़|Jardin de Sakura|Sakura-Garten|사쿠라 정원|桜の庭|樱花园
+Atirgul‖Gül|Rosa|Rosa|وردة|Mawar|गुलाब|Rose|Rose|장미|バラ|玫瑰
+Lola‖Lale|Tulipán|Tulipa|توليب|Tulip|ट्यूलिप|Tulipe|Tulpe|튤립|チューリップ|郁金香
+Lotus‖Lotus|Loto|Lótus|لوتس|Teratai|कमल|Lotus|Lotus|연꽃|ロータス|莲花
+Paxta (Rishton)‖Pamuk (Rishton)|Algodón (Rishtan)|Algodão (Rishtan)|قطن (ريشتان)|Kapas (Rishtan)|कपास (रिश्तान)|Coton (Rishtan)|Baumwolle (Rischtan)|목화 (리슈탄)|コットン(リシタン)|棉花(里希坦)
+Orxideya‖Orkide|Orquídea|Orquídea|أوركيد|Anggrek|ऑर्किड|Orchidée|Orchidee|난초|蘭|兰花
+Kungaboqar‖Ayçiçeği|Girasol|Girassol|عباد الشمس|Bunga Matahari|सूरजमुखी|Tournesol|Sonnenblume|해바라기|ひまわり|向日葵
+Atlas‖Atlas İpeği|Seda Atlas|Seda Atlas|حرير أطلس|Sutra Atlas|एटलस रेशम|Soie Atlas|Atlasseide|아틀라스 실크|アトラスシルク|艾德莱斯绸
+Samarqand‖Semerkant|Samarcanda|Samarcanda|سمرقند|Samarkand|समरकंद|Samarcande|Samarkand|사마르칸트|サマルカンド|撒马尔罕
+Malaxit‖Malakit|Malaquita|Malaquita|ملكيت|Malasit|मैलाकाइट|Malachite|Malachit|공작석|マラカイト|孔雀石
+Lazurit‖Lapis Lazuli|Lapislázuli|Lápis-lazúli|اللازورد|Lapis Lazuli|लैपिस लाज़ुली|Lapis-lazuli|Lapislazuli|청금석|ラピスラズリ|青金石
+Marvarid‖İnci|Perla|Pérola|لؤلؤ|Mutiara|मोती|Perle|Perle|진주|真珠|珍珠
+Muz kristall‖Buz Kristali|Cristal de hielo|Cristal de gelo|بلورة الجليد|Kristal Es|बर्फ़ का क्रिस्टल|Cristal de glace|Eiskristall|얼음 크리스털|アイスクリスタル|冰晶
+Ajdar tangasi‖Ejder Pulu|Escama de dragón|Escama de dragão|حراشف التنين|Sisik Naga|ड्रैगन स्केल|Écaille de dragon|Drachenschuppe|용의 비늘|ドラゴンスケイル|龙鳞
+Olov‖Ateş|Fuego|Fogo|نار|Api|आग|Feu|Feuer|불꽃|炎|火焰
+Kosmos‖Kozmos|Cosmos|Cosmos|الكون|Kosmos|कॉसमॉस|Cosmos|Kosmos|코스모스|コスモス|宇宙
+Qahrabo‖Kehribar|Ámbar|Âmbar|عنبر|Ambar|एम्बर|Ambre|Bernstein|호박|琥珀|琥珀
+Tovus pati‖Tavus Kuşu|Pavo real|Pavão|طاووس|Merak|मोर|Paon|Pfau|공작새|クジャク|孔雀
+Pushti oltin‖Pembe Altın|Oro rosa|Ouro rosé|ذهب وردي|Emas Mawar|रोज़ गोल्ड|Or rose|Roségold|로즈 골드|ローズゴールド|玫瑰金
+Sapfir‖Safir|Zafiro|Safira|ياقوت أزرق|Safir|नीलम|Saphir|Saphir|사파이어|サファイア|蓝宝石
+Zumrad‖Zümrüt|Esmeralda|Esmeralda|زمرد|Zamrud|पन्ना|Émeraude|Smaragd|에메랄드|エメラルド|祖母绿
+Yoqut‖Yakut|Rubí|Rubi|ياقوت|Rubi|माणिक|Rubis|Rubin|루비|ルビー|红宝石
+Ametist‖Ametist|Amatista|Ametista|جمشت|Kecubung|अमेथिस्ट|Améthyste|Amethyst|자수정|アメジスト|紫水晶
+Brilliant‖Pırlanta|Brillante|Brilhante|ماس مقطوع|Berlian|ब्रिलियंट|Brillant|Brillant|브릴리언트|ブリリアント|钻石切割
+Qora olmos‖Siyah Elmas|Diamante negro|Diamante negro|ماس أسود|Berlian Hitam|ब्लैक डायमंड|Diamant noir|Schwarzer Diamant|블랙 다이아몬드|ブラックダイヤモンド|黑钻
+Kamalak opal‖Gökkuşağı Opal|Ópalo arcoíris|Opala arco-íris|أوبال قوس قزح|Opal Pelangi|इंद्रधनुषी ओपल|Opale arc-en-ciel|Regenbogen-Opal|무지개 오팔|レインボーオパール|彩虹欧珀
+Premium hoshiya · tovlanadi‖Premium çerçeve · parıldar|Marco premium · brilla|Moldura premium · brilha|إطار بريميوم · متلألئ|Bingkai premium · berkilau|प्रीमियम फ़्रेम · चमकदार|Cadre premium · scintille|Premium-Rahmen · funkelt|프리미엄 프레임 · 반짝임|プレミアムフレーム · きらめく|高级头像框 · 闪耀
+🎱 Stollar‖🎱 Masalar|🎱 Mesas|🎱 Mesas|🎱 الطاولات|🎱 Meja|🎱 टेबल|🎱 Tables|🎱 Tische|🎱 테이블|🎱 テーブル|🎱 球桌
+Tanlangan stol hamma o'yinlaringizda chiqadi. Shahar uzugini yutsangiz, o'sha shahar stoli bepul.‖Seçtiğin masa tüm oyunlarında kullanılır. Bir şehrin yüzüğünü kazanırsan o şehrin masası bedava.|Tu mesa elegida se usa en todas tus partidas. Si ganas el anillo de una ciudad, su mesa es gratis.|Sua mesa escolhida é usada em todas as partidas. Ganhe o anel de uma cidade e a mesa dela sai de graça.|تُستخدم طاولتك المختارة في جميع مبارياتك. اربح خاتم مدينة لتحصل على طاولتها مجانًا.|Meja pilihanmu dipakai di semua permainan. Menangkan cincin kota untuk mendapat mejanya gratis.|आपकी चुनी टेबल सभी गेम में इस्तेमाल होती है। किसी शहर की अंगूठी जीतें तो उसकी टेबल मुफ़्त।|Votre table choisie sert dans toutes vos parties. Gagnez l'anneau d'une ville et sa table est gratuite.|Dein gewählter Tisch wird in allen Spielen benutzt. Gewinne den Ring einer Stadt und ihr Tisch ist gratis.|선택한 테이블은 모든 경기에서 사용됩니다. 도시의 반지를 얻으면 그 도시 테이블이 무료입니다.|選んだテーブルはすべての試合で使われます。都市のリングを獲得すればその都市のテーブルが無料に。|所选球桌将用于所有比赛。赢得某城市的戒指即可免费获得该城市球桌。
+Shahar stoli‖Şehir masası|Mesa de ciudad|Mesa da cidade|طاولة المدينة|Meja kota|शहर की टेबल|Table de ville|Stadt-Tisch|도시 테이블|都市テーブル|城市球桌
+Har shaharda o'z stoli‖Her şehrin kendi masası var|Cada ciudad tiene su propia mesa|Cada cidade tem sua própria mesa|لكل مدينة طاولتها الخاصة|Setiap kota punya mejanya sendiri|हर शहर की अपनी टेबल है|Chaque ville a sa propre table|Jede Stadt hat ihren eigenen Tisch|도시마다 고유한 테이블이 있습니다|各都市に専用テーブルがあります|每座城市都有专属球桌
+Maxsus stol‖Özel masa|Mesa especial|Mesa especial|طاولة خاصة|Meja spesial|खास टेबल|Table spéciale|Spezialtisch|스페셜 테이블|スペシャルテーブル|特别球桌
+Galaktika‖Galaksi|Galaxia|Galáxia|المجرة|Galaksi|गैलेक्सी|Galaxie|Galaxie|은하|ギャラクシー|银河
+Ajdaho‖Ejderha|Dragón|Dragão|التنين|Naga|ड्रैगन|Dragon|Drache|용|ドラゴン|巨龙
+Qutb nuri‖Kutup Işığı|Aurora|Aurora|الشفق القطبي|Aurora|ध्रुवीय ज्योति|Aurore|Polarlicht|오로라|オーロラ|极光
+Lava‖Lav|Lava|Lava|حمم|Lava|लावा|Lave|Lava|용암|ラバ|熔岩
+Qirollik‖Kraliyet|Real|Real|ملكي|Kerajaan|रॉयल|Royal|Königlich|로열|ロイヤル|皇家
+Muz saroyi‖Buz Sarayı|Palacio de hielo|Palácio de gelo|قصر الجليد|Istana Es|बर्फ़ का महल|Palais de glace|Eispalast|얼음 궁전|氷の宮殿|冰宫
+Qora oltin‖Siyah Altın|Oro negro|Ouro negro|ذهب أسود|Emas Hitam|काला सोना|Or noir|Schwarzgold|블랙 골드|ブラックゴールド|黑金
+Tanga va pul‖Jeton ve Nakit|Monedas y efectivo|Moedas e dinheiro|عملات ونقد|Koin & Uang Tunai|सिक्के और कैश|Pièces et cash|Münzen & Cash|코인 & 캐시|コイン&キャッシュ|金币与现金
+Bepul mukofotlar‖Bedava Ödüller|Recompensas gratis|Recompensas grátis|مكافآت مجانية|Hadiah Gratis|मुफ़्त इनाम|Récompenses gratuites|Gratis-Belohnungen|무료 보상|無料報酬|免费奖励
+Kiylar va boshqalar‖Sopalar ve fazlası|Tacos y más|Tacos e mais|عصي والمزيد|Stik & lainnya|क्यू और बहुत कुछ|Queues et plus|Queues & mehr|큐 & 기타|キューなど|球杆及更多
+KUBOKLAR‖KUPALAR|COPAS|COPAS|الكؤوس|PIALA|कप|COUPES|POKALE|컵|カップ|杯赛
+Darajani oshirish!‖Seviye atla!|¡Sube de rango!|Suba de nível!|ارتقِ بالرتبة!|Naik peringkat!|रैंक बढ़ाएँ!|Montez en rang !|Steige auf!|랭크 업!|ランクアップ!|提升段位!
+CHEKLANGAN KIY‖SINIRLI SOPA|TACO LIMITADO|TACO LIMITADO|عصا محدودة|STIK TERBATAS|सीमित क्यू|QUEUE LIMITÉE|LIMITIERTER QUEUE|한정 큐|限定キュー|限量球杆
+Quti joyiga qo'shildi‖Kutu yuvasına eklendi|Añadida a un hueco de caja|Adicionada a um espaço de caixa|أُضيف إلى خانة الصندوق|Ditambahkan ke slot kotak|बॉक्स स्लॉट में जोड़ा गया|Ajouté à un emplacement de coffre|Zu einem Kistenplatz hinzugefügt|상자 슬롯에 추가됨|ボックススロットに追加されました|已加入箱子栏位
+Bo'sh joy‖Boş yuva|Hueco vacío|Espaço vazio|خانة فارغة|Slot kosong|खाली स्लॉट|Emplacement vide|Leerer Platz|빈 슬롯|空きスロット|空栏位
+1 ga 1 o'yinda yutib quti oling‖Kutu kazanmak için 1'e 1 oyun kazan|Gana partidas 1 contra 1 para conseguir cajas|Vença partidas 1x1 para ganhar caixas|اربح مباريات 1 ضد 1 لتحصل على صناديق|Menangkan pertandingan 1 lawan 1 untuk dapat kotak|बॉक्स पाने के लिए 1-ऑन-1 गेम जीतें|Gagnez en 1 contre 1 pour obtenir des coffres|Gewinne 1-gegen-1-Spiele, um Kisten zu erhalten|1대1 경기에서 이겨 상자를 얻으세요|1対1で勝つとボックスがもらえる|赢得1对1比赛即可获得箱子
+Boshqa quti ochilmoqda‖Başka bir kutu açılıyor|Se está abriendo otra caja|Outra caixa está abrindo|صندوق آخر قيد الفتح|Kotak lain sedang dibuka|एक और बॉक्स खुल रहा है|Un autre coffre s'ouvre|Eine andere Kiste wird geöffnet|다른 상자가 열리는 중입니다|別のボックスを開封中です|另一个箱子正在开启
+Ochilishiga‖Açılmasına|Se abre en|Abre em|يُفتح بعد|Terbuka dalam|खुलने में|S'ouvre dans|Öffnet in|해제까지|開封まで|开启倒计时
+Hozir ochish‖Şimdi aç|Abrir ahora|Abrir agora|افتح الآن|Buka sekarang|अभी खोलें|Ouvrir maintenant|Jetzt öffnen|지금 열기|今すぐ開ける|立即开启
+Bo'sh‖Boş|Vacío|Vazio|فارغ|Kosong|खाली|Vide|Leer|비어 있음|空き|空
+joy‖yuva|hueco|espaço|خانة|slot|स्लॉट|emplacement|Platz|슬롯|スロット|栏位
+OCHISH!‖AÇ!|¡ABRIR!|ABRIR!|افتح!|BUKA!|खोलें!|OUVRIR !|ÖFFNEN!|열기!|開ける!|开启!
+Faqat shu hafta‖Sadece bu hafta|Solo esta semana|Só esta semana|هذا الأسبوع فقط|Hanya minggu ini|सिर्फ़ इस हफ़्ते|Cette semaine seulement|Nur diese Woche|이번 주 한정|今週限定|仅限本周
+Bronza quti‖Bronz kutu|Caja de bronce|Caixa de bronze|صندوق برونزي|Kotak Perunggu|कांस्य बॉक्स|Coffre de bronze|Bronze-Kiste|브론즈 상자|ブロンズボックス|青铜箱
+Kumush quti‖Gümüş kutu|Caja de plata|Caixa de prata|صندوق فضي|Kotak Perak|रजत बॉक्स|Coffre d'argent|Silber-Kiste|실버 상자|シルバーボックス|白银箱
+Oltin quti‖Altın kutu|Caja de oro|Caixa de ouro|صندوق ذهبي|Kotak Emas|स्वर्ण बॉक्स|Coffre d'or|Gold-Kiste|골드 상자|ゴールドボックス|黄金箱
+Olmos quti‖Elmas kutu|Caja de diamante|Caixa de diamante|صندوق الماس|Kotak Berlian|डायमंड बॉक्स|Coffre de diamant|Diamant-Kiste|다이아몬드 상자|ダイヤモンドボックス|钻石箱
+Ajoyib!‖Harika!|¡Genial!|Incrível!|رائع!|Keren!|शानदार!|Génial !|Super!|멋져요!|すごい!|太棒了!
+Bepul‖Bedava|Gratis|Grátis|مجاني|Gratis|मुफ़्त|Gratuit|Gratis|무료|無料|免费
+Bepul o'ynash‖Bedava oyna|Jugar gratis|Jogar grátis|العب مجانًا|Main gratis|मुफ़्त खेलें|Jouer gratuitement|Gratis spielen|무료로 플레이|無料で遊ぶ|免费游玩
+Aylantirib yuting‖Çevir ve Kazan|Gira y gana|Gire e ganhe|أدِر واربح|Putar & Menang|घुमाएँ और जीतें|Tournez et gagnez|Drehen & Gewinnen|돌리고 당첨|回して当てよう|旋转赢大奖
+Oltin zarba‖Altın Vuruş|Tiro dorado|Tacada dourada|الضربة الذهبية|Tembakan Emas|गोल्डन शॉट|Coup d'or|Goldener Stoß|골든 샷|ゴールデンショット|黄金一击
+Katta sovrinlar‖Büyük ödüller|Grandes premios|Grandes prêmios|جوائز كبرى|Hadiah besar|बड़े इनाम|Gros lots|Große Preise|큰 상품|大きな賞品|丰厚大奖
+urinish‖deneme|intentos|tentativas|محاولات|percobaan|प्रयास|essais|Versuche|시도|回|次机会
+Syurpriz qutilar‖Sürpriz Kutular|Cajas sorpresa|Caixas surpresa|صناديق المفاجآت|Kotak Kejutan|सरप्राइज़ बॉक्स|Coffres surprise|Überraschungskisten|서프라이즈 박스|サプライズボックス|惊喜箱
+Afsonaviy kiy bo'laklari‖Efsanevi sopa parçaları|Piezas de tacos legendarios|Peças de tacos lendários|قطع العصي الأسطورية|Keping stik legendaris|legendary क्यू के टुकड़े|Pièces de queues légendaires|Legendäre Queue-Teile|전설 큐 조각|伝説キューのパーツ|传说球杆碎片
+Reklama ko'ring‖Reklam izle|Ver un anuncio|Assistir a um anúncio|شاهد إعلانًا|Tonton iklan|विज्ञापन देखें|Regarder une pub|Werbung ansehen|광고 보기|広告を見る|观看广告
+3 ta urinish 25 olmos turadi.‖3 vuruş 25 elmasa mal olur.|3 tiros cuestan 25 gemas.|3 tacadas custam 25 gemas.|3 ضربات تكلف 25 جوهرة.|3 tembakan seharga 25 permata.|3 शॉट की कीमत 25 जेम्स है।|3 coups coûtent 25 gemmes.|3 Stöße kosten 25 Edelsteine.|샷 3회에 보석 25개가 듭니다.|3ショットはジェム25個です。|3次击球需要25颗宝石。
+Olmos olish‖Elmas al|Conseguir gemas|Obter gemas|احصل على جواهر|Dapatkan permata|जेम्स पाएँ|Obtenir des gemmes|Edelsteine holen|보석 받기|ジェムを入手|获取宝石
+Barmoq bilan qiring — 3 ta bir xil = sovrin!‖Parmağınla kazı — 3 aynısı ödül kazandırır!|Rasca con el dedo: ¡3 iguales ganan premio!|Raspe com o dedo — 3 iguais ganham prêmio!|اكشط بإصبعك — 3 متطابقة تربح!|Gosok dengan jari — 3 yang sama menang!|उंगली से स्क्रैच करें — 3 एक जैसे पर इनाम!|Grattez du doigt — 3 identiques gagnent !|Rubble mit dem Finger — 3 gleiche gewinnen!|손가락으로 긁으세요 — 같은 것 3개면 당첨!|指でこすろう — 3つ揃えば当たり!|用手指刮开 — 3个相同即中奖!
+token‖jeton|fichas|fichas|رموز|token|टोकन|jetons|Token|토큰|トークン|代币
+G'alabalardan ochko yig'ib, reytingda ko'tariling!‖Galibiyetlerden puan topla, sıralamada yüksel!|¡Suma puntos con tus victorias y sube en el ranking!|Acumule pontos com vitórias e suba no ranking!|اجمع النقاط من الانتصارات وارتقِ في الترتيب!|Kumpulkan poin dari kemenangan dan naik peringkat!|जीत से अंक जुटाएँ और लीडरबोर्ड पर चढ़ें!|Cumulez des points en gagnant et grimpez au classement !|Sammle Punkte durch Siege und steige in der Rangliste auf!|승리로 점수를 모아 랭킹을 올리세요!|勝利でポイントを貯めてランキングを駆け上がろう!|通过获胜积累积分,冲上排行榜!
+Gambit do'koni‖Gambit Mağazası|Tienda de Gambito|Loja Gambito|متجر غامبيت|Toko Gambit|गैम्बिट शॉप|Boutique Gambit|Gambit-Shop|갬빗 상점|ギャンビットショップ|Gambit商店
+Tokenlaringizni almashtiring‖Jetonlarını takas et|Canjea tus fichas|Troque suas fichas|استبدل رموزك|Tukar token Anda|अपने टोकन एक्सचेंज करें|Échangez vos jetons|Tausche deine Token|토큰을 교환하세요|トークンを交換|兑换你的代币
+Grandmaster stoli‖Grandmaster Masası|Mesa Gran Maestro|Mesa Grande Mestre|طاولة الغراند ماستر|Meja Grandmaster|ग्रैंडमास्टर टेबल|Table Grand Maître|Großmeister-Tisch|그랜드마스터 테이블|グランドマスターテーブル|特级大师球桌
+Maxsus uzuk‖Özel yüzük|Anillo exclusivo|Anel exclusivo|خاتم حصري|Cincin eksklusif|एक्सक्लूसिव अंगूठी|Anneau exclusif|Exklusiver Ring|한정 반지|限定リング|专属戒指
+45 kubok bilan ochiladi‖45 kupa ile açılır|Se desbloquea con 45 trofeos|Desbloqueia com 45 troféus|يُفتح بـ 45 كأسًا|Terbuka dengan 45 trofi|45 ट्रॉफ़ी पर खुलता है|Se débloque avec 45 trophées|Wird mit 45 Trophäen freigeschaltet|트로피 45개로 해금|トロフィー45個で解放|45座奖杯解锁
+Yopiq‖Kilitli|Bloqueado|Bloqueado|مقفل|Terkunci|बंद|Verrouillé|Gesperrt|잠김|ロック中|未解锁
+Tokenlar‖Jetonlar|Fichas|Fichas|الرموز|Token|टोकन|Jetons|Token|토큰|トークン|代币
+kiy bo'laklari‖sopa parçaları|piezas de tacos|peças de tacos|قطع العصي|keping stik|क्यू के टुकड़े|pièces de queues|Queue-Teile|큐 조각|キューのパーツ|球杆碎片
+Kolleksiya qutisi‖Koleksiyon kutusu|Caja de colección|Caixa de coleção|صندوق المجموعة|Kotak koleksi|कलेक्शन बॉक्स|Coffre de collection|Sammlungskiste|컬렉션 상자|コレクションボックス|收藏箱
+Davlat qutisi‖Ülke kutusu|Caja de país|Caixa do país|صندوق الدولة|Kotak negara|देश बॉक्स|Coffre du pays|Länderkiste|국가 상자|国別ボックス|国家箱
+Maxsus avatar‖Özel avatar|Avatar exclusivo|Avatar exclusivo|صورة رمزية حصرية|Avatar eksklusif|एक्सक्लूसिव अवतार|Avatar exclusif|Exklusiver Avatar|한정 아바타|限定アバター|专属头像
+kiyi‖sopası|taco|taco|عصا|stik|क्यू|queue|Queue|큐|キュー|球杆
+Limit‖Limit|Límite|Limite|الحد|Batas|सीमा|Limite|Limit|한도|上限|限购
+Token yetmaydi‖Yeterli jeton yok|No hay fichas suficientes|Fichas insuficientes|رموز غير كافية|Token tidak cukup|पर्याप्त टोकन नहीं|Pas assez de jetons|Nicht genug Token|토큰이 부족합니다|トークンが足りません|代币不足
+Bepul tanga‖Bedava jeton|Monedas gratis|Moedas grátis|عملات مجانية|Koin gratis|मुफ़्त सिक्के|Pièces gratuites|Gratis-Münzen|무료 코인|無料コイン|免费金币
+video‖video|vídeo|vídeo|فيديو|video|वीडियो|vidéo|Video|비디오|動画|视频
+Bepul pul‖Bedava nakit|Efectivo gratis|Dinheiro grátis|نقد مجاني|Uang tunai gratis|मुफ़्त कैश|Cash gratuit|Gratis-Cash|무료 캐시|無料キャッシュ|免费现金
+Kunlik missiyalar‖Günlük görevler|Misiones diarias|Missões diárias|المهام اليومية|Misi harian|दैनिक मिशन|Missions quotidiennes|Tagesmissionen|일일 미션|デイリーミッション|每日任务
+sizni o'yinga chaqirdi!‖seni oyuna davet etti!|¡te ha desafiado!|desafiou você!|تحداك!|menantangmu!|ने आपको चुनौती दी!|vous a défié !|hat dich herausgefordert!|님이 도전했습니다!|があなたに挑戦!|向你发起了挑战!
+Kod‖Kod|Código|Código|الرمز|Kode|कोड|Code|Code|코드|コード|代码
+Qabul qilish‖Kabul et|Aceptar|Aceitar|قبول|Terima|स्वीकारें|Accepter|Annehmen|수락|承諾|接受
+Yangiliklar‖Haberler|Noticias|Novidades|الأخبار|Berita|समाचार|Actualités|Neuigkeiten|소식|ニュース|新闻
+Batafsil‖Ayrıntılar|Más info|Saiba mais|المزيد|Selengkapnya|अधिक जानें|En savoir plus|Mehr Infos|자세히|詳細|详情
+Lobbi yaratish‖Lobi oluştur|Crear sala|Criar sala|إنشاء غرفة|Buat lobi|लॉबी बनाएँ|Créer un salon|Lobby erstellen|로비 만들기|ロビーを作成|创建房间
+Kodni do'stingizga yuboring‖Kodu arkadaşına gönder|Envía el código a tu amigo|Envie o código ao seu amigo|أرسل الرمز إلى صديقك|Kirim kode ke temanmu|कोड अपने दोस्त को भेजें|Envoyez le code à votre ami|Sende den Code an deinen Freund|친구에게 코드를 보내세요|コードを友達に送ろう|把代码发给好友
+Kod bilan qo'shilish‖Kodla katıl|Unirse con código|Entrar com código|انضم بالرمز|Gabung dengan kode|कोड से जुड़ें|Rejoindre avec un code|Mit Code beitreten|코드로 참가|コードで参加|用代码加入
+Do'stingiz bergan kodni kiriting‖Arkadaşının verdiği kodu gir|Introduce el código de tu amigo|Digite o código do seu amigo|أدخل الرمز الذي أعطاك إياه صديقك|Masukkan kode dari temanmu|दोस्त का दिया कोड डालें|Entrez le code de votre ami|Gib den Code deines Freundes ein|친구가 준 코드를 입력하세요|友達のコードを入力|输入好友给你的代码
+Navbatma-navbat o'ynang‖Sırayla oynayın|Turnaos|Joguem alternando|تناوبوا اللعب|Bermain bergantian|बारी-बारी से खेलें|Jouez à tour de rôle|Spielt abwechselnd|번갈아 플레이|交代でプレイ|轮流对战
+Do'stni chaqirish‖Arkadaşını davet et|Desafiar a un amigo|Desafiar um amigo|تحدَّ صديقًا|Tantang teman|दोस्त को चुनौती दें|Défier un ami|Freund herausfordern|친구에게 도전|友達に挑戦|挑战好友
+Chaqirish‖Meydan oku|Desafiar|Desafiar|تحدي|Tantang|चुनौती दें|Défier|Herausfordern|도전|挑戦|挑战
+Lobbi‖Lobi|Sala|Sala|الغرفة|Lobi|लॉबी|Salon|Lobby|로비|ロビー|房间
+Do'stingiz kelmadi‖Arkadaşın gelmedi|Tu amigo no vino|Seu amigo não veio|لم يأتِ صديقك|Temanmu tidak datang|आपका दोस्त नहीं आया|Votre ami n'est pas venu|Dein Freund kam nicht|친구가 오지 않았습니다|友達が来ませんでした|好友没有来
+Bunday lobbi topilmadi‖Böyle bir lobi bulunamadı|No se encontró esa sala|Sala não encontrada|الغرفة غير موجودة|Lobi tidak ditemukan|लॉबी नहीं मिली|Salon introuvable|Lobby nicht gefunden|로비를 찾을 수 없습니다|ロビーが見つかりません|未找到该房间
+Xat qutisi‖Gelen kutusu|Bandeja de entrada|Caixa de entrada|صندوق الوارد|Kotak masuk|इनबॉक्स|Boîte de réception|Posteingang|받은 편지함|受信箱|收件箱
+Tavsiya etilgan do'stlar‖Önerilen arkadaşlar|Amigos sugeridos|Amigos sugeridos|أصدقاء مقترحون|Teman yang disarankan|सुझाए गए दोस्त|Amis suggérés|Vorgeschlagene Freunde|추천 친구|おすすめフレンド|推荐好友
+Kiylar yig'ing — kolleksiya kuchi oshadi‖Sopa topla — koleksiyon gücün artsın|Colecciona tacos para subir tu poder de colección|Colecione tacos para aumentar o poder da coleção|اجمع العصي لترفع قوة مجموعتك|Kumpulkan stik untuk menaikkan kekuatan koleksi|क्यू जुटाएँ — कलेक्शन पावर बढ़ेगी|Collectionnez des queues pour augmenter la puissance de collection|Sammle Queues, um deine Sammlungskraft zu steigern|큐를 모아 컬렉션 파워를 높이세요|キューを集めてコレクション力アップ|收集球杆以提升收藏力量
+Yana‖Tekrar|Otra vez|De novo|مرة أخرى|Lagi|फिर से|Encore|Nochmal|다시|もう一度|再来一次
+Do'stlar bilan o'ynash‖Arkadaşlarla oyna|Jugar con amigos|Jogar com amigos|العب مع الأصدقاء|Main dengan teman|दोस्तों के साथ खेलें|Jouer entre amis|Mit Freunden spielen|친구와 플레이|友達と遊ぶ|与好友对战
+Keyingi bepul urinish‖Sonraki bedava hakkın|Próximo intento gratis|Próxima tentativa grátis|المحاولة المجانية القادمة|Percobaan gratis berikutnya|अगला मुफ़्त प्रयास|Prochain essai gratuit|Nächster Gratisversuch|다음 무료 시도|次の無料プレイ|下次免费机会
+Hozir yana o'ynash uchun reklama ko'ring yoki urinish sotib oling.‖Şimdi tekrar oynamak için reklam izle veya hak satın al.|Mira un anuncio o compra un intento para jugar de nuevo ahora.|Assista a um anúncio ou compre uma tentativa para jogar de novo agora.|شاهد إعلانًا أو اشترِ محاولة للعب مجددًا الآن.|Tonton iklan atau beli percobaan untuk main lagi sekarang.|अभी दोबारा खेलने के लिए विज्ञापन देखें या प्रयास खरीदें।|Regardez une pub ou achetez un essai pour rejouer maintenant.|Sieh dir Werbung an oder kaufe einen Versuch, um sofort erneut zu spielen.|지금 다시 하려면 광고를 보거나 시도 횟수를 구매하세요.|今すぐ遊ぶには広告を見るか、回数を購入してください。|想立即再玩,请观看广告或购买次数。
+Reklama ko'rish‖Reklam izle|Ver anuncio|Assistir anúncio|شاهد الإعلان|Tonton iklan|विज्ञापन देखें|Voir la pub|Werbung ansehen|광고 보기|広告を見る|看广告
+Yana (bepul)‖Tekrar (bedava)|Otra vez (gratis)|De novo (grátis)|مرة أخرى (مجانًا)|Lagi (gratis)|फिर से (मुफ़्त)|Encore (gratuit)|Nochmal (gratis)|다시 (무료)|もう一度(無料)|再来一次(免费)
+24 soatda 1 ta bepul‖24 saatte 1 bedava|1 gratis cada 24 horas|1 grátis a cada 24 horas|واحدة مجانية كل 24 ساعة|1 gratis setiap 24 jam|हर 24 घंटे में 1 मुफ़्त|1 gratuit toutes les 24 h|1 gratis alle 24 Stunden|24시간마다 1회 무료|24時間に1回無料|每24小时1次免费
+Reklama yoki $0.99 bilan yana aylantiring‖Reklam veya $0.99 ile tekrar çevir|Gira otra vez con un anuncio o por $0.99|Gire de novo com um anúncio ou por $0,99|أدِر مجددًا بإعلان أو بـ 0.99$|Putar lagi dengan iklan atau $0,99|विज्ञापन या $0.99 से फिर घुमाएँ|Retournez avec une pub ou pour 0,99 $|Drehe erneut mit Werbung oder für 0,99 $|광고 또는 $0.99로 다시 돌리기|広告または$0.99でもう一度|观看广告或支付$0.99再转一次
+Bepul — 24 soatda 1 marta‖Bedava — 24 saatte bir|Gratis: una vez cada 24 horas|Grátis — uma vez a cada 24 horas|مجاني — مرة كل 24 ساعة|Gratis — sekali tiap 24 jam|मुफ़्त — 24 घंटे में एक बार|Gratuit — une fois toutes les 24 h|Gratis — einmal alle 24 Stunden|무료 — 24시간에 1번|無料 — 24時間に1回|免费 — 每24小时一次
+Pullik‖Ücretli|De pago|Pago|مدفوع|Berbayar|सशुल्क|Payant|Kostenpflichtig|유료|有料|付费
+qutilar‖kutular|cajas|caixas|صناديق|kotak|बॉक्स|coffres|Kisten|상자|ボックス|箱子
+Katta sovrinlar uchun pullik o'yin: 3 ta zarba.‖Büyük ödüllü ücretli oyun: 3 vuruş.|Juego de pago con grandes premios: 3 tiros.|Jogo pago com grandes prêmios: 3 tacadas.|لعبة مدفوعة بجوائز كبرى: 3 ضربات.|Permainan berbayar dengan hadiah besar: 3 tembakan.|बड़े इनाम वाला सशुल्क गेम: 3 शॉट।|Jeu payant avec gros lots : 3 coups.|Bezahlspiel mit großen Preisen: 3 Stöße.|큰 상품이 걸린 유료 게임: 샷 3회.|大きな賞品が狙える有料ゲーム:3ショット。|大奖付费玩法:共3次击球。
+Omadli zarba‖Şanslı Vuruş|Tiro de la suerte|Tacada da sorte|ضربة الحظ|Tembakan Beruntung|लकी शॉट|Coup chanceux|Glücksstoß|럭키 샷|ラッキーショット|幸运一击
+Progress bulutdan tiklandi‖İlerleme buluttan geri yüklendi|Progreso restaurado desde la nube|Progresso restaurado da nuvem|تمت استعادة التقدم من السحابة|Progres dipulihkan dari cloud|प्रगति क्लाउड से बहाल हुई|Progression restaurée depuis le cloud|Fortschritt aus der Cloud wiederhergestellt|클라우드에서 진행 상황을 복원했습니다|クラウドから進行状況を復元しました|已从云端恢复进度
+Tiklash kaliti‖Kurtarma anahtarı|Clave de recuperación|Chave de recuperação|مفتاح الاسترداد|Kunci pemulihan|रिकवरी की|Clé de récupération|Wiederherstellungsschlüssel|복구 키|復旧キー|恢复密钥
+Buni yozib qo'ying! Yangi telefonda ID va shu kalit bilan kirasiz.‖Bunu bir yere yaz! Yeni telefonda ID ve bu anahtarla giriş yaparsın.|¡Anótalo! En un teléfono nuevo entrarás con tu ID y esta clave.|Anote isto! Em um celular novo você entra com seu ID e esta chave.|دوّن هذا! على هاتف جديد تسجّل الدخول بمعرّفك وهذا المفتاح.|Catat ini! Di ponsel baru, masuk dengan ID dan kunci ini.|इसे लिख लें! नए फ़ोन पर ID और इस की से लॉग इन करें।|Notez-le ! Sur un nouveau téléphone, connectez-vous avec votre ID et cette clé.|Schreib das auf! Auf einem neuen Handy meldest du dich mit ID und diesem Schlüssel an.|꼭 적어 두세요! 새 휴대폰에서 ID와 이 키로 로그인합니다.|必ず書き留めて!新しいスマホではIDとこのキーでログインします。|请记下来!换新手机时用ID和此密钥登录。
+Kalit‖Anahtar|Clave|Chave|المفتاح|Kunci|की|Clé|Schlüssel|키|キー|密钥
+Yangi kalit olsangiz, eskisi ishlamay qoladi.‖Yeni anahtar alırsan eskisi çalışmaz.|Al obtener una clave nueva, la anterior deja de funcionar.|Ao gerar uma nova chave, a antiga deixa de funcionar.|الحصول على مفتاح جديد يُلغي القديم.|Kunci baru akan menonaktifkan yang lama.|नई की लेने पर पुरानी काम नहीं करेगी।|Une nouvelle clé désactive l'ancienne.|Ein neuer Schlüssel deaktiviert den alten.|새 키를 받으면 이전 키는 사용할 수 없습니다.|新しいキーを発行すると古いキーは無効になります。|获取新密钥后,旧密钥将失效。
+Hisobni tiklash‖Hesabı geri yükle|Restaurar cuenta|Restaurar conta|استعادة الحساب|Pulihkan akun|खाता बहाल करें|Restaurer le compte|Konto wiederherstellen|계정 복원|アカウントを復元|恢复账号
+Eski qurilmadagi ID va tiklash kalitini kiriting.‖Eski cihazdaki ID ve kurtarma anahtarını gir.|Introduce el ID y la clave de recuperación de tu dispositivo anterior.|Digite o ID e a chave de recuperação do seu dispositivo antigo.|أدخل المعرّف ومفتاح الاسترداد من جهازك القديم.|Masukkan ID dan kunci pemulihan dari perangkat lama Anda.|पुराने डिवाइस की ID और रिकवरी की डालें।|Entrez l'ID et la clé de récupération de votre ancien appareil.|Gib die ID und den Wiederherstellungsschlüssel deines alten Geräts ein.|이전 기기의 ID와 복구 키를 입력하세요.|以前の端末のIDと復旧キーを入力してください。|请输入旧设备的ID和恢复密钥。
+Juda ko'p urinish. 1 soatdan keyin qayting.‖Çok fazla deneme. 1 saat sonra tekrar dene.|Demasiados intentos. Vuelve en una hora.|Muitas tentativas. Volte em uma hora.|محاولات كثيرة. عُد بعد ساعة.|Terlalu banyak percobaan. Coba lagi 1 jam lagi.|बहुत ज़्यादा प्रयास। 1 घंटे बाद आएँ।|Trop d'essais. Revenez dans une heure.|Zu viele Versuche. Komm in einer Stunde wieder.|시도가 너무 많습니다. 1시간 후에 다시 시도하세요.|試行回数が多すぎます。1時間後にもう一度お試しください。|尝试次数过多,请1小时后再试。
+ID yoki kalit noto'g'ri‖ID veya anahtar yanlış|ID o clave incorrectos|ID ou chave incorretos|المعرّف أو المفتاح غير صحيح|ID atau kunci salah|ID या की गलत है|ID ou clé incorrect|ID oder Schlüssel falsch|ID 또는 키가 올바르지 않습니다|IDまたはキーが正しくありません|ID或密钥错误
+Hisob tiklandi!‖Hesap geri yüklendi!|¡Cuenta restaurada!|Conta restaurada!|تمت استعادة الحساب!|Akun dipulihkan!|खाता बहाल हो गया!|Compte restauré !|Konto wiederhergestellt!|계정이 복원되었습니다!|アカウントを復元しました!|账号已恢复!
+Hisob va saqlash‖Hesap ve kayıt|Cuenta y guardado|Conta e salvamento|الحساب والحفظ|Akun & penyimpanan|खाता और सेव|Compte et sauvegarde|Konto & Speichern|계정 및 저장|アカウントとセーブ|账号与存档
+Progress serverga saqlanadi‖İlerleme sunucuya kaydedilir|El progreso se guarda en el servidor|O progresso é salvo no servidor|يُحفظ التقدم على الخادم|Progres disimpan di server|प्रगति सर्वर पर सेव होती है|La progression est sauvegardée sur le serveur|Fortschritt wird auf dem Server gespeichert|진행 상황이 서버에 저장됩니다|進行状況はサーバーに保存されます|进度保存在服务器
+Yangi telefonga o'tish uchun kalit‖Yeni telefona geçmek için anahtar|Clave para cambiar a un teléfono nuevo|Chave para mudar para um novo celular|مفتاح للانتقال إلى هاتف جديد|Kunci untuk pindah ke ponsel baru|नए फ़ोन पर जाने की की|Clé pour passer à un nouveau téléphone|Schlüssel für den Wechsel zu einem neuen Handy|새 휴대폰으로 옮기기 위한 키|新しいスマホへ移行するキー|换新手机用的密钥
+Kalit olish‖Anahtar al|Obtener clave|Obter chave|الحصول على مفتاح|Dapatkan kunci|की पाएँ|Obtenir la clé|Schlüssel holen|키 받기|キーを取得|获取密钥
+Boshqa qurilmadagi hisobga kirish‖Başka cihazdaki hesaba giriş yap|Entrar en una cuenta de otro dispositivo|Entrar em uma conta de outro dispositivo|سجّل الدخول إلى حساب من جهاز آخر|Masuk ke akun dari perangkat lain|दूसरे डिवाइस के खाते में साइन इन करें|Se connecter à un compte d'un autre appareil|In ein Konto von einem anderen Gerät einloggen|다른 기기의 계정으로 로그인|別の端末のアカウントにログイン|登录其他设备上的账号
+Tiklash‖Geri yükle|Restaurar|Restaurar|استعادة|Pulihkan|बहाल करें|Restaurer|Wiederherstellen|복원|復元|恢复
+Klub yo'q‖Kulüp yok|Sin club|Sem clube|لا نادٍ|Tanpa klub|कोई क्लब नहीं|Aucun club|Kein Club|클럽 없음|クラブなし|无俱乐部
+Avatarni almashtirish‖Avatarı değiştir|Cambiar avatar|Trocar avatar|تغيير الصورة الرمزية|Ganti avatar|अवतार बदलें|Changer d'avatar|Avatar ändern|아바타 변경|アバターを変更|更换头像
+Kuboklar‖Kupalar|Trofeos|Troféus|الكؤوس|Trofi|ट्रॉफ़ियाँ|Trophées|Trophäen|트로피|トロフィー|奖杯
+VIP daraja‖VIP seviyesi|Nivel VIP|Nível VIP|مستوى VIP|Level VIP|VIP लेवल|Niveau VIP|VIP-Level|VIP 등급|VIPレベル|VIP等级
+Hamyon‖Cüzdan|Cartera|Carteira|المحفظة|Dompet|वॉलेट|Portefeuille|Geldbörse|지갑|ウォレット|钱包
+Turnirlar yutildi‖Kazanılan turnuvalar|Torneos ganados|Torneios vencidos|بطولات فزت بها|Turnamen dimenangkan|जीते गए टूर्नामेंट|Tournois gagnés|Gewonnene Turniere|우승한 토너먼트|優勝したトーナメント|赢得的锦标赛
+Tushirilgan sharlar‖Sokulan toplar|Bolas embocadas|Bolas encaçapadas|الكرات المُدخلة|Bola dimasukkan|पॉकेट की गई गेंदें|Billes empochées|Versenkte Kugeln|넣은 공|落としたボール|进球数
+G'alaba seriyasi‖Galibiyet serisi|Racha de victorias|Sequência de vitórias|سلسلة الانتصارات|Rentetan kemenangan|जीत की स्ट्रीक|Série de victoires|Siegesserie|연승|連勝記録|连胜纪录
+eng yaxshi‖en iyi|mejor|melhor|الأفضل|terbaik|सर्वश्रेष्ठ|meilleur|Bestwert|최고|最高|最佳
+Uzuklar‖Yüzükler|Anillos|Anéis|الخواتم|Cincin|अंगूठियाँ|Anneaux|Ringe|반지|リング|戒指
+So'nggi yutuqlar‖Son başarılar|Últimos logros|Últimas conquistas|أحدث الإنجازات|Pencapaian terbaru|हाल की उपलब्धियाँ|Derniers succès|Neueste Erfolge|최근 업적|最近の実績|最新成就
+Hali yo'q‖Henüz yok|Ninguno aún|Nenhum ainda|لا شيء بعد|Belum ada|अभी कोई नहीं|Aucun pour l'instant|Noch keine|아직 없음|まだありません|暂无
+Liga medallari‖Lig madalyaları|Medallas de liga|Medalhas de liga|ميداليات الدوري|Medali liga|लीग पदक|Médailles de ligue|Liga-Medaillen|리그 메달|リーグメダル|联赛奖牌
+Tanlangan kiy‖Kuşanılan sopa|Taco equipado|Taco equipado|العصا المجهّزة|Stik terpasang|इस्तेमाल हो रहा क्यू|Queue équipée|Ausgerüsteter Queue|장착한 큐|装備中のキュー|已装备球杆
+ID nusxalandi!‖ID kopyalandı!|¡ID copiado!|ID copiado!|تم نسخ المعرّف!|ID tersalin!|ID कॉपी हो गई!|ID copié !|ID kopiert!|ID 복사됨!|IDをコピーしました!|ID已复制!
+Uzuklar kolleksiyasi‖Yüzük koleksiyonu|Colección de anillos|Coleção de anéis|مجموعة الخواتم|Koleksi cincin|अंगूठी कलेक्शन|Collection d'anneaux|Ringsammlung|반지 컬렉션|リングコレクション|戒指收藏
+Har bir shaharda 3 marta yutib, uning uzugini oling.‖Bir şehirde 3 kez kazanarak yüzüğünü al.|Gana 3 veces en una ciudad para conseguir su anillo.|Vença 3 vezes em uma cidade para ganhar o anel dela.|اربح 3 مرات في مدينة لتحصل على خاتمها.|Menang 3 kali di sebuah kota untuk mendapat cincinnya.|किसी शहर में 3 बार जीतकर उसकी अंगूठी पाएँ।|Gagnez 3 fois dans une ville pour obtenir son anneau.|Gewinne 3-mal in einer Stadt, um ihren Ring zu erhalten.|한 도시에서 3번 이기면 그 도시의 반지를 얻습니다.|都市で3回勝つとその都市のリングを獲得。|在一座城市获胜3次即可获得其戒指。
+SPORT JINNISI‖SPOR ÇILGINLIĞI|LOCURA DEPORTIVA|LOUCURA ESPORTIVA|جنون الرياضة|GILA OLAHRAGA|स्पोर्ट्स मैडनेस|FOLIE DU SPORT|SPORT-WAHNSINN|스포츠 매드니스|スポーツ・マッドネス|运动狂热
+Kiy + bo'laklar · maksimal ko'rsatkichlar‖Sopa + ekstralar · maksimum özellikler|Taco + extras · estadísticas máximas|Taco + extras · atributos máximos|عصا + إضافات · أقصى الخصائص|Stik + ekstra · statistik maksimal|क्यू + एक्स्ट्रा · अधिकतम आँकड़े|Queue + bonus · stats maximales|Queue + Extras · Maximalwerte|큐 + 추가 아이템 · 최대 능력치|キュー+おまけ・最大性能|球杆+额外内容 · 满属性
+ATOM PORTLASHI‖ATOM PATLAMASI|EXPLOSIÓN ATÓMICA|EXPLOSÃO ATÔMICA|انفجار ذري|LEDAKAN ATOM|परमाणु धमाका|EXPLOSION ATOMIQUE|ATOMEXPLOSION|원자 폭발|アトミックブラスト|原子爆破
+Hammasini bitta narxda oling!‖Hepsini tek fiyata al!|¡Consíguelo todo por un solo precio!|Leve tudo por um só preço!|احصل على كل شيء بسعر واحد!|Dapatkan semuanya dengan satu harga!|सब कुछ एक ही कीमत में पाएँ!|Tout pour un seul prix !|Alles zu einem Preis!|모두 한 가격에 받으세요!|すべてを1つの価格で!|一个价格全部拿下!
+ZODIAK‖ZODYAK|ZODIACO|ZODÍACO|الأبراج|ZODIAK|राशि|ZODIAQUE|STERNZEICHEN|별자리|星座|星座
+Burjingiz kiyi + avatari‖Burcunun sopası + avatarı|El taco y el avatar de tu signo|O taco e o avatar do seu signo|عصا وصورة رمزية لبرجك|Stik + avatar zodiakmu|आपकी राशि का क्यू + अवतार|La queue et l'avatar de votre signe|Queue + Avatar deines Sternzeichens|내 별자리 큐 + 아바타|あなたの星座のキュー+アバター|你星座的球杆+头像
+Kiy‖Sopa|Taco|Taco|عصا|Stik|क्यू|Queue|Queue|큐|キュー|球杆
+Tanga‖Jeton|Monedas|Moedas|عملات|Koin|सिक्के|Pièces|Münzen|코인|コイン|金币
+Naqd pul‖Nakit|Efectivo|Dinheiro|نقد|Uang tunai|कैश|Cash|Cash|캐시|キャッシュ|现金
+VIP ochko‖VIP puanı|Puntos VIP|Pontos VIP|نقاط VIP|Poin VIP|VIP अंक|Points VIP|VIP-Punkte|VIP 포인트|VIPポイント|VIP积分
+Bu kiy sizda bor‖Bu sopa sende var|Ya tienes este taco|Você já tem este taco|تمتلك هذه العصا بالفعل|Anda sudah punya stik ini|यह क्यू आपके पास है|Vous possédez déjà cette queue|Du besitzt diesen Queue bereits|이미 보유한 큐입니다|このキューは所持済みです|你已拥有这支球杆
+Bu to'plam faqat saytimizda sotiladi‖Bu paket yalnızca web sitemizde satılır|Este paquete solo se vende en nuestro sitio web|Este pacote é vendido apenas no nosso site|هذه الحزمة تُباع في موقعنا فقط|Paket ini hanya dijual di situs web kami|यह बंडल सिर्फ़ हमारी वेबसाइट पर बिकता है|Ce pack n'est vendu que sur notre site|Dieses Paket gibt es nur auf unserer Website|이 패키지는 웹사이트에서만 판매됩니다|このバンドルは公式サイトのみで販売|此礼包仅在官网出售
+Hamal‖Koç|Aries|Áries|الحمل|Aries|मेष|Bélier|Widder|양자리|牡羊座|白羊座
+Savr‖Boğa|Tauro|Touro|الثور|Taurus|वृषभ|Taureau|Stier|황소자리|牡牛座|金牛座
+Javzo‖İkizler|Géminis|Gêmeos|الجوزاء|Gemini|मिथुन|Gémeaux|Zwillinge|쌍둥이자리|双子座|双子座
+Saraton‖Yengeç|Cáncer|Câncer|السرطان|Cancer|कर्क|Cancer|Krebs|게자리|蟹座|巨蟹座
+Asad‖Aslan|Leo|Leão|الأسد|Leo|सिंह|Lion|Löwe|사자자리|獅子座|狮子座
+Sunbula‖Başak|Virgo|Virgem|العذراء|Virgo|कन्या|Vierge|Jungfrau|처녀자리|乙女座|处女座
+Mezon‖Terazi|Libra|Libra|الميزان|Libra|तुला|Balance|Waage|천칭자리|天秤座|天秤座
+Aqrab‖Akrep|Escorpio|Escorpião|العقرب|Scorpio|वृश्चिक|Scorpion|Skorpion|전갈자리|蠍座|天蝎座
+Qavs‖Yay|Sagitario|Sagitário|القوس|Sagitarius|धनु|Sagittaire|Schütze|궁수자리|射手座|射手座
+Jaddiy‖Oğlak|Capricornio|Capricórnio|الجدي|Capricorn|मकर|Capricorne|Steinbock|염소자리|山羊座|摩羯座
+Dalv‖Kova|Acuario|Aquário|الدلو|Aquarius|कुंभ|Verseau|Wassermann|물병자리|水瓶座|水瓶座
+Hut‖Balık|Piscis|Peixes|الحوت|Pisces|मीन|Poissons|Fische|물고기자리|魚座|双鱼座
+ta yangi yutuq‖yeni başarı|nuevos logros|novas conquistas|إنجازات جديدة|pencapaian baru|नई उपलब्धियाँ|nouveaux succès|neue Erfolge|새 업적|個の新しい実績|个新成就
+ulanmoqda…‖bağlanıyor…|conectando…|conectando…|جارٍ الاتصال…|menghubungkan…|कनेक्ट हो रहा है…|connexion…|verbinde…|연결 중…|接続中…|连接中…
+Har bir shaharda kuboklarni to'plab, uzugini qo'lga kiriting.‖Bir şehirdeki tüm kupaları toplayıp yüzüğünü kazan.|Reúne todos los trofeos de una ciudad para ganar su anillo.|Reúna todos os troféus de uma cidade para ganhar o anel dela.|اجمع كل الكؤوس في مدينة لتفوز بخاتمها.|Kumpulkan semua trofi di sebuah kota untuk mendapat cincinnya.|किसी शहर की सभी ट्रॉफ़ियाँ जुटाकर उसकी अंगूठी जीतें।|Réunissez tous les trophées d'une ville pour gagner son anneau.|Sammle alle Trophäen einer Stadt, um ihren Ring zu gewinnen.|도시의 트로피를 모두 모아 반지를 얻으세요.|都市のトロフィーをすべて集めてリングを獲得しよう。|集齐一座城市的全部奖杯即可赢得其戒指。
+Bonus‖Bonus|Bono|Bônus|مكافأة|Bonus|बोनस|Bonus|Bonus|보너스|ボーナス|奖励
+shu shahardagi har bir g'alabadan‖bu şehirdeki her galibiyetten|por cada victoria en esta ciudad|de cada vitória nesta cidade|من كل فوز في هذه المدينة|dari setiap kemenangan di kota ini|इस शहर की हर जीत पर|à chaque victoire dans cette ville|bei jedem Sieg in dieser Stadt|이 도시에서 승리할 때마다|この都市での勝利ごとに|在此城市每次获胜
+Olindi‖Alındı|Recibido|Recebido|تم الاستلام|Diterima|मिल गया|Récupéré|Abgeholt|받음|受取済み|已领取
+Mag'lubiyat‖Mağlubiyet|Derrota|Derrota|خسارة|Kalah|हार|Défaite|Niederlage|패배|敗北|失败
+kubok‖kupa|trofeos|troféus|كؤوس|trofi|ट्रॉफ़ी|trophées|Trophäen|트로피|トロフィー|奖杯
+Yangi uzuk!‖Yeni yüzük!|¡Nuevo anillo!|Novo anel!|خاتم جديد!|Cincin baru!|नई अंगूठी!|Nouvel anneau !|Neuer Ring!|새 반지!|新しいリング!|新戒指!
+barcha kuboklar yig'ildi!‖tüm kupalar toplandı!|¡todos los trofeos reunidos!|todos os troféus reunidos!|تم جمع كل الكؤوس!|semua trofi terkumpul!|सभी ट्रॉफ़ियाँ जुट गईं!|tous les trophées réunis !|alle Trophäen gesammelt!|모든 트로피를 모았습니다!|トロフィーをすべて集めました!|已集齐全部奖杯!
+Uzuk sizda! +50% ♞‖Yüzük sende! +%50 ♞|¡Anillo conseguido! +50% ♞|Anel conquistado! +50% ♞|الخاتم لك! +50% ♞|Cincin dimiliki! +50% ♞|अंगूठी आपके पास! +50% ♞|Anneau obtenu ! +50 % ♞|Ring erhalten! +50 % ♞|반지 획득! +50% ♞|リング獲得!+50% ♞|已获得戒指!+50% ♞
+Barcha kuboklarni yuting — uzuk oling!‖Tüm kupaları kazan — yüzüğü al!|Gana todos los trofeos y consigue el anillo.|Vença todos os troféus e ganhe o anel!|اربح كل الكؤوس لتحصل على الخاتم!|Menangkan semua trofi untuk mendapat cincin!|सभी ट्रॉफ़ियाँ जीतें — अंगूठी पाएँ!|Gagnez tous les trophées pour obtenir l'anneau !|Gewinne alle Trophäen, um den Ring zu erhalten!|모든 트로피를 얻으면 반지를 받습니다!|すべてのトロフィーを勝ち取ってリングを獲得!|赢得全部奖杯即可获得戒指!
+Yangi medal‖Yeni madalya|Nueva medalla|Nova medalha|ميدالية جديدة|Medali baru|नया पदक|Nouvelle médaille|Neue Medaille|새 메달|新しいメダル|新勋章
+MEDALLAR‖MADALYALAR|MEDALLAS|MEDALHAS|الميداليات|MEDALI|पदक|MÉDAILLES|MEDAILLEN|메달|メダル|勋章
+Sening yutuqlaring‖Başarıların|Tus logros|Suas conquistas|إنجازاتك|Pencapaianmu|आपकी उपलब्धियाँ|Vos succès|Deine Erfolge|나의 업적|あなたの実績|你的成就
+Har bir medal — sening kuching!‖Her madalya senin gücün!|¡Cada medalla es tu fuerza!|Cada medalha é a sua força!|كل ميدالية هي قوتك!|Setiap medali adalah kekuatanmu!|हर पदक आपकी ताकत है!|Chaque médaille est votre force !|Jede Medaille ist deine Stärke!|메달 하나하나가 당신의 힘!|メダルはすべてあなたの力!|每枚勋章都是你的力量!
+Medallar‖Madalyalar|Medallas|Medalhas|الميداليات|Medali|पदक|Médailles|Medaillen|메달|メダル|勋章
+Boy o'yinchi‖Rich Player|Богач|Zengin Oyuncu|Jugador rico|Jogador rico|لاعب ثري|Pemain Kaya|अमीर खिलाड़ी|Joueur riche|Reicher Spieler|부자 플레이어|お金持ち|富豪玩家
+Birinchi qadam‖First Step|Первый шаг|İlk Adım|Primer paso|Primeiro passo|الخطوة الأولى|Langkah Pertama|पहला कदम|Premier pas|Erster Schritt|첫걸음|はじめの一歩|第一步
+{0} ta o'yinda yuting‖Win {0} games|Выиграйте {0} игр|{0} oyun kazan|Gana {0} partidas|Vença {0} partidas|اربح {0} مباراة|Menangkan {0} pertandingan|{0} गेम जीतें|Gagnez {0} parties|Gewinne {0} Spiele|{0}경기 승리|{0}試合に勝つ|赢得{0}场比赛
+Faxriy o'yinchi‖Honored Player|Почётный игрок|Onurlu Oyuncu|Jugador honorario|Jogador honorário|لاعب فخري|Pemain Terhormat|सम्मानित खिलाड़ी|Joueur honoraire|Ehrenspieler|명예 플레이어|名誉プレイヤー|荣誉玩家
+{0} ta shar tushiring‖Pot {0} balls|Забейте {0} шаров|{0} top sok|Emboca {0} bolas|Encaçape {0} bolas|أدخل {0} كرة|Masukkan {0} bola|{0} गेंदें पॉकेट करें|Empochez {0} billes|Versenke {0} Kugeln|공 {0}개 넣기|{0}個のボールを落とす|打进{0}个球
+Pro to'purar‖Pro Potter|Про-забиватель|Pro Sokucu|Pro embocador|Pro caçapador|محترف الإدخال|Penembak Pro|प्रो पॉटर|Pro empocheur|Profi-Versenker|프로 포터|プロポッター|职业进球手
+Usta to'purar‖Master Potter|Мастер-забиватель|Usta Sokucu|Maestro embocador|Mestre caçapador|أستاذ الإدخال|Penembak Master|मास्टर पॉटर|Maître empocheur|Meister-Versenker|마스터 포터|マスターポッター|大师进球手
+Issiq qo'l‖Hot Hand|Горячая рука|Sıcak El|Mano caliente|Mão quente|اليد الساخنة|Tangan Panas|गरम हाथ|Main chaude|Heiße Hand|불타는 손|ホットハンド|手感火热
+Ketma-ket {0} ta g'alaba‖Win {0} in a row|Выиграйте {0} подряд|Üst üste {0} galibiyet|Gana {0} seguidas|Vença {0} seguidas|اربح {0} متتالية|Menangkan {0} berturut-turut|लगातार {0} जीत|Gagnez {0} d'affilée|Gewinne {0} in Folge|{0}연승|{0}連勝|连胜{0}场
+Olovli seriya‖Fiery Streak|Огненная серия|Ateşli Seri|Racha ardiente|Sequência de fogo|سلسلة ملتهبة|Rentetan Membara|आग की स्ट्रीक|Série de feu|Feuerserie|불꽃 연승|炎の連勝|火热连胜
+To'xtatib bo'lmas‖Unstoppable|Неудержимый|Durdurulamaz|Imparable|Imparável|لا يُقهر|Tak Terhentikan|अजेय|Inarrêtable|Unaufhaltsam|멈출 수 없는|止まらない|势不可挡
+Yo'lga chiqdi‖Off We Go|В путь|Yola Çıktı|En marcha|A caminho|انطلقت|Berangkat|सफ़र शुरू|En route|Los geht's|출발!|出発|出发
+{0}-darajaga chiqing‖Reach level {0}|Достигните {0} уровня|{0}. seviyeye ulaş|Alcanza el nivel {0}|Alcance o nível {0}|اصل إلى المستوى {0}|Capai level {0}|लेवल {0} तक पहुँचें|Atteignez le niveau {0}|Erreiche Level {0}|레벨 {0} 달성|レベル{0}に到達|达到{0}级
+Tajribali‖Experienced|Опытный|Tecrübeli|Experimentado|Experiente|ذو خبرة|Berpengalaman|अनुभवी|Expérimenté|Erfahren|숙련자|ベテラン|经验丰富
+Yarim yo'l‖Halfway There|На полпути|Yarı Yol|A medio camino|Na metade|في منتصف الطريق|Setengah Jalan|आधा रास्ता|À mi-chemin|Halbzeit|반환점|折り返し地点|走到一半
+Hayot yo'li‖Road of Life|Путь жизни|Hayat Yolu|Camino de vida|Estrada da vida|طريق الحياة|Jalan Hidup|जीवन पथ|Chemin de vie|Lebensweg|인생길|人生の道|人生之路
+Kubok sohibi‖Trophy Owner|Обладатель кубка|Kupa Sahibi|Dueño de trofeo|Dono de troféu|صاحب كأس|Pemilik Piala|ट्रॉफ़ी धारक|Détenteur de trophée|Pokalbesitzer|트로피 보유자|トロフィー保持者|奖杯拥有者
+{0} ta turnir yuting‖Win {0} tournaments|Выиграйте турниров: {0}|{0} turnuva kazan|Gana {0} torneos|Vença {0} torneios|اربح {0} بطولات|Menangkan {0} turnamen|{0} टूर्नामेंट जीतें|Gagnez {0} tournois|Gewinne {0} Turniere|토너먼트 {0}회 우승|トーナメントで{0}回優勝|赢得{0}场锦标赛
+Kubok ovchisi‖Trophy Hunter|Охотник за кубками|Kupa Avcısı|Cazador de trofeos|Caçador de troféus|صائد الكؤوس|Pemburu Piala|ट्रॉफ़ी हंटर|Chasseur de trophées|Pokaljäger|트로피 사냥꾼|トロフィーハンター|奖杯猎人
+Kuboklar qiroli‖King of Trophies|Король кубков|Kupaların Kralı|Rey de trofeos|Rei dos troféus|ملك الكؤوس|Raja Piala|ट्रॉफ़ियों का राजा|Roi des trophées|König der Pokale|트로피의 왕|トロフィーの王|奖杯之王
+Kolleksioner‖Collector|Коллекционер|Koleksiyoncu|Coleccionista|Colecionador|جامع|Kolektor|कलेक्टर|Collectionneur|Sammler|수집가|コレクター|收藏家
+{0} ta kiy yig'ing‖Collect {0} cues|Соберите {0} киёв|{0} sopa topla|Reúne {0} tacos|Junte {0} tacos|اجمع {0} عصا|Kumpulkan {0} stik|{0} क्यू जुटाएँ|Collectez {0} queues|Sammle {0} Queues|큐 {0}개 수집|キューを{0}本集める|收集{0}支球杆
+Katta kolleksiya‖Big Collection|Большая коллекция|Büyük Koleksiyon|Gran colección|Grande coleção|مجموعة كبيرة|Koleksi Besar|बड़ा कलेक्शन|Grande collection|Große Sammlung|대형 컬렉션|大コレクション|庞大收藏
+Muzey‖Museum|Музей|Müze|Museo|Museu|متحف|Museum|संग्रहालय|Musée|Museum|박물관|ミュージアム|博物馆
+{0} ustasi‖{0} Master|Мастер: {0}|{0} Ustası|Maestro de {0}|Mestre de {0}|سيد {0}|Master {0}|{0} मास्टर|Maître de {0}|{0}-Meister|{0} 마스터|{0}マスター|{0}大师
+{0} uzugini oling‖Get the {0} ring|Получите кольцо: {0}|{0} yüzüğünü al|Consigue el anillo de {0}|Ganhe o anel de {0}|احصل على خاتم {0}|Dapatkan cincin {0}|{0} की अंगूठी पाएँ|Obtenez l'anneau de {0}|Hol dir den {0}-Ring|{0} 반지 획득|{0}のリングを獲得|获得{0}戒指
+{0} liga‖{0} League|Лига: {0}|{0} Ligi|Liga {0}|Liga {0}|دوري {0}|Liga {0}|{0} लीग|Ligue {0}|{0}-Liga|{0} 리그|{0}リーグ|{0}联赛
+{0} ligasiga ko'tariling‖Reach the {0} League|Достигните лиги: {0}|{0} Ligine yüksel|Asciende a la Liga {0}|Suba para a Liga {0}|اصعد إلى دوري {0}|Naik ke Liga {0}|{0} लीग में पहुँचें|Montez en Ligue {0}|Steige in die {0}-Liga auf|{0} 리그로 승급|{0}リーグに昇格|晋级到{0}联赛
+Jamoa o'yinchisi‖Team Player|Командный игрок|Takım Oyuncusu|Jugador de equipo|Jogador de equipe|لاعب فريق|Pemain Tim|टीम प्लेयर|Joueur d'équipe|Teamplayer|팀 플레이어|チームプレイヤー|团队玩家
+Klubga qo'shiling‖Join a club|Вступите в клуб|Bir kulübe katıl|Únete a un club|Entre em um clube|انضم إلى نادٍ|Gabung klub|क्लब से जुड़ें|Rejoignez un club|Tritt einem Club bei|클럽 가입|クラブに参加|加入俱乐部
+VIP {0}-darajaga chiqing‖Reach VIP level {0}|Достигните VIP-уровня {0}|VIP {0}. seviyeye ulaş|Alcanza el nivel VIP {0}|Alcance o nível VIP {0}|اصل إلى مستوى VIP {0}|Capai level VIP {0}|VIP लेवल {0} तक पहुँचें|Atteignez le niveau VIP {0}|Erreiche VIP-Level {0}|VIP {0}등급 달성|VIPレベル{0}に到達|达到VIP{0}级
+Birinchi o'yin‖First Game|Первая игра|İlk Oyun|Primera partida|Primeira partida|أول مباراة|Game Pertama|पहला गेम|Première partie|Erstes Spiel|첫 경기|初めての試合|首场比赛
+{0} ta o'yin o'ynang‖Play {0} games|Сыграйте {0} игр|{0} oyun oyna|Juega {0} partidas|Jogue {0} partidas|العب {0} مباراة|Mainkan {0} pertandingan|{0} गेम खेलें|Jouez {0} parties|Spiele {0} Spiele|{0}경기 플레이|{0}試合プレイする|进行{0}场比赛
+{0} to'p g'olibi‖{0}-Ball Winner|Победитель {0} шаров|{0} Top Galibi|Ganador de {0} bolas|Vencedor de {0} bolas|فائز {0} كرات|Pemenang {0} Bola|{0}-बॉल विजेता|Vainqueur {0} billes|{0}-Ball-Sieger|{0}볼 승자|{0}ボールの覇者|{0}球赢家
+Doimiy o'yinchi‖Regular Player|Постоянный игрок|Düzenli Oyuncu|Jugador habitual|Jogador frequente|لاعب منتظم|Pemain Setia|नियमित खिलाड़ी|Joueur régulier|Stammspieler|단골 플레이어|常連プレイヤー|常客玩家
+Do'stlar bilan‖With Friends|С друзьями|Arkadaşlarla|Con amigos|Com amigos|مع الأصدقاء|Bersama Teman|दोस्तों के साथ|Entre amis|Mit Freunden|친구와 함께|友達と一緒に|与好友同乐
+Do'st qo'shing‖Add a friend|Добавьте друга|Arkadaş ekle|Añade un amigo|Adicione um amigo|أضف صديقًا|Tambah teman|दोस्त जोड़ें|Ajoutez un ami|Füge einen Freund hinzu|친구 추가|友達を追加|添加好友
+Jamoa o'yini‖Team Game|Командная игра|Takım Oyunu|Juego en equipo|Jogo em equipe|لعبة جماعية|Permainan Tim|टीम गेम|Jeu d'équipe|Teamspiel|팀 게임|チームプレイ|团队游戏
+Chempion‖Champion|Чемпион|Şampiyon|Campeón|Campeão|بطل|Juara|चैंपियन|Champion|Champion|챔피언|チャンピオン|冠军
+Turnirni yuting‖Win a tournament|Выиграйте турнир|Bir turnuva kazan|Gana un torneo|Vença um torneio|اربح بطولة|Menangkan turnamen|टूर्नामेंट जीतें|Gagnez un tournoi|Gewinne ein Turnier|토너먼트 우승|トーナメントに優勝|赢得锦标赛
+Professional‖Professional|Профессионал|Profesyonel|Profesional|Profissional|محترف|Profesional|प्रोफ़ेशनल|Professionnel|Profi|프로페셔널|プロフェッショナル|专业选手
+{0} ta g'alaba‖{0} wins|Побед: {0}|{0} galibiyet|{0} victorias|{0} vitórias|{0} انتصارات|{0} kemenangan|{0} जीत|{0} victoires|{0} Siege|{0}승|{0}勝|{0}场胜利
+Ketma-ket g'alaba‖Win Streak|Серия побед|Galibiyet Serisi|Racha de victorias|Sequência de vitórias|سلسلة انتصارات|Rentetan Menang|जीत की स्ट्रीक|Série de victoires|Siegesserie|연승|連勝|连胜
+Aniq zarba‖Precise Shot|Точный удар|Hassas Vuruş|Tiro preciso|Tacada precisa|ضربة دقيقة|Tembakan Akurat|सटीक शॉट|Tir précis|Präziser Stoß|정밀 샷|正確なショット|精准一击
+Omadli zarbada markazga tushiring‖Hit the center on a Lucky Shot|Попадите в центр в Счастливом ударе|Şanslı Vuruşta merkeze isabet ettir|Da en el centro en el Tiro de la suerte|Acerte o centro na Tacada da sorte|أصب المركز في ضربة الحظ|Kenai bagian tengah di Tembakan Beruntung|लकी शॉट में केंद्र पर मारें|Touchez le centre au Coup chanceux|Triff beim Glücksstoß die Mitte|럭키 샷에서 중앙 맞히기|ラッキーショットで中心に当てる|幸运一击命中中心
+Qiyin o'yin‖Tough Game|Трудная игра|Zor Oyun|Partida difícil|Partida difícil|مباراة صعبة|Permainan Sulit|कठिन गेम|Partie difficile|Harte Partie|어려운 경기|難しい試合|高难对局
+Dubay yoki undan yuqorida yuting‖Win in Dubai or higher|Выиграйте в Дубае или выше|Dubai veya daha üstünde kazan|Gana en Dubái o superior|Vença em Dubai ou acima|اربح في دبي أو أعلى|Menang di Dubai atau lebih tinggi|दुबई या उससे ऊपर जीतें|Gagnez à Dubaï ou au-dessus|Gewinne in Dubai oder höher|두바이 이상에서 승리|ドバイ以上で勝つ|在迪拜或更高城市获胜
+Jangchi‖Fighter|Боец|Savaşçı|Luchador|Lutador|مقاتل|Petarung|योद्धा|Combattant|Kämpfer|전사|ファイター|斗士
+Do'stona o'yin‖Friendly Match|Дружеский матч|Dostluk Maçı|Partida amistosa|Partida amistosa|مباراة ودية|Pertandingan Persahabatan|दोस्ताना मैच|Match amical|Freundschaftsspiel|친선 경기|フレンドリーマッチ|友谊赛
+Bitta qurilmada do'st bilan o'ynang‖Play with a friend on one device|Сыграйте с другом на одном устройстве|Bir cihazda arkadaşınla oyna|Juega con un amigo en un dispositivo|Jogue com um amigo em um aparelho|العب مع صديق على جهاز واحد|Main bareng teman di satu perangkat|एक डिवाइस पर दोस्त के साथ खेलें|Jouez avec un ami sur un appareil|Spiele mit einem Freund an einem Gerät|한 기기에서 친구와 플레이|1台の端末で友達と遊ぶ|与好友在同一设备上对战
+Xalqaro o'yin‖International Match|Международный матч|Uluslararası Maç|Partida internacional|Partida internacional|مباراة دولية|Pertandingan Internasional|अंतरराष्ट्रीय मैच|Match international|Internationales Spiel|국제 경기|国際マッチ|国际对战
+Onlayn haqiqiy raqib bilan o'ynang‖Play a real opponent online|Сыграйте онлайн с реальным соперником|Çevrimiçi gerçek bir rakiple oyna|Juega online contra un rival real|Jogue online contra um oponente real|العب أونلاين ضد خصم حقيقي|Main online melawan lawan asli|ऑनलाइन असली विरोधी के साथ खेलें|Jouez en ligne contre un vrai adversaire|Spiele online gegen einen echten Gegner|온라인에서 실제 상대와 플레이|オンラインで実際の相手と対戦|与真人对手在线对战
+Shafqatsiz‖Ruthless|Беспощадный|Acımasız|Despiadado|Impiedoso|عديم الرحمة|Tanpa Ampun|बेरहम|Impitoyable|Gnadenlos|무자비|容赦なし|冷酷无情
+Raqib birorta shar tushirmasidan yuting‖Win without your opponent potting a ball|Победите, пока соперник не забил ни одного шара|Rakip hiç top sokmadan kazan|Gana sin que tu rival emboque ninguna bola|Vença sem o oponente encaçapar nenhuma bola|اربح دون أن يُدخل خصمك أي كرة|Menang tanpa lawan memasukkan bola satu pun|विरोधी के एक भी गेंद पॉकेट किए बिना जीतें|Gagnez sans que l'adversaire empoche une bille|Gewinne, ohne dass der Gegner eine Kugel versenkt|상대가 공을 하나도 넣지 못하게 이기기|相手に1球も落とさせず勝つ|对手一球未进即获胜
+Sovuq qon‖Cold Blooded|Хладнокровный|Soğukkanlı|Sangre fría|Sangue frio|بدم بارد|Berdarah Dingin|ठंडे दिमाग़ वाला|Sang-froid|Kaltblütig|냉혈한|冷静沈着|冷静沉着
+Tezkor‖Quick|Быстрый|Hızlı|Rápido|Rápido|سريع|Cepat|तेज़|Rapide|Schnell|재빠른|スピーディー|迅速
+Sindirishda shar tushiring‖Pot a ball on the break|Забейте шар на разбое|Açılışta top sok|Emboca una bola en la salida|Encaçape uma bola na abertura|أدخل كرة في الكسر|Masukkan bola saat break|ब्रेक पर एक गेंद पॉकेट करें|Empochez une bille à la casse|Versenke beim Anstoß eine Kugel|브레이크에서 공 넣기|ブレイクでボールを落とす|开球时进一球
+Maqsad sari‖On Target|В цель|Hedefte|Al objetivo|No alvo|نحو الهدف|Tepat Sasaran|लक्ष्य की ओर|En plein but|Auf Kurs|목표를 향해|目標に向かって|目标在望
+Kuchli raqib‖Strong Opponent|Сильный соперник|Güçlü Rakip|Rival fuerte|Oponente forte|خصم قوي|Lawan Tangguh|मज़बूत विरोधी|Adversaire redoutable|Starker Gegner|강력한 상대|強敵|强劲对手
+Seul yoki undan yuqorida yuting‖Win in Seoul or higher|Выиграйте в Сеуле или выше|Seul veya daha üstünde kazan|Gana en Seúl o superior|Vença em Seul ou acima|اربح في سيول أو أعلى|Menang di Seoul atau lebih tinggi|सियोल या उससे ऊपर जीतें|Gagnez à Séoul ou au-dessus|Gewinne in Seoul oder höher|서울 이상에서 승리|ソウル以上で勝つ|在首尔或更高城市获胜
+{0} tanga to'plang‖Collect {0} coins|Накопите монет: {0}|{0} jeton topla|Reúne {0} monedas|Junte {0} moedas|اجمع {0} عملة|Kumpulkan {0} koin|{0} सिक्के जुटाएँ|Accumulez {0} pièces|Sammle {0} Münzen|코인 {0}개 모으기|コインを{0}枚集める|累计{0}金币
+Ajoyib o'yin‖Great Game|Отличная игра|Harika Oyun|Gran partida|Grande partida|مباراة رائعة|Permainan Hebat|शानदार गेम|Belle partie|Tolles Spiel|멋진 경기|ナイスゲーム|精彩对局
+Bir zarbada {0} ta shar tushiring‖Pot {0} balls in one shot|Забейте {0} шара одним ударом|Tek vuruşta {0} top sok|Emboca {0} bolas de un tiro|Encaçape {0} bolas em uma tacada|أدخل {0} كرات بضربة واحدة|Masukkan {0} bola dalam satu tembakan|एक शॉट में {0} गेंदें पॉकेट करें|Empochez {0} billes en un coup|Versenke {0} Kugeln mit einem Stoß|한 번에 공 {0}개 넣기|1ショットで{0}個落とす|一杆打进{0}球
+Ulug' ustoz‖Grand Master|Великий мастер|Ulu Usta|Gran maestro|Grande mestre|المعلم الأكبر|Guru Besar|महागुरु|Grand maître|Großmeister|위대한 스승|大師匠|宗师
+O'rta daraja‖Mid Level|Средний уровень|Orta Seviye|Nivel medio|Nível intermediário|مستوى متوسط|Level Menengah|मध्यम स्तर|Niveau intermédiaire|Mittelstufe|중급|中級|中级
+Vaqtida‖On Time|Вовремя|Zamanında|A tiempo|No tempo|في الوقت المناسب|Tepat Waktu|समय पर|À l'heure|Pünktlich|제때|時間通り|准时
+{0} kunlik seriya‖{0}-day streak|Серия: {0} дн.|{0} günlük seri|Racha de {0} días|Sequência de {0} dias|سلسلة {0} أيام|Rentetan {0} hari|{0} दिन की स्ट्रीक|Série de {0} jours|{0}-Tage-Serie|{0}일 연속|{0}日連続|连续{0}天
+Toza o'yin‖Clean Game|Чистая игра|Temiz Oyun|Partida limpia|Partida limpa|مباراة نظيفة|Permainan Bersih|साफ़ गेम|Partie propre|Saubere Partie|깔끔한 경기|クリーンゲーム|干净对局
+{0} to'p ustasi‖{0}-Ball Master|Мастер {0} шаров|{0} Top Ustası|Maestro de {0} bolas|Mestre de {0} bolas|أستاذ {0} كرات|Master {0} Bola|{0}-बॉल मास्टर|Maître {0} billes|{0}-Ball-Meister|{0}볼 마스터|{0}ボールの達人|{0}球大师
+Afsonaviy kiy oling‖Get a legendary cue|Получите легендарный кий|Efsanevi bir sopa al|Consigue un taco legendario|Ganhe um taco lendário|احصل على عصا أسطورية|Dapatkan stik legendaris|legendary क्यू पाएँ|Obtenez une queue légendaire|Erhalte einen legendären Queue|전설 큐 획득|伝説のキューを入手|获得传说球杆
+Akula‖Shark|Акула|Köpekbalığı|Tiburón|Tubarão|قرش|Hiu|शार्क|Requin|Hai|상어|シャーク|鲨鱼
+{0} mln tanga yuting‖Win {0}M coins|Выиграйте {0} млн монет|{0} milyon jeton kazan|Gana {0} M de monedas|Ganhe {0} mi de moedas|اربح {0} مليون عملة|Menangkan {0} juta koin|{0} मिलियन सिक्के जीतें|Gagnez {0} M de pièces|Gewinne {0} Mio. Münzen|코인 {0}백만 획득|{0}万コイン獲得|赢取{0}百万金币
+Dunyoviy‖Worldly|Мирянин|Dünyalı|Mundano|Mundano|عالمي|Mendunia|विश्वस्तरीय|Mondain|Weltgewandt|세계인|世界人|环球玩家
+{0} ta shahar uzugini oling‖Get {0} city rings|Получите колец городов: {0}|{0} şehrin yüzüğünü al|Consigue {0} anillos de ciudad|Ganhe {0} anéis de cidade|احصل على {0} خواتم مدن|Dapatkan {0} cincin kota|{0} शहरों की अंगूठियाँ पाएँ|Obtenez {0} anneaux de ville|Hol dir {0} Stadtringe|도시 반지 {0}개 획득|都市リングを{0}個獲得|获得{0}枚城市戒指
+Birinchi g'alaba‖First Win|Первая победа|İlk Galibiyet|Primera victoria|Primeira vitória|أول فوز|Kemenangan Pertama|पहली जीत|Première victoire|Erster Sieg|첫 승리|初勝利|首场胜利
+{0} ga {1} o'yinda yuting‖Win a {0}-on-{1} game|Выиграйте игру {0} на {1}|{0}'e {1} oyunda kazan|Gana una partida {0} contra {1}|Vença uma partida {0} contra {1}|اربح مباراة {0} ضد {1}|Menangkan pertandingan {0} lawan {1}|{0} बनाम {1} गेम जीतें|Gagnez une partie {0} contre {1}|Gewinne ein {0}-gegen-{1}-Spiel|{0}대{1} 경기 승리|{0}対{1}で勝つ|赢得{0}对{1}比赛
+Ikki birdan‖Double Trouble|Дуплет|Bir Vuruşta İki|Dos de golpe|Dois de uma vez|اثنتان بضربة|Dua Sekaligus|एक साथ दो|Deux d'un coup|Doppelt hält besser|한 방에 두 개|ダブルポット|一杆双进
+Bir zarbada {0} ta sharni tushiring‖Pot {0} balls in a single shot|Забейте {0} шара за один удар|Tek vuruşta {0} top sok|Emboca {0} bolas en un solo tiro|Encaçape {0} bolas em uma só tacada|أدخل {0} كرات بضربة واحدة|Masukkan {0} bola dalam satu tembakan|एक ही शॉट में {0} गेंदें पॉकेट करें|Empochez {0} billes en un seul coup|Versenke {0} Kugeln mit einem Stoß|한 번의 샷으로 공 {0}개 넣기|1ショットで{0}個落とす|一杆打进{0}球
+Kuchli sindirish‖Power Break|Мощный разбой|Güçlü Açılış|Salida potente|Abertura potente|كسر قوي|Break Kuat|पावर ब्रेक|Casse puissante|Kraftvoller Anstoß|파워 브레이크|パワーブレイク|强力开球
+Toza stol‖Clean Table|Чистый стол|Temiz Masa|Mesa limpia|Mesa limpa|طاولة نظيفة|Meja Bersih|साफ़ टेबल|Table nettoyée|Tisch geräumt|테이블 클리어|クリーンテーブル|清台
+Turnir chempioni‖Tournament Champion|Чемпион турнира|Turnuva Şampiyonu|Campeón del torneo|Campeão do torneio|بطل البطولة|Juara Turnamen|टूर्नामेंट चैंपियन|Champion du tournoi|Turniersieger|토너먼트 챔피언|トーナメントチャンピオン|锦标赛冠军
+Aniq nishon‖Sharp Aim|Меткий прицел|Keskin Nişan|Puntería afilada|Mira afiada|تصويب حاد|Bidikan Tajam|तेज़ निशाना|Visée précise|Scharfes Zielen|날카로운 조준|鋭いエイム|神准瞄准
+Sodiq o'yinchi‖Loyal Player|Верный игрок|Sadık Oyuncu|Jugador leal|Jogador leal|لاعب مخلص|Pemain Setia|वफ़ादार खिलाड़ी|Joueur fidèle|Treuer Spieler|충성 플레이어|忠実なプレイヤー|忠实玩家
+Boy‖Rich|Богатый|Zengin|Rico|Rico|ثري|Kaya|अमीर|Riche|Reich|부자|リッチ|富有
+{0} ta kiy sotib oling‖Buy {0} cues|Купите киёв: {0}|{0} sopa satın al|Compra {0} tacos|Compre {0} tacos|اشترِ {0} عصا|Beli {0} stik|{0} क्यू खरीदें|Achetez {0} queues|Kaufe {0} Queues|큐 {0}개 구매|キューを{0}本購入|购买{0}支球杆
+Oq shar tushdi — joyini tanlang‖Cue ball potted — choose its spot|Биток забит — выберите место|Beyaz top girdi — yerini seç|Bola blanca embocada: elige su posición|Bola branca caiu — escolha a posição|دخلت البيضاء — اختر مكانها|Bola putih masuk — pilih posisinya|सफ़ेद गेंद पॉकेट हुई — जगह चुनें|Blanche empochée — choisissez sa place|Weiße versenkt — wähle die Position|흰 공이 들어갔어요 — 위치를 고르세요|白球が落ちた — 置く場所を選んで|白球落袋 — 请选择放置位置
+Zo'r!‖Nice!|Отлично!|Süper!|¡Bien!|Boa!|جيد!|Bagus!|बढ़िया!|Bien !|Gut!|좋아요!|ナイス!|不错!
+Ajoyib zarba!‖Great shot!|Отличный удар!|Muhteşem vuruş!|¡Gran tiro!|Belíssima tacada!|ضربة رائعة!|Tembakan bagus!|शानदार शॉट!|Beau coup !|Toller Stoß!|멋진 샷!|ナイスショット!|漂亮的一杆!
+Aniq!‖Precise!|Точно!|İsabetli!|¡Preciso!|Preciso!|دقيق!|Akurat!|सटीक!|Précis !|Präzise!|정확해요!|正確!|精准!
+Barakalla!‖Well done!|Молодец!|Aferin!|¡Bien hecho!|Muito bem!|أحسنت!|Bagus sekali!|शाबाश!|Bravo !|Gut gemacht!|잘했어요!|お見事!|干得漂亮!
+STOL TOZALANDI!‖TABLE CLEARED!|СТОЛ ОЧИЩЕН!|MASA TEMİZLENDİ!|¡MESA LIMPIA!|MESA LIMPA!|تم تنظيف الطاولة!|MEJA BERSIH!|टेबल साफ़!|TABLE NETTOYÉE !|TISCH GERÄUMT!|테이블 클리어!|テーブルクリア!|清台成功!
+8-shar joyiga qaytarildi‖8 ball returned to its spot|8-й шар возвращён на место|8 numaralı top yerine kondu|La bola 8 volvió a su sitio|A bola 8 voltou ao lugar|أُعيدت الكرة 8 إلى مكانها|Bola 8 dikembalikan ke posisinya|8 नंबर की गेंद अपनी जगह लौटी|La bille 8 est remise en place|Die 8 wurde zurückgesetzt|8번 공이 제자리로 돌아갔습니다|8番ボールが元の位置に戻された|8号球已放回原位
+Birinchi 8-sharga tegildi‖8 ball hit first|Первым задет 8-й шар|İlk olarak 8 numaralı topa vuruldu|Se tocó primero la bola 8|Acertou a bola 8 primeiro|لُمست الكرة 8 أولًا|Bola 8 tersentuh pertama|पहले 8 नंबर की गेंद पर लगी|Bille 8 touchée en premier|Die 8 wurde zuerst getroffen|8번 공을 먼저 맞혔습니다|8番ボールに最初に当たった|先击中了8号球
+8-shar tushdi va qoida buzildi‖8 ball potted and a foul was made|8-й шар забит с нарушением|8 numaralı top girdi ve faul yapıldı|Bola 8 embocada con falta|Bola 8 encaçapada com falta|دخلت الكرة 8 مع خطأ|Bola 8 masuk disertai pelanggaran|8 नंबर की गेंद पॉकेट हुई और फ़ाउल हुआ|Bille 8 empochée avec faute|Die 8 wurde mit Foul versenkt|8번 공이 들어갔지만 반칙|8番ボールを落としてファウル|8号球落袋且犯规
+8-shar vaqtidan oldin tushdi‖8 ball potted too early|8-й шар забит раньше времени|8 numaralı top erken girdi|Bola 8 embocada antes de tiempo|Bola 8 encaçapada cedo demais|دخلت الكرة 8 مبكرًا|Bola 8 masuk terlalu cepat|8 नंबर की गेंद समय से पहले पॉकेट हुई|Bille 8 empochée trop tôt|Die 8 wurde zu früh versenkt|8번 공이 너무 일찍 들어갔습니다|8番ボールを早く落としすぎた|8号球过早落袋
+Boshladik!‖Let's go!|Поехали!|Başlayalım!|¡Empecemos!|Vamos lá!|هيا بنا!|Ayo mulai!|चलो शुरू करें!|C'est parti !|Los geht's!|시작합시다!|いくぞ!|开始吧!
+{0} sindiradi — omad!‖{0} is breaking — good luck!|{0} разбивает — удачи!|{0} açıyor — bol şans!|{0} saca: ¡suerte!|{0} vai abrir — boa sorte!|{0} يكسر — حظًا موفقًا!|{0} melakukan break — semoga beruntung!|{0} ब्रेक कर रहा है — शुभकामनाएँ!|{0} casse — bonne chance !|{0} stößt an — viel Glück!|{0}님이 브레이크 — 행운을 빌어요!|{0}のブレイク — 幸運を!|{0}开球 — 祝好运!
+{0} sindiradi‖{0} is breaking|{0} разбивает|{0} açıyor|{0} saca|{0} vai abrir|{0} يكسر|{0} melakukan break|{0} ब्रेक कर रहा है|{0} casse|{0} stößt an|{0}님이 브레이크|{0}のブレイク|{0}开球
+{0} navbati‖{0}'s turn|Ход: {0}|Sıra {0}'de|Turno de {0}|Vez de {0}|دور {0}|Giliran {0}|{0} की बारी|Tour de {0}|{0} ist dran|{0}님의 차례|{0}の番|轮到{0}
+{0} YUTDI!‖{0} WINS!|{0} ПОБЕЖДАЕТ!|{0} KAZANDI!|¡{0} GANA!|{0} VENCEU!|{0} يفوز!|{0} MENANG!|{0} जीता!|{0} GAGNE !|{0} GEWINNT!|{0} 승리!|{0}の勝利!|{0}获胜!
+Salom! 👋‖Hello! 👋|Привет! 👋|Selam! 👋|¡Hola! 👋|Olá! 👋|مرحبًا! 👋|Halo! 👋|नमस्ते! 👋|Salut ! 👋|Hallo! 👋|안녕하세요! 👋|こんにちは! 👋|你好! 👋
+Omad! 🍀‖Good luck! 🍀|Удачи! 🍀|Bol şans! 🍀|¡Suerte! 🍀|Boa sorte! 🍀|حظًا موفقًا! 🍀|Semoga beruntung! 🍀|शुभकामनाएँ! 🍀|Bonne chance ! 🍀|Viel Glück! 🍀|행운을 빌어요! 🍀|幸運を! 🍀|祝你好运! 🍀
+Zo'r zarba! 👏‖Great shot! 👏|Отличный удар! 👏|Harika vuruş! 👏|¡Gran tiro! 👏|Belíssima tacada! 👏|ضربة رائعة! 👏|Tembakan hebat! 👏|शानदार शॉट! 👏|Beau coup ! 👏|Toller Stoß! 👏|멋진 샷! 👏|ナイスショット! 👏|好球! 👏
+Voy! 😮‖Wow! 😮|Ого! 😮|Vay! 😮|¡Vaya! 😮|Uau! 😮|واو! 😮|Wah! 😮|वाह! 😮|Oh ! 😮|Wow! 😮|와! 😮|わあ! 😮|哇! 😮
+Rahmat! 🙏‖Thanks! 🙏|Спасибо! 🙏|Teşekkürler! 🙏|¡Gracias! 🙏|Obrigado! 🙏|شكرًا! 🙏|Terima kasih! 🙏|धन्यवाद! 🙏|Merci ! 🙏|Danke! 🙏|감사합니다! 🙏|ありがとう! 🙏|谢谢! 🙏
+Yaxshi o'yin! 🤝‖Good game! 🤝|Хорошая игра! 🤝|İyi oyundu! 🤝|¡Buena partida! 🤝|Bom jogo! 🤝|مباراة جيدة! 🤝|Permainan bagus! 🤝|अच्छा खेल! 🤝|Bien joué ! 🤝|Gutes Spiel! 🤝|굿 게임! 🤝|グッドゲーム! 🤝|打得好! 🤝
+Ha-ha 😂‖Haha 😂|Ха-ха 😂|Haha 😂|Jaja 😂|Haha 😂|هههه 😂|Haha 😂|हा-हा 😂|Haha 😂|Haha 😂|하하 😂|あはは 😂|哈哈 😂
+Kechirasiz 😅‖Sorry 😅|Извини 😅|Pardon 😅|Perdón 😅|Desculpe 😅|آسف 😅|Maaf 😅|माफ़ करना 😅|Désolé 😅|Sorry 😅|미안해요 😅|ごめん 😅|抱歉 😅
+Qoyil! 🔥‖Respect! 🔥|Респект! 🔥|Saygılar! 🔥|¡Respeto! 🔥|Respeito! 🔥|احترامي! 🔥|Salut! 🔥|सलाम! 🔥|Respect ! 🔥|Respekt! 🔥|리스펙트! 🔥|リスペクト! 🔥|佩服! 🔥
+Sizga ham! 🍀‖You too! 🍀|И вам! 🍀|Sana da! 🍀|¡Igualmente! 🍀|Para você também! 🍀|وأنت أيضًا! 🍀|Kamu juga! 🍀|आपको भी! 🍀|À vous aussi ! 🍀|Dir auch! 🍀|당신도요! 🍀|そちらも! 🍀|你也是! 🍀
+Assalomu alaykum!‖Hello there!|Здравствуйте!|Merhaba!|¡Hola!|Olá!|السلام عليكم!|Halo!|नमस्कार!|Bonjour !|Hallo zusammen!|안녕하세요!|こんにちは!|你好!
+Oq shar bilan oltin sharni nishonga yuboring!‖Shoot the golden ball at the target with the cue ball!|Отправьте золотой шар в цель белым шаром!|Beyaz topla altın topu hedefe gönder!|¡Manda la bola dorada al objetivo con la blanca!|Mande a bola dourada ao alvo com a bola branca!|أرسل الكرة الذهبية إلى الهدف بالكرة البيضاء!|Kirim bola emas ke target dengan bola putih!|सफ़ेद गेंद से सुनहरी गेंद को निशाने पर भेजें!|Envoyez la bille dorée sur la cible avec la blanche !|Schieße mit der weißen Kugel die goldene ins Ziel!|흰 공으로 황금 공을 목표에 보내세요!|白球で金のボールをターゲットへ!|用白球把金球打进目标!
+Yaqin qoldi!‖Close call!|Почти!|Ramak kaldı!|¡Casi!|Quase!|اقتربت!|Hampir!|बस थोड़ा सा!|Presque !|Knapp daneben!|아깝네요!|惜しい!|差一点!
+Tegmadi!‖Missed!|Мимо!|Iskaladı!|¡Fallaste!|Errou!|أخطأت!|Meleset!|चूक गए!|Raté !|Verfehlt!|빗나갔어요!|ミス!|没打中!
+MARKAZ! 🎯‖BULLSEYE! 🎯|В ЯБЛОЧКО! 🎯|TAM İSABET! 🎯|¡EN EL BLANCO! 🎯|NA MOSCA! 🎯|في الصميم! 🎯|TEPAT SASARAN! 🎯|बिल्कुल निशाने पर! 🎯|EN PLEIN CENTRE ! 🎯|VOLLTREFFER! 🎯|정중앙! 🎯|ど真ん中! 🎯|正中靶心! 🎯
+Omadingiz keldi!‖Lucky you!|Вам повезло!|Şansın yaver gitti!|¡Qué suerte!|Que sorte!|حالفك الحظ!|Beruntung sekali!|आप किस्मत वाले हैं!|Quelle chance !|Glück gehabt!|운이 좋네요!|ラッキー!|好运降临!
+Oltin shar nishonga tushdi!‖The golden ball hit the target!|Золотой шар попал в цель!|Altın top hedefe girdi!|¡La bola dorada dio en el blanco!|A bola dourada acertou o alvo!|أصابت الكرة الذهبية الهدف!|Bola emas mengenai target!|सुनहरी गेंद निशाने पर लगी!|La bille dorée a touché la cible !|Die goldene Kugel hat das Ziel getroffen!|황금 공이 목표에 들어갔습니다!|金のボールがターゲットに命中!|金球命中目标!
+Tasalli sovg'asi‖Consolation prize|Утешительный приз|Teselli ödülü|Premio de consolación|Prêmio de consolação|جائزة ترضية|Hadiah hiburan|सांत्वना पुरस्कार|Lot de consolation|Trostpreis|위로 상품|参加賞|安慰奖
+AYLANISH (SPIN)‖SPIN|СПИН|SPİN|EFECTO|EFEITO|الدوران (سبين)|SPIN|स्पिन|EFFET|DRALL|스핀|スピン|旋转
+Oq sharning qayeriga urishni tanlang‖Choose where to hit the cue ball|Выберите, куда бить по битку|Beyaz topun neresine vuracağını seç|Elige dónde golpear la bola blanca|Escolha onde bater na bola branca|اختر مكان ضرب الكرة البيضاء|Pilih bagian bola putih yang dipukul|सफ़ेद गेंद पर कहाँ मारना है चुनें|Choisissez où frapper la bille blanche|Wähle, wo du die weiße Kugel triffst|흰 공의 어디를 칠지 선택하세요|白球のどこを撃つか選ぶ|选择击打白球的位置
+▲ Yuqori — urilgandan keyin oldinga yuradi   ▼ Past — orqaga qaytadi‖▲ Top — rolls forward after impact   ▼ Bottom — draws back|▲ Верх — катится вперёд после удара   ▼ Низ — откат назад|▲ Üst — çarpınca ileri gider   ▼ Alt — geri döner|▲ Arriba: avanza tras el impacto   ▼ Abajo: retrocede|▲ Cima — segue em frente após o impacto   ▼ Baixo — volta|▲ أعلى — تتقدم بعد الاصطدام   ▼ أسفل — ترجع للخلف|▲ Atas — maju setelah benturan   ▼ Bawah — mundur|▲ ऊपर — टकराने के बाद आगे बढ़ती है   ▼ नीचे — पीछे लौटती है|▲ Haut : avance après l'impact   ▼ Bas : recule|▲ Oben — rollt nach dem Treffer vor   ▼ Unten — zieht zurück|▲ 위 — 충돌 후 앞으로 진행   ▼ 아래 — 뒤로 당김|▲ 上 — 当たった後に前進   ▼ 下 — 引き戻す|▲ 上 — 撞击后前进   ▼ 下 — 撞后回拉
+◀ ▶ Yon — bortga tekkanda burilib qaytadi‖◀ ▶ Side — curves back after hitting a cushion|◀ ▶ Бок — после борта меняет направление|◀ ▶ Yan — bandaya çarpınca yön değiştirir|◀ ▶ Lado: cambia de dirección al tocar la banda|◀ ▶ Lado — muda de direção ao bater na tabela|◀ ▶ الجانب — تنحرف عند ملامسة الحافة|◀ ▶ Samping — berbelok setelah kena bantalan|◀ ▶ किनारा — बोर्ड से टकराकर मुड़ती है|◀ ▶ Côté : dévie après la bande|◀ ▶ Seitlich — lenkt nach der Bande ab|◀ ▶ 옆 — 쿠션에 닿으면 방향이 바뀜|◀ ▶ 横 — クッションで曲がる|◀ ▶ 侧旋 — 碰库后转向
+Tayyor bo'lsa doiradan tashqariga bosing‖Tap outside the circle when ready|Нажмите вне круга, когда будете готовы|Hazır olunca dairenin dışına dokun|Toca fuera del círculo cuando estés listo|Toque fora do círculo quando estiver pronto|اضغط خارج الدائرة عندما تكون جاهزًا|Ketuk di luar lingkaran jika sudah siap|तैयार होने पर घेरे के बाहर टैप करें|Touchez en dehors du cercle quand vous êtes prêt|Tippe außerhalb des Kreises, wenn du bereit bist|준비되면 원 밖을 탭하세요|準備ができたら円の外をタップ|准备好后点击圆圈外部
+✓ Olindi‖✓ Collected|✓ Получено|✓ Alındı|✓ Recibido|✓ Recebido|✓ تم الاستلام|✓ Diterima|✓ मिल गया|✓ Récupéré|✓ Abgeholt|✓ 받음|✓ 受取済み|✓ 已领取
+Bugungi sovg'angiz tayyor — bosing!‖Your gift for today is ready — tap!|Ваш подарок на сегодня готов — нажмите!|Bugünkü hediyen hazır — dokun!|Tu regalo de hoy está listo: ¡toca!|Seu presente de hoje está pronto — toque!|هديتك لليوم جاهزة — اضغط!|Hadiah hari ini siap — ketuk!|आज का उपहार तैयार है — टैप करें!|Votre cadeau du jour est prêt — touchez !|Dein Tagesgeschenk ist bereit — tippen!|오늘의 선물이 준비됐어요 — 탭하세요!|今日のギフトの準備完了 — タップ!|今日礼物已就绪 — 点击领取!
+Keyingi sovg'a: {0} soat {1} daqiqadan keyin‖Next gift in {0} h {1} min|Следующий подарок через {0} ч {1} мин|Sonraki hediye: {0} sa {1} dk sonra|Próximo regalo en {0} h {1} min|Próximo presente em {0} h {1} min|الهدية التالية بعد {0} س {1} د|Hadiah berikutnya dalam {0} j {1} m|अगला उपहार {0} घंटे {1} मिनट बाद|Prochain cadeau dans {0} h {1} min|Nächstes Geschenk in {0} Std. {1} Min.|다음 선물까지 {0}시간 {1}분|次のギフトまで{0}時間{1}分|下次礼物还有{0}小时{1}分钟
+Tabriklaymiz!‖Congratulations!|Поздравляем!|Tebrikler!|¡Felicidades!|Parabéns!|تهانينا!|Selamat!|बधाई हो!|Félicitations !|Glückwunsch!|축하합니다!|おめでとう!|恭喜!
+G'ildirakdan yutuq:‖You won from the wheel:|Выигрыш с колеса:|Çarktan kazandığın:|Ganaste en la ruleta:|Você ganhou na roleta:|ما ربحته من العجلة:|Kamu menang dari roda:|चक्र से आपने जीता:|Gagné à la roue :|Gewinn vom Rad:|룰렛 당첨:|ルーレットの当選:|转盘奖品:
+{0} tanga‖{0} coins|{0} монет|{0} jeton|{0} monedas|{0} moedas|{0} عملة|{0} koin|{0} सिक्के|{0} pièces|{0} Münzen|코인 {0}개|{0}コイン|{0}金币
+Omadli zarba x{0}‖Lucky Shot x{0}|Счастливый удар x{0}|Şanslı Vuruş x{0}|Tiro de la suerte x{0}|Tacada da sorte x{0}|ضربة الحظ x{0}|Tembakan Beruntung x{0}|लकी शॉट x{0}|Coup chanceux x{0}|Glücksstoß x{0}|럭키 샷 x{0}|ラッキーショット x{0}|幸运一击 x{0}
+{0} pul‖{0} cash|{0} нал.|{0} nakit|{0} de efectivo|{0} de dinheiro|{0} نقد|{0} uang tunai|{0} कैश|{0} de cash|{0} Cash|캐시 {0}|キャッシュ{0}|{0}现金
+G'ildirak x{0}‖Wheel x{0}|Колесо x{0}|Çark x{0}|Ruleta x{0}|Roleta x{0}|العجلة x{0}|Roda x{0}|चक्र x{0}|Roue x{0}|Rad x{0}|룰렛 x{0}|ルーレット x{0}|转盘 x{0}
+{0} pul — katta sovg'a‖{0} cash — big prize|{0} нал. — большой приз|{0} nakit — büyük ödül|{0} de efectivo: gran premio|{0} de dinheiro — grande prêmio|{0} نقد — جائزة كبرى|{0} uang tunai — hadiah besar|{0} कैश — बड़ा इनाम|{0} de cash — gros lot|{0} Cash — Hauptgewinn|캐시 {0} — 큰 상품|キャッシュ{0} — 大賞|{0}现金 — 大奖
+Yutuq ochildi · +{0} tanga‖Achievement unlocked · +{0} coins|Достижение открыто · +{0} монет|Başarı açıldı · +{0} jeton|Logro desbloqueado · +{0} monedas|Conquista desbloqueada · +{0} moedas|تم فتح الإنجاز · +{0} عملة|Pencapaian terbuka · +{0} koin|उपलब्धि अनलॉक · +{0} सिक्के|Succès débloqué · +{0} pièces|Erfolg freigeschaltet · +{0} Münzen|업적 달성 · 코인 +{0}|実績解除 · +{0}コイン|成就解锁 · +{0}金币
+{0} ta yangi yutuq‖{0} new achievements|{0} новых достижений|{0} yeni başarı|{0} nuevos logros|{0} novas conquistas|{0} إنجازات جديدة|{0} pencapaian baru|{0} नई उपलब्धियाँ|{0} nouveaux succès|{0} neue Erfolge|새 업적 {0}개|新しい実績{0}個|{0}个新成就
+Yulduz‖Star|Звезда|Yıldız|Estrella|Estrela|نجمة|Bintang|सितारा|Étoile|Stern|스타|スター|之星
+Profil‖Profile|Профиль|Profil|Perfil|Perfil|الملف الشخصي|Profil|प्रोफ़ाइल|Profil|Profil|프로필|プロフィール|个人资料
+{0}-kun‖Day {0}|День {0}|{0}. Gün|Día {0}|Dia {0}|اليوم {0}|Hari {0}|दिन {0}|Jour {0}|Tag {0}|{0}일차|{0}日目|第{0}天
+Jonli o'yinlar‖Live matches|Прямые матчи|Canlı maçlar|Partidas en vivo|Partidas ao vivo|مباريات مباشرة|Pertandingan langsung|लाइव मैच|Matchs en direct|Live-Spiele|라이브 경기|ライブ対戦|直播对局
+Barcha davlatlar‖All countries|Все страны|Tüm ülkeler|Todos los países|Todos os países|كل الدول|Semua negara|सभी देश|Tous les pays|Alle Länder|모든 국가|すべての国|所有国家
+JONLI‖LIVE|LIVE|CANLI|EN VIVO|AO VIVO|مباشر|LANGSUNG|लाइव|EN DIRECT|LIVE|라이브|ライブ|直播
+Hozir jonli o'yin yo'q‖No live matches right now|Сейчас нет прямых матчей|Şu an canlı maç yok|Ahora no hay partidas en vivo|Nenhuma partida ao vivo agora|لا توجد مباريات مباشرة الآن|Belum ada pertandingan langsung|अभी कोई लाइव मैच नहीं|Aucun match en direct pour l'instant|Gerade keine Live-Spiele|현재 라이브 경기가 없습니다|現在ライブ対戦はありません|目前没有直播对局
+Onlayn o'ynang — sizning o'yiningizni boshqalar ko'rishi mumkin!‖Play online — others can watch your match!|Играйте онлайн — другие смогут смотреть вашу игру!|Çevrimiçi oyna — maçını başkaları izleyebilir!|Juega online: ¡otros podrán ver tu partida!|Jogue online — outros poderão assistir à sua partida!|العب أونلاين — يمكن للآخرين مشاهدة مباراتك!|Main online — orang lain bisa menonton pertandinganmu!|ऑनलाइन खेलें — दूसरे आपका मैच देख सकते हैं!|Jouez en ligne — d'autres pourront suivre votre match !|Spiele online — andere können dein Spiel ansehen!|온라인으로 플레이하면 다른 사람이 내 경기를 볼 수 있어요!|オンラインで遊ぶと、他の人があなたの試合を観戦できます!|在线对战,别人可以观看你的比赛!
+Demo o'yin‖Demo match|Демо-матч|Demo maç|Partida demo|Partida demo|مباراة تجريبية|Pertandingan demo|डेमो मैच|Match démo|Demo-Spiel|데모 경기|デモ対戦|演示对局
+O'yin tugagan‖The match has ended|Матч завершён|Maç bitti|La partida terminó|A partida terminou|انتهت المباراة|Pertandingan telah selesai|मैच खत्म हो चुका है|Le match est terminé|Das Spiel ist beendet|경기가 끝났습니다|試合は終了しました|对局已结束
+Jonli tomosha‖Watching live|Прямой просмотр|Canlı izleme|Viendo en vivo|Assistindo ao vivo|مشاهدة مباشرة|Menonton langsung|लाइव देख रहे हैं|Visionnage en direct|Live-Zuschauen|라이브 관전 중|ライブ観戦中|正在观战
+Ovozli suhbat‖Voice chat|Голосовой чат|Sesli sohbet|Chat de voz|Bate-papo por voz|دردشة صوتية|Obrolan suara|वॉइस चैट|Chat vocal|Sprachchat|음성 채팅|ボイスチャット|语音聊天
+Mikrofon o'chiq‖Microphone is off|Микрофон выключен|Mikrofon kapalı|Micrófono apagado|Microfone desligado|الميكروفون مغلق|Mikrofon mati|माइक बंद है|Micro coupé|Mikrofon aus|마이크 꺼짐|マイクはオフです|麦克风已关闭
+Ovozli suhbat ulandi‖Voice chat connected|Голосовой чат подключён|Sesli sohbet bağlandı|Chat de voz conectado|Bate-papo por voz conectado|تم توصيل الدردشة الصوتية|Obrolan suara tersambung|वॉइस चैट जुड़ गया|Chat vocal connecté|Sprachchat verbunden|음성 채팅 연결됨|ボイスチャットに接続しました|语音聊天已连接
+Raqib kutilmoqda…‖Waiting for the opponent…|Ожидание соперника…|Rakip bekleniyor…|Esperando al rival…|Aguardando o oponente…|في انتظار الخصم…|Menunggu lawan…|विरोधी की प्रतीक्षा…|En attente de l'adversaire…|Warte auf den Gegner…|상대를 기다리는 중…|相手を待っています…|等待对手…
+Ovozli aloqa uzildi‖Voice connection lost|Голосовая связь прервана|Sesli bağlantı koptu|Se perdió la conexión de voz|Conexão de voz perdida|انقطع الاتصال الصوتي|Koneksi suara terputus|वॉइस कनेक्शन टूट गया|Connexion vocale perdue|Sprachverbindung verloren|음성 연결이 끊겼습니다|音声接続が切れました|语音连接已断开
+Bu qurilmada ovozli suhbat ishlamaydi‖Voice chat is not supported on this device|Голосовой чат не поддерживается на этом устройстве|Bu cihazda sesli sohbet desteklenmiyor|El chat de voz no funciona en este dispositivo|O bate-papo por voz não funciona neste dispositivo|الدردشة الصوتية غير مدعومة على هذا الجهاز|Obrolan suara tidak didukung di perangkat ini|इस डिवाइस पर वॉइस चैट काम नहीं करता|Le chat vocal n'est pas pris en charge sur cet appareil|Sprachchat wird auf diesem Gerät nicht unterstützt|이 기기에서는 음성 채팅을 사용할 수 없습니다|このデバイスではボイスチャットは使えません|此设备不支持语音聊天
+Mikrofonga ruxsat berilmadi‖Microphone permission denied|Нет доступа к микрофону|Mikrofon izni verilmedi|Permiso de micrófono denegado|Permissão de microfone negada|تم رفض إذن الميكروفون|Izin mikrofon ditolak|माइक की अनुमति नहीं मिली|Autorisation du micro refusée|Mikrofonzugriff verweigert|마이크 권한이 거부되었습니다|マイクの許可が拒否されました|麦克风权限被拒绝
+Raqib mikrofonni yoqdi‖Your opponent turned on the mic|Соперник включил микрофон|Rakip mikrofonu açtı|Tu rival activó el micrófono|Seu oponente ligou o microfone|فعّل خصمك الميكروفون|Lawan menyalakan mikrofon|विरोधी ने माइक चालू किया|Votre adversaire a activé le micro|Dein Gegner hat das Mikrofon eingeschaltet|상대가 마이크를 켰습니다|相手がマイクをオンにしました|对手已开启麦克风
+🎤 tugmasini bosing‖Tap 🎤 to talk|Нажмите 🎤, чтобы говорить|Konuşmak için 🎤'ye dokun|Toca 🎤 para hablar|Toque em 🎤 para falar|اضغط 🎤 للتحدث|Ketuk 🎤 untuk bicara|बोलने के लिए 🎤 दबाएँ|Touchez 🎤 pour parler|Tippe auf 🎤 zum Sprechen|🎤를 눌러 대화하세요|🎤をタップして話す|点击🎤开始通话
+Rahmat 😅‖Thanks 😅|Спасибо 😅|Sağ ol 😅|Gracias 😅|Valeu 😅|شكرًا 😅|Makasih 😅|शुक्रिया 😅|Merci 😅|Danke 😅|고마워요 😅|ありがとう 😅|谢啦 😅
+Eh! 😅‖Oops! 😅|Ой! 😅|Eh! 😅|¡Ay! 😅|Ops! 😅|آخ! 😅|Aduh! 😅|अरे! 😅|Oups ! 😅|Ups! 😅|아이고! 😅|おっと! 😅|哎呀! 😅
+Oson! 😏‖Easy! 😏|Легко! 😏|Kolay! 😏|¡Fácil! 😏|Fácil! 😏|سهل! 😏|Gampang! 😏|आसान! 😏|Facile ! 😏|Easy! 😏|쉽네요! 😏|楽勝! 😏|轻松! 😏
+Tabriklayman 👏‖Congrats 👏|Поздравляю 👏|Tebrikler 👏|Felicidades 👏|Parabéns 👏|مبروك 👏|Selamat 👏|बधाई 👏|Bravo 👏|Glückwunsch 👏|축하해요 👏|おめでとう 👏|恭喜 👏
