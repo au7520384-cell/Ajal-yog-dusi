@@ -1050,10 +1050,10 @@ const FONT = '"Lilita One","Arial Black",Impact,sans-serif';
 
 const POCKETS = [
   {x: 0, y: 0, r: 37, dx: -16, dy: -16, dr: 27},          // r = how close a ball centre must get to drop (wide mouths: jaws never make a ball bounce back out of a pocket it is visibly over)
-  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -23, dr: 20, mid: true},
+  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -21, dr: 19, mid: true},
   {x: FW, y: 0, r: 37, dx: 16, dy: -16, dr: 27},
   {x: 0, y: FH, r: 37, dx: -16, dy: 16, dr: 27},
-  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 23, dr: 20, mid: true},
+  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 21, dr: 19, mid: true},
   {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
 const POCKET_AIMS = [
@@ -4154,7 +4154,6 @@ function paintTable(city) {
     };
     for (const p of POCKETS) {
       const x = FX + p.x + p.dx, y = FY + p.y + p.dy, ax = Math.sign(x - (FX + FW / 2)), ay = Math.sign(y - (FY + FH / 2));
-      pocketOrnament(p, x, y, -ax, -ay);
     }
   }
   // gold pocket ring with pearls, flush with the rail (the dark hole itself is painted with the cloth below)
@@ -4171,7 +4170,7 @@ function paintTable(city) {
   }
   // felt
   ctx.save(); ctx.translate(FX, FY);
-  ctx.fillStyle = shade(city.felt[1], -22); ctx.fillRect(-18, -18, FW + 36, FH + 36);   // under-cushion / pocket mouths
+  ctx.fillStyle = "#1c060c"; ctx.fillRect(-18, -18, FW + 36, FH + 36);   // under-cushion / pocket mouths
   const fg = ctx.createRadialGradient(FW / 2, FH / 2, 20, FW / 2, FH / 2, FW * 0.62);
   fg.addColorStop(0, shade(city.felt[0], 2)); fg.addColorStop(0.5, shade(city.felt[0], -20)); fg.addColorStop(1, shade(city.felt[1], -22));
   ctx.fillStyle = fg; ctx.fillRect(0, 0, FW, FH);
@@ -4208,6 +4207,11 @@ function paintTable(city) {
     // pocket holes
     for (const p of POCKETS) {
       const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
+      if (p.mid) {   // the hole flows into the cushion notch as one dark-red funnel that fades out into the cloth
+        const sy2 = p.y < 0 ? -1 : 1, g = ctx.createLinearGradient(0, y, 0, sy2 * 8);
+        g.addColorStop(0, "rgba(50,8,12,1)"); g.addColorStop(0.6, "rgba(34,6,10,.8)"); g.addColorStop(1, "rgba(20,4,8,0)");
+        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - r + 1, y); ctx.lineTo(x - 26, sy2 * 8); ctx.lineTo(x + 26, sy2 * 8); ctx.lineTo(x + r - 1, y); ctx.closePath(); ctx.fill();
+      }
       ctx.fillStyle = "#12040a"; ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
       const pg = ctx.createRadialGradient(x - p.dx * 0.25, y - p.dy * 0.25, 2, x, y, r + 1);
       pg.addColorStop(0, "#010000"); pg.addColorStop(0.55, "#0c0202"); pg.addColorStop(0.85, "#3a0a0a"); pg.addColorStop(1, "#6a1414");
@@ -4215,7 +4219,7 @@ function paintTable(city) {
     }
   }
   // cushions with angled jaws at the pockets
-  const C = 16, cA = 32, mA = 22;
+  const C = 16, cA = 32, mA = 20;
   const segs = lucky ? [
     [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
     [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
