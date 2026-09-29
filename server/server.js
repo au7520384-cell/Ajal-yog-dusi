@@ -248,6 +248,12 @@ function geoCountry(req) {   // set by some hosts / CDNs (Cloudflare, Vercel…)
 // ---------------------------------------------------------------- routes
 const routes = {
   "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: !!STRIPE_KEY}),
+  // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
+  "GET /api/ice": () => {
+    const iceServers = [{urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}];
+    if (process.env.TURN_URLS) iceServers.push({urls: process.env.TURN_URLS.split(",").map(x => x.trim()), username: process.env.TURN_USER || "", credential: process.env.TURN_PASS || ""});
+    return {iceServers};
+  },
   "GET /api/skus": () => ({skus: SKUS, payments: !!STRIPE_KEY, referral: REFERRAL}),
   "GET /api/editions": () => editionsLeft(),
   async "POST /api/editions/claim"(req, u) {
@@ -256,6 +262,20 @@ const routes = {
     if (!EDITION_CAP[id]) return [400, {error: "not_limited"}];
     const r = claimEdition(u, id);
     return r.error ? [409, {error: r.error, ...editionsLeft()[id]}] : {id, serial: r.serial, cap: r.cap};
+  },
+  // real matches in progress, for the Live screen (optionally filtered by the players' country)
+  "GET /api/live": req => {
+    const cc = (new URL(req.url, "http://x").searchParams.get("country") || "").toUpperCase().slice(0, 2);
+    const list = [];
+    for (const r of rooms.values()) {
+      if (r.over || !r.p[0] || !r.p[1]) continue;
+      const p = r.p.map(s => ({name: s.profile.name, avatar: s.profile.avatar, frame: s.profile.frame, country: s.profile.country, level: s.profile.level}));
+      if (cc && !p.some(x => (x.country || "").toUpperCase() === cc)) continue;
+      list.push({room: r.id, city: r.city, started: r.startedAt, specs: r.specs.size, p});
+    }
+    list.sort((a, b) => b.specs - a.specs || a.started - b.started);
+    const countries = {}; for (const r of rooms.values()) if (!r.over) for (const s of r.p) { const c = (s.profile.country || "").toUpperCase(); if (c) countries[c] = (countries[c] || 0) + 1; }
+    return {live: list.slice(0, 50), total: list.length, countries};
   },
   "GET /api/online": () => {
     const byCity = {}; for (const [city, q] of queues) byCity[city] = q.length;
@@ -574,7 +594,13 @@ const wss = new WebSocketServer({server, path: "/ws", maxPayload: 32 * 1024});
 const clients = new Map();          // userId -> ws
 const queues = new Map();           // cityId -> [ws]
 const rooms = new Map();            // roomId -> room
-const RELAY = new Set(["aim", "shot", "state", "chat", "place", "spin"]);
+const RELAY = new Set(["aim", "shot", "state", "chat", "place", "spin", "rtc"]);
+const SPEC_FWD = new Set(["aim", "shot", "state", "place", "spin"]);   // what spectators get (no voice signalling, no chat)
+function bucket(ws, key, max, perMs) {   // small token bucket per socket
+  const now = Date.now(), b = ws.bk || (ws.bk = {}), x = b[key] || (b[key] = {n: max, t: now});
+  x.n = Math.min(max, x.n + (now - x.t) / perMs); x.t = now;
+  if (x.n < 1) return false; x.n -= 1; return true;
+}
 
 function wsSend(ws, obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
 function leaveQueue(ws) { for (const q of queues.values()) { const i = q.indexOf(ws); if (i >= 0) q.splice(i, 1); } }
@@ -587,6 +613,8 @@ function finish(room, winnerSeat, reason) {
   if (lu) lu.games++;
   markDirty();
   for (const s of [a, b]) { wsSend(s, {t: "end", winner: winnerSeat, reason}); if (s) s.room = null; }
+  for (const sp of room.specs) { wsSend(sp, {t: "specEnd", winner: winnerSeat, reason}); sp.spec = null; }
+  room.specs.clear();
   rooms.delete(room.id);
 }
 
@@ -610,17 +638,35 @@ wss.on("connection", (ws, req) => {
       const opp = q.find(o => o.uid !== ws.uid && o.readyState === 1);
       if (!opp) { if (code && m.join) return wsSend(ws, {t: "nocode"}); q.push(ws); return wsSend(ws, {t: "queued", city, waiting: q.length}); }
       q.splice(q.indexOf(opp), 1);
-      const room = {id: crypto.randomUUID(), city, p: [opp, ws], seed: crypto.randomInt(2 ** 31), over: false, reports: {}};
-      rooms.set(room.id, room);
       const first = crypto.randomInt(2);
+      const room = {id: crypto.randomUUID(), city, p: [opp, ws], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null};
+      rooms.set(room.id, room);
       room.p.forEach((s, seat) => { s.room = room; s.seat = seat; });
       room.p.forEach((s, seat) => wsSend(s, {t: "match", room: room.id, seat, first, seed: room.seed, city, opp: room.p[1 - seat].profile}));
     } else if (m.t === "cancel") {
       leaveQueue(ws);
+    } else if (m.t === "spectate") {
+      if (ws.room) return;
+      if (ws.spec) { ws.spec.specs.delete(ws); ws.spec = null; }
+      const room = rooms.get(String(m.room || ""));
+      if (!room || room.over || room.specs.size >= 200) return wsSend(ws, {t: "nospec"});
+      room.specs.add(ws); ws.spec = room;
+      wsSend(ws, {t: "spec", room: room.id, seed: room.seed, first: room.first, city: room.city, p: room.p.map(s => { const {code, ...r} = s.profile; return r; }), state: room.last, specs: room.specs.size});
+    } else if (m.t === "unspec") {
+      if (ws.spec) { ws.spec.specs.delete(ws); ws.spec = null; }
     } else if (RELAY.has(m.t) && ws.room && !ws.room.over) {
-      const other = ws.room.p[1 - ws.seat];
-      if (m.t === "chat") m.msg = String(m.msg || "").slice(0, 40);
-      wsSend(other, {...m, from: ws.seat});
+      const room = ws.room, other = room.p[1 - ws.seat];
+      if (m.t === "chat") {
+        if (!bucket(ws, "chat", 6, 1500)) return;
+        m.msg = String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 40); if (!m.msg) return;
+      } else if (m.t === "rtc") {
+        if (!bucket(ws, "rtc", 60, 500)) return;
+        m = {t: "rtc", k: String(m.k || "").slice(0, 12), d: m.d && typeof m.d === "object" ? m.d : null};
+      }
+      const out = {...m, from: ws.seat};
+      if (m.t === "state") room.last = out;
+      wsSend(other, out);
+      if (SPEC_FWD.has(m.t) && room.specs.size) for (const sp of room.specs) wsSend(sp, out);
     } else if (m.t === "result" && ws.room) {
       const room = ws.room, w = +m.winner === 1 ? 1 : 0;
       room.reports[ws.seat] = w;
@@ -634,6 +680,7 @@ wss.on("connection", (ws, req) => {
   });
   ws.on("close", () => {
     leaveQueue(ws);
+    if (ws.spec) { ws.spec.specs.delete(ws); ws.spec = null; }
     if (clients.get(u.id) === ws) clients.delete(u.id);
     const room = ws.room;
     if (room && !room.over) { wsSend(room.p[1 - ws.seat], {t: "oppLeft"}); finish(room, 1 - ws.seat, "left"); }
