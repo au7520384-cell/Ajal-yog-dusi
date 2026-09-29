@@ -1049,12 +1049,12 @@ const SPIN_UI = {x: W / 2, y: H / 2 + 20, r: 150};
 const FONT = '"Lilita One","Arial Black",Impact,sans-serif';
 
 const POCKETS = [
-  {x: 0, y: 0, r: 37, dx: -8, dy: -8, dr: 27},          // r = how close a ball centre must get to drop (wide mouths: jaws never make a ball bounce back out of a pocket it is visibly over)
-  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -11, dr: 24, mid: true},
-  {x: FW, y: 0, r: 37, dx: 8, dy: -8, dr: 27},
-  {x: 0, y: FH, r: 37, dx: -8, dy: 8, dr: 27},
-  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 11, dr: 24, mid: true},
-  {x: FW, y: FH, r: 37, dx: 8, dy: 8, dr: 27},
+  {x: 0, y: 0, r: 37, dx: -7, dy: -7, dr: 25},          // r = how close a ball centre must get to drop (wide mouths: jaws never make a ball bounce back out of a pocket it is visibly over)
+  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -7, dr: 21, mid: true},
+  {x: FW, y: 0, r: 37, dx: 7, dy: -7, dr: 25},
+  {x: 0, y: FH, r: 37, dx: -7, dy: 7, dr: 25},
+  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 7, dr: 21, mid: true},
+  {x: FW, y: FH, r: 37, dx: 7, dy: 7, dr: 25},
 ];
 const POCKET_AIMS = [
   {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
@@ -4133,19 +4133,19 @@ function paintTable(city) {
     };
     for (const p of POCKETS) {
       const x = FX + p.x + p.dx, y = FY + p.y + p.dy, ax = Math.sign(x - (FX + FW / 2)), ay = Math.sign(y - (FY + FH / 2));
-      if (!p.mid) plate(x + ax * 6, y + ay * 6, 78, 60, Math.atan2(ax, -ay));
-      else plate(x, y + ay * 8, 84, 44, ay < 0 ? 0 : Math.PI);
+      if (!p.mid) plate(x + ax * 2, y + ay * 2, 62, 46, Math.atan2(ax, -ay));   // kept inside the rail's outer edge: nothing bulges out of the frame
+      else plate(x, y + ay * 3, 72, 36, ay < 0 ? 0 : Math.PI);
     }
   }
   // leather pocket cups with a metal edge, sitting in the rail around every pocket
   if (!lucky) for (const p of POCKETS) {
-    const x = FX + p.x + p.dx, y = FY + p.y + p.dy, r = p.dr + 13;
-    const lg = ctx.createRadialGradient(x - 4, y - 4, 2, x, y, r);
-    lg.addColorStop(0, "#5a1a14"); lg.addColorStop(0.7, "#2a0806"); lg.addColorStop(1, "#120302");
-    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 8;
+    const x = FX + p.x + p.dx, y = FY + p.y + p.dy, r = p.dr + 7;
+    const lg = ctx.createRadialGradient(x - 3, y - 3, 2, x, y, r);
+    lg.addColorStop(0, "#4a1610"); lg.addColorStop(0.75, "#240806"); lg.addColorStop(1, "#120302");
+    ctx.save(); ctx.shadowColor = "rgba(0,0,0,.55)"; ctx.shadowBlur = 5;
     ctx.fillStyle = lg; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.restore();
-    ctx.strokeStyle = shade(trim, -30); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x, y, r - 1, 0, 7); ctx.stroke();
-    ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r - 1, Math.PI * 1.05, Math.PI * 1.6); ctx.stroke();
+    ctx.strokeStyle = shade(trim, -20); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r - 1, 0, 7); ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.4)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r - 1, Math.PI * 1.05, Math.PI * 1.6); ctx.stroke();
   }
   // felt
   ctx.save(); ctx.translate(FX, FY);
