@@ -2500,7 +2500,7 @@ function doShoot(power, remote) {
   G.moving = true; G.ballInHand = false; input.power = 0; G.aiPull = 0;
   if (G.isBreak) G.shake = 10 * power;
   if (!G.demo) { Snd.cue(power); if (!remote) vib(12 + power * 25 | 0); }
-  { const cd = cueDef(curP().cue); if (cd.lux && !G.demo) { spawnFx(G, cd.fx, G.balls[0].x, G.balls[0].y, 0.35 + power * 0.55); Snd.tableFx(tableFxKind(cd.fx), 0.35 + power * 0.4); } }
+  try { const cd = cueDef(curP().cue); if (cd.lux && !G.demo) { spawnFx(G, cd.fx, G.balls[0].x, G.balls[0].y, 0.35 + power * 0.55); Snd.tableFx(tableFxKind(cd.fx), 0.35 + power * 0.4); } } catch (e) { console.error("cue fx", e); }
 }
 function freeSpot(x, y) {
   const ok = (x, y) => game.balls.every(b => b.out || b.n === 0 || (b.x - x) ** 2 + (b.y - y) ** 2 > (2 * R + 1) ** 2);
@@ -4957,7 +4957,7 @@ function update() {
   if (input.charging) { if (canControl()) input.power = Math.min(1, input.power + 0.012); else { input.charging = false; input.power = 0; } }
   if (G.strike) {
     G.strike.t++;
-    if (G.strike.t >= 5) { const s = G.strike; G.strike = null; doShoot(s.power, s.remote); }
+    if (G.strike.t >= 5) { const s = G.strike; G.strike = null; try { doShoot(s.power, s.remote); } catch (e) { onFrameError(e); if (!G.moving) { G.moving = true; G.shot = G.shot || {firstHit: null, potted: [], ownBefore: -1, rails: 0, power: s.power}; } } }
   } else if (G.moving) {
     physicsFrame(G);
     if (!G.demo) Snd.roll(G.balls.reduce((s, b) => s + (b.out ? 0 : Math.hypot(b.vx, b.vy)), 0));
@@ -5054,6 +5054,7 @@ function frame() {
 }
 function onFrameError(e) {   // log once, then un-stick the current game so play carries on
   if (frameErr++ < 3) console.error("frame error:", e);
+  if (frameErr < 6) { try { toast("⚠️", "Xato: " + String(e && e.message || e).slice(0, 70), "Skrinshot yuboring"); } catch (_) {} }
   const G = game; if (!G) return;
   G.strike = null; G.aiTask = null; if (G.aiWait) { clearTimeout(G.aiWait); G.aiWait = null; }
   for (const b of G.balls) if (!isFinite(b.x) || !isFinite(b.y) || !isFinite(b.vx) || !isFinite(b.vy)) { b.vx = b.vy = 0; if (!isFinite(b.x) || !isFinite(b.y)) { const sp = freeSpot(FW * 0.25, FH / 2); b.x = sp.x; b.y = sp.y; } }
