@@ -1050,10 +1050,10 @@ const FONT = '"Lilita One","Arial Black",Impact,sans-serif';
 
 const POCKETS = [
   {x: 0, y: 0, r: 37, dx: -16, dy: -16, dr: 27},          // r = how close a ball centre must get to drop (wide mouths: jaws never make a ball bounce back out of a pocket it is visibly over)
-  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -7, dr: 22, mid: true},
+  {x: FW / 2, y: -9, r: 34, dx: 0, dy: -15, dr: 19, mid: true},
   {x: FW, y: 0, r: 37, dx: 16, dy: -16, dr: 27},
   {x: 0, y: FH, r: 37, dx: -16, dy: 16, dr: 27},
-  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 7, dr: 22, mid: true},
+  {x: FW / 2, y: FH + 9, r: 34, dx: 0, dy: 15, dr: 19, mid: true},
   {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
 const POCKET_AIMS = [
@@ -4148,7 +4148,7 @@ function paintTable(city) {
       if (!p.mid) {
         for (const rot of [0, 1]) { ctx.save(); ctx.scale(sx, sy); if (rot) { ctx.rotate(Math.PI / 2); ctx.scale(1, -1); } ctx.translate(r - 2, -11); scroll(); ctx.restore(); }
       } else {
-        for (const m of [1, -1]) { ctx.save(); ctx.scale(m, sy); ctx.translate(r - 2, -10); scroll(); ctx.restore(); }
+        for (const m of [1, -1]) { ctx.save(); ctx.scale(m, sy); ctx.translate(r - 2, -3); scroll(); ctx.restore(); }
       }
       ctx.restore();
     };
@@ -4170,7 +4170,7 @@ function paintTable(city) {
   }
   // felt
   ctx.save(); ctx.translate(FX, FY);
-  ctx.fillStyle = shade(city.felt[1], -45); ctx.fillRect(-18, -18, FW + 36, FH + 36);   // under-cushion / pocket mouths
+  ctx.fillStyle = shade(city.felt[1], -22); ctx.fillRect(-18, -18, FW + 36, FH + 36);   // under-cushion / pocket mouths
   const fg = ctx.createRadialGradient(FW / 2, FH / 2, 20, FW / 2, FH / 2, FW * 0.62);
   fg.addColorStop(0, shade(city.felt[0], 2)); fg.addColorStop(0.5, shade(city.felt[0], -20)); fg.addColorStop(1, shade(city.felt[1], -22));
   ctx.fillStyle = fg; ctx.fillRect(0, 0, FW, FH);
@@ -4214,15 +4214,15 @@ function paintTable(city) {
     }
   }
   // cushions with angled jaws at the pockets
-  const C = 16, cA = 32, mA = 28;
+  const C = 16, cA = 32, mA = 30;
   const segs = lucky ? [
     [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
     [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
   ] : [
-    [[cA, 0], [FW / 2 - mA, 0], [FW / 2 - mA + 7, -C], [cA - C, -C], "t"],
-    [[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + mA - 7, -C], "t"],
-    [[cA, FH], [FW / 2 - mA, FH], [FW / 2 - mA + 7, FH + C], [cA - C, FH + C], "b"],
-    [[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + mA - 7, FH + C], "b"],
+    [[cA, 0], [FW / 2 - mA, 0], [FW / 2 - mA + 4, -C], [cA - C, -C], "t"],
+    [[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + mA - 4, -C], "t"],
+    [[cA, FH], [FW / 2 - mA, FH], [FW / 2 - mA + 4, FH + C], [cA - C, FH + C], "b"],
+    [[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + mA - 4, FH + C], "b"],
     [[0, cA], [0, FH - cA], [-C, FH - cA + C], [-C, cA - C], "l"],
     [[FW, cA], [FW, FH - cA], [FW + C, FH - cA + C], [FW + C, cA - C], "r"],
   ];
