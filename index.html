@@ -2386,7 +2386,7 @@ function startMatch(type, city, opp, net) {
   else players = [mePlayer()];
   const G = baseGame(type, city, players);
   if (type === "ai") G.pot = city.prize;
-  if (type === "tour") { const cup = CUPS.find(c => c.id === tour.cup); G.skill = cup.skill * Math.pow(0.8, tour.round); G.pot = cup.prize; }
+  if (type === "tour") { const cup = CUPS.find(c => c.id === tour.cup); G.skill = cup.skill * Math.pow(0.8, Math.max(0, tour.rounds.length - 1)); G.pot = cup.prize; }   // tighter aim in later rounds
   if (type === "watch") G.skill = 0.004;
   if (type === "ai" || type === "tour" || type === "watch") G.cur = Math.random() < 0.5 ? 0 : 1;
   if (net) {   // real opponent: same rack from the shared seed, the server picks who breaks
@@ -2703,7 +2703,7 @@ function aiThink() {
       const t = pick(clear.length ? clear : tg.length ? tg : any.length ? any : [{x: FW / 2, y: FH / 2}]);
       plan = {angle: Math.atan2(t.y - cue.y, t.x - cue.x), power: rnd(0.45, 0.65)};
     }
-    plan.angle += gauss() * G.skill;
+    plan.angle += gauss() * (isFinite(G.skill) ? G.skill : 0.01);
   }
   let from = G.angle, to = plan.angle;
   while (to - from > Math.PI) to -= 2 * Math.PI;
