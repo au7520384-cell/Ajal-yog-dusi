@@ -1090,7 +1090,7 @@ const ON_PORTAL = /(^|\.)y8\.com$|(^|\.)id\.net$/.test(location.hostname) || /y8
 
 // ---------------------------------------------------------------- geometry
 const W = 1280, H = 720;
-const FX = 140, FY = 164, FW = 1000, FH = 500, RAIL = 44, R = 13;
+const FX = 140, FY = 162, FW = 1000, FH = 500, RAIL = 48, R = 13;
 const POWER_BAR = {x: 42, y: 184, w: 46, h: 440};
 const TRAY = {x: 1190, y: 184, w: 32, h: 440};
 const FINE = {x: 1232, y: 184, w: 38, h: 440};
@@ -3955,8 +3955,8 @@ const LUX_BASE = {
 };
 function luxRail(st, OX, OY, OW, OH, rn) {
   const [hi, mid, lo] = st.metal;
-  const segs = [[FX + 30, FY - 33, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY - 33, FW / 2 - 60, 0], [FX + 30, FY + FH + 33, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY + FH + 33, FW / 2 - 60, 0],
-    [FX - 33, FY + 30, FH - 60, 1], [FX + FW + 33, FY + 30, FH - 60, 1]];
+  const segs = [[FX + 30, FY - 37.5, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY - 37.5, FW / 2 - 60, 0], [FX + 30, FY + FH + 37.5, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY + FH + 37.5, FW / 2 - 60, 0],
+    [FX - 37.5, FY + 30, FH - 60, 1], [FX + FW + 37.5, FY + 30, FH - 60, 1]];
   const each = fn => { for (const [x, y, L, v] of segs) { ctx.save(); ctx.translate(x, y); if (v) ctx.rotate(Math.PI / 2); fn(L); ctx.restore(); } };
   (LUX_BASE[st.base || "metal"] || LUX_BASE.metal)(st, OX, OY, OW, OH, rn, each);
   if (st.flora) each(L => {                        // a climbing vine with leaves and flowers
@@ -4025,7 +4025,7 @@ function drawLuxFx(city) {
     sp = luxSpark[city.id] = [];
     for (let i = 0; i < (st.spark || 16); i++) {
       const side = Math.random() * 4 | 0, u = Math.random();
-      const x = side < 2 ? FX + 20 + u * (FW - 40) : side === 2 ? FX - 33 : FX + FW + 33, y = side === 0 ? FY - 33 + (Math.random() - 0.5) * 22 : side === 1 ? FY + FH + 33 + (Math.random() - 0.5) * 22 : FY + 20 + u * (FH - 40);
+      const x = side < 2 ? FX + 20 + u * (FW - 40) : side === 2 ? FX - 37.5 : FX + FW + 37.5, y = side === 0 ? FY - 37.5 + (Math.random() - 0.5) * 22 : side === 1 ? FY + FH + 37.5 + (Math.random() - 0.5) * 22 : FY + 20 + u * (FH - 40);
       sp.push({x: side >= 2 ? x + (Math.random() - 0.5) * 22 : x, y, r: 5 + Math.random() * 6, sp: 1.5 + Math.random() * 2.5, ph: Math.random() * 6.3});
     }
   }
@@ -4199,7 +4199,7 @@ function paintTable(city) {
   // rounded rail profile: lit outer edge, soft crown, shadow toward the cloth; drawn as concentric rings so it is seamless all the way round the corners
   if (!lucky) {
     ctx.save(); ctx.beginPath(); rr(OX, OY, OW, OH, 38); ctx.rect(FX - 18, FY - 18, FW + 36, FH + 36); ctx.clip("evenodd");
-    const iw = RAIL + 8, P = [[0, -0.45], [0.1, 0.34], [0.22, 0.1], [0.55, 0], [0.85, -0.18], [1, -0.42]];
+    const iw = RAIL + 8, P = [[0, -0.4], [0.06, 0.16], [0.2, 0.06], [0.5, 0], [0.8, -0.1], [1, -0.34]];
     const at = t => { for (let i = 1; i < P.length; i++) if (t <= P[i][0]) { const [t0, v0] = P[i - 1], [t1, v1] = P[i]; return v0 + (v1 - v0) * (t - t0) / (t1 - t0); } return P[P.length - 1][1]; };
     ctx.lineWidth = 1.25;
     for (let d = 0.5; d < iw; d += 1) {
@@ -4213,14 +4213,11 @@ function paintTable(city) {
   const sh = ctx.createLinearGradient(0, OY, 0, OY + RAIL);
   sh.addColorStop(0, "rgba(255,255,255,.28)"); sh.addColorStop(0.5, "rgba(255,255,255,.06)"); sh.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = sh; rr(OX, OY, OW, RAIL, 38); ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 2; rr(OX + 1, OY + 1, OW - 2, OH - 2, 37); ctx.stroke();
-  ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 3; rr(OX + 3, OY + 5, OW - 6, OH - 8, 35); ctx.stroke();
-  ctx.strokeStyle = trim; ctx.globalAlpha = 0.5; ctx.lineWidth = 1.5; rr(FX - RAIL + 4, FY - RAIL + 4, FW + 2 * RAIL - 8, FH + 2 * RAIL - 8, 20); ctx.stroke();
-  ctx.globalAlpha = 1;
+  ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.lineWidth = 1.5; rr(OX + 1, OY + 1, OW - 2, OH - 2, 37); ctx.stroke();
   // an inlaid strip framed in metal along every rail, jewelled sights and the city's medallion
   const INL = {classic: "wave", tribal: "chev", ikat: "diamond", gold: "dots", medal: "rope", stars: "dots"};
   const inl = st.inlay || INL[city.pat] || "rope", gem = city.gem || (city.col && city.col[1]) || trim;
-  const my = FY - 33, by = FY + FH + 33, lx = FX - 33, rx = FX + FW + 33;
+  const RC = (RAIL + 8 + 19) / 2, my = FY - RC, by = FY + FH + RC, lx = FX - RC, rx = FX + FW + RC;
   const segH = [[FX + 44, FW / 2 - 88], [FX + FW / 2 + 44, FW / 2 - 88]], segV = [[FY + 44, FH - 88]];
   const pearl = (x, y, r) => {
     const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, 0, x, y, r);
@@ -4362,7 +4359,7 @@ function paintTable(city) {
     }
     for (const x of [1, L - 1]) { ctx.fillStyle = accent; ctx.beginPath(); ctx.moveTo(x, -3.6); ctx.lineTo(x + 2.2, 0); ctx.lineTo(x, 3.6); ctx.lineTo(x - 2.2, 0); ctx.fill(); }
   };
-  const along = (x, y, L, vert) => { ctx.save(); ctx.translate(x, y); if (vert) ctx.rotate(Math.PI / 2); (modern ? inlayStrip : strip)(L); ctx.restore(); };
+  const along = (x, y, L, vert) => { const k = modern ? 1.55 : 1; ctx.save(); ctx.translate(x, y); if (vert) ctx.rotate(Math.PI / 2); ctx.scale(k, k); (modern ? inlayStrip : strip)(L / k); ctx.restore(); };   // the inlay fills most of the rail's width
   const jewel = (x, y, r = 5.2) => {             // faceted gem in a metal bezel
     ctx.save(); ctx.shadowColor = "rgba(0,0,0,.65)"; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1.5;
     const bz = ctx.createLinearGradient(x, y - r - 3, x, y + r + 3); bz.addColorStop(0, shade(trim, 100)); bz.addColorStop(0.5, trim); bz.addColorStop(1, shade(trim, -90));
@@ -4408,8 +4405,8 @@ function paintTable(city) {
   if (!lucky) {
     const mg = ctx.createLinearGradient(OX, OY, OX + OW * 0.3, OY + OH);
     mg.addColorStop(0, shade(trim, 70)); mg.addColorStop(0.35, trim); mg.addColorStop(0.55, shade(trim, -60)); mg.addColorStop(0.8, shade(trim, 40)); mg.addColorStop(1, shade(trim, -40));
-    ctx.strokeStyle = modern ? shade(city.rail[1], -30) : mg; ctx.lineWidth = modern ? 2.2 : 4; rr(OX + 2.5, OY + 2.5, OW - 5, OH - 5, 36); ctx.stroke();
-    ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1; rr(OX + 5, OY + 5, OW - 10, OH - 10, 34); ctx.stroke();
+    if (!modern) { ctx.strokeStyle = mg; ctx.lineWidth = 4; rr(OX + 2.5, OY + 2.5, OW - 5, OH - 5, 36); ctx.stroke();
+      ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1; rr(OX + 5, OY + 5, OW - 10, OH - 10, 34); ctx.stroke(); }
     ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1.5; ctx.strokeRect(FX - 19.5, FY - 19.5, FW + 39, FH + 39);
     const plate = (x, y, w, h, rot) => {
       ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
