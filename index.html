@@ -4319,22 +4319,13 @@ function paintTable(city) {
   // rounded rail profile: lit outer edge, soft crown, shadow falling toward the cloth
   if (!lucky) {
     ctx.save(); ctx.beginPath(); rr(OX, OY, OW, OH, 38); ctx.rect(FX - 18, FY - 18, FW + 36, FH + 36); ctx.clip("evenodd");
-    const prof = (x0, y0, x1, y1) => {
-      const g = ctx.createLinearGradient(x0, y0, x1, y1);
-      g.addColorStop(0, "rgba(0,0,0,.45)"); g.addColorStop(0.1, "rgba(255,255,255,.34)"); g.addColorStop(0.22, "rgba(255,255,255,.1)");
-      g.addColorStop(0.55, "rgba(255,255,255,0)"); g.addColorStop(0.85, "rgba(0,0,0,.18)"); g.addColorStop(1, "rgba(0,0,0,.42)");
-      return g;
-    };
-    const iw = RAIL - 18 + 8 + 18;                // outer edge -> cloth edge
-    ctx.fillStyle = prof(0, OY, 0, OY + iw); ctx.fillRect(OX + iw, OY, OW - 2 * iw, iw);
-    ctx.fillStyle = prof(0, OY + OH, 0, OY + OH - iw); ctx.fillRect(OX + iw, OY + OH - iw, OW - 2 * iw, iw);
-    ctx.fillStyle = prof(OX, 0, OX + iw, 0); ctx.fillRect(OX, OY + iw, iw, OH - 2 * iw);
-    ctx.fillStyle = prof(OX + OW, 0, OX + OW - iw, 0); ctx.fillRect(OX + OW - iw, OY + iw, iw, OH - 2 * iw);
-    for (const [cx, cy] of [[OX + iw, OY + iw], [OX + OW - iw, OY + iw], [OX + iw, OY + OH - iw], [OX + OW - iw, OY + OH - iw]]) {   // rounded corners
-      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, iw);
-      g.addColorStop(0, "rgba(0,0,0,.42)"); g.addColorStop(0.15, "rgba(0,0,0,.18)"); g.addColorStop(0.45, "rgba(255,255,255,0)");
-      g.addColorStop(0.78, "rgba(255,255,255,.1)"); g.addColorStop(0.9, "rgba(255,255,255,.34)"); g.addColorStop(1, "rgba(0,0,0,.45)");
-      ctx.fillStyle = g; ctx.fillRect(cx - iw, cy - iw, 2 * iw, 2 * iw);
+    const iw = RAIL + 8, P = [[0, -0.4], [0.06, 0.16], [0.2, 0.06], [0.5, 0], [0.8, -0.1], [1, -0.34]];   // one profile drawn as concentric rings: seamless, no blocks or swooshes at the corners
+    const at = t => { for (let i = 1; i < P.length; i++) if (t <= P[i][0]) { const [t0, v0] = P[i - 1], [t1, v1] = P[i]; return v0 + (v1 - v0) * (t - t0) / (t1 - t0); } return P[P.length - 1][1]; };
+    ctx.lineWidth = 1.25;
+    for (let d = 0.5; d < iw; d += 1) {
+      const v = at(d / iw); if (Math.abs(v) < 0.004) continue;
+      ctx.strokeStyle = v > 0 ? `rgba(255,255,255,${v.toFixed(3)})` : `rgba(0,0,0,${(-v).toFixed(3)})`;
+      rr(OX + d, OY + d, OW - 2 * d, OH - 2 * d, Math.max(1, 38 - d)); ctx.stroke();
     }
     ctx.restore();
   }
