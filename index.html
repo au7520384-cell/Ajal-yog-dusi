@@ -4196,17 +4196,32 @@ function paintTable(city) {
     grain(OX, OY, OW, RAIL + 8, true); grain(OX, FY + FH, OW, RAIL + 8, true);
     grain(OX, FY, RAIL + 8, FH, false); grain(FX + FW, FY, RAIL + 8, FH, false);
   });
-  // rail profile drawn as crisp concentric lines (no soft gradients, so no haze or seams at the corners)
+  // rounded rail profile: lit outer edge, soft crown, shadow falling toward the cloth
   if (!lucky) {
     ctx.save(); ctx.beginPath(); rr(OX, OY, OW, OH, 38); ctx.rect(FX - 18, FY - 18, FW + 36, FH + 36); ctx.clip("evenodd");
-    const ring = (inset, color, w) => { ctx.strokeStyle = color; ctx.lineWidth = w; rr(OX + inset, OY + inset, OW - 2 * inset, OH - 2 * inset, Math.max(6, 38 - inset)); ctx.stroke(); };
-    ring(1.5, "rgba(255,255,255,.55)", 1.6);       // lit outer edge
-    ring(5, "rgba(0,0,0,.35)", 1.4);               // groove
-    ring(9, "rgba(255,255,255,.22)", 1.2);         // crown highlight
-    ring(RAIL + 2, "rgba(255,255,255,.28)", 1.2);  // cloth-side bevel, lit
-    ring(RAIL + 5, "rgba(0,0,0,.55)", 2);          // dark line where the rail meets the cushion
+    const prof = (x0, y0, x1, y1) => {
+      const g = ctx.createLinearGradient(x0, y0, x1, y1);
+      g.addColorStop(0, "rgba(0,0,0,.45)"); g.addColorStop(0.1, "rgba(255,255,255,.34)"); g.addColorStop(0.22, "rgba(255,255,255,.1)");
+      g.addColorStop(0.55, "rgba(255,255,255,0)"); g.addColorStop(0.85, "rgba(0,0,0,.18)"); g.addColorStop(1, "rgba(0,0,0,.42)");
+      return g;
+    };
+    const iw = RAIL - 18 + 8 + 18;                // outer edge -> cloth edge
+    ctx.fillStyle = prof(0, OY, 0, OY + iw); ctx.fillRect(OX + iw, OY, OW - 2 * iw, iw);
+    ctx.fillStyle = prof(0, OY + OH, 0, OY + OH - iw); ctx.fillRect(OX + iw, OY + OH - iw, OW - 2 * iw, iw);
+    ctx.fillStyle = prof(OX, 0, OX + iw, 0); ctx.fillRect(OX, OY + iw, iw, OH - 2 * iw);
+    ctx.fillStyle = prof(OX + OW, 0, OX + OW - iw, 0); ctx.fillRect(OX + OW - iw, OY + iw, iw, OH - 2 * iw);
+    for (const [cx, cy] of [[OX + iw, OY + iw], [OX + OW - iw, OY + iw], [OX + iw, OY + OH - iw], [OX + OW - iw, OY + OH - iw]]) {   // rounded corners
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, iw);
+      g.addColorStop(0, "rgba(0,0,0,.42)"); g.addColorStop(0.15, "rgba(0,0,0,.18)"); g.addColorStop(0.45, "rgba(255,255,255,0)");
+      g.addColorStop(0.78, "rgba(255,255,255,.1)"); g.addColorStop(0.9, "rgba(255,255,255,.34)"); g.addColorStop(1, "rgba(0,0,0,.45)");
+      ctx.fillStyle = g; ctx.fillRect(cx - iw, cy - iw, 2 * iw, 2 * iw);
+    }
     ctx.restore();
   }
+  // lacquer sheen + bevels
+  const sh = ctx.createLinearGradient(0, OY, 0, OY + RAIL);
+  sh.addColorStop(0, "rgba(255,255,255,.28)"); sh.addColorStop(0.5, "rgba(255,255,255,.06)"); sh.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = sh; rr(OX, OY, OW, RAIL, 38); ctx.fill();
   ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 2; rr(OX + 1, OY + 1, OW - 2, OH - 2, 37); ctx.stroke();
   ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 3; rr(OX + 3, OY + 5, OW - 6, OH - 8, 35); ctx.stroke();
   ctx.strokeStyle = trim; ctx.globalAlpha = 0.5; ctx.lineWidth = 1.5; rr(FX - RAIL + 4, FY - RAIL + 4, FW + 2 * RAIL - 8, FH + 2 * RAIL - 8, 20); ctx.stroke();
@@ -4465,7 +4480,6 @@ function paintTable(city) {
   ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(0, 0, FW, FH); ctx.globalAlpha = 1;
   // shadow cast by the cushions onto the cloth
   const edge = (x, y, w, h, x1, y1, x2, y2) => { const g = ctx.createLinearGradient(x1, y1, x2, y2); g.addColorStop(0, "rgba(0,0,0,.14)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(x, y, w, h); };
-  edge(0, 0, FW, 22, 0, 0, 0, 22); edge(0, FH - 14, FW, 14, 0, FH, 0, FH - 14); edge(0, 0, 16, FH, 0, 0, 16, 0); edge(FW - 16, 0, 16, FH, FW, 0, FW - 16, 0);
   edge(0, 0, FW, 12, 0, 0, 0, 12); edge(0, FH - 12, FW, 12, 0, FH, 0, FH - 12); edge(0, 0, 12, FH, 0, 0, 12, 0); edge(FW - 12, 0, 12, FH, FW, 0, FW - 12, 0);
   if (!lucky) {
     const rid = city.ring || city.id, rim = rid && ringPicSoft(rid);
@@ -4497,31 +4511,33 @@ function paintTable(city) {
     [[0, cA], [0, FH - cA], [-C, FH - cA + C], [-C, cA - C], "l"],
     [[FW, cA], [FW, FH - cA], [FW + C, FH - cA + C], [FW + C, cA - C], "r"],
   ];
-  if (!lucky) for (const [ox, oy] of [[0, 0], [FW, 0], [0, FH], [FW, FH]]) {   // join the cushions round every corner: one continuous rim, no gap by the pocket
-    const sx = ox ? 1 : -1, sy = oy ? 1 : -1, ex = (u, v) => [ox + sx * u, oy + sy * v];
-    segs.push([ex(0, 0), ex(-cA, 0), ex(-(cA - C), C), ex(C, C), "t", 1]);
-    segs.push([ex(0, 0), ex(0, -cA), ex(C, -(cA - C)), ex(C, C), "l", 1]);
-  }
   for (const s of segs) {
     const side = s[4], d = {t: [0, 0, 0, -C], b: [0, FH, 0, FH + C], l: [0, 0, -C, 0], r: [FW, 0, FW + C, 0]}[side];
     const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
-    g.addColorStop(0, shade(city.felt[0], 25)); g.addColorStop(0.35, city.felt[0]); g.addColorStop(1, shade(city.felt[1], -25));
+    const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
+    const cb = side === "t" || side === "b" ? f0.map(v => v - 16) : f0.map((v, i) => (v - 20) * 0.4 + (f1[i] - 22) * 0.6);   // the cushion is the same cloth colour the felt has right at that edge
+    const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
+    g.addColorStop(0, cc(2)); g.addColorStop(0.5, cc(-8)); g.addColorStop(1, cc(-22));   // no visible seam: the cushion starts exactly in the cloth's own colour and only darkens as the slope turns away
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
-    ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.09)"; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
+    ctx.strokeStyle = "rgba(0,0,0,.28)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
   }
-  ctx.save(); ctx.globalAlpha = 0.55; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); for (const s of segs) { ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill(); } ctx.restore();   // the same cloth grain on the cushions, so they read as one material with the felt
   if (st.glow && !lucky) {                     // neon strip under the cushion nose
     ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
     rr(-C - 3, -C - 3, FW + 2 * C + 6, FH + 2 * C + 6, 10); ctx.stroke(); ctx.restore();
   }
-  if (!lucky) for (const p of POCKETS) {   // pocket holes (as in the approved screenshot)
-    const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
-    { const sh = ctx.createRadialGradient(x, y, r - 2, x, y, r + 11); sh.addColorStop(0, "rgba(0,0,0,.55)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 11, 0, 7); ctx.fill(); }
-    ctx.fillStyle = "#12040a"; ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
-    const pg = ctx.createRadialGradient(x - p.dx * 0.25, y - p.dy * 0.25, 2, x, y, r + 1);
-    pg.addColorStop(0, "#010000"); pg.addColorStop(0.55, "#0c0202"); pg.addColorStop(0.85, "#3a0a0a"); pg.addColorStop(1, "#6a1414");
-    ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, y, r + 1, 0, 7); ctx.fill();
+  if (!lucky) for (const p of POCKETS) {   // pocket holes: rubber lip, deep shaded well and a lit rim, painted over the cushion ends
+    const x = p.x + p.dx, y = p.y + p.dy, r = p.dr, mar = city.id === "syd";
+    const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1);   // direction away from the table
+    { const sh = ctx.createRadialGradient(x, y, r - 1, x, y, r + 8); sh.addColorStop(0, "rgba(0,0,0,.4)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 8, 0, 7); ctx.fill(); }
+    const lip = ctx.createLinearGradient(x - r, y - r, x + r, y + r); lip.addColorStop(0, mar ? "#4a1a10" : shade(city.felt[1], -70)); lip.addColorStop(1, mar ? "#0f0403" : shade(city.felt[1], -120));
+    ctx.fillStyle = lip; ctx.beginPath(); ctx.arc(x, y, r + 2.6, 0, 7); ctx.fill();               // rubber lip
+    const well = ctx.createRadialGradient(x - ox * r * 0.28, y - oy * r * 0.28, r * 0.05, x, y, r + 0.5);
+    well.addColorStop(0, "#000"); well.addColorStop(0.55, "#040101"); well.addColorStop(0.82, mar ? "#2c0808" : shade(city.felt[1], -118)); well.addColorStop(1, mar ? "#5a1010" : shade(city.felt[0], -85));
+    ctx.fillStyle = well; ctx.beginPath(); ctx.arc(x, y, r + 0.4, 0, 7); ctx.fill();               // the well, lit only at its near rim
+    ctx.lineCap = "round";
+    ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();   // inner wall catching the light
+    ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r + 2.1, Math.atan2(-oy, -ox) - 0.7, Math.atan2(-oy, -ox) + 0.7); ctx.stroke();   // specular on the lip
   }
   // soft overhead lamp
   const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
