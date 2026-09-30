@@ -1056,6 +1056,13 @@ const POCKETS = [
   {x: FW / 2, y: FH + 9, r: 32, dx: 0, dy: 18, dr: 23, mid: true},
   {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
+const CORNER_MOUTH = 32, TIP_R = 4;   // cushion nose ends at 32 from each corner; jaw tips are rounded (radius 4)
+const JAW_TIPS = (() => {   // centres of the rounded jaw tips, in table coordinates (cushion body lies outside the table)
+  const t = TIP_R, c = CORNER_MOUTH, m = 27, h = 1000 / 2, H = 500, o = [];
+  for (const x of [c + t, h - m - t, h + m + t, 1000 - c - t]) o.push([x, -t], [x, H + t]);
+  for (const y of [c + t, H - c - t]) o.push([-t, y], [1000 + t, y]);
+  return o;
+})();
 const MID_MOUTH = 27;   // half-width of a middle pocket mouth at the cushion nose (the jaws angle in to the hole)
 const POCKET_AIMS = [
   {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
@@ -2219,28 +2226,36 @@ function physicsFrame(G) {
   const balls = G.balls, pockets = G.pockets, SUB = 8, E = 0.95, RE = 0.78;
   for (let s = 0; s < SUB; s++) {
     for (const b of balls) if (!b.out) { b.x += b.vx / SUB; b.y += b.vy / SUB; }
-    if (pockets) for (const b of balls) {
+    if (pockets) for (const b of balls) {   // a ball drops when its centre passes the lip of a pocket mouth (no magnet: it has to be really over the hole)
       if (b.out) continue;
+      let hit = null;
       for (const p of pockets) {
-        const dx = p.x - b.x, dy = p.y - b.y, d2 = dx * dx + dy * dy;
-        if (d2 < p.r * p.r) { b.out = true; onPot(G, b, p); b.vx = b.vy = 0; break; }
-        // a slow ball rolling towards the mouth is drawn into the hole (gravity of the drop), instead of stalling on the lip
-        const rim = p.r + 14;
-        if (d2 < rim * rim && (b.vx || b.vy)) {
-          const d = Math.sqrt(d2) || 1, sp = Math.hypot(b.vx, b.vy);
-          if (sp < 4.5 && (b.vx * dx + b.vy * dy) / (sp * d) > 0.15) { const k = 0.07 * (1 - d / rim + 0.35) / SUB * 8; b.vx += dx / d * k; b.vy += dy / d * k; }
+        if (p.mid) { if (Math.abs(b.x - p.x) < MID_MOUTH && (p.y < 0 ? b.y < 3 : b.y > FH - 3)) { hit = p; break; } }
+        else if (Math.abs(b.x - p.x) + Math.abs(b.y - p.y) < 27 && b.x > -30 && b.x < FW + 30 && b.y > -30 && b.y < FH + 30) { hit = p; break; }
+      }
+      if (!hit && (b.x < -1 || b.x > FW + 1 || b.y < -1 || b.y > FH + 1)) { let bd = 1e9; for (const p of pockets) { const d = (b.x - p.x) ** 2 + (b.y - p.y) ** 2; if (d < bd) { bd = d; hit = p; } } }   // safety: never let a ball leave the table
+      if (hit) { b.out = true; onPot(G, b, hit); b.vx = b.vy = 0; }
+    }
+    if (pockets) for (const b of balls) {   // rounded jaw tips: real elastic contact instead of a flat wall
+      if (b.out) continue;
+      for (const t of JAW_TIPS) {
+        const dx = b.x - t[0], dy = b.y - t[1], d2 = dx * dx + dy * dy, m = R + TIP_R;
+        if (d2 < m * m && d2 > 0.0001) {
+          const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, vn = b.vx * nx + b.vy * ny;
+          b.x = t[0] + nx * m; b.y = t[1] + ny * m;
+          if (vn < 0) { b.vx -= (1 + RE) * vn * nx; b.vy -= (1 + RE) * vn * ny; onRail(G, b, -vn); }
         }
       }
     }
     for (const b of balls) {
       if (b.out) continue;
-      if (b.x < R || b.x > FW - R) {
+      if ((b.x < R || b.x > FW - R) && (!pockets || (b.y >= CORNER_MOUTH + TIP_R && b.y <= FH - CORNER_MOUTH - TIP_R))) {
         const sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy), hit = Math.abs(b.vx); let kick = 0;
         if (b.side && sp) { kick = (b.vx / sp) * b.side * hit * 0.45; b.side *= 0.6; }
         const left = b.x < R; b.x = left ? R : FW - R; b.vx = (left ? 1 : -1) * hit * RE; b.vy += kick;
         onRail(G, b, hit);
       }
-      if (b.y < R || b.y > FH - R) {
+      if ((b.y < R || b.y > FH - R) && (!pockets || (b.x >= CORNER_MOUTH + TIP_R && b.x <= FW / 2 - MID_MOUTH - TIP_R) || (b.x >= FW / 2 + MID_MOUTH + TIP_R && b.x <= FW - CORNER_MOUTH - TIP_R))) {
         const sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy), hit = Math.abs(b.vy); let kick = 0;
         if (b.side && sp) { kick = (-b.vy / sp) * b.side * hit * 0.45; b.side *= 0.6; }
         const top = b.y < R; b.y = top ? R : FH - R; b.vy = (top ? 1 : -1) * hit * RE; b.vx += kick;
@@ -4255,7 +4270,7 @@ function paintTable(city) {
     }
   }
   // cushions with angled jaws at the pockets
-  const C = 19, cA = 32, mA = MID_MOUTH;
+  const C = 19, cA = CORNER_MOUTH, mA = MID_MOUTH;
   const segs = lucky ? [
     [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
     [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
