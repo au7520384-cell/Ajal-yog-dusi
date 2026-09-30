@@ -4271,22 +4271,35 @@ function paintTable(city) {
     ctx.fillStyle = gl; rr(0, -h, L, h, [h, h, 0, 0]); ctx.fill();                                        // glassy lacquer
     for (const x of [0, L]) { const cg = ctx.createRadialGradient(x - 1, -1.5, 0, x, 0, 5); cg.addColorStop(0, shade(trim, 100)); cg.addColorStop(1, shade(trim, -60)); ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(x, 0, 4.2, 0, 7); ctx.fill(); }
   };
-  const tribal = city.pat === "tribal" && !st.lux;   // Sydney: light maple rail with a red-brown tribal band (white dot borders, wavy dot line, ringed medallions), no metal
+  const tribal = city.pat !== "lucky" && !st.lux;   // every city table: rail band with dot borders and ringed medallions in the city's own colours, no metal ornaments
+  const lumOf = hex => { const h = String(hex).replace("#", ""), n = parseInt(h.length === 3 ? h.replace(/./g, "$&$&") : h, 16); return ((n >> 16) & 255) * 0.3 + ((n >> 8) & 255) * 0.59 + (n & 255) * 0.11; };
+  const bandCols = (() => {
+    if (city.id === "syd") return ["#54190d", "#93331a"];
+    const l = lumOf(r1);
+    if (l < 80 || l > 170) return [shade(city.felt[1], -40), shade(city.felt[1], 8)];
+    return [shade(r2, -70), shade(r2, -22)];
+  })();
+  const accent = lumOf(trim) > 130 ? trim : "#f7c948", cream = "#fff2d6";
   const tribalBand = L => {                      // drawn along +x, centred on y = 0
-    const h = 12.5;
-    ctx.save(); ctx.shadowColor = "rgba(60,25,0,.5)"; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1.5;
-    const bg = ctx.createLinearGradient(0, -h, 0, h); bg.addColorStop(0, "#54190d"); bg.addColorStop(0.5, "#93331a"); bg.addColorStop(1, "#4a160c");
+    const h = 12.5, pat = city.pat;
+    ctx.save(); ctx.shadowColor = "rgba(30,15,0,.5)"; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1.5;
+    const bg = ctx.createLinearGradient(0, -h, 0, h); bg.addColorStop(0, bandCols[0]); bg.addColorStop(0.5, bandCols[1]); bg.addColorStop(1, bandCols[0]);
     ctx.fillStyle = bg; rr(0, -h, L, 2 * h, 4); ctx.fill(); ctx.restore();
     ctx.save(); rr(0, -h, L, 2 * h, 4); ctx.clip();
-    for (const sg of [-1, 1]) for (let x = 5; x < L - 3; x += 5.4) { ctx.fillStyle = "#f7ead0"; ctx.beginPath(); ctx.arc(x, sg * (h - 2.9), 1.15, 0, 7); ctx.fill(); }
-    for (let x = 4; x < L - 3; x += 3.1) { ctx.fillStyle = (x / 3.1 | 0) % 2 ? "#ffd766" : "#f7b731"; ctx.beginPath(); ctx.arc(x, Math.sin(x / 8.5) * 3.4, 1.25, 0, 7); ctx.fill(); }
+    for (const sg of [-1, 1]) for (let x = 5; x < L - 3; x += 5.4) { ctx.fillStyle = cream; ctx.beginPath(); ctx.arc(x, sg * (h - 2.9), 1.15, 0, 7); ctx.fill(); }
+    if (pat === "tribal") for (let x = 4; x < L - 3; x += 3.1) { ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(x, Math.sin(x / 8.5) * 3.4, 1.25, 0, 7); ctx.fill(); }
+    else if (pat === "classic") for (let x = 8; x < L - 6; x += 11) { ctx.fillStyle = accent; ctx.beginPath(); ctx.moveTo(x - 4, 0); ctx.lineTo(x, -4); ctx.lineTo(x + 4, 0); ctx.lineTo(x, 4); ctx.closePath(); ctx.fill(); }
+    else if (pat === "ikat") { ctx.strokeStyle = accent; ctx.lineWidth = 1.6; ctx.lineJoin = "round"; ctx.beginPath(); for (let x = 0, i = 0; x <= L; x += 7, i++) ctx.lineTo(x, i % 2 ? 3.6 : -3.6); ctx.stroke(); }
+    else if (pat === "medal") for (let x = 6; x < L - 4; x += 8) { ctx.strokeStyle = accent; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(x, 0, 3.1, 0, 7); ctx.stroke(); }
+    else for (let x = 4, i = 0; x < L - 3; x += 4.2, i++) { ctx.strokeStyle = i % 2 ? accent : cream; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x - 1.6, 3.6); ctx.lineTo(x + 1.6, -3.6); ctx.stroke(); }
     for (const x of [L * 0.17, L * 0.5, L * 0.83]) {   // ringed medallions
       ctx.fillStyle = "#f6e4bb"; ctx.beginPath(); ctx.arc(x, 0, 11.4, 0, 7); ctx.fill();
-      ctx.fillStyle = "#3f1108"; ctx.beginPath(); ctx.arc(x, 0, 9.4, 0, 7); ctx.fill();
-      for (let k = 0; k < 14; k++) { const a = k * Math.PI * 2 / 14; ctx.fillStyle = "#fff4d6"; ctx.beginPath(); ctx.arc(x + Math.cos(a) * 7.3, Math.sin(a) * 7.3, 1, 0, 7); ctx.fill(); }
-      const pg = ctx.createRadialGradient(x - 1, -1.2, 0, x, 0, 3.6); pg.addColorStop(0, "#fff"); pg.addColorStop(0.6, "#d9cfe8"); pg.addColorStop(1, "#7a6a98"); ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, 0, 3.9, 0, 7); ctx.fill();
+      ctx.fillStyle = shade(bandCols[0], -20); ctx.beginPath(); ctx.arc(x, 0, 9.4, 0, 7); ctx.fill();
+      for (let k = 0; k < 14; k++) { const a = k * Math.PI * 2 / 14; ctx.fillStyle = cream; ctx.beginPath(); ctx.arc(x + Math.cos(a) * 7.3, Math.sin(a) * 7.3, 1, 0, 7); ctx.fill(); }
+      if (pat === "tribal" || pat === "classic") { const pg = ctx.createRadialGradient(x - 1, -1.2, 0, x, 0, 3.9); pg.addColorStop(0, "#fff"); pg.addColorStop(0.6, "#d9cfe8"); pg.addColorStop(1, "#7a6a98"); ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, 0, 3.9, 0, 7); ctx.fill(); }
+      else { ctx.fillStyle = accent; star8(x, 0, 4.6); }
     }
-    for (const x of [0, L]) for (const k of [-1, 1]) { ctx.fillStyle = "#f7ead0"; ctx.fillRect(x + k * 3.2 - 0.6, -h + 2, 1.2, 2 * h - 4); ctx.fillRect(x + k * 6.2 - 0.6, -h + 2, 1.2, 2 * h - 4); }   // striped ends
+    for (const x of [0, L]) for (const k of [-1, 1]) { ctx.fillStyle = cream; ctx.fillRect(x + k * 3.2 - 0.6, -h + 2, 1.2, 2 * h - 4); ctx.fillRect(x + k * 6.2 - 0.6, -h + 2, 1.2, 2 * h - 4); }   // striped ends
     ctx.restore();
     ctx.strokeStyle = "rgba(255,240,205,.85)"; ctx.lineWidth = 1.4; rr(0.5, -h + 0.5, L - 1, 2 * h - 1, 4); ctx.stroke();
     const gl = ctx.createLinearGradient(0, -h, 0, 0); gl.addColorStop(0, "rgba(255,255,255,.22)"); gl.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = gl; rr(0, -h, L, h, [4, 4, 0, 0]); ctx.fill();
