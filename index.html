@@ -2491,7 +2491,7 @@ function rack(seed) {
   return balls;
 }
 function botPlayer(minL, maxL) {
-  return {name: pick(Math.random() < 0.5 ? BOT_NAMES : AV_NAMES), avatar: randAv(), frame: Math.random() < 0.08 ? FRAMES.length - 12 + (Math.random() * 12 | 0) : Math.random() < 0.3 ? 1 + (Math.random() * 5 | 0) : 0, color: pick(AV_COLORS),
+  return {name: pick(Math.random() < 0.5 ? BOT_NAMES : AV_NAMES), avatar: randAv(), frame: Math.random() < 0.08 ? FRAMES.findIndex(f => f.id === "pf_brz") + (Math.random() * 12 | 0) : Math.random() < 0.3 ? 1 + (Math.random() * 5 | 0) : 0, color: pick(AV_COLORS),
     level: Math.round(rnd(minL, maxL)), isAI: true, cue: pick(CUES).id, tbl: botTable(maxL)};
 }
 // Richer opponents sometimes own an exclusive table (cheaper ones are more common).
@@ -3841,7 +3841,7 @@ function tableCard(t) {
     if (city) {
       for (let i = 0; i < 16; i++) { const bx = 40 + i * 32 + rnd() * 10, bh = 40 + rnd() * 70; g.fillStyle = "rgba(4,6,12,.55)"; g.fillRect(bx - 12, H * 0.66 - bh, 24, bh + 30); lights(bx - 12, H * 0.66 - bh, 24, bh, 5); }
       (LM[t.id] || LM.lis)(56, H - 42, 285); for (const [dx, w, h2] of [[62, 26, 240], [92, 20, 170], [34, 18, 200], [112, 16, 120]]) tower(W - dx, H - 42, w, h2); flare(W - 40, 92, 6);
-    } else if (t.vip) {                                     // horror scene: pale moon, dead trees, graves and mist
+    } else if (t.vip || /^xh_/.test(t.id)) {                                     // horror scene: pale moon, dead trees, graves and mist
       const gc = t.gem || acc; const mg2 = g.createRadialGradient(W * 0.78, 78, 4, W * 0.78, 78, 120); mg2.addColorStop(0, "rgba(255,255,255,.9)"); mg2.addColorStop(0.25, gc + "aa"); mg2.addColorStop(1, gc + "00"); g.fillStyle = mg2; g.fillRect(0, 0, W, H);
       g.fillStyle = "#f2f0e8"; g.beginPath(); g.arc(W * 0.78, 78, 30, 0, 7); g.fill(); g.fillStyle = "rgba(0,0,0,.12)"; for (const [dx, dy, r] of [[-8, -6, 7], [9, 8, 5], [3, -12, 4]]) { g.beginPath(); g.arc(W * 0.78 + dx, 78 + dy, r, 0, 7); g.fill(); }
       const tree = (x, h2, dir) => { g.strokeStyle = "#05060c"; g.lineCap = "round"; const br = (x0, y0, a, len, w, d) => { if (d > 4) return; const x1 = x0 + Math.cos(a) * len, y1 = y0 + Math.sin(a) * len; g.lineWidth = w; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); br(x1, y1, a - 0.5 - rnd() * 0.3, len * 0.72, w * 0.68, d + 1); br(x1, y1, a + 0.45 + rnd() * 0.3, len * 0.7, w * 0.66, d + 1); }; br(x, H - 38, -Math.PI / 2 + dir * 0.12, h2 * 0.36, 9, 0); };
@@ -4221,6 +4221,7 @@ function luxRail(st, OX, OY, OW, OH, rn) {
   }
 }
 // ---------------------------------------------------------------- ornaments: every table has its own hand-built motif, in raised metal / enamel on the wood
+const ORN_KIND = {};
 const CITY_ORN = new Set(["lon", "syd", "lis", "tok", "veg", "jak", "tor", "cai", "dub", "sha", "par", "rom", "bkk", "seo", "mum", "ber", "ist", "osa", "x_dia", "x_gal", "x_drg", "x_aur", "x_lav", "x_roy", "x_ice", "x_blk"]);
 function ornDraw(kind, L, P) {
   const g = ctx.createLinearGradient(0, -16, 0, 16); g.addColorStop(0, P.hi); g.addColorStop(0.5, P.mid); g.addColorStop(1, P.lo);
@@ -4287,6 +4288,24 @@ function ornDraw(kind, L, P) {
     tomb() { for (let x = 14; x < L; x += 28) { F(() => { ctx.beginPath(); ctx.moveTo(x - 8, 13); ctx.lineTo(x - 8, -3); ctx.arc(x, -3, 8, Math.PI, 0); ctx.lineTo(x + 8, 13); ctx.closePath(); }, "#8a8a98"); S(() => { ctx.beginPath(); ctx.moveTo(x, -8); ctx.lineTo(x, 5); ctx.moveTo(x - 4, -3); ctx.lineTo(x + 4, -3); }, 1.5, "#2a2a34"); S(() => { ctx.beginPath(); ctx.moveTo(x - 13, 13); ctx.lineTo(x + 13, 13); }, 1.3, "#3a5a2a"); } },
     rune() { for (let x = 6, i = 0; x < L; x += 18, i++) { ctx.save(); ctx.shadowColor = "#5aff7a"; ctx.shadowBlur = 6; S(() => { ctx.beginPath(); const t = i % 5; if (t === 0) { ctx.moveTo(x, -11); ctx.lineTo(x, 11); ctx.moveTo(x, -6); ctx.lineTo(x + 7, -11); ctx.moveTo(x, 0); ctx.lineTo(x + 7, -5); } else if (t === 1) { ctx.moveTo(x - 4, -11); ctx.lineTo(x + 5, 0); ctx.lineTo(x - 4, 11); } else if (t === 2) { ctx.moveTo(x - 5, -11); ctx.lineTo(x + 5, -11); ctx.lineTo(x - 5, 11); ctx.lineTo(x + 5, 11); } else if (t === 3) { ctx.moveTo(x, -11); ctx.lineTo(x - 6, 0); ctx.lineTo(x, 11); ctx.lineTo(x + 6, 0); ctx.closePath(); ctx.moveTo(x, -4); ctx.lineTo(x, 4); } else { ctx.moveTo(x - 5, 11); ctx.lineTo(x - 5, -11); ctx.lineTo(x + 5, 0); ctx.lineTo(x - 5, 0); } }, 1.8, "#7aff9a"); ctx.restore(); } },
     spider() { for (let x = 17; x < L; x += 34) { S(() => { ctx.beginPath(); ctx.moveTo(x, -17); ctx.lineTo(x, -6); }, 0.8, "#d8d8e8"); F(circ(x, 1, 4.6), "#1a0a22"); F(circ(x, -4.6, 3), "#1a0a22"); F(circ(x - 1.1, -5, 0.8), "#ff4a4a"); F(circ(x + 1.1, -5, 0.8), "#ff4a4a"); S(() => { ctx.beginPath(); for (const d of [-1, 1]) for (let k = 0; k < 4; k++) { const dy = -5 + k * 4.2; ctx.moveTo(x + d * 3.6, dy * 0.5); ctx.quadraticCurveTo(x + d * 10, dy - 6, x + d * 13, dy + 6); } }, 1.1, "#2a1a3a"); F(() => { ctx.beginPath(); ctx.ellipse(x, 3, 1.2, 1.8, 0, 0, 7); }, "#c8102e"); } },
+    coffin() { for (let x = 15; x < L; x += 30) { F(poly([[x - 4.5, -14], [x + 4.5, -14], [x + 9, -5], [x + 5.5, 14], [x - 5.5, 14], [x - 9, -5]]), "#4a2a18"); S(() => { ctx.beginPath(); ctx.moveTo(x, -9); ctx.lineTo(x, 7); ctx.moveTo(x - 4, -4); ctx.lineTo(x + 4, -4); }, 1.4, "#e0b860"); } },
+    pumpkin() { for (let x = 15; x < L; x += 30) { F(() => { ctx.beginPath(); ctx.ellipse(x, 2, 11, 9, 0, 0, 7); }, "#ff8a1a"); S(() => { ctx.beginPath(); for (const d of [-6, 0, 6]) { ctx.moveTo(x + d * 0.5, -6); ctx.quadraticCurveTo(x + d * 1.6, 2, x + d * 0.5, 10); } }, 0.9, "#b85a08"); F(() => { ctx.beginPath(); ctx.rect(x - 1.6, -10, 3.2, 5); }, "#3a7a2a"); F(poly([[x - 5, -1], [x - 2, -1], [x - 3.5, 3]]), "#2a1004"); F(poly([[x + 5, -1], [x + 2, -1], [x + 3.5, 3]]), "#2a1004"); F(poly([[x - 4, 6], [x - 2, 4], [x, 6], [x + 2, 4], [x + 4, 6], [x, 8]]), "#2a1004"); } },
+    candle() { for (let x = 12; x < L; x += 24) { F(() => { ctx.beginPath(); ctx.rect(x - 3.4, -3, 6.8, 15); }, "#f4ecd4"); F(() => { ctx.beginPath(); ctx.moveTo(x - 3.4, -3); ctx.lineTo(x + 3.4, -3); ctx.lineTo(x + 3.4, 2); ctx.quadraticCurveTo(x + 2, 6, x + 0.6, 2); ctx.lineTo(x - 1, 4); ctx.lineTo(x - 3.4, 1); }, "#fffaf0"); ctx.save(); ctx.shadowColor = "#ffb02a"; ctx.shadowBlur = 9; F(() => { ctx.beginPath(); ctx.moveTo(x, -13); ctx.quadraticCurveTo(x + 4.5, -7, x, -3.6); ctx.quadraticCurveTo(x - 4.5, -7, x, -13); }, "#ffc83a"); ctx.restore(); } },
+    hand() { for (let x = 15; x < L; x += 30) { F(() => { ctx.beginPath(); ctx.ellipse(x, 6, 7, 6, 0, 0, 7); }, "#7a9a5a"); for (let k = 0; k < 4; k++) F(() => { ctx.beginPath(); lp(x - 5 + k * 3.4, 3, 12 - Math.abs(k - 1.5) * 2, -Math.PI / 2 + (k - 1.5) * 0.14, 1.5); }, "#7a9a5a"); F(() => { ctx.beginPath(); lp(x - 6, 7, 8, -2.5, 1.7); }, "#7a9a5a"); S(() => { ctx.beginPath(); ctx.moveTo(x - 6, 12); ctx.lineTo(x + 6, 12); }, 1.2, "#3a5a2a"); } },
+    crossbones() { for (let x = 15; x < L; x += 30) { S(() => { ctx.beginPath(); ctx.moveTo(x - 10, -10); ctx.lineTo(x + 10, 10); ctx.moveTo(x + 10, -10); ctx.lineTo(x - 10, 10); }, 3.2, "#ece4cc"); for (const [dx, dy] of [[-10, -10], [10, 10], [10, -10], [-10, 10]]) { F(circ(x + dx - 1.5, dy, 2.4), "#ece4cc"); F(circ(x + dx + 1.5, dy, 2.4), "#ece4cc"); } F(circ(x, 0, 3.4), "#c8102e"); } },
+    cauldron() { for (let x = 15; x < L; x += 30) { for (const [dx, dy, r] of [[-3, -10, 3], [3, -13, 2.2], [5, -7, 2.6]]) F(circ(x + dx, dy, r), "#7aff3a"); F(() => { ctx.beginPath(); ctx.ellipse(x, 2, 11, 9, 0, 0, Math.PI); ctx.lineTo(x - 11, 2); }, "#2a2a34"); F(() => { ctx.beginPath(); ctx.ellipse(x, 1, 11, 3, 0, 0, 7); }, "#5a5a6a"); F(() => { ctx.beginPath(); ctx.ellipse(x, 1, 8.5, 1.8, 0, 0, 7); }, "#5aff3a"); S(() => { ctx.beginPath(); ctx.moveTo(x - 7, 10); ctx.lineTo(x - 9, 14); ctx.moveTo(x + 7, 10); ctx.lineTo(x + 9, 14); }, 1.8, "#2a2a34"); } },
+    potion() { for (let x = 13; x < L; x += 26) { F(() => { ctx.beginPath(); ctx.moveTo(x - 2.5, -11); ctx.lineTo(x + 2.5, -11); ctx.lineTo(x + 2.5, -5); ctx.lineTo(x + 9, 10); ctx.quadraticCurveTo(x + 9, 14, x + 5, 14); ctx.lineTo(x - 5, 14); ctx.quadraticCurveTo(x - 9, 14, x - 9, 10); ctx.lineTo(x - 2.5, -5); ctx.closePath(); }, "#c8f0ff"); F(() => { ctx.beginPath(); ctx.moveTo(x - 7.5, 4); ctx.lineTo(x + 7.5, 4); ctx.lineTo(x + 9, 10); ctx.quadraticCurveTo(x + 9, 14, x + 5, 14); ctx.lineTo(x - 5, 14); ctx.quadraticCurveTo(x - 9, 14, x - 9, 10); ctx.closePath(); }, "#7aff3a"); F(() => { ctx.beginPath(); ctx.rect(x - 3.2, -14, 6.4, 4); }, "#8a5a2a"); F(circ(x - 1, 9, 1.6), "#e8ffc8"); } },
+    hat() { for (let x = 17; x < L; x += 34) { F(() => { ctx.beginPath(); ctx.ellipse(x, 9, 15, 4, 0, 0, 7); }, "#1a1026"); F(poly([[x - 8, 8], [x - 3, -6], [x + 2, -11], [x + 8, -13], [x + 5, -9], [x + 4, -3], [x + 8, 8]]), "#1a1026"); F(() => { ctx.beginPath(); ctx.rect(x - 8, 3, 16, 3.6); }, "#8a3ad8"); F(() => { ctx.beginPath(); ctx.rect(x - 2, 3, 4, 3.6); }, "#ffd24d"); } },
+    fangs() { for (let x = 13; x < L; x += 26) { F(poly([[x - 9, -14], [x - 2, -14], [x - 5.5, 0]]), "#f4f0e0"); F(poly([[x + 2, -14], [x + 9, -14], [x + 5.5, 0]]), "#f4f0e0"); S(() => { ctx.beginPath(); ctx.moveTo(x - 5.5, 0); ctx.quadraticCurveTo(x - 5, 6, x - 5.5, 12); ctx.moveTo(x + 5.5, 0); ctx.quadraticCurveTo(x + 6, 5, x + 5.5, 9); }, 1.4, "#c8102e"); F(circ(x - 5.5, 13, 1.5), "#c8102e"); F(circ(x + 5.5, 10, 1.3), "#c8102e"); } },
+    tentacle() { for (let x = 4; x < L; x += 38) { S(() => { ctx.beginPath(); ctx.moveTo(x, 13); ctx.bezierCurveTo(x + 12, 13, x + 12, -2, x + 20, -2); ctx.bezierCurveTo(x + 27, -2, x + 26, -12, x + 20, -11); }, 5, "#7a3aa8"); S(() => { ctx.beginPath(); ctx.moveTo(x, 13); ctx.bezierCurveTo(x + 12, 13, x + 12, -2, x + 20, -2); ctx.bezierCurveTo(x + 27, -2, x + 26, -12, x + 20, -11); }, 1.2, "#d8a0ff"); for (const [dx, dy] of [[6, 12], [12, 6], [16, -1], [23, -2]]) F(circ(x + dx, dy, 1.4), "#ffd0f0"); } },
+    axe() { for (let x = 17; x < L; x += 34) { S(() => { ctx.beginPath(); ctx.moveTo(x - 10, 13); ctx.lineTo(x + 8, -11); }, 2.6, "#7a4a1a"); F(() => { ctx.beginPath(); ctx.moveTo(x + 4, -13); ctx.quadraticCurveTo(x + 18, -10, x + 13, 2); ctx.quadraticCurveTo(x + 10, -4, x + 4, -2); ctx.closePath(); }, "#c0c8d8"); S(() => { ctx.beginPath(); ctx.moveTo(x + 14, -6); ctx.lineTo(x + 14, -2); }, 1.6, "#c8102e"); } },
+    noose() { for (let x = 15; x < L; x += 30) { S(() => { ctx.beginPath(); ctx.moveTo(x, -17); ctx.lineTo(x, -5); }, 1.8, "#c8a060"); S(() => { ctx.beginPath(); ctx.ellipse(x, 3, 6, 8, 0, 0, 7); }, 2, "#c8a060"); F(() => { ctx.beginPath(); ctx.rect(x - 2.6, -7, 5.2, 4.6); }, "#a07a3a"); } },
+    dagger() { for (let x = 16; x < L; x += 32) { F(poly([[x - 2.6, -14], [x + 2.6, -14], [x + 2.2, 4], [x, 8], [x - 2.2, 4]]), "#d8dce8"); S(() => { ctx.beginPath(); ctx.moveTo(x, -13); ctx.lineTo(x, 5); }, 0.8, "#8a90a8"); F(() => { ctx.beginPath(); ctx.rect(x - 7, 4, 14, 2.6); }, "#c8a04a"); F(() => { ctx.beginPath(); ctx.rect(x - 1.6, 6.6, 3.2, 6); }, "#5a2a1a"); F(circ(x, 13.4, 1.8), "#c8a04a"); F(circ(x + 1, -6, 1.3), "#c8102e"); F(() => { ctx.beginPath(); ctx.ellipse(x + 1, -2, 1.1, 2.2, 0, 0, 7); }, "#c8102e"); } },
+    hourglass() { for (let x = 13; x < L; x += 26) { F(() => { ctx.beginPath(); ctx.rect(x - 8, -14, 16, 2.6); ctx.rect(x - 8, 11.4, 16, 2.6); }, "#c8a04a"); F(poly([[x - 6.5, -11.4], [x + 6.5, -11.4], [x + 1, 0], [x + 6.5, 11.4], [x - 6.5, 11.4], [x - 1, 0]]), "#d8f0ff"); F(poly([[x - 4, 9], [x + 4, 9], [x + 5, 11.4], [x - 5, 11.4]]), "#e8c070"); F(poly([[x - 4.6, -11.4], [x + 4.6, -11.4], [x + 1.4, -6]]), "#e8c070"); } },
+    mask() { for (let x = 16; x < L; x += 32) { F(() => { ctx.beginPath(); ctx.ellipse(x, 0, 9, 12, 0, 0, 7); }, "#f4f0e0"); F(() => { ctx.beginPath(); ctx.ellipse(x - 3.6, -3, 2.6, 3.6, -0.3, 0, 7); ctx.ellipse(x + 3.6, -3, 2.6, 3.6, 0.3, 0, 7); }, "#10080c"); S(() => { ctx.beginPath(); ctx.moveTo(x - 5, 5); ctx.quadraticCurveTo(x, 10, x + 5, 5); }, 1.6, "#c8102e"); S(() => { ctx.beginPath(); ctx.moveTo(x + 6, -9); ctx.lineTo(x + 3, -4); }, 1, "#c8102e"); } },
+    ribs() { for (let x = 15; x < L; x += 30) { S(() => { ctx.beginPath(); ctx.moveTo(x, -13); ctx.lineTo(x, 13); }, 2.2, "#ece4cc"); for (let k = 0; k < 4; k++) for (const d of [-1, 1]) S(() => { ctx.beginPath(); ctx.moveTo(x, -9 + k * 5.5); ctx.quadraticCurveTo(x + d * 10, -11 + k * 5.5, x + d * 10, -5 + k * 5.5); }, 1.7, "#ece4cc"); } },
+    lantern() { for (let x = 12; x < L; x += 24) { S(() => { ctx.beginPath(); ctx.moveTo(x - 3, -10); ctx.quadraticCurveTo(x, -16, x + 3, -10); }, 1.4); F(() => { ctx.beginPath(); ctx.rect(x - 6, -10, 12, 3); ctx.rect(x - 6, 9, 12, 3); }, "#3a3a44"); ctx.save(); ctx.shadowColor = "#ffb02a"; ctx.shadowBlur = 10; F(() => { ctx.beginPath(); ctx.rect(x - 5, -7, 10, 16); }, "#ffd86a"); ctx.restore(); F(() => { ctx.beginPath(); ctx.moveTo(x, -3); ctx.quadraticCurveTo(x + 3.4, 2, x, 6); ctx.quadraticCurveTo(x - 3.4, 2, x, -3); }, "#ff8a1a"); } },
+    howl() { for (let x = 20; x < L; x += 40) { F(circ(x + 7, -5, 9), "#f2f0e8"); F(poly([[x - 12, 14], [x - 10, 2], [x - 6, -4], [x - 4, -10], [x - 1, -5], [x + 2, -6], [x + 4, -1], [x + 1, 1], [x + 1, 5], [x + 5, 14]]), "#10101a"); F(poly([[x - 4, -10], [x - 3, -14], [x - 1, -9]]), "#10101a"); } },
     x_dia() { for (let x = 15; x < L; x += 30) { F(poly([[x - 7, -13], [x + 7, -13], [x + 14, -4], [x, 13], [x - 14, -4]]), undefined); S(() => { ctx.beginPath(); ctx.moveTo(x - 14, -4); ctx.lineTo(x + 14, -4); ctx.moveTo(x - 7, -13); ctx.lineTo(x - 3, -4); ctx.lineTo(x, 13); ctx.moveTo(x + 7, -13); ctx.lineTo(x + 3, -4); ctx.lineTo(x, 13); }, 0.9, "#eaf6ff"); } },
     x_gal() { const pts = [[8, -7], [22, 5], [38, -6], [52, 6]]; for (let x = 0; x < L; x += 64) { S(() => { ctx.beginPath(); pts.forEach(([a, b], i) => i ? ctx.lineTo(x + a, b) : ctx.moveTo(x + a, b)); }, 0.9); pts.forEach(([a, b], i) => F(star(x + a, b, 4, 4.6 + (i % 2) * 2, 1.3), "#ffffff")); S(() => { ctx.beginPath(); ctx.ellipse(x + 30, 0, 9, 2.6, -0.5, 0, 7); }, 0.9); F(circ(x + 30, 0, 3.2), "#8a6aff"); } },
     x_drg() { for (let row = 0; row < 3; row++) for (let x = (row % 2) * 7 - 7; x < L + 7; x += 14) S(() => { ctx.beginPath(); ctx.arc(x + 7, -9 + row * 9, 7, 0.05, Math.PI - 0.05); }, 1.3); for (let x = 20; x < L - 6; x += 56) F(circ(x, 1, 3.2), "#fff0c0"); },
@@ -4661,7 +4680,7 @@ function paintTable(city) {
     ctx.save(); ctx.translate(x, y); if (vert) ctx.rotate(Math.PI / 2); ctx.scale(k, k); const Lk = L / k + 2;
     ctx.fillStyle = "rgba(0,0,0,.26)"; rr(-2, -17.5, Lk + 2, 35, 9); ctx.fill(); ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1; ctx.stroke();
     ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 0.8; rr(-1.4, -16.6, Lk + 0.8, 35, 9); ctx.stroke();
-    ornDraw(city.id, Lk, {hi: shade(accent, 80), mid: accent, lo: shade(accent, -85)});
+    ornDraw(ORN_KIND[city.id] || city.id, Lk, {hi: shade(accent, 80), mid: accent, lo: shade(accent, -85)});
     ctx.restore(); };
   const jewel = (x, y, r = 5.2) => {             // faceted gem in a metal bezel
     ctx.save(); ctx.shadowColor = "rgba(0,0,0,.65)"; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1.5;
@@ -5182,6 +5201,21 @@ const CUE_DECO = {
     }
   },
 };
+// ---- scary cue layers
+Object.assign(CUE_DECO, {
+  skulls(g, L, J, F, rad, cd, wm) { for (let x = J + 6 * wm; x < 0.94 * L; x += 15 * wm) { const r = rad(x) * 0.62; g.fillStyle = cd.dc; g.beginPath(); g.arc(x, -r * 0.1, r * 0.78, 0, 7); g.fill(); g.fillRect(x - r * 0.4, r * 0.35, r * 0.8, r * 0.5); g.fillStyle = "rgba(0,0,0,.85)"; g.beginPath(); g.arc(x - r * 0.32, -r * 0.15, r * 0.22, 0, 7); g.arc(x + r * 0.32, -r * 0.15, r * 0.22, 0, 7); g.fill(); } },
+  bones(g, L, J, F, rad, cd, wm) { g.strokeStyle = cd.dc; g.lineCap = "round"; g.lineWidth = 1.5 * wm; for (let x = J + 5 * wm; x < 0.94 * L; x += 11 * wm) { const r = rad(x) * 0.7; g.beginPath(); g.moveTo(x - 3 * wm, -r); g.lineTo(x + 3 * wm, r); g.moveTo(x + 3 * wm, -r); g.lineTo(x - 3 * wm, r); g.stroke(); } },
+  spikes(g, L, J, F, rad, cd, wm) { g.fillStyle = cd.dc; for (let x = 0.08 * L; x < 0.96 * L; x += 8 * wm) { const r = rad(x); for (const sg of [-1, 1]) { g.beginPath(); g.moveTo(x, sg * r); g.lineTo(x + 4 * wm, sg * r); g.lineTo(x + 2 * wm, sg * (r - 4.5 * wm)); g.closePath(); g.fill(); } } },
+  webs(g, L, J, F, rad, cd, wm) { g.strokeStyle = cd.dc; g.lineWidth = 0.6 * wm; for (let x = J + 8 * wm; x < 0.95 * L; x += 22 * wm) { const r = rad(x); g.beginPath(); for (let k = -2; k <= 2; k++) { g.moveTo(x, 0); g.lineTo(x + 11 * wm, k * r * 0.45); } for (const q of [0.5, 0.8]) { g.moveTo(x + q * 11 * wm, -2 * r * 0.45 * q); for (let k = -1; k <= 2; k++) g.quadraticCurveTo(x + q * 9 * wm, (k - 0.5) * r * 0.45 * q, x + q * 11 * wm, k * r * 0.45 * q); } g.stroke(); } },
+  blood(g, L, J, F, rad, cd, wm) { for (let x = 0.3 * L, i = 0; x < 0.96 * L; x += 11 * wm, i++) { const r = rad(x), h = (0.3 + hash(i + 3) * 0.9) * r; const lg = g.createLinearGradient(0, -r, 0, -r + h); lg.addColorStop(0, cd.dc); lg.addColorStop(1, cd.dc2 || shade(cd.dc, -60)); g.fillStyle = lg; g.beginPath(); g.moveTo(x - 2.4 * wm, -r - 1); g.lineTo(x + 2.4 * wm, -r - 1); g.lineTo(x + 1.6 * wm, -r + h); g.arc(x, -r + h, 1.6 * wm, 0, Math.PI); g.lineTo(x - 1.6 * wm, -r + h); g.closePath(); g.fill(); } },
+  eyes(g, L, J, F, rad, cd, wm) { for (let x = J + 7 * wm, i = 0; x < 0.93 * L; x += 16 * wm, i++) { const r = rad(x) * 0.5; g.fillStyle = "#f4f0e0"; g.beginPath(); g.ellipse(x, 0, r * 1.5, r * 0.78, 0, 0, 7); g.fill(); g.fillStyle = cd.dc; g.beginPath(); g.arc(x, 0, r * 0.62, 0, 7); g.fill(); g.fillStyle = "#050205"; g.beginPath(); g.ellipse(x, 0, r * 0.16, r * 0.56, 0, 0, 7); g.fill(); } },
+  claws(g, L, J, F, rad, cd, wm) { g.strokeStyle = cd.dc; g.lineCap = "round"; for (let x = 0.2 * L, i = 0; x < 0.94 * L; x += 34 * wm, i++) for (let k = 0; k < 3; k++) { const r = rad(x); g.lineWidth = (1.4 - k * 0.2) * wm; g.beginPath(); g.moveTo(x + k * 4 * wm, -r * 0.9); g.quadraticCurveTo(x + k * 4 * wm + 8 * wm, 0, x + k * 4 * wm + 3 * wm, r * 0.9); g.stroke(); } },
+  bats(g, L, J, F, rad, cd, wm) { g.fillStyle = cd.dc; for (let x = J + 10 * wm; x < 0.93 * L; x += 26 * wm) { const r = rad(x) * 0.8; g.beginPath(); g.moveTo(x, 0); g.quadraticCurveTo(x - r * 0.9, -r * 0.9, x - r * 1.9, -r * 0.3); g.quadraticCurveTo(x - r * 1.2, -r * 0.1, x - r * 0.9, r * 0.5); g.lineTo(x - r * 0.3, r * 0.15); g.lineTo(x, r * 0.35); g.lineTo(x + r * 0.3, r * 0.15); g.lineTo(x + r * 0.9, r * 0.5); g.quadraticCurveTo(x + r * 1.2, -r * 0.1, x + r * 1.9, -r * 0.3); g.quadraticCurveTo(x + r * 0.9, -r * 0.9, x, 0); g.fill(); } },
+  thorns(g, L, J, F, rad, cd, wm) { g.strokeStyle = cd.dc; g.fillStyle = cd.dc; g.lineWidth = 0.9 * wm; g.beginPath(); for (let x = 0.06 * L; x < 0.97 * L; x += 2) g.lineTo(x, Math.sin(x / (6 * wm)) * rad(x) * 0.45); g.stroke(); for (let x = 0.06 * L, i = 0; x < 0.97 * L; x += 7 * wm, i++) { const y = Math.sin(x / (6 * wm)) * rad(x) * 0.45, sg = i % 2 ? 1 : -1; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 2 * wm, y + sg * 4.5 * wm); g.lineTo(x + 3.5 * wm, y); g.fill(); } },
+  cracks(g, L, J, F, rad, cd, wm) { g.save(); g.shadowColor = cd.dc; g.shadowBlur = 4 * wm; g.strokeStyle = cd.dc; g.lineWidth = 0.9 * wm; g.lineJoin = "round"; for (let k = 0; k < 4; k++) { g.beginPath(); let x = 0.12 * L + k * 0.2 * L, y = -rad(x) * 0.9; g.moveTo(x, y); for (let s = 0; s < 6; s++) { x += 4 * wm + hash(k * 9 + s) * 4 * wm; y += rad(x) * 0.32 * (hash(k * 5 + s + 2) - 0.25); g.lineTo(x, y); } g.stroke(); } g.restore(); },
+  teeth(g, L, J, F, rad, cd, wm) { g.fillStyle = cd.dc; for (let x = 0.12 * L; x < 0.96 * L; x += 6 * wm) { const r = rad(x); for (const sg of [-1, 1]) { g.beginPath(); g.moveTo(x, sg * r); g.lineTo(x + 3 * wm, sg * r); g.lineTo(x + 1.5 * wm, sg * (r - 5 * wm)); g.fill(); } } },
+  chains(g, L, J, F, rad, cd, wm) { g.strokeStyle = cd.dc; g.lineWidth = 1.1 * wm; for (let x = 0.1 * L, i = 0; x < 0.96 * L; x += 6 * wm, i++) { const r = rad(x) * 0.6; g.beginPath(); if (i % 2) g.ellipse(x, 0, 3 * wm, r, 0, 0, 7); else g.ellipse(x, 0, 3 * wm, r * 0.6, 0, 0, 7); g.stroke(); } },
+});
 function drawCueStick(g, L, cd, wm = 1) {
   const rt = 3.4 * wm, rb = 7.8 * wm, rad = x => rt + (rb - rt) * clamp(x / L, 0, 1);
   const J = 0.56 * L, F = 0.8 * L;
@@ -6220,11 +6254,13 @@ function buildShop(tab) {
   if (tab === "frames") {
     if (Date.now() - editionsAt > 60000) { editionsAt = Date.now(); Net.api("/api/editions").then(r => { editions = r; if ($("frGrid")) buildShop("frames"); }).catch(() => {}); }
     body.innerHTML = `<div class="tblhead">👑 ${T("Premium ramkalar")} <small>${T("qimmatbaho metall va toshlar · tovlanadi")}</small></div><div class="avgrid pfgrid" id="pfGrid"></div>
+      <div class="tblhead">💀 ${T("Qo'rqinchli ramkalar")}</div><div class="avgrid pfgrid" id="hfGrid"></div>
       <div class="tblhead">🖼 ${T("Ramkalar")}</div><div class="avgrid" id="frGrid"></div>`;
     const pg = $("pfGrid");
     FRAMES.forEach((f, i) => {
-      if (!f.prem) return;
+      if (!f.prem || f.shopH) return;
       const owned = profile.frames.includes(i), sel = (profile.frame | 0) === i, no = (profile.editions || {})[f.id], so = soldOut(f.id);
+      if ((f.vip || f.ps) && !owned) return;
       const el = document.createElement("div"); el.className = "avcard pfcard" + (sel ? " sel" : "");
       el.innerHTML = `${avHTML(profile.avatar, i, 70)}<small class="h" style="color:#ffe27a">👑 ${esc(T(f.name))}</small>${no ? `<small class="muted">№ ${fmt(no)} / ${fmt(EDITION_CAP[f.id])}</small>` : owned ? "" : edLine(f.id)}
         ${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`)
@@ -6236,6 +6272,17 @@ function buildShop(tab) {
       on("gems", () => buyFrame(f, i, "gems", f.gems).then(ok => ok && buildShop("frames")));
       on("usd", () => Net.checkout("frame_" + f.id, el.querySelector('[data-p="usd"]')));
       pg.appendChild(el);
+    });
+    const hg = $("hfGrid");
+    FRAMES.forEach((f, i) => {
+      if (!f.shopH) return;
+      const owned = profile.frames.includes(i), sel = (profile.frame | 0) === i, el = document.createElement("div"); el.className = "avcard pfcard" + (sel ? " sel" : "");
+      el.innerHTML = `${avHTML(profile.avatar, i, 70)}<small class="h" style="color:#ff9a9a">💀 ${esc(T(f.name))}</small>${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`) : `<div class="tpay"><button class="btn purple" data-p="cash">💵 ${fmt(f.v)}</button><button class="btn blue" data-p="gems">💎 ${f.gems}</button></div>`}`;
+      const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = fn; };
+      on("use", () => { profile.frame = i; save(); updateNav(); Net.sync(); buildShop("frames"); });
+      on("cash", () => buyFrame(f, i, "cash", f.v).then(ok => ok && buildShop("frames")));
+      on("gems", () => buyFrame(f, i, "gems", f.gems).then(ok => ok && buildShop("frames")));
+      hg.appendChild(el);
     });
     const grid = $("frGrid");
     FRAMES.forEach((f, i) => {
@@ -6330,7 +6377,7 @@ function buildShop(tab) {
   body.insertAdjacentHTML("beforeend", `<div class="cuehead">
     <div class="cpow" id="cpBtn" style="cursor:pointer;position:relative"><b>⚜ ${T("Kolleksiya kuchi")} ›</b><span>${fmt(power)} · ${profile.cues.length}/${CUES.length}</span><i class="dot" id="dotCp" style="display:none"></i></div>
     <button class="btn blue" id="cueInfo" style="padding:6px 14px">ℹ ${T("Kiy ko'rsatkichlari")}</button></div>
-    <div class="tabs subtabs">${[["premium", "👑 Premium"], ["standard", "Standart"], ["victory", "G'alaba"], ["surprise", "Syurpriz"], ["country", "Davlat"], ["owned", "Meniki"]]
+    <div class="tabs subtabs">${[["premium", "👑 Premium"], ["horror", "💀 Qo'rqinchli"], ["standard", "Standart"], ["victory", "G'alaba"], ["surprise", "Syurpriz"], ["country", "Davlat"], ["owned", "Meniki"]]
       .map(([k, n]) => `<button class="tab${k === cueCat ? " on" : ""}" data-cc="${k}">${T(n)}</button>`).join("")}</div>
     ${cueCat === "surprise" ? `<div class="card surbox"><div style="font-size:44px">🎁</div><div style="flex:1"><b>${T("Syurpriz qutisi")}</b>
       <div class="muted">${T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.")}</div></div>
@@ -7633,12 +7680,16 @@ const VIP_CUES = [
   ...ZODIAC.map(([n, sym, el], i) => { const e = ELEM[el]; return vipCue("vip_z" + i, n, [10, 9 + (i % 2), 10, 9 + ((i + 1) % 2)], e.b, e.s, e.m, e.l, e.g); }),
 ];
 CUES.push(...VIP_CUES);
-// ---------------------------------------------------------------- VIP horror collection: 32 cues + 12 tables, sold only in the VIP window and rotated weekly (never in the shop)
+// ---------------------------------------------------------------- VIP horror collection: 64 scary cues + 24 scary tables + 64 scary frames, sold only in the VIP window (never in the shop); 8 rotate in every week
 const HORROR = [
   ["Vampir", "bat", "blood"], ["Zombi", 0, "toxic"], ["Skelet", 0, "bone"], ["Arvoh", "ghost", "ice"], ["Jodugar", 0, "violet"], ["Bo'ri odam", "claw", "steel"], ["Mumiya", 0, "bone"], ["Frankenshteyn", 0, "toxic"],
   ["Qora mushuk", "cat", "pumpkin"], ["Qabriston", 0, "steel"], ["Iblis", 0, "blood"], ["Kuzgun", "raven", "violet"], ["Qon oy", 0, "blood"], ["Shayton ko'zi", "eye", "pumpkin"], ["Yovvoyi ruh", 0, "ice"], ["Bosh suyagi", 0, "bone"],
   ["Hayqiriq", "skull", "bone"], ["Qorong'u o'rmon", 0, "toxic"], ["Zulmat malikasi", 0, "violet"], ["Kabus", "web", "steel"], ["Gargoyl", 0, "steel"], ["Bo'ron arvohi", "storm", "ice"], ["Tungi ovchi", 0, "blood"], ["Lanat", 0, "violet"],
   ["Kuldon", "tomb", "steel"], ["Zahar", 0, "toxic"], ["Jallod", 0, "pumpkin"], ["Nekromant", "rune", "toxic"], ["Ilon", 0, "toxic"], ["O'rgimchak", "spider", "violet"], ["Yirtqich", 0, "pumpkin"], ["Tuman", 0, "ice"],
+  ["Drakula", 0, "crimson"], ["Tobut", "coffin", "rust"], ["G'ul", 0, "sick"], ["Qovoq qiroli", "pumpkin", "pumpkin"], ["Banshi", 0, "ice"], ["Sham ruhi", "candle", "gold"], ["Qora ritsar", 0, "steel"], ["Kalla ovchisi", 0, "rust"],
+  ["Go'rkov qo'li", "hand", "sick"], ["Qonxo'r", 0, "crimson"], ["Chirigan", 0, "toxic"], ["Suyak shohi", "crossbones", "bone"], ["Soyalar ovchisi", 0, "teal"], ["Sehrli qozon", "cauldron", "toxic"], ["Jinni", 0, "neon"], ["Alvasti", 0, "violet"],
+  ["Zahar sharbati", "potion", "sick"], ["Bo'ri shoh", 0, "steel"], ["Yarasa shoh", 0, "crimson"], ["Sehrgar shlyapasi", "hat", "violet"], ["Ajal farishtasi", 0, "gold"], ["Qonli tishlar", "fangs", "crimson"], ["Tog' arvohi", 0, "teal"], ["Kemadagi arvoh", 0, "ice"],
+  ["Chuqurlik dahshati", "tentacle", "neon"], ["Shamchiroq ruhi", 0, "gold"], ["Qora gulxan", 0, "rust"], ["Jallod boltasi", "axe", "rust"], ["Sirli niqob", 0, "neon"], ["Dor", "noose", "gold"], ["Yig'loqi ruh", 0, "teal"], ["Oxirgi kabus", 0, "crimson"],
 ];
 const HOR_PAL = {
   blood: {b: ["#7a0a10", "#1a0204"], s: ["#f0dcd4", "#a08078"], m: "#d8b48a", g: "#ff2a3a", bg: "linear-gradient(135deg,#5a0a14,#14020a 55%,#8a1020)", acc: "#ff6a6a", felt: ["#6a0a16", "#1a0208"], metal: ["#e8b8c0", "#7a1020", "#1a0208"], c: "#ff3a3a", c2: "#ffb0a0"},
@@ -7648,27 +7699,44 @@ const HOR_PAL = {
   violet: {b: ["#3a0a5a", "#0a0216"], s: ["#f4e8ff", "#b08ae8"], m: "#d8a8ff", g: "#b05aff", bg: "linear-gradient(135deg,#2a0a4a,#080214 55%,#6a1a9a)", acc: "#d8a8ff", felt: ["#2a0a2a", "#0a020a"], metal: ["#e0b8ff", "#5a2a7a", "#14041e"], c: "#b05aff", c2: "#ffd0ff"},
   pumpkin: {b: ["#8a3a08", "#1a0a02"], s: ["#fff0d8", "#e8a060"], m: "#ffb34d", g: "#ff8a1a", bg: "linear-gradient(135deg,#6a2a06,#140802 55%,#c8600a)", acc: "#ffa83a", felt: ["#3a0a4a", "#0e0212"], metal: ["#ffb05a", "#8a3a08", "#1a0a02"], c: "#ff8a1a", c2: "#ffe0a0"},
   steel: {b: ["#3a3a4a", "#0a0a10"], s: ["#f0f0f8", "#a8a8c0"], m: "#c8c8d8", g: "#9aa0c8", bg: "linear-gradient(135deg,#2a2a3a,#08080e 55%,#5a5a7a)", acc: "#c8c8e0", felt: ["#2a2a3a", "#08080e"], metal: ["#d0d0e0", "#5a5a72", "#14141e"], c: "#9aa0c8", c2: "#ffffff"},
+  crimson: {b: ["#4a0a1a", "#10020a"], s: ["#f8f0f4", "#b0a0b0"], m: "#e8e0e8", g: "#e8102a", bg: "linear-gradient(135deg,#4a0818,#0e0208 55%,#a01030)", acc: "#ff4a6a", felt: ["#3a0612", "#0c0106"], metal: ["#f0e8ee", "#8a1830", "#200410"], c: "#e8102a", c2: "#ffc0c8"},
+  sick: {b: ["#6a7a0a", "#141a02"], s: ["#f8ffd0", "#c8d84a"], m: "#e8f23a", g: "#d8ff2a", bg: "linear-gradient(135deg,#4a5a08,#0e1202 55%,#9aaa18)", acc: "#e8f23a", felt: ["#2a3a08", "#0a1002"], metal: ["#f0ff9a", "#7a8a14", "#1e2404"], c: "#d8ff2a", c2: "#ffffc8"},
+  teal: {b: ["#0a4a4a", "#021414"], s: ["#d8ffff", "#6ad0d0"], m: "#6af0e0", g: "#2affd8", bg: "linear-gradient(135deg,#083a3a,#020e0e 55%,#14808a)", acc: "#6af0e0", felt: ["#083a3a", "#021414"], metal: ["#a8fff0", "#1a7a78", "#04201e"], c: "#2affd8", c2: "#d8fff8"},
+  rust: {b: ["#6a2a10", "#140802"], s: ["#f0d8c0", "#a87850"], m: "#d89a5a", g: "#ff6a2a", bg: "linear-gradient(135deg,#4a1c08,#100602 55%,#8a3a14)", acc: "#e89a5a", felt: ["#2a1208", "#0a0402"], metal: ["#e8a878", "#7a3414", "#200a04"], c: "#ff6a2a", c2: "#ffd8b0"},
+  neon: {b: ["#1a0a4a", "#04020e"], s: ["#f0e8ff", "#9a8ae8"], m: "#ff5ad8", g: "#ff2ad8", bg: "linear-gradient(135deg,#2a0a4a,#06020e 55%,#b010a0)", acc: "#ff5ad8", felt: ["#1a0a3a", "#05020e"], metal: ["#ff9af0", "#7a1a8a", "#1a0422"], c: "#ff2ad8", c2: "#9af8ff"},
+  gold: {b: ["#2a2208", "#060400"], s: ["#fff6d0", "#d8b84a"], m: "#ffd24d", g: "#ffcf3d", bg: "linear-gradient(135deg,#3a2c06,#0a0800 55%,#8a6a10)", acc: "#ffd24d", felt: ["#1a1406", "#060400"], metal: ["#fff0a0", "#a07a10", "#2a2004"], c: "#ffcf3d", c2: "#fff8d0"},
 };
-const HOR_LAYERS = ["fire", "runes", "gems", "galaxy", "crystal", "vines", "camo", "carbon", "circuit", "rings", "lightning", "marble", "wave", "stars", "neon", "checker"];
-const HOR_TABLE_SET = new Set([0, 3, 5, 8, 11, 13, 16, 19, 21, 24, 27, 29]);
+const HOR_LAYERS = ["skulls", "bones", "spikes", "webs", "blood", "eyes", "claws", "bats", "thorns", "cracks", "teeth", "chains", "fire", "runes", "galaxy", "crystal", "lightning", "vines", "camo", "carbon", "circuit", "gems", "neon", "wave"];
+const HOR_TABLE_SET = new Set([0, 3, 5, 8, 11, 13, 16, 19, 21, 24, 27, 29, 33, 35, 37, 40, 43, 45, 48, 51, 53, 56, 59, 61]);
 const HOR_USD = [4.99, 6.99, 9.99, 12.99, 14.99, 19.99, 24.99, 29.99];
+const horCueLayers = (i, P) => { const A = HOR_LAYERS.slice(0, 12), B = HOR_LAYERS.slice(12); return [{d: A[i % 12], c: P.c, c2: P.c2}, {d: A[(i * 5 + 3 + (i >> 4)) % 12 === i % 12 ? (i + 7) % 12 : (i * 5 + 3 + (i >> 4)) % 12], c: P.c2}, {d: B[(i * 7 + (i >> 3)) % B.length], c: P.c, c2: P.c2}]; };
 HORROR.forEach(([name, motif, pal], i) => {
-  const P = HOR_PAL[pal], L0 = HOR_LAYERS[(i * 3) % HOR_LAYERS.length], L1 = HOR_LAYERS[(i * 3 + 5) % HOR_LAYERS.length], L2 = HOR_LAYERS[(i * 5 + 9) % HOR_LAYERS.length];
-  VIP_CUES.push(vipCue("vh_" + i, name, [9 + (i % 2), 9 + ((i >> 1) % 2), 10, 9 + ((i >> 2) % 2)], P.b, P.s, P.m, [{d: L0, c: P.c, c2: P.c2}, {d: L1, c: P.c2}, {d: L2, c: P.c}], P.g));
+  const P = HOR_PAL[pal];
+  VIP_CUES.push(vipCue("vh_" + i, name, [9 + (i % 2), 9 + ((i >> 1) % 2), 10, 9 + ((i >> 2) % 2)], P.b, P.s, P.m, horCueLayers(i, P), P.g));
   if (motif) {
     EXTRA_TABLES.push({id: "vt_" + i, name, felt: P.felt, rail: [P.metal[1], P.metal[2]], trim: P.metal[0], gem: P.c, pat: "medal", cash: 0, lux: 1, vip: 1});
-    TBL["vt_" + i] = {base: "lacquer", metal: P.metal, orn: motif, lux: 1, elite: 1, spark: 12, sparkC: P.c2, shine: 0.35, mat: "lux", bg: [P.felt[0], P.felt[1]], gem: P.c};
+    TBL["vt_" + i] = {base: i % 2 ? "lacquer" : "metal", metal: P.metal, orn: motif, lux: 1, elite: 1, spark: 12, sparkC: P.c2, shine: 0.35, mat: "lux", bg: [P.felt[0], P.felt[1]], gem: P.c};
   }
 });
 CUES.push(...VIP_CUES.filter(c => c.id.startsWith("vh_")));
 const weekIdx = () => Math.floor((Date.now() + 3 * 864e5) / (7 * 864e5));
-const horrorWeek = () => { const w = weekIdx(), out = []; for (let k = 0; k < 8; k++) out.push((w * 8 + k) % 32); return out.map(i => horrorOffer(i)); };
+const horrorWeek = () => { const w = weekIdx(), out = []; for (let k = 0; k < 8; k++) out.push((w * 8 + k) % HORROR.length); return out.map(i => horrorOffer(i)); };
 const horrorOffer = i => {
   const [name, motif, pal] = HORROR[i], P = HOR_PAL[pal], usd = HOR_USD[i % 8], tb = HOR_TABLE_SET.has(i);
-  return {id: "hor_" + i, title: name, sub: tb ? "Qo'rqinchli kiy + VIP stol" : "Qo'rqinchli VIP kiy", bg: P.bg, accent: P.acc, horror: true, table: tb ? "vt_" + i : "", tiers: [
-    {sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", coins: Math.round(usd * 24000), cash: Math.round(usd * 14), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
+  return {id: "hor_" + i, title: name, sub: tb ? "Qo'rqinchli kiy + VIP stol + ramka" : "Qo'rqinchli VIP kiy + ramka", bg: P.bg, accent: P.acc, horror: true, table: tb ? "vt_" + i : "", frame: "vf_" + i, tiers: [
+    {sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", frame: "vf_" + i, coins: Math.round(usd * 24000), cash: Math.round(usd * 14), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
 };
 const horrorLeft = () => { const s = ((weekIdx() + 1) * 7 * 864e5 - 3 * 864e5 - Date.now()) / 1000; return `${Math.floor(s / 86400)}${T("k")} ${Math.floor(s % 86400 / 3600)}${T("s")}`; };
+// scary set sold in the normal shop (cash): 12 cues (own tab) + 6 tables
+const SHOP_HCUES = [["Sirli tun", "violet", 0, 5], ["Yarim tun", "ice", 1, 6], ["Qabr qo'ng'irog'i", "steel", 2, 7], ["Yovuz ko'z", "crimson", 5, 8], ["Kabus o'rmoni", "toxic", 8, 9], ["Tun sayyohi", "teal", 10, 10],
+  ["Suyak taqa", "bone", 1, 11], ["Jodu tayoqchasi", "neon", 9, 12], ["Qorong'u oy", "gold", 3, 13], ["Tuman shamoli", "rust", 6, 14], ["Xira chiroq", "sick", 4, 15], ["Sukunat", "blood", 7, 16]];
+SHOP_HCUES.forEach(([name, pal, l1, l2], k) => { const P = HOR_PAL[pal], A = HOR_LAYERS.slice(0, 12), c = vipCue("sh_" + k, name, [7 + (k >> 2), 7 + (k % 3), 8, 7 + (k % 2)], P.b, P.s, P.m, [{d: A[l1], c: P.c, c2: P.c2}, {d: HOR_LAYERS[12 + l2 % 12], c: P.c2}, {d: A[(l1 + 5) % 12], c: P.c}], P.g);
+  c.cat = "horror"; c.tier = "Qo'rqinchli"; c.price = 40 + k * 22; c.cur = "cash"; CUES.push(c); });
+const SHOP_HTBL = [["Qora tun", "dagger", "crimson", 120], ["Vaqt qumi", "hourglass", "gold", 160], ["Sirli niqob", "mask", "violet", 200], ["Suyaklar bog'i", "ribs", "bone", 240], ["Shamchiroq", "lantern", "pumpkin", 280], ["Oy uvillashi", "howl", "steel", 320]];
+SHOP_HTBL.forEach(([name, motif, pal, cash], k) => { const P = HOR_PAL[pal], id = "xh_" + k;
+  EXTRA_TABLES.push({id, name, felt: P.felt, rail: [P.metal[1], P.metal[2]], trim: P.metal[0], gem: P.c, pat: "gold", cash});
+  TBL[id] = {mat: ["carbon", "ebony", "lacquer", "stone", "carbon", "ebony"][k], motif: ["hex", "girih", "damask", "hex", "cloud", "stars"][k], mc: P.c2, ma: 0.14, bg: [P.felt[0], P.felt[1]], glow: P.g};
+  ORN_KIND[id] = motif; CITY_ORN.add(id); });
 // Premium cues: precious-metal butts with engraving or set stones, limited editions, a strike effect of their own.
 // Each one matches a premium table (same material); owning both gives a set bonus.
 const PREMIUM_CUES = [
@@ -7694,10 +7762,66 @@ const PREMIUM_FRAMES = [
     gem: tb.gemrow || (tb.pave && tb.pave !== "opal" ? tb.pave : null) || t.gem || tb.metal[0], glow: tb.gemrow || (tb.pave === "opal" ? "#ff8ad8" : tb.metal[0]), c: [tb.metal[0], tb.metal[1], tb.metal[2]]};
 });
 FRAMES.push(...PREMIUM_FRAMES);
+// scary frames (never sold in the normal frame shop except set C): A = VIP window, B = season pass rewards, C = cash shop
+const hFrame = (id, name, pal, deco, shape, extra = {}) => { const P = HOR_PAL[pal]; return {id, name, prem: true, h: {deco, shape}, metal: P.metal, glow: P.g, gem: deco % 3 === 0, c: P.metal, cur: "cash", v: 0, ...extra}; };
+FRAMES.push(...HORROR.map(([name, , pal], i) => hFrame("vf_" + i, name, pal, i % 12, (i >> 2) % 4, {vip: true})));
+const PASS_FR_NAMES = ["Oy ramkasi", "Sham ramkasi", "Kuzgun ramkasi", "Qovoq ramkasi", "Suyak ramkasi", "Qabr ramkasi", "Sharpa ramkasi", "To'r ramkasi", "Qon atirgul", "Shox ramkasi", "Chaqmoq ramkasi", "Yarasa to'dasi", "Go'r ramkasi", "Nur ramkasi", "Ruh ramkasi", "Qora tun"];
+const PASS_FR_PAL = ["ice", "gold", "violet", "pumpkin", "bone", "steel", "teal", "crimson", "blood", "rust", "neon", "toxic", "sick", "gold", "ice", "blood"];
+FRAMES.push(...PASS_FR_NAMES.map((nm, k) => hFrame("pp_" + k, nm, PASS_FR_PAL[k], 12 + k % 12, (k + 1 + (k >> 2)) % 4, {ps: true})));
+const SHOP_FR = [["Tun nigohi", "crimson", 8, 2, 90], ["Suyak toji", "bone", 2, 1, 120], ["Zulmat to'ri", "violet", 4, 3, 150], ["Jodu ko'zi", "neon", 20, 0, 180], ["Qora alanga", "rust", 7, 2, 210], ["Arvohlar raqsi", "ice", 18, 1, 240], ["Go'rkov", "sick", 17, 3, 270], ["Bo'ron qoni", "teal", 22, 0, 300]];
+FRAMES.push(...SHOP_FR.map(([nm, pal, deco, shape, v], k) => hFrame("fs_" + k, nm, pal, deco, shape, {shopH: true, v, gems: Math.round(v / 6)})));
 const frameIdx = id => FRAMES.findIndex(f => f.id === id);
+// ---------------------------------------------------------------- scary avatar frames (VIP set A, season-pass set B, shop set C): ring + 24 different decorations
+function horrorFrameArt(f) {
+  const c = document.createElement("canvas"); c.width = c.height = 200; const g = c.getContext("2d");
+  const [hi, mid, lo] = f.metal, glow = f.glow, TAU = Math.PI * 2, sn = Math.sin, cs = Math.cos, h = f.h;
+  const shp = (a, r) => { g.beginPath(); if (h.shape === 2) g.arc(100, 100, 100 - a, 0, TAU); else if (h.shape === 1) { const q = 100 - a, k = 34; g.moveTo(a + k, a); g.lineTo(200 - a - k, a); g.lineTo(200 - a, a + k); g.lineTo(200 - a, 200 - a - k); g.lineTo(200 - a - k, 200 - a); g.lineTo(a + k, 200 - a); g.lineTo(a, 200 - a - k); g.lineTo(a, a + k); g.closePath(); } else g.roundRect(a, a, 200 - 2 * a, 200 - 2 * a, h.shape === 3 ? r * 0.45 : r); };
+  const fill = (col, fn, sh) => { g.save(); if (sh) { g.shadowColor = "rgba(0,0,0,.65)"; g.shadowBlur = 5; g.shadowOffsetY = 2; } g.fillStyle = col; fn(); g.fill(); g.restore(); };
+  const line = (col, w, fn) => { g.save(); g.lineCap = g.lineJoin = "round"; g.strokeStyle = col; g.lineWidth = w; fn(); g.stroke(); g.restore(); };
+  const pl = pts => () => { g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); };
+  const mir = fn => { fn(1); g.save(); g.translate(200, 0); g.scale(-1, 1); fn(-1); g.restore(); };
+  const mir4 = fn => { for (const [sx, sy] of [[1, 1], [-1, 1], [1, -1], [-1, -1]]) { g.save(); g.translate(sx > 0 ? 0 : 200, sy > 0 ? 0 : 200); g.scale(sx, sy); fn(); g.restore(); } };
+  const metalG = g.createLinearGradient(0, 0, 200, 200); [[0, mid], [0.15, hi], [0.3, lo], [0.5, mid], [0.7, hi], [0.85, lo], [1, mid]].forEach(([o, col]) => metalG.addColorStop(o, col));
+  g.save(); g.shadowColor = "rgba(0,0,0,.7)"; g.shadowBlur = 10; g.shadowOffsetY = 3; g.fillStyle = metalG; shp(9, 38); g.fill(); g.restore();
+  g.save(); g.globalCompositeOperation = "destination-out"; shp(27, 20); g.fill(); g.restore();
+  line("rgba(255,255,255,.55)", 1.4, () => shp(10, 37)); line("rgba(0,0,0,.6)", 1.6, () => shp(26, 21)); line(shade(lo, -40), 1, () => shp(18, 30));
+  g.save(); g.shadowColor = glow; g.shadowBlur = 8; line(glow, 1.6, () => shp(28.5, 19)); g.restore();
+  const bone = "#ece4cc", dark = "#14101a";
+  const D = [
+    () => mir(() => { fill(bone, () => { g.beginPath(); g.moveTo(58, 26); g.bezierCurveTo(50, 22, 36, 12, 34, -2); g.bezierCurveTo(46, 6, 62, 10, 76, 14); g.closePath(); }, 1); line("rgba(0,0,0,.3)", 1, () => { g.beginPath(); g.moveTo(54, 22); g.lineTo(38, 4); }); }),
+    () => mir4(() => { fill(dark, () => { g.beginPath(); g.moveTo(14, 48); g.quadraticCurveTo(0, 22, 20, 4); g.quadraticCurveTo(24, 16, 36, 12); g.quadraticCurveTo(38, 24, 52, 24); g.quadraticCurveTo(38, 30, 32, 48); g.closePath(); }, 1); line(glow, 0.9, () => { g.beginPath(); g.moveTo(14, 44); g.quadraticCurveTo(6, 22, 20, 8); g.moveTo(24, 34); g.lineTo(36, 14); }); }),
+    () => { const sk = (x, y, r) => { fill(bone, () => { g.beginPath(); g.arc(x, y - r * 0.1, r, 0, TAU); g.rect(x - r * 0.5, y + r * 0.5, r, r * 0.7); }, 1); fill(dark, () => { g.beginPath(); g.arc(x - r * 0.38, y, r * 0.26, 0, TAU); g.arc(x + r * 0.38, y, r * 0.26, 0, TAU); }); }; sk(100, 14, 12); sk(20, 22, 8); sk(180, 22, 8); sk(20, 178, 8); sk(180, 178, 8); },
+    () => { for (let t = 0; t < 40; t++) { const a = t / 40 * TAU, x = 100 + cs(a) * 90, y = 100 + sn(a) * 90; if (Math.max(Math.abs(cs(a)), Math.abs(sn(a))) > 0.97 && t % 2) continue; const nx = cs(a), ny = sn(a); fill(hi, () => { g.beginPath(); g.moveTo(x - ny * 4, y + nx * 4); g.lineTo(x + ny * 4, y - nx * 4); g.lineTo(x + nx * 9, y + ny * 9); g.closePath(); }, 1); } },
+    () => { mir(() => { line("rgba(255,255,255,.75)", 0.9, () => { g.beginPath(); for (let k = 0; k < 5; k++) { const a = k * 0.4; g.moveTo(4, 4); g.lineTo(4 + cs(a) * 56, 4 + sn(a) * 56); } for (const r of [14, 26, 40]) { g.moveTo(4 + r, 4); for (let k = 0; k <= 4; k++) { const a = k * 0.4; g.quadraticCurveTo(4 + cs(a - 0.2) * r * 0.85, 4 + sn(a - 0.2) * r * 0.85, 4 + cs(a) * r, 4 + sn(a) * r); } } }); }); line("rgba(255,255,255,.7)", 0.8, () => { g.beginPath(); g.moveTo(100, 0); g.lineTo(100, 11); }); fill("#1a0a22", () => { g.beginPath(); g.arc(100, 15, 4.5, 0, TAU); }); fill("#1a0a22", () => { g.beginPath(); g.arc(100, 9, 3, 0, TAU); }); fill("#ff3a3a", () => { g.beginPath(); g.arc(99, 9, 0.9, 0, TAU); g.arc(101, 9, 0.9, 0, TAU); }); line("#1a0a22", 1.3, () => { g.beginPath(); for (const d of [-1, 1]) for (let k = 0; k < 4; k++) { g.moveTo(100 + d * 4, 14); g.quadraticCurveTo(100 + d * 12, 6 + k * 3, 100 + d * 14, 16 + k * 2); } }); },
+    () => { for (const x of [150, 162, 174]) line("#c8102e", 2.2, () => { g.beginPath(); g.moveTo(x - 2, 30); g.quadraticCurveTo(x + 9, 52, x + 2, 76); }); mir4(() => { fill(bone, () => { g.beginPath(); g.moveTo(8, 34); g.quadraticCurveTo(14, 26, 16, 12); g.quadraticCurveTo(10, 22, 4, 26); g.closePath(); }, 1); fill(bone, () => { g.beginPath(); g.moveTo(14, 36); g.quadraticCurveTo(22, 30, 26, 16); g.quadraticCurveTo(18, 26, 10, 30); g.closePath(); }, 1); }); },
+    () => { line("#1a2a14", 3.2, () => { g.beginPath(); for (let t = 0; t <= 100; t++) { const a = t / 100 * TAU, r = 90 + sn(a * 9) * 3; g.lineTo(100 + cs(a) * r, 100 + sn(a) * r); } g.closePath(); }); for (let t = 0; t < 36; t++) { const a = t / 36 * TAU, x = 100 + cs(a) * 90, y = 100 + sn(a) * 90, sg = t % 2 ? 1 : -1; fill("#2a3a1a", () => { g.beginPath(); g.moveTo(x, y); g.lineTo(x + cs(a + sg * 1.2) * 7, y + sn(a + sg * 1.2) * 7); g.lineTo(x + cs(a) * 3, y + sn(a) * 3); }); } for (const [x, y] of [[100, 12], [22, 100], [178, 100], [100, 188]]) { fill("#c8102e", () => { g.beginPath(); g.arc(x, y, 7, 0, TAU); }, 1); fill("#7a0a14", () => { g.beginPath(); g.arc(x, y, 3.6, 0, TAU); }); } },
+    () => { for (const [x0, y0, dx, dy] of [[0, 10, 1, 0], [0, 190, 1, 0]]) for (let x = 24; x < 180; x += 13) { const sg = y0 < 100 ? 1 : -1, hh = 12 + ((x * 7) % 9); const lg = g.createLinearGradient(0, y0, 0, y0 + sg * hh); lg.addColorStop(0, "#ffe27a"); lg.addColorStop(0.5, "#ff7a1a"); lg.addColorStop(1, "rgba(200,20,0,0)"); fill(lg, () => { g.beginPath(); g.moveTo(x - 6, y0); g.quadraticCurveTo(x - 4, y0 + sg * hh * 0.5, x, y0 + sg * hh); g.quadraticCurveTo(x + 4, y0 + sg * hh * 0.5, x + 6, y0); }); } },
+    () => { for (const [x, y, r] of [[100, 12, 8], [100, 188, 8], [12, 100, 8], [188, 100, 8], [30, 30, 6], [170, 30, 6], [30, 170, 6], [170, 170, 6]]) { fill("#f4f0e0", () => { g.beginPath(); g.ellipse(x, y, r * 1.5, r * 0.8, 0, 0, TAU); }, 1); fill(glow, () => { g.beginPath(); g.arc(x, y, r * 0.66, 0, TAU); }); fill("#050205", () => { g.beginPath(); g.ellipse(x, y, r * 0.16, r * 0.6, 0, 0, TAU); }); } },
+    () => { for (const y0 of [30, 170]) { const sg = y0 < 100 ? 1 : -1; for (let x = 36; x < 170; x += 11) fill("#f4f0e0", () => { g.beginPath(); g.moveTo(x - 4, y0 - sg * 1); g.lineTo(x + 4, y0 - sg * 1); g.lineTo(x, y0 + sg * 11); g.closePath(); }); } for (const x of [72, 128]) line("#c8102e", 1.4, () => { g.beginPath(); g.moveTo(x, 40); g.lineTo(x, 50); }); },
+    () => mir4(() => { line(mid, 6, () => { g.beginPath(); g.moveTo(26, 40); g.bezierCurveTo(6, 40, 2, 16, 18, 10); g.bezierCurveTo(30, 6, 34, 20, 26, 22); }); line(hi, 1.4, () => { g.beginPath(); g.moveTo(26, 40); g.bezierCurveTo(6, 40, 2, 16, 18, 10); g.bezierCurveTo(30, 6, 34, 20, 26, 22); }); for (const [x, y] of [[16, 34], [8, 24], [12, 14]]) fill("#ffd0f0", () => { g.beginPath(); g.arc(x, y, 1.6, 0, TAU); }); }),
+    () => { for (let t = 0; t < 28; t++) { const a = t / 28 * TAU, x = 100 + cs(a) * 90, y = 100 + sn(a) * 90; if (Math.max(Math.abs(cs(a)), Math.abs(sn(a))) > 0.96) { } g.save(); g.translate(x, y); g.rotate(a + Math.PI / 2); line(hi, 1.8, () => { g.beginPath(); g.ellipse(0, 0, 3.4, t % 2 ? 6 : 4, 0, 0, TAU); }); g.restore(); } fill("#ece4cc", () => { g.beginPath(); g.arc(100, 189, 9, 0, TAU); g.rect(95, 194, 10, 5); }, 1); fill(dark, () => { g.beginPath(); g.arc(96.5, 189, 2.4, 0, TAU); g.arc(103.5, 189, 2.4, 0, TAU); }); },
+    // ---- set B
+    () => { fill("#f2f0e8", () => { g.beginPath(); g.arc(100, 15, 13, 0, TAU); }, 1); fill(mid, () => { g.beginPath(); g.arc(106, 12, 11, 0, TAU); }); line(glow, 1, () => { g.beginPath(); g.arc(100, 15, 15, 0, TAU); }); for (const [x, y] of [[40, 16], [160, 16], [22, 40], [178, 40]]) fill("#f2f0e8", () => { g.beginPath(); g.arc(x, y, 1.8, 0, TAU); }); },
+    () => { for (const [x, hh] of [[60, 18], [80, 24], [100, 30], [120, 24], [140, 18]]) { fill("#f4ecd4", () => { g.beginPath(); g.rect(x - 4, 26 - hh, 8, hh); }, 1); fill("#fffaf0", () => { g.beginPath(); g.moveTo(x - 4, 26 - hh); g.lineTo(x + 4, 26 - hh); g.lineTo(x + 4, 30 - hh); g.quadraticCurveTo(x + 2, 34 - hh, x, 30 - hh); g.lineTo(x - 2, 33 - hh); g.lineTo(x - 4, 28 - hh); }); g.save(); g.shadowColor = "#ffb02a"; g.shadowBlur = 8; fill("#ffc83a", () => { g.beginPath(); g.moveTo(x, 12 - hh); g.quadraticCurveTo(x + 4.5, 20 - hh, x, 24 - hh); g.quadraticCurveTo(x - 4.5, 20 - hh, x, 12 - hh); }); g.restore(); } },
+    () => { fill("#10101a", () => { g.beginPath(); g.ellipse(146, 14, 14, 7, -0.3, 0, TAU); }, 1); fill("#10101a", () => { g.beginPath(); g.moveTo(132, 12); g.quadraticCurveTo(112, 0, 100, 8); g.quadraticCurveTo(116, 14, 128, 20); }); fill("#10101a", () => { g.beginPath(); g.arc(158, 8, 6, 0, TAU); }); fill("#c8a04a", () => { g.beginPath(); g.moveTo(163, 6); g.lineTo(172, 9); g.lineTo(163, 11); }); fill("#ff5a3a", () => { g.beginPath(); g.arc(159, 7, 1.2, 0, TAU); }); for (const x of [30, 44]) fill("#10101a", () => { g.beginPath(); g.ellipse(x, 18 + (x - 30) * 0.3, 10, 3.4, -0.6, 0, TAU); }); },
+    () => { mir4(() => { line("#2a6a1a", 2, () => { g.beginPath(); g.moveTo(40, 6); g.bezierCurveTo(20, 6, 8, 18, 8, 40); }); fill("#ff8a1a", () => { g.beginPath(); g.ellipse(18, 18, 11, 9, 0, 0, TAU); }, 1); line("#b85a08", 0.9, () => { g.beginPath(); g.moveTo(14, 11); g.quadraticCurveTo(10, 18, 14, 26); g.moveTo(22, 11); g.quadraticCurveTo(26, 18, 22, 26); }); fill("#2a1004", () => { g.beginPath(); g.moveTo(13, 16); g.lineTo(17, 16); g.lineTo(15, 20); g.moveTo(19, 16); g.lineTo(23, 16); g.lineTo(21, 20); }); fill("#3a7a2a", () => { g.beginPath(); g.rect(17, 6, 3, 4); }); }); },
+    () => { mir(() => { for (let k = 0; k < 4; k++) { const y = 40 + k * 32; fill(bone, () => { g.beginPath(); g.roundRect(3, y, 7, 24, 3.5); g.arc(6.5, y - 1, 4.4, 0, TAU); g.arc(6.5, y + 25, 4.4, 0, TAU); }, 1); } }); },
+    () => { mir4(() => { fill("#8a8a98", () => { g.beginPath(); g.moveTo(10, 44); g.lineTo(10, 22); g.arc(17, 22, 7, Math.PI, 0); g.lineTo(24, 44); g.closePath(); }, 1); line("#2a2a34", 1.6, () => { g.beginPath(); g.moveTo(17, 18); g.lineTo(17, 34); g.moveTo(12, 24); g.lineTo(22, 24); }); }); },
+    () => { for (const [x, y, s] of [[22, 100, 1], [178, 100, -1], [100, 184, 1]]) { g.save(); g.translate(x, y); g.scale(s, 1); fill("rgba(220,240,255,.85)", () => { g.beginPath(); g.arc(0, -5, 8, Math.PI, 0); g.lineTo(8, 10); g.quadraticCurveTo(5, 6, 3, 10); g.quadraticCurveTo(0, 6, -3, 10); g.quadraticCurveTo(-5, 6, -8, 10); g.closePath(); }); fill("#14182a", () => { g.beginPath(); g.ellipse(-3, -5, 1.6, 2.4, 0, 0, TAU); g.ellipse(3, -5, 1.6, 2.4, 0, 0, TAU); }); g.restore(); } },
+    () => { mir(() => { line("rgba(255,255,255,.8)", 0.9, () => { g.beginPath(); for (let k = 0; k < 7; k++) { g.moveTo(100, 0); g.lineTo(100 - 10 - k * 14, 50 + (k * k) % 7); } for (const r of [12, 24, 38, 52]) { g.moveTo(100, r); for (let k = 0; k <= 6; k++) { g.quadraticCurveTo(100 - 10 - k * 7 * (r / 40), r * 0.8 + k * 1.5, 100 - 10 - k * 14 * r / 52 * 1.0, 6 + r * 0.95); } } }); }); },
+    () => { for (const [x, y] of [[30, 30], [170, 30], [30, 170], [170, 170]]) { for (let k = 0; k < 5; k++) { const a = k * TAU / 5; fill("#d8102a", () => { g.beginPath(); g.ellipse(x + cs(a) * 5, y + sn(a) * 5, 6.5, 4.6, a, 0, TAU); }, 1); } fill("#6a0010", () => { g.beginPath(); g.arc(x, y, 3, 0, TAU); }); } for (const [x, y] of [[30, 44], [170, 48], [44, 170], [156, 168]]) fill("#c8102e", () => { g.beginPath(); g.moveTo(x, y - 5); g.quadraticCurveTo(x + 4, y, x, y + 3); g.quadraticCurveTo(x - 4, y, x, y - 5); }); },
+    () => mir(() => { line(bone, 3.2, () => { g.beginPath(); g.moveTo(68, 22); g.bezierCurveTo(60, 10, 50, 14, 46, 2); g.moveTo(58, 14); g.bezierCurveTo(54, 4, 46, 6, 44, -4); g.moveTo(54, 10); g.lineTo(62, 0); }); }),
+    () => mir4(() => { fill("#ffe23a", () => { g.beginPath(); g.moveTo(24, 8); g.lineTo(12, 26); g.lineTo(20, 26); g.lineTo(10, 46); g.lineTo(32, 20); g.lineTo(22, 20); g.lineTo(30, 8); g.closePath(); }, 1); }),
+    () => { for (let k = 0; k < 7; k++) { const x = 30 + k * 23 + (k % 2) * 4, y = 12 + (k % 3) * 5; fill("#14101a", () => { g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x - 6, y - 7, x - 11, y - 2); g.quadraticCurveTo(x - 6, y - 1, x - 4, y + 3); g.lineTo(x, y + 1.5); g.lineTo(x + 4, y + 3); g.quadraticCurveTo(x + 6, y - 1, x + 11, y - 2); g.quadraticCurveTo(x + 6, y - 7, x, y); }, 1); } },
+  ];
+  D[h.deco % D.length]();
+  if (f.gem) for (const [x, y] of [[100, 189], [11, 100], [189, 100]]) { g.fillStyle = "rgba(0,0,0,.5)"; g.beginPath(); g.arc(x, y, 5, 0, TAU); g.fill(); g.fillStyle = glow; g.beginPath(); g.arc(x, y, 3.6, 0, TAU); g.fill(); }
+  return c;
+}
 const frArt = {};
 function frameArt(f) {                            // transparent 200×200 overlay; the avatar sits in 28..172
   if (frArt[f.id]) return frArt[f.id];
+  if (f.h) return (frArt[f.id] = horrorFrameArt(f));
   const c = document.createElement("canvas"); c.width = c.height = 200; const g = c.getContext("2d"), saved = ctx; ctx = g;
   try {
     const [hi, mid, lo] = f.metal; let s2 = 3; const rn = () => (s2 = (s2 * 16807) % 2147483647) / 2147483647;
@@ -7759,7 +7883,7 @@ function vipOffers(start) {
       <div class="viptitle">${T(o.title)}</div><div class="vipsub">${T(o.sub)}${o.horror ? ` · ⏳ ${horrorLeft()}` : ""}</div>
       ${o.zodiac ? `<div class="zodsel"><button class="btn gray" id="zPrev">◀</button><span class="zav"><img src="${avatarURL(t.avatar)}" alt=""></span><b>${t.sign[1]}\uFE0E ${T(t.sign[0])}</b><button class="btn gray" id="zNext">▶</button></div>` : ""}
       <div class="vipcue"><div class="vcn">${esc(cue.name)} <small>⚡${cue.st[0]} 🎯${cue.st[1]} 🌀${cue.st[2]} ⏱${cue.st[3]}</small></div><div id="vipCv"></div></div>
-      <div class="vitems">${item("🎱", "Kiy", esc(cue.name))}${t.table ? item(`<img src="${tableThumb(tableById(t.table))}" style="height:34px;border-radius:4px">`, "Stol", esc(T(tableById(t.table).name))) : ""}${t.avatar ? item("🙂", "Avatar", T(t.sign[0])) : ""}${item('<span class="coin" style="width:30px;height:30px"></span>', "Tanga", fmtS(t.coins))}
+      <div class="vitems">${item("🎱", "Kiy", esc(cue.name))}${t.frame ? item(`<span style="display:inline-block">${avHTML(profile.avatar, frameIdx(t.frame), 38)}</span>`, "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name))) : ""}${t.table ? item(`<img src="${tableThumb(tableById(t.table))}" style="height:34px;border-radius:4px">`, "Stol", esc(T(tableById(t.table).name))) : ""}${t.avatar ? item("🙂", "Avatar", T(t.sign[0])) : ""}${item('<span class="coin" style="width:30px;height:30px"></span>', "Tanga", fmtS(t.coins))}
         ${item('<span class="cash" style="width:38px;height:28px"></span>', "Naqd pul", fmt(t.cash))}${t.sboxes ? item("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}${t.goldShots ? item("🏆", "Oltin zarba", "×" + t.goldShots) : ""}
         ${item('<img src="' + IMG.vip + '" style="height:30px">', "VIP ochko", fmt(t.vip))}</div>
       ${o.zodiac || o.tiers.length < 2 ? "" : `<div class="vtiers">${o.tiers.map((x, i) => `<button class="btn ${i === vipSel[o.id] ? "orange" : "gray"}" data-vt="${i}">$${x.usd}</button>`).join("")}</div>`}
@@ -8073,10 +8197,12 @@ const SEASONS = [["Muz saltanati", "#1a4a8a", "#050e24", "#9fe8ff"], ["Sevgi bog
   ["Kuz bargi", "#8a3a0a", "#200c02", "#ffb070"], ["Qon oyi", "#a8101e", "#2a0206", "#ff8a8a"], ["Tuman shohligi", "#3a4a6a", "#0a0e18", "#c0d0f0"], ["Qor malikasi", "#2a6ab8", "#06122e", "#e0f4ff"]];
 const seasonTheme = () => { const d = new Date(), m = d.getUTCMonth(), [name, c1, c2, ac] = SEASONS[m]; return {name, c1, c2, ac, m}; };
 // Season-only cues: earned in the pass, never sold anywhere
-const PASS_CUE_DEF = [["Oy nuri", "#0a2a5a", "#050a1c", "#bfe0ff", "#7ab8ff", "stars", "crystal"], ["Qon sharob", "#7a0a14", "#1a0204", "#ffc0c0", "#ff5a5a", "fire", "runes"], ["Qor bo'roni", "#0a3a4a", "#02101a", "#e8fcff", "#9ff4ff", "crystal", "wave"],
-  ["Yashil olov", "#0a4a1a", "#02100a", "#d0ffc0", "#6aff4a", "fire", "vines"], ["Oltin burgut", "#6a4a08", "#1a1002", "#fff0b0", "#ffd24d", "runes", "marble"], ["Samoviy ajdar", "#3a0a7a", "#0a0216", "#f0e0ff", "#b05aff", "galaxy", "lightning"],
-  ["Tun pari", "#7a0a5a", "#1a0214", "#ffd0f0", "#ff5ad8", "stars", "neon"], ["Shoh gambiti II", "#1a1a2a", "#04040a", "#ffe8a0", "#ffcf3d", "circuit", "gems"]];
-const PASS_CUES = PASS_CUE_DEF.map(([name, a, b, sh, col, l1, l2], i) => { const c = vipCue("ps_" + i, name, [9 + (i % 2), 9, 9 + ((i >> 1) % 2), 9 + (i % 2)], [a, b], [sh, col], col, [{d: l1, c: col}, {d: l2, c: sh}, {d: "gems", c: col}], col); c.cat = "pass"; c.tier = "Mavsum"; return c; });
+const PASS_CUE_DEF = [["Oy nuri", "#0a2a5a", "#050a1c", "#bfe0ff", "#7ab8ff", "stars", "crystal", "bats"], ["Qon sharob", "#7a0a14", "#1a0204", "#ffc0c0", "#ff5a5a", "blood", "runes", "teeth"], ["Qor bo'roni", "#0a3a4a", "#02101a", "#e8fcff", "#9ff4ff", "crystal", "wave", "cracks"],
+  ["Yashil olov", "#0a4a1a", "#02100a", "#d0ffc0", "#6aff4a", "fire", "vines", "skulls"], ["Oltin burgut", "#6a4a08", "#1a1002", "#fff0b0", "#ffd24d", "runes", "marble", "claws"], ["Samoviy ajdar", "#3a0a7a", "#0a0216", "#f0e0ff", "#b05aff", "galaxy", "lightning", "eyes"],
+  ["Tun pari", "#7a0a5a", "#1a0214", "#ffd0f0", "#ff5ad8", "stars", "neon", "webs"], ["Shoh gambiti II", "#1a1a2a", "#04040a", "#ffe8a0", "#ffcf3d", "circuit", "gems", "chains"],
+  ["Yalang'och daraxt", "#2a1a10", "#080402", "#e8d8c0", "#a8804a", "thorns", "bones", "cracks"], ["Sirli soat", "#3a3a4a", "#0a0a10", "#f0f0ff", "#c8c8e0", "chains", "runes", "gems"], ["Tungi gul", "#5a0a4a", "#14020e", "#ffd8f4", "#ff7ae0", "vines", "stars", "blood"], ["Oy ovchisi", "#0a2a3a", "#020a12", "#d8f4ff", "#5ad0ff", "claws", "wave", "bats"],
+  ["Qora atirgul", "#2a0a14", "#080204", "#f0d0d8", "#ff3a5a", "thorns", "blood", "gems"], ["Hayot daraxti", "#0a4a2a", "#02140a", "#e0ffd8", "#7aff9a", "vines", "eyes", "crystal"], ["Sharpa yo'li", "#1a1a3a", "#04040e", "#e8e8ff", "#8a8aff", "webs", "skulls", "neon"], ["Tumanli ko'l", "#0a3a3a", "#021212", "#d8fff8", "#3af0d0", "wave", "cracks", "crystal"]];
+const PASS_CUES = PASS_CUE_DEF.map(([name, a, b, sh, col, l1, l2, l3], i) => { const c = vipCue("ps_" + i, name, [9 + (i % 2), 9, 9 + ((i >> 1) % 2), 9 + (i % 2)], [a, b], [sh, col], col, [{d: l1, c: col, c2: sh}, {d: l2, c: sh}, {d: l3, c: col}], col); c.cat = "pass"; c.tier = "Mavsum"; return c; });
 CUES.push(...PASS_CUES);
 const PASS_TABLES = ["e_pax", "e_atl", "e_smq", "e_kos"], PASS_ELITE = ["e_sak", "e_pax", "e_atl", "e_smq", "e_kos", "e_olv", "e_orx", "e_lot", "e_tov", "e_qah"];
 const PASS_AV = [12, 25, 17, 22, 38, 5, 9, 30, 41, 47, 33, 20, 14, 44, 28, 36];
@@ -8085,9 +8211,12 @@ const passRew = (t, prem) => {
   const m = t / 25;
   if (t % 25 === 0) {
     if (t === 400) return prem ? {k: "cue", id: "p_shoh"} : {k: "frame", i: FRAMES.findIndex(f => f.pass)};
-    if (prem) return [null, {k: "cue", id: PASS_CUES[(m - 1) / 4 | 0].id}, {k: "tpiece", id: PASS_ELITE[m % PASS_ELITE.length], n: 2}, {k: "avatar", id: GA + PASS_AV[m % PASS_AV.length]}, {k: "table", id: PASS_TABLES[m / 4 - 1]}][m % 4 === 0 ? 4 : m % 4];
-    return [null, {k: "avatar", id: GA + PASS_AV[(m + 7) % PASS_AV.length]}, {k: "box"}, {k: "cue", id: PASS_CUES[4 + ((m - 3) / 4 | 0)].id}, {k: "tpiece", id: PASS_ELITE[(m + 2) % PASS_ELITE.length], n: 1}][m % 4 === 0 ? 4 : m % 4];
+    if (prem) return [null, {k: "cue", id: PASS_CUES[(m - 1) / 4 | 0].id}, {k: "cue", id: PASS_CUES[8 + ((m - 2) / 4 | 0)].id}, {k: "avatar", id: GA + PASS_AV[m % PASS_AV.length]}, {k: "table", id: PASS_TABLES[m / 4 - 1]}][m % 4 === 0 ? 4 : m % 4];
+    return [null, {k: "avatar", id: GA + PASS_AV[(m + 7) % PASS_AV.length]}, {k: "cue", id: PASS_CUES[12 + ((m - 2) / 4 | 0)].id}, {k: "cue", id: PASS_CUES[4 + ((m - 3) / 4 | 0)].id}, {k: "tpiece", id: PASS_ELITE[(m + 2) % PASS_ELITE.length], n: 1}][m % 4 === 0 ? 4 : m % 4];
   }
+  const fr = n => ({k: "frame", i: FRAMES.findIndex(f => f.id === "pp_" + (n % 16))});
+  if (prem && t % 20 === 0) return fr(t / 20 - (t / 100 | 0) - 1);                                   // scary season frames on the premium row
+  if (!prem && t % 60 === 20) return fr((t - 20) / 60 + 9);
   if (t % 10 === 0) return prem ? {k: "gems", v: 10 + t / 10 * 2} : {k: "gems", v: 3 + (t / 30 | 0)};
   const g = 1 + t / 40, cyc = t % 12;
   if (!prem) return [{k: "coins", v: Math.round(300 * t * g / 50) * 50}, {k: "spin", v: 1}, {k: "cash", v: 2 + (t / 10 | 0)}, {k: "piece"}, {k: "lucky", v: 1}, {k: "tokens", v: 5 + (t / 10 | 0)},
@@ -8181,7 +8310,7 @@ function buildPass() {
   $("passTitle").textContent = `♞ ${T("Mavsum passi")}`;
   const cell = (t, prem) => {
     const r = passRew(t, prem), [ico, qty] = rewIcon(r), key = t + (prem ? "p" : "f"), got = p.got[key], open = tier >= t && (!prem || p.prem), big = t % 25 === 0;
-    const art = r.k === "avatar" ? avHTML(r.id, 0, 56) : r.k === "cue" ? `<img class="pcue" src="${cueArtURL(cueDef(r.id))}" alt="">` : r.k === "table" ? `<img class="ptimg" src="${tableThumb(tableById(r.id))}">` : `<div class="ico">${ico}</div>`;
+    const art = r.k === "avatar" ? avHTML(r.id, 0, 56) : r.k === "frame" ? avHTML(profile.avatar, r.i, 62) : r.k === "cue" ? `<img class="pcue" src="${cueArtURL(cueDef(r.id))}" alt="">` : r.k === "table" ? `<img class="ptimg" src="${tableThumb(tableById(r.id))}">` : `<div class="ico">${ico}</div>`;
     return `<div class="ptier ${prem ? "prem" : "free"} ${rewKind(r)}${big ? " big" : ""}${got ? " got" : ""}${open && !got ? " ready" : ""}${prem && !p.prem ? " lock" : ""}">${art}<div class="qty">${esc(String(qty))}</div>
       ${got ? "✅" : open ? `<button class="btn green" data-claim="${key}">${T("Olish")}</button>` : ""}</div>`;
   };
