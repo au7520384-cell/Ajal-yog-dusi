@@ -3735,8 +3735,12 @@ function tableBadge(id, no) {
 const tableById = id => id ? TABLE_SKINS().find(t => t.id === id) : null;
 const tableRank = id => { const t = tableById(id); return !t ? 0 : t.tier === "premium" ? 2e6 + t.cash : t.tier === "elite" ? 1e6 + t.cash : 1 + (t.cash || (t.coins || 0) / 1e5); };
 const setBonus = () => profile.tableSkin && profile.tableSkin.startsWith("l_") && profile.cue === "pc_" + profile.tableSkin.slice(2) ? 10 : 0;
-const tableBonus = id => { const t = tableById(id); if (!t || !t.tier) return 0;                  // % extra win coins / pass points
-  return t.tier === "premium" ? [10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 25][EXTRA_TABLES.filter(x => x.tier === "premium").indexOf(t)] || 10 : Math.round(5 + (t.cash - 300) / 450 * 7); };
+const tableBonus = id => {                        // % extra win coins / pass points / XP: the more a table costs, the more it gives
+  const t = tableById(id); if (!t || t.city) return 0;                                                  // city tables: no bonus (all equal)
+  if (t.tier === "premium") return Math.round(12 + (t.cash - 500) / 4500 * 38);                        // 12% (Bronza) ... 50% (Kamalak opal)
+  if (t.tier === "elite") return Math.round(3 + (t.cash - 300) / 450 * 6);                             // 3% ... 9%: always below the cheapest premium
+  return Math.round(1 + ((t.cash || 150) - 150) / 450 * 2);                                            // ordinary shop tables: 1% ... 3%
+};
 // The match is played on the most precious table either player owns (ties: seat 0 / me) — the opponent sees it too.
 function chooseTable(G) {
   let best = -1, rank = 0;
@@ -4471,9 +4475,12 @@ function paintTable(city) {
   for (const s of segs) {
     const side = s[4], d = {t: [0, 0, 0, -C], b: [0, FH, 0, FH + C], l: [0, 0, -C, 0], r: [FW, 0, FW + C, 0]}[side];
     const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
-    g.addColorStop(0, shade(city.felt[0], 25)); g.addColorStop(0.35, city.felt[0]); g.addColorStop(1, shade(city.felt[1], -25));
+    const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
+    const cb = side === "t" || side === "b" ? f0.map(v => v - 16) : f0.map((v, i) => (v - 20) * 0.4 + (f1[i] - 22) * 0.6);   // the cushion is the same cloth colour the felt has right at that edge
+    const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
+    g.addColorStop(0, cc(14)); g.addColorStop(0.45, cc(0)); g.addColorStop(1, cc(-16));
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
   }
   if (st.glow && !lucky) {                     // neon strip under the cushion nose
@@ -5966,7 +5973,7 @@ function buildShop(tab) {
       }
       const btnHTML = locked ? `<button class="btn gray" disabled>🔒 ${T("Daraja")} ${t.lvl}</button>` : priceBtn(p, own, sel);
       const no = (profile.editions || {})[t.id];
-      add(t, own, sel, `<b>${t.city ? "🏙 " : t.tier === "premium" ? "👑 " : t.tier ? "✨ " : "💎 "}${T(t.name)}</b>`, t.city ? esc(T(t.city.sub)) : T(t.tier ? "Sizniki" : "Maxsus stol") + (no ? ` · № ${fmt(no)} / ${fmt(EDITION_CAP[t.id])}` : ""), btnHTML, sel || locked ? null : () => {
+      add(t, own, sel, `<b>${t.city ? "🏙 " : t.tier === "premium" ? "👑 " : t.tier ? "✨ " : "💎 "}${T(t.name)}</b>`, t.city ? esc(T(t.city.sub)) : T(t.tier ? "Sizniki" : "Maxsus stol") + (no ? ` · № ${fmt(no)} / ${fmt(EDITION_CAP[t.id])}` : "") + (t.city ? "" : `<br><span class="tbon">🪙 +${tableBonus(t.id)}% · ♞ +${tableBonus(t.id)}% · XP +${tableBonus(t.id)}%</span>`), btnHTML, sel || locked ? null : () => {
         if (own) use(); else buy(p, T(t.name), got);
       });
     }
