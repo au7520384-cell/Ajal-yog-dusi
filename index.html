@@ -3743,6 +3743,7 @@ const tableBonus = id => { const t = tableById(id); if (!t || !t.tier) return 0;
 function chooseTable(G) {
   let best = -1, rank = 0;
   G.players.forEach((pl, i) => { const r = tableRank(pl.tbl); const seat = G.net ? (i === 0 ? G.net.seat : 1 - G.net.seat) : i; if (r > rank || (r === rank && r > 0 && seat === 0)) { rank = r; best = i; } });
+  if (!G.net && G.players[0] && G.players[0].tbl && !G.players[0].isAI) { best = 0; }   // against the computer, the table you equipped is the one you play on
   G.tbl = best >= 0 ? G.players[best].tbl : ""; G.tblOwner = best;
 }
 const ownsTable = t => !!(profile.tables || []).includes(t.id) || (t.city && ringOf(t.city));
