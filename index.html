@@ -835,6 +835,19 @@ background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),color-mix(in srg
 .cpck,.cpk{position:absolute;top:4px;right:4px;font-size:16px}.cpck{color:#3fe052;font-weight:900;background:#0008;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-size:14px}
 .cpb{background:#1a1030;border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-family:var(--fh);font-size:14px;color:#9a8ac8}.cpb.done{background:linear-gradient(#ffd24d,#c88a0a);color:#2a1a00}.cpb.half i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#ffd24d,#c88a0a)}.cpb span{position:relative}
 .sbox{filter:drop-shadow(0 6px 10px #000a)}
+#modal .panel:has(.hwin){max-width:none;width:auto;padding:0;background:none;border:0;box-shadow:none}#modal .panel:has(.hwin) #mIcon,#modal .panel:has(.hwin) #mTitle,#modal .panel:has(.hwin) #mText,#modal .panel:has(.hwin) #mBtns{display:none}
+.hwin{position:relative;border-radius:14px;border:4px solid #8a8aa0;box-shadow:0 0 0 2px #10131c,0 10px 50px #000;overflow:hidden;padding:10px 12px 8px;text-align:left}
+.hx{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;border:2px solid #fff;background:linear-gradient(#ff5a5a,#b01010);color:#fff;font-weight:900;font-size:18px;cursor:pointer;z-index:3}
+.hlogo{font-family:Georgia,"Times New Roman",serif;font-weight:900;font-style:italic;text-align:center;font-size:clamp(30px,6vw,54px);letter-spacing:2px;text-transform:uppercase;background:linear-gradient(#fff6c0,#e8b83a 50%,#7a4a08);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #000) drop-shadow(0 0 14px var(--hg));line-height:1.05;margin:2px 40px 6px}
+.hbody{display:flex;gap:10px;align-items:stretch}.hcues{flex:0 0 auto;display:grid;place-items:center;min-height:200px}
+.hright{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.hstat{background:#0009;border:2px solid #6a5a8a;border-radius:10px;padding:6px 10px;max-width:280px}.hbr{display:grid;grid-template-columns:70px 1fr;gap:6px;align-items:center;font-size:12px;font-weight:800;color:#fff}.hbr div{display:flex;gap:2px}.hbr i{width:100%;height:9px;background:#2a2a3a;border-radius:2px}.hbr i.on{background:linear-gradient(#b8ff5a,#3ab01a)}
+.hpw{margin-top:4px;background:linear-gradient(#5a2a9a,#2a1058);border-radius:8px;padding:3px 8px;color:#ffe27a;font-weight:900;text-align:center}
+.hcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:6px}.hcol{background:#000a;border:1px solid #fff3;border-radius:10px;padding:6px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative}
+.hci{font-size:30px;height:54px;display:grid;place-items:center}.hcol small{color:#cfd8ee;font-size:11px;font-weight:800}.hcol b{color:var(--acc);font-family:var(--fh);font-size:14px;line-height:1.1;word-break:break-word}
+.hbuy{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:auto}.hrib{background:linear-gradient(#e8483a,#a01a14);color:#fff;font-weight:900;padding:8px 18px 8px 12px;clip-path:polygon(0 0,100% 0,88% 50%,100% 100%,0 100%);font-size:15px;letter-spacing:1px}
+.hend{color:#fff;font-weight:800}.hnav{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:8px}.hdots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:70%}.hdots i{width:9px;height:9px;border-radius:50%;background:#556}.hdots i.on{background:#fff}.hnav .btn{padding:4px 16px}
+.hsmall .hlogo{font-size:26px;margin:0 40px 2px}.hsmall .hci{font-size:22px;height:34px}.hsmall .hci img,.hsmall .hci .avx{transform:scale(.7)}.hsmall .hcol{padding:3px 2px}.hsmall .hcols{grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:4px}.hsmall .hcol b{font-size:12px}.hsmall .hstat{padding:3px 8px}.hsmall .hbr{font-size:10px}.hsmall .hbr i{height:6px}.hsmall .hbuy .btn{font-size:16px!important;padding:6px 14px!important}.hsmall .hrib{font-size:12px;padding:5px 12px}.hsmall .hcues{min-height:0}.hsmall .hnav{margin-top:2px}.hsmall .hbody{gap:6px}.hsmall .hright{gap:4px}
 .mission{display:grid;grid-template-columns:40px 1fr 110px;gap:10px;align-items:center;background:#262f4a;border:1px solid #34436a;border-radius:12px;padding:8px 12px;margin-bottom:6px}
 .mbar{height:10px;border-radius:5px;background:#141a2c;overflow:hidden;margin-top:4px}.mbar i{display:block;height:100%;background:linear-gradient(90deg,#7ff7ff,#3b8cff)}
 @media (max-width:820px){ #fsBtn{display:none} }
@@ -1198,7 +1211,7 @@ const STAT_NAMES = ["Kuch", "Nishon", "Aylanish", "Vaqt"];
 const AVATARS = ["😎", "🦁", "🐯", "🦅", "🐺", "🐉", "🧔", "👩", "🤠", "👑", "🦊", "🐼", "🥷", "👨‍🚀", "🧕", "🤖"];
 const AV_N = 100;
 const PV = 300, PV_N = 76, isPortrait = i => i >= PV && i < PV + PV_N;
-const normAv = i => (i >= 200 && i < 212) || isPortrait(i) || (i >= 400 && i < 470) ? i : ((i | 0) % AV_N + AV_N) % AV_N;
+const normAv = i => (i >= 200 && i < 212) || (i >= 500 && i < 564) || isPortrait(i) || (i >= 400 && i < 470) ? i : ((i | 0) % AV_N + AV_N) % AV_N;
 const randAv = () => { const r = Math.random(); return r < 0.7 ? PV + (Math.random() * PV_N | 0) : 400 + (r < 0.95 ? Math.random() * 30 | 0 : 30 + (Math.random() * 40 | 0)); };
 const GA = 400, GA_N = 70, isPremiumAv = i => i >= GA && i < GA + GA_N;
 const GA_NAMES = ["Oddly", "Sportchi", "Klassik", "Nozik", "Beparvo", "Yulduz", "Yapon", "Jin", "Rosa", "Arjun", "Nadia", "Felix", "Zara", "Leo", "Ivy", "Kai", "Luna", "Max", "Blaze", "Storm", "Shadow", "Queen", "Titan", "Viper", "Ghost", "King", "Royal", "Legend", "Phoenix", "Nebula", "Cosmos Girl", "Quantica", "Onna-Bugeisha", "Kunoichi", "Dragon Priestess", "Centurion", "Goddess", "Frost Queen", "Gladiator", "Emperor", "Leona", "Tigress", "Huntress", "Ninja", "Eagle-Eye", "Bearskin", "Reef Guard", "Venomous", "Ophidian", "Dynasty", "Archer", "Mountaineer", "Diver", "Stinger", "Sorcerer", "Rider", "Matriarch", "Star-Seeker", "Elysium", "Poseidon", "Star-Gazer", "Pathfinder", "Matrix", "Cyber God", "Elder Wise", "Ascendant", "Elysia", "Overlord", "Celestial Being", "Voidwalker"];
@@ -1249,7 +1262,7 @@ function countryOptions() {
 const list = COUNTRY_CODES.map(cc => [cc, countryName(cc)]).sort((a, b) => a[1].localeCompare(b[1]));
 return `<option value="">🌍 —</option>` + list.map(([cc, n]) => `<option value="${cc}" ${cc === profile.country ? "selected" : ""}>${flagEmoji(cc)} ${esc(n)}</option>`).join("");
 }
-const avName = i => isPremiumAv(i) ? GA_NAMES[i - GA] : isPortrait(i) ? AV_NAMES[(i - PV) % AV_NAMES.length] : i < AVATARS.length ? AVATARS[i] : AV_NAMES[(i - AVATARS.length) % AV_NAMES.length];
+const avName = i => i >= 500 && i < 564 ? HORROR[i - 500][0] : isPremiumAv(i) ? GA_NAMES[i - GA] : isPortrait(i) ? AV_NAMES[(i - PV) % AV_NAMES.length] : i < AVATARS.length ? AVATARS[i] : AV_NAMES[(i - AVATARS.length) % AV_NAMES.length];
 function avPrice(i) {
 if (i < 20 || isPortrait(i)) return {cur: "coin", v: 0};
 if (isPremiumAv(i)) { const [cur, v] = GA_PRICE[i - GA]; return {cur, v}; }
@@ -1271,6 +1284,7 @@ const FRAMES = [
 const avCache = new Map(), avUrlCache = new Map();
 function avRng(seed) { let s = (seed * 2654435761) % 2147483647 || 1; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
 function avatarCanvas(i) {
+if (i >= 500 && i < 564) { if (!avCache.has(i)) avCache.set(i, horrorAvatar(i)); return avCache.get(i); }
 if (i >= 200 && i < 212) { if (!avCache.has(i)) avCache.set(i, zodiacAvatar(i)); return avCache.get(i); }
 if (isPortrait(i) || isPremiumAv(i)) {          // the owner's drawn portraits
 if (!avCache.has(i)) {
@@ -6222,13 +6236,13 @@ setTimeout(next, 0);
 return;
 }
 const owns = c => profile.cues.includes(c.id);
-const vipNow = new Set(VO().flatMap(o => o.tiers.map(t => t.cue))), list = CUES.filter(c => cueCat === "owned" ? owns(c) : cueCat === "vip" ? c.cat === "vip" && (owns(c) || vipNow.has(c.id)) : c.cat === cueCat);
+const list = CUES.filter(c => cueCat === "owned" ? owns(c) : c.cat === cueCat);
 if (cueCat === "country") list.sort((a, b) => (b.cc === profile.country) - (a.cc === profile.country) || cueName(a).localeCompare(cueName(b)));
 const power = CUES.filter(owns).reduce((a, c) => a + cuePower(c), 0);
 body.insertAdjacentHTML("beforeend", `<div class="cuehead">
 <div class="cpow" id="cpBtn" style="cursor:pointer;position:relative"><b>⚜ ${T("Kolleksiya kuchi")} ›</b><span>${fmt(power)} · ${profile.cues.length}/${CUES.length}</span><i class="dot" id="dotCp" style="display:none"></i></div>
 <button class="btn blue" id="cueInfo" style="padding:6px 14px">ℹ ${T("Kiy ko'rsatkichlari")}</button></div>
-<div class="tabs subtabs">${[["premium", "👑 Premium"], ["vip", "♛ VIP"], ["horror", "💀 Qo'rqinchli"], ["standard", "Standart"], ["victory", "G'alaba"], ["surprise", "Syurpriz"], ["country", "Davlat"], ["owned", "Meniki"]]
+<div class="tabs subtabs">${[["premium", "👑 Premium"], ["horror", "💀 Qo'rqinchli"], ["standard", "Standart"], ["victory", "G'alaba"], ["surprise", "Syurpriz"], ["country", "Davlat"], ["owned", "Meniki"]]
 .map(([k, n]) => `<button class="tab${k === cueCat ? " on" : ""}" data-cc="${k}">${T(n)}</button>`).join("")}</div>
 ${cueCat === "surprise" ? `<div class="card surbox"><div style="font-size:44px">🎁</div><div style="flex:1"><b>${T("Syurpriz qutisi")}</b>
 <div class="muted">${T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.")}</div></div>
@@ -7570,7 +7584,7 @@ const horrorWeek = () => { const w = weekIdx(), out = []; for (let k = 0; k < 8;
 const horrorOffer = i => {
 const [name, motif, pal] = HORROR[i], P = HOR_PAL[pal], usd = HOR_USD[i % 8], tb = HOR_TABLE_SET.has(i);
 return {id: "hor_" + i, title: name, sub: tb ? "Qo'rqinchli kiy + VIP stol + ramka" : "Qo'rqinchli VIP kiy + ramka", bg: P.bg, accent: P.acc, horror: true, table: tb ? "vt_" + i : "", frame: "vf_" + i, tiers: [
-{sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", frame: "vf_" + i, coins: Math.round(usd * 24000), cash: Math.round(usd * 14), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
+{sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", frame: "vf_" + i, avatar: 500 + i, goldShots: 2 + (i % 4), coins: Math.round(usd * 24000), cash: Math.round(usd * 14), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
 };
 const horrorLeft = () => { const s = ((weekIdx() + 1) * 7 * 864e5 - 3 * 864e5 - Date.now()) / 1000; return `${Math.floor(s / 86400)}${T("k")} ${Math.floor(s % 86400 / 3600)}${T("s")}`; };
 const SHOP_HCUES = [["Sirli tun", "violet", 0, 5], ["Yarim tun", "ice", 1, 6], ["Qabr qo'ng'irog'i", "steel", 2, 7], ["Yovuz ko'z", "crimson", 5, 8], ["Kabus o'rmoni", "toxic", 8, 9], ["Tun sayyohi", "teal", 10, 10],
@@ -7697,6 +7711,111 @@ g.globalAlpha = 0.5; g.lineWidth = 1; for (let a = 0; a < 12; a++) { g.beginPath
 g.fillStyle = "#fff"; g.shadowColor = e.g; g.shadowBlur = 14; g.font = "bold 64px serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(sym + "\uFE0E", 64, 66);
 return cv;
 }
+
+// ---------------------------------------------------------------- big ornate horror cues (tall, thick), scary avatars and the horror VIP window
+const HC_CACHE = {};
+function horrorCueArt(i) {
+  if (HC_CACHE[i]) return HC_CACHE[i];
+  const [name, motif, pal] = HORROR[i], P = HOR_PAL[pal], W = 210, H = 470, cv = document.createElement("canvas"); cv.width = W; cv.height = H; const g = cv.getContext("2d");
+  let sd = i * 97 + 13; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  const head = i % 10, body = (i * 3 + (i >> 3)) % 8, cx = 70, top = 92, bot = H - 16, TAU = Math.PI * 2, sn = Math.sin, cs = Math.cos;
+  const [m0, m1, m2] = P.metal, [b0, b1] = P.b, gl = P.c, gl2 = P.c2;
+  const nodes = [top + 52, top + 160, top + 268], hw = y => { const t = (y - top) / (bot - top); let w = 25 - 15 * t; for (const ny of nodes) w += 8 * Math.exp(-Math.pow((y - ny) / 13, 2)); return w; };
+  const mg = (x0, x1) => { const q = g.createLinearGradient(x0, 0, x1, 0); q.addColorStop(0, m2); q.addColorStop(0.3, m1); q.addColorStop(0.5, m0); q.addColorStop(0.72, m1); q.addColorStop(1, m2); return q; };
+  const pth = () => { g.beginPath(); for (let y = top; y <= bot; y += 4) g.lineTo(cx - hw(y), y); for (let y = bot; y >= top; y -= 4) g.lineTo(cx + hw(y), y); g.closePath(); };
+  // soft shadow + body
+  g.save(); g.shadowColor = "rgba(0,0,0,.7)"; g.shadowBlur = 12; g.shadowOffsetX = 5; g.shadowOffsetY = 3; pth(); const bgr = g.createLinearGradient(cx - 26, 0, cx + 26, 0); bgr.addColorStop(0, shade(b1, -20)); bgr.addColorStop(0.3, b0); bgr.addColorStop(0.5, shade(b0, 45)); bgr.addColorStop(0.72, b0); bgr.addColorStop(1, shade(b1, -30)); g.fillStyle = bgr; g.fill(); g.restore();
+  g.save(); pth(); g.clip();
+  const bp = {
+    0() { for (const ph of [0, Math.PI]) { g.strokeStyle = "#0e1a0c"; g.lineWidth = 3; g.beginPath(); for (let y = top; y <= bot; y += 3) g.lineTo(cx + sn(y / 22 + ph) * 13, y); g.stroke(); g.fillStyle = "#1c2a16"; for (let y = top + 6; y < bot; y += 15) { const x = cx + sn(y / 22 + ph) * 13; g.beginPath(); g.moveTo(x, y); g.lineTo(x + (ph ? 7 : -7), y + 5); g.lineTo(x, y + 6); g.fill(); } } for (const ny of nodes) for (const [dx, dy] of [[-7, 0], [7, 14], [-5, 26]]) { const x = cx + dx, y = ny + dy - 12; for (let k = 0; k < 5; k++) { const a = k * TAU / 5; g.fillStyle = k % 2 ? "#e8182e" : "#b00a1c"; g.beginPath(); g.ellipse(x + cs(a) * 4, y + sn(a) * 4, 5, 3.6, a, 0, TAU); g.fill(); } g.fillStyle = "#5a0008"; g.beginPath(); g.arc(x, y, 2.8, 0, TAU); g.fill(); } },
+    1() { g.fillStyle = "#e4dcc4"; for (let y = top + 6; y < bot; y += 13) { g.beginPath(); g.ellipse(cx, y, hw(y) - 3, 4.2, 0, 0, TAU); g.fill(); g.fillStyle = "rgba(0,0,0,.25)"; g.fillRect(cx - hw(y), y + 2, 2 * hw(y), 2); g.fillStyle = "#e4dcc4"; } g.strokeStyle = "#8a7a5a"; g.lineWidth = 2; g.beginPath(); g.moveTo(cx, top); g.lineTo(cx, bot); g.stroke(); },
+    2() { const cols = ["#e83a2a", "#3a8ae8", "#f2c81a", "#2ab86a", "#c83ad8"]; nodes.forEach((ny, k) => { for (let q = 0; q < 6; q++) { g.fillStyle = cols[(q + k) % 5]; g.beginPath(); g.moveTo(cx, ny); g.arc(cx, ny, hw(ny) - 4, q * TAU / 6, (q + 1) * TAU / 6); g.closePath(); g.fill(); } g.strokeStyle = "#1a1208"; g.lineWidth = 1.6; g.beginPath(); g.arc(cx, ny, hw(ny) - 4, 0, TAU); for (let q = 0; q < 6; q++) { g.moveTo(cx, ny); g.lineTo(cx + cs(q * TAU / 6) * (hw(ny) - 4), ny + sn(q * TAU / 6) * (hw(ny) - 4)); } g.stroke(); }); for (let y = top; y < bot; y += 9) { g.fillStyle = cols[(y / 9 | 0) % 5]; g.globalAlpha = 0.55; g.fillRect(cx - 7, y, 14, 7); g.globalAlpha = 1; g.strokeStyle = "#1a1208"; g.strokeRect(cx - 7, y, 14, 7); } },
+    3() { g.save(); g.shadowColor = gl; g.shadowBlur = 7; g.strokeStyle = gl2; g.lineWidth = 2; g.lineCap = "round"; for (let y = top + 10, k = 0; y < bot - 6; y += 19, k++) { g.beginPath(); const t = k % 5; if (t === 0) { g.moveTo(cx - 6, y); g.lineTo(cx - 6, y + 14); g.moveTo(cx - 6, y + 3); g.lineTo(cx + 6, y + 8); } else if (t === 1) { g.moveTo(cx - 6, y); g.lineTo(cx + 6, y + 7); g.lineTo(cx - 6, y + 14); } else if (t === 2) { g.moveTo(cx, y); g.lineTo(cx - 6, y + 7); g.lineTo(cx, y + 14); g.lineTo(cx + 6, y + 7); g.closePath(); } else if (t === 3) { g.moveTo(cx - 6, y); g.lineTo(cx + 6, y); g.lineTo(cx - 6, y + 14); g.lineTo(cx + 6, y + 14); } else { g.moveTo(cx - 5, y + 14); g.lineTo(cx - 5, y); g.lineTo(cx + 6, y + 7); g.lineTo(cx - 5, y + 7); } g.stroke(); } g.restore(); },
+    4() { for (let y = top; y < bot; y += 9) for (let x = cx - 30, k = 0; x < cx + 30; x += 10, k++) { g.strokeStyle = "rgba(0,0,0,.55)"; g.lineWidth = 1.4; g.fillStyle = k % 2 ? shade(b0, 35) : shade(b0, 10); g.beginPath(); g.arc(x + ((y / 9 | 0) % 2) * 5, y, 6, 0, Math.PI); g.fill(); g.stroke(); } },
+    5() { g.strokeStyle = "#0a0a10"; g.lineWidth = 2; for (let y = top + 4, k = 0; y < bot; y += 10, k++) { g.fillStyle = k % 2 ? shade(m1, -10) : m1; g.beginPath(); g.ellipse(cx, y, k % 2 ? 14 : 8, 6, 0, 0, TAU); g.fill(); g.stroke(); } },
+    6() { g.save(); g.shadowColor = gl; g.shadowBlur = 12; const vg = g.createLinearGradient(cx - 4, 0, cx + 4, 0); vg.addColorStop(0, gl + "00"); vg.addColorStop(0.5, gl2); vg.addColorStop(1, gl + "00"); g.fillStyle = vg; g.fillRect(cx - 5, top, 10, bot - top); g.restore(); g.fillStyle = m1; for (let y = top + 8; y < bot; y += 14) for (const d of [-1, 1]) { g.beginPath(); g.moveTo(cx + d * hw(y), y); g.lineTo(cx + d * (hw(y) - 10), y + 3); g.lineTo(cx + d * hw(y), y + 7); g.fill(); } },
+    7() { g.strokeStyle = "rgba(230,230,240,.75)"; g.lineWidth = 1; for (let k = -6; k <= 6; k++) { g.beginPath(); g.moveTo(cx + k * 5, top); g.lineTo(cx + k * 5 + 22, bot); g.moveTo(cx + k * 5, top); g.lineTo(cx + k * 5 - 22, bot); g.stroke(); } for (let y = top + 10; y < bot; y += 16) { g.beginPath(); g.arc(cx, y, 12 + (y - top) * 0.02, 0.2, Math.PI - 0.2); g.stroke(); } },
+  };
+  bp[body](); const hl = g.createLinearGradient(cx - 28, 0, cx + 28, 0); hl.addColorStop(0, "rgba(0,0,0,.45)"); hl.addColorStop(0.32, "rgba(255,255,255,.22)"); hl.addColorStop(0.5, "rgba(255,255,255,0)"); hl.addColorStop(1, "rgba(0,0,0,.5)"); g.fillStyle = hl; g.fillRect(0, top, W, bot - top); g.restore();
+  g.save(); pth(); g.lineWidth = 3; g.strokeStyle = "rgba(0,0,0,.75)"; g.stroke(); g.restore();
+  // metal rings + glowing gems at the nodes
+  const ring = (y, w) => { g.save(); g.shadowColor = "rgba(0,0,0,.6)"; g.shadowBlur = 5; g.fillStyle = mg(cx - w, cx + w); g.beginPath(); g.roundRect(cx - w, y - 6, 2 * w, 12, 4); g.fill(); g.restore(); g.strokeStyle = "rgba(0,0,0,.55)"; g.lineWidth = 1.2; g.strokeRect(cx - w, y - 6, 2 * w, 12); };
+  for (const ny of nodes) { ring(ny - 22, hw(ny - 22) + 3); ring(ny + 22, hw(ny + 22) + 3); g.save(); g.shadowColor = gl; g.shadowBlur = 14; const gg = g.createRadialGradient(cx - 3, ny - 3, 1, cx, ny, 10); gg.addColorStop(0, "#fff"); gg.addColorStop(0.35, gl2); gg.addColorStop(1, shade(gl, -90)); g.fillStyle = gg; g.beginPath(); g.ellipse(cx, ny, 9, 11, 0, 0, TAU); g.fill(); g.restore(); g.strokeStyle = mg(cx - 12, cx + 12); g.lineWidth = 2.6; g.beginPath(); g.ellipse(cx, ny, 11, 13, 0, 0, TAU); g.stroke(); }
+  ring(top + 4, 30); ring(bot - 34, 12); g.fillStyle = "#e8e0d0"; g.beginPath(); g.roundRect(cx - 6, bot - 18, 12, 18, 3); g.fill(); g.fillStyle = "#3a2a1a"; g.fillRect(cx - 6, bot - 4, 12, 4);
+  // head ornaments
+  const M = (fn, col) => { g.save(); g.shadowColor = "rgba(0,0,0,.7)"; g.shadowBlur = 6; g.shadowOffsetY = 2; g.fillStyle = col || mg(cx - 30, cx + 30); fn(); g.fill(); g.restore(); g.strokeStyle = "rgba(0,0,0,.6)"; g.lineWidth = 1.2; fn(); g.stroke(); };
+  const eyes = (x, y, dx, r) => { g.save(); g.shadowColor = gl; g.shadowBlur = 12; g.fillStyle = gl2; for (const d of [-1, 1]) { g.beginPath(); g.arc(x + d * dx, y, r, 0, TAU); g.fill(); } g.restore(); };
+  const hd = {
+    0() { for (const d of [-1, 1]) for (let k = 0; k < 3; k++) M(() => { g.beginPath(); g.moveTo(cx + d * 24, top - 6 - k * 18); g.quadraticCurveTo(cx + d * 40, top - 10 - k * 18, cx + d * 34, top - 26 - k * 18); g.quadraticCurveTo(cx + d * 30, top - 14 - k * 18, cx + d * 22, top - 14 - k * 18); }, m1); M(() => { g.beginPath(); g.arc(cx, top - 44, 28, Math.PI * 0.9, Math.PI * 2.1); g.lineTo(cx + 14, top - 10); g.lineTo(cx - 14, top - 10); g.closePath(); }, "#ece4cc"); g.fillStyle = "#0a0408"; g.beginPath(); g.ellipse(cx - 11, top - 42, 8, 10, 0, 0, TAU); g.ellipse(cx + 11, top - 42, 8, 10, 0, 0, TAU); g.fill(); eyes(cx, top - 42, 11, 4); g.fillStyle = "#0a0408"; g.beginPath(); g.moveTo(cx, top - 32); g.lineTo(cx - 4, top - 24); g.lineTo(cx + 4, top - 24); g.fill(); for (let k = -2; k <= 2; k++) g.fillRect(cx + k * 5 - 1, top - 18, 2, 7); },
+    1() { M(() => { g.beginPath(); g.ellipse(cx, top - 28, 24, 16, 0, 0, TAU); }, "#16121e"); M(() => { g.beginPath(); g.arc(cx + 6, top - 52, 12, 0, TAU); }, "#16121e"); M(() => { g.beginPath(); g.moveTo(cx + 16, top - 55); g.lineTo(cx + 34, top - 49); g.lineTo(cx + 16, top - 45); }, "#c8a04a"); g.fillStyle = gl2; g.beginPath(); g.arc(cx + 8, top - 54, 2.6, 0, TAU); g.fill(); for (const d of [-1, 1]) M(() => { g.beginPath(); g.moveTo(cx + d * 16, top - 30); g.quadraticCurveTo(cx + d * 52, top - 54, cx + d * 46, top - 6); g.quadraticCurveTo(cx + d * 36, top - 26, cx + d * 18, top - 14); }, "#221a30"); M(() => { g.beginPath(); g.moveTo(cx - 10, top - 14); g.lineTo(cx, top + 8); g.lineTo(cx + 10, top - 14); }, "#16121e"); },
+    2() { for (const d of [-1, 1]) { M(() => { g.beginPath(); g.moveTo(cx + d * 12, top - 34); g.quadraticCurveTo(cx + d * 40, top - 66, cx + d * 60, top - 48); g.quadraticCurveTo(cx + d * 52, top - 44, cx + d * 50, top - 36); g.quadraticCurveTo(cx + d * 44, top - 38, cx + d * 40, top - 26); g.quadraticCurveTo(cx + d * 34, top - 30, cx + d * 28, top - 18); g.quadraticCurveTo(cx + d * 20, top - 24, cx + d * 12, top - 12); }, "#2a1830"); g.strokeStyle = gl; g.lineWidth = 1.2; g.beginPath(); g.moveTo(cx + d * 12, top - 34); g.lineTo(cx + d * 50, top - 40); g.moveTo(cx + d * 12, top - 34); g.lineTo(cx + d * 40, top - 28); g.stroke(); } M(() => { g.beginPath(); g.ellipse(cx, top - 28, 11, 17, 0, 0, TAU); }, "#2a1830"); eyes(cx, top - 32, 4.5, 2.6); },
+    3() { for (let k = 0; k < 10; k++) { const a = k * TAU / 10; M(() => { g.beginPath(); g.moveTo(cx + cs(a - 0.22) * 22, top - 40 + sn(a - 0.22) * 22); g.lineTo(cx + cs(a) * 36, top - 40 + sn(a) * 36); g.lineTo(cx + cs(a + 0.22) * 22, top - 40 + sn(a + 0.22) * 22); }, m1); } M(() => { g.beginPath(); g.ellipse(cx, top - 40, 27, 18, 0, 0, TAU); }, "#f4ecd8"); g.save(); g.shadowColor = gl; g.shadowBlur = 14; g.fillStyle = gl; g.beginPath(); g.arc(cx, top - 40, 12, 0, TAU); g.fill(); g.restore(); g.fillStyle = "#050205"; g.beginPath(); g.ellipse(cx, top - 40, 3.4, 11, 0, 0, TAU); g.fill(); g.strokeStyle = "#7a1a1a"; g.lineWidth = 1; g.beginPath(); for (let k = 0; k < 6; k++) { g.moveTo(cx - 26, top - 40); g.quadraticCurveTo(cx - 14, top - 40 + (k - 3) * 4, cx - 12, top - 40 + (k - 3) * 2); } g.stroke(); },
+    4() { g.strokeStyle = m1; g.lineWidth = 3; g.lineCap = "round"; for (const d of [-1, 1]) for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(cx + d * 8, top - 28); g.quadraticCurveTo(cx + d * 34, top - 62 + k * 14, cx + d * 42, top - 30 + k * 10); g.stroke(); } M(() => { g.beginPath(); g.ellipse(cx, top - 22, 13, 16, 0, 0, TAU); }, "#1a1024"); M(() => { g.beginPath(); g.arc(cx, top - 44, 9, 0, TAU); }, "#1a1024"); eyes(cx, top - 46, 4, 2.4); g.fillStyle = "#c8102e"; g.beginPath(); g.moveTo(cx - 5, top - 26); g.lineTo(cx + 5, top - 26); g.lineTo(cx, top - 14); g.fill(); },
+    5() { for (let k = -1; k <= 1; k++) M(() => { g.beginPath(); g.moveTo(cx + k * 12, top + 2); g.bezierCurveTo(cx + k * 40, top - 14, cx + k * 34, top - 52, cx + k * 14, top - 60); g.bezierCurveTo(cx + k * 22, top - 40, cx + k * 14, top - 22, cx + k * 6, top - 10); }, mg(cx - 30, cx + 30)); g.save(); g.shadowColor = gl; g.shadowBlur = 20; const og = g.createRadialGradient(cx - 5, top - 34, 2, cx, top - 28, 20); og.addColorStop(0, "#fff"); og.addColorStop(0.3, gl2); og.addColorStop(1, shade(gl, -110)); g.fillStyle = og; g.beginPath(); g.arc(cx, top - 28, 17, 0, TAU); g.fill(); g.restore(); },
+    6() { M(() => { g.beginPath(); g.moveTo(cx - 26, top + 2); g.lineTo(cx - 20, top - 22); g.lineTo(cx + 20, top - 22); g.lineTo(cx + 26, top + 2); g.closePath(); }, mg(cx - 30, cx + 30)); g.save(); g.shadowColor = "#ffb02a"; g.shadowBlur = 24; const fg = g.createRadialGradient(cx, top - 50, 2, cx, top - 46, 26); fg.addColorStop(0, "#fff8c0"); fg.addColorStop(0.4, "#ffb02a"); fg.addColorStop(1, "#c8201a"); g.fillStyle = fg; g.beginPath(); g.moveTo(cx, top - 88); g.bezierCurveTo(cx + 22, top - 62, cx + 26, top - 34, cx, top - 24); g.bezierCurveTo(cx - 26, top - 34, cx - 22, top - 62, cx, top - 88); g.fill(); g.restore(); g.fillStyle = "#fffaf0"; g.beginPath(); g.moveTo(cx, top - 60); g.bezierCurveTo(cx + 8, top - 48, cx + 8, top - 36, cx, top - 32); g.bezierCurveTo(cx - 8, top - 36, cx - 8, top - 48, cx, top - 60); g.fill(); },
+    7() { for (const d of [-1, 1]) { M(() => { g.beginPath(); g.moveTo(cx + d * 10, top - 4); g.bezierCurveTo(cx + d * 34, top - 6, cx + d * 40, top - 38, cx + d * 22, top - 66); g.bezierCurveTo(cx + d * 22, top - 40, cx + d * 14, top - 26, cx + d * 6, top - 22); }, "#1a1424"); g.strokeStyle = m0; g.lineWidth = 1; g.stroke(); } M(() => { g.beginPath(); g.moveTo(cx - 20, top - 4); g.lineTo(cx - 22, top - 34); g.lineTo(cx - 10, top - 18); g.lineTo(cx, top - 42); g.lineTo(cx + 10, top - 18); g.lineTo(cx + 22, top - 34); g.lineTo(cx + 20, top - 4); g.closePath(); }); g.save(); g.shadowColor = gl; g.shadowBlur = 10; g.fillStyle = gl2; for (const [x, y] of [[cx, top - 40], [cx - 22, top - 34], [cx + 22, top - 34]]) { g.beginPath(); g.arc(x, y, 3.4, 0, TAU); g.fill(); } g.restore(); },
+    8() { M(() => { g.beginPath(); g.moveTo(cx - 8, top - 70); g.lineTo(cx + 8, top - 70); g.lineTo(cx + 8, top - 54); g.lineTo(cx + 24, top - 54); g.lineTo(cx + 24, top - 38); g.lineTo(cx + 8, top - 38); g.lineTo(cx + 8, top - 6); g.lineTo(cx - 8, top - 6); g.lineTo(cx - 8, top - 38); g.lineTo(cx - 24, top - 38); g.lineTo(cx - 24, top - 54); g.lineTo(cx - 8, top - 54); g.closePath(); }); g.save(); g.shadowColor = gl; g.shadowBlur = 12; g.fillStyle = gl2; g.beginPath(); g.arc(cx, top - 46, 6, 0, TAU); g.fill(); g.restore(); for (const d of [-1, 1]) for (let k = 0; k < 3; k++) M(() => { g.beginPath(); g.moveTo(cx + d * 10, top - 4 - k * 4); g.lineTo(cx + d * 36, top + 4 - k * 6); g.lineTo(cx + d * 12, top + 4 - k * 4); }, m1); },
+    9() { M(() => { g.beginPath(); g.arc(cx, top - 44, 30, -2.2, 2.2); g.arc(cx + 14, top - 44, 24, 1.9, -1.9, true); g.closePath(); }); g.save(); g.shadowColor = gl; g.shadowBlur = 16; const og = g.createRadialGradient(cx + 8, top - 48, 1, cx + 8, top - 44, 12); og.addColorStop(0, "#fff"); og.addColorStop(0.4, gl2); og.addColorStop(1, shade(gl, -100)); g.fillStyle = og; g.beginPath(); g.arc(cx + 8, top - 44, 10, 0, TAU); g.fill(); g.restore(); for (const d of [-1, 1]) M(() => { g.beginPath(); g.moveTo(cx + d * 6, top - 6); g.lineTo(cx + d * 22, top - 24); g.lineTo(cx + d * 10, top - 4); }, m1); },
+  };
+  hd[head]();
+  // slim companion cue (spear-like)
+  const sx = 160, sTop = 120, sBot = H - 16, sw = y => 9 - 5 * (y - sTop) / (sBot - sTop) + 3 * Math.exp(-Math.pow((y - 250) / 12, 2)) + 3 * Math.exp(-Math.pow((y - 380) / 12, 2));
+  g.save(); g.shadowColor = "rgba(0,0,0,.65)"; g.shadowBlur = 8; g.shadowOffsetX = 4; g.beginPath(); for (let y = sTop; y <= sBot; y += 4) g.lineTo(sx - sw(y), y); for (let y = sBot; y >= sTop; y -= 4) g.lineTo(sx + sw(y), y); g.closePath(); const sg2 = g.createLinearGradient(sx - 10, 0, sx + 10, 0); sg2.addColorStop(0, shade(b1, -20)); sg2.addColorStop(0.4, shade(b0, 35)); sg2.addColorStop(1, shade(b1, -30)); g.fillStyle = sg2; g.fill(); g.restore(); g.strokeStyle = "rgba(0,0,0,.7)"; g.lineWidth = 1.6; g.stroke();
+  g.save(); g.shadowColor = gl; g.shadowBlur = 8; g.fillStyle = gl; g.fillRect(sx - 1.6, sTop + 10, 3.2, sBot - sTop - 30); g.restore();
+  M(() => { g.beginPath(); g.moveTo(sx, sTop - 54); g.lineTo(sx + 10, sTop - 18); g.lineTo(sx, sTop); g.lineTo(sx - 10, sTop - 18); g.closePath(); }, mg(sx - 12, sx + 12));
+  for (const y of [250, 380, sTop + 6]) { g.save(); g.shadowColor = gl; g.shadowBlur = 10; g.fillStyle = gl2; g.beginPath(); g.ellipse(sx, y, 6, 8, 0, 0, TAU); g.fill(); g.restore(); g.strokeStyle = mg(sx - 9, sx + 9); g.lineWidth = 2; g.beginPath(); g.ellipse(sx, y, 8, 10, 0, 0, TAU); g.stroke(); }
+  g.fillStyle = "#e8e0d0"; g.beginPath(); g.roundRect(sx - 4, sBot - 16, 8, 16, 2); g.fill();
+  return (HC_CACHE[i] = cv);
+}
+function horrorShow(i, host, sc = 0.92) {
+  const P = HOR_PAL[HORROR[i][2]], art = horrorCueArt(i), W0 = 210 * sc, H0 = 470 * sc, dp = 1.5, cv = document.createElement("canvas"); cv.width = W0 * dp; cv.height = H0 * dp; cv.style.cssText = `width:${W0}px;height:${H0}px`; host.appendChild(cv);
+  const g = cv.getContext("2d"), col = P.g, sp = Array.from({length: 34}, () => ({x: 10 + Math.random() * 190, y: Math.random() * 470, v: 0.2 + Math.random() * 0.8, r: 0.8 + Math.random() * 2.2, ph: Math.random() * 6}));
+  const loop = () => {
+    if (!cv.isConnected) return; const t = performance.now() / 1000;
+    g.setTransform(dp * sc, 0, 0, dp * sc, 0, 0); g.clearRect(0, 0, 210, 470);
+    const pul = 0.5 + 0.3 * Math.sin(t * 2.2), gr = g.createRadialGradient(105, 240, 10, 105, 240, 190); gr.addColorStop(0, col + "aa"); gr.addColorStop(1, col + "00"); g.globalAlpha = pul; g.fillStyle = gr; g.fillRect(0, 0, 210, 470); g.globalAlpha = 1;
+    g.save(); g.shadowColor = col; g.shadowBlur = 16 + 10 * Math.sin(t * 3); g.drawImage(art, 0, 0); g.restore();
+    g.globalCompositeOperation = "lighter";
+    for (const p of sp) { p.y -= p.v; if (p.y < -6) { p.y = 474; p.x = 10 + Math.random() * 190; } g.globalAlpha = (0.3 + 0.7 * Math.abs(Math.sin(t * 2 + p.ph))) * 0.85; g.fillStyle = col; g.beginPath(); g.arc(p.x + Math.sin(t + p.ph) * 7, p.y, p.r, 0, 7); g.fill(); }
+    for (let k = 0; k < 6; k++) { const a = Math.pow(Math.max(0, Math.sin(t * (1.5 + k * 0.45) + k * 2.1)), 7); if (a < 0.06) continue; const x = 50 + (k * 37) % 120, y = 40 + k * 70, r = 16 * a; g.globalAlpha = a; g.fillStyle = "#fff"; g.beginPath(); g.moveTo(x - r, y); g.lineTo(x, y - r * 0.12); g.lineTo(x + r, y); g.lineTo(x, y + r * 0.12); g.closePath(); g.moveTo(x, y - r); g.lineTo(x + r * 0.12, y); g.lineTo(x, y + r); g.lineTo(x - r * 0.12, y); g.closePath(); g.fill(); }
+    g.globalAlpha = 1; g.globalCompositeOperation = "source-over"; requestAnimationFrame(loop);
+  };
+  loop();
+}
+const HSCENE = {};
+function horrorScene(pal) {
+  if (HSCENE[pal]) return HSCENE[pal];
+  const P = HOR_PAL[pal], W = 980, H = 420, c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d"); let sd = pal.length * 31 + 7; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, shade(P.felt[0], 30)); bg.addColorStop(0.6, P.felt[1]); bg.addColorStop(1, "#02030a"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  const mg = g.createRadialGradient(W * 0.72, 70, 4, W * 0.72, 70, 240); mg.addColorStop(0, P.g + "99"); mg.addColorStop(1, P.g + "00"); g.fillStyle = mg; g.fillRect(0, 0, W, H); g.fillStyle = "#f2f0e8"; g.beginPath(); g.arc(W * 0.72, 70, 34, 0, 7); g.fill();
+  g.fillStyle = "#04050a"; for (let x = 160; x < W; x += 26) { g.fillRect(x, 130, 6, 230); g.beginPath(); g.moveTo(x - 3, 130); g.lineTo(x + 3, 106); g.lineTo(x + 9, 130); g.fill(); } g.fillRect(150, 150, W, 7); g.fillRect(150, 300, W, 7);
+  g.lineWidth = 5; g.strokeStyle = "#04050a"; for (const [x0, dir] of [[W * 0.45, 1], [W * 0.66, -1]]) { g.beginPath(); g.arc(x0, 140, 34, Math.PI, 0); g.stroke(); }
+  g.save(); g.translate(W * 0.555, 104); g.fillStyle = "#020308"; g.beginPath(); g.ellipse(0, 0, 22, 12, -0.3, 0, 7); g.fill(); g.beginPath(); g.arc(16, -10, 8, 0, 7); g.fill(); g.beginPath(); g.moveTo(22, -12); g.lineTo(36, -9); g.lineTo(22, -6); g.fill(); g.restore();
+  for (let k = 0; k < 40; k++) { g.fillStyle = P.g; g.globalAlpha = 0.3 + rnd() * 0.6; g.beginPath(); g.arc(rnd() * W, rnd() * H, 0.8 + rnd() * 2, 0, 7); g.fill(); } g.globalAlpha = 1;
+  for (let k = 0; k < 8; k++) { const x = 260 + rnd() * 660, y = 30 + rnd() * 240; g.fillStyle = "#04050a"; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 10, y + 18, x + 4, y + 36); g.quadraticCurveTo(x - 6, y + 18, x, y); g.fill(); }
+  const fog = g.createLinearGradient(0, H - 140, 0, H); fog.addColorStop(0, "rgba(200,215,240,0)"); fog.addColorStop(1, "rgba(200,215,240,.3)"); g.fillStyle = fog; g.fillRect(0, H - 140, W, 140);
+  return (HSCENE[pal] = c.toDataURL("image/jpeg", 0.8));
+}
+function horrorAvatar(i) {                          // scary portrait avatars 500..563: 8 characters in 7 palettes
+  const k = i - 500, [name, , pal] = HORROR[k], P = HOR_PAL[pal], cv = document.createElement("canvas"); cv.width = cv.height = 128; const g = cv.getContext("2d"), TAU = Math.PI * 2, who = k % 8;
+  const bg = g.createRadialGradient(64, 46, 6, 64, 70, 100); bg.addColorStop(0, shade(P.felt[0], 50)); bg.addColorStop(1, "#04050a"); g.fillStyle = bg; g.fillRect(0, 0, 128, 128);
+  const mg = g.createRadialGradient(100, 24, 2, 100, 24, 40); mg.addColorStop(0, "rgba(255,255,255,.9)"); mg.addColorStop(0.3, P.g + "88"); mg.addColorStop(1, P.g + "00"); g.fillStyle = mg; g.fillRect(0, 0, 128, 128);
+  const F = (col, fn) => { g.fillStyle = col; fn(); g.fill(); }, glowEye = (x, y, r) => { g.save(); g.shadowColor = P.g; g.shadowBlur = 8; F(P.c2, () => { g.beginPath(); g.ellipse(x, y, r, r * 0.8, 0, 0, TAU); }); g.restore(); F("#050205", () => { g.beginPath(); g.ellipse(x, y, r * 0.3, r * 0.75, 0, 0, TAU); }); };
+  const face = col => { const fg = g.createRadialGradient(56, 54, 4, 64, 62, 42); fg.addColorStop(0, shade(col, 35)); fg.addColorStop(1, shade(col, -45)); F(fg, () => { g.beginPath(); g.ellipse(64, 66, 31, 38, 0, 0, TAU); }); };
+  const W_ = {
+    0() { F("#0a0810", () => { g.beginPath(); g.moveTo(10, 128); g.lineTo(26, 92); g.lineTo(64, 106); g.lineTo(102, 92); g.lineTo(118, 128); }); F(P.g, () => { g.beginPath(); g.moveTo(28, 128); g.lineTo(34, 100); g.lineTo(64, 112); g.lineTo(94, 100); g.lineTo(100, 128); }); face("#e8e0e0"); F("#0a0810", () => { g.beginPath(); g.moveTo(33, 58); g.quadraticCurveTo(40, 22, 64, 24); g.quadraticCurveTo(88, 22, 95, 58); g.quadraticCurveTo(84, 44, 64, 42); g.quadraticCurveTo(44, 44, 33, 58); }); glowEye(51, 66, 5); glowEye(77, 66, 5); F("#7a0a14", () => { g.beginPath(); g.ellipse(64, 88, 10, 4, 0, 0, TAU); }); F("#fff", () => { g.beginPath(); g.moveTo(56, 86); g.lineTo(59, 97); g.lineTo(61, 87); g.moveTo(67, 87); g.lineTo(69, 97); g.lineTo(72, 86); }); },
+    1() { F("#ece4cc", () => { g.beginPath(); g.arc(64, 58, 34, 0, TAU); g.rect(48, 74, 32, 30); }); F("#0a0408", () => { g.beginPath(); g.ellipse(51, 60, 10, 12, 0, 0, TAU); g.ellipse(77, 60, 10, 12, 0, 0, TAU); g.moveTo(64, 72); g.lineTo(58, 84); g.lineTo(70, 84); }); glowEye(51, 60, 4); glowEye(77, 60, 4); g.fillStyle = "#0a0408"; for (let x = 52; x <= 76; x += 6) g.fillRect(x, 92, 2, 12); },
+    2() { F("rgba(235,240,255,.92)", () => { g.beginPath(); g.moveTo(22, 128); g.lineTo(28, 58); g.quadraticCurveTo(64, -6, 100, 58); g.lineTo(106, 128); g.quadraticCurveTo(96, 116, 88, 128); g.quadraticCurveTo(78, 116, 68, 128); g.quadraticCurveTo(58, 116, 48, 128); g.quadraticCurveTo(38, 116, 22, 128); }); F("#10142a", () => { g.beginPath(); g.ellipse(50, 62, 9, 13, 0, 0, TAU); g.ellipse(78, 62, 9, 13, 0, 0, TAU); g.ellipse(64, 92, 8, 11, 0, 0, TAU); }); },
+    3() { face("#8aa860"); g.strokeStyle = "#2a3a18"; g.lineWidth = 2; g.beginPath(); g.moveTo(40, 48); g.lineTo(58, 52); for (let x = 42; x < 58; x += 4) { g.moveTo(x, 46); g.lineTo(x, 54); } g.stroke(); F("#f2f0e0", () => { g.beginPath(); g.ellipse(50, 64, 8, 8, 0, 0, TAU); g.ellipse(78, 66, 11, 11, 0, 0, TAU); }); glowEye(50, 64, 3); F("#2a1a10", () => { g.beginPath(); g.arc(78, 66, 4, 0, TAU); }); F("#3a1a12", () => { g.beginPath(); g.moveTo(46, 90); g.lineTo(82, 88); g.lineTo(80, 98); g.lineTo(48, 100); }); g.fillStyle = "#e8e0c0"; for (let x = 50; x < 80; x += 6) g.fillRect(x, 90, 4, 6); },
+    4() { F("#1a0a24", () => { g.beginPath(); g.moveTo(14, 54); g.lineTo(114, 54); g.lineTo(84, 48); g.lineTo(70, 6); g.lineTo(52, 40); g.lineTo(44, 48); }); F(P.g, () => { g.beginPath(); g.rect(46, 44, 38, 7); }); face("#7ab058"); glowEye(51, 70, 5); glowEye(77, 70, 5); F("#5a8a3a", () => { g.beginPath(); g.moveTo(64, 72); g.lineTo(58, 88); g.lineTo(70, 88); }); F("#3a1a2a", () => { g.beginPath(); g.ellipse(64, 96, 12, 4, 0, 0, TAU); }); },
+    5() { face("#c8281e"); for (const d of [-1, 1]) F("#2a0a08", () => { g.beginPath(); g.moveTo(64 + d * 22, 40); g.quadraticCurveTo(64 + d * 50, 30, 64 + d * 40, 2); g.quadraticCurveTo(64 + d * 34, 26, 64 + d * 14, 34); }); glowEye(51, 64, 6); glowEye(77, 64, 6); g.strokeStyle = "#2a0a08"; g.lineWidth = 3; g.beginPath(); g.moveTo(40, 52); g.lineTo(56, 58); g.moveTo(88, 52); g.lineTo(72, 58); g.stroke(); F("#1a0404", () => { g.beginPath(); g.moveTo(44, 88); g.quadraticCurveTo(64, 108, 84, 88); g.quadraticCurveTo(64, 96, 44, 88); }); g.fillStyle = "#fff"; for (let x = 48; x < 82; x += 7) { g.beginPath(); g.moveTo(x, 90); g.lineTo(x + 3, 97); g.lineTo(x + 6, 91); g.fill(); } },
+    6() { face("#8a8a96"); for (const d of [-1, 1]) F("#6a6a78", () => { g.beginPath(); g.moveTo(64 + d * 14, 34); g.lineTo(64 + d * 34, 6); g.lineTo(64 + d * 34, 44); }); glowEye(51, 62, 5); glowEye(77, 62, 5); F("#4a4a56", () => { g.beginPath(); g.ellipse(64, 80, 16, 12, 0, 0, TAU); }); F("#0a0408", () => { g.beginPath(); g.ellipse(64, 76, 5, 3.5, 0, 0, TAU); }); g.fillStyle = "#fff"; for (const d of [-1, 1]) { g.beginPath(); g.moveTo(64 + d * 8, 90); g.lineTo(64 + d * 10, 102); g.lineTo(64 + d * 13, 90); g.fill(); } },
+    7() { const pg = g.createRadialGradient(52, 50, 4, 64, 66, 48); pg.addColorStop(0, "#ffb04a"); pg.addColorStop(1, "#b04a08"); F(pg, () => { g.beginPath(); g.ellipse(64, 70, 44, 38, 0, 0, TAU); }); g.strokeStyle = "rgba(90,30,0,.5)"; g.lineWidth = 2; g.beginPath(); for (const d of [-26, -10, 10, 26]) { g.moveTo(64 + d * 0.3, 34); g.quadraticCurveTo(64 + d * 1.5, 70, 64 + d * 0.3, 106); } g.stroke(); F("#3a7a2a", () => { g.beginPath(); g.rect(60, 28, 8, 10); }); F("#ffd24d", () => { g.beginPath(); g.moveTo(34, 38); g.lineTo(34, 22); g.lineTo(48, 32); g.lineTo(64, 16); g.lineTo(80, 32); g.lineTo(94, 22); g.lineTo(94, 38); }); g.save(); g.shadowColor = "#ffb02a"; g.shadowBlur = 10; F("#ffe27a", () => { g.beginPath(); g.moveTo(40, 60); g.lineTo(54, 60); g.lineTo(47, 72); g.moveTo(74, 60); g.lineTo(88, 60); g.lineTo(81, 72); g.moveTo(44, 88); g.lineTo(54, 82); g.lineTo(64, 90); g.lineTo(74, 82); g.lineTo(84, 88); g.lineTo(76, 98); g.lineTo(64, 94); g.lineTo(52, 98); }); g.restore(); },
+  };
+  W_[who]();
+  const vg = g.createRadialGradient(64, 64, 40, 64, 64, 92); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.55)"); g.fillStyle = vg; g.fillRect(0, 0, 128, 128);
+  return cv;
+}
 function vipCueShow(cd, host) {               // tall animated showcase of a VIP cue: pulsing glow, rising sparks, twinkling stars
   const W0 = 150, H0 = 300, dp = 1.5, cv = document.createElement("canvas"); cv.width = W0 * dp; cv.height = H0 * dp; cv.style.cssText = `width:${W0}px;height:${H0}px`; host.appendChild(cv);
   const g = cv.getContext("2d"), col = cd.glow || cd.metal || "#ffd24d", sp = Array.from({length: 26}, (_, i) => ({x: 30 + Math.random() * 90, y: Math.random() * H0, v: 0.25 + Math.random() * 0.7, r: 1 + Math.random() * 2.2, ph: Math.random() * 6}));
@@ -7727,9 +7846,30 @@ tiers: ZODIAC.map((z, i) => ({sku: "zod_" + i, usd: 24.99, cue: "vip_z" + i, ava
 ];
 const VO = () => [...horrorWeek(), ...VIP_OFFERS0];
 let vipPage = 0, vipSel = {sport: 1, atom: 1, zodiac: new Date().getMonth()};
+
+function horrorOfferModal(o, t) {
+  const i = +o.id.slice(4), [name, , pal] = HORROR[i], P = HOR_PAL[pal], cue = cueDef(t.cue), ownC = profile.cues.includes(cue.id), tbl = t.table ? tableById(t.table) : null, offers = VO();
+  const col = (ic, lab, val) => `<div class="hcol"><div class="hci">${ic}</div><small>${T(lab)}</small><b>${val}</b></div>`;
+  const bars = cue.st.map((v, k) => `<div class="hbr"><span>${T(STAT_NAMES[k])}</span><div>${Array.from({length: 10}, (_, q) => `<i class="${q < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("");
+  const left = Math.max(0, ((weekIdx() + 1) * 7 * 864e5 - 3 * 864e5 - Date.now()) / 1000);
+  openModal({icon: "", title: "", text: "", extra: `<div class="hwin${vh < 560 ? " hsmall" : ""}" style="width:${Math.min(960, vw * 0.97)}px;--acc:${P.acc};--hg:${P.g};background:linear-gradient(#0008,#000c),url(${horrorScene(pal)}) center/cover">
+    <button class="hx" id="hClose">✕</button><div class="hlogo">${esc(T(name))}</div>
+    <div class="hbody"><div class="hcues" id="hCue"></div><div class="hright">
+      <div class="hstat">${bars}<div class="hpw">🔓 +${cuePower(cue)} ⚜</div></div>
+      <div class="hcols">${col("🎱", "Kiy", esc(cue.name))}${col('<span class="coin" style="width:40px;height:40px"></span>', "Tanga", fmtS(t.coins))}${col('<span class="cash" style="width:50px;height:36px"></span>', "Naqd pul", fmt(t.cash))}${col("🏆", "Oltin zarba", "×" + t.goldShots)}${col(`<img src="${avatarURL(t.avatar)}" style="width:50px;height:50px;border-radius:10px">`, "Avatar", esc(avName(t.avatar)))}${col(avHTML(profile.avatar, frameIdx(t.frame), 54), "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name)))}${tbl ? col(`<img src="${tableThumb(tbl)}" style="height:40px;border-radius:5px">`, "Stol", esc(T(tbl.name))) : ""}${t.sboxes ? col("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}</div>
+      <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} $${t.usd}</button>`}<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small></div></div></div>
+    <div class="hnav"><button class="btn gray" id="hPrev">‹</button><span class="hdots">${offers.map((x, k) => `<i class="${k === vipPage % offers.length ? "on" : ""}"></i>`).join("")}</span><button class="btn gray" id="hNext">›</button></div></div>`, buttons: []});
+  horrorShow(i, $("hCue"), vh < 560 ? Math.max(0.32, (vh - 150) / 480) : 0.88);
+  $("hClose").onclick = () => $("modal").classList.remove("on");
+  $("hPrev").onclick = () => { vipPage = (vipPage + offers.length - 1) % offers.length; vipOffers(); };
+  $("hNext").onclick = () => { vipPage = (vipPage + 1) % offers.length; vipOffers(); };
+  if ($("hBuy")) $("hBuy").onclick = () => Net.checkout(t.sku, $("hBuy"));
+}
 function vipOffers(start) {
 if (typeof start === "string") vipPage = Math.max(0, VO().findIndex(o => o.id === start));
-const offers = VO(), o = offers[vipPage % offers.length], t = o.tiers[(vipSel[o.id] | 0) % o.tiers.length], cue = cueDef(t.cue), own = profile.cues.includes(cue.id);
+const offers = VO(), o = offers[vipPage % offers.length], t = o.tiers[(vipSel[o.id] | 0) % o.tiers.length];
+  if (o.horror) return horrorOfferModal(o, t);
+  const cue = cueDef(t.cue), own = profile.cues.includes(cue.id);
 const item = (ic, n, v) => `<div class="vitem"><div class="vic">${ic}</div><small>${T(n)}</small><b>${v}</b></div>`;
 openModal({icon: "", title: "", text: "", extra: `<div class="vipbox" style="background:${o.bg};--acc:${o.accent}">
 <span class="vipbadge">♛ VIP</span>
