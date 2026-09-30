@@ -334,6 +334,8 @@
   @keyframes pop{from{transform:scale(0)}}
   .pot{background:#0b1020e6;border:2px solid #3b4a74;border-radius:14px;padding:10px 18px;text-align:center;font-family:var(--fh);font-size:24px;color:#ffe27a;min-width:120px}
   .pot .stack{font-size:40px;line-height:1}
+  .vsfee{min-height:30px;font-family:var(--fh);font-size:20px;color:#ffe27a;background:#0b1020cc;border:2px solid #3b4a74;border-radius:12px;padding:2px 12px;display:flex;align-items:center;gap:6px;opacity:0;transition:opacity .3s}.vsfee.on{opacity:1}.vsfee .coin{width:20px;height:20px}
+  .flycoin{position:fixed;z-index:80;width:22px;height:22px;pointer-events:none;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3a8,#ffcf3d 55%,#b87a00);border:1.5px solid #8a5a00;box-shadow:0 2px 4px #0008}
 
   /* modal */
   #modal{justify-content:center;background:#000b;z-index:40;padding-top:14px}
@@ -990,10 +992,10 @@
 
 <!-- ============ VS ============ -->
 <div class="screen full" id="vs">
-  <div class="vsp vsL"><div class="big" id="vsA"></div><div class="nm" id="vsAn"></div></div>
+  <div class="vsp vsL"><div class="big" id="vsA"></div><div class="nm" id="vsAn"></div><div class="vsfee" id="vsAf"></div></div>
   <div class="vsmid"><div class="h" id="vsCity" style="font-size:24px;text-shadow:0 3px 0 #000"></div><div class="vstxt">VS</div>
     <div class="pot"><div class="stack">🪙</div><span id="vsPot">0</span></div></div>
-  <div class="vsp vsR"><div class="big" id="vsB"></div><div class="nm" id="vsBn">Qidirilmoqda…</div></div>
+  <div class="vsp vsR"><div class="big" id="vsB"></div><div class="nm" id="vsBn">Qidirilmoqda…</div><div class="vsfee" id="vsBf"></div></div>
 </div>
 
 <!-- ============ IN-GAME DOM ============ -->
@@ -1066,6 +1068,13 @@ const JAW_TIPS = (() => {   // centres of the rounded jaw tips, in table coordin
   const t = TIP_R, c = CORNER_MOUTH, m = 27, h = 1000 / 2, H = 500, o = [];
   for (const x of [c + t, h - m - t, h + m + t, 1000 - c - t]) o.push([x, -t], [x, H + t]);
   for (const y of [c + t, H - c - t]) o.push([-t, y], [1000 + t, y]);
+  return o;
+})();
+const JAW_FACES = (() => {   // angled jaw faces inside each pocket throat: [x1,y1,x2,y2] from the nose end into the pocket
+  const c = 32, m = 27, h = 500, w = 1000, d = 19, o = [];
+  const top = (x1, x2) => o.push([x1, 0, x2, -d]), bot = (x1, x2) => o.push([x1, 500, x2, 500 + d]);
+  for (const f of [top, bot]) { f(c, c - d); f(w - c, w - c + d); f(w / 2 - m, w / 2 - m + 5); f(w / 2 + m, w / 2 + m - 5); }
+  for (const f of [(y1, y2) => o.push([0, y1, -d, y2]), (y1, y2) => o.push([w, y1, w + d, y2])]) { f(c, c - d); f(500 - c, 500 - c + d); }
   return o;
 })();
 const MID_MOUTH = 27;   // half-width of a middle pocket mouth at the cushion nose (the jaws angle in to the hole)
@@ -2235,7 +2244,7 @@ function physicsFrame(G) {
       if (b.out) continue;
       let hit = null;
       for (const p of pockets) {
-        if (p.mid) { if (Math.abs(b.x - p.x) < MID_MOUTH && (p.y < 0 ? b.y < 3 : b.y > FH - 3)) { hit = p; break; } }
+        if (p.mid) { if (Math.abs(b.x - p.x) < MID_MOUTH && (p.y < 0 ? b.y < -4 : b.y > FH + 4)) { hit = p; break; } }
         else if (Math.abs(b.x - p.x) + Math.abs(b.y - p.y) < 27 && b.x > -30 && b.x < FW + 30 && b.y > -30 && b.y < FH + 30) { hit = p; break; }
       }
       if (!hit && (b.x < -1 || b.x > FW + 1 || b.y < -1 || b.y > FH + 1)) { let bd = 1e9; for (const p of pockets) { const d = (b.x - p.x) ** 2 + (b.y - p.y) ** 2; if (d < bd) { bd = d; hit = p; } } }   // safety: never let a ball leave the table
@@ -2248,6 +2257,18 @@ function physicsFrame(G) {
         if (d2 < m * m && d2 > 0.0001) {
           const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, vn = b.vx * nx + b.vy * ny;
           b.x = t[0] + nx * m; b.y = t[1] + ny * m;
+          if (vn < 0) { b.vx -= (1 + RE) * vn * nx; b.vy -= (1 + RE) * vn * ny; onRail(G, b, -vn); }
+        }
+      }
+    }
+    if (pockets) for (const b of balls) {   // angled jaw faces: the ball rebounds off them (or is guided into the hole)
+      if (b.out || (b.y > R + 6 && b.y < FH - R - 6 && b.x > R + 6 && b.x < FW - R - 6)) continue;
+      for (const f of JAW_FACES) {
+        const ex = f[2] - f[0], ey = f[3] - f[1], L2 = ex * ex + ey * ey; let t = ((b.x - f[0]) * ex + (b.y - f[1]) * ey) / L2; t = t < 0 ? 0 : t > 1 ? 1 : t;
+        const px = f[0] + ex * t, py = f[1] + ey * t, dx = b.x - px, dy = b.y - py, d2 = dx * dx + dy * dy;
+        if (d2 < R * R && d2 > 0.0001) {
+          const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, vn = b.vx * nx + b.vy * ny;
+          b.x = px + nx * R; b.y = py + ny * R;
           if (vn < 0) { b.vx -= (1 + RE) * vn * nx; b.vy -= (1 + RE) * vn * ny; onRail(G, b, -vn); }
         }
       }
@@ -5379,6 +5400,20 @@ function avatarHTML(el, pl) {
   el.style.boxShadow = fr.glow ? `0 0 24px ${fr.glow}` : "";
   el.innerHTML = `<img src="${avatarURL(pl.avatar)}" alt="" style="width:100%;height:100%;border-radius:12px"><div class="star">${pl.level}</div>`;
 }
+function vsPotFly(half) {   // coins fly from both entry-fee chips into the pot, which counts up to the full prize
+  const pot = $("vsPot"), pr = pot.getBoundingClientRect(), tx = pr.left + pr.width / 2 - 11, ty = pr.top + pr.height / 2 - 11;
+  let landed = 0; const total = 10;
+  for (const id of ["vsAf", "vsBf"]) {
+    const el = $(id), r = el.getBoundingClientRect(); el.classList.remove("on");
+    for (let k = 0; k < total / 2 + 1; k++) {
+      const c = document.createElement("i"); c.className = "flycoin"; document.body.appendChild(c);
+      const sx = r.left + r.width / 2 - 11 + (Math.random() - .5) * 30, sy = r.top + r.height / 2 - 11 + (Math.random() - .5) * 12;
+      const an = c.animate([{transform: `translate(${sx}px,${sy}px) scale(.8)`, opacity: 1}, {transform: `translate(${(sx + tx) / 2}px,${Math.min(sy, ty) - 50}px) scale(1.15)`, opacity: 1, offset: .5}, {transform: `translate(${tx + (Math.random() - .5) * 20}px,${ty + (Math.random() - .5) * 10}px) scale(.6)`, opacity: .9}], {duration: 650 + Math.random() * 250, delay: k * 70, easing: "ease-in", fill: "forwards"});
+      an.onfinish = () => { c.remove(); if (landed % 3 === 0) Snd.coin(1); landed++; pot.textContent = fmt(Math.round(half * 2 * Math.min(1, landed / (total + 2)))); if (landed >= total + 2) pot.textContent = fmt(half * 2); };
+    }
+  }
+  setTimeout(() => { pot.textContent = fmt(half * 2); }, 1500);
+}
 function vsScreen(city, pot, find, done) {
   mode = "menu";
   $("gameUi").classList.remove("on"); $("cheerBar").classList.remove("on"); closeChat();
@@ -5388,7 +5423,8 @@ function vsScreen(city, pot, find, done) {
   const me = mePlayer();
   avatarHTML($("vsA"), me); $("vsAn").textContent = me.name;
   $("vsCity").textContent = `${city.name} ${city.sub}`;
-  $("vsPot").textContent = fmt(pot);
+  $("vsPot").textContent = "0"; const half = Math.round(pot / 2), fa = $("vsAf"), fb = $("vsBf");
+  fa.innerHTML = `<span class="coin"></span>${fmt(half)}`; fa.classList.add("on"); fb.classList.remove("on"); fb.innerHTML = `<span class="coin"></span>${fmt(half)}`;
   const b = $("vsB"), bn = $("vsBn"); bn.textContent = T("Qidirilmoqda…");
   for (const el of document.querySelectorAll("#vs .vsL,#vs .vsR,#vs .vstxt")) { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }
   Snd.whoosh();
@@ -5401,7 +5437,9 @@ function vsScreen(city, pot, find, done) {
     if (found && performance.now() > minEnd) {
       clearInterval(iv); const o = found.opp;
       avatarHTML(b, o); bn.textContent = o.name + (o.isAI ? " 🤖" : ""); Snd.pop(); Snd.coin(4);
-      setTimeout(() => { Snd.whoosh(); done(found); }, 1500);
+      fb.classList.add("on");
+      setTimeout(() => vsPotFly(half), 350);   // both players put their entry fee into the middle
+      setTimeout(() => { Snd.whoosh(); done(found); }, 2200);
       return;
     }
     avatarHTML(b, {avatar: randAv(), color: pick(AV_COLORS), level: "?"});
