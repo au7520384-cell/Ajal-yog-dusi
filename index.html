@@ -4196,32 +4196,17 @@ function paintTable(city) {
     grain(OX, OY, OW, RAIL + 8, true); grain(OX, FY + FH, OW, RAIL + 8, true);
     grain(OX, FY, RAIL + 8, FH, false); grain(FX + FW, FY, RAIL + 8, FH, false);
   });
-  // rounded rail profile: lit outer edge, soft crown, shadow falling toward the cloth
+  // rail profile drawn as crisp concentric lines (no soft gradients, so no haze or seams at the corners)
   if (!lucky) {
     ctx.save(); ctx.beginPath(); rr(OX, OY, OW, OH, 38); ctx.rect(FX - 18, FY - 18, FW + 36, FH + 36); ctx.clip("evenodd");
-    const prof = (x0, y0, x1, y1) => {
-      const g = ctx.createLinearGradient(x0, y0, x1, y1);
-      g.addColorStop(0, "rgba(0,0,0,.45)"); g.addColorStop(0.1, "rgba(255,255,255,.34)"); g.addColorStop(0.22, "rgba(255,255,255,.1)");
-      g.addColorStop(0.55, "rgba(255,255,255,0)"); g.addColorStop(0.85, "rgba(0,0,0,.18)"); g.addColorStop(1, "rgba(0,0,0,.42)");
-      return g;
-    };
-    const iw = RAIL - 18 + 8 + 18;                // outer edge -> cloth edge
-    ctx.fillStyle = prof(0, OY, 0, OY + iw); ctx.fillRect(OX + iw, OY, OW - 2 * iw, iw);
-    ctx.fillStyle = prof(0, OY + OH, 0, OY + OH - iw); ctx.fillRect(OX + iw, OY + OH - iw, OW - 2 * iw, iw);
-    ctx.fillStyle = prof(OX, 0, OX + iw, 0); ctx.fillRect(OX, OY + iw, iw, OH - 2 * iw);
-    ctx.fillStyle = prof(OX + OW, 0, OX + OW - iw, 0); ctx.fillRect(OX + OW - iw, OY + iw, iw, OH - 2 * iw);
-    for (const [cx, cy] of [[OX + iw, OY + iw], [OX + OW - iw, OY + iw], [OX + iw, OY + OH - iw], [OX + OW - iw, OY + OH - iw]]) {   // rounded corners
-      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, iw);
-      g.addColorStop(0, "rgba(0,0,0,.42)"); g.addColorStop(0.15, "rgba(0,0,0,.18)"); g.addColorStop(0.45, "rgba(255,255,255,0)");
-      g.addColorStop(0.78, "rgba(255,255,255,.1)"); g.addColorStop(0.9, "rgba(255,255,255,.34)"); g.addColorStop(1, "rgba(0,0,0,.45)");
-      ctx.fillStyle = g; ctx.fillRect(cx - iw, cy - iw, 2 * iw, 2 * iw);
-    }
+    const ring = (inset, color, w) => { ctx.strokeStyle = color; ctx.lineWidth = w; rr(OX + inset, OY + inset, OW - 2 * inset, OH - 2 * inset, Math.max(6, 38 - inset)); ctx.stroke(); };
+    ring(1.5, "rgba(255,255,255,.55)", 1.6);       // lit outer edge
+    ring(5, "rgba(0,0,0,.35)", 1.4);               // groove
+    ring(9, "rgba(255,255,255,.22)", 1.2);         // crown highlight
+    ring(RAIL + 2, "rgba(255,255,255,.28)", 1.2);  // cloth-side bevel, lit
+    ring(RAIL + 5, "rgba(0,0,0,.55)", 2);          // dark line where the rail meets the cushion
     ctx.restore();
   }
-  // lacquer sheen + bevels
-  const sh = ctx.createLinearGradient(0, OY, 0, OY + RAIL);
-  sh.addColorStop(0, "rgba(255,255,255,.28)"); sh.addColorStop(0.5, "rgba(255,255,255,.06)"); sh.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = sh; rr(OX, OY, OW, RAIL, 38); ctx.fill();
   ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 2; rr(OX + 1, OY + 1, OW - 2, OH - 2, 37); ctx.stroke();
   ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 3; rr(OX + 3, OY + 5, OW - 6, OH - 8, 35); ctx.stroke();
   ctx.strokeStyle = trim; ctx.globalAlpha = 0.5; ctx.lineWidth = 1.5; rr(FX - RAIL + 4, FY - RAIL + 4, FW + 2 * RAIL - 8, FH + 2 * RAIL - 8, 20); ctx.stroke();
