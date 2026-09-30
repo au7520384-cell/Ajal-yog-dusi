@@ -1127,7 +1127,7 @@ const groupOf = n => n === 0 ? "cue" : n < 8 ? "solid" : n === 8 ? "eight" : "st
 // ---------------------------------------------------------------- content
 const CITIES = [
   {id: "lon", name: "London",    sub: "Thames Pub",        fee: 50,        prize: 100,       lvl: 1,  felt: ["#2f86f0", "#0c3a8e"], rail: ["#7a3a1c", "#34130a"], trim: "#ffffff", pat: "classic", skill: 0.018,  col: ["#ffffff", "#e0352b"]},
-  {id: "syd", name: "Sidney",    sub: "Harbour Bar",       fee: 100,       prize: 200,       lvl: 2,  felt: ["#23c94a", "#07702a"], rail: ["#d9a066", "#8a5a2a"], trim: "#ffffff", pat: "tribal",  skill: 0.017,  col: ["#fffbd0", "#1ed45a"]},
+  {id: "syd", name: "Sidney",    sub: "Harbour Bar",       fee: 100,       prize: 200,       lvl: 2,  felt: ["#23c94a", "#07702a"], rail: ["#f0bf78", "#c17b38"], trim: "#ffffff", pat: "tribal",  skill: 0.017,  col: ["#fffbd0", "#1ed45a"]},
   {id: "lis", name: "Lissabon",  sub: "Summer Terrace",    fee: 500,       prize: 1000,      lvl: 3,  felt: ["#2cb5d8", "#0a5270"], rail: ["#f4f1ea", "#c9c2b2"], trim: "#1f4fd1", pat: "ikat",    skill: 0.016,  col: ["#ffffff", "#3e6df0"]},
   {id: "tok", name: "Tokio",     sub: "Samurai Dojo",      fee: 2500,      prize: 5000,      lvl: 5,  felt: ["#d8283a", "#6a0612"], rail: ["#141420", "#050508"], trim: "#ffd24d", pat: "medal",   skill: 0.015,  col: ["#ffd6d0", "#ff3b30"]},
   {id: "veg", name: "Las-Vegas", sub: "Royal Flush",       fee: 10000,     prize: 20000,     lvl: 7,  felt: ["#2b2b3a", "#0a0a12"], rail: ["#d9b34a", "#6a4e10"], trim: "#ffffff", pat: "gold",    skill: 0.013,  col: ["#fff6c8", "#ffcf3d"]},
@@ -4271,7 +4271,27 @@ function paintTable(city) {
     ctx.fillStyle = gl; rr(0, -h, L, h, [h, h, 0, 0]); ctx.fill();                                        // glassy lacquer
     for (const x of [0, L]) { const cg = ctx.createRadialGradient(x - 1, -1.5, 0, x, 0, 5); cg.addColorStop(0, shade(trim, 100)); cg.addColorStop(1, shade(trim, -60)); ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(x, 0, 4.2, 0, 7); ctx.fill(); }
   };
-  const along = (x, y, L, vert) => { ctx.save(); ctx.translate(x, y); if (vert) ctx.rotate(Math.PI / 2); strip(L); ctx.restore(); };
+  const tribal = city.pat === "tribal" && !st.lux;   // Sydney: light maple rail with a red-brown tribal band (white dot borders, wavy dot line, ringed medallions), no metal
+  const tribalBand = L => {                      // drawn along +x, centred on y = 0
+    const h = 12.5;
+    ctx.save(); ctx.shadowColor = "rgba(60,25,0,.5)"; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1.5;
+    const bg = ctx.createLinearGradient(0, -h, 0, h); bg.addColorStop(0, "#54190d"); bg.addColorStop(0.5, "#93331a"); bg.addColorStop(1, "#4a160c");
+    ctx.fillStyle = bg; rr(0, -h, L, 2 * h, 4); ctx.fill(); ctx.restore();
+    ctx.save(); rr(0, -h, L, 2 * h, 4); ctx.clip();
+    for (const sg of [-1, 1]) for (let x = 5; x < L - 3; x += 5.4) { ctx.fillStyle = "#f7ead0"; ctx.beginPath(); ctx.arc(x, sg * (h - 2.9), 1.15, 0, 7); ctx.fill(); }
+    for (let x = 4; x < L - 3; x += 3.1) { ctx.fillStyle = (x / 3.1 | 0) % 2 ? "#ffd766" : "#f7b731"; ctx.beginPath(); ctx.arc(x, Math.sin(x / 8.5) * 3.4, 1.25, 0, 7); ctx.fill(); }
+    for (const x of [L * 0.17, L * 0.5, L * 0.83]) {   // ringed medallions
+      ctx.fillStyle = "#f6e4bb"; ctx.beginPath(); ctx.arc(x, 0, 11.4, 0, 7); ctx.fill();
+      ctx.fillStyle = "#3f1108"; ctx.beginPath(); ctx.arc(x, 0, 9.4, 0, 7); ctx.fill();
+      for (let k = 0; k < 14; k++) { const a = k * Math.PI * 2 / 14; ctx.fillStyle = "#fff4d6"; ctx.beginPath(); ctx.arc(x + Math.cos(a) * 7.3, Math.sin(a) * 7.3, 1, 0, 7); ctx.fill(); }
+      const pg = ctx.createRadialGradient(x - 1, -1.2, 0, x, 0, 3.6); pg.addColorStop(0, "#fff"); pg.addColorStop(0.6, "#d9cfe8"); pg.addColorStop(1, "#7a6a98"); ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, 0, 3.9, 0, 7); ctx.fill();
+    }
+    for (const x of [0, L]) for (const k of [-1, 1]) { ctx.fillStyle = "#f7ead0"; ctx.fillRect(x + k * 3.2 - 0.6, -h + 2, 1.2, 2 * h - 4); ctx.fillRect(x + k * 6.2 - 0.6, -h + 2, 1.2, 2 * h - 4); }   // striped ends
+    ctx.restore();
+    ctx.strokeStyle = "rgba(255,240,205,.85)"; ctx.lineWidth = 1.4; rr(0.5, -h + 0.5, L - 1, 2 * h - 1, 4); ctx.stroke();
+    const gl = ctx.createLinearGradient(0, -h, 0, 0); gl.addColorStop(0, "rgba(255,255,255,.22)"); gl.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = gl; rr(0, -h, L, h, [4, 4, 0, 0]); ctx.fill();
+  };
+  const along = (x, y, L, vert) => { ctx.save(); ctx.translate(x, y); if (vert) ctx.rotate(Math.PI / 2); (tribal ? tribalBand : strip)(L); ctx.restore(); };
   const jewel = (x, y, r = 5.2) => {             // faceted gem in a metal bezel
     ctx.save(); ctx.shadowColor = "rgba(0,0,0,.65)"; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1.5;
     const bz = ctx.createLinearGradient(x, y - r - 3, x, y + r + 3); bz.addColorStop(0, shade(trim, 100)); bz.addColorStop(0.5, trim); bz.addColorStop(1, shade(trim, -90));
@@ -4299,9 +4319,10 @@ function paintTable(city) {
   };
   if (!lucky) {
     if (!st.lux) { for (const [a, l] of segH) { along(a, my, l); along(a, by, l); } for (const [a, l] of segV) { along(lx, a, l, true); along(rx, a, l, true); } }
-    const sights = !st.pave && !st.gemrow && !st.elite;
+    const sights = !st.pave && !st.gemrow && !st.elite && !tribal;
     for (let i = 1; i < 8; i++) {
       if (i === 4) continue;
+      if (tribal) continue;
       if (i === 2 || i === 6) { medallion(FX + FW * i / 8, my); medallion(FX + FW * i / 8, by); }
       else if (sights) { jewel(FX + FW * i / 8, my); jewel(FX + FW * i / 8, by); }
     }
@@ -4311,7 +4332,7 @@ function paintTable(city) {
   if (!lucky) {
     const mg = ctx.createLinearGradient(OX, OY, OX + OW * 0.3, OY + OH);
     mg.addColorStop(0, shade(trim, 70)); mg.addColorStop(0.35, trim); mg.addColorStop(0.55, shade(trim, -60)); mg.addColorStop(0.8, shade(trim, 40)); mg.addColorStop(1, shade(trim, -40));
-    ctx.strokeStyle = mg; ctx.lineWidth = 4; rr(OX + 2.5, OY + 2.5, OW - 5, OH - 5, 36); ctx.stroke();
+    ctx.strokeStyle = tribal ? shade(city.rail[1], -25) : mg; ctx.lineWidth = tribal ? 2.5 : 4; rr(OX + 2.5, OY + 2.5, OW - 5, OH - 5, 36); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1; rr(OX + 5, OY + 5, OW - 10, OH - 10, 34); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1.5; ctx.strokeRect(FX - 19.5, FY - 19.5, FW + 39, FH + 39);
     const plate = (x, y, w, h, rot) => {
