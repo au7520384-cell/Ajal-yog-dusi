@@ -4526,18 +4526,19 @@ function paintTable(city) {
     ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
     rr(-C - 3, -C - 3, FW + 2 * C + 6, FH + 2 * C + 6, 10); ctx.stroke(); ctx.restore();
   }
-  if (!lucky) for (const p of POCKETS) {   // pocket holes: rubber lip, deep shaded well and a lit rim, painted over the cushion ends
-    const x = p.x + p.dx, y = p.y + p.dy, r = p.dr, mar = city.id === "syd";
-    const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1);   // direction away from the table
-    { const sh = ctx.createRadialGradient(x, y, r - 1, x, y, r + 8); sh.addColorStop(0, "rgba(0,0,0,.4)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 8, 0, 7); ctx.fill(); }
-    const lip = ctx.createLinearGradient(x - r, y - r, x + r, y + r); lip.addColorStop(0, mar ? "#4a1a10" : shade(city.felt[1], -70)); lip.addColorStop(1, mar ? "#0f0403" : shade(city.felt[1], -120));
-    ctx.fillStyle = lip; ctx.beginPath(); ctx.arc(x, y, r + 2.6, 0, 7); ctx.fill();               // rubber lip
-    const well = ctx.createRadialGradient(x - ox * r * 0.28, y - oy * r * 0.28, r * 0.05, x, y, r + 0.5);
-    well.addColorStop(0, "#000"); well.addColorStop(0.55, "#040101"); well.addColorStop(0.82, mar ? "#2c0808" : shade(city.felt[1], -118)); well.addColorStop(1, mar ? "#5a1010" : shade(city.felt[0], -85));
-    ctx.fillStyle = well; ctx.beginPath(); ctx.arc(x, y, r + 0.4, 0, 7); ctx.fill();               // the well, lit only at its near rim
+  if (!lucky) for (const p of POCKETS) {   // 3D pocket: dark lip, a deep well that is black at the far side and deep maroon toward the table, lit inner wall
+    const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
+    const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1), n = Math.hypot(ox, oy) || 1, ux = ox / n, uy = oy / n;   // unit vector pointing away from the table
+    { const sh = ctx.createRadialGradient(x, y, r, x, y, r + 9); sh.addColorStop(0, "rgba(0,0,0,.5)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 9, 0, 7); ctx.fill(); }   // soft contact shadow on the cloth
+    ctx.fillStyle = "#1a0606"; ctx.beginPath(); ctx.arc(x, y, r + 2.4, 0, 7); ctx.fill();                   // thin dark lip
+    const body = ctx.createRadialGradient(x + ux * r * 0.38, y + uy * r * 0.38, 1, x, y, r + 0.6);          // dark core shifted away from the table, maroon rim on the table side
+    body.addColorStop(0, "#000000"); body.addColorStop(0.45, "#060101"); body.addColorStop(0.72, "#2a0707"); body.addColorStop(0.9, "#57100e"); body.addColorStop(1, "#7a1c18");
+    ctx.fillStyle = body; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+    const aim = Math.atan2(-uy, -ux);                                                                       // angle pointing at the table
     ctx.lineCap = "round";
-    ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();   // inner wall catching the light
-    ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r + 2.1, Math.atan2(-oy, -ox) - 0.7, Math.atan2(-oy, -ox) + 0.7); ctx.stroke();   // specular on the lip
+    ctx.strokeStyle = "rgba(255,110,90,.2)"; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.arc(x, y, r - 2.4, aim - 0.8, aim + 0.8); ctx.stroke();         // lit inner wall on the table side
+    ctx.strokeStyle = "rgba(255,190,170,.22)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r - 0.7, aim - 0.55, aim + 0.55); ctx.stroke();       // fine rim light
+    ctx.strokeStyle = "rgba(0,0,0,.55)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r - 1, aim + Math.PI - 0.9, aim + Math.PI + 0.9); ctx.stroke(); // deep shadow on the far wall
   }
   // soft overhead lamp
   const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
