@@ -4028,7 +4028,7 @@ function drawLuxFx(city) {
 }
 function railMaterial(st, city, OX, OY, OW, OH, rn, woodGrain) {
   const [r1, r2] = city.rail, trim = city.trim;
-  ctx.save(); rr(OX, OY, OW, OH, 30); ctx.clip();
+  ctx.save(); rr(OX, OY, OW, OH, 38); ctx.clip();
   const lines = (n, horiz, col) => {            // brushed metal: fine parallel lines along each rail
     for (let i = 0; i < n; i++) {
       ctx.strokeStyle = col(rn()); ctx.lineWidth = 0.4 + rn() * 0.8; ctx.beginPath();
@@ -4088,7 +4088,7 @@ function railMaterial(st, city, OX, OY, OW, OH, rn, woodGrain) {
     case "leather": {
       for (let i = 0; i < 1800; i++) { ctx.fillStyle = `rgba(0,0,0,${rn() * 0.18})`; ctx.fillRect(OX + rn() * OW, OY + rn() * OH, 2, 2); }
       ctx.setLineDash([6, 4]); ctx.strokeStyle = "rgba(255,240,220,.55)"; ctx.lineWidth = 1.4;
-      rr(OX + 8, OY + 8, OW - 16, OH - 16, 24); ctx.stroke();
+      rr(OX + 8, OY + 8, OW - 16, OH - 16, 32); ctx.stroke();
       rr(FX - RAIL + 10, FY - RAIL + 10, FW + 2 * RAIL - 20, FH + 2 * RAIL - 20, 16); ctx.stroke(); ctx.setLineDash([]);
       break;
     }
@@ -4107,7 +4107,7 @@ function railMaterial(st, city, OX, OY, OW, OH, rn, woodGrain) {
     case "lacquer": case "ebony": {
       if (st.mat === "ebony") woodGrain();
       ctx.strokeStyle = trim; ctx.globalAlpha = 0.8; ctx.lineWidth = 1.2;   // gold pinstripes
-      rr(OX + 10, OY + 10, OW - 20, OH - 20, 22); ctx.stroke(); rr(OX + 14, OY + 14, OW - 28, OH - 28, 20); ctx.stroke(); ctx.globalAlpha = 1;
+      rr(OX + 10, OY + 10, OW - 20, OH - 20, 30); ctx.stroke(); rr(OX + 14, OY + 14, OW - 28, OH - 28, 28); ctx.stroke(); ctx.globalAlpha = 1;
       if (st.mat === "ebony") {                 // mother-of-pearl inlay dots
         for (let i = 0; i < 70; i++) {
           const t = i / 70, per = 2 * (OW + OH), d = t * per;
@@ -4156,10 +4156,10 @@ function paintTable(city) {
   }
   // body + floor shadow
   ctx.save(); ctx.shadowColor = "rgba(0,0,0,.8)"; ctx.shadowBlur = 60; ctx.shadowOffsetY = 24;
-  ctx.fillStyle = r2; rr(OX, OY, OW, OH, 30); ctx.fill(); ctx.restore();
+  ctx.fillStyle = r2; rr(OX, OY, OW, OH, 38); ctx.fill(); ctx.restore();
   const wg = ctx.createLinearGradient(0, OY, 0, OY + OH);
   wg.addColorStop(0, shade(r1, 50)); wg.addColorStop(0.06, r1); wg.addColorStop(0.5, r2); wg.addColorStop(0.94, r1); wg.addColorStop(1, shade(r2, -10));
-  ctx.fillStyle = wg; rr(OX, OY, OW, OH, 30); ctx.fill();
+  ctx.fillStyle = wg; rr(OX, OY, OW, OH, 38); ctx.fill();
   // wood grain, following each rail
   const grain = (x, y, w, h, horiz) => {
     ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
@@ -4179,7 +4179,7 @@ function paintTable(city) {
   });
   // rounded rail profile: lit outer edge, soft crown, shadow falling toward the cloth
   if (!lucky) {
-    ctx.save(); ctx.beginPath(); rr(OX, OY, OW, OH, 30); ctx.rect(FX - 18, FY - 18, FW + 36, FH + 36); ctx.clip("evenodd");
+    ctx.save(); ctx.beginPath(); rr(OX, OY, OW, OH, 38); ctx.rect(FX - 18, FY - 18, FW + 36, FH + 36); ctx.clip("evenodd");
     const prof = (x0, y0, x1, y1) => {
       const g = ctx.createLinearGradient(x0, y0, x1, y1);
       g.addColorStop(0, "rgba(0,0,0,.45)"); g.addColorStop(0.1, "rgba(255,255,255,.34)"); g.addColorStop(0.22, "rgba(255,255,255,.1)");
@@ -4202,9 +4202,9 @@ function paintTable(city) {
   // lacquer sheen + bevels
   const sh = ctx.createLinearGradient(0, OY, 0, OY + RAIL);
   sh.addColorStop(0, "rgba(255,255,255,.28)"); sh.addColorStop(0.5, "rgba(255,255,255,.06)"); sh.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = sh; rr(OX, OY, OW, RAIL, 30); ctx.fill();
-  ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 2; rr(OX + 1, OY + 1, OW - 2, OH - 2, 29); ctx.stroke();
-  ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 3; rr(OX + 3, OY + 5, OW - 6, OH - 8, 27); ctx.stroke();
+  ctx.fillStyle = sh; rr(OX, OY, OW, RAIL, 38); ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 2; rr(OX + 1, OY + 1, OW - 2, OH - 2, 37); ctx.stroke();
+  ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 3; rr(OX + 3, OY + 5, OW - 6, OH - 8, 35); ctx.stroke();
   ctx.strokeStyle = trim; ctx.globalAlpha = 0.5; ctx.lineWidth = 1.5; rr(FX - RAIL + 4, FY - RAIL + 4, FW + 2 * RAIL - 8, FH + 2 * RAIL - 8, 20); ctx.stroke();
   ctx.globalAlpha = 1;
   // an inlaid strip framed in metal along every rail, jewelled sights and the city's medallion
@@ -4303,8 +4303,8 @@ function paintTable(city) {
   if (!lucky) {
     const mg = ctx.createLinearGradient(OX, OY, OX + OW * 0.3, OY + OH);
     mg.addColorStop(0, shade(trim, 70)); mg.addColorStop(0.35, trim); mg.addColorStop(0.55, shade(trim, -60)); mg.addColorStop(0.8, shade(trim, 40)); mg.addColorStop(1, shade(trim, -40));
-    ctx.strokeStyle = mg; ctx.lineWidth = 4; rr(OX + 2.5, OY + 2.5, OW - 5, OH - 5, 28); ctx.stroke();
-    ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1; rr(OX + 5, OY + 5, OW - 10, OH - 10, 26); ctx.stroke();
+    ctx.strokeStyle = mg; ctx.lineWidth = 4; rr(OX + 2.5, OY + 2.5, OW - 5, OH - 5, 36); ctx.stroke();
+    ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1; rr(OX + 5, OY + 5, OW - 10, OH - 10, 34); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1.5; ctx.strokeRect(FX - 19.5, FY - 19.5, FW + 39, FH + 39);
     const plate = (x, y, w, h, rot) => {
       ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
@@ -4349,7 +4349,7 @@ function paintTable(city) {
     const x = FX + p.x + p.dx, y = FY + p.y + p.dy, r = p.dr + 4;
     ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 5; ctx.shadowOffsetY = 1.5;
     const rg = ctx.createLinearGradient(x - r, y - r, x + r, y + r); rg.addColorStop(0, shade(city.rail[0], -30)); rg.addColorStop(1, shade(city.rail[1], -55));   // a dark wooden recess round the hole (no metal ring, like the reference)
-    ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r + 3, 0, 7); ctx.fill(); ctx.restore();
+    ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r + 1.2, 0, 7); ctx.fill(); ctx.restore();
     ctx.fillStyle = "#1a0606"; ctx.beginPath(); ctx.arc(x, y, r - 1.5, 0, 7); ctx.fill();
   }
   // felt
