@@ -2672,7 +2672,6 @@ function resolveShot() {
   } else if (s.firstHit === 8 && !G.isBreak) foul = "Birinchi 8-sharga tegildi";
   if (!foul && !potted.length && s.rails === 0 && !G.isBreak) foul = T("Hech bir shar bortga tegmadi");
   if (cueP) foul = T("Oq shar lunkaga tushdi");
-  if (!foul && G.isBreak && !obj.length && !eightP && (s.rb ? s.rb.size : 0) < 4) foul = T("Noqonuniy sindirish: 4 ta shar bortga tegishi kerak");   // a legal break pots a ball or drives at least four balls to a rail
 
   if (eightP) {
     if (G.isBreak) {
@@ -4482,6 +4481,10 @@ function paintTable(city) {
     ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
   }
+  if (st.glow && !lucky) {                     // neon strip under the cushion nose
+    ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
+    rr(-C - 3, -C - 3, FW + 2 * C + 6, FH + 2 * C + 6, 10); ctx.stroke(); ctx.restore();
+  }
   if (!lucky) for (const p of POCKETS) {   // pocket holes: rubber lip, deep shaded well and a lit rim, painted over the cushion ends
     const x = p.x + p.dx, y = p.y + p.dy, r = p.dr, mar = city.id === "syd";
     const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1);   // direction away from the table
@@ -4494,10 +4497,6 @@ function paintTable(city) {
     ctx.lineCap = "round";
     ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();   // inner wall catching the light
     ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r + 2.1, Math.atan2(-oy, -ox) - 0.7, Math.atan2(-oy, -ox) + 0.7); ctx.stroke();   // specular on the lip
-  }
-  if (st.glow && !lucky) {                     // neon strip under the cushion nose
-    ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
-    rr(-C - 3, -C - 3, FW + 2 * C + 6, FH + 2 * C + 6, 10); ctx.stroke(); ctx.restore();
   }
   // soft overhead lamp
   const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
