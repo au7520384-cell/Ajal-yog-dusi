@@ -4187,7 +4187,7 @@ function paintTable(city) {
   });
   // rounded rail profile: lit outer edge, soft crown, shadow falling toward the cloth
   if (!lucky) {
-    ctx.save(); ctx.beginPath(); rr(OX, OY, OW, OH, 38); ctx.rect(FX - 11, FY - 11, FW + 22, FH + 22); ctx.clip("evenodd");
+    ctx.save(); ctx.beginPath(); rr(OX, OY, OW, OH, 38); ctx.rect(FX - 18, FY - 18, FW + 36, FH + 36); ctx.clip("evenodd");
     const prof = (x0, y0, x1, y1) => {
       const g = ctx.createLinearGradient(x0, y0, x1, y1);
       g.addColorStop(0, "rgba(0,0,0,.45)"); g.addColorStop(0.1, "rgba(255,255,255,.34)"); g.addColorStop(0.22, "rgba(255,255,255,.1)");
@@ -4313,7 +4313,7 @@ function paintTable(city) {
     mg.addColorStop(0, shade(trim, 70)); mg.addColorStop(0.35, trim); mg.addColorStop(0.55, shade(trim, -60)); mg.addColorStop(0.8, shade(trim, 40)); mg.addColorStop(1, shade(trim, -40));
     ctx.strokeStyle = mg; ctx.lineWidth = 4; rr(OX + 2.5, OY + 2.5, OW - 5, OH - 5, 36); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1; rr(OX + 5, OY + 5, OW - 10, OH - 10, 34); ctx.stroke();
-    ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1.5; ctx.strokeRect(FX - 12.5, FY - 12.5, FW + 25, FH + 25);
+    ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1.5; ctx.strokeRect(FX - 19.5, FY - 19.5, FW + 39, FH + 39);
     const plate = (x, y, w, h, rot) => {
       ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
       const g = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
@@ -4364,7 +4364,7 @@ function paintTable(city) {
   ctx.save(); ctx.translate(FX, FY);
   const fg = ctx.createRadialGradient(FW / 2, FH / 2, 20, FW / 2, FH / 2, FW * 0.62);
   fg.addColorStop(0, shade(city.felt[0], 2)); fg.addColorStop(0.5, shade(city.felt[0], -20)); fg.addColorStop(1, shade(city.felt[1], -22));
-  ctx.fillStyle = fg; ctx.fillRect(-12, -12, FW + 24, FH + 24);   // cloth runs under the cushions, so every pocket mouth shows cloth
+  ctx.fillStyle = fg; ctx.fillRect(-21, -21, FW + 42, FH + 42);   // cloth runs under the cushions, so every pocket mouth shows cloth
   if (!feltNoise) {
     feltNoise = document.createElement("canvas"); feltNoise.width = feltNoise.height = 128;
     const ng = feltNoise.getContext("2d"), id = ng.createImageData(128, 128);
@@ -4393,7 +4393,7 @@ function paintTable(city) {
     }
   }
   // cushions with angled jaws at the pockets
-  const C = 12, cA = CORNER_MOUTH, mA = MID_MOUTH;   // the cushion is a slim rounded bumper (~a quarter of the rail); the rest is wood
+  const C = 19, cA = CORNER_MOUTH, mA = MID_MOUTH;
   const segs = lucky ? [
     [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
     [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
@@ -4410,7 +4410,6 @@ function paintTable(city) {
     const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
     g.addColorStop(0, shade(city.felt[0], 25)); g.addColorStop(0.35, city.felt[0]); g.addColorStop(1, shade(city.felt[1], -25));
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
-    ctx.lineJoin = "round"; ctx.lineWidth = 4; ctx.strokeStyle = shade(city.felt[0], -6); ctx.stroke(); ctx.lineJoin = "miter";   // softly rounded cushion ends
     ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
   }
