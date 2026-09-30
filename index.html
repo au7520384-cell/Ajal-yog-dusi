@@ -5468,8 +5468,9 @@ function avatarHTML(el, pl) {
   el.style.boxShadow = fr.glow ? `0 0 24px ${fr.glow}` : "";
   el.innerHTML = `<img src="${avatarURL(pl.avatar)}" alt="" style="width:100%;height:100%;border-radius:12px"><div class="star">${pl.level}</div>`;
 }
+const toLocal = (x, y) => rotated ? [y, innerWidth - x] : [x, y];   // screen point -> the (possibly rotated) body's own frame, where position:fixed lives
 function vsPotFly(half) {   // both entry fees fly (spinning, with a glow trail) from the two chips into the pot; the pot pulses and counts up
-  const pot = $("vsPot"), box = pot.parentNode, pr = pot.getBoundingClientRect(), tx = pr.left + pr.width / 2 - 13, ty = pr.top + pr.height / 2 - 13;
+  const pot = $("vsPot"), box = pot.parentNode, pr = pot.getBoundingClientRect(), [tcx, tcy] = toLocal(pr.left + pr.width / 2, pr.top + pr.height / 2), tx = tcx - 13, ty = tcy - 13;
   let landed = 0; const per = 12, total = per * 2;
   const spark = (x, y) => { for (let i = 0; i < 4; i++) { const p = document.createElement("i"); p.className = "flyspark"; p.style.left = x + 13 + "px"; p.style.top = y + 13 + "px"; document.body.appendChild(p); const a = Math.random() * 6.28, d = 18 + Math.random() * 22; p.animate([{transform: "translate(0,0) scale(1)", opacity: 1}, {transform: `translate(${Math.cos(a) * d}px,${Math.sin(a) * d}px) scale(0)`, opacity: 0}], {duration: 450, easing: "ease-out"}).onfinish = () => p.remove(); } };
   box.classList.add("potglow");
@@ -5477,7 +5478,7 @@ function vsPotFly(half) {   // both entry fees fly (spinning, with a glow trail)
     const el = $(id), r = el.getBoundingClientRect(); el.classList.remove("on"); el.classList.add("paid");
     for (let k = 0; k < per; k++) {
       const c = document.createElement("i"); c.className = "flycoin"; document.body.appendChild(c);
-      const sx = r.left + r.width / 2 - 13 + (Math.random() - .5) * 40, sy = r.top + r.height / 2 - 13 + (Math.random() - .5) * 14;
+      const [scx, scy] = toLocal(r.left + r.width / 2, r.top + r.height / 2), sx = scx - 13 + (Math.random() - .5) * 30, sy = scy - 13 + (Math.random() - .5) * 20;
       const ex = tx + (Math.random() - .5) * 26, ey = ty + (Math.random() - .5) * 12, mx = (sx + ex) / 2, my = (sy + ey) / 2 - 16 - Math.random() * 14, spin = 540 + Math.random() * 540;   // straight from the chip under the avatar into the pot, only a shallow arc
       const an = c.animate([
         {transform: `translate(${sx}px,${sy}px) scale(.9) rotateY(0deg)`, opacity: 1},
@@ -5495,13 +5496,13 @@ function vsPotFly(half) {   // both entry fees fly (spinning, with a glow trail)
   setTimeout(() => { pot.textContent = fmt(half * 2); }, 2600);
 }
 function coinShower(n) {   // winner: coins rain down from the top and fly into the coin counter
-  const dst = document.querySelector("#coinTxt"), r = dst ? dst.getBoundingClientRect() : {left: 60, top: 20};
+  const dst = document.querySelector("#coinTxt"), rr = dst ? dst.getBoundingClientRect() : {left: 60, top: 20, width: 0, height: 0}, [dl, dt] = toLocal(rr.left + rr.width / 2, rr.top + rr.height / 2), r = {left: dl, top: dt}, LW = rotated ? innerHeight : innerWidth, LH = rotated ? innerWidth : innerHeight;
   for (let k = 0; k < n; k++) {
     const c = document.createElement("i"); c.className = "flycoin"; document.body.appendChild(c);
-    const x = innerWidth * (.15 + Math.random() * .7), dx = r.left - 8, dy = r.top - 4, spin = 720 + Math.random() * 720;
+    const x = LW * (.15 + Math.random() * .7), dx = r.left - 13, dy = r.top - 13, spin = 720 + Math.random() * 720;
     c.animate([
       {transform: `translate(${x}px,-30px) scale(1) rotateY(0deg)`, opacity: 1},
-      {transform: `translate(${x + (Math.random() - .5) * 60}px,${innerHeight * (.45 + Math.random() * .3)}px) scale(1.2) rotateY(${spin * .5}deg)`, opacity: 1, offset: .5},
+      {transform: `translate(${x + (Math.random() - .5) * 60}px,${LH * (.45 + Math.random() * .3)}px) scale(1.2) rotateY(${spin * .5}deg)`, opacity: 1, offset: .5},
       {transform: `translate(${dx}px,${dy}px) scale(.6) rotateY(${spin}deg)`, opacity: .9}], {duration: 1300 + Math.random() * 500, delay: k * 55, easing: "cubic-bezier(.3,.1,.6,1)", fill: "both"}).onfinish = () => { c.remove(); if (k % 4 === 0) Snd.coin(1); };
   }
 }
