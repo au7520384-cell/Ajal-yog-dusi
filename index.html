@@ -346,6 +346,10 @@
   .resList .rrow .ic{width:clamp(24px,5.5vh,38px);text-align:center;font-size:clamp(20px,4.6vh,32px);line-height:1}.resList .rrow .ic .coin{width:1em;height:1em;display:inline-block}
   .resList .rrow .xp{font-size:clamp(20px,4.8vh,32px);color:#38e04a;text-shadow:0 2px 0 #062}
   .resList .rrow.neg{color:#ff8a80}
+  .bxi{display:grid;place-items:center;width:clamp(28px,6.4vh,42px);aspect-ratio:1;border-radius:10px;border:2px solid var(--c,#cd7f32);background:linear-gradient(#26304f,#111830);box-shadow:0 0 12px var(--c,#cd7f32),inset 0 2px 0 #fff3;font-size:clamp(18px,4.2vh,28px);position:relative;animation:bxdrop .9s cubic-bezier(.2,1.5,.4,1) both 1.1s}
+  .bxi::after{content:'';position:absolute;inset:0;border-radius:8px;background:linear-gradient(115deg,transparent 35%,#fff8 50%,transparent 65%);background-size:250% 100%;animation:bxshine 2.2s ease-in-out infinite 2s}
+  @keyframes bxdrop{0%{transform:translateY(-50px) scale(.4) rotate(-25deg);opacity:0}60%{transform:translateY(4px) scale(1.15) rotate(8deg);opacity:1}100%{transform:none}}
+  @keyframes bxshine{0%{background-position:150% 0}60%,100%{background-position:-50% 0}}
   .resBtns{position:absolute;left:2.5vw;bottom:3vh;display:flex;gap:10px;z-index:3;flex-wrap:wrap}
   .resBtns button{font-family:var(--fh);font-size:clamp(15px,3.4vh,22px);color:#fff;border:2px solid #0006;border-radius:12px;padding:8px 18px;text-shadow:0 2px 0 #0006;cursor:pointer;box-shadow:inset 0 2px 0 #fff5,0 4px 0 #0007;animation:pop .4s both 1.4s}
   .resBtns .back{background:linear-gradient(#ff5a4a,#b3201a);width:clamp(44px,10vh,64px);padding:8px 0;font-size:clamp(22px,5vh,34px)}
@@ -4344,12 +4348,9 @@ function paintTable(city) {
     if (p.mid) continue;
     const x = FX + p.x + p.dx, y = FY + p.y + p.dy, r = p.dr + 4;
     ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 5; ctx.shadowOffsetY = 1.5;
-    const rg = ctx.createLinearGradient(x - r, y - r, x + r, y + r); rg.addColorStop(0, shade(trim, 100)); rg.addColorStop(0.5, trim); rg.addColorStop(1, shade(trim, -85));
-    ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r + 2.5, 0, 7); ctx.fill(); ctx.restore();
+    const rg = ctx.createLinearGradient(x - r, y - r, x + r, y + r); rg.addColorStop(0, shade(city.rail[0], -30)); rg.addColorStop(1, shade(city.rail[1], -55));   // a dark wooden recess round the hole (no metal ring, like the reference)
+    ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(x, y, r + 3, 0, 7); ctx.fill(); ctx.restore();
     ctx.fillStyle = "#1a0606"; ctx.beginPath(); ctx.arc(x, y, r - 1.5, 0, 7); ctx.fill();
-    ctx.fillStyle = shade(trim, 120);
-    const out = Math.atan2(y - (FY + FH / 2), x - (FX + FW / 2));
-    for (let k = -5; k <= 5; k++) { const a = out + k * 0.19 * (p.mid ? 1.0 : 0.85); if (p.mid && Math.abs(Math.sin(a)) < 0.2) continue; ctx.beginPath(); ctx.arc(x + Math.cos(a) * (r + 0.6), y + Math.sin(a) * (r + 0.6), 1.35, 0, 7); ctx.fill(); }
   }
   // felt
   ctx.save(); ctx.translate(FX, FY);
@@ -4382,16 +4383,6 @@ function paintTable(city) {
       ctx.strokeText(sb, FW / 2, y0 + 50); ctx.fillStyle = "#fff"; ctx.fillText(sb, FW / 2, y0 + 50); ctx.letterSpacing = ls || "0px";
       ctx.restore();
     }
-    // pocket holes
-    for (const p of POCKETS) {
-      const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
-      { const sh = ctx.createRadialGradient(x, y, r - 2, x, y, r + 11);   // soft shadow of the drop on the cloth in the mouth
-        sh.addColorStop(0, "rgba(0,0,0,.55)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 11, 0, 7); ctx.fill(); }
-      ctx.fillStyle = "#12040a"; ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
-      const pg = ctx.createRadialGradient(x - p.dx * 0.25, y - p.dy * 0.25, 2, x, y, r + 1);
-      pg.addColorStop(0, "#010000"); pg.addColorStop(0.55, "#0c0202"); pg.addColorStop(0.85, "#3a0a0a"); pg.addColorStop(1, "#6a1414");
-      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, y, r + 1, 0, 7); ctx.fill();
-    }
   }
   // cushions with angled jaws at the pockets
   const C = 19, cA = CORNER_MOUTH, mA = MID_MOUTH;
@@ -4413,6 +4404,16 @@ function paintTable(city) {
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
     ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
+  }
+  if (!lucky) for (const p of POCKETS) {   // pocket holes are painted over the cushion ends, so the jaws look cut into the hole
+      const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
+      { const sr = p.mid ? r + 22 : r + 34, sh = ctx.createRadialGradient(x, y, r - 2, x, y, sr);   // the throat: the funnel between the jaws is shadowed, darkest at the hole
+        sh.addColorStop(0, "rgba(0,0,0,.78)"); sh.addColorStop(0.45, "rgba(0,0,0,.4)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, sr, 0, 7); ctx.fill(); }
+      ctx.fillStyle = "#12040a"; ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
+      const pg = ctx.createRadialGradient(x - p.dx * 0.25, y - p.dy * 0.25, 2, x, y, r + 1);
+      pg.addColorStop(0, "#000"); pg.addColorStop(0.55, "#0b0202"); pg.addColorStop(0.85, "#3c0b0b"); pg.addColorStop(1, "#701818");
+      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, y, r + 1, 0, 7); ctx.fill();
+      ctx.strokeStyle = "rgba(255,120,100,.16)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 0.5, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke();   // faint lit lip
   }
   if (st.glow && !lucky) {                     // neon strip under the cushion nose
     ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
@@ -5366,13 +5367,13 @@ function resultScreen(humanWon, why, winner, prize, buttons) {   // full-screen 
   $("resPot").textContent = fmt(potTotal); $("resAf").innerHTML = ""; $("resBf").innerHTML = ""; $("resAf").style.opacity = $("resBf").style.opacity = 0;
   for (const el of document.querySelectorAll("#res .vsL,#res .vsR,#res .vstxt,#res .wtag")) { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }
   const rows = [];
-  if (rw.box) rows.push({ic: rw.box.i, t: T(rw.box.n)});
+  if (rw.box) rows.push({ic: `<span class="bxi" style="--c:${rw.box.c}">${rw.box.i}</span>`, t: T(rw.box.n), box: true});
   if (rw.coins) rows.push({ic: '<span class="coin"></span>', t: (rw.coins > 0 ? "+ " : "- ") + fmt(Math.abs(rw.coins)), neg: rw.coins < 0});
   if (rw.trophy) rows.push({ic: "🏆", t: (rw.trophy > 0 ? "+ " : "- ") + Math.abs(rw.trophy), neg: rw.trophy < 0});
   if (rw.pass) rows.push({ic: "🛡️", t: "+ " + rw.pass});
   if (rw.xp) rows.push({ic: '<b class="xp">XP</b>', t: "+ " + rw.xp});
   const list = $("resList"); list.innerHTML = "";
-  rows.forEach((r, i) => { const d = document.createElement("div"); d.className = "rrow" + (r.neg ? " neg" : ""); d.style.animationDelay = 1 + i * 0.35 + "s"; d.innerHTML = `<span class="ic">${r.ic}</span><span>${r.t}</span>`; list.appendChild(d); });
+  rows.forEach((r, i) => { const d = document.createElement("div"); d.className = "rrow" + (r.neg ? " neg" : "") + (r.box ? " boxrow" : ""); d.style.animationDelay = 1 + i * 0.35 + "s"; d.innerHTML = `<span class="ic">${r.ic}</span><span>${r.t}</span>`; list.appendChild(d); });
   const bt = $("resBtns"); bt.innerHTML = "";
   const mk = (cls, label, fn) => { const b = document.createElement("button"); b.className = cls; b.innerHTML = label; b.onclick = () => { Snd.click(); fn(); }; bt.appendChild(b); };
   buttons = buttons.map(b => ({...b, fn: () => y8Break(b.fn)}));
