@@ -4130,6 +4130,7 @@ luxGem(x, y, 3.6, st.pave, rn);
 const ORN_KIND = {};
 const CITY_ORN = new Set(["lon", "syd", "lis", "tok", "veg", "jak", "tor", "cai", "dub", "sha", "par", "rom", "bkk", "seo", "mum", "ber", "ist", "osa", "x_dia", "x_gal", "x_drg", "x_aur", "x_lav", "x_roy", "x_ice", "x_blk"]);
 function ornDraw(kind, L, P) {
+  if (kind.includes("+")) { const [ka, kb] = kind.split("+"); for (let x = 0, k = 0; x < L; x += 150, k++) { ctx.save(); ctx.beginPath(); ctx.rect(x, -20, Math.min(150, L - x), 40); ctx.clip(); ornDraw(k % 2 ? kb : ka, L, P); ctx.restore(); } return; }
 const g = ctx.createLinearGradient(0, -16, 0, 16); g.addColorStop(0, P.hi); g.addColorStop(0.5, P.mid); g.addColorStop(1, P.lo);
 ctx.save(); ctx.beginPath(); ctx.rect(-2, -19, L + 4, 38); ctx.clip(); ctx.lineCap = ctx.lineJoin = "round";
 const TAU = Math.PI * 2, sn = Math.sin, cs = Math.cos;
@@ -7567,24 +7568,26 @@ neon: {b: ["#1a0a4a", "#04020e"], s: ["#f0e8ff", "#9a8ae8"], m: "#ff5ad8", g: "#
 gold: {b: ["#2a2208", "#060400"], s: ["#fff6d0", "#d8b84a"], m: "#ffd24d", g: "#ffcf3d", bg: "linear-gradient(135deg,#3a2c06,#0a0800 55%,#8a6a10)", acc: "#ffd24d", felt: ["#1a1406", "#060400"], metal: ["#fff0a0", "#a07a10", "#2a2004"], c: "#ffcf3d", c2: "#fff8d0"},
 };
 const HOR_LAYERS = ["skulls", "bones", "spikes", "webs", "blood", "eyes", "claws", "bats", "thorns", "cracks", "teeth", "chains", "fire", "runes", "galaxy", "crystal", "lightning", "vines", "camo", "carbon", "circuit", "gems", "neon", "wave"];
-const HOR_TABLE_SET = new Set([0, 3, 5, 8, 11, 13, 16, 19, 21, 24, 27, 29, 33, 35, 37, 40, 43, 45, 48, 51, 53, 56, 59, 61]);
+const HOR_TABLE_SET = {has: () => true};
 const HOR_USD = [4.99, 6.99, 9.99, 12.99, 14.99, 19.99, 24.99, 29.99];
 const horCueLayers = (i, P) => { const A = HOR_LAYERS.slice(0, 12), B = HOR_LAYERS.slice(12); return [{d: A[i % 12], c: P.c, c2: P.c2}, {d: A[(i * 5 + 3 + (i >> 4)) % 12 === i % 12 ? (i + 7) % 12 : (i * 5 + 3 + (i >> 4)) % 12], c: P.c2}, {d: B[(i * 7 + (i >> 3)) % B.length], c: P.c, c2: P.c2}]; };
-HORROR.forEach(([name, motif, pal], i) => {
-const P = HOR_PAL[pal];
-VIP_CUES.push(vipCue("vh_" + i, name, [9 + (i % 2), 9 + ((i >> 1) % 2), 10, 9 + ((i >> 2) % 2)], P.b, P.s, P.m, horCueLayers(i, P), P.g));
-if (motif) {
-EXTRA_TABLES.push({id: "vt_" + i, name, felt: P.felt, rail: [P.metal[1], P.metal[2]], trim: P.metal[0], gem: P.c, pat: "medal", cash: 0, lux: 1, vip: 1});
-TBL["vt_" + i] = {base: i % 2 ? "lacquer" : "metal", metal: P.metal, orn: motif, lux: 1, elite: 1, spark: 12, sparkC: P.c2, shine: 0.35, mat: "lux", bg: [P.felt[0], P.felt[1]], gem: P.c};
-}
+const HOR_MOT = ["bat", "ghost", "claw", "cat", "raven", "eye", "skull", "web", "storm", "tomb", "rune", "spider", "coffin", "pumpkin", "candle", "hand", "crossbones", "cauldron", "potion", "hat", "fangs", "tentacle", "axe", "noose", "dagger", "hourglass", "mask", "ribs", "lantern", "howl"];
+const hsl2hex = (h, s2, l) => { s2 /= 100; l /= 100; const a = s2 * Math.min(l, 1 - l), f = n => { const k = (n + h / 30) % 12, c = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(255 * c).toString(16).padStart(2, "0"); }; return `#${f(0)}${f(8)}${f(4)}`; };
+HORROR.forEach(([name, , pal], i) => {
+  const P = HOR_PAL[pal], h = (i * 47 + 13) % 360, glow = hsl2hex(h, 100, 58), light = hsl2hex(h, 85, 82);
+  const A = HOR_LAYERS.slice(0, 12), B = HOR_LAYERS.slice(12), la = i % 12, lb = (la + 1 + (i * 5 + (i >> 4)) % 11) % 12, lc = (i * 7 + (i >> 3)) % B.length;
+  VIP_CUES.push(vipCue("vh_" + i, name, [9 + (i % 2), 9 + ((i >> 1) % 2), 10, 9 + ((i >> 2) % 2)], [hsl2hex(h, 70, 28), hsl2hex(h, 80, 5)], [hsl2hex(h, 35, 93), hsl2hex(h, 45, 64)], hsl2hex(h, 65, 72), [{d: A[la], c: glow, c2: light}, {d: A[lb], c: light}, {d: B[lc], c: glow, c2: light}], glow));
+  const ma = HOR_MOT[i % HOR_MOT.length], mb = HOR_MOT[(i * 7 + 3 + (i >> 5)) % HOR_MOT.length], orn = ma === mb ? ma : ma + "+" + mb, hh = (i * 29 + 200) % 360, tm = [hsl2hex(hh, 60, 82), hsl2hex(hh, 55, 42), hsl2hex(hh, 70, 10)], tf = [hsl2hex(hh, 60, 16), hsl2hex(hh, 70, 4)];
+  EXTRA_TABLES.push({id: "vt_" + i, name, felt: tf, rail: [tm[1], tm[2]], trim: tm[0], gem: glow, pat: "medal", cash: 0, lux: 1, vip: 1});
+  TBL["vt_" + i] = {base: ["metal", "lacquer", "porcelain"][i % 3], metal: tm, orn, lux: 1, elite: 1, spark: 12, sparkC: light, shine: 0.35, mat: "lux", bg: tf, gem: glow};
 });
 CUES.push(...VIP_CUES.filter(c => c.id.startsWith("vh_")));
 const weekIdx = () => Math.floor((Date.now() + 3 * 864e5) / (7 * 864e5));
-const horrorWeek = () => { const w = weekIdx(), out = []; for (let k = 0; k < 8; k++) out.push((w * 8 + k) % HORROR.length); return out.map(i => horrorOffer(i)); };
+const horrorWeek = () => { const w = weekIdx(), out = []; for (let k = 0; k < 16; k++) out.push((w * 16 + k) % HORROR.length); return out.map(i => horrorOffer(i)); };
 const horrorOffer = i => {
 const [name, motif, pal] = HORROR[i], P = HOR_PAL[pal], usd = HOR_USD[i % 8], tb = HOR_TABLE_SET.has(i);
 return {id: "hor_" + i, title: name, sub: tb ? "Qo'rqinchli kiy + VIP stol + ramka" : "Qo'rqinchli VIP kiy + ramka", bg: P.bg, accent: P.acc, horror: true, table: tb ? "vt_" + i : "", frame: "vf_" + i, tiers: [
-{sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", frame: "vf_" + i, avatar: 500 + i, goldShots: 2 + (i % 4), coins: Math.round(usd * 24000), cash: Math.round(usd * 14), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
+{sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", frame: "vf_" + i, goldShots: 2 + (i % 4), coins: Math.round(usd * 24000), cash: Math.round(usd * 14), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
 };
 const horrorLeft = () => { const s = ((weekIdx() + 1) * 7 * 864e5 - 3 * 864e5 - Date.now()) / 1000; return `${Math.floor(s / 86400)}${T("k")} ${Math.floor(s % 86400 / 3600)}${T("s")}`; };
 const SHOP_HCUES = [["Sirli tun", "violet", 0, 5], ["Yarim tun", "ice", 1, 6], ["Qabr qo'ng'irog'i", "steel", 2, 7], ["Yovuz ko'z", "crimson", 5, 8], ["Kabus o'rmoni", "toxic", 8, 9], ["Tun sayyohi", "teal", 10, 10],
@@ -7856,10 +7859,10 @@ function horrorOfferModal(o, t) {
     <button class="hx" id="hClose">✕</button><div class="hlogo">${esc(T(name))}</div>
     <div class="hbody"><div class="hcues" id="hCue"></div><div class="hright">
       <div class="hstat">${bars}<div class="hpw">🔓 +${cuePower(cue)} ⚜</div></div>
-      <div class="hcols">${col("🎱", "Kiy", esc(cue.name))}${col('<span class="coin" style="width:40px;height:40px"></span>', "Tanga", fmtS(t.coins))}${col('<span class="cash" style="width:50px;height:36px"></span>', "Naqd pul", fmt(t.cash))}${col("🏆", "Oltin zarba", "×" + t.goldShots)}${col(`<img src="${avatarURL(t.avatar)}" style="width:50px;height:50px;border-radius:10px">`, "Avatar", esc(avName(t.avatar)))}${col(avHTML(profile.avatar, frameIdx(t.frame), 54), "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name)))}${tbl ? col(`<img src="${tableThumb(tbl)}" style="height:40px;border-radius:5px">`, "Stol", esc(T(tbl.name))) : ""}${t.sboxes ? col("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}</div>
+      <div class="hcols">${col("🎱", "Kiy", esc(cue.name))}${col('<span class="coin" style="width:40px;height:40px"></span>', "Tanga", fmtS(t.coins))}${col('<span class="cash" style="width:50px;height:36px"></span>', "Naqd pul", fmt(t.cash))}${col("🏆", "Oltin zarba", "×" + t.goldShots)}${col(avHTML(profile.avatar, frameIdx(t.frame), 54), "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name)))}${tbl ? col(`<img src="${tableThumb(tbl)}" style="height:40px;border-radius:5px">`, "Stol", esc(T(tbl.name))) : ""}${t.sboxes ? col("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}</div>
       <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} $${t.usd}</button>`}<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small></div></div></div>
     <div class="hnav"><button class="btn gray" id="hPrev">‹</button><span class="hdots">${offers.map((x, k) => `<i class="${k === vipPage % offers.length ? "on" : ""}"></i>`).join("")}</span><button class="btn gray" id="hNext">›</button></div></div>`, buttons: []});
-  horrorShow(i, $("hCue"), vh < 560 ? Math.max(0.32, (vh - 150) / 480) : 0.88);
+  vipCueShow(cue, $("hCue"));
   $("hClose").onclick = () => $("modal").classList.remove("on");
   $("hPrev").onclick = () => { vipPage = (vipPage + offers.length - 1) % offers.length; vipOffers(); };
   $("hNext").onclick = () => { vipPage = (vipPage + 1) % offers.length; vipOffers(); };
