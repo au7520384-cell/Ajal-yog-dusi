@@ -4073,8 +4073,8 @@ const LUX_BASE = {
 };
 function luxRail(st, OX, OY, OW, OH, rn) {
   const [hi, mid, lo] = st.metal;
-  const segs = [[FX + 30, FY - 37.5, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY - 37.5, FW / 2 - 60, 0], [FX + 30, FY + FH + 37.5, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY + FH + 37.5, FW / 2 - 60, 0],
-    [FX - 37.5, FY + 30, FH - 60, 1], [FX + FW + 37.5, FY + 30, FH - 60, 1]];
+  const segs = [[FX + 30, FY - 36, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY - 36, FW / 2 - 60, 0], [FX + 30, FY + FH + 36, FW / 2 - 60, 0], [FX + FW / 2 + 30, FY + FH + 36, FW / 2 - 60, 0],
+    [FX - 36, FY + 30, FH - 60, 1], [FX + FW + 36, FY + 30, FH - 60, 1]];
   const each = fn => { for (const [x, y, L, v] of segs) { ctx.save(); ctx.translate(x, y); if (v) ctx.rotate(Math.PI / 2); fn(L); ctx.restore(); } };
   (LUX_BASE[st.base || "metal"] || LUX_BASE.metal)(st, OX, OY, OW, OH, rn, each);
   if (st.flora) each(L => {                        // a climbing vine with leaves and flowers
