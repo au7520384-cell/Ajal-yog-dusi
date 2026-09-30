@@ -2222,7 +2222,14 @@ function physicsFrame(G) {
     if (pockets) for (const b of balls) {
       if (b.out) continue;
       for (const p of pockets) {
-        if ((b.x - p.x) ** 2 + (b.y - p.y) ** 2 < p.r * p.r) { b.out = true; onPot(G, b, p); b.vx = b.vy = 0; break; }
+        const dx = p.x - b.x, dy = p.y - b.y, d2 = dx * dx + dy * dy;
+        if (d2 < p.r * p.r) { b.out = true; onPot(G, b, p); b.vx = b.vy = 0; break; }
+        // a slow ball rolling towards the mouth is drawn into the hole (gravity of the drop), instead of stalling on the lip
+        const rim = p.r + 14;
+        if (d2 < rim * rim && (b.vx || b.vy)) {
+          const d = Math.sqrt(d2) || 1, sp = Math.hypot(b.vx, b.vy);
+          if (sp < 4.5 && (b.vx * dx + b.vy * dy) / (sp * d) > 0.15) { const k = 0.07 * (1 - d / rim + 0.35) / SUB * 8; b.vx += dx / d * k; b.vy += dy / d * k; }
+        }
       }
     }
     for (const b of balls) {
