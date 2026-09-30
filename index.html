@@ -2015,7 +2015,7 @@ CUES.push({id: "c_" + cc, cc, cat: "country", tier: "Yuqori", price: 40, cur: "c
 shaft: ["#f7ecd0", "#d9b87e"], butt: ["#3a2210", "#0d0603"], metal: "#d9d9d9", deco: "flag"});
 });
 const cueName = c => c.cc ? `${countryName(c.cc)}` : c.name;
-const cuePower = c => c.cat === "vip" ? 200 : c.cat === "pass" ? 160 : c.cat === "premium" ? 160 + Math.round(c.cash / 40) : c.cat === "surprise" ? 150 : c.cat === "victory" ? 40 + c.city * 8 : c.cat === "country" ? 70 : c.price ? Math.round(10 + (c.cur === "cash" ? c.price / 3 : Math.log10(c.price + 1) * 12)) : 0;
+const cuePower = c => c.cat === "vip" ? 60 + c.st.reduce((a, v) => a + v, 0) * 6 : c.cat === "pass" ? 160 : c.cat === "premium" ? 160 + Math.round(c.cash / 40) : c.cat === "surprise" ? 150 : c.cat === "victory" ? 40 + c.city * 8 : c.cat === "country" ? 70 : c.price ? Math.round(10 + (c.cur === "cash" ? c.price / 3 : Math.log10(c.price + 1) * 12)) : 0;
 const store = {
 get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
 set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -7550,11 +7550,11 @@ earth: {b: ["#2e6b2a", "#0a1a06"], s: ["#f4e6c0", "#b8904a"], m: "#e6c070", l: [
 air: {b: ["#d8f4ff", "#5aa8d8"], s: ["#ffffff", "#bfe8ff"], m: "#e6ecf5", l: [{d: "wave", c: "#2a7ad8", c2: "#ffffff"}, {d: "stars", c: "#ffffff"}, {d: "gems", c: "#7ff7ff"}], g: "#9fe8ff", bg: ["#9fe8ff", "#1a4a8a"]},
 water: {b: ["#2a1a8a", "#06021a"], s: ["#dfe0ff", "#8a8ad8"], m: "#9fe8ff", l: [{d: "galaxy", c: "#3ad8ff", c2: "#b05aff"}, {d: "crystal", c: "#7ff7ff"}], g: "#6a5aff", bg: ["#7a6aff", "#0a0640"]}};
 const VIP_CUES = [
-vipCue("vip_under", "Underdog", [9, 8, 8, 8], ["#1e5ad8", "#06163a"], ["#fffbe0", "#ffe14d"], "#ffe14d", [{d: "lightning", c: "#ffe14d"}, {d: "pinstripe", c: "#ffffff"}], "#ffe14d"),
-vipCue("vip_champ", "Chempion", [9, 9, 8, 9], ["#0a0a0a", "#000000"], ["#e8ffe0", "#6aff4a"], "#6aff4a", [{d: "neon", c: "#6aff4a"}, {d: "checker", c: "#1a3a1a"}, {d: "gems", c: "#39ff9a"}], "#39ff6a"),
+vipCue("vip_under", "Underdog", [6, 6, 6, 6], ["#1e5ad8", "#06163a"], ["#fffbe0", "#ffe14d"], "#ffe14d", [{d: "lightning", c: "#ffe14d"}, {d: "pinstripe", c: "#ffffff"}], "#ffe14d"),
+vipCue("vip_champ", "Chempion", [7, 7, 7, 7], ["#0a0a0a", "#000000"], ["#e8ffe0", "#6aff4a"], "#6aff4a", [{d: "neon", c: "#6aff4a"}, {d: "checker", c: "#1a3a1a"}, {d: "gems", c: "#39ff9a"}], "#39ff6a"),
 vipCue("vip_mvp", "M.V.P.", [10, 10, 9, 9], ["#8a1aa8", "#1a0230"], ["#ffe8ff", "#ff7ad8"], "#ffd24d", [{d: "galaxy", c: "#ff4fd8", c2: "#3ad8ff"}, {d: "legend", c: "#ffd24d"}], "#ff4fd8", "#ff4fd8"),
-vipCue("vip_geiger", "Geyger", [8, 9, 8, 8], ["#0a4a5a", "#02141a"], ["#e0ffff", "#6adcff"], "#9fe8ff", [{d: "circuit", c: "#3ffcff"}, {d: "rings", c: "#9fe8ff"}], "#3ffcff"),
-vipCue("vip_kaboom", "Kaboom", [9, 9, 9, 9], ["#3a2a18", "#0a0602"], ["#fff0d0", "#e0a060"], "#ffb34d", [{d: "fire", c: "#ffcf3d", c2: "#ff5a00"}, {d: "carbon", c: "#ffb34d"}, {d: "gems", c: "#ff6a00"}], "#ff8a00"),
+vipCue("vip_geiger", "Geyger", [6, 6, 7, 6], ["#0a4a5a", "#02141a"], ["#e0ffff", "#6adcff"], "#9fe8ff", [{d: "circuit", c: "#3ffcff"}, {d: "rings", c: "#9fe8ff"}], "#3ffcff"),
+vipCue("vip_kaboom", "Kaboom", [8, 8, 8, 8], ["#3a2a18", "#0a0602"], ["#fff0d0", "#e0a060"], "#ffb34d", [{d: "fire", c: "#ffcf3d", c2: "#ff5a00"}, {d: "carbon", c: "#ffb34d"}, {d: "gems", c: "#ff6a00"}], "#ff8a00"),
 vipCue("vip_nemesis", "Yadro Nemesis", [10, 10, 10, 10], ["#2a4a0a", "#060e02"], ["#f0ffd0", "#9adc3a"], "#c8ff3a", [{d: "camo", c: "#6a9a1a", c2: "#1a2a06"}, {d: "lightning", c: "#c8ff3a"}, {d: "gems", c: "#c8ff3a"}], "#9aff2a"),
 ...ZODIAC.map(([n, sym, el], i) => { const e = ELEM[el]; return vipCue("vip_z" + i, n, [10, 9 + (i % 2), 10, 9 + ((i + 1) % 2)], e.b, e.s, e.m, e.l, e.g); }),
 ];
@@ -7598,7 +7598,7 @@ const horHue = i => (i * 47 + 13) % 360, HOR_FXN = ["alanga uchqunlari", "qon to
 HORROR.forEach(([name, , pal], i) => {
   const h = horHue(i), glow = hsl2hex(h, 100, 58), light = hsl2hex(h, 85, 82), fx = (i * 3 + (i >> 3)) % 8;
   const la = HOR_LA[i % 12], lm = HOR_LM[(i * 5 + (i >> 2)) % 12], lb = HOR_LB[(i * 7 + (i >> 3)) % 12];
-  VIP_CUES.push(Object.assign(vipCue("vh_" + i, name, [9 + (i % 2), 9 + ((i >> 1) % 2), 10, 9 + ((i >> 2) % 2)], [hsl2hex(h, 75, 20), hsl2hex(h, 85, 4)], [hsl2hex(h, 30, 34), hsl2hex(h, 40, 13)], hsl2hex(h, 60, 62), [{d: lm, c: glow, c2: light}, {d: la, c: light}, {d: lb, c: glow, c2: light}], glow), {fx}));
+  VIP_CUES.push(Object.assign(vipCue("vh_" + i, name, (b => [Math.min(10, b + (i % 3 === 0 ? 1 : 0)), b, Math.max(4, b - (i % 3 === 1 ? 1 : 0)), Math.min(10, b + (i % 2))])([5, 6, 6, 7, 8, 8, 9, 10][i % 8]), [hsl2hex(h, 75, 20), hsl2hex(h, 85, 4)], [hsl2hex(h, 30, 34), hsl2hex(h, 40, 13)], hsl2hex(h, 60, 62), [{d: lm, c: glow, c2: light}, {d: la, c: light}, {d: lb, c: glow, c2: light}], glow), {fx}));
   let ma = HOR_MOT[i % HOR_MOT.length], mb = HOR_MOT[(i * 7 + 3 + (i >> 5)) % HOR_MOT.length], orn; for (let q = 0; q < 30; q++) { orn = ma === mb ? ma + "+" + HOR_MOT[(i + 11 + q) % 30] : ma + "+" + mb; if (!HOR_USED.has(orn)) break; mb = HOR_MOT[(i * 7 + 4 + q + (i >> 5)) % 30]; } HOR_USED.add(orn); const tm = [hsl2hex(h, 60, 82), hsl2hex(h, 55, 42), hsl2hex(h, 70, 10)], tf = [hsl2hex(h, 60, 16), hsl2hex(h, 70, 4)];
   EXTRA_TABLES.push({id: "vt_" + i, name, felt: tf, rail: [tm[1], tm[2]], trim: tm[0], gem: glow, pat: "medal", cash: 0, lux: 1, vip: 1});
   TBL["vt_" + i] = {base: ["metal", "lacquer", "porcelain"][i % 3], metal: tm, orn, lux: 1, elite: 1, spark: 12, sparkC: light, shine: 0.35, mat: "lux", bg: tf, gem: glow};
