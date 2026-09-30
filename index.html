@@ -1127,7 +1127,7 @@ const groupOf = n => n === 0 ? "cue" : n < 8 ? "solid" : n === 8 ? "eight" : "st
 // ---------------------------------------------------------------- content
 const CITIES = [
   {id: "lon", name: "London",    sub: "Thames Pub",        fee: 50,        prize: 100,       lvl: 1,  felt: ["#2f86f0", "#0c3a8e"], rail: ["#7a3a1c", "#34130a"], trim: "#ffffff", pat: "classic", skill: 0.018,  col: ["#ffffff", "#e0352b"]},
-  {id: "syd", name: "Sidney",    sub: "Harbour Bar",       fee: 100,       prize: 200,       lvl: 2,  felt: ["#23c94a", "#07702a"], rail: ["#f0bf78", "#c17b38"], trim: "#ffffff", pat: "tribal",  skill: 0.017,  col: ["#fffbd0", "#1ed45a"]},
+  {id: "syd", name: "Sidney",    sub: "Harbour Bar",       fee: 100,       prize: 200,       lvl: 2,  felt: ["#23c94a", "#07702a"], rail: ["#fbdea2", "#e0a656"], trim: "#ffffff", pat: "tribal",  skill: 0.017,  col: ["#fffbd0", "#1ed45a"]},
   {id: "lis", name: "Lissabon",  sub: "Summer Terrace",    fee: 500,       prize: 1000,      lvl: 3,  felt: ["#2cb5d8", "#0a5270"], rail: ["#f4f1ea", "#c9c2b2"], trim: "#1f4fd1", pat: "ikat",    skill: 0.016,  col: ["#ffffff", "#3e6df0"]},
   {id: "tok", name: "Tokio",     sub: "Samurai Dojo",      fee: 2500,      prize: 5000,      lvl: 5,  felt: ["#d8283a", "#6a0612"], rail: ["#141420", "#050508"], trim: "#ffd24d", pat: "medal",   skill: 0.015,  col: ["#ffd6d0", "#ff3b30"]},
   {id: "veg", name: "Las-Vegas", sub: "Royal Flush",       fee: 10000,     prize: 20000,     lvl: 7,  felt: ["#2b2b3a", "#0a0a12"], rail: ["#d9b34a", "#6a4e10"], trim: "#ffffff", pat: "gold",    skill: 0.013,  col: ["#fff6c8", "#ffcf3d"]},
@@ -4280,7 +4280,37 @@ function paintTable(city) {
     return [shade(r2, -70), shade(r2, -22)];
   })();
   const accent = lumOf(trim) > 130 ? trim : "#f7c948", cream = "#fff2d6";
+  const sydBand = L => {                         // wide orange tribal band with dark-red arches, dotted rings and striped ends (own artwork)
+    const h = 15.5;
+    ctx.save(); ctx.shadowColor = "rgba(60,25,0,.45)"; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1.5;
+    const bg = ctx.createLinearGradient(0, -h, 0, h); bg.addColorStop(0, "#f09a3e"); bg.addColorStop(0.5, "#d9701f"); bg.addColorStop(1, "#b04e16");
+    ctx.fillStyle = bg; rr(0, -h, L, 2 * h, 3); ctx.fill(); ctx.restore();
+    ctx.save(); rr(0, -h, L, 2 * h, 3); ctx.clip();
+    for (const sg of [-1, 1]) {
+      for (let x = 24; x < L - 24; x += 4.6) { ctx.fillStyle = "#fff6e0"; ctx.beginPath(); ctx.arc(x, sg * (h - 2.6), 1.05, 0, 7); ctx.fill(); }
+      ctx.strokeStyle = "#7a2410"; ctx.lineWidth = 1.5; ctx.beginPath(); for (let x = 22; x <= L - 22; x += 2) ctx.lineTo(x, sg * (h - 5.6)); ctx.stroke();
+    }
+    ctx.strokeStyle = "#7a2410"; ctx.lineWidth = 2.2; ctx.beginPath(); for (let x = 24; x <= L - 24; x += 2) ctx.lineTo(x, Math.sin(x / 9) * 5.2); ctx.stroke();      // arches
+    for (let x = 24; x < L - 24; x += 3.2) { ctx.fillStyle = (x / 3.2 | 0) % 2 ? "#ffe9a8" : "#fff8e6"; ctx.beginPath(); ctx.arc(x, Math.sin(x / 9) * 5.2, 1.15, 0, 7); ctx.fill(); }
+    for (const x of [L * 0.17, L * 0.5, L * 0.83]) {
+      ctx.fillStyle = "#fff4d8"; ctx.beginPath(); ctx.arc(x, 0, 13.2, 0, 7); ctx.fill();
+      ctx.fillStyle = "#8a2a12"; ctx.beginPath(); ctx.arc(x, 0, 11.2, 0, 7); ctx.fill();
+      ctx.fillStyle = "#c0431c"; ctx.beginPath(); ctx.arc(x, 0, 8.4, 0, 7); ctx.fill();
+      for (let k = 0; k < 18; k++) { const a = k * Math.PI * 2 / 18; ctx.fillStyle = "#fff8e6"; ctx.beginPath(); ctx.arc(x + Math.cos(a) * 9.8, Math.sin(a) * 9.8, 1.05, 0, 7); ctx.fill(); }
+      ctx.fillStyle = "#3a0d06"; ctx.beginPath(); ctx.arc(x, 0, 5.4, 0, 7); ctx.fill();
+      const pg = ctx.createRadialGradient(x - 1.3, -1.4, 0, x, 0, 4); pg.addColorStop(0, "#fff"); pg.addColorStop(0.55, "#cfc8e2"); pg.addColorStop(1, "#6d6390"); ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, 0, 3.6, 0, 7); ctx.fill();
+    }
+    for (const [x0, dir] of [[0, 1], [L, -1]]) {   // striped end caps: dark block, cream stripes, triangles
+      ctx.fillStyle = "#2a0d08"; ctx.fillRect(dir > 0 ? x0 : x0 - 17, -h, 17, 2 * h);
+      for (let k = 0; k < 4; k++) { ctx.fillStyle = "#fff4d8"; ctx.fillRect(x0 + dir * (2 + k * 3.6) - (dir < 0 ? 1.3 : 0), -h + 2.5, 1.3, 2 * h - 5); }
+      ctx.fillStyle = "#f09a3e"; for (let k = 0; k < 3; k++) { ctx.beginPath(); const yy = -h + 5 + k * 9; ctx.moveTo(x0 + dir * 17, yy); ctx.lineTo(x0 + dir * 13, yy + 4.5); ctx.lineTo(x0 + dir * 17, yy + 9); ctx.fill(); }
+    }
+    ctx.restore();
+    ctx.strokeStyle = "rgba(255,246,224,.9)"; ctx.lineWidth = 1.3; rr(0.5, -h + 0.5, L - 1, 2 * h - 1, 3); ctx.stroke();
+    const gl = ctx.createLinearGradient(0, -h, 0, 0); gl.addColorStop(0, "rgba(255,255,255,.25)"); gl.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = gl; rr(0, -h, L, h, [3, 3, 0, 0]); ctx.fill();
+  };
   const tribalBand = L => {                      // drawn along +x, centred on y = 0
+    if (city.id === "syd") return sydBand(L);
     const h = 12.5, pat = city.pat;
     ctx.save(); ctx.shadowColor = "rgba(30,15,0,.5)"; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1.5;
     const bg = ctx.createLinearGradient(0, -h, 0, h); bg.addColorStop(0, bandCols[0]); bg.addColorStop(0.5, bandCols[1]); bg.addColorStop(1, bandCols[0]);
@@ -4447,15 +4477,18 @@ function paintTable(city) {
     ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
   }
-  if (!lucky) for (const p of POCKETS) {   // pocket holes are painted over the cushion ends, so the jaws look cut into the hole
-      const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
-      { const sr = r + 6, sh = ctx.createRadialGradient(x, y, r - 1, x, y, sr);   // only a thin soft edge: the cloth and jaws stay clear and bright right up to the hole
-        sh.addColorStop(0, "rgba(0,0,0,.32)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, sr, 0, 7); ctx.fill(); }
-      ctx.fillStyle = shade(city.felt[1], -110); ctx.beginPath(); ctx.arc(x, y, r + 2, 0, 7); ctx.fill();
-      const pg = ctx.createRadialGradient(x - p.dx * 0.25, y - p.dy * 0.25, 2, x, y, r + 1);   // the hole is a deep shade of the cloth itself, so it blends with the table instead of looking like a foreign colour
-      pg.addColorStop(0, "#000"); pg.addColorStop(0.55, shade(city.felt[1], -135)); pg.addColorStop(0.88, shade(city.felt[1], -105)); pg.addColorStop(1, shade(city.felt[0], -75));
-      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(x, y, r + 1, 0, 7); ctx.fill();
-      ctx.strokeStyle = shade(city.felt[0], 25) + "55"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 0.5, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke();   // faint lit lip
+  if (!lucky) for (const p of POCKETS) {   // pocket holes: rubber lip, deep shaded well and a lit rim, painted over the cushion ends
+    const x = p.x + p.dx, y = p.y + p.dy, r = p.dr, mar = city.id === "syd";
+    const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1);   // direction away from the table
+    { const sh = ctx.createRadialGradient(x, y, r - 1, x, y, r + 8); sh.addColorStop(0, "rgba(0,0,0,.4)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 8, 0, 7); ctx.fill(); }
+    const lip = ctx.createLinearGradient(x - r, y - r, x + r, y + r); lip.addColorStop(0, mar ? "#4a1a10" : shade(city.felt[1], -70)); lip.addColorStop(1, mar ? "#0f0403" : shade(city.felt[1], -120));
+    ctx.fillStyle = lip; ctx.beginPath(); ctx.arc(x, y, r + 2.6, 0, 7); ctx.fill();               // rubber lip
+    const well = ctx.createRadialGradient(x - ox * r * 0.28, y - oy * r * 0.28, r * 0.05, x, y, r + 0.5);
+    well.addColorStop(0, "#000"); well.addColorStop(0.55, "#040101"); well.addColorStop(0.82, mar ? "#2c0808" : shade(city.felt[1], -118)); well.addColorStop(1, mar ? "#5a1010" : shade(city.felt[0], -85));
+    ctx.fillStyle = well; ctx.beginPath(); ctx.arc(x, y, r + 0.4, 0, 7); ctx.fill();               // the well, lit only at its near rim
+    ctx.lineCap = "round";
+    ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();   // inner wall catching the light
+    ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r + 2.1, Math.atan2(-oy, -ox) - 0.7, Math.atan2(-oy, -ox) + 0.7); ctx.stroke();   // specular on the lip
   }
   if (st.glow && !lucky) {                     // neon strip under the cushion nose
     ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
