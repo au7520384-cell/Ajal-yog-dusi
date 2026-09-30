@@ -667,3 +667,10 @@ Keyingi o'yin boshida ko'rsatiladi‖Shown at the start of the next match|Пок
 Keyingi‖Next|Далее|İleri|Siguiente|Próximo|التالي|Berikutnya|अगला|Suivant|Weiter|다음|次へ|下一步
 Boshladik!‖Let's go!|Поехали!|Başlayalım!|¡Vamos!|Vamos lá!|هيا بنا!|Ayo mulai!|चलो शुरू करें!|C'est parti !|Los geht's!|시작!|始めよう!|开始吧!
 O'tkazib yuborish‖Skip|Пропустить|Atla|Omitir|Pular|تخطي|Lewati|छोड़ें|Passer|Überspringen|건너뛰기|スキップ|跳过
+Hammasini olish‖Claim all|Забрать всё|Hepsini al|Recoger todo|Coletar tudo|استلم الكل|Ambil semua|सब लें|Tout récupérer|Alle holen|모두 받기|すべて受け取る|全部领取
+Kolleksiya darajasi‖Collection rank|Ранг коллекции|Koleksiyon seviyesi|Rango de colección|Rank da coleção|رتبة المجموعة|Peringkat koleksi|कलेक्शन रैंक|Rang de collection|Sammlungsrang|컬렉션 랭크|コレクションランク|收藏等级
+Tezda ochish‖Open now|Открыть сейчас|Şimdi aç|Abrir ahora|Abrir agora|افتح الآن|Buka sekarang|अभी खोलें|Ouvrir maintenant|Jetzt öffnen|지금 열기|今すぐ開ける|立即打开
+Ochish!‖Open!|Открыть!|Aç!|¡Abrir!|Abrir!|افتح!|Buka!|खोलें!|Ouvrir !|Öffnen!|열기!|開ける!|打开!
+Keyingi quti‖Next box|Следующий ящик|Sonraki kutu|Siguiente caja|Próxima caixa|الصندوق التالي|Kotak berikutnya|अगला बॉक्स|Boîte suivante|Nächste Kiste|다음 상자|次の箱|下一个箱子
+qulf ochildi‖locks opened|замков открыто|kilit açıldı|candados abiertos|cadeados abertos|أقفال مفتوحة|gembok terbuka|ताले खुले|cadenas ouverts|Schlösser offen|잠금 해제됨|解錠|已解锁
+Quti ochishga tayyor!‖The box is ready to open!|Ящик готов к открытию!|Kutu açılmaya hazır!|¡La caja está lista!|A caixa está pronta!|الصندوق جاهز للفتح!|Kotak siap dibuka!|बॉक्स खुलने को तैयार!|La boîte est prête !|Die Kiste ist bereit!|상자가 열릴 준비가 됐어요!|箱を開ける準備ができました!|箱子可以打开了!
