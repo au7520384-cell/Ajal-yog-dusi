@@ -3566,6 +3566,7 @@ const TABLE_SKINS = () => [
   ...EXTRA_TABLES.filter(t => t.tier === "elite"),
   ...CITIES.map(c => ({id: c.id, name: c.name, felt: c.felt, rail: c.rail, trim: c.trim, pat: c.pat, coins: Math.max(2000, c.fee * 10), lvl: c.lvl, city: c})),
   ...EXTRA_TABLES.filter(t => !t.lux),
+  ...EXTRA_TABLES.filter(t => t.vip),
 ];
 // Limited editions (the server counts every copy and hands out serial numbers; mirrors EDITION_CAP in server.js).
 const EDITION_CAP = {l_brz: 5000, l_slv: 4000, l_gld: 3000, l_rgd: 2500, l_plt: 2000, l_sap: 1500, l_emr: 1500, l_rby: 1200, l_ame: 1200, l_dia: 1000, l_bdi: 500, l_opl: 300,
@@ -3741,6 +3742,7 @@ const tableRank = id => { const t = tableById(id); return !t ? 0 : t.tier === "p
 const setBonus = () => profile.tableSkin && profile.tableSkin.startsWith("l_") && profile.cue === "pc_" + profile.tableSkin.slice(2) ? 10 : 0;
 const tableBonus = id => {                        // % extra win coins / pass points / XP: the more a table costs, the more it gives
   const t = tableById(id); if (!t || t.city) return 0;                                                  // city tables: no bonus (all equal)
+  if (t.vip) return 35;                                                                                 // VIP horror tables: the best bonus
   if (t.tier === "premium") return Math.round(12 + (t.cash - 500) / 4500 * 38);                        // 12% (Bronza) ... 50% (Kamalak opal)
   if (t.tier === "elite") return Math.round(3 + (t.cash - 300) / 450 * 6);                             // 3% ... 9%: always below the cheapest premium
   return Math.round(1 + ((t.cash || 150) - 150) / 450 * 2);                                            // ordinary shop tables: 1% ... 3%
@@ -3818,6 +3820,14 @@ function tableCard(t) {
     if (city) {
       for (let i = 0; i < 16; i++) { const bx = 40 + i * 32 + rnd() * 10, bh = 40 + rnd() * 70; g.fillStyle = "rgba(4,6,12,.55)"; g.fillRect(bx - 12, H * 0.66 - bh, 24, bh + 30); lights(bx - 12, H * 0.66 - bh, 24, bh, 5); }
       (LM[t.id] || LM.lis)(56, H - 42, 285); for (const [dx, w, h2] of [[62, 26, 240], [92, 20, 170], [34, 18, 200], [112, 16, 120]]) tower(W - dx, H - 42, w, h2); flare(W - 40, 92, 6);
+    } else if (t.vip) {                                     // horror scene: pale moon, dead trees, graves and mist
+      const gc = t.gem || acc; const mg2 = g.createRadialGradient(W * 0.78, 78, 4, W * 0.78, 78, 120); mg2.addColorStop(0, "rgba(255,255,255,.9)"); mg2.addColorStop(0.25, gc + "aa"); mg2.addColorStop(1, gc + "00"); g.fillStyle = mg2; g.fillRect(0, 0, W, H);
+      g.fillStyle = "#f2f0e8"; g.beginPath(); g.arc(W * 0.78, 78, 30, 0, 7); g.fill(); g.fillStyle = "rgba(0,0,0,.12)"; for (const [dx, dy, r] of [[-8, -6, 7], [9, 8, 5], [3, -12, 4]]) { g.beginPath(); g.arc(W * 0.78 + dx, 78 + dy, r, 0, 7); g.fill(); }
+      const tree = (x, h2, dir) => { g.strokeStyle = "#05060c"; g.lineCap = "round"; const br = (x0, y0, a, len, w, d) => { if (d > 4) return; const x1 = x0 + Math.cos(a) * len, y1 = y0 + Math.sin(a) * len; g.lineWidth = w; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke(); br(x1, y1, a - 0.5 - rnd() * 0.3, len * 0.72, w * 0.68, d + 1); br(x1, y1, a + 0.45 + rnd() * 0.3, len * 0.7, w * 0.66, d + 1); }; br(x, H - 38, -Math.PI / 2 + dir * 0.12, h2 * 0.36, 9, 0); };
+      tree(52, 330, 1); tree(W - 50, 300, -1); tree(104, 170, 1);
+      for (let i = 0; i < 7; i++) { const bx = 120 + rnd() * (W - 240), by = 50 + rnd() * 120; g.fillStyle = "#05060c"; g.beginPath(); g.moveTo(bx, by); g.quadraticCurveTo(bx - 10, by - 10, bx - 18, by - 2); g.quadraticCurveTo(bx - 10, by - 2, bx - 6, by + 3); g.lineTo(bx, by + 2); g.lineTo(bx + 6, by + 3); g.quadraticCurveTo(bx + 10, by - 2, bx + 18, by - 2); g.quadraticCurveTo(bx + 10, by - 10, bx, by); g.fill(); }
+      for (const gx of [160, 240, 330, W - 330, W - 240, W - 160]) { g.fillStyle = "#0a0c16"; g.beginPath(); g.moveTo(gx - 10, H - 38); g.lineTo(gx - 10, H - 66); g.arc(gx, H - 66, 10, Math.PI, 0); g.lineTo(gx + 10, H - 38); g.fill(); }
+      const fog = g.createLinearGradient(0, H - 130, 0, H); fog.addColorStop(0, "rgba(200,210,230,0)"); fog.addColorStop(1, "rgba(200,210,230,.28)"); g.fillStyle = fog; g.fillRect(0, H - 130, W, 130);
     } else if (lux && !(st.flora && FLOWER[st.flora])) {
       const gem = lum(t.gem || "#000") > 235 ? fr[1] : (t.gem || acc); g.save(); g.globalAlpha = 0.16; for (let k = 0; k < 9; k++) { const a = -Math.PI / 2 + (k - 4) * 0.2; g.fillStyle = k % 2 ? gem : "#fff"; g.beginPath(); g.moveTo(W / 2, -10); g.lineTo(W / 2 + Math.cos(a - 0.05) * 560, -10 - Math.sin(a - 0.05) * -560); g.lineTo(W / 2 + Math.cos(a + 0.05) * 560, -10 - Math.sin(a + 0.05) * -560); g.fill(); } g.restore();
       for (const [sx, dir] of [[52, 1], [W - 52, -1]]) { shard(sx, H - 40, 200, 26, gem); shard(sx + dir * 30, H - 40, 130, 20, gem); shard(sx - dir * 22, H - 40, 96, 16, gem); shard(sx + dir * 54, H - 40, 70, 13, gem); }
@@ -4244,6 +4254,18 @@ function ornDraw(kind, L, P) {
     ber() { for (let x = 12, i = 0; x < L; x += 26, i++) { const s = i % 2 ? 1 : -1; F(heart(x, s * 3.5, 1.05, s > 0 ? Math.PI : 0), i % 2 ? "#d8202a" : undefined); } S(() => { ctx.beginPath(); for (let x = 12, i = 0; x < L; x += 13, i++) ctx.lineTo(x, i % 2 ? 11 : -11); }, 1); },
     ist() { for (let x = 13, i = 0; x < L; x += 30, i++) { F(() => { ctx.beginPath(); ctx.moveTo(x - 6, 1); ctx.lineTo(x - 6, -6); ctx.lineTo(x - 3, -13); ctx.lineTo(x, -6); ctx.lineTo(x + 3, -13); ctx.lineTo(x + 6, -6); ctx.lineTo(x + 6, 1); ctx.bezierCurveTo(x + 6, 9, x - 6, 9, x - 6, 1); ctx.closePath(); }, "#d8202a"); F(() => { ctx.beginPath(); lp(x, 8, 14, Math.PI * 0.5 + 0.6, 2.8); }, "#1aa89a"); F(() => { ctx.beginPath(); lp(x, 8, 14, Math.PI * 0.5 - 0.6, 2.8); }, "#1aa89a"); flower(x + 15, 0, 5, 5, "#ffffff"); F(circ(x + 15, 0, 1.6), "#e8b83a"); } },
     osa() { for (let x = 15; x < L; x += 30) { for (let k = 0; k < 16; k++) F(() => { ctx.beginPath(); lp(x, 0, 13, k * TAU / 16, 2.1); }); F(circ(x, 0, 4.2), "#e83a7a"); F(circ(x, 0, 1.6), "#fff"); S(() => { ctx.beginPath(); ctx.arc(x + 15, 6, 5, Math.PI, 0); ctx.moveTo(x + 15, 12); ctx.arc(x + 15, 12, 5, Math.PI, 0); }, 1); } },
+    bat() { for (let x = 17; x < L; x += 34) { for (const d of [-1, 1]) F(poly([[x + d * 3, -3], [x + d * 10, -10], [x + d * 17, -6], [x + d * 15, -1], [x + d * 14, 4], [x + d * 10, 0], [x + d * 6, 5]]), "#6a1a2c"); F(() => { ctx.beginPath(); ctx.ellipse(x, 0, 3.4, 6, 0, 0, 7); }, "#7a1a30"); F(poly([[x - 3, -5], [x - 2, -10], [x, -6], [x + 2, -10], [x + 3, -5]]), "#7a1a30"); F(circ(x - 1.3, -1, 0.9), "#ff3a3a"); F(circ(x + 1.3, -1, 0.9), "#ff3a3a"); } },
+    ghost() { for (let x = 14; x < L; x += 28) { F(() => { ctx.beginPath(); ctx.moveTo(x - 8, 13); ctx.lineTo(x - 8, -2); ctx.arc(x, -2, 8, Math.PI, 0); ctx.lineTo(x + 8, 13); ctx.quadraticCurveTo(x + 5.3, 8, x + 2.7, 13); ctx.quadraticCurveTo(x, 8, x - 2.7, 13); ctx.quadraticCurveTo(x - 5.3, 8, x - 8, 13); ctx.closePath(); }, "#eef2ff"); F(() => { ctx.beginPath(); ctx.ellipse(x - 3, -3, 1.6, 2.6, 0, 0, 7); ctx.ellipse(x + 3, -3, 1.6, 2.6, 0, 0, 7); }, "#141832"); F(() => { ctx.beginPath(); ctx.ellipse(x, 3, 1.8, 2.4, 0, 0, 7); }, "#141832"); } },
+    claw() { for (let x = 4; x < L; x += 32) for (let k = 0; k < 3; k++) { F(() => { ctx.beginPath(); ctx.moveTo(x + k * 7, -14); ctx.quadraticCurveTo(x + k * 7 + 9, 0, x + k * 7 + 4, 14); ctx.quadraticCurveTo(x + k * 7 + 5, 0, x + k * 7, -14); }, "#c8102e"); } },
+    cat() { for (let x = 15; x < L; x += 30) { F(poly([[x - 9, -11], [x - 4, -5], [x - 9, 2]]), "#1a1a22"); F(poly([[x + 9, -11], [x + 4, -5], [x + 9, 2]]), "#1a1a22"); F(circ(x, 1, 9), "#1a1a22"); for (const d of [-1, 1]) { F(() => { ctx.beginPath(); ctx.ellipse(x + d * 4, -1, 2.6, 3.4, d * 0.3, 0, 7); }, "#8aff3a"); F(() => { ctx.beginPath(); ctx.ellipse(x + d * 4, -1, 0.7, 2.8, 0, 0, 7); }, "#0a0a10"); } F(poly([[x - 1.6, 4], [x + 1.6, 4], [x, 6]]), "#ff8aa8"); S(() => { ctx.beginPath(); for (const d of [-1, 1]) for (const dy of [-1, 1]) { ctx.moveTo(x + d * 3, 5); ctx.lineTo(x + d * 12, 5 + dy * 3); } }, 0.8); } },
+    raven() { for (let x = 17; x < L; x += 34) { F(() => { ctx.beginPath(); ctx.ellipse(x, 3, 11, 5.5, -0.25, 0, 7); }, "#1a1626"); F(() => { ctx.beginPath(); lp(x - 8, 2, 20, -0.7, 4); }, "#26203a"); F(circ(x + 10, -2, 4), "#1a1626"); F(poly([[x + 13, -3], [x + 19, -1], [x + 13, 0]]), "#c8a04a"); F(circ(x + 11, -3, 0.8), "#ff5a3a"); F(poly([[x - 11, 4], [x - 19, 9], [x - 11, 8]]), "#1a1626"); } },
+    eye() { for (let x = 16; x < L; x += 32) { F(() => { ctx.beginPath(); ctx.moveTo(x - 14, 0); ctx.quadraticCurveTo(x, -16, x + 14, 0); ctx.quadraticCurveTo(x, 16, x - 14, 0); }, "#f2ead8"); F(circ(x, 0, 6.4), "#e8301a"); F(() => { ctx.beginPath(); ctx.ellipse(x, 0, 1.7, 5.4, 0, 0, 7); }, "#0a0404"); S(() => { ctx.beginPath(); for (let k = -2; k <= 2; k++) { ctx.moveTo(x + k * 5, k * k * -0.6 - 7); ctx.lineTo(x + k * 6.5, k * k * -0.9 - 11); } }, 1); } },
+    skull() { for (let x = 14; x < L; x += 28) { F(() => { ctx.beginPath(); ctx.arc(x, -2, 9, Math.PI * 0.85, Math.PI * 2.15); ctx.lineTo(x + 5, 11); ctx.lineTo(x - 5, 11); ctx.closePath(); }, "#ece4cc"); F(() => { ctx.beginPath(); ctx.ellipse(x - 3.6, -2, 2.6, 3, 0, 0, 7); ctx.ellipse(x + 3.6, -2, 2.6, 3, 0, 0, 7); }, "#120810"); F(poly([[x, 2], [x - 1.5, 5], [x + 1.5, 5]]), "#120810"); S(() => { ctx.beginPath(); for (const d of [-2.5, 0, 2.5]) { ctx.moveTo(x + d, 7.5); ctx.lineTo(x + d, 11); } }, 0.8, "#120810"); } },
+    web() { for (let x = 20; x < L; x += 40) { S(() => { ctx.beginPath(); for (let k = 0; k < 7; k++) { const a = 0.25 + k * 0.4; ctx.moveTo(x, -17); ctx.lineTo(x + cs(a + Math.PI / 2 - 0.05) * 30, -17 + sn(a + Math.PI / 2 - 0.05) * 30); } }, 0.8); for (const r of [7, 13, 19, 25]) S(() => { ctx.beginPath(); for (let k = 0; k <= 6; k++) { const a = 0.25 + k * 0.4 + Math.PI / 2 - 0.05; const px = x + cs(a) * r, py = -17 + sn(a) * r; k ? ctx.quadraticCurveTo(x + cs(a - 0.2) * r * 0.86, -17 + sn(a - 0.2) * r * 0.86, px, py) : ctx.moveTo(px, py); } }, 0.8); } },
+    storm() { for (let x = 15; x < L; x += 30) { F(() => { ctx.beginPath(); ctx.arc(x - 5, -5, 5, 0, 7); ctx.arc(x + 3, -7, 6.5, 0, 7); ctx.arc(x + 10, -3, 4.5, 0, 7); ctx.rect(x - 9, -5, 22, 5); }, "#7a86a8"); F(poly([[x + 2, -1], [x - 3, 6], [x + 1, 6], [x - 2, 14], [x + 6, 4], [x + 2, 4], [x + 5, -1]]), "#ffe23a"); } },
+    tomb() { for (let x = 14; x < L; x += 28) { F(() => { ctx.beginPath(); ctx.moveTo(x - 8, 13); ctx.lineTo(x - 8, -3); ctx.arc(x, -3, 8, Math.PI, 0); ctx.lineTo(x + 8, 13); ctx.closePath(); }, "#8a8a98"); S(() => { ctx.beginPath(); ctx.moveTo(x, -8); ctx.lineTo(x, 5); ctx.moveTo(x - 4, -3); ctx.lineTo(x + 4, -3); }, 1.5, "#2a2a34"); S(() => { ctx.beginPath(); ctx.moveTo(x - 13, 13); ctx.lineTo(x + 13, 13); }, 1.3, "#3a5a2a"); } },
+    rune() { for (let x = 6, i = 0; x < L; x += 18, i++) { ctx.save(); ctx.shadowColor = "#5aff7a"; ctx.shadowBlur = 6; S(() => { ctx.beginPath(); const t = i % 5; if (t === 0) { ctx.moveTo(x, -11); ctx.lineTo(x, 11); ctx.moveTo(x, -6); ctx.lineTo(x + 7, -11); ctx.moveTo(x, 0); ctx.lineTo(x + 7, -5); } else if (t === 1) { ctx.moveTo(x - 4, -11); ctx.lineTo(x + 5, 0); ctx.lineTo(x - 4, 11); } else if (t === 2) { ctx.moveTo(x - 5, -11); ctx.lineTo(x + 5, -11); ctx.lineTo(x - 5, 11); ctx.lineTo(x + 5, 11); } else if (t === 3) { ctx.moveTo(x, -11); ctx.lineTo(x - 6, 0); ctx.lineTo(x, 11); ctx.lineTo(x + 6, 0); ctx.closePath(); ctx.moveTo(x, -4); ctx.lineTo(x, 4); } else { ctx.moveTo(x - 5, 11); ctx.lineTo(x - 5, -11); ctx.lineTo(x + 5, 0); ctx.lineTo(x - 5, 0); } }, 1.8, "#7aff9a"); ctx.restore(); } },
+    spider() { for (let x = 17; x < L; x += 34) { S(() => { ctx.beginPath(); ctx.moveTo(x, -17); ctx.lineTo(x, -6); }, 0.8, "#d8d8e8"); F(circ(x, 1, 4.6), "#1a0a22"); F(circ(x, -4.6, 3), "#1a0a22"); F(circ(x - 1.1, -5, 0.8), "#ff4a4a"); F(circ(x + 1.1, -5, 0.8), "#ff4a4a"); S(() => { ctx.beginPath(); for (const d of [-1, 1]) for (let k = 0; k < 4; k++) { const dy = -5 + k * 4.2; ctx.moveTo(x + d * 3.6, dy * 0.5); ctx.quadraticCurveTo(x + d * 10, dy - 6, x + d * 13, dy + 6); } }, 1.1, "#2a1a3a"); F(() => { ctx.beginPath(); ctx.ellipse(x, 3, 1.2, 1.8, 0, 0, 7); }, "#c8102e"); } },
     x_dia() { for (let x = 15; x < L; x += 30) { F(poly([[x - 7, -13], [x + 7, -13], [x + 14, -4], [x, 13], [x - 14, -4]]), undefined); S(() => { ctx.beginPath(); ctx.moveTo(x - 14, -4); ctx.lineTo(x + 14, -4); ctx.moveTo(x - 7, -13); ctx.lineTo(x - 3, -4); ctx.lineTo(x, 13); ctx.moveTo(x + 7, -13); ctx.lineTo(x + 3, -4); ctx.lineTo(x, 13); }, 0.9, "#eaf6ff"); } },
     x_gal() { const pts = [[8, -7], [22, 5], [38, -6], [52, 6]]; for (let x = 0; x < L; x += 64) { S(() => { ctx.beginPath(); pts.forEach(([a, b], i) => i ? ctx.lineTo(x + a, b) : ctx.moveTo(x + a, b)); }, 0.9); pts.forEach(([a, b], i) => F(star(x + a, b, 4, 4.6 + (i % 2) * 2, 1.3), "#ffffff")); S(() => { ctx.beginPath(); ctx.ellipse(x + 30, 0, 9, 2.6, -0.5, 0, 7); }, 0.9); F(circ(x + 30, 0, 3.2), "#8a6aff"); } },
     x_drg() { for (let row = 0; row < 3; row++) for (let x = (row % 2) * 7 - 7; x < L + 7; x += 14) S(() => { ctx.beginPath(); ctx.arc(x + 7, -9 + row * 9, 7, 0.05, Math.PI - 0.05); }, 1.3); for (let x = 20; x < L - 6; x += 56) F(circ(x, 1, 3.2), "#fff0c0"); },
@@ -6212,7 +6234,7 @@ function buildShop(tab) {
   }
   if (tab === "tables") {
     if (Date.now() - editionsAt > 60000) { editionsAt = Date.now(); Net.api("/api/editions").then(r => { editions = r; if ($("tblGrid")) buildShop("tables"); }).catch(() => {}); }
-    const list = TABLE_SKINS(), owned = list.filter(ownsTable).length;
+    const list = TABLE_SKINS().filter(t => !t.vip || ownsTable(t)), owned = list.filter(ownsTable).length;
     body.innerHTML = `<p class="muted" style="margin:0 0 10px">${T("Tanlangan stol hamma o'yinlaringizda chiqadi. Shahar uzugini yutsangiz, o'sha shahar stoli bepul.")} · ${owned}/${list.length}</p>
       <div class="tblgrid" id="tblGrid"></div>`;
     const grid = $("tblGrid"), cards = [];
@@ -7149,8 +7171,8 @@ function buildShopSection(sec, body) {
   } else if (sec === "offers") {
     const st = SKUS.starter, left = Math.max(0, (profile.starterSeen || (profile.starterSeen = Date.now(), save(), profile.starterSeen)) + 48 * 3600e3 - Date.now());
     const gems = Object.entries(SKUS).filter(([, s]) => s.gems && !s.coins);
-    body.innerHTML = `<div class="vipstrip">${VIP_OFFERS.map(o => { const t = o.tiers[o.zodiac ? vipSel.zodiac : 1];
-        return `<div class="vipcard" data-vo="${o.id}" style="background:${o.bg};--acc:${o.accent}"><span class="vipbadge">♛ VIP</span><b>${T(o.title)}</b><small>${T(o.sub)}</small><div class="vcv" data-cue="${t.cue}"></div><span class="btn green">${o.zodiac ? "$24.99" : "$" + o.tiers[0].usd + "+"}</span></div>`; }).join("")}</div>
+    body.innerHTML = `<div class="vipstrip">${VO().map(o => { const t = o.tiers[o.zodiac ? vipSel.zodiac : Math.min(1, o.tiers.length - 1)];
+        return `<div class="vipcard" data-vo="${o.id}" style="background:${o.bg};--acc:${o.accent}"><span class="vipbadge">♛ VIP</span><b>${T(o.title)}</b><small>${T(o.sub)}</small><div class="vcv" data-cue="${t.cue}"></div><span class="btn green">${o.zodiac ? "$24.99" : "$" + o.tiers[0].usd + (o.tiers.length > 1 ? "+" : "")}</span></div>`; }).join("")}</div>
       <div class="offers">
       <div class="ltbanner"><div class="lttitle"><span>${T("CHEKLANGAN")}</span><span>${T("TAKLIFLAR!")}</span></div><img src="${IMG.chest}" alt="">
         <button class="btn green" data-sec2="money" style="font-size:22px;padding:10px 26px">${T("Xarid qilish")} ›</button></div>
@@ -7288,7 +7310,7 @@ function buildHome() {
   updateHomeDots();
   const wl = weekEnds() - Date.now(); $("hLimEnds").textContent = `⏱ ${Math.floor(wl / 864e5)}${T("k")} ${Math.floor(wl % 864e5 / 36e5)}${T("s")} ${Math.floor(wl % 36e5 / 6e4)}${T("d")}`;
   $("hTourSub").textContent = `32–60 ${T("o'yinchi")}`;
-  if (profile.vipPop !== today() && !ON_PORTAL) setTimeout(() => { if ($("home").classList.contains("on") && !$("modal").classList.contains("on") && profile.vipPop !== today() && performance.now() - lastTouch > 4000) { profile.vipPop = today(); save(); vipPage = new Date().getDate() % VIP_OFFERS.length; vipOffers(); } }, 3500);
+  if (profile.vipPop !== today() && !ON_PORTAL) setTimeout(() => { if ($("home").classList.contains("on") && !$("modal").classList.contains("on") && profile.vipPop !== today() && performance.now() - lastTouch > 4000) { profile.vipPop = today(); save(); vipPage = new Date().getDate() % VO().length; vipOffers(); } }, 3500);
   clearInterval(homeTimer);
   homeTimer = setInterval(() => {
     if (!$("home").classList.contains("on")) return clearInterval(homeTimer);
@@ -7590,6 +7612,42 @@ const VIP_CUES = [
   ...ZODIAC.map(([n, sym, el], i) => { const e = ELEM[el]; return vipCue("vip_z" + i, n, [10, 9 + (i % 2), 10, 9 + ((i + 1) % 2)], e.b, e.s, e.m, e.l, e.g); }),
 ];
 CUES.push(...VIP_CUES);
+// ---------------------------------------------------------------- VIP horror collection: 32 cues + 12 tables, sold only in the VIP window and rotated weekly (never in the shop)
+const HORROR = [
+  ["Vampir", "bat", "blood"], ["Zombi", 0, "toxic"], ["Skelet", 0, "bone"], ["Arvoh", "ghost", "ice"], ["Jodugar", 0, "violet"], ["Bo'ri odam", "claw", "steel"], ["Mumiya", 0, "bone"], ["Frankenshteyn", 0, "toxic"],
+  ["Qora mushuk", "cat", "pumpkin"], ["Qabriston", 0, "steel"], ["Iblis", 0, "blood"], ["Kuzgun", "raven", "violet"], ["Qon oy", 0, "blood"], ["Shayton ko'zi", "eye", "pumpkin"], ["Yovvoyi ruh", 0, "ice"], ["Bosh suyagi", 0, "bone"],
+  ["Hayqiriq", "skull", "bone"], ["Qorong'u o'rmon", 0, "toxic"], ["Zulmat malikasi", 0, "violet"], ["Kabus", "web", "steel"], ["Gargoyl", 0, "steel"], ["Bo'ron arvohi", "storm", "ice"], ["Tungi ovchi", 0, "blood"], ["Lanat", 0, "violet"],
+  ["Kuldon", "tomb", "steel"], ["Zahar", 0, "toxic"], ["Jallod", 0, "pumpkin"], ["Nekromant", "rune", "toxic"], ["Ilon", 0, "toxic"], ["O'rgimchak", "spider", "violet"], ["Yirtqich", 0, "pumpkin"], ["Tuman", 0, "ice"],
+];
+const HOR_PAL = {
+  blood: {b: ["#7a0a10", "#1a0204"], s: ["#f0dcd4", "#a08078"], m: "#d8b48a", g: "#ff2a3a", bg: "linear-gradient(135deg,#5a0a14,#14020a 55%,#8a1020)", acc: "#ff6a6a", felt: ["#6a0a16", "#1a0208"], metal: ["#e8b8c0", "#7a1020", "#1a0208"], c: "#ff3a3a", c2: "#ffb0a0"},
+  toxic: {b: ["#1a4a0a", "#040e02"], s: ["#e8ffc8", "#8ad83a"], m: "#c8ff3a", g: "#7aff2a", bg: "linear-gradient(135deg,#143a08,#040e02 55%,#3a7a10)", acc: "#b8ff4a", felt: ["#0a3a1a", "#02100a"], metal: ["#9aff7a", "#1a6a2a", "#04200a"], c: "#7aff2a", c2: "#e8ff9a"},
+  bone: {b: ["#d8d0c0", "#6a6050"], s: ["#fffaf0", "#d8ccb0"], m: "#8a7a5a", g: "#ffe8b0", bg: "linear-gradient(135deg,#3a3226,#0e0c08 55%,#7a6a4a)", acc: "#f4ecd4", felt: ["#1a1a1a", "#050505"], metal: ["#f4ecd4", "#9a8a6a", "#2a2418"], c: "#8a7a5a", c2: "#f4ecd4"},
+  ice: {b: ["#0a3a4a", "#02101a"], s: ["#e8fcff", "#8ad8f0"], m: "#9ff4ff", g: "#6ae8ff", bg: "linear-gradient(135deg,#0a2a3a,#020a12 55%,#1a6a8a)", acc: "#9ff4ff", felt: ["#1a2a4a", "#050a1a"], metal: ["#e8f8ff", "#5a8aa8", "#0a2434"], c: "#6ae8ff", c2: "#ffffff"},
+  violet: {b: ["#3a0a5a", "#0a0216"], s: ["#f4e8ff", "#b08ae8"], m: "#d8a8ff", g: "#b05aff", bg: "linear-gradient(135deg,#2a0a4a,#080214 55%,#6a1a9a)", acc: "#d8a8ff", felt: ["#2a0a2a", "#0a020a"], metal: ["#e0b8ff", "#5a2a7a", "#14041e"], c: "#b05aff", c2: "#ffd0ff"},
+  pumpkin: {b: ["#8a3a08", "#1a0a02"], s: ["#fff0d8", "#e8a060"], m: "#ffb34d", g: "#ff8a1a", bg: "linear-gradient(135deg,#6a2a06,#140802 55%,#c8600a)", acc: "#ffa83a", felt: ["#3a0a4a", "#0e0212"], metal: ["#ffb05a", "#8a3a08", "#1a0a02"], c: "#ff8a1a", c2: "#ffe0a0"},
+  steel: {b: ["#3a3a4a", "#0a0a10"], s: ["#f0f0f8", "#a8a8c0"], m: "#c8c8d8", g: "#9aa0c8", bg: "linear-gradient(135deg,#2a2a3a,#08080e 55%,#5a5a7a)", acc: "#c8c8e0", felt: ["#2a2a3a", "#08080e"], metal: ["#d0d0e0", "#5a5a72", "#14141e"], c: "#9aa0c8", c2: "#ffffff"},
+};
+const HOR_LAYERS = ["fire", "runes", "gems", "galaxy", "crystal", "vines", "camo", "carbon", "circuit", "rings", "lightning", "marble", "wave", "stars", "neon", "checker"];
+const HOR_TABLE_SET = new Set([0, 3, 5, 8, 11, 13, 16, 19, 21, 24, 27, 29]);
+const HOR_USD = [4.99, 6.99, 9.99, 12.99, 14.99, 19.99, 24.99, 29.99];
+HORROR.forEach(([name, motif, pal], i) => {
+  const P = HOR_PAL[pal], L0 = HOR_LAYERS[(i * 3) % HOR_LAYERS.length], L1 = HOR_LAYERS[(i * 3 + 5) % HOR_LAYERS.length], L2 = HOR_LAYERS[(i * 5 + 9) % HOR_LAYERS.length];
+  VIP_CUES.push(vipCue("vh_" + i, name, [9 + (i % 2), 9 + ((i >> 1) % 2), 10, 9 + ((i >> 2) % 2)], P.b, P.s, P.m, [{d: L0, c: P.c, c2: P.c2}, {d: L1, c: P.c2}, {d: L2, c: P.c}], P.g));
+  if (motif) {
+    EXTRA_TABLES.push({id: "vt_" + i, name, felt: P.felt, rail: [P.metal[1], P.metal[2]], trim: P.metal[0], gem: P.c, pat: "medal", cash: 0, lux: 1, vip: 1});
+    TBL["vt_" + i] = {base: "lacquer", metal: P.metal, orn: motif, lux: 1, elite: 1, spark: 12, sparkC: P.c2, shine: 0.35, mat: "lux", bg: [P.felt[0], P.felt[1]], gem: P.c};
+  }
+});
+CUES.push(...VIP_CUES.filter(c => c.id.startsWith("vh_")));
+const weekIdx = () => Math.floor((Date.now() + 3 * 864e5) / (7 * 864e5));
+const horrorWeek = () => { const w = weekIdx(), out = []; for (let k = 0; k < 8; k++) out.push((w * 8 + k) % 32); return out.map(i => horrorOffer(i)); };
+const horrorOffer = i => {
+  const [name, motif, pal] = HORROR[i], P = HOR_PAL[pal], usd = HOR_USD[i % 8], tb = HOR_TABLE_SET.has(i);
+  return {id: "hor_" + i, title: name, sub: tb ? "Qo'rqinchli kiy + VIP stol" : "Qo'rqinchli VIP kiy", bg: P.bg, accent: P.acc, horror: true, table: tb ? "vt_" + i : "", tiers: [
+    {sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", coins: Math.round(usd * 24000), cash: Math.round(usd * 14), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
+};
+const horrorLeft = () => { const s = ((weekIdx() + 1) * 7 * 864e5 - 3 * 864e5 - Date.now()) / 1000; return `${Math.floor(s / 86400)}${T("k")} ${Math.floor(s % 86400 / 3600)}${T("s")}`; };
 // Premium cues: precious-metal butts with engraving or set stones, limited editions, a strike effect of their own.
 // Each one matches a premium table (same material); owning both gives a set bonus.
 const PREMIUM_CUES = [
@@ -7657,7 +7715,7 @@ function zodiacAvatar(i) {
   return cv;
 }
 // bundles: each is also a server SKU (prices are enforced there)
-const VIP_OFFERS = [
+const VIP_OFFERS0 = [
   {id: "sport", title: "SPORT JINNISI", sub: "Kiy + bo'laklar · maksimal ko'rsatkichlar", bg: "linear-gradient(135deg,#1a3aa8,#0a1450 55%,#d8283a)", accent: "#ffe14d", tiers: [
     {sku: "sport_1", usd: 3.99, cue: "vip_under", coins: 120000, cash: 60, sboxes: 2, vip: 332},
     {sku: "sport_2", usd: 6.99, cue: "vip_champ", coins: 258000, cash: 90, sboxes: 2, vip: 582},
@@ -7669,26 +7727,27 @@ const VIP_OFFERS = [
   {id: "zodiac", title: "ZODIAK", sub: "Burjingiz kiyi + avatari", bg: "linear-gradient(135deg,#2a0a5a,#0a0220 55%,#6a1a8a)", accent: "#e2c2ff", zodiac: true,
     tiers: ZODIAC.map((z, i) => ({sku: "zod_" + i, usd: 24.99, cue: "vip_z" + i, avatar: ZOD_AV + i, coins: 420000, cash: 1260, sboxes: 5, vip: 2708, sign: z}))},
 ];
+const VO = () => [...horrorWeek(), ...VIP_OFFERS0];
 let vipPage = 0, vipSel = {sport: 1, atom: 1, zodiac: new Date().getMonth()};
 function vipOffers(start) {
-  if (typeof start === "string") vipPage = Math.max(0, VIP_OFFERS.findIndex(o => o.id === start));
-  const o = VIP_OFFERS[vipPage], t = o.tiers[vipSel[o.id] % o.tiers.length], cue = cueDef(t.cue), own = profile.cues.includes(cue.id);
+  if (typeof start === "string") vipPage = Math.max(0, VO().findIndex(o => o.id === start));
+  const offers = VO(), o = offers[vipPage % offers.length], t = o.tiers[(vipSel[o.id] | 0) % o.tiers.length], cue = cueDef(t.cue), own = profile.cues.includes(cue.id);
   const item = (ic, n, v) => `<div class="vitem"><div class="vic">${ic}</div><small>${T(n)}</small><b>${v}</b></div>`;
   openModal({icon: "", title: "", text: "", extra: `<div class="vipbox" style="background:${o.bg};--acc:${o.accent}">
       <span class="vipbadge">♛ VIP</span>
-      <div class="viptitle">${T(o.title)}</div><div class="vipsub">${T(o.sub)}</div>
+      <div class="viptitle">${T(o.title)}</div><div class="vipsub">${T(o.sub)}${o.horror ? ` · ⏳ ${horrorLeft()}` : ""}</div>
       ${o.zodiac ? `<div class="zodsel"><button class="btn gray" id="zPrev">◀</button><span class="zav"><img src="${avatarURL(t.avatar)}" alt=""></span><b>${t.sign[1]}\uFE0E ${T(t.sign[0])}</b><button class="btn gray" id="zNext">▶</button></div>` : ""}
       <div class="vipcue"><div class="vcn">${esc(cue.name)} <small>⚡${cue.st[0]} 🎯${cue.st[1]} 🌀${cue.st[2]} ⏱${cue.st[3]}</small></div><div id="vipCv"></div></div>
-      <div class="vitems">${item("🎱", "Kiy", esc(cue.name))}${t.avatar ? item("🙂", "Avatar", T(t.sign[0])) : ""}${item('<span class="coin" style="width:30px;height:30px"></span>', "Tanga", fmtS(t.coins))}
+      <div class="vitems">${item("🎱", "Kiy", esc(cue.name))}${t.table ? item(`<img src="${tableThumb(tableById(t.table))}" style="height:34px;border-radius:4px">`, "Stol", esc(T(tableById(t.table).name))) : ""}${t.avatar ? item("🙂", "Avatar", T(t.sign[0])) : ""}${item('<span class="coin" style="width:30px;height:30px"></span>', "Tanga", fmtS(t.coins))}
         ${item('<span class="cash" style="width:38px;height:28px"></span>', "Naqd pul", fmt(t.cash))}${t.sboxes ? item("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}${t.goldShots ? item("🏆", "Oltin zarba", "×" + t.goldShots) : ""}
         ${item('<img src="' + IMG.vip + '" style="height:30px">', "VIP ochko", fmt(t.vip))}</div>
-      ${o.zodiac ? "" : `<div class="vtiers">${o.tiers.map((x, i) => `<button class="btn ${i === vipSel[o.id] ? "orange" : "gray"}" data-vt="${i}">$${x.usd}</button>`).join("")}</div>`}
+      ${o.zodiac || o.tiers.length < 2 ? "" : `<div class="vtiers">${o.tiers.map((x, i) => `<button class="btn ${i === vipSel[o.id] ? "orange" : "gray"}" data-vt="${i}">$${x.usd}</button>`).join("")}</div>`}
       <div class="vbuy">${own ? `<b style="color:#8dff9a">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="vipBuy" style="font-size:22px;padding:10px 30px">$${t.usd}</button>`}</div>
-      <div class="vipnav"><button class="btn gray" id="vPrev">‹</button>${VIP_OFFERS.map((x, i) => `<i class="${i === vipPage ? "on" : ""}"></i>`).join("")}<button class="btn gray" id="vNext">›</button></div>
+      <div class="vipnav"><button class="btn gray" id="vPrev">‹</button>${offers.map((x, i) => `<i class="${i === vipPage ? "on" : ""}"></i>`).join("")}<button class="btn gray" id="vNext">›</button></div>
     </div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
   $("vipCv").appendChild(cueCanvas(cue));
-  $("vPrev").onclick = () => { vipPage = (vipPage + VIP_OFFERS.length - 1) % VIP_OFFERS.length; vipOffers(); };
-  $("vNext").onclick = () => { vipPage = (vipPage + 1) % VIP_OFFERS.length; vipOffers(); };
+  $("vPrev").onclick = () => { vipPage = (vipPage + offers.length - 1) % offers.length; vipOffers(); };
+  $("vNext").onclick = () => { vipPage = (vipPage + 1) % offers.length; vipOffers(); };
   document.querySelectorAll("[data-vt]").forEach(b => b.onclick = () => { vipSel[o.id] = +b.dataset.vt; vipOffers(); });
   if ($("zPrev")) { $("zPrev").onclick = () => { vipSel.zodiac = (vipSel.zodiac + 11) % 12; vipOffers(); }; $("zNext").onclick = () => { vipSel.zodiac = (vipSel.zodiac + 1) % 12; vipOffers(); }; }
   if ($("vipBuy")) $("vipBuy").onclick = () => Net.checkout(t.sku, $("vipBuy"));
