@@ -595,6 +595,7 @@ const clients = new Map();          // userId -> ws
 const queues = new Map();           // cityId -> [ws]
 const rooms = new Map();            // roomId -> room
 const RELAY = new Set(["aim", "shot", "state", "chat", "place", "spin", "rtc"]);
+const specCount = room => { const msg = {t: "specs", n: room.specs.size}; for (const p of room.p) wsSend(p, msg); for (const sp of room.specs) wsSend(sp, msg); };   // everyone in the room sees how many people are watching
 const SPEC_FWD = new Set(["aim", "shot", "state", "place", "spin"]);   // what spectators get (no voice signalling, no chat)
 function bucket(ws, key, max, perMs) {   // small token bucket per socket
   const now = Date.now(), b = ws.bk || (ws.bk = {}), x = b[key] || (b[key] = {n: max, t: now});
@@ -651,9 +652,15 @@ wss.on("connection", (ws, req) => {
       const room = rooms.get(String(m.room || ""));
       if (!room || room.over || room.specs.size >= 200) return wsSend(ws, {t: "nospec"});
       room.specs.add(ws); ws.spec = room;
+      specCount(room);
       wsSend(ws, {t: "spec", room: room.id, seed: room.seed, first: room.first, city: room.city, p: room.p.map(s => { const {code, ...r} = s.profile; return r; }), state: room.last, specs: room.specs.size});
     } else if (m.t === "unspec") {
-      if (ws.spec) { ws.spec.specs.delete(ws); ws.spec = null; }
+      if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
+    } else if (m.t === "schat" && ws.spec && !ws.spec.over) {   // a spectator writes to the players and the other spectators
+      if (!bucket(ws, "schat", 4, 4000)) return;
+      const msg = String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 60); if (!msg) return;
+      const room = ws.spec, out = {t: "schat", name: String(u.name || "Player").slice(0, 16), country: u.country || "", msg};
+      for (const p of room.p) wsSend(p, out); for (const sp of room.specs) wsSend(sp, out);
     } else if (RELAY.has(m.t) && ws.room && !ws.room.over) {
       const room = ws.room, other = room.p[1 - ws.seat];
       if (m.t === "chat") {
@@ -680,7 +687,7 @@ wss.on("connection", (ws, req) => {
   });
   ws.on("close", () => {
     leaveQueue(ws);
-    if (ws.spec) { ws.spec.specs.delete(ws); ws.spec = null; }
+    if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
     if (clients.get(u.id) === ws) clients.delete(u.id);
     const room = ws.room;
     if (room && !room.over) { wsSend(room.p[1 - ws.seat], {t: "oppLeft"}); finish(room, 1 - ws.seat, "left"); }

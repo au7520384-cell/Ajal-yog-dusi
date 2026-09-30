@@ -394,6 +394,8 @@
   #chatPanel .citems{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
   #chatPanel .citems.p{grid-template-columns:1fr}
   #chatPanel .citems.e button{font-size:26px;padding:6px}
+  #liveFeed{position:fixed;left:70px;bottom:14px;z-index:15;display:flex;flex-direction:column;gap:4px;max-width:34vw;pointer-events:none}
+  #liveFeed .lf{background:#0b1226cc;border:1px solid #34436a;border-radius:10px;padding:4px 10px;font-size:14px;color:#fff;animation:pop .25s both}#liveFeed .lf b{color:#ffd24d}
   #cheerBar{position:fixed;bottom:12px;right:12px;z-index:15;display:none;gap:6px;background:#0d1426dd;border:2px solid #34436a;border-radius:14px;padding:6px}
   #cheerBar.on{display:flex}
   #cheerBar button{width:46px;height:46px;border-radius:10px;border:0;background:#243052;font-size:24px;cursor:pointer}
@@ -1047,6 +1049,7 @@
   <button class="gbtn gv" id="gSpk" title="Speaker" style="display:none"></button>
 </div>
 <div id="chatPanel"></div>
+<div id="liveFeed"></div>
 <div id="cheerBar"><button>👏</button><button>🔥</button><button>😮</button><button>🎉</button><button>💪</button></div>
 
 <!-- ============ MODAL ============ -->
@@ -2496,7 +2499,7 @@ function setGame(G) {
 function enterGameUi(type) {
   mode = "game"; showScreen(null);
   $("gameUi").classList.add("on");
-  $("gChat").style.display = ["practice", "lucky", "watch", "spec"].includes(type) ? "none" : "";
+  $("gChat").style.display = ["practice", "lucky", "watch"].includes(type) ? "none" : "";
   $("cheerBar").classList.toggle("on", type === "watch");
   $("shade").classList.remove("on");
 }
@@ -4278,7 +4281,7 @@ function paintTable(city) {
   const modern = city.pat !== "lucky" && !st.lux;   // original city tables: pearl-inlay sights in a city-specific shape + fine metal pinstripes, on a crisp lacquered rail
   const lumOf = hex => { const h = String(hex).replace("#", ""), n = parseInt(h.length === 3 ? h.replace(/./g, "$&$&") : h, 16); return ((n >> 16) & 255) * 0.3 + ((n >> 8) & 255) * 0.59 + (n & 255) * 0.11; };
   const accent = lumOf(trim) > 120 ? trim : (city.gem && lumOf(city.gem) > 120 ? city.gem : "#f2c14e");
-  const SIGHT = {lon: "diamond", syd: "shell", lis: "tile", tok: "sakura", veg: "suits", jak: "drop", tor: "leaf", cai: "tri", dub: "star8", sha: "coin", par: "star4", rom: "arch", bkk: "lotus", seo: "hex", mum: "paisley", ber: "square", ist: "star6", osa: "ring"};
+  const SIGHT = {lon: "diamond", syd: "shell", lis: "tile", tok: "sakura", veg: "suits", jak: "drop", tor: "leaf", cai: "tri", dub: "star8", sha: "coin", par: "star4", rom: "arch", bkk: "lotus", seo: "hex", mum: "paisley", ber: "square", ist: "star6", osa: "ring", x_dia: "gem", x_gal: "planet", x_drg: "scale", x_aur: "bars", x_lav: "flame", x_roy: "crown", x_ice: "snow", x_blk: "ingot"};
   const sightKind = SIGHT[city.id] || ({medal: "coin", gold: "star8", classic: "diamond", ikat: "tile", tribal: "drop"}[city.pat] || "diamond");
   const poly = pts => { ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); };
   const starP = (n, ro, ri, rot = -Math.PI / 2) => { ctx.beginPath(); for (let i = 0; i < 2 * n; i++) { const r = i % 2 ? ri : ro, a = rot + i * Math.PI / n; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); };
@@ -4307,6 +4310,14 @@ function paintTable(city) {
         case 2: ctx.beginPath(); ctx.arc(0, -r * 0.6, r * 0.55, 0, 7); ctx.moveTo(r * 1.05, r * 0.3); ctx.arc(r * 0.55, r * 0.3, r * 0.5, 0, 7); ctx.moveTo(-r * 0.05, r * 0.3); ctx.arc(-r * 0.55, r * 0.3, r * 0.5, 0, 7); ctx.moveTo(-r * 0.15, 0); ctx.lineTo(-r * 0.4, r * 1.2); ctx.lineTo(r * 0.4, r * 1.2); ctx.lineTo(r * 0.15, 0); break;   // club
         default: poly([[0, -r * 1.3], [r * 0.9, 0], [0, r * 1.3], [-r * 0.9, 0]]);   // diamond
       } break;
+      case "gem": poly([[-r * 0.55, -r * 1.0], [r * 0.55, -r * 1.0], [r * 1.2, -r * 0.2], [0, r * 1.25], [-r * 1.2, -r * 0.2]]); ctx.moveTo(-r * 1.2, -r * 0.2); ctx.lineTo(r * 1.2, -r * 0.2); break;
+      case "planet": ctx.beginPath(); ctx.arc(0, 0, r * 0.75, 0, 7); ctx.moveTo(r * 1.35, 0); ctx.ellipse(0, 0, r * 1.35, r * 0.45, -0.45, 0, 7); ctx.moveTo(r * 1.1, 0); ctx.ellipse(0, 0, r * 1.1, r * 0.3, -0.45, 0, 7, true); break;
+      case "scale": ctx.beginPath(); ctx.moveTo(-r * 1.2, r * 0.7); ctx.arc(0, r * 0.7, r * 1.2, Math.PI, 0); ctx.closePath(); ctx.moveTo(-r * 0.78, r * 0.7); ctx.arc(0, r * 0.7, r * 0.78, Math.PI, 0); ctx.closePath(); ctx.moveTo(-r * 0.36, r * 0.7); ctx.arc(0, r * 0.7, r * 0.36, Math.PI, 0); ctx.closePath(); break;
+      case "bars": ctx.beginPath(); ctx.rect(-r * 1.05, -r * 0.2, r * 0.55, r * 1.3); ctx.rect(-r * 0.27, -r * 1.15, r * 0.55, r * 2.25); ctx.rect(r * 0.5, -r * 0.65, r * 0.55, r * 1.75); break;
+      case "flame": ctx.beginPath(); ctx.moveTo(0, -r * 1.4); ctx.bezierCurveTo(r * 0.5, -r * 0.6, r * 1.15, -r * 0.1, r * 0.75, r * 0.75); ctx.bezierCurveTo(r * 0.5, r * 1.2, -r * 0.5, r * 1.2, -r * 0.75, r * 0.75); ctx.bezierCurveTo(-r * 1.1, -r * 0.1, -r * 0.4, -r * 0.5, 0, -r * 1.4); ctx.moveTo(0, r * 0.2); ctx.bezierCurveTo(r * 0.35, r * 0.45, r * 0.3, r * 0.85, 0, r * 0.85); ctx.bezierCurveTo(-r * 0.3, r * 0.85, -r * 0.35, r * 0.45, 0, r * 0.2); break;
+      case "crown": poly([[-r * 1.15, r * 0.9], [-r * 1.15, -r * 0.55], [-r * 0.55, r * 0.1], [0, -r * 0.95], [r * 0.55, r * 0.1], [r * 1.15, -r * 0.55], [r * 1.15, r * 0.9]]); break;
+      case "snow": ctx.beginPath(); for (let k = 0; k < 3; k++) { ctx.save(); ctx.rotate(k * Math.PI / 3); ctx.rect(-r * 1.35, -r * 0.17, r * 2.7, r * 0.34); ctx.restore(); } break;
+      case "ingot": poly([[-r * 1.2, r * 0.8], [-r * 0.75, -r * 0.7], [r * 0.75, -r * 0.7], [r * 1.2, r * 0.8]]); break;
       default: ctx.beginPath(); ctx.arc(0, 0, r * 0.8, 0, 7);
     }
   };
@@ -4319,16 +4330,40 @@ function paintTable(city) {
     const bg = ctx.createRadialGradient(-2, -3, 1, 0, 0, 12); bg.addColorStop(0, shade(city.felt[1], 10)); bg.addColorStop(1, shade(city.felt[1], -85));   // enamel in the table's own deep colour
     ctx.fillStyle = bg; ctx.beginPath(); ctx.arc(0, 0, 11.4, 0, 7); ctx.fill();
     const pg = ctx.createLinearGradient(-r, -r * 1.3, r, r * 1.3); pg.addColorStop(0, "#ffffff"); pg.addColorStop(0.5, shade(accent, 105)); pg.addColorStop(1, shade(accent, 20));
-    ctx.fillStyle = pg; shapePath(kind === "suits" ? "suit" : kind, r, suit); ctx.fill("evenodd");
+    ctx.fillStyle = pg; shapePath(kind === "suits" ? "suit" : kind, r, suit); ctx.fill(kind === "snow" || kind === "bars" ? "nonzero" : "evenodd");
     ctx.strokeStyle = "rgba(0,0,0,.4)"; ctx.lineWidth = 0.7; ctx.stroke();
     ctx.fillStyle = "rgba(255,255,255,.75)"; ctx.beginPath(); ctx.arc(-r * 0.35, -r * 0.55, 0.9, 0, 7); ctx.fill();   // glint
     ctx.restore();
   };
-  const inlayStrip = L => {                       // two fine metal pinstripes in a dark groove, drawn along +x, centred on y = 0
-    ctx.fillStyle = "rgba(0,0,0,.38)"; rr(-1, -6.2, L + 2, 12.4, 6.2); ctx.fill();
-    for (const yy of [-2.9, 2.9]) {
-      const g = ctx.createLinearGradient(0, yy - 1.4, 0, yy + 1.4); g.addColorStop(0, shade(accent, 90)); g.addColorStop(0.55, accent); g.addColorStop(1, shade(accent, -80));
-      ctx.strokeStyle = g; ctx.lineWidth = 1.7; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(3, yy); ctx.lineTo(L - 3, yy); ctx.stroke();
+  const INLAY = {lon: "double", syd: "wave", lis: "dotted", tok: "dashes", veg: "chain", jak: "triple", tor: "single", cai: "zigzag", dub: "pearls", sha: "ladder", par: "twist", rom: "meander", bkk: "scallop", seo: "neon", mum: "beads", ber: "segments", ist: "dotdash", osa: "ripple",
+    x_dia: "triple", x_gal: "dotdash", x_drg: "scallop", x_aur: "twist", x_lav: "zigzag", x_roy: "pearls", x_ice: "chain", x_blk: "single"};
+  const inlayStyle = INLAY[city.id] || "double";
+  const inlayStrip = L => {                       // a fine metal inlay in a dark groove, drawn along +x, centred on y = 0; every table has its own line style
+    const g = ctx.createLinearGradient(0, -4, 0, 4); g.addColorStop(0, shade(accent, 90)); g.addColorStop(0.55, accent); g.addColorStop(1, shade(accent, -80));
+    ctx.fillStyle = "rgba(0,0,0,.36)"; rr(-1, -6.2, L + 2, 12.4, 6.2); ctx.fill();
+    ctx.strokeStyle = g; ctx.fillStyle = g; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    const line = (yy, w, x0 = 3, x1 = L - 3) => { ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(x0, yy); ctx.lineTo(x1, yy); ctx.stroke(); };
+    const sine = (amp, per, ph, w) => { ctx.lineWidth = w; ctx.beginPath(); for (let x = 3; x <= L - 3; x += 1.5) ctx.lineTo(x, Math.sin(x / per + ph) * amp); ctx.stroke(); };
+    const dot = (x, y, r) => { ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); };
+    switch (inlayStyle) {
+      case "triple": line(-3.6, 1.2); line(0, 1.6); line(3.6, 1.2); break;
+      case "single": line(0, 3); break;
+      case "dotted": for (let x = 6; x < L - 3; x += 5.5) dot(x, 0, 1.5); break;
+      case "dashes": ctx.setLineDash([9, 5]); line(0, 2.6); ctx.setLineDash([]); break;
+      case "wave": sine(2.8, 4.2, 0, 1.7); break;
+      case "twist": sine(2.6, 5, 0, 1.4); sine(2.6, 5, Math.PI, 1.4); break;
+      case "ripple": sine(3.4, 7, 0, 1.3); sine(1.6, 3.5, 1, 1.0); break;
+      case "zigzag": ctx.lineWidth = 1.6; ctx.beginPath(); for (let x = 3, i = 0; x <= L - 3; x += 6, i++) ctx.lineTo(x, i % 2 ? 3 : -3); ctx.stroke(); break;
+      case "chain": line(0, 1.2); for (let x = 8; x < L - 5; x += 12) { ctx.beginPath(); ctx.moveTo(x - 3.4, 0); ctx.lineTo(x, -3.4); ctx.lineTo(x + 3.4, 0); ctx.lineTo(x, 3.4); ctx.closePath(); ctx.fill(); } break;
+      case "pearls": line(0, 1.2); for (let x = 9; x < L - 5; x += 12) { ctx.fillStyle = "#fff"; dot(x, 0, 2.5); ctx.fillStyle = g; dot(x, 0, 1.2); } break;
+      case "ladder": line(-3.2, 1.3); line(3.2, 1.3); for (let x = 8; x < L - 4; x += 9) line(0, 1.1, x, x), ctx.beginPath(), ctx.moveTo(x, -3.2), ctx.lineTo(x, 3.2), ctx.stroke(); break;
+      case "meander": ctx.lineWidth = 1.5; ctx.beginPath(); for (let x = 4; x + 12 < L - 3; x += 12) { ctx.moveTo(x, 3.4); ctx.lineTo(x, -3.4); ctx.lineTo(x + 9, -3.4); ctx.lineTo(x + 9, 1.4); ctx.lineTo(x + 4, 1.4); ctx.lineTo(x + 4, -1); } ctx.stroke(); break;
+      case "scallop": ctx.lineWidth = 1.5; for (let x = 4; x + 8 < L - 3; x += 8) { ctx.beginPath(); ctx.arc(x + 4, 1.4, 4, Math.PI, 0); ctx.stroke(); } break;
+      case "neon": ctx.save(); ctx.shadowColor = accent; ctx.shadowBlur = 8; line(0, 2.2); ctx.restore(); line(0, 1.0); break;
+      case "beads": for (let x = 6, i = 0; x < L - 3; x += 6, i++) dot(x, 0, i % 2 ? 1.2 : 2.3); break;
+      case "segments": for (let x = 5; x + 8 < L - 3; x += 12) { ctx.lineWidth = 1.2; ctx.strokeRect(x, -2.6, 8, 5.2); } break;
+      case "dotdash": for (let x = 5, i = 0; x < L - 8; x += 12, i++) { dot(x, 0, 1.4); line(0, 1.8, x + 4, x + 10); } break;
+      default: line(-2.9, 1.7); line(2.9, 1.7);
     }
     for (const x of [1, L - 1]) { ctx.fillStyle = accent; ctx.beginPath(); ctx.moveTo(x, -3.6); ctx.lineTo(x + 2.2, 0); ctx.lineTo(x, 3.6); ctx.lineTo(x - 2.2, 0); ctx.fill(); }
   };
@@ -4440,8 +4475,8 @@ function paintTable(city) {
   }
   ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(0, 0, FW, FH); ctx.globalAlpha = 1;
   // shadow cast by the cushions onto the cloth
-  const edge = (x, y, w, h, x1, y1, x2, y2) => { const g = ctx.createLinearGradient(x1, y1, x2, y2); g.addColorStop(0, "rgba(0,0,0,.38)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(x, y, w, h); };
-  edge(0, 0, FW, 22, 0, 0, 0, 22); edge(0, FH - 14, FW, 14, 0, FH, 0, FH - 14); edge(0, 0, 16, FH, 0, 0, 16, 0); edge(FW - 16, 0, 16, FH, FW, 0, FW - 16, 0);
+  const edge = (x, y, w, h, x1, y1, x2, y2) => { const g = ctx.createLinearGradient(x1, y1, x2, y2); g.addColorStop(0, "rgba(0,0,0,.14)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(x, y, w, h); };
+  edge(0, 0, FW, 12, 0, 0, 0, 12); edge(0, FH - 12, FW, 12, 0, FH, 0, FH - 12); edge(0, 0, 12, FH, 0, 0, 12, 0); edge(FW - 12, 0, 12, FH, FW, 0, FW - 12, 0);
   if (!lucky) {
     const rid = city.ring || city.id, rim = rid && ringPicSoft(rid);
     if (rim) {                                  // the city's ring printed on the cloth, like a table logo
@@ -4478,10 +4513,10 @@ function paintTable(city) {
     const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
     const cb = side === "t" || side === "b" ? f0.map(v => v - 16) : f0.map((v, i) => (v - 20) * 0.4 + (f1[i] - 22) * 0.6);   // the cushion is the same cloth colour the felt has right at that edge
     const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-    g.addColorStop(0, cc(14)); g.addColorStop(0.45, cc(0)); g.addColorStop(1, cc(-16));
+    g.addColorStop(0, cc(2)); g.addColorStop(0.5, cc(-8)); g.addColorStop(1, cc(-22));   // no visible seam: the cushion starts exactly in the cloth's own colour and only darkens as the slope turns away
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
-    ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.09)"; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
+    ctx.strokeStyle = "rgba(0,0,0,.28)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
   }
   if (st.glow && !lucky) {                     // neon strip under the cushion nose
     ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
@@ -4503,10 +4538,10 @@ function paintTable(city) {
   // soft overhead lamp
   const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
   lamp.addColorStop(0, "rgba(255,255,240,.16)"); lamp.addColorStop(0.6, "rgba(255,255,240,.04)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
-  ctx.fillStyle = lamp; ctx.fillRect(0, 0, FW, FH);
+  ctx.fillStyle = lamp; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
   const vig = ctx.createRadialGradient(FW / 2, FH / 2, FH * 0.45, FW / 2, FH / 2, FW * 0.62);
   vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.22)");
-  ctx.fillStyle = vig; ctx.fillRect(0, 0, FW, FH);
+  ctx.fillStyle = vig; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
   ctx.restore();
 }
 
@@ -5017,9 +5052,11 @@ function drawHUD(G) {
   if (G.pot) {
     for (let i = 0; i < 4; i++) drawCoin(cx - 11 + (i % 2) * 22, 46 - (i >> 1) * 9 + (i % 2) * 4, 13);
     ctx.fillStyle = "#ffe27a"; ctx.font = `20px ${FONT}`; ctx.fillText(fmt(G.pot), cx, 74);
+    if (G.net && G.viewers > 0) { ctx.fillStyle = "#cfe0ff"; ctx.font = `14px ${FONT}`; ctx.fillText("👁 " + G.viewers, cx, 96); }
   } else {
     ctx.fillStyle = G.type === "watch" ? "#ff4b3e" : "#ffcf3d"; ctx.font = `${G.type === "pvp" ? 28 : 21}px ${FONT}`;
-    ctx.fillText(G.type === "pvp" ? "VS" : G.type === "watch" || G.type === "spec" ? T("● JONLI") : T("MASHQ"), cx, 49);
+    ctx.fillText(G.type === "pvp" ? "VS" : G.type === "watch" || G.type === "spec" ? T("● JONLI") : T("MASHQ"), cx, G.type === "spec" ? 40 : 49);
+    if (G.type === "spec") { ctx.fillStyle = "#cfe0ff"; ctx.font = `18px ${FONT}`; ctx.fillText("👁 " + (G.viewers | 0), cx, 68); }
   }
   ctx.restore();
   drawPanel(G, 0, -1);
@@ -6599,6 +6636,15 @@ Net.on("state", m => {
   if (G.moving || G.strike) G.pendingState = m; else applyState(m);
 });
 Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, String(m.msg || "").slice(0, 40)); });
+Net.on("specs", m => { if (game && game.net) game.viewers = m.n | 0; });   // how many people are watching this match
+Net.on("schat", m => {                          // a message from a spectator: shown in a small feed for the players and the other spectators
+  if (!game || !game.net) return;
+  const feed = $("liveFeed"), row = document.createElement("div"); row.className = "lf";
+  const b = document.createElement("b"); b.textContent = String(m.name || "").slice(0, 16); row.appendChild(b);
+  row.appendChild(document.createTextNode(": " + String(m.msg || "").slice(0, 60)));
+  feed.appendChild(row); while (feed.children.length > 5) feed.firstChild.remove();
+  setTimeout(() => row.remove(), 9000); try { Snd.pop(); } catch (e) {}
+});
 Net.on("end", m => {   // opponent resigned (normal endings are already handled on this device)
   const G = game; if (!G || !G.net || G.over || m.reason === "normal") return;
   const w = localOf(m.winner);
@@ -6645,7 +6691,7 @@ function startSpectate(m) {
   const mk = o => ({name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length], level: o.level | 0 || 1,
     isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0, country: o.country || ""});
   const G = baseGame("spec", city, [mk(m.p[0] || {}), mk(m.p[1] || {})]);
-  G.net = {seat: 0, spec: true, room: m.room, lastAim: 0, sentA: null};
+  G.net = {seat: 0, spec: true, room: m.room, lastAim: 0, sentA: null}; G.viewers = m.specs | 0;
   G.balls = rack(m.seed); G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
   G.cur = m.first === 1 ? 1 : 0; G.tbl = G.players[0].tbl || ""; G.tblOwner = 0; G.demo = false;
   setGame(G); enterGameUi("spec"); nextTurn(true);
@@ -6746,6 +6792,7 @@ function buildChat(tab = "p") {
 }
 function sendChat(msg) {
   const G = game; if (!G || mode !== "game") return;
+  if (G.net && G.net.spec) { Net.send({t: "schat", msg: String(msg).slice(0, 60)}); closeChat(); return; }   // a spectator writes to the players (the server echoes it to everyone)
   const who = G.type === "pvp" ? G.cur : 0;
   bubble(who, msg); closeChat();
   if (G.net) Net.send({t: "chat", msg});
