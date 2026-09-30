@@ -4470,7 +4470,7 @@ function paintTable(city) {
   // felt
   ctx.save(); ctx.translate(FX, FY);
   const fg = ctx.createRadialGradient(FW / 2, FH / 2, 20, FW / 2, FH / 2, FW * 0.62);
-  fg.addColorStop(0, shade(city.felt[0], 2)); fg.addColorStop(0.5, shade(city.felt[0], -20)); fg.addColorStop(1, shade(city.felt[1], -22));
+  fg.addColorStop(0, shade(city.felt[0], -22)); fg.addColorStop(1, shade(city.felt[0], -26));   // one even, deep cloth colour from the middle to the cushions
   ctx.fillStyle = fg; ctx.fillRect(-21, -21, FW + 42, FH + 42);   // cloth runs under the cushions, so every pocket mouth shows cloth
   if (!feltNoise) {
     feltNoise = document.createElement("canvas"); feltNoise.width = feltNoise.height = 128;
@@ -4516,9 +4516,9 @@ function paintTable(city) {
     const side = s[4], d = {t: [0, 0, 0, -C], b: [0, FH, 0, FH + C], l: [0, 0, -C, 0], r: [FW, 0, FW + C, 0]}[side];
     const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
     const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
-    const cb = f0.map((v, i) => v * 0.62 + f1[i] * 0.38 - 26);   // the cloth colour the felt really has at its edge (after the gradient, vignette and edge shadow)   // the cushion is the same cloth colour the felt has right at that edge
+    const cb = f0.map(v => v - 26);   // exactly the cloth colour
     const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-    g.addColorStop(0, cc(4)); g.addColorStop(0.5, cc(-6)); g.addColorStop(1, cc(-22));   // no visible seam: the cushion starts exactly in the cloth's own colour and only darkens as the slope turns away
+    g.addColorStop(0, cc(8)); g.addColorStop(0.5, cc(-2)); g.addColorStop(1, cc(-20));   // no visible seam: the cushion starts exactly in the cloth's own colour and only darkens as the slope turns away
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
     ctx.strokeStyle = "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.28)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
@@ -4531,22 +4531,24 @@ function paintTable(city) {
   if (!lucky) for (const p of POCKETS) {   // pocket holes: rubber lip, deep shaded well and a lit rim, painted over the cushion ends
     const x = p.x + p.dx, y = p.y + p.dy, r = p.dr, mar = city.id === "syd";
     const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1);   // direction away from the table
-    { const sh = ctx.createRadialGradient(x, y, r - 1, x, y, r + 8); sh.addColorStop(0, "rgba(0,0,0,.4)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 8, 0, 7); ctx.fill(); }
-    const lip = ctx.createLinearGradient(x - r, y - r, x + r, y + r); lip.addColorStop(0, mar ? "#4a1a10" : shade(city.felt[1], -70)); lip.addColorStop(1, mar ? "#0f0403" : shade(city.felt[1], -120));
-    ctx.fillStyle = lip; ctx.beginPath(); ctx.arc(x, y, r + 2.6, 0, 7); ctx.fill();               // rubber lip
-    const well = ctx.createRadialGradient(x - ox * r * 0.28, y - oy * r * 0.28, r * 0.05, x, y, r + 0.5);
-    well.addColorStop(0, "#000"); well.addColorStop(0.55, "#040101"); well.addColorStop(0.82, mar ? "#2c0808" : shade(city.felt[1], -118)); well.addColorStop(1, mar ? "#5a1010" : shade(city.felt[0], -85));
-    ctx.fillStyle = well; ctx.beginPath(); ctx.arc(x, y, r + 0.4, 0, 7); ctx.fill();               // the well, lit only at its near rim
-    ctx.lineCap = "round";
-    ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();   // inner wall catching the light
-    ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r + 2.1, Math.atan2(-oy, -ox) - 0.7, Math.atan2(-oy, -ox) + 0.7); ctx.stroke();   // specular on the lip
+    const lx = -ox * 0.7071, ly = -oy * 0.7071, drk = mar ? "#0f0403" : shade(city.felt[1], -120), mid = mar ? "#4a1a10" : shade(city.felt[1], -70);
+    { const sh = ctx.createRadialGradient(x, y, r, x, y, r + 16); sh.addColorStop(0, "rgba(0,0,0,.55)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x - ox * 2, y - oy * 2, r + 16, 0, 7); ctx.fill(); }   // shadow the pocket casts on the cloth
+    const torus = ctx.createLinearGradient(x + lx * (r + 4), y + ly * (r + 4), x - lx * (r + 4), y - ly * (r + 4)); torus.addColorStop(0, mar ? "#8a4a30" : shade(city.felt[0], 30)); torus.addColorStop(0.5, mid); torus.addColorStop(1, drk);   // rounded rubber lip: lit on one side, dark on the far side
+    ctx.fillStyle = torus; ctx.beginPath(); ctx.arc(x, y, r + 4.2, 0, 7); ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.4)"; ctx.lineWidth = 1.4; ctx.lineCap = "round"; ctx.beginPath(); ctx.arc(x, y, r + 3.2, Math.atan2(ly, lx) - 0.95, Math.atan2(ly, lx) + 0.95); ctx.stroke();
+    ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r + 3.2, Math.atan2(-ly, -lx) - 0.95, Math.atan2(-ly, -lx) + 0.95); ctx.stroke();
+    const wall = ctx.createLinearGradient(x + lx * r, y + ly * r, x - lx * r, y - ly * r); wall.addColorStop(0, "#050202"); wall.addColorStop(0.5, mar ? "#3a1208" : shade(city.felt[1], -95)); wall.addColorStop(1, mar ? "#7a2a18" : shade(city.felt[0], -40));   // the inner cylinder wall, visible on the far side
+    ctx.fillStyle = wall; ctx.beginPath(); ctx.arc(x, y, r + 0.6, 0, 7); ctx.fill();
+    const well = ctx.createRadialGradient(x + lx * r * 0.15, y + ly * r * 0.15, 1, x + lx * r * 0.1, y + ly * r * 0.1, r * 0.92); well.addColorStop(0, "#000"); well.addColorStop(0.8, "#010000"); well.addColorStop(1, "#0a0303");
+    ctx.fillStyle = well; ctx.beginPath(); ctx.arc(x + lx * 1.6, y + ly * 1.6, r * 0.86, 0, 7); ctx.fill();
+    ctx.strokeStyle = mar ? "rgba(255,160,130,.3)" : "rgba(255,255,255,.2)"; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(x, y, r - 0.6, Math.atan2(-ly, -lx) - 0.8, Math.atan2(-ly, -lx) + 0.8); ctx.stroke();
   }
   // soft overhead lamp
   const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
-  lamp.addColorStop(0, "rgba(255,255,240,.16)"); lamp.addColorStop(0.6, "rgba(255,255,240,.04)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
+  lamp.addColorStop(0, "rgba(255,255,240,.02)"); lamp.addColorStop(0.6, "rgba(255,255,240,.01)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
   ctx.fillStyle = lamp; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
   const vig = ctx.createRadialGradient(FW / 2, FH / 2, FH * 0.45, FW / 2, FH / 2, FW * 0.62);
-  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.22)");
+  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.05)");
   ctx.fillStyle = vig; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
   ctx.restore();
 }
