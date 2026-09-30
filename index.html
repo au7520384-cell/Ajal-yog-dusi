@@ -4153,7 +4153,12 @@ function drawTable(city) {
   const c = tableCache;
   ctx.drawImage(c.cv, c.x0, c.y0, c.w, c.h);
 }
+function liftHex(hex, k, add) {   // brighten and saturate a #rrggbb colour (premium/exclusive cloths were much darker than the city cloths)
+  const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255], m = (c[0] + c[1] + c[2]) / 3;
+  return "#" + c.map(v => clamp(Math.round(m + (v - m) * 1.25) * k + add, 0, 255)).map(v => Math.round(v).toString(16).padStart(2, "0")).join("");
+}
 function paintTable(city) {
+  if (/^[le]_/.test(city.id || "") && !city.vivid) city = {...city, vivid: 1, felt: [liftHex(city.felt[0], 1.35, 26), liftHex(city.felt[1], 1.5, 12)]};   // same vivid cloth as the city tables
   const [r1, r2] = city.rail, trim = city.trim, lucky = city.pat === "lucky";
   const OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
   let seed = 11; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
