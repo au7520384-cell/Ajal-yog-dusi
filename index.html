@@ -4516,13 +4516,18 @@ function paintTable(city) {
     [[0, cA], [0, FH - cA], [-C, FH - cA + C], [-C, cA - C], "l"],
     [[FW, cA], [FW, FH - cA], [FW + C, FH - cA + C], [FW + C, cA - C], "r"],
   ];
+  if (!lucky) for (const [ox, oy] of [[0, 0], [FW, 0], [0, FH], [FW, FH]]) {   // join the cushions round every corner: one continuous rim, no gap by the pocket
+    const sx = ox ? 1 : -1, sy = oy ? 1 : -1, ex = (u, v) => [ox + sx * u, oy + sy * v];
+    segs.push([ex(0, 0), ex(-cA, 0), ex(-(cA - C), C), ex(C, C), "t", 1]);
+    segs.push([ex(0, 0), ex(0, -cA), ex(C, -(cA - C)), ex(C, C), "l", 1]);
+  }
   for (const s of segs) {
     const side = s[4], d = {t: [0, 0, 0, -C], b: [0, FH, 0, FH + C], l: [0, 0, -C, 0], r: [FW, 0, FW + C, 0]}[side];
     const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
     const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
     const cb = f0.map(v => v - 26);   // exactly the cloth colour
     const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-    g.addColorStop(0, cc(-6)); g.addColorStop(1, cc(-10));   // no visible seam: the cushion starts exactly in the cloth's own colour and only darkens as the slope turns away
+    g.addColorStop(0, cc(2)); g.addColorStop(1, cc(-2));   // no visible seam: the cushion starts exactly in the cloth's own colour and only darkens as the slope turns away
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
     
     
