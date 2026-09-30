@@ -4530,14 +4530,14 @@ function paintTable(city) {
     const x = p.x + p.dx, y = p.y + p.dy, r = p.dr;
     const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1), n = Math.hypot(ox, oy) || 1, ux = ox / n, uy = oy / n;   // unit vector pointing away from the table
     { const sh = ctx.createRadialGradient(x, y, r, x, y, r + 9); sh.addColorStop(0, "rgba(0,0,0,.5)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 9, 0, 7); ctx.fill(); }   // soft contact shadow on the cloth
-    ctx.fillStyle = "#1a0606"; ctx.beginPath(); ctx.arc(x, y, r + 2.4, 0, 7); ctx.fill();                   // thin dark lip
+    ctx.fillStyle = "#0b0b0d"; ctx.beginPath(); ctx.arc(x, y, r + 2.4, 0, 7); ctx.fill();                   // thin dark lip
     const body = ctx.createRadialGradient(x + ux * r * 0.38, y + uy * r * 0.38, 1, x, y, r + 0.6);          // dark core shifted away from the table, maroon rim on the table side
-    body.addColorStop(0, "#000000"); body.addColorStop(0.45, "#060101"); body.addColorStop(0.72, "#2a0707"); body.addColorStop(0.9, "#57100e"); body.addColorStop(1, "#7a1c18");
+    body.addColorStop(0, "#000000"); body.addColorStop(0.45, "#040405"); body.addColorStop(0.72, "#121316"); body.addColorStop(0.9, "#25272c"); body.addColorStop(1, "#383b42");
     ctx.fillStyle = body; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
     const aim = Math.atan2(-uy, -ux);                                                                       // angle pointing at the table
     ctx.lineCap = "round";
-    ctx.strokeStyle = "rgba(255,110,90,.2)"; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.arc(x, y, r - 2.4, aim - 0.8, aim + 0.8); ctx.stroke();         // lit inner wall on the table side
-    ctx.strokeStyle = "rgba(255,190,170,.22)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r - 0.7, aim - 0.55, aim + 0.55); ctx.stroke();       // fine rim light
+    ctx.strokeStyle = "rgba(255,255,255,.16)"; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.arc(x, y, r - 2.4, aim - 0.8, aim + 0.8); ctx.stroke();         // lit inner wall on the table side
+    ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y, r - 0.7, aim - 0.55, aim + 0.55); ctx.stroke();       // fine rim light
     ctx.strokeStyle = "rgba(0,0,0,.55)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r - 1, aim + Math.PI - 0.9, aim + Math.PI + 0.9); ctx.stroke(); // deep shadow on the far wall
   }
   // soft overhead lamp
