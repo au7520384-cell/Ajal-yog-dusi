@@ -1068,17 +1068,17 @@ const POCKETS = [
   {x: FW / 2, y: FH + 9, r: 32, dx: 0, dy: 18, dr: 23, mid: true},
   {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
-const CORNER_MOUTH = 32, TIP_R = 4;   // cushion nose ends at 32 from each corner; jaw tips are rounded (radius 4)
+const CORNER_MOUTH = 36, TIP_R = 4;   // cushion nose ends at 32 from each corner; jaw tips are rounded (radius 4)
 const CF = 22, MF = 12;   // length of the 45° knuckle cut on the cushion end: corner pockets / side pockets
 const JAW_TIPS = [];
 const JAW_FACES = (() => {   // the cushion ends are cut at 45°: [x1,y1,x2,y2] from the flat rail end down into the pocket throat
-  const c = CORNER_MOUTH, m = 27, h = 500, w = 1000, o = [];
+  const c = CORNER_MOUTH, m = 29, h = 500, w = 1000, o = [];
   const top = (x1, x2) => o.push([x1, 0, x2, -Math.abs(x2 - x1)]), bot = (x1, x2) => o.push([x1, 500, x2, 500 + Math.abs(x2 - x1)]);
   for (const f of [top, bot]) { f(c + CF, c); f(w - c - CF, w - c); f(h - m - MF, h - m); f(h + m + MF, h + m); }
   for (const f of [(y1, y2) => o.push([0, y1, -Math.abs(y2 - y1), y2]), (y1, y2) => o.push([w, y1, w + Math.abs(y2 - y1), y2])]) { f(c + CF, c); f(500 - c - CF, 500 - c); }
   return o;
 })();
-const MID_MOUTH = 27;   // half-width of a middle pocket mouth at the cushion nose (the jaws angle in to the hole)
+const MID_MOUTH = 29;   // half-width of a middle pocket mouth at the cushion nose (the jaws angle in to the hole)
 const POCKET_AIMS = [
   {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
   {x: 5, y: FH - 5}, {x: FW / 2, y: FH - 1, mid: true}, {x: FW - 5, y: FH - 5},
@@ -2255,7 +2255,7 @@ function physicsFrame(G) {
       for (const p of pockets) {
         if (b.z > 5) break;
         if (p.mid) { if (Math.abs(b.x - p.x) < MID_MOUTH && (p.y < 0 ? b.y < -4 : b.y > FH + 4)) { hit = p; break; } }
-        else if (Math.abs(b.x - p.x) + Math.abs(b.y - p.y) < 27 && b.x > -30 && b.x < FW + 30 && b.y > -30 && b.y < FH + 30) { hit = p; break; }
+        else if (Math.abs(b.x - p.x) + Math.abs(b.y - p.y) < 30 && b.x > -30 && b.x < FW + 30 && b.y > -30 && b.y < FH + 30) { hit = p; break; }
       }
       if (!hit && (b.x < -1 || b.x > FW + 1 || b.y < -1 || b.y > FH + 1)) { let bd = 1e9; for (const p of pockets) { const d = (b.x - p.x) ** 2 + (b.y - p.y) ** 2; if (d < bd) { bd = d; hit = p; } } }   // safety: never let a ball leave the table
       if (hit) { b.out = true; onPot(G, b, hit); b.vx = b.vy = 0; b.z = b.vz = 0; }
@@ -2427,7 +2427,7 @@ function mePlayer(name) {
 function baseGame(type, city, players) {
   const G = {
     type, city, players, cur: 0, groups: [null, null], balls: rack(), pockets: POCKETS, ballInHand: true, isBreak: true,
-    moving: false, over: false, angle: 0, spin: {x: 0, y: 0}, elev: 0, spinOpen: false, shot: null, sinking: [], tray: [], flashes: [], sparks: [],
+    venue: (type !== "lucky" && city && city.name) ? {} : null, moving: false, over: false, angle: 0, spin: {x: 0, y: 0}, elev: 0, spinOpen: false, shot: null, sinking: [], tray: [], flashes: [], sparks: [],
     banner: null, pill: null, bubbles: [null, null], turnStart: performance.now(), aiTask: null, aiWait: null, strike: null, shake: 0,
     demo: false, skill: city.skill, aiPull: 0, oppHadPot: false, pot: 0,
   };
@@ -3348,6 +3348,35 @@ function introCamera(G) {
   else { const u = ease(Math.min(1, (k - 0.55) / 0.33)); z = 2.3 + (1 - 2.3) * u; fx = FX + FW - 60 + (W / 2 - (FX + FW - 60)) * u; fy = FY - 26 + (H / 2 - (FY - 26)) * u; }
   ctx.translate(W / 2, H / 2); ctx.scale(z, z); ctx.translate(-fx, -fy);
   return k < 0.86;
+}
+function drawVenueTitle(G) {   // venue name animation at the start of a match ("SYDNEY"): letters pop in one by one, a light sweeps across, the venue name slides in
+  const v = G.venue; if (!v || G.demo || !G.city || introOn(G)) return;
+  if (!v.t0) { v.t0 = performance.now(); try { Snd.whoosh(); } catch (e) {} }
+  const e = performance.now() - v.t0, D = 3400; if (e > D) { G.venue = null; return; }
+  const nm = String(G.city.name || "").toUpperCase(), sb = String(G.city.sub || "").toUpperCase(), col = G.city.col ? G.city.col[0] : "#ffd24d";
+  const fade = Math.min(1, e / 200, (D - e) / 600), cx = W / 2, cy = H * 0.34;
+  ctx.save(); ctx.globalAlpha = Math.max(0, fade); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.lineJoin = "round";
+  const size = nm.length > 9 ? 84 : 110, ls = size * 0.06; ctx.font = `${size}px ${FONT}`;
+  const ws = [...nm].map(ch => ctx.measureText(ch).width + ls), total = ws.reduce((a, b) => a + b, 0);
+  const bar = ctx.createLinearGradient(0, cy - size, 0, cy + size); bar.addColorStop(0, "rgba(0,0,0,0)"); bar.addColorStop(0.5, "rgba(4,6,14,.6)"); bar.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = bar; ctx.fillRect(0, cy - size * 0.9, W, size * 1.9);
+  let x = cx - total / 2;
+  const sweep = ((e - 700) / 900) * (total + 200) - 100;   // x offset of the light sweep
+  [...nm].forEach((ch, i) => {
+    const k = Math.min(1, Math.max(0, (e - i * 70) / 380)), pop = k < 1 ? 1 + 0.5 * Math.sin(k * Math.PI) * (1 - k) * 2 : 1, w = ws[i];
+    if (k > 0) {
+      ctx.save(); ctx.translate(x + w / 2, cy + (1 - k) * -40); ctx.scale(pop, pop); ctx.globalAlpha = Math.max(0, fade) * k;
+      const g = ctx.createLinearGradient(0, -size * 0.45, 0, size * 0.45); g.addColorStop(0, "#ffffff"); g.addColorStop(0.55, col); g.addColorStop(1, "#7a4a00");
+      ctx.lineWidth = 9; ctx.strokeStyle = "rgba(0,0,0,.8)"; ctx.strokeText(ch, 0, 0);
+      ctx.shadowColor = col; ctx.shadowBlur = 22; ctx.fillStyle = g; ctx.fillText(ch, 0, 0); ctx.shadowBlur = 0;
+      const d = Math.abs((x + w / 2) - (cx - total / 2) - sweep); if (d < 70) { ctx.globalAlpha *= 1 - d / 70; ctx.fillStyle = "#fff"; ctx.fillText(ch, 0, 0); }
+      ctx.restore();
+    }
+    x += w;
+  });
+  const k2 = Math.min(1, Math.max(0, (e - 900) / 500));
+  if (k2 > 0) { ctx.font = `30px ${FONT}`; ctx.letterSpacing = "8px"; ctx.globalAlpha = Math.max(0, fade) * k2; ctx.lineWidth = 5; ctx.strokeStyle = "rgba(0,0,0,.8)"; ctx.strokeText(sb, cx + (1 - k2) * 80, cy + size * 0.66); ctx.fillStyle = "#fff"; ctx.fillText(sb, cx + (1 - k2) * 80, cy + size * 0.66); ctx.letterSpacing = "0px"; }
+  ctx.restore();
 }
 function drawIntroBanner(G) {
   if (!introOn(G)) return;
@@ -4294,10 +4323,6 @@ function paintTable(city) {
   const edge = (x, y, w, h, x1, y1, x2, y2) => { const g = ctx.createLinearGradient(x1, y1, x2, y2); g.addColorStop(0, "rgba(0,0,0,.38)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(x, y, w, h); };
   edge(0, 0, FW, 22, 0, 0, 0, 22); edge(0, FH - 14, FW, 14, 0, FH, 0, FH - 14); edge(0, 0, 16, FH, 0, 0, 16, 0); edge(FW - 16, 0, 16, FH, FW, 0, FW - 16, 0);
   if (!lucky) {
-    ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(FW * 0.25, 0); ctx.lineTo(FW * 0.25, FH); ctx.stroke();
-    ctx.fillStyle = "rgba(255,255,255,.35)";
-    for (const sx of [FW * 0.25, FW * 0.72]) { ctx.beginPath(); ctx.arc(sx, FH / 2, 3, 0, 7); ctx.fill(); }
     const rid = city.ring || city.id, rim = rid && ringPicSoft(rid);
     if (rim) {                                  // the city's ring printed on the cloth, like a table logo
       ctx.save(); ctx.globalAlpha = typeof ringOf === "function" && ringOf({id: rid}) ? 0.4 : 0.2; ctx.globalCompositeOperation = "luminosity";
@@ -5166,7 +5191,7 @@ function render() {
   const v = ctx.createRadialGradient(W / 2, H / 2, H * 0.45, W / 2, H / 2, W * 0.75);
   v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(0,0,0,.45)");
   ctx.fillStyle = v; ctx.fillRect(-3000, -3000, W + 6000, H + 6000);
-  drawIntroBanner(G);
+  drawIntroBanner(G); drawVenueTitle(G);
   drawConfetti();
 }
 let frameErr = 0;
