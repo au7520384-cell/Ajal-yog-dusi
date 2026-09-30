@@ -4519,17 +4519,24 @@ function paintTable(city) {
     const x = p.x + p.dx, y = p.y + p.dy, r = p.dr + 1.5;
     const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1), n = Math.hypot(ox, oy) || 1, ux = ox / n, uy = oy / n;   // unit vector pointing away from the table
     if (p.mid) { const sg = p.y < 0 ? -1 : 1, yb = p.y < 0 ? 0 : FH, q = [[FW / 2 - mA, yb], [FW / 2 + mA, yb], [FW / 2 + 22, yb + sg * C], [FW / 2 - 22, yb + sg * C]];   // the cushion runs into the side pocket, so the mouth is cloth, not a gap
-      cushPath(q); ctx.fillStyle = fg; ctx.fill(); ctx.globalAlpha = 0.5; ctx.fillStyle = grainPat; ctx.fill(); ctx.globalAlpha = 1; ctx.fillStyle = "rgba(0,0,0,.07)"; ctx.fill(); ctx.fillStyle = lamp; ctx.fill(); ctx.fillStyle = vig; ctx.fill(); }
+      cushPath(q); ctx.fillStyle = fg; ctx.fill(); ctx.globalAlpha = 0.5; ctx.fillStyle = grainPat; ctx.fill(); ctx.globalAlpha = 1; ctx.fillStyle = "rgba(0,0,0,.07)"; ctx.fill(); ctx.fillStyle = lamp; ctx.fill(); ctx.fillStyle = vig; ctx.fill();
+      const tg = ctx.createLinearGradient(0, yb, 0, yb + sg * C); tg.addColorStop(0, "rgba(0,0,0,0)"); tg.addColorStop(1, "rgba(0,0,0,.2)"); ctx.fillStyle = tg; ctx.fill(); }   // the mouth dips toward the hole
     const mul = (hex, f) => { const v = parseInt(String(hex).slice(1), 16); return `rgb(${Math.round((v >> 16) * f)},${Math.round(((v >> 8) & 255) * f)},${Math.round((v & 255) * f)})`; };
     const aim = Math.atan2(-uy, -ux), green = p.mid ? 1.24 : 0.89;       // direction of the table, and how much of the rim is cloth (the rest is wood)
-    const wall = ctx.createLinearGradient(x + ux * r, y + uy * r, x - ux * r, y - uy * r);   // the far inner wall catches the light in the wood's own colour, the near side falls into black
     const wc = (() => { const v = parseInt(String(city.rail[0]).slice(1), 16), c = [v >> 16, (v >> 8) & 255, v & 255], l = c[0] * 0.3 + c[1] * 0.59 + c[2] * 0.11, k = l < 130 ? (130 - l) / 130 : 0, w = [178, 150, 118];   // very dark rails still get a visible, wood-toned wall
       return "#" + c.map((q, i) => Math.round(q + (w[i] - q) * k).toString(16).padStart(2, "0")).join(""); })();
-    wall.addColorStop(0, mul(wc, 0.62)); wall.addColorStop(0.2, mul(wc, 0.4)); wall.addColorStop(0.45, mul(wc, 0.14)); wall.addColorStop(0.64, "#050404"); wall.addColorStop(1, "#000000");
+    const warm = (f, g, h) => { const v = parseInt(wc.slice(1), 16); return `rgb(${Math.round((v >> 16) * f)},${Math.round(((v >> 8) & 255) * g)},${Math.round((v & 255) * h)})`; };   // warm, wood-toned wall, lightest right at the far rim
+    const cx0 = x - ux * r * 0.38, cy0 = y - uy * r * 0.38, wall = ctx.createRadialGradient(cx0, cy0, 0, cx0, cy0, r * 1.38);   // black core pushed toward the table, the far rim lit as a crescent
+    wall.addColorStop(0, "#000000"); wall.addColorStop(0.5, "#020101"); wall.addColorStop(0.7, warm(0.16, 0.09, 0.06)); wall.addColorStop(0.86, warm(0.36, 0.22, 0.15)); wall.addColorStop(1, warm(0.52, 0.34, 0.24));
     ctx.fillStyle = wall; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "rgba(255,238,205,.55)"; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(x, y, r + 0.2, aim + green, aim + 2 * Math.PI - green); ctx.stroke();   // thin wooden lip round the hole
-    ctx.strokeStyle = shade(city.felt[0], 22); ctx.globalAlpha = 0.3; ctx.lineWidth = 3.4; ctx.beginPath(); ctx.arc(x, y, r + 0.9, aim - green, aim + green); ctx.stroke(); ctx.globalAlpha = 0.45; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(x, y, r + 0.3, aim - green, aim + green); ctx.stroke(); ctx.globalAlpha = 1;   // the cloth rolling over the edge into the hole
+    const ring = (r0, r1, stops) => { const e = ctx.createRadialGradient(x, y, r0, x, y, r1); for (const [t, c] of stops) e.addColorStop(t, c); ctx.fillStyle = e; ctx.beginPath(); ctx.arc(x, y, r1, 0, 7); ctx.arc(x, y, r0, 7, 0, true); ctx.fill(); };
+    ctx.save(); ctx.beginPath(); ctx.rect(-C, -C, FW + 2 * C, FH + 2 * C); ctx.clip();   // cloth side only: it rolls over the edge and down into the hole
+    ring(r - 0.5, r + 9, [[0, "rgba(0,0,0,.34)"], [0.3, "rgba(0,0,0,.14)"], [1, "rgba(0,0,0,0)"]]);
+    ring(r - 0.5, r + 1.6, [[0, "rgba(255,255,255,.13)"], [1, "rgba(255,255,255,0)"]]);
+    ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.rect(-C - 400, -C - 400, FW + 2 * C + 800, FH + 2 * C + 800); ctx.rect(-C, -C, FW + 2 * C, FH + 2 * C); ctx.clip("evenodd");   // wood side: the cut edge of the rail catches a little light
+    ring(r - 0.5, r + 1.8, [[0, "rgba(255,244,220,.22)"], [1, "rgba(255,244,220,0)"]]);
+    ctx.restore();
   }
   ctx.restore();
 }
