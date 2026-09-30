@@ -651,3 +651,13 @@ SIZNING YUTUQLARINGIZ‖YOUR REWARDS|ВАШИ НАГРАДЫ|ÖDÜLLERİN|TUS PR
 Tabriklaymiz!‖Congratulations!|Поздравляем!|Tebrikler!|¡Felicidades!|Parabéns!|تهانينا!|Selamat!|बधाई हो!|Félicitations !|Glückwunsch!|축하합니다!|おめでとう！|恭喜！
 O'YIN NATIJASI‖MATCH RESULT|ИТОГ МАТЧА|MAÇ SONUCU|RESULTADO|RESULTADO DA PARTIDA|نتيجة المباراة|HASIL PERMAINAN|मैच का नतीजा|RÉSULTAT DU MATCH|SPIELERGEBNIS|경기 결과|試合結果|比赛结果
 Keyingi safar omad!‖Better luck next time!|Повезёт в следующий раз!|Bir dahaki sefere!|¡Suerte la próxima!|Mais sorte da próxima vez!|حظًا أوفر في المرة القادمة!|Semoga beruntung lain kali!|अगली बार किस्मत साथ दे!|Bonne chance la prochaine fois !|Viel Glück beim nächsten Mal!|다음엔 행운이 있기를!|次はきっと勝てる！|下次好运！
+Mavsum passi‖Season Pass|Сезонный пропуск|Sezon Geçidi|Pase de temporada|Passe da temporada|بطاقة الموسم|Pass Musim|सीज़न पास|Pass de saison|Saisonpass|시즌 패스|シーズンパス|赛季通行证
+Missiyalar‖Missions|Задания|Görevler|Misiones|Missões|المهام|Misi|मिशन|Missions|Missionen|미션|ミッション|任务
+Kundalik missiyalar‖Daily Missions|Ежедневные задания|Günlük Görevler|Misiones diarias|Missões diárias|المهام اليومية|Misi Harian|दैनिक मिशन|Missions quotidiennes|Tägliche Missionen|일일 미션|デイリーミッション|每日任务
+Mukofot olish‖Collect Reward|Забрать награду|Ödülü Al|Recoger premio|Coletar prêmio|استلم المكافأة|Ambil Hadiah|इनाम लें|Récupérer|Belohnung holen|보상 받기|報酬を受け取る|领取奖励
+Pass olish‖Get the Pass|Получить пропуск|Geçidi Al|Obtener pase|Obter passe|احصل على البطاقة|Dapatkan Pass|पास लें|Obtenir le pass|Pass holen|패스 받기|パスを入手|获取通行证
+Yo'q, rahmat‖No, thanks|Нет, спасибо|Hayır, teşekkürler|No, gracias|Não, obrigado|لا، شكرًا|Tidak, terima kasih|नहीं, धन्यवाद|Non merci|Nein danke|아니요|いいえ|不用了
+Mavsum tugashi‖Season ends|Сезон закончится|Sezon sona erer|La temporada termina|A temporada termina|ينتهي الموسم|Musim berakhir|सीज़न समाप्त|Fin de saison|Saison endet|시즌 종료|シーズン終了|赛季结束
+O'tgan mavsum mukofotlari!‖Past Season Rewards!|Награды прошлого сезона!|Geçen Sezon Ödülleri!|¡Premios de la temporada pasada!|Prêmios da temporada passada!|!مكافآت الموسم الماضي|Hadiah Musim Lalu!|पिछले सीज़न के इनाम!|Récompenses de la saison passée !|Belohnungen der letzten Saison!|지난 시즌 보상!|前シーズンの報酬!|上赛季奖励!
+Qo'rqinchli kiy + VIP stol‖Scary cue + VIP table|Жуткий кий + VIP-стол|Korkunç ıstaka + VIP masa|Taco terrorífico + mesa VIP|Taco assustador + mesa VIP|عصا مخيفة + طاولة VIP|Stik seram + meja VIP|डरावना क्यू + VIP टेबल|Queue effrayante + table VIP|Gruseliger Queue + VIP-Tisch|공포 큐 + VIP 테이블|ホラーキュー + VIPテーブル|恐怖球杆 + VIP球桌
+Qo'rqinchli VIP kiy‖Scary VIP cue|Жуткий VIP-кий|Korkunç VIP ıstaka|Taco VIP terrorífico|Taco VIP assustador|عصا VIP مخيفة|Stik VIP seram|डरावना VIP क्यू|Queue VIP effrayante|Gruseliger VIP-Queue|공포 VIP 큐|ホラーVIPキュー|恐怖VIP球杆
