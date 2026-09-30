@@ -4646,8 +4646,21 @@ function paintTable(city) {
     ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
     rr(-C - 3, -C - 3, FW + 2 * C + 6, FH + 2 * C + 6, 10); ctx.stroke(); ctx.restore();
   }
+  // soft overhead lamp
+  const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
+  lamp.addColorStop(0, "rgba(255,255,240,.16)"); lamp.addColorStop(0.6, "rgba(255,255,240,.04)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
+  ctx.fillStyle = lamp; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
+  const vig = ctx.createRadialGradient(FW / 2, FH / 2, FH * 0.45, FW / 2, FH / 2, FW * 0.62);
+  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.22)");
+  ctx.fillStyle = vig; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
   if (!lucky) for (const p of POCKETS) {   // pocket holes: rubber lip, deep shaded well and a lit rim, painted over the cushion ends
     const x = p.x + p.dx, y = p.y + p.dy, r = p.dr, mar = city.id === "syd";
+    if (p.mid) {   // side pocket: the cushion is cut open between the two jaw tips, so the mouth is a clear notch running into the hole
+      const sg = p.y < 0 ? -1 : 1, yb = p.y < 0 ? 0 : FH, xm = FW / 2, ng = ctx.createLinearGradient(0, yb, 0, yb + sg * (C + 6));
+      ng.addColorStop(0, "rgba(2,1,2,.55)"); ng.addColorStop(0.5, "#030203"); ng.addColorStop(1, "#000");
+      ctx.fillStyle = ng; ctx.beginPath(); ctx.moveTo(xm - mA, yb); ctx.lineTo(xm + mA, yb); ctx.lineTo(xm + mA - 4, yb + sg * (C + 6)); ctx.lineTo(xm - mA + 4, yb + sg * (C + 6)); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 1.4; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(xm - mA, yb); ctx.lineTo(xm - mA + 3, yb + sg * C); ctx.moveTo(xm + mA, yb); ctx.lineTo(xm + mA - 3, yb + sg * C); ctx.stroke();   // lit jaw faces
+    }
     const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1);   // direction away from the table
     { const sh = ctx.createRadialGradient(x, y, r - 1, x, y, r + 8); sh.addColorStop(0, "rgba(0,0,0,.4)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 8, 0, 7); ctx.fill(); }
     const lip = ctx.createLinearGradient(x - r, y - r, x + r, y + r); lip.addColorStop(0, mar ? "#4a1a10" : shade(city.felt[1], -70)); lip.addColorStop(1, mar ? "#0f0403" : shade(city.felt[1], -120));
@@ -4659,13 +4672,6 @@ function paintTable(city) {
     ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();   // inner wall catching the light
     ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r + 2.1, Math.atan2(-oy, -ox) - 0.7, Math.atan2(-oy, -ox) + 0.7); ctx.stroke();   // specular on the lip
   }
-  // soft overhead lamp
-  const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
-  lamp.addColorStop(0, "rgba(255,255,240,.16)"); lamp.addColorStop(0.6, "rgba(255,255,240,.04)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
-  ctx.fillStyle = lamp; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
-  const vig = ctx.createRadialGradient(FW / 2, FH / 2, FH * 0.45, FW / 2, FH / 2, FW * 0.62);
-  vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.22)");
-  ctx.fillStyle = vig; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
   ctx.restore();
 }
 
