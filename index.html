@@ -4516,13 +4516,14 @@ function paintTable(city) {
     const side = s[4], d = {t: [0, 0, 0, -C], b: [0, FH, 0, FH + C], l: [0, 0, -C, 0], r: [FW, 0, FW + C, 0]}[side];
     const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
     const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
-    const cb = side === "t" || side === "b" ? f0.map(v => v - 16) : f0.map((v, i) => (v - 20) * 0.4 + (f1[i] - 22) * 0.6);   // the cushion is the same cloth colour the felt has right at that edge
+    const cb = f0.map((v, i) => v * 0.62 + f1[i] * 0.38 - 26);   // the cloth colour the felt really has at its edge (after the gradient, vignette and edge shadow)   // the cushion is the same cloth colour the felt has right at that edge
     const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-    g.addColorStop(0, cc(2)); g.addColorStop(0.5, cc(-8)); g.addColorStop(1, cc(-22));   // no visible seam: the cushion starts exactly in the cloth's own colour and only darkens as the slope turns away
+    g.addColorStop(0, cc(4)); g.addColorStop(0.5, cc(-6)); g.addColorStop(1, cc(-22));   // no visible seam: the cushion starts exactly in the cloth's own colour and only darkens as the slope turns away
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,.09)"; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
     ctx.strokeStyle = "rgba(0,0,0,.28)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
   }
+  ctx.save(); ctx.globalAlpha = 0.55; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); for (const s of segs) { ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill(); } ctx.restore();   // the same cloth grain on the cushions, so they read as one material with the felt
   if (st.glow && !lucky) {                     // neon strip under the cushion nose
     ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur = 16; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.9;
     rr(-C - 3, -C - 3, FW + 2 * C + 6, FH + 2 * C + 6, 10); ctx.stroke(); ctx.restore();
