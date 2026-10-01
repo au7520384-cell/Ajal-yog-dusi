@@ -1991,7 +1991,7 @@ const SUR_NAMES = ["Aksion", "Kristall Tig'", "Ekskalibur", "Ajdar Olovi", "Muz 
 "Tomiris", "Spitamen", "Ulug'bek", "Amir Temur", "Bobur", "Alpomish"];
 SUR_NAMES.forEach((name, i) => {
 const rnd = cueRand(i * 53 + 5);
-CUES.push({id: "x" + i, name, cat: "surprise", tier: "Afsonaviy", pieces: 4, st: [9, 9, 9, 9], ...cueLook(2)});
+CUES.push({id: "x" + i, name, cat: "surprise", tier: "Afsonaviy", pieces: 4, st: [0, 0, 0, 0].map((_, k) => Math.max(3, Math.min(8, Math.round(3 + ((i * 7 + k * 5 + 3) % 9) / 8 * 3.4 + rnd() * 2.2)))), ...cueLook(2)});
 });
 CUES.push({id: "p_ot", name: "Ot yurishi", cat: "pass", tier: "Afsonaviy", st: [8, 8, 8, 8], ...cueLook(2)},
 {id: "p_shoh", name: "Shoh gambiti", cat: "pass", tier: "Afsonaviy", st: [10, 9, 10, 9], ...cueLook(2), glow: "#ffd24d"});
@@ -2018,7 +2018,7 @@ CUES.push({id: "c_" + cc, cc, cat: "country", tier: "Yuqori", price: 40, cur: "c
 shaft: ["#f7ecd0", "#d9b87e"], butt: ["#3a2210", "#0d0603"], metal: "#d9d9d9", deco: "flag"});
 });
 const cueName = c => c.cc ? `${countryName(c.cc)}` : c.name;
-const cuePower = c => c.cat === "vip" ? 60 + c.st.reduce((a, v) => a + v, 0) * 6 : c.cat === "pass" ? 160 : c.cat === "premium" ? 160 + Math.round(c.cash / 40) : c.cat === "surprise" ? 150 : c.cat === "victory" ? 40 + c.city * 8 : c.cat === "country" ? 70 : c.price ? Math.round(10 + (c.cur === "cash" ? c.price / 3 : Math.log10(c.price + 1) * 12)) : 0;
+const cuePower = c => c.cat === "vip" ? 60 + c.st.reduce((a, v) => a + v, 0) * 6 : c.cat === "pass" ? 160 : c.cat === "premium" ? 160 + Math.round(c.cash / 40) : c.cat === "surprise" ? 50 + c.st.reduce((x, v) => x + v, 0) * 5 : c.cat === "victory" ? 40 + c.city * 8 : c.cat === "country" ? 70 : c.price ? Math.round(10 + (c.cur === "cash" ? c.price / 3 : Math.log10(c.price + 1) * 12)) : 0;
 const store = {
 get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
 set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
