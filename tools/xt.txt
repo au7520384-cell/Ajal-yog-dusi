@@ -736,3 +736,7 @@ Doimiy mehmon‖Regular|Завсегдатай|Müdavim|Habitual|Frequentador|ز
 Tajribali‖Experienced|Опытный|Deneyimli|Experimentado|Experiente|ذو خبرة|Berpengalaman|अनुभवी|Expérimenté|Erfahren|숙련자|ベテラン|资深玩家
 Usta‖Master|Мастер|Usta|Maestro|Mestre|محترف|Master|मास्टर|Maître|Meister|마스터|マスター|大师
 Afsona‖Legend|Легенда|Efsane|Leyenda|Lenda|أسطورة|Legenda|लेजेंड|Légende|Legende|전설|レジェンド|传奇
+Asosiy yutuqlar‖Core achievements|Основные достижения|Temel başarımlar|Logros básicos|Conquistas básicas|الإنجازات الأساسية|Pencapaian utama|मुख्य उपलब्धियाँ|Succès principaux|Haupterfolge|기본 업적|基本実績|基础成就
+Kiylar to'plami‖Cue collection|Коллекция киев|Isteka koleksiyonu|Colección de tacos|Coleção de tacos|مجموعة العصي|Koleksi stik|क्यू संग्रह|Collection de queues|Queue-Sammlung|큐 컬렉션|キューコレクション|球杆收藏
+Shahar uzuklari‖City rings|Кольца городов|Şehir yüzükleri|Anillos de ciudades|Anéis das cidades|خواتم المدن|Cincin kota|शहर की अंगूठियाँ|Bagues des villes|Stadtringe|도시 반지|都市リング|城市戒指
+Ligalar‖Leagues|Лиги|Ligler|Ligas|Ligas|الدوريات|Liga|लीग|Ligues|Ligen|리그|リーグ|联赛
