@@ -2896,6 +2896,15 @@ const d = Math.max(0.006, isFinite(G.skill) ? G.skill : 0.01);
 for (const c of all.slice(0, 4)) c.sc = (c.sc + scoreSim(simShot(c.angle - d, c.power, c.spx, c.spy), T_) + scoreSim(simShot(c.angle + d, c.power, c.spx, c.spy), T_)) / 3;
 all.sort((a, b) => b.sc - a.sc);
 }
+if (T_ === 2) for (const c of all.slice(0, 3)) {   // two-shot lookahead: after the shot, what could this player do next from the resulting table?
+const r = simShot(c.angle, c.power, c.spx, c.spy), s0 = r.s, obj = s0.potted.filter(n => n !== 0 && n !== 8);
+if (!obj.length || s0.potted.includes(0) || s0.potted.includes(8) || s0.firstHit === null) continue;
+const saveB = G.balls, saveG = G.groups, cue = r.balls[0];
+G.balls = r.balls; if (!G.groups[G.cur]) { const g0 = groupOf(obj[0]); G.groups = G.cur === 0 ? [g0, g0 === "solid" ? "stripe" : "solid"] : [g0 === "solid" ? "stripe" : "solid", g0]; }
+let nx = null; try { nx = cue.out ? null : bestShotSim(cue.x, cue.y, 0); } finally { G.balls = saveB; G.groups = saveG; }
+if (nx && nx.sc > 0) c.sc += 0.4 * Math.min(nx.sc, 240);
+}
+all.sort((a, b) => b.sc - a.sc);
 return all[0] || null;
 }
 function safeShotSim(cx, cy, tier) {   // nothing pots cleanly: pick the shot the engine says is legal and safest (strong bots also leave the opponent no shot)
@@ -8245,7 +8254,7 @@ Net.sync(); setTimeout(() => location.reload(), 1200);
 }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), ""));
 }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
-const SET_DEF = {proTable: false, vib: true, sens: "normal", tapAim: true, fine: true, guideOff: false, power: "left", cheer: "all", allowFriend: true, showOnline: true, notifyFr: true};
+const SET_DEF = {proTable: true, vib: true, sens: "normal", tapAim: true, fine: true, guideOff: false, power: "left", cheer: "all", allowFriend: true, showOnline: true, notifyFr: true};
 const opt = k => profile.set && k in profile.set ? profile.set[k] : SET_DEF[k];
 const SENS = {slow: 0.55, normal: 1, fast: 1.6};
 function setOpt(k, v) { profile.set = {...(profile.set || {}), [k]: v}; save(); applySettings(); if (k === "allowFriend" || k === "showOnline") Net.sync(); }
