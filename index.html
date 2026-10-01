@@ -5671,17 +5671,22 @@ const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, mx = dir > 0 ? 1232 : 8
 return {cx, dir, mx, y0, ye, L1, len: L1 + ye - y0};
 };
 const trayPos = (g, s) => s < g.L1 ? [g.mx + g.dir * s, g.y0] : [g.cx, g.y0 + s - g.L1];
-function trayPath(g) { ctx.beginPath(); ctx.moveTo(g.mx, g.y0); ctx.arcTo(g.cx, g.y0, g.cx, g.y0 + 16, 16); ctx.lineTo(g.cx, g.ye); }
+function trayPath(g) { ctx.beginPath(); ctx.moveTo(g.mx, g.y0); ctx.arcTo(g.cx, g.y0, g.cx, g.y0 + 22, 22); ctx.lineTo(g.cx, g.ye); }
 function drawTray(G) {
-const g = trayGeo();
+const g = trayGeo(), W = 30;
 ctx.save(); ctx.lineCap = "round"; ctx.lineJoin = "round";
-trayPath(g); ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 38; ctx.save(); ctx.translate(3, 4); ctx.stroke(); ctx.restore();
-trayPath(g); ctx.strokeStyle = "#9aa8c0"; ctx.lineWidth = 34; ctx.stroke();
-trayPath(g); ctx.strokeStyle = "#5d6b86"; ctx.lineWidth = 31; ctx.stroke();
-trayPath(g); ctx.strokeStyle = "#0b101c"; ctx.lineWidth = 27; ctx.stroke();
+const line = (w, c) => { trayPath(g); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.stroke(); };
+ctx.save(); ctx.translate(3, 4); line(W + 12, "rgba(0,0,0,.4)"); ctx.restore();
+line(W + 9, "#dfe7f5"); line(W + 7, "#6f7d98"); line(W + 5, "#eef3fb"); line(W + 2.5, "#7b88a3");   // double chrome wall
+line(W, "#0f1627"); line(W - 4, "#131c31");
+// cross ribs every two balls, like the original ladder
+ctx.strokeStyle = "rgba(190,203,226,.75)"; ctx.lineWidth = 2.5; ctx.lineCap = "butt";
+for (let y = g.y0 + g.L1 + 40; y < g.ye - 10; y += 54) { ctx.beginPath(); ctx.moveTo(g.cx - W / 2, y); ctx.lineTo(g.cx + W / 2, y); ctx.stroke(); }
 for (const q of G.tray) if (q.delay <= 0) { const [x, y] = trayPos(g, q.s); drawBall(q.b, x, y, 1); }
-trayPath(g); ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 3; ctx.save(); ctx.translate(-g.dir * 9, 0); ctx.stroke(); ctx.restore();
-ctx.fillStyle = "#c3cde0"; rr(g.mx - (g.dir > 0 ? 2 : 6), g.y0 - 20, 8, 40, 3); ctx.fill();
+ctx.lineCap = "round"; ctx.save(); ctx.translate(-g.dir * (W / 2 - 3), 0); line(2, "rgba(255,255,255,.28)"); ctx.restore();
+const fx = g.dir > 0 ? g.mx - 3 : g.mx - 4;   // mouth ring set into the rail
+const fg = ctx.createLinearGradient(fx, 0, fx + 7, 0); fg.addColorStop(0, "#f4f8ff"); fg.addColorStop(0.5, "#8d9ab4"); fg.addColorStop(1, "#dfe7f5");
+ctx.fillStyle = fg; rr(fx, g.y0 - W / 2 - 6, 7, W + 12, 3); ctx.fill();
 ctx.restore();
 }
 function updateTray(G) {
