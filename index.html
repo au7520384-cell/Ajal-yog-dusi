@@ -1125,7 +1125,7 @@ const POCKETS = [
 {x: FW / 2, y: FH + 9, r: 32, dx: 0, dy: 18, dr: 23, mid: true},
 {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
-POCKETS.forEach(p => { if (p.mid) { p.hx = p.x; p.hy = p.y + p.dy * 0.5; p.hr = 32; } else { p.hx = p.x + p.dx * 0.375; p.hy = p.y + p.dy * 0.375; p.hr = 30; } });   // the hole cut in the slate: ball is unsupported once its centre is over it
+POCKETS.forEach(p => { if (p.mid) { p.hx = p.x; p.hy = p.y + p.dy * 0.5; p.hr = 29.6; } else { p.hx = p.x + p.dx * 0.375; p.hy = p.y + p.dy * 0.375; p.hr = 26.7; } });   // the hole cut in the slate: ball is unsupported once its centre is over it; radius = half the WPA maximum mouth (corner 4.625 in, side 5.125 in) in units of the ball diameter
 const CORNER_MOUTH = 36, TIP_R = 4;
 const CF = 22, MF = 12;
 const JAW_TIPS = [];
@@ -1136,6 +1136,14 @@ for (const f of [top, bot]) { f(c + CF, c); f(w - c - CF, w - c); f(h - m - MF, 
 for (const f of [(y1, y2) => o.push([0, y1, -Math.abs(y2 - y1), y2]), (y1, y2) => o.push([w, y1, w + Math.abs(y2 - y1), y2])]) { f(c + CF, c); f(500 - c - CF, 500 - c); }
 return o;
 })();
+const KN_R = 8;   // rounded jaw knuckle (≈ 0.7 in): the sharp corner where the cushion meets the jaw face is replaced by a fillet circle tangent to both faces
+for (const f of JAW_FACES) {
+const dx = f[2] - f[0], dy = f[3] - f[1], dl = Math.hypot(dx, dy), fx = dx / dl, fy = dy / dl;
+const side = f[0] === 0 || f[0] === 1000, rx = side ? 0 : -Math.sign(dx), ry = side ? -Math.sign(dy) : 0;
+const th = Math.acos(rx * fx + ry * fy), tl = KN_R / Math.tan(th / 2), kd = KN_R / Math.sin(th / 2), bx = rx + fx, by = ry + fy, bl = Math.hypot(bx, by);
+JAW_TIPS.push([f[0] + bx / bl * kd, f[1] + by / bl * kd, KN_R]);
+f[0] += fx * tl; f[1] += fy * tl;
+}
 const MID_MOUTH = 29;
 const POCKET_AIMS = [
 {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
@@ -2281,9 +2289,20 @@ a.vx += px; a.vy += py; b.vx -= px; b.vy -= py;
 a.wx += k * (ray * pz); a.wy += k * (-rax * pz); a.wz += k * (rax * py - ray * px);
 b.wx += k * (-ray * -pz); b.wy += k * (rax * -pz); b.wz += k * (-rax * -py + ray * -px);
 }
-function cushion(G, b, nx, ny) {   // cushion nose sits 1.4 R above the cloth: contact normal is tilted down by asin(0.4), which couples top/back spin and english into the bounce
+function contact3(b, n0, n1, n2, e, mu) {   // frictional impact with a fixed surface whose unit normal n points towards the ball; spin and vertical motion included
 if (b.wx === undefined) b.wx = b.wy = b.wz = 0;
-const CT = 0.9165, ST = 0.4, vn = -(b.vx * nx + b.vy * ny); if (vn <= 0) return false;
+const r0 = -R * n0, r1 = -R * n1, r2 = -R * n2, vz = b.vz || 0;
+const ux = b.vx + (b.wy * r2 - b.wz * r1), uy = b.vy + (b.wz * r0 - b.wx * r2), uz = vz + (b.wx * r1 - b.wy * r0), un = ux * n0 + uy * n1 + uz * n2;
+if (un >= 0) return 0;
+const Jn = -(1 + e) * un, t0 = ux - un * n0, t1 = uy - un * n1, t2 = uz - un * n2, tl = Math.hypot(t0, t1, t2), Jt = tl > 1e-9 ? Math.min(mu * Jn, tl / 3.5) : 0;
+const px = Jn * n0 - (tl ? Jt * t0 / tl : 0), py = Jn * n1 - (tl ? Jt * t1 / tl : 0), pz = Jn * n2 - (tl ? Jt * t2 / tl : 0), k = 2.5 / (R * R);
+b.vx += px; b.vy += py; b.vz = Math.min(4.5, vz + pz);   // the cup roof and rail caps keep a ball from leaping out of the pocket
+b.wx += k * (r1 * pz - r2 * py); b.wy += k * (r2 * px - r0 * pz); b.wz += k * (r0 * py - r1 * px);
+return -un;
+}
+function cushion(G, b, nx, ny) {   // WPA cushion nose height is 63.5–65 % of the ball diameter (≈1.28 R): the contact normal is tilted down by asin(0.28), which couples top/back spin and english into the bounce
+if (b.wx === undefined) b.wx = b.wy = b.wz = 0;
+const CT = 0.96, ST = 0.28, vn = -(b.vx * nx + b.vy * ny); if (vn <= 0) return false;
 const rx = -R * CT * nx, ry = -R * CT * ny, rz = R * ST, N0 = CT * nx, N1 = CT * ny, N2 = -ST;
 const ux = b.vx + (b.wy * rz - b.wz * ry), uy = b.vy + (b.wz * rx - b.wx * rz), uz = b.wx * ry - b.wy * rx, un = ux * N0 + uy * N1 + uz * N2;
 if (un >= 0) return false;
@@ -2300,9 +2319,13 @@ const nx = p[0] * c + cx * s + kx * kp * (1 - c), ny = p[1] * c + cy * s + ky * 
 p[0] = nx; p[1] = ny; p[2] = nz; norm3(p);
 }
 function spinBall(b) { const wm = Math.hypot(b.wx || 0, b.wy || 0, b.wz || 0); if (wm < 1e-4) return; const kx = b.wx / wm, ky = b.wy / wm, kz = b.wz / wm, c = Math.cos(wm), sn = Math.sin(wm); rotA(b.p, kx, ky, kz, c, sn); if (b.q) rotA(b.q, kx, ky, kz, c, sn); }
-function holeAt(pockets, b, margin) { const m = margin || 0; for (const p of pockets) if ((b.x - p.hx) ** 2 + (b.y - p.hy) ** 2 < (p.hr + m) ** 2) return p; return null; }
+function holeAt(pockets, b, margin) {   // the hole in the slate, or the open cup beyond the table edge: no cloth under the ball there
+const m = margin || 0; let bd = 1e9, np = null;
+for (const p of pockets) { const d = (b.x - p.hx) ** 2 + (b.y - p.hy) ** 2; if (d < (p.hr + m) ** 2) return p; if (d < bd) { bd = d; np = p; } }
+return b.x < 0 || b.x > FW || b.y < 0 || b.y > FH ? np : null;
+}
 function jawHit(G, b, nx, ny, hv) {   // rubber jaw: same contact model as a cushion (nose above centre, spin coupling); below the slate the ball just rebounds off the shaft wall
-if (b.z < -0.3 * R) { const vn = b.vx * nx + b.vy * ny; if (vn < 0) { b.vx -= 1.45 * vn * nx; b.vy -= 1.45 * vn * ny; onRail(G, b, hv); } return; }
+if (b.z < -0.3 * R) { if (contact3(b, nx, ny, 0, 0.45, 0.3)) onRail(G, b, hv); return; }
 if (cushion(G, b, nx, ny)) { onRail(G, b, hv); if (hv > 12 && !(b.z > 0)) { b.vz = Math.min(4, 1.5 + (hv - 12) * 0.2); b.z = 0.01; } }
 }
 function physicsFrame(G) {
@@ -2327,22 +2350,21 @@ continue;
 let dx = b.x - hp.hx, dy = b.y - hp.hy, rho = Math.hypot(dx, dy) || 1e-6;
 const iax = hp.mid ? 0 : -Math.sign(hp.dx) * 0.7071, iay = hp.mid ? -Math.sign(hp.dy) : -Math.sign(hp.dy) * 0.7071;
 if (dx * iax + dy * iay < 0 && rho + R > hp.hr) {   // back of the pocket cup: a fast ball hits it and drops instead of flying out the far side
-const ux = dx / rho, uy = dy / rho, vr = b.vx * ux + b.vy * uy;
-if (vr > 0) { b.vx -= 1.3 * vr * ux; b.vy -= 1.3 * vr * uy; if (vr > 3 && !G.demo) Snd.rail(vr * 0.7); }
+const ux = dx / rho, uy = dy / rho, vr = contact3(b, -ux, -uy, 0, 0.3, 0.3); if (vr > 3 && !G.demo) Snd.rail(vr * 0.7);
 const nr = hp.hr - R; if (rho > nr) { b.x = hp.hx + ux * nr; b.y = hp.hy + uy * nr; dx = b.x - hp.hx; dy = b.y - hp.hy; rho = nr; }
 }
 const dz = b.z + R, hd = rho - hp.hr, dist = Math.hypot(hd, dz);
 if (dist < R && dist > 1e-6 && b.z <= 0.5) {   // the rim of the hole is a ring in the slate surface: the ball rolls over it, or a fast ball catches the far lip and rattles out
 const n0 = hd * dx / rho / dist, n1 = hd * dy / rho / dist, n2 = dz / dist, vn = b.vx * n0 + b.vy * n1 + (b.vz || 0) * n2, pen = R - dist;
 b.x += n0 * pen; b.y += n1 * pen; b.z += n2 * pen;
-if (vn < 0) { const j = -(1 + 0.35) * vn; b.vx += j * n0; b.vy += j * n1; b.vz = (b.vz || 0) + j * n2; if (-vn > 2 && !G.demo) Snd.rail(-vn * 0.6); }
+const vr = contact3(b, n0, n1, n2, Math.max(0.2, 0.5 - 0.04 * (-vn) * MPS), 0.3); if (vr > 2 && !G.demo) Snd.rail(vr * 0.6);
 }
-if (b.z < -R * 0.9 && Math.hypot(b.x - hp.hx, b.y - hp.hy) < hp.hr) { b.out = true; onPot(G, b, hp); b.vx = b.vy = 0; b.z = b.vz = 0; }
+if (b.z < -R * 0.9 && (Math.hypot(b.x - hp.hx, b.y - hp.hy) < hp.hr || b.x < 0 || b.x > FW || b.y < 0 || b.y > FH)) { b.out = true; onPot(G, b, hp); b.vx = b.vy = 0; b.z = b.vz = 0; }
 }
 if (pockets) for (const b of balls) {
 if (b.out) continue;
 for (const t of JAW_TIPS) {
-const dx = b.x - t[0], dy = b.y - t[1], d2 = dx * dx + dy * dy, m = R + TIP_R;
+const dx = b.x - t[0], dy = b.y - t[1], d2 = dx * dx + dy * dy, m = R + t[2];
 if (d2 < m * m && d2 > 0.0001) {
 const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, vn = b.vx * nx + b.vy * ny;
 b.x = t[0] + nx * m; b.y = t[1] + ny * m;
@@ -2822,6 +2844,41 @@ if (s && (!best || s.score > best.score)) best = s;
 }
 return best;
 }
+function simShot(angle, power) {   // the AI tries a shot in the real physics engine on a copy of the table
+const G = game, balls = G.balls.map(b => ({...b, p: b.p.slice(), q: b.q.slice()})), cue = balls[0], sp = Math.max(0.6, power * 30.5) * (G.isBreak ? 1.35 : 1);
+cue.vx = Math.cos(angle) * sp; cue.vy = Math.sin(angle) * sp; cue.wx = cue.wy = cue.wz = 0; cue.z = cue.vz = 0;
+const g = {balls, pockets: G.pockets, demo: true, shot: {firstHit: null, potted: [], rails: 0}, sinking: [], tray: [], flashes: [], sparks: [], type: G.type};
+for (let f = 0; f < 700; f++) { physicsFrame(g); if (!anyMoving(balls)) break; }
+return g.shot;
+}
+function scoreSim(s) {
+const G = game, grp = G.groups[G.cur], pot = s.potted, cueP = pot.includes(0), eight = pot.includes(8), obj = pot.filter(n => n !== 0 && n !== 8);
+if (G.type === "practice") return obj.length * 100 - (cueP ? 300 : 0);
+if (s.firstHit === null) return -500;
+const own = grp ? remaining(grp) : -1, legal = grp ? (own > 0 ? groupOf(s.firstHit) === grp : s.firstHit === 8) : s.firstHit !== 8;
+let sc = legal ? 0 : -400;
+if (cueP) sc -= 800;
+for (const n of obj) sc += !grp || groupOf(n) === grp ? 120 : -60;
+if (eight) sc += grp && own > 0 && own === obj.filter(n => groupOf(n) === grp).length && !cueP && legal ? 2000 : -3000;
+return sc;
+}
+function bestShotSim(cx, cy) {
+const G = game, cands = [];
+for (const t of legalTargets(G.cur)) for (const pa of POCKET_AIMS) { const e = evalShot(G.balls, cx, cy, t, pa); if (e) cands.push(e); }
+cands.sort((a, b) => b.score - a.score);
+let best = null;
+for (const c of cands.slice(0, 4)) for (const pw of [c.power, Math.min(1, c.power * 1.2)]) {
+const sc = scoreSim(simShot(c.angle, pw)) + c.score * 1e-6;
+if (!best || sc > best.sc) best = {angle: c.angle, power: pw, score: c.score, t: c.t, sc};
+}
+return best;
+}
+function safeShotSim(cx, cy) {   // nothing pots cleanly: pick the shot the engine says is legal and safest
+const G = game, tg = legalTargets(G.cur); let best = null;
+for (const t of tg) { if (!segClear(G.balls, cx, cy, t.x, t.y, [0, t.n])) continue; const ang = Math.atan2(t.y - cy, t.x - cx);
+for (const pw of [0.3, 0.45, 0.65]) { const sc = scoreSim(simShot(ang, pw)); if (!best || sc > best.sc) best = {angle: ang, power: pw, sc}; } }
+return best;
+}
 function aiThink() {
 const G = game, cue = G.balls[0];
 if (G.ballInHand) {
@@ -2840,7 +2897,8 @@ if (G.isBreak) {
 const apex = G.balls.find(b => b.n === 1 && !b.out) || G.balls.find(b => !b.out && b.n !== 0) || {x: FW * 0.72, y: FH / 2};
 plan = {angle: Math.atan2(apex.y - cue.y, apex.x - cue.x) + gauss() * 0.004, power: rnd(0.93, 1)};
 } else {
-plan = bestShotFrom(cue.x, cue.y);
+plan = bestShotSim(cue.x, cue.y);
+if (!plan || plan.sc < 0) { const sf = safeShotSim(cue.x, cue.y); if (sf && (!plan || sf.sc > plan.sc)) plan = sf; }
 if (!plan) {
 const tg = legalTargets(G.cur);
 const clear = tg.filter(t => segClear(G.balls, cue.x, cue.y, t.x, t.y, [0, t.n]));
