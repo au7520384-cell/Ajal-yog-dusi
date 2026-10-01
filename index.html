@@ -8593,7 +8593,6 @@ function achArt(a, got, size) {
 const m = /^([wpslt]|c)(\d+)$/.exec(a.id);
 if (m) { const F = ACH_FAM[m[1]], ids = ACH2.filter(x => new RegExp("^" + m[1] + "\\d+$").test(x.id)), i = ids.findIndex(x => x.id === a.id); return achBadge(F[0], F[1], F[2], metFor(i, ids.length), got, fmtS(+m[2]), size); }
 const c = a.id.startsWith("city_") ? CITIES.find(x => "city_" + x.id === a.id) : null;
-if (c && IMG["ab_" + c.id]) return "";
 if (c) return `<div class="abring${got ? "" : " off"}" style="width:${size}px">${ringHTML(c, true, size * 0.9)}</div>`;
 const lg = /^lg(\d)$/.exec(a.id); if (lg) return `<div class="abring${got ? "" : " off"}" style="width:${size}px">${leagueImg(+lg[1], size * 0.95)}</div>`;
 const B = ACH_BASE[a.id]; if (B) return achBadge(B[0], B[1], B[2], MET[[2, 1, 3, 4][B[3]] || 2], got, "", size);
@@ -8622,7 +8621,7 @@ const grp = a => a.g || (/^w\d/.test(a.id) ? "G'alabalar" : /^p\d/.test(a.id) ? 
 const groups = []; for (const a of all) { const g = grp(a); let o = groups.find(x => x[0] === g); if (!o) groups.push(o = [g, []]); o[1].push(a); }
 const card = a => { const m = /^([wpslt]|c)(\d+)$/.exec(a.id), v = m ? achVal[m[1]](profile) : 0, tg = m ? +m[2] : 0, pct = m ? Math.min(100, Math.floor(v / tg * 100)) : 0;
 const cc = a.id.startsWith("city_") ? CITIES.find(x => "city_" + x.id === a.id) : null;
-if (cc && IMG["ab_" + cc.id]) return `<div class="acc acwide${a.got ? " got" : ""}" style="background-image:url(${IMG["ab_" + cc.id]})"><div class="acwt"><b>${esc(T(a.name))}</b><small>${esc(T(a.d))}</small><span class="acchip">${a.got ? "✓ " + T("Olindi") : "🔒"}</span></div></div>`;
+if (false) return `<div class="acc acwide${a.got ? " got" : ""}" style="background-image:url(${IMG["ab_" + cc.id]})"><div class="acwt"><b>${esc(T(a.name))}</b><small>${esc(T(a.d))}</small><span class="acchip">${a.got ? "✓ " + T("Olindi") : "🔒"}</span></div></div>`;
 return `<div class="acc${a.got ? " got" : ""}"><div class="acart" style="background-image:url('${WREATH_URI}')">${achArt(a, !!a.got, 50)}</div><div class="acinfo"><b>${esc(T(a.name))}</b><small>${esc(T(a.d))}</small>${m && !a.got ? `<div class="chbar"><i style="width:${pct}%"></i><em>${fmtS(Math.min(v, tg))}/${fmtS(tg)}</em></div>` : a.got ? `<span class="acok"><i>✓</i>${T("Olindi")}</span>` : ""}</div></div>`; };
 openModal({icon: "", title: "", text: "", extra: `<div class="achbox"><div class="ahero"><div class="aemb">${achEmblem(92)}</div><div class="ahtx"><b>${T("Yutuqlar")}</b><span>${T("Bajarilgan")}: <em>${n}/${tot}</em></span><div class="ahbar"><i style="width:${Math.max(3, Math.round(n / tot * 100))}%"></i></div></div></div>
 <div class="achlist2">${groups.map(([g, list]) => `<div class="ash"><span>${T(g)}</span></div><div class="acgrid">${list.map(card).join("")}</div>`).join("")}</div></div>`,
