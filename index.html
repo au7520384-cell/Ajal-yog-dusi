@@ -2370,7 +2370,7 @@ const iconBall = n => ({n, p: [0, 0, 1], q: [0, -1, 0]});
 function anyMoving(balls) { return balls.some(b => !b.out && (b.vx || b.vy || b.z !== 0)); }
 const reOf = h => 0.84 - 0.0075 * (h > 24 ? 24 : h);
 const GRAV = 0.3;
-const GU = 1.2397, MPS = 0.13189, MU_S = 0.2, MU_R = 0.014, WZ_DEC = 10 / 3600, E_BB = 0.95, MU_BB = 0.06, MU_CU = 0.16;   // real units: 1 u = 2.198 mm, 1 frame = 1/60 s; GU = g in u/frame²
+const NAP = 0.0004, GU = 1.2397, MPS = 0.13189, MU_S = 0.2, MU_R = 0.014, WZ_DEC = 10 / 3600, E_BB = 0.95, MU_BB = 0.06, MU_CU = 0.16;   // real units: 1 u = 2.198 mm, 1 frame = 1/60 s; GU = g in u/frame²
 function clothStep(b, dt) {   // cloth friction: sliding (contact point slips) until it grips and the ball rolls, then rolling resistance; spin about the vertical axis decays slowly
 if (b.wx === undefined) b.wx = b.wy = b.wz = 0;
 if (!b.vx && !b.vy && !b.wx && !b.wy && !b.wz) return;
@@ -2383,6 +2383,7 @@ if (ts <= dt) rolling = true;
 if (rolling) {
 b.wx = -b.vy / R; b.wy = b.vx / R;
 const sp = Math.hypot(b.vx, b.vy);
+if (sp > 0.06 && sp < 8) b.vx += NAP * t;   // cloth nap runs head → foot: slow balls drift a hair towards the foot end
 if (sp) { const ns = sp - MU_R * GU * t; if (ns < 0.03) { b.vx = b.vy = 0; b.wx = b.wy = 0; } else { b.vx *= ns / sp; b.vy *= ns / sp; b.wx = -b.vy / R; b.wy = b.vx / R; } }
 }
 if (b.wz) { const d = WZ_DEC * dt; b.wz = Math.abs(b.wz) <= d ? 0 : b.wz - Math.sign(b.wz) * d; }
@@ -2455,7 +2456,7 @@ if (pockets) for (const b of balls) {
 if (b.out) continue;
 const hp = holeAt(pockets, b, R);
 if (!hp) {
-if (b.x < -6 || b.x > FW + 6 || b.y < -6 || b.y > FH + 6) { b.out = true; b.vx = b.vy = 0; b.z = b.vz = 0; if (G.shot) (G.shot.off = G.shot.off || []).push(b.n); if (!G.demo) Snd.rail(14); dustPuff(G, b.x, b.y, 8, 1.4); }   // thrown off the table by a jump or a violent break
+if (b.x < -6 || b.x > FW + 6 || b.y < -6 || b.y > FH + 6) { b.out = true; b.vx = b.vy = 0; b.z = b.vz = 0; if (G.shot) (G.shot.off = G.shot.off || []).push(b.n); if (!G.demo) Snd.rail(14); dustPuff(G, b.x, b.y, 8, 1.4); (G.fall = G.fall || []).push({b: {n: b.n, p: b.p.slice(), q: b.q.slice()}, x: b.x, y: b.y, vx: (b.x < 0 ? -1 : b.x > FW ? 1 : 0) * 2 + rnd(-1, 1), vy: (b.y < 0 ? -1 : b.y > FH ? 1 : 0) * 2 + rnd(-1, 1), z: Math.max(10, b.z0 || 18), vz: 2, t: 0, bn: 0}); }   // thrown off the table by a jump or a violent break
 continue;
 }
 let dx = b.x - hp.hx, dy = b.y - hp.hy, rho = Math.hypot(dx, dy) || 1e-6;
@@ -5844,6 +5845,12 @@ else drawBall(b, b.x, b.y);
 G.sparks = G.sparks.filter(s => s.life-- > 0);
 ctx.fillStyle = "#fff";
 for (const s of G.sparks) { s.x += s.vx; s.y += s.vy; ctx.globalAlpha = s.life / 16; ctx.fillRect(s.x - 1, s.y - 1, 2.5, 2.5); }
+if (G.fall && G.fall.length) { G.fall = G.fall.filter(f => f.t < 170); for (const f of G.fall) {   // a ball that left the table drops to the floor (≈ 0.8 m), bounces and rolls away
+f.t++; f.x += f.vx; f.y += f.vy; f.vz -= 0.7; f.z += f.vz;
+if (f.z < -260) { f.z = -260; f.vz = -f.vz * 0.5; f.bn++; f.vx *= 0.85; f.vy *= 0.85; if (f.bn < 4 && !G.demo) Snd.clack(Math.abs(f.vz) * 1.2); if (f.bn >= 4) f.vz = 0; }
+const k = Math.max(0.45, 1 + f.z / 700), a = Math.min(1, (170 - f.t) / 40);
+ctx.globalAlpha = 0.35 * a; ctx.fillStyle = "#000"; ctx.beginPath(); ctx.ellipse(f.x + 4, f.y + 6 - f.z * 0.18, R * k, R * k * 0.7, 0, 0, 7); ctx.fill();
+ctx.globalAlpha = a; drawBall(f.b, f.x, f.y - f.z * 0.18, k); ctx.globalAlpha = 1; } }
 if (G.dust && G.dust.length) { G.dust = G.dust.filter(d => d.life-- > 0); for (const d of G.dust) { d.x += d.vx; d.y += d.vy; d.vx *= 0.97; d.vy *= 0.97; d.r += 0.12; const k = d.life / d.l0, g = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.r); g.addColorStop(0, `rgba(205,225,255,${0.34 * k})`); g.addColorStop(1, "rgba(205,225,255,0)"); ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, 7); ctx.fill(); } ctx.fillStyle = "#fff"; }
 ctx.globalAlpha = 1;
 drawFx(G);
