@@ -5048,11 +5048,12 @@ function drawCue(G, pull) {
 const cue = G.balls[0], cd = cueDef(curP().cue);
 const dx = Math.cos(G.angle), dy = Math.sin(G.angle), start = R + 3 + pull * 95, L = 540;
 const tx = FX + cue.x - dx * start, ty = FY + cue.y - dy * start, th = G.angle + Math.PI;
+const al = (G.elev || 0) * 1.2, ca = Math.cos(al), sa = Math.sin(al), cs = Math.cos(th), sn = Math.sin(th);   // raised butt: the stick shortens in top view and its butt end rises on screen (tip stays on the cue ball)
 ctx.save();
 ctx.translate(tx + 10, ty + 14); ctx.rotate(th);
-ctx.fillStyle = "rgba(0,0,0,.28)"; ctx.beginPath(); ctx.moveTo(0, -3.5); ctx.lineTo(L, -8); ctx.lineTo(L, 8); ctx.lineTo(0, 3.5); ctx.fill();
+ctx.fillStyle = "rgba(0,0,0,.28)"; ctx.beginPath(); ctx.moveTo(0, -3.5); ctx.lineTo(L * ca, -8); ctx.lineTo(L * ca, 8); ctx.lineTo(0, 3.5); ctx.fill();
 ctx.restore();
-ctx.save(); ctx.translate(tx, ty); ctx.rotate(th);
+ctx.save(); ctx.translate(tx, ty); ctx.transform(cs * ca, sn * ca - 0.5 * sa, -sn, cs, 0, 0);
 if (Math.cos(th) < 0) ctx.scale(1, -1);
 drawCueStick(ctx, L, cd, 1);
 if (cd.lux || cd.cat === "vip") {
@@ -5683,9 +5684,10 @@ ctx.save(); ctx.translate(ELEV_X + 44, s.y); ctx.rotate(-(0.05 + el * 1.4)); ctx
 ctx.fillStyle = "#cfd8ee"; ctx.font = "13px Nunito,sans-serif"; ctx.fillText(T("tik = massé (egri zarba)"), ELEV_X, bot + 26); ctx.fillText(T("yon spin bilan birga ishlaydi"), ELEV_X, bot + 44);
 }
 ctx.fillStyle = "#cfd8ee"; ctx.font = "14px Nunito,sans-serif";
-ctx.fillText(T("▲ Yuqori — urilgandan keyin oldinga yuradi   ▼ Past — orqaga qaytadi"), s.x, s.y + s.r + 26);
-ctx.fillText(T("◀ ▶ Yon — bortga tekkanda burilib qaytadi"), s.x, s.y + s.r + 48);
-ctx.fillStyle = "#ffe27a"; ctx.fillText(T("Tayyor bo'lsa doiradan tashqariga bosing"), s.x, s.y + s.r + 72);
+ctx.fillText(T("▲ Yuqori — urilgandan keyin oldinga yuradi"), s.x, s.y + s.r + 26);
+ctx.fillText(T("▼ Past — orqaga qaytadi"), s.x, s.y + s.r + 46);
+ctx.fillText(T("◀ ▶ Yon — bortga tekkanda burilib qaytadi"), s.x, s.y + s.r + 66);
+ctx.fillStyle = "#ffe27a"; ctx.fillText(T("Tayyor bo'lsa doiradan tashqariga bosing"), s.x, s.y + s.r + 88);
 ctx.restore();
 }
 function drawBanner(G) {
