@@ -2244,12 +2244,61 @@ function mkBall(n, x, y) {
 const p = norm3([rnd(-0.35, 0.35), rnd(-0.35, 0.35), 1]);
 const q0 = [rnd(-1, 1), rnd(-1, 1), 0], d = q0[0] * p[0] + q0[1] * p[1];
 const q = norm3([q0[0] - p[0] * d, q0[1] - p[1] * d, -p[2] * d]);
-return {n, x, y, vx: 0, vy: 0, out: false, p, q};
+return {n, x, y, vx: 0, vy: 0, wx: 0, wy: 0, wz: 0, out: false, p, q};
 }
 const iconBall = n => ({n, p: [0, 0, 1], q: [0, -1, 0]});
 function anyMoving(balls) { return balls.some(b => !b.out && (b.vx || b.vy || b.z > 0)); }
 const reOf = h => 0.84 - 0.0075 * (h > 24 ? 24 : h);
 const GRAV = 0.3;
+const GU = 1.2397, MPS = 0.13189, MU_S = 0.2, MU_R = 0.014, WZ_DEC = 10 / 3600, E_BB = 0.95, MU_BB = 0.06, MU_CU = 0.16;   // real units: 1 u = 2.198 mm, 1 frame = 1/60 s; GU = g in u/frame²
+function clothStep(b, dt) {   // cloth friction: sliding (contact point slips) until it grips and the ball rolls, then rolling resistance; spin about the vertical axis decays slowly
+if (b.wx === undefined) b.wx = b.wy = b.wz = 0;
+if (!b.vx && !b.vy && !b.wx && !b.wy && !b.wz) return;
+const ux = b.vx - R * b.wy, uy = b.vy + R * b.wx, ud = Math.hypot(ux, uy); let t = dt, rolling = ud < 1e-6;
+if (!rolling) {
+const dec = 3.5 * MU_S * GU, ts = ud / dec, tt = Math.min(t, ts), ax = ux / ud, ay = uy / ud, f = MU_S * GU * tt;
+b.vx -= f * ax; b.vy -= f * ay; b.wx -= 2.5 / R * f * ay; b.wy += 2.5 / R * f * ax; t -= tt;
+if (ts <= dt) rolling = true;
+}
+if (rolling) {
+b.wx = -b.vy / R; b.wy = b.vx / R;
+const sp = Math.hypot(b.vx, b.vy);
+if (sp) { const ns = sp - MU_R * GU * t; if (ns < 0.03) { b.vx = b.vy = 0; b.wx = b.wy = 0; } else { b.vx *= ns / sp; b.vy *= ns / sp; b.wx = -b.vy / R; b.wy = b.vx / R; } }
+}
+if (b.wz) { const d = WZ_DEC * dt; b.wz = Math.abs(b.wz) <= d ? 0 : b.wz - Math.sign(b.wz) * d; }
+}
+function collideBalls(a, b, nx, ny) {   // ball–ball impact: normal impulse (e = 0.95) plus Coulomb friction at the contact point (cut-induced throw, spin transfer)
+if (a.wx === undefined) a.wx = a.wy = a.wz = 0; if (b.wx === undefined) b.wx = b.wy = b.wz = 0;
+const rax = R * nx, ray = R * ny;
+const ua0 = a.vx - a.wz * ray, ua1 = a.vy + a.wz * rax, ua2 = a.wx * ray - a.wy * rax;
+const ub0 = b.vx + b.wz * ray, ub1 = b.vy - b.wz * rax, ub2 = -(b.wx * ray - b.wy * rax);
+const u0 = ua0 - ub0, u1 = ua1 - ub1, u2 = ua2 - ub2, un = u0 * nx + u1 * ny;
+if (un <= 0) return;
+const Jn = (1 + E_BB) * un / 2, t0 = u0 - un * nx, t1 = u1 - un * ny, t2 = u2, tl = Math.hypot(t0, t1, t2), Jt = tl > 1e-9 ? Math.min(MU_BB * Jn, tl / 7) : 0;
+const px = -Jn * nx - (tl ? Jt * t0 / tl : 0), py = -Jn * ny - (tl ? Jt * t1 / tl : 0), pz = tl ? -Jt * t2 / tl : 0, k = 2.5 / (R * R);
+a.vx += px; a.vy += py; b.vx -= px; b.vy -= py;
+a.wx += k * (ray * pz); a.wy += k * (-rax * pz); a.wz += k * (rax * py - ray * px);
+b.wx += k * (-ray * -pz); b.wy += k * (rax * -pz); b.wz += k * (-rax * -py + ray * -px);
+}
+function cushion(G, b, nx, ny) {   // cushion nose sits 1.4 R above the cloth: contact normal is tilted down by asin(0.4), which couples top/back spin and english into the bounce
+if (b.wx === undefined) b.wx = b.wy = b.wz = 0;
+const CT = 0.9165, ST = 0.4, vn = -(b.vx * nx + b.vy * ny); if (vn <= 0) return false;
+const rx = -R * CT * nx, ry = -R * CT * ny, rz = R * ST, N0 = CT * nx, N1 = CT * ny, N2 = -ST;
+const ux = b.vx + (b.wy * rz - b.wz * ry), uy = b.vy + (b.wz * rx - b.wx * rz), uz = b.wx * ry - b.wy * rx, un = ux * N0 + uy * N1 + uz * N2;
+if (un >= 0) return false;
+const eh = Math.max(0.5, 0.86 - 0.045 * vn * MPS), Jn = -(1 + eh) / (CT * CT) * un;
+const t0 = ux - un * N0, t1 = uy - un * N1, t2 = uz - un * N2, tl = Math.hypot(t0, t1, t2), Jt = tl > 1e-9 ? Math.min(MU_CU * Jn, tl / 3.5) : 0;
+const px = Jn * N0 - (tl ? Jt * t0 / tl : 0), py = Jn * N1 - (tl ? Jt * t1 / tl : 0), pz = Jn * N2 - (tl ? Jt * t2 / tl : 0), k = 2.5 / (R * R);
+b.vx += px; b.vy += py;
+b.wx += k * (ry * pz - rz * py); b.wy += k * (rz * px - rx * pz); b.wz += k * (rx * py - ry * px);
+return true;
+}
+function rotA(p, kx, ky, kz, c, s) {
+const kp = kx * p[0] + ky * p[1] + kz * p[2], cx = ky * p[2] - kz * p[1], cy = kz * p[0] - kx * p[2], cz = kx * p[1] - ky * p[0];
+const nx = p[0] * c + cx * s + kx * kp * (1 - c), ny = p[1] * c + cy * s + ky * kp * (1 - c), nz = p[2] * c + cz * s + kz * kp * (1 - c);
+p[0] = nx; p[1] = ny; p[2] = nz; norm3(p);
+}
+function spinBall(b) { const wm = Math.hypot(b.wx || 0, b.wy || 0, b.wz || 0); if (wm < 1e-4) return; const kx = b.wx / wm, ky = b.wy / wm, kz = b.wz / wm, c = Math.cos(wm), sn = Math.sin(wm); rotA(b.p, kx, ky, kz, c, sn); if (b.q) rotA(b.q, kx, ky, kz, c, sn); }
 function physicsFrame(G) {
 const balls = G.balls, pockets = G.pockets, SUB = 8, E = 0.95, RE = 0.78;
 for (let s = 0; s < SUB; s++) {
@@ -2258,7 +2307,7 @@ b.x += b.vx / SUB; b.y += b.vy / SUB;
 if (b.z > 0) {
 b.vz -= GRAV / SUB; b.z += b.vz / SUB;
 if (b.z <= 0) { const v = -b.vz; b.z = 0; b.vz = v > 1.5 ? v * 0.38 : 0; if (b.vz) b.z = 0.01; if (!G.demo && v > 0.8) Snd.clack(v * 2.2); }
-}
+} else clothStep(b, 1 / SUB);
 }
 if (pockets) for (const b of balls) {
 if (b.out) continue;
@@ -2315,16 +2364,10 @@ if (-vn > 8 && !(b.z > 0)) { b.vz = Math.min(2.8, 1 + (-vn - 8) * 0.18); b.z = 0
 for (const b of balls) {
 if (b.out) continue;
 if ((b.x < R || b.x > FW - R) && (!pockets || (b.y >= CORNER_MOUTH + CF && b.y <= FH - CORNER_MOUTH - CF))) {
-const sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy), hit = Math.abs(b.vx); let kick = 0;
-if (b.side && sp) { kick = (b.vx / sp) * b.side * hit * 0.45; b.side *= 0.6; }
-const left = b.x < R; b.x = left ? R : FW - R; b.vx = (left ? 1 : -1) * hit * reOf(hit); b.vy += kick;
-onRail(G, b, hit);
+const left = b.x < R, hit = Math.abs(b.vx); b.x = left ? R : FW - R; if (cushion(G, b, left ? 1 : -1, 0)) onRail(G, b, hit);
 }
 if ((b.y < R || b.y > FH - R) && (!pockets || (b.x >= CORNER_MOUTH + CF && b.x <= FW / 2 - MID_MOUTH - MF) || (b.x >= FW / 2 + MID_MOUTH + MF && b.x <= FW - CORNER_MOUTH - CF))) {
-const sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy), hit = Math.abs(b.vy); let kick = 0;
-if (b.side && sp) { kick = (-b.vy / sp) * b.side * hit * 0.45; b.side *= 0.6; }
-const top = b.y < R; b.y = top ? R : FH - R; b.vy = (top ? 1 : -1) * hit * reOf(hit); b.vx += kick;
-onRail(G, b, hit);
+const top = b.y < R, hit = Math.abs(b.vy); b.y = top ? R : FH - R; if (cushion(G, b, 0, top ? 1 : -1)) onRail(G, b, hit);
 }
 }
 for (let i = 0; i < balls.length; i++) {
@@ -2337,30 +2380,13 @@ const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, ov = (2 * R - d) / 2;
 a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
 const rel = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
 if (rel > 0) {
-const k = rel * (1 + E) / 2;
-a.vx -= k * nx; a.vy -= k * ny; b.vx += k * nx; b.vy += k * ny;
-const tx = -ny, ty = nx, vt = (a.vx - b.vx) * tx + (a.vy - b.vy) * ty, cs = a.n === 0 ? a : b.n === 0 ? b : null;
-let th = vt * 0.06; if (cs && cs.side) th += (cs === a ? 1 : -1) * cs.side * rel * 0.02;   // ball-to-ball friction: cut shots and side spin "throw" the object ball a little
-a.vx -= th * tx; a.vy -= th * ty; b.vx += th * tx; b.vy += th * ty; a.sl = b.sl = 12;
-const cue = cs; if (cs) cs.mass = 0;
-if (cue && cue.follow && !cue.followDone && cue.dir) {
-cue.vx += cue.dir[0] * cue.follow * rel * 0.62; cue.vy += cue.dir[1] * cue.follow * rel * 0.62; cue.followDone = true;
-}
+collideBalls(a, b, nx, ny);
 onHit(G, a, b, rel, a.x + nx * R, a.y + ny * R);
 }
 }
 }
 }
-for (const b of balls) {
-if (b.out) continue;
-const sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy); if (!sp) continue;
-if (b.mass) {   // massé: the cue ball's path bends (energy is kept, only the heading turns) and the curve fades out
-const w = b.mass * 0.014, c = Math.cos(w), sn = Math.sin(w), vx = b.vx; b.vx = vx * c - b.vy * sn; b.vy = vx * sn + b.vy * c; b.mass *= 0.988; if (Math.abs(b.mass) < 0.02) b.mass = 0;
-}
-rollBall(b, b.vx, b.vy);
-let ns = sp * 0.987 - (b.sl > 0 ? 0.05 : 0.012); if (b.sl > 0) b.sl--; if (ns < 0.03) ns = 0;
-b.vx *= ns / sp; b.vy *= ns / sp;
-}
+for (const b of balls) if (!b.out) spinBall(b);
 }
 function onPot(G, b, p) {
 if (G.shot) G.shot.potted.push(b.n);
@@ -2599,22 +2625,25 @@ function doShoot(power, remote) {
 const G = game, cue = G.balls[0], pl = curP(), cd = cueDef(pl.cue);
 if (remote) {   // opponent's shot, reproduced with the exact numbers they used
 cue.x = remote.x; cue.y = remote.y; cue.vx = remote.vx; cue.vy = remote.vy; cue.dir = remote.dir;
-cue.follow = remote.follow; cue.side = remote.side; cue.mass = +remote.mass || 0; cue.vz0 = +remote.vz0 || 0;
+const rw = remote.w || [0, 0, 0]; cue.wx = +rw[0] || 0; cue.wy = +rw[1] || 0; cue.wz = +rw[2] || 0; cue.vz0 = +remote.vz0 || 0;
 } else {
 const maxS = pl.isAI ? 30.5 : cueMax(cd);
 const sp = Math.max(0.6, power * maxS) * (G.isBreak ? 1.35 : 1) * (G.type === "lucky" ? 0.8 : 1);
 const dx = Math.cos(G.angle), dy = Math.sin(G.angle);
 cue.vx = dx * sp; cue.vy = dy * sp; cue.dir = [dx, dy];
-const k = pl.isAI ? 0.7 : cueSpin(cd);
-cue.follow = -G.spin.y * k; cue.side = G.spin.x * k;
-const el = G.elev || 0; cue.mass = G.spin.x * el * k; cue.vz0 = 0;
+const k = pl.isAI ? 0.7 : cueSpin(cd), el = G.elev || 0; cue.vz0 = 0;
 if (el > 0.15) { cue.vx *= 1 - 0.3 * el; cue.vy *= 1 - 0.3 * el; }
 if (el > 0.75 && Math.abs(G.spin.x) < 0.25) cue.vz0 = Math.min(3.8, 1.8 + 2 * power);
-const off = Math.hypot(G.spin.x, G.spin.y);
-let dev = -cue.side * 0.03;
-if (off > 0.88 && power > 0.55 && !pl.isAI) { dev += (G.spin.x >= 0 ? 1 : -1) * 0.07 * power; cue.vx *= 0.92; cue.vy *= 0.92; if (!G.demo) setTimeout(() => toast("⚠️", T("Miskyu!"), ""), 0); }
+const offS = Math.hypot(G.spin.x, G.spin.y);
+let dev = -G.spin.x * k * 0.03;
+if (offS > 0.88 && power > 0.55 && !pl.isAI) { dev += (G.spin.x >= 0 ? 1 : -1) * 0.07 * power; cue.vx *= 0.92; cue.vy *= 0.92; if (!G.demo) setTimeout(() => toast("⚠️", T("Miskyu!"), ""), 0); }
 if (dev) { const c = Math.cos(dev), sn = Math.sin(dev), vx = cue.vx; cue.vx = vx * c - cue.vy * sn; cue.vy = vx * sn + cue.vy * c; }
-if (G.net && G.cur === 0) Net.send({t: "shot", power, x: cue.x, y: cue.y, vx: cue.vx, vy: cue.vy, dir: cue.dir, follow: cue.follow, side: cue.side, mass: cue.mass, vz0: cue.vz0, a: G.angle});
+// the tip strikes the ball at an offset c from its centre; the impulse J gives it velocity J and angular velocity (5 / 2R²)·(c × J)
+const off = R * 0.5 * Math.min(1, k / 0.85), sa = G.spin.x * off, sb = -G.spin.y * off, al = el * 1.2, ca = Math.cos(al), sal = Math.sin(al);
+const Jh = Math.hypot(cue.vx, cue.vy) || 1, hx = cue.vx / Jh, hy = cue.vy / Jh, Jz = -Jh * Math.tan(al), dep = Math.sqrt(Math.max(0, R * R - sa * sa - sb * sb));
+const cx = -dep * hx * ca - sa * hy, cy = -dep * hy * ca + sa * hx, cz = dep * sal + sb, kk = 2.5 / (R * R);
+cue.wx = kk * (cy * Jz - cz * cue.vy); cue.wy = kk * (cz * cue.vx - cx * Jz); cue.wz = kk * (cx * cue.vy - cy * cue.vx);
+if (G.net && G.cur === 0) Net.send({t: "shot", power, x: cue.x, y: cue.y, vx: cue.vx, vy: cue.vy, dir: cue.dir, w: [cue.wx, cue.wy, cue.wz], vz0: cue.vz0, a: G.angle});
 }
 cue.followDone = false; if (cue.vz0) { cue.vz = cue.vz0; cue.z = 0.01; } else { cue.vz = 0; cue.z = 0; }
 G.shotBy = G.cur;
@@ -5570,7 +5599,7 @@ f.t++; ctx.strokeStyle = `rgba(255,230,140,${1 - f.t / 24})`; ctx.lineWidth = 4;
 ctx.beginPath(); ctx.arc(f.x, f.y, 20 + f.t * 1.6, 0, 7); ctx.stroke();
 }
 G.sinking = G.sinking.filter(s => s.t < 14);
-for (const s of G.sinking) { s.t++; const k = s.t / 14; drawBall(s.b, s.x + (s.px - s.x) * k, s.y + (s.py - s.y) * k, 1 - k * 0.55, 1 - k * 0.9); }
+for (const s of G.sinking) { s.t++; const k = s.t / 14; drawBall(s.b, s.x + (s.px - s.x) * k * (2 - k), s.y + (s.py - s.y) * k * (2 - k), 1 - k * k * 0.55, 1 - k * k * 0.9); }
 for (const b of G.balls) if (!b.out) {
 if (b.z > 0) {
 ctx.save(); ctx.fillStyle = `rgba(0,0,0,${Math.max(0.12, 0.4 - b.z * 0.015)})`; ctx.beginPath(); ctx.ellipse(b.x + 2, b.y + 4, R * (1 - b.z * 0.01), R * 0.8 * (1 - b.z * 0.01), 0, 0, 7); ctx.fill(); ctx.restore();
@@ -6877,10 +6906,10 @@ G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1);
 if (G.ballInHand) { G.balls[0].x = clamp(+m.x, R, FW - R); G.balls[0].y = clamp(+m.y, R, FH - R); }
 });
 Net.on("shot", m => {
-const G = game; if (G && G.net && G.net.spec) { if (G.moving || G.strike) return; G.cur = m.from === 1 ? 1 : 0; G.angle = +m.a || G.angle; requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0}); return; }
+const G = game; if (G && G.net && G.net.spec) { if (G.moving || G.strike) return; G.cur = m.from === 1 ? 1 : 0; G.angle = +m.a || G.angle; requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0}); return; }
 if (!G || !G.net || G.cur !== 1 || G.moving || G.strike) return;
 G.angle = +m.a || G.angle;
-requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0});
+requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0});
 });
 Net.on("state", m => {
 const G = game; if (!G || !G.net) return;
