@@ -356,6 +356,14 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 .screen,#nav,#toasts,#gameUi,#chatPanel,#cheerBar,#liveFeed{zoom:var(--uiz,1)}
 @media (max-width:1320px){ #langBtn{display:none} .money{gap:5px} .mchip{padding:0 8px} }
 @media (max-width:1180px){ .nb-cues{display:none} }
+.nb-cues{width:126px;height:48px}
+#nav.nf1 #langBtn{display:none}
+#nav.nf2 .nb-cues{width:104px!important;height:40px!important}
+#nav.nf3 .pc-m{width:84px!important} #nav.nf3 #navName{max-width:56px!important}
+#nav.nf4 .nb-cues{display:none!important}
+#nav.nf5 .mchip .plus{display:none} #nav.nf5 .nb{min-width:32px!important}
+#nav.nf6 #muteBtn,#nav.nf6 .pinfo,#nav.nf6 .pc-m,#nav.nf6 .pc-r{display:none!important}
+#nav.nf7 #fsBtn{display:none!important}
 /* modal */
 #modal{justify-content:center;background:#000b;z-index:40;padding-top:14px}
 #modal .panel{max-width:460px;text-align:center;animation:pop .35s cubic-bezier(.2,1.5,.4,1)}
@@ -426,7 +434,7 @@ html.rot body{position:fixed;top:0;left:0;transform-origin:0 0;transform:rotate(
 @media (max-width:1000px){ .nb{min-width:50px;padding:3px 6px;font-size:10px} .nb span{font-size:17px} .money{gap:4px} .mchip{min-width:0} #nav{gap:5px} .iconbtn{width:36px;height:36px} }
 @media (max-width:900px){ .pinfo b{max-width:74px;font-size:13px!important} .xpbar{width:78px} .xprow .tro{display:none} .pchip{padding:3px 6px 3px 3px} .mchip{font-size:13px;gap:4px;padding:4px 5px} }
 @media (max-width:700px){ .navbtns{gap:4px} .nb{min-width:34px!important;padding:4px 3px!important} .nb span{font-size:19px!important} #nav{gap:4px} .mchip .plus{display:none} .iconbtn{width:30px!important;height:30px!important} }
-@media (max-width:1100px){ .nb{min-width:40px;padding:4px 6px;font-size:0} .nb span{font-size:22px} .iconbtn{width:34px;height:34px;font-size:16px} #fsBtn,#langBtn{display:none} }
+@media (max-width:1100px){ .nb{min-width:40px;padding:4px 6px;font-size:0} .nb span{font-size:22px} .iconbtn{width:34px;height:34px;font-size:16px} #langBtn{display:none} }
 @media (max-width:760px){ .mchip .plus{display:none} .money{gap:3px} .mchip{padding:3px 5px;font-size:12px} #langBtn{display:none} }
 /* shop (special offers, coins & cash, free rewards, minigames, cues) */
 #shop .panel{margin-bottom:64px}
@@ -860,7 +868,6 @@ background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),color-mix(in srg
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;max-height:60vh;overflow:auto}.vgc{background:#141a30;border:1px solid #34436a;border-radius:8px;padding:4px;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px}.vgc img{width:100%;height:auto}.vgc small{font-size:11px;font-weight:800}.vgc:hover{border-color:#ffcf3d}
 .mission{display:grid;grid-template-columns:40px 1fr 110px;gap:10px;align-items:center;background:#262f4a;border:1px solid #34436a;border-radius:12px;padding:8px 12px;margin-bottom:6px}
 .mbar{height:10px;border-radius:5px;background:#141a2c;overflow:hidden;margin-top:4px}.mbar i{display:block;height:100%;background:linear-gradient(90deg,#7ff7ff,#3b8cff)}
-@media (max-width:820px){ #fsBtn{display:none} }
 @media (max-width:760px){ .tiles{grid-template-columns:repeat(3,1fr)} }
 @media (max-height:520px){                 /* phone landscape: compact city card so the banner and PLAY button always fit */
 #cities .head{margin-bottom:0} #cities .head h2{font-size:22px} #cities .carousel{padding:4px 16px 6px}
@@ -3160,7 +3167,7 @@ document.documentElement.style.setProperty("--uiz", uiz.toFixed(3));   // big mo
 offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
 }
 function setZoom(z) { zoom = Math.max(0.6, Math.min(1.5, Math.round(z * 100) / 100)); if (typeof profile === "object" && profile) { profile.zoom = zoom; try { save(); } catch (e) {} } resize(); }
-addEventListener("resize", resize);
+addEventListener("resize", () => { resize(); setTimeout(fitNav, 60); });
 addEventListener("orientationchange", () => setTimeout(resize, 250));
 resize();
 let fsTried = false;
@@ -5823,6 +5830,20 @@ if (!game || !game.demo) startDemo();
 Snd.roll(0);
 go(screen, opt);
 }
+function fitNav() {   // the top menu never overlaps itself: if the buttons and money chips collide, shrink or hide the least important pieces step by step (language, cues banner, ...)
+const nav = $("nav"); if (!nav || !nav.classList.contains("on")) return;
+const lv = ["nf1", "nf2", "nf3", "nf4", "nf5", "nf6", "nf7"]; nav.classList.remove(...lv);
+const bad = () => {
+const it = [], add = e => { if (getComputedStyle(e).display === "none") return; const r = e.getBoundingClientRect(); if (r.width < 2 && r.height < 2) return; it.push(rotated ? [r.top, r.bottom] : [r.left, r.right]); };
+for (const c of nav.children) { if (c.classList.contains("navbtns") || c.classList.contains("money")) for (const d of c.children) add(d); else add(c); }
+it.sort((a, b) => a[0] - b[0]);
+for (let i = 0; i < it.length - 1; i++) if (it[i][1] > it[i + 1][0] + 1.5) return true;
+const nr = nav.getBoundingClientRect(), lim = rotated ? nr.bottom : nr.right;
+return it.length > 0 && it[it.length - 1][1] > lim + 1;
+};
+for (const l of lv) { if (!bad()) break; nav.classList.add(l); }
+}
+setInterval(fitNav, 1200);
 function updateNav() {
 $("coinTxt").textContent = profile.coins >= 1e7 ? fmtS(profile.coins) : fmt(profile.coins);
 $("cashTxt").textContent = fmt(profile.cash);
@@ -5843,6 +5864,7 @@ const ib = (Net.inbox || []).length; $("dotMail").style.display = ib ? "" : "non
 const minis = ["lucky", "wheel", "scratch"].filter(freeReady).length + (profile.luckyTries | 0) + (profile.wheelTries | 0) + (profile.scratchTries | 0);
 for (const id of ["dotMini", "dotMini2"]) { $(id).style.display = minis ? "" : "none"; $(id).textContent = minis; }
 $("muteBtn").textContent = profile.muted ? "🔇" : "🔊";
+fitNav();
 }
 const toastQ = [];
 function toast(icon, title, sub, o = {}) { if (toastQ.length < 12) toastQ.push([icon, title, sub, o]); pumpToast(); }
