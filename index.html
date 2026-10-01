@@ -1222,11 +1222,11 @@ for (const k of ["coin", "coinc", "cash", "gem", "vip"]) document.documentElemen
 const ringImg = {}; // city ring pictures for the table and the HUD
 const imgEl = {}; for (const k of ["coin", "cash", "gem"]) { imgEl[k] = new Image(); imgEl[k].src = IMG[k]; }
 const ON_PORTAL = /(^|\.)y8\.com$|(^|\.)id\.net$/.test(location.hostname) || /y8\.com/.test(document.referrer) || (window.top !== window.self && !!CONFIG.y8AppId);
-const W = 1280, H = 720;
+const W = 1340, H = 720;
 const FX = 158, FY = 148, FW = 1000, FH = 500, RAIL = 66, R = 13;
 const RAILC = (RAIL + 8 + 19) / 2;
 const POWER_BAR = {x: 42, y: 184, w: 46, h: 440};
-const TRAY = {x: 1247, y: 184, w: 30, h: 440};   // outside the table frame (which ends at x = 1232), like a real ball return
+const TRAY = {x: 1275, y: 184, w: 30, h: 440};   // outside the table frame (which ends at x = 1232), like a real ball return
 const FINE = {x: 4, y: 184, w: 36, h: 440};
 const SPIN_BTN = {x: 1232, y: 56, r: 30};
 const CUE_BTN = {x: 1232, y: 130, r: 24};
@@ -5667,13 +5667,13 @@ ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.textAlign = 
 ctx.restore();
 }
 const trayGeo = () => {
-const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, mx = dir > 0 ? 1232 : 84, y0 = 196, ye = TRAY.y + TRAY.h, L1 = Math.abs(cx - mx);
+const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, mx = dir > 0 ? 1232 : 84, y0 = 190, ye = TRAY.y + TRAY.h, L1 = Math.abs(cx - mx);
 return {cx, dir, mx, y0, ye, L1, len: L1 + ye - y0};
 };
 const trayPos = (g, s) => s < g.L1 ? [g.mx + g.dir * s, g.y0] : [g.cx, g.y0 + s - g.L1];
 function trayPath(g) { ctx.beginPath(); ctx.moveTo(g.mx, g.y0); ctx.arcTo(g.cx, g.y0, g.cx, g.y0 + 22, 22); ctx.lineTo(g.cx, g.ye); }
 function drawTray(G) {
-const g = trayGeo(), W = 26;
+const g = trayGeo(), W = 36;
 ctx.save(); ctx.lineCap = "round"; ctx.lineJoin = "round";
 const line = (w, c) => { trayPath(g); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.stroke(); };
 ctx.save(); ctx.translate(3, 4); line(W + 11, "rgba(0,0,0,.35)"); ctx.restore();
@@ -5682,7 +5682,7 @@ line(W, "#0f1627"); line(W - 4, "#131c31");
 // cross ribs every two balls, like the original ladder
 ctx.strokeStyle = "rgba(190,203,226,.75)"; ctx.lineWidth = 2.5; ctx.lineCap = "butt";
 for (let y = g.y0 + g.L1 + 40; y < g.ye - 10; y += 54) { ctx.beginPath(); ctx.moveTo(g.cx - W / 2, y); ctx.lineTo(g.cx + W / 2, y); ctx.stroke(); }
-for (const q of G.tray) if (q.delay <= 0) { const [x, y] = trayPos(g, q.s); drawBall(q.b, x, y, 0.88); }
+for (const q of G.tray) if (q.delay <= 0) { const [x, y] = trayPos(g, q.s); drawBall(q.b, x, y, 1.15); }
 ctx.lineCap = "round"; ctx.save(); ctx.translate(-g.dir * (W / 2 - 3), 0); line(2, "rgba(255,255,255,.28)"); ctx.restore();
 const fx = g.dir > 0 ? g.mx - 3 : g.mx - 4;   // mouth ring set into the rail
 const fg = ctx.createLinearGradient(fx, 0, fx + 7, 0); fg.addColorStop(0, "#f4f8ff"); fg.addColorStop(0.5, "#8d9ab4"); fg.addColorStop(1, "#dfe7f5");
@@ -5693,7 +5693,7 @@ function updateTray(G) {
 const g = trayGeo();
 G.tray.forEach((q, i) => {
 if (q.delay > 0) { q.delay--; return; }
-const target = g.len - R - 3 - i * (2 * R * 0.88 + 1);
+const target = g.len - R - 3 - i * (2 * R * 1.15 + 1);
 if (q.s < target) {
 q.vy = q.s < g.L1 ? Math.max(q.vy, 3) : Math.min(q.vy + 0.7, 14); q.s += q.vy;
 if (q.s < g.L1) rollBall(q.b, g.dir * q.vy, 0); else rollBall(q.b, 0, q.vy);
@@ -8501,7 +8501,7 @@ function setOpt(k, v) { profile.set = {...(profile.set || {}), [k]: v}; save(); 
 function vib(p) { if (opt("vib") && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
 function applySettings() {
 const right = opt("power") === "right";
-POWER_BAR.x = right ? 1226 : 42; FINE.x = right ? 44 : 4; FINE.y = right ? 232 : 184; FINE.h = right ? 392 : 440; TRAY.x = right ? 6 : 1247;
+POWER_BAR.x = right ? 1282 : 42; FINE.x = right ? 44 : 4; FINE.y = right ? 232 : 184; FINE.h = right ? 392 : 440; TRAY.x = right ? 6 : 1275;
 }
 function buildSettings() {
 const tg = (k, on) => `<button class="tgl${on ? " on" : ""}" data-t="${k}"></button>`;
