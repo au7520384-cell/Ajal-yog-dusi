@@ -925,6 +925,16 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 #modal .panel.scened #mTitle{display:inline-block;background:#050a1ccc;border:1px solid #2f4a9a55;border-radius:14px;padding:2px 18px;margin-top:0}
 #modal .panel.scened #mTitle{font-size:34px;letter-spacing:.5px;text-shadow:0 3px 0 #2a1a00,0 0 20px #000,0 0 18px #ffb300aa}
 #modal .mgart{height:92px;max-width:42%;object-fit:contain;filter:drop-shadow(0 4px 10px #000a);float:left;margin:0 10px 4px 0}
+
+.rchip{display:inline-flex;align-items:center;gap:5px;font-weight:800;color:#ffe9a8;background:#050a1c;border:1px solid #2a4690;border-radius:999px;padding:3px 10px 3px 4px;font-size:14px;white-space:nowrap;box-shadow:inset 0 0 8px #0008}
+.ric{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3b8,#e9b838 55%,#8a5a0e);color:#3a2400;font-style:normal;font-size:12px;font-weight:900}
+.rchip .coin{width:20px;height:20px;flex:none}
+#modal .dm.msn{grid-template-columns:1fr auto auto 104px;gap:8px;padding:8px 10px}#modal .dm.msn.rdy{background:linear-gradient(#123a22,#08241a);border-color:#4fe07a}
+.dmb.thin{height:8px;margin-top:5px;background:#050a1c;border:1px solid #1d3a7a;border-radius:5px}.dmb.thin i{background:linear-gradient(#6aaaff,#2a5ad8)}
+.dm.msn small,.mission.msn2 small{display:block;color:#9fb4e8;font-size:11px;margin-top:2px}
+.mission.msn2{grid-template-columns:1fr auto auto 104px;gap:8px;background:linear-gradient(#10204f,#08112c);border:1px solid #234b9e;text-align:left}
+.mission.msn2 .mbar{height:8px;margin-top:5px;background:#050a1c;border:1px solid #1d3a7a}.mission.msn2 .mbar i{background:linear-gradient(#6aaaff,#2a5ad8)}
+@media (max-height:460px){ #modal .dm.msn,.mission.msn2{grid-template-columns:1fr auto auto 78px;gap:5px;padding:5px 7px} .rchip{font-size:12px;padding:2px 7px 2px 3px} .ric,.rchip .coin{width:16px;height:16px;font-size:10px} #modal .dm.msn .btn{padding:5px 6px;font-size:13px} }
 </style>
 </head>
 <body>
@@ -7633,9 +7643,9 @@ ${ad ? `<div class="card fr1"><div style="font-size:40px">📺</div><b>${T("Bepu
 <div class="card fr1"><div style="font-size:40px">🎁</div><b>${T("Sovg'alar yo'li")}</b><small>${profile.lastClaim !== today() ? T("Kunlik sovg'a tayyor!") : "⏱ " + hms(nextMidnight())}</small><button class="btn orange" data-go="rewards">${T("Ochish")}</button></div>
 </div>
 <div class="setsec">🎯 ${T("Kunlik missiyalar")}</div>
-${p.ms.map(m => { const d = MISSIONS[m.i]; return `<div class="mission"><div style="font-size:28px">${m.done ? "✅" : "🎯"}</div>
-<div><b>${T(d.d)}</b><div class="mbar"><i style="width:${m.c / d.n * 100}%"></i></div><small class="muted">${m.c}/${d.n}</small></div>
-<div style="text-align:right"><div class="h" style="color:#ffcf3d">+${d.pts} ♞</div>${m.done ? "" : `<button class="btn green" data-mplay="${d.k}" style="padding:4px 14px">${T("O'ynash")}</button>`}</div></div>`; }).join("")}`;
+${p.ms.map((m, k) => { const d = MISSIONS[m.i]; return `<div class="mission msn2"><div class="mt"><b>${k + 1}. ${T(d.d)}</b><div class="mbar"><i style="width:${m.c / d.n * 100}%"></i></div><small class="muted">${m.c}/${d.n}</small></div>
+<span class="rchip"><i class="ric">♞</i>+${d.pts}</span><span class="rchip"><span class="coin"></span>+${fmtS(d.pts * 4)}</span>
+${m.done ? `<div class="dmd">✅</div>` : `<button class="btn green" data-mplay="${d.k}" style="padding:6px 16px">${T("O'ynash")}</button>`}</div>`; }).join("")}`;
 if ($("frCoins")) $("frCoins").onclick = () => { profile.freeAt = Date.now(); addCoins(50); Snd.coin(6); toast("🪙", "+50", T("Bepul tanga")); buildFree(); updateHomeDots(); };
 if ($("frVid")) $("frVid").onclick = () => y8Rewarded("free-coins", () => { addCoins(15); toast("🪙", "+15", T("Rahmat!")); });
 if ($("frCash")) $("frCash").onclick = () => y8Rewarded("bank-cash", () => { profile.cash += 1; save(); updateNav(); toast("💵", "+1", T("Rahmat!")); });
@@ -8550,10 +8560,10 @@ const cueArt = {}; const cueArtURL = c => cueArt[c.id] || (cueArt[c.id] = cueCan
 function passMissionsModal() {
 const p = passState();
 const rows = p.ms.map((m, k) => { const d = MISSIONS[m.i], pct = Math.round(m.c / d.n * 100);
-return `<div class="dm${m.done && !m.claimed ? " rdy" : ""}${m.claimed ? " cl" : ""}"><div class="dmt"><b>${T(d.d)}</b><div class="dmb"><i style="width:${pct}%"></i><span>${m.c} / ${d.n}</span></div></div>
-<div class="dmr"><span>♞ +${d.pts}</span><small>🪙 ${fmtS(d.pts * 4)}</small></div>
-${m.claimed ? `<div class="dmd">✅</div>` : m.done ? `<button class="btn orange" data-mcl="${k}">${T("Mukofot olish")}</button>` : `<button class="btn green" data-mpl="1">${T("O'ynash")}</button>`}</div>`; }).join("");
-openModal({icon: "", title: "Kundalik missiyalar", text: "", extra: `<div class="dmlist">${rows}</div><p class="muted" style="margin:8px 0 0">${T("G'alaba: +30 ♞ · Mag'lubiyat: +10 ♞ · Turnir raundi: +25 ♞")}</p>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => buildPass()}]});
+return `<div class="dm msn${m.done && !m.claimed ? " rdy" : ""}${m.claimed ? " cl" : ""}"><div class="dmt"><b>${k + 1}. ${T(d.d)}</b><div class="dmb thin"><i style="width:${pct}%"></i></div><small>${m.c} / ${d.n}</small></div>
+<span class="rchip"><i class="ric">♞</i>+${d.pts}</span><span class="rchip"><span class="coin"></span>+${fmtS(d.pts * 4)}</span>
+${m.claimed ? `<div class="dmd">✅</div>` : m.done ? `<button class="btn green" data-mcl="${k}">${T("Olish")}</button>` : `<button class="btn blue" data-mpl="1">${T("O'ynash")}</button>`}</div>`; }).join("");
+openModal({icon: "🎯", title: "Kundalik missiyalar", text: "", extra: `<div class="dmlist">${rows}</div><p class="muted" style="margin:8px 0 0">${T("G'alaba: +30 ♞ · Mag'lubiyat: +10 ♞ · Turnir raundi: +25 ♞")}</p>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => buildPass()}]});
 document.querySelectorAll("[data-mcl]").forEach(b => b.onclick = () => { const m = p.ms[+b.dataset.mcl], d = MISSIONS[m.i]; if (m.claimed || !m.done) return; m.claimed = true; addCoins(d.pts * 4); passPoints(d.pts); Snd.coin(6); save(); passMissionsModal(); });
 document.querySelectorAll("[data-mpl]").forEach(b => b.onclick = () => { $("modal").classList.remove("on"); go("cities"); });
 }
