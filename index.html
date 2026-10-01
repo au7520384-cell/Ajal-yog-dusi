@@ -1125,6 +1125,7 @@ const POCKETS = [
 {x: FW / 2, y: FH + 9, r: 32, dx: 0, dy: 18, dr: 23, mid: true},
 {x: FW, y: FH, r: 37, dx: 16, dy: 16, dr: 27},
 ];
+POCKETS.forEach(p => { if (p.mid) { p.hx = p.x; p.hy = p.y + p.dy * 0.5; p.hr = 32; } else { p.hx = p.x + p.dx * 0.375; p.hy = p.y + p.dy * 0.375; p.hr = 30; } });   // the hole cut in the slate: ball is unsupported once its centre is over it
 const CORNER_MOUTH = 36, TIP_R = 4;
 const CF = 22, MF = 12;
 const JAW_TIPS = [];
@@ -2244,10 +2245,10 @@ function mkBall(n, x, y) {
 const p = norm3([rnd(-0.35, 0.35), rnd(-0.35, 0.35), 1]);
 const q0 = [rnd(-1, 1), rnd(-1, 1), 0], d = q0[0] * p[0] + q0[1] * p[1];
 const q = norm3([q0[0] - p[0] * d, q0[1] - p[1] * d, -p[2] * d]);
-return {n, x, y, vx: 0, vy: 0, wx: 0, wy: 0, wz: 0, out: false, p, q};
+return {n, x, y, vx: 0, vy: 0, wx: 0, wy: 0, wz: 0, z: 0, vz: 0, out: false, p, q};
 }
 const iconBall = n => ({n, p: [0, 0, 1], q: [0, -1, 0]});
-function anyMoving(balls) { return balls.some(b => !b.out && (b.vx || b.vy || b.z > 0)); }
+function anyMoving(balls) { return balls.some(b => !b.out && (b.vx || b.vy || b.z !== 0)); }
 const reOf = h => 0.84 - 0.0075 * (h > 24 ? 24 : h);
 const GRAV = 0.3;
 const GU = 1.2397, MPS = 0.13189, MU_S = 0.2, MU_R = 0.014, WZ_DEC = 10 / 3600, E_BB = 0.95, MU_BB = 0.06, MU_CU = 0.16;   // real units: 1 u = 2.198 mm, 1 frame = 1/60 s; GU = g in u/frame²
@@ -2299,41 +2300,44 @@ const nx = p[0] * c + cx * s + kx * kp * (1 - c), ny = p[1] * c + cy * s + ky * 
 p[0] = nx; p[1] = ny; p[2] = nz; norm3(p);
 }
 function spinBall(b) { const wm = Math.hypot(b.wx || 0, b.wy || 0, b.wz || 0); if (wm < 1e-4) return; const kx = b.wx / wm, ky = b.wy / wm, kz = b.wz / wm, c = Math.cos(wm), sn = Math.sin(wm); rotA(b.p, kx, ky, kz, c, sn); if (b.q) rotA(b.q, kx, ky, kz, c, sn); }
+function holeAt(pockets, b, margin) { const m = margin || 0; for (const p of pockets) if ((b.x - p.hx) ** 2 + (b.y - p.hy) ** 2 < (p.hr + m) ** 2) return p; return null; }
+function jawHit(G, b, nx, ny, hv) {   // rubber jaw: same contact model as a cushion (nose above centre, spin coupling); below the slate the ball just rebounds off the shaft wall
+if (b.z < -0.3 * R) { const vn = b.vx * nx + b.vy * ny; if (vn < 0) { b.vx -= 1.45 * vn * nx; b.vy -= 1.45 * vn * ny; onRail(G, b, hv); } return; }
+if (cushion(G, b, nx, ny)) { onRail(G, b, hv); if (hv > 12 && !(b.z > 0)) { b.vz = Math.min(4, 1.5 + (hv - 12) * 0.2); b.z = 0.01; } }
+}
 function physicsFrame(G) {
 const balls = G.balls, pockets = G.pockets, SUB = 8, E = 0.95, RE = 0.78;
 for (let s = 0; s < SUB; s++) {
 for (const b of balls) if (!b.out) {
 b.x += b.vx / SUB; b.y += b.vy / SUB;
-if (b.z > 0) {
-b.vz -= GRAV / SUB; b.z += b.vz / SUB;
-if (b.z <= 0) { const v = -b.vz; b.z = 0; b.vz = v > 1.5 ? v * 0.38 : 0; if (b.vz) b.z = 0.01; if (!G.demo && v > 0.8) Snd.clack(v * 2.2); }
+if (b.z === undefined) { b.z = 0; b.vz = 0; }
+const hp = pockets ? holeAt(pockets, b) : null;
+if (hp || b.z > 0 || b.z < 0) {
+b.vz = (b.vz || 0) - GU / SUB; b.z += b.vz / SUB;
+if (!hp && b.z <= 0) { const v = -b.vz; b.z = 0; b.vz = v > 3 ? v * 0.38 : 0; if (b.vz) b.z = 0.01; if (!G.demo && v > 1.6) Snd.clack(v * 1.1); }
 } else clothStep(b, 1 / SUB);
 }
 if (pockets) for (const b of balls) {
 if (b.out) continue;
-let hit = null;
-for (const p of pockets) {
-if (b.z > 5) break;
-if (p.mid) { if (Math.abs(b.x - p.x) < MID_MOUTH && (p.y < 0 ? b.y < -4 : b.y > FH + 4)) { hit = p; break; } }
-else if (Math.abs(b.x - p.x) + Math.abs(b.y - p.y) < 30 && b.x > -30 && b.x < FW + 30 && b.y > -30 && b.y < FH + 30) { hit = p; break; }
+const hp = holeAt(pockets, b, R);
+if (!hp) {
+if (b.x < -26 || b.x > FW + 26 || b.y < -26 || b.y > FH + 26) { let bd = 1e9, np = null; for (const p of pockets) { const d = (b.x - p.hx) ** 2 + (b.y - p.hy) ** 2; if (d < bd) { bd = d; np = p; } } b.out = true; onPot(G, b, np); b.vx = b.vy = 0; b.z = b.vz = 0; }
+continue;
 }
-if (!hit && (b.x < -1 || b.x > FW + 1 || b.y < -1 || b.y > FH + 1)) { let bd = 1e9; for (const p of pockets) { const d = (b.x - p.x) ** 2 + (b.y - p.y) ** 2; if (d < bd) { bd = d; hit = p; } } }
-if (b.rl && !hit) { let far = true; for (const p of pockets) if ((b.x - p.x) ** 2 + (b.y - p.y) ** 2 < 2500) { far = false; break; } if (far) b.rl = false; }
-if (hit && !b.rl) {
-const sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
-if (sp > 9) {
-const ax = hit.mid ? 0 : Math.sign(hit.dx) * 0.7071, ay = hit.mid ? (hit.y < 0 ? -1 : 1) : Math.sign(hit.dy) * 0.7071;
-const along = Math.max(0, Math.min(1, (b.vx * ax + b.vy * ay) / sp));
-const e = hit.mid ? Math.abs(b.x - hit.x) / MID_MOUTH : Math.abs((b.x - hit.x) * ay - (b.y - hit.y) * ax) / 25;
-const score = Math.min(1.2, e) * 0.7 + (1 - along) * 0.9, lim = 0.9 - (sp - 9) * 0.028;
-if (score > lim) {
-const ap = b.vx * ax + b.vy * ay;
-if (ap > 0) { b.vx -= 1.5 * ap * ax; b.vy -= 1.5 * ap * ay; }
-b.vx *= 0.9; b.vy *= 0.9; b.x -= ax * 7; b.y -= ay * 7; b.rl = true; onRail(G, b, sp * 0.8); hit = null;
+let dx = b.x - hp.hx, dy = b.y - hp.hy, rho = Math.hypot(dx, dy) || 1e-6;
+const iax = hp.mid ? 0 : -Math.sign(hp.dx) * 0.7071, iay = hp.mid ? -Math.sign(hp.dy) : -Math.sign(hp.dy) * 0.7071;
+if (dx * iax + dy * iay < 0 && rho + R > hp.hr) {   // back of the pocket cup: a fast ball hits it and drops instead of flying out the far side
+const ux = dx / rho, uy = dy / rho, vr = b.vx * ux + b.vy * uy;
+if (vr > 0) { b.vx -= 1.3 * vr * ux; b.vy -= 1.3 * vr * uy; if (vr > 3 && !G.demo) Snd.rail(vr * 0.7); }
+const nr = hp.hr - R; if (rho > nr) { b.x = hp.hx + ux * nr; b.y = hp.hy + uy * nr; dx = b.x - hp.hx; dy = b.y - hp.hy; rho = nr; }
 }
+const dz = b.z + R, hd = rho - hp.hr, dist = Math.hypot(hd, dz);
+if (dist < R && dist > 1e-6 && b.z <= 0.5) {   // the rim of the hole is a ring in the slate surface: the ball rolls over it, or a fast ball catches the far lip and rattles out
+const n0 = hd * dx / rho / dist, n1 = hd * dy / rho / dist, n2 = dz / dist, vn = b.vx * n0 + b.vy * n1 + (b.vz || 0) * n2, pen = R - dist;
+b.x += n0 * pen; b.y += n1 * pen; b.z += n2 * pen;
+if (vn < 0) { const j = -(1 + 0.35) * vn; b.vx += j * n0; b.vy += j * n1; b.vz = (b.vz || 0) + j * n2; if (-vn > 2 && !G.demo) Snd.rail(-vn * 0.6); }
 }
-}
-if (hit) { b.out = true; onPot(G, b, hit); b.vx = b.vy = 0; b.z = b.vz = 0; }
+if (b.z < -R * 0.9 && Math.hypot(b.x - hp.hx, b.y - hp.hy) < hp.hr) { b.out = true; onPot(G, b, hp); b.vx = b.vy = 0; b.z = b.vz = 0; }
 }
 if (pockets) for (const b of balls) {
 if (b.out) continue;
@@ -2342,7 +2346,7 @@ const dx = b.x - t[0], dy = b.y - t[1], d2 = dx * dx + dy * dy, m = R + TIP_R;
 if (d2 < m * m && d2 > 0.0001) {
 const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, vn = b.vx * nx + b.vy * ny;
 b.x = t[0] + nx * m; b.y = t[1] + ny * m;
-if (vn < 0) { b.vx -= (1 + RE) * vn * nx; b.vy -= (1 + RE) * vn * ny; onRail(G, b, -vn); }
+if (vn < 0) jawHit(G, b, nx, ny, -vn);
 }
 }
 }
@@ -2354,10 +2358,7 @@ const px = f[0] + ex * t, py = f[1] + ey * t, dx = b.x - px, dy = b.y - py, d2 =
 if (d2 < R * R && d2 > 0.0001) {
 const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, vn = b.vx * nx + b.vy * ny;
 b.x = px + nx * R; b.y = py + ny * R;
-if (vn < 0) {
-const re = reOf(-vn); b.vx -= (1 + re) * vn * nx; b.vy -= (1 + re) * vn * ny; onRail(G, b, -vn);
-if (-vn > 8 && !(b.z > 0)) { b.vz = Math.min(2.8, 1 + (-vn - 8) * 0.18); b.z = 0.01; }
-}
+if (vn < 0) jawHit(G, b, nx, ny, -vn);
 }
 }
 }
@@ -2375,8 +2376,9 @@ const a = balls[i]; if (a.out) continue;
 for (let j = i + 1; j < balls.length; j++) {
 const b = balls[j]; if (b.out) continue;
 const dx = b.x - a.x, dy = b.y - a.y, d2 = dx * dx + dy * dy;
-if (d2 >= 4 * R * R || d2 === 0 || a.z > 9 || b.z > 9) continue;
-const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, ov = (2 * R - d) / 2;
+const dzz = (a.z || 0) - (b.z || 0), req2 = 4 * R * R - dzz * dzz;
+if (req2 <= 0 || d2 >= req2 || d2 === 0) continue;
+const d = Math.sqrt(d2), nx = dx / d, ny = dy / d, ov = (Math.sqrt(req2) - d) / 2;
 a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
 const rel = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
 if (rel > 0) {
@@ -2633,7 +2635,7 @@ const dx = Math.cos(G.angle), dy = Math.sin(G.angle);
 cue.vx = dx * sp; cue.vy = dy * sp; cue.dir = [dx, dy];
 const k = pl.isAI ? 0.7 : cueSpin(cd), el = G.elev || 0; cue.vz0 = 0;
 if (el > 0.15) { cue.vx *= 1 - 0.3 * el; cue.vy *= 1 - 0.3 * el; }
-if (el > 0.75 && Math.abs(G.spin.x) < 0.25) cue.vz0 = Math.min(3.8, 1.8 + 2 * power);
+if (el > 0.75 && Math.abs(G.spin.x) < 0.25) cue.vz0 = Math.min(7.7, 3.7 + 4.1 * power);
 const offS = Math.hypot(G.spin.x, G.spin.y);
 let dev = -G.spin.x * k * 0.03;
 if (offS > 0.88 && power > 0.55 && !pl.isAI) { dev += (G.spin.x >= 0 ? 1 : -1) * 0.07 * power; cue.vx *= 0.92; cue.vy *= 0.92; if (!G.demo) setTimeout(() => toast("⚠️", T("Miskyu!"), ""), 0); }
@@ -5604,7 +5606,8 @@ for (const b of G.balls) if (!b.out) {
 if (b.z > 0) {
 ctx.save(); ctx.fillStyle = `rgba(0,0,0,${Math.max(0.12, 0.4 - b.z * 0.015)})`; ctx.beginPath(); ctx.ellipse(b.x + 2, b.y + 4, R * (1 - b.z * 0.01), R * 0.8 * (1 - b.z * 0.01), 0, 0, 7); ctx.fill(); ctx.restore();
 drawBall(b, b.x, b.y - b.z * 1.1, 1 + b.z * 0.014);
-} else drawBall(b, b.x, b.y);
+} else if (b.z < 0) drawBall(b, b.x, b.y - b.z * 0.4, Math.max(0.4, 1 + b.z * 0.03), Math.max(0.1, 1 + b.z * 0.07));
+else drawBall(b, b.x, b.y);
 }
 G.sparks = G.sparks.filter(s => s.life-- > 0);
 ctx.fillStyle = "#fff";
