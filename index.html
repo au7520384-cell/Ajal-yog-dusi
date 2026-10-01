@@ -2543,7 +2543,7 @@ function onPot(G, b, p) {
 if (G.shot) G.shot.potted.push(b.n);
 const copy = {n: b.n, p: b.p.slice(), q: b.q.slice()};
 G.sinking.push({b: copy, x: b.x, y: b.y, px: p.x + p.dx, py: p.y + p.dy, t: 0});
-if (b.n !== 0) G.tray.push({b: {n: b.n, p: b.p.slice(), q: b.q.slice()}, y: TRAY.y - 6, vy: 0, delay: 16});
+if (b.n !== 0) G.tray.push({b: {n: b.n, p: b.p.slice(), q: b.q.slice()}, s: 0, vy: 3, delay: 16});
 G.flashes.push({x: p.x + p.dx, y: p.y + p.dy, t: 0});
 if (!G.demo) { Snd.pocket(); vib(30); if (b.n && isHuman(G.cur) && !G.players[G.cur].remote && G.type !== "watch") mission("pot"); profile.potted = (profile.potted | 0) + 1; }
 }
@@ -2944,7 +2944,7 @@ if (offer && G.trialCue) { $("mText").textContent = T("Kiy yoqdimi? Hozir 30% ch
 else if (offer) { $("mText").textContent = `${T("Sizga yoqdimi? Stolni hozir 30% chegirma bilan saqlab qoling!")}`; $("mExtra").insertAdjacentHTML("beforeend", `<canvas class="tpcv" width="620" height="340"></canvas>`); previewTable(tableById(G.trial), document.querySelector("#modal .tpcv")); }
 }, 1600);
 } else if (G.type === "tour") {
-profile.games++; if (humanWon) profile.wins++; save(); mission("play"); if (humanWon) { mission("win"); mission("round"); } else passPoints(10);
+profile.games++; if (humanWon) { profile.wins++; profile.tp = roadTP() + 6; } save(); mission("play"); if (humanWon) { mission("win"); mission("round"); } else passPoints(10);
 setTimeout(() => tourAfterMatch(humanWon, why, G.players[winner]), 1600);
 } else if (G.type === "watch") {
 setTimeout(() => resultModal(null, why, G.players[winner], 0, [
@@ -5666,25 +5666,33 @@ ctx.restore();
 ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.textAlign = "center"; ctx.fillText(show ? T("▲▼ bur") : "", f.x + f.w / 2, f.y + f.h + 10);
 ctx.restore();
 }
+const trayGeo = () => {
+const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, mx = dir > 0 ? 1232 : 84, y0 = 196, ye = TRAY.y + TRAY.h, L1 = Math.abs(cx - mx);
+return {cx, dir, mx, y0, ye, L1, len: L1 + ye - y0};
+};
+const trayPos = (g, s) => s < g.L1 ? [g.mx + g.dir * s, g.y0] : [g.cx, g.y0 + s - g.L1];
+function trayPath(g) { ctx.beginPath(); ctx.moveTo(g.mx, g.y0); ctx.arcTo(g.cx, g.y0, g.cx, g.y0 + 16, 16); ctx.lineTo(g.cx, g.ye); }
 function drawTray(G) {
-const t = TRAY;
-ctx.save();
-const g = ctx.createLinearGradient(t.x, 0, t.x + t.w, 0);
-g.addColorStop(0, "rgba(160,190,255,.25)"); g.addColorStop(0.5, "rgba(20,28,48,.9)"); g.addColorStop(1, "rgba(160,190,255,.25)");
-ctx.fillStyle = g; rr(t.x, t.y, t.w, t.h, 14); ctx.fill();
-ctx.strokeStyle = "rgba(200,215,255,.35)"; ctx.lineWidth = 2; ctx.stroke();
-for (const q of G.tray) if (q.delay <= 0) drawBall(q.b, t.x + t.w / 2, q.y, 1);
-ctx.fillStyle = "rgba(255,255,255,.12)"; ctx.fillRect(t.x + 5, t.y + 8, 3, t.h - 16);
+const g = trayGeo();
+ctx.save(); ctx.lineCap = "round"; ctx.lineJoin = "round";
+trayPath(g); ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 38; ctx.save(); ctx.translate(3, 4); ctx.stroke(); ctx.restore();
+trayPath(g); ctx.strokeStyle = "#9aa8c0"; ctx.lineWidth = 34; ctx.stroke();
+trayPath(g); ctx.strokeStyle = "#5d6b86"; ctx.lineWidth = 31; ctx.stroke();
+trayPath(g); ctx.strokeStyle = "#0b101c"; ctx.lineWidth = 27; ctx.stroke();
+for (const q of G.tray) if (q.delay <= 0) { const [x, y] = trayPos(g, q.s); drawBall(q.b, x, y, 1); }
+trayPath(g); ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 3; ctx.save(); ctx.translate(-g.dir * 9, 0); ctx.stroke(); ctx.restore();
+ctx.fillStyle = "#c3cde0"; rr(g.mx - (g.dir > 0 ? 2 : 6), g.y0 - 20, 8, 40, 3); ctx.fill();
 ctx.restore();
 }
 function updateTray(G) {
-const t = TRAY;
+const g = trayGeo();
 G.tray.forEach((q, i) => {
 if (q.delay > 0) { q.delay--; return; }
-const target = t.y + t.h - R - 3 - i * (2 * R + 1);
-if (q.y < target) {
-q.vy = Math.min(q.vy + 0.7, 14); q.y += q.vy; rollBall(q.b, 0, q.vy);
-if (q.y >= target) { q.y = target; if (q.vy > 3 && !G.demo) Snd.tray(); q.vy = 0; }
+const target = g.len - R - 3 - i * (2 * R + 1);
+if (q.s < target) {
+q.vy = q.s < g.L1 ? Math.max(q.vy, 3) : Math.min(q.vy + 0.7, 14); q.s += q.vy;
+if (q.s < g.L1) rollBall(q.b, g.dir * q.vy, 0); else rollBall(q.b, 0, q.vy);
+if (q.s >= target) { q.s = target; if (q.vy > 3 && !G.demo) Snd.tray(); q.vy = 0; }
 }
 });
 }
@@ -8488,7 +8496,7 @@ function setOpt(k, v) { profile.set = {...(profile.set || {}), [k]: v}; save(); 
 function vib(p) { if (opt("vib") && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
 function applySettings() {
 const right = opt("power") === "right";
-POWER_BAR.x = right ? 1226 : 42; FINE.x = right ? 44 : 4; TRAY.x = right ? 6 : 1240;
+POWER_BAR.x = right ? 1226 : 42; FINE.x = right ? 44 : 4; FINE.y = right ? 232 : 184; FINE.h = right ? 392 : 440; TRAY.x = right ? 6 : 1240;
 }
 function buildSettings() {
 const tg = (k, on) => `<button class="tgl${on ? " on" : ""}" data-t="${k}"></button>`;
