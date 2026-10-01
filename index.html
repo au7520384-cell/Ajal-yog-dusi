@@ -931,6 +931,23 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 .cupi{position:relative;display:inline-block;border-radius:12px;overflow:hidden;border:2px solid var(--a1);box-shadow:0 0 8px color-mix(in srgb,var(--a1) 55%,transparent);flex:none}.cupi img{width:100%;height:100%;object-fit:cover}.cupi i{position:absolute;right:1px;bottom:0;font-style:normal;font-size:.42em;line-height:1;filter:drop-shadow(0 1px 1px #000)}
 .cupgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.cupc{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;font-size:11px;opacity:.45}.cupc.on{opacity:1}.cupc small{color:#ffe27a;font-size:15px;font-family:var(--fh)}
 
+
+/* achievements panel skin (reference mockup): ornate gold corners, square X, hex Close, glossy bevelled cards */
+#modal .panel.achp{border:2.5px solid #e2b13a;border-radius:20px;background:radial-gradient(ellipse at 50% -10%,#1e3a8a,#0a1536 55%,#050a1c);box-shadow:0 0 0 1px #5a3a08,0 0 28px #ffb30066,inset 0 0 0 3px #08102e,inset 0 0 0 5px #c9951e99,inset 0 0 40px #0a1a5a99,0 14px 50px #000d}
+#modal .panel.achp .achfx{position:absolute;inset:0;pointer-events:none;z-index:3}
+#modal .panel.achp .achfx i{position:absolute;width:54px;height:54px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2060%2060%22%3E%3Cpath%20d%3D%22M3%2056V14Q3%203%2014%203H56%22%20fill%3D%22none%22%20stroke%3D%22%23ffd76a%22%20stroke-width%3D%223.2%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M10%2056V20Q10%2010%2020%2010H56%22%20fill%3D%22none%22%20stroke%3D%22%23b8801a%22%20stroke-width%3D%221.4%22%2F%3E%3Cpath%20d%3D%22M3%203l16%200-6%206-0%206z%22%20fill%3D%22%23ffe08a%22%2F%3E%3Ccircle%20cx%3D%223%22%20cy%3D%223%22%20r%3D%223.2%22%20fill%3D%22%23fff3b8%22%2F%3E%3Cpath%20d%3D%22M22%203q4%206%2010%204M3%2022q6%204%204%2010%22%20fill%3D%22none%22%20stroke%3D%22%23ffd76a%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat}
+.achfx i:nth-child(1){left:2px;top:2px}.achfx i:nth-child(2){right:2px;top:2px;transform:scaleX(-1)}.achfx i:nth-child(3){left:2px;bottom:2px;transform:scaleY(-1)}.achfx i:nth-child(4){right:2px;bottom:2px;transform:scale(-1)}
+#modal .panel.achp .mx{width:34px;height:34px;border-radius:8px;border:2px solid #e2b13a;background:linear-gradient(#10224f,#060d2a);color:#ffe08a;font-size:20px;font-weight:900;line-height:1;box-shadow:inset 0 0 0 2px #0a1636,0 0 10px #ffb30055}
+#modal .panel.achp .ahtx b{font-style:normal;font-size:38px;letter-spacing:.5px;background:linear-gradient(#fff3b8,#f2b52a 55%,#b8801a);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #3a2400) drop-shadow(0 0 10px #ffb02088)}
+#modal .panel.achp .ahbar{height:18px;border:2px solid #c79a3a;background:#050c26;border-radius:10px}#modal .panel.achp .ahbar i{border-radius:8px}
+#modal .panel.achp .ash{background:linear-gradient(#ffe9a0,#a8741a);filter:drop-shadow(0 0 8px #ffb30077)}
+#modal .panel.achp .ash span{background:linear-gradient(#17306e,#0a1a46);font-family:Georgia,"Times New Roman",serif;font-size:19px;letter-spacing:.3px;color:#fff6d8}
+#modal .panel.achp .acc:not(.acwide){border:1.5px solid #d9b14a;border-radius:16px;background:linear-gradient(180deg,#22458f 0,#12296a 40%,#0a1c4c 100%);box-shadow:inset 0 0 0 2px #081640,inset 0 0 0 3px #4a7ae0aa,inset 0 14px 18px #ffffff12,0 5px 12px #000a}
+#modal .panel.achp .acc.got:not(.acwide){border-color:#ffd76a;box-shadow:inset 0 0 0 2px #081640,inset 0 0 0 3px #6aa0ffcc,inset 0 14px 18px #ffffff1a,0 0 16px #ffb30055,0 5px 12px #000a}
+#modal .panel.achp .acinfo b{font-family:Georgia,"Times New Roman",serif;font-size:17px;color:#fff3d0;letter-spacing:.2px}#modal .panel.achp .acinfo small{color:#d4e2ff}
+@media (max-height:460px){#modal .panel.achp .ahtx b{font-size:26px}#modal .panel.achp .ahtx span{font-size:12px}.ahero .aemb svg{width:64px;height:64px}#modal .panel.achp .achfx i{width:38px;height:38px}}
+#modal .panel.achp #mBtns .btn{position:relative;isolation:isolate;min-width:150px;border:0;color:#fff;font-family:Georgia,"Times New Roman",serif;font-weight:800;font-size:20px;background:linear-gradient(#ffe9a0,#9a6a14);padding:3px;box-shadow:none;clip-path:polygon(20px 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,20px 100%,0 50%)}
+#modal .panel.achp #mBtns .btn:before{content:"";position:absolute;inset:3px;background:linear-gradient(#10224f,#040a22);clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%);z-index:-1}
 /* premium modal skin: dark navy panel, gold frame with diamonds, italic gold titles, glossy buttons */
 #modal .panel:not(:has(.hwin)){position:relative;background:radial-gradient(ellipse at 50% 0,#1c2d6e,#0b1233 58%,#060a1c);border:2px solid #d9a22a;border-radius:16px;box-shadow:0 0 0 1px #5a3a08,0 0 22px #ffb30055,inset 0 0 0 3px #0a1030,inset 0 0 0 4px #b8861f88,0 12px 44px #000c}
 #modal .panel:not(:has(.hwin))::before,#modal .panel:not(:has(.hwin))::after{content:"";position:absolute;left:50%;width:13px;height:13px;transform:translateX(-50%) rotate(45deg);background:linear-gradient(135deg,#fff3b8,#e9b838,#8a5a0e);box-shadow:0 0 9px #ffb300;border-radius:2px;pointer-events:none;z-index:2}
@@ -6069,6 +6086,7 @@ const MODAL_SH = {room: 166, lounge: 143, gold: 110};
 const modalScene = k => MODAL_ART[k] || "";
 function openModal({icon = "", title, text = "", extra = "", buttons = [], scene = ""}) {
   $("modal").classList.remove("cpm");
+  { const pn = document.querySelector("#modal .panel"); pn.classList.remove("achp"); const f = pn.querySelector(".achfx"); if (f) f.remove(); }
   { const pn = document.querySelector("#modal .panel"); pn.classList.toggle("scened", !!scene); if (scene) { pn.style.setProperty("--scene", `url(${modalScene(scene)})`); pn.style.setProperty("--shd", (MODAL_SH[scene] || 120) + "px"); } }
 if (icon.startsWith("img:")) $("mIcon").innerHTML = `<img class="mic" src="${UI_SPR["ic_" + icon.slice(4)]}" alt="">`; else $("mIcon").textContent = icon; $("mTitle").textContent = T(title); $("mText").textContent = T(text); $("mExtra").innerHTML = extra;
 const box = $("mBtns"); box.innerHTML = "";
@@ -8626,6 +8644,7 @@ return `<div class="acc${a.got ? " got" : ""}"><div class="acart" style="backgro
 openModal({icon: "", title: "", text: "", extra: `<div class="achbox"><div class="ahero"><div class="aemb">${achEmblem(92)}</div><div class="ahtx"><b>${T("Yutuqlar")}</b><span>${T("Bajarilgan")}: <em>${n}/${tot}</em></span><div class="ahbar"><i style="width:${Math.max(3, Math.round(n / tot * 100))}%"></i></div></div></div>
 <div class="achlist2">${groups.map(([g, list]) => `<div class="ash"><span>${T(g)}</span></div><div class="acgrid">${list.map(card).join("")}</div>`).join("")}</div></div>`,
 buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
+{ const pn = document.querySelector("#modal .panel"); pn.classList.add("achp"); const f = document.createElement("div"); f.className = "achfx"; f.innerHTML = "<i></i><i></i><i></i><i></i>"; pn.appendChild(f); }
 }
 function errText(e) {
 return {code_not_found: T("Bunday kod topilmadi"), own_code: T("Bu sizning kodingiz"), already_used: T("Siz allaqachon taklif kodini ishlatgansiz"), too_late: T("Taklif kodi faqat birinchi 7 kunda ishlaydi"),
