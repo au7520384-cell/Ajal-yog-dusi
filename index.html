@@ -1225,9 +1225,9 @@ const ON_PORTAL = /(^|\.)y8\.com$|(^|\.)id\.net$/.test(location.hostname) || /y8
 const W = 1340, H = 720;
 const FX = 188, FY = 148, FW = 1000, FH = 500, RAIL = 66, R = 13;
 const RAILC = (RAIL + 8 + 19) / 2;
-const POWER_BAR = {x: 42, y: 184, w: 46, h: 440};
+const POWER_BAR = {x: 48, y: 200, w: 38, h: 390};
 const TRAY = {x: 1287, y: 184, w: 30, h: 440};   // outside the table frame (which ends at x = 1232), like a real ball return
-const FINE = {x: 4, y: 184, w: 36, h: 440};
+const FINE = {x: 6, y: 200, w: 30, h: 390};
 const SPIN_BTN = {x: 1300, y: 56, r: 30};
 const CUE_BTN = {x: 1300, y: 130, r: 24};
 const SPIN_UI = {x: W / 2, y: H / 2 + 20, r: 150};
@@ -5626,7 +5626,7 @@ const {x, y, w, h} = POWER_BAR, power = input.power;
 ctx.save();
 ctx.fillStyle = "#0b1020"; rr(x - 7, y - 32, w + 14, h + 48, 16); ctx.fill();
 ctx.strokeStyle = "#2c3a60"; ctx.lineWidth = 2; ctx.stroke();
-ctx.fillStyle = "#a7b2cc"; ctx.font = `14px ${FONT}`; ctx.textAlign = "center"; ctx.fillText(T("KUCH"), x + w / 2, y - 14);
+ctx.fillStyle = "#a7b2cc"; ctx.font = `12px ${FONT}`; ctx.textAlign = "center"; ctx.fillText(T("KUCH"), x + w / 2, y - 14);
 const tg = ctx.createLinearGradient(x, 0, x + w, 0); tg.addColorStop(0, "#050810"); tg.addColorStop(0.5, "#1a2238"); tg.addColorStop(1, "#050810");
 ctx.fillStyle = tg; rr(x, y, w, h, 12); ctx.fill();
 if (power > 0) {
@@ -5641,14 +5641,14 @@ ctx.rotate(Math.PI / 2); ctx.scale(1, -1);
 drawCueStick(ctx, 420, cueDef(profile.cue), 1.25);
 ctx.restore();
 ctx.textAlign = "center";
-ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.fillText(show ? T("▼ torting") : "", x + w / 2, y + h + 10);
+ctx.fillStyle = "#a7b2cc"; ctx.font = "10px Nunito,sans-serif"; ctx.fillText(show ? T("▼ torting") : "", x + w / 2, y + h + 10);
 ctx.restore();
 const f = FINE;
 if (!opt("fine")) return;
 ctx.save();
 ctx.fillStyle = "#0b1020"; rr(f.x - 6, f.y - 32, f.w + 12, f.h + 48, 16); ctx.fill();
 ctx.strokeStyle = "#2c3a60"; ctx.lineWidth = 2; ctx.stroke();
-ctx.fillStyle = "#a7b2cc"; ctx.font = `14px ${FONT}`; ctx.textAlign = "center"; ctx.fillText(T("ANIQ"), f.x + f.w / 2, f.y - 14);
+ctx.fillStyle = "#a7b2cc"; ctx.font = `12px ${FONT}`; ctx.textAlign = "center"; ctx.fillText(T("ANIQ"), f.x + f.w / 2, f.y - 14);
 const fg = ctx.createLinearGradient(f.x, 0, f.x + f.w, 0);
 fg.addColorStop(0, "#1a2238"); fg.addColorStop(0.5, "#6a7898"); fg.addColorStop(1, "#1a2238");
 ctx.fillStyle = fg; rr(f.x, f.y, f.w, f.h, 12); ctx.fill();
@@ -8499,7 +8499,7 @@ function setOpt(k, v) { profile.set = {...(profile.set || {}), [k]: v}; save(); 
 function vib(p) { if (opt("vib") && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
 function applySettings() {
 const right = opt("power") === "right";
-POWER_BAR.x = right ? 1290 : 42; FINE.x = right ? 50 : 4; FINE.y = right ? 232 : 184; FINE.h = right ? 392 : 440; TRAY.x = right ? 9 : 1287;
+POWER_BAR.x = right ? 1296 : 48; FINE.x = right ? 52 : 6; FINE.y = right ? 240 : 200; FINE.h = right ? 350 : 390; TRAY.x = right ? 9 : 1287;
 }
 function buildSettings() {
 const tg = (k, on) => `<button class="tgl${on ? " on" : ""}" data-t="${k}"></button>`;
