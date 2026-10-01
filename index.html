@@ -2859,40 +2859,49 @@ const g = {balls, pockets: G.pockets, demo: true, shot: {firstHit: null, potted:
 for (let f = 0; f < 700; f++) { physicsFrame(g); if (!anyMoving(balls)) break; }
 return {s: g.shot, balls};
 }
-function nextBest(balls, grp) {   // how good a follow-up shot the cue ball is left with
+function leaveBest(balls, grp, eightOnly) {   // best shot available to a player on `grp` from the cue ball's resting place
 const cue = balls[0]; if (cue.out) return 0;
 const on = balls.filter(b => !b.out && b.n !== 0 && b.n !== "gold"), own = grp ? on.filter(b => groupOf(b.n) === grp) : on.filter(b => b.n !== 8), tg = own.length ? own : on.filter(b => b.n === 8);
 let best = 0; for (const t of tg) for (const pa of POCKET_AIMS) { const e = evalShot(balls, cue.x, cue.y, t, pa); if (e && e.score > best) best = e.score; }
 return best;
 }
-function scoreSim(r) {
-const G = game, s = r.s, grp = G.groups[G.cur], pot = s.potted, cueP = pot.includes(0), eight = pot.includes(8), obj = pot.filter(n => n !== 0 && n !== 8);
+function scoreSim(r, tier) {
+const G = game, s = r.s, grp = G.groups[G.cur], opp = G.groups[1 - G.cur], pot = s.potted, cueP = pot.includes(0), eight = pot.includes(8), obj = pot.filter(n => n !== 0 && n !== 8);
 if (G.type === "practice") return obj.length * 100 - (cueP ? 300 : 0);
 if (s.firstHit === null) return -500;
 const own = grp ? remaining(grp) : -1, legal = grp ? (own > 0 ? groupOf(s.firstHit) === grp : s.firstHit === 8) : s.firstHit !== 8;
 let sc = legal ? 0 : -400;
 if (cueP) sc -= 800;
 for (const n of obj) sc += !grp || groupOf(n) === grp ? 120 : -60;
+const good = legal && !cueP && obj.length && obj.every(n => !grp || groupOf(n) === grp);
 if (eight) sc += grp && own > 0 && own === obj.filter(n => groupOf(n) === grp).length && !cueP && legal ? 2000 : -3000;
-else if (legal && !cueP && obj.length && obj.every(n => !grp || groupOf(n) === grp)) sc += Math.min(60, nextBest(r.balls, grp || groupOf(obj[0])) * 0.25);   // position play: keep a pot on for the next turn
+else if (good) sc += Math.min(tier === 2 ? 90 : 60, leaveBest(r.balls, grp || groupOf(obj[0])) * 0.25);   // position play: keep a pot on for the next turn
+else if (tier === 2 && legal && !cueP) sc -= Math.min(60, leaveBest(r.balls, opp || null) * 0.2);   // no pot: at least leave the opponent a hard shot
+if (tier === 2 && !cueP) { const c = r.balls[0]; if (c.x < R + 5 || c.x > FW - R - 5 || c.y < R + 5 || c.y > FH - R - 5) sc -= 15; }   // cue ball frozen on the cushion is awkward
 return sc;
 }
-const AI_SPINS = [[0, 0], [0, -0.55], [0, 0.55]];
-function bestShotSim(cx, cy) {
-const G = game, cands = [];
+const AI_SPIN_SETS = [[[0, 0]], [[0, 0], [0, -0.55], [0, 0.55]], [[0, 0], [0, -0.55], [0, 0.55], [0.5, 0], [-0.5, 0], [0.5, -0.4], [-0.5, -0.4], [0.5, 0.4], [-0.5, 0.4]]];
+const aiTier = () => { const k = isFinite(game.skill) ? game.skill : 0.01; return k > 0.014 ? 0 : k > 0.0095 ? 1 : 2; };   // weak bots shoot plain, mid bots use draw/follow, strong bots add english and plan the cue ball's leave
+function bestShotSim(cx, cy, tier) {
+const G = game, cands = [], T_ = tier === undefined ? aiTier() : tier, all = [];
 for (const t of legalTargets(G.cur)) for (const pa of POCKET_AIMS) { const e = evalShot(G.balls, cx, cy, t, pa); if (e) cands.push(e); }
 cands.sort((a, b) => b.score - a.score);
-let best = null;
-for (const c of cands.slice(0, 4)) for (const pw of [c.power, Math.min(1, c.power * 1.2)]) for (const [spx, spy] of AI_SPINS) {
-const sc = scoreSim(simShot(c.angle, pw, spx, spy)) + c.score * 1e-6 - (spy ? 0.5 : 0);
-if (!best || sc > best.sc) best = {angle: c.angle, power: pw, score: c.score, t: c.t, sc, spx, spy};
+for (const c of cands.slice(0, 4)) for (const pw of T_ === 2 ? [c.power * 0.85, c.power, Math.min(1, c.power * 1.2)] : [c.power, Math.min(1, c.power * 1.2)]) for (const [spx, spy] of AI_SPIN_SETS[T_]) {
+const pen = (spy || spx ? 0.5 : 0), sc = scoreSim(simShot(c.angle, pw, spx, spy), T_) + c.score * 1e-6 - pen;
+all.push({angle: c.angle, power: pw, score: c.score, t: c.t, sc, spx, spy, pen});
 }
-return best;
+all.sort((a, b) => b.sc - a.sc);
+if (T_ > 0) {   // a shot that only works at the exact aim is fragile: re-score the best few under small aiming errors
+const d = Math.max(0.006, isFinite(G.skill) ? G.skill : 0.01);
+for (const c of all.slice(0, 6)) c.sc = (c.sc + scoreSim(simShot(c.angle - d, c.power, c.spx, c.spy), T_) + scoreSim(simShot(c.angle + d, c.power, c.spx, c.spy), T_)) / 3;
+all.sort((a, b) => b.sc - a.sc);
 }
-function safeShotSim(cx, cy) {   // nothing pots cleanly: pick the shot the engine says is legal and safest
-const G = game, tg = legalTargets(G.cur); let best = null;
+return all[0] || null;
+}
+function safeShotSim(cx, cy, tier) {   // nothing pots cleanly: pick the shot the engine says is legal and safest (strong bots also leave the opponent no shot)
+const G = game, T_ = tier === undefined ? aiTier() : tier, tg = legalTargets(G.cur); let best = null;
 for (const t of tg) { if (!segClear(G.balls, cx, cy, t.x, t.y, [0, t.n])) continue; const ang = Math.atan2(t.y - cy, t.x - cx);
-for (const pw of [0.3, 0.45, 0.65]) for (const [spx, spy] of AI_SPINS) { const sc = scoreSim(simShot(ang, pw, spx, spy)) - (spy ? 0.5 : 0); if (!best || sc > best.sc) best = {angle: ang, power: pw, sc, spx, spy}; } }
+for (const pw of [0.3, 0.45, 0.65]) for (const [spx, spy] of AI_SPIN_SETS[T_]) { const sc = scoreSim(simShot(ang, pw, spx, spy), T_) - (spy || spx ? 0.5 : 0); if (!best || sc > best.sc) best = {angle: ang, power: pw, sc, spx, spy}; } }
 return best;
 }
 function aiThink() {
