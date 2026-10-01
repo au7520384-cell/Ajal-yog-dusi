@@ -2431,6 +2431,7 @@ const nx = p[0] * c + cx * s + kx * kp * (1 - c), ny = p[1] * c + cy * s + ky * 
 p[0] = nx; p[1] = ny; p[2] = nz; norm3(p);
 }
 function spinBall(b) { const wm = Math.hypot(b.wx || 0, b.wy || 0, b.wz || 0); if (wm < 1e-4) return; const kx = b.wx / wm, ky = b.wy / wm, kz = b.wz / wm, c = Math.cos(wm), sn = Math.sin(wm); rotA(b.p, kx, ky, kz, c, sn); if (b.q) rotA(b.q, kx, ky, kz, c, sn); }
+const CAP_W = 46, edgeDist = b => Math.max(-b.x, b.x - FW, -b.y, b.y - FH);
 function holeAt(pockets, b, margin) {   // the hole in the slate, or the open cup beyond the table edge: no cloth under the ball there
 const m = margin || 0; let bd = 1e9, np = null;
 for (const p of pockets) { const d = (b.x - p.hx) ** 2 + (b.y - p.hy) ** 2; if (d < (p.hr + m) ** 2) return p; if (d < bd) { bd = d; np = p; } }
@@ -2446,17 +2447,18 @@ for (let s = 0; s < SUB; s++) {
 for (const b of balls) if (!b.out) {
 b.x += b.vx / SUB; b.y += b.vy / SUB;
 if (b.z === undefined) { b.z = 0; b.vz = 0; }
-const hp = pockets ? holeAt(pockets, b) : null;
-if (hp || b.z > 0 || b.z < 0) {
+const hp = pockets ? holeAt(pockets, b) : null, ed = pockets ? edgeDist(b) : 0, cap = pockets && !hp && ed > 0 && ed < CAP_W, fz = cap ? 17 : 0;   // the wooden rail cap lies 17 u above the cloth, CAP_W wide
+if (hp || b.z > fz || b.z < 0) {
 b.vz = (b.vz || 0) - GU / SUB; b.z += b.vz / SUB;
-if (!hp && b.z <= 0) { const v = -b.vz; b.z = 0; b.vz = v > 3 ? v * 0.38 : 0; if (b.vz) b.z = 0.01; if (!G.demo && v > 1.6) Snd.clack(v * 1.1); }
+if (!hp && b.z <= fz) { const v = -b.vz; b.z = fz; b.vz = v > 3 ? v * 0.42 : 0; if (b.vz) b.z = fz + 0.01; if (cap) { b.vx *= 0.82; b.vy *= 0.82; } if (!G.demo && v > 1.6) Snd.clack(v * 1.1); }
 } else clothStep(b, 1 / SUB);
+if (cap && b.z <= fz + 0.02) { const nx = b.x < 0 ? 1 : b.x > FW ? -1 : 0, ny = b.y < 0 ? 1 : b.y > FH ? -1 : 0; b.vx += nx * 0.8 / SUB; b.vy += ny * 0.8 / SUB; }   // the cap slopes slightly towards the cloth: a ball that lands on it usually rolls back in
 }
 if (pockets) for (const b of balls) {
 if (b.out) continue;
 const hp = holeAt(pockets, b, R);
 if (!hp) {
-if (b.x < -6 || b.x > FW + 6 || b.y < -6 || b.y > FH + 6) { b.out = true; b.vx = b.vy = 0; b.z = b.vz = 0; if (G.shot) (G.shot.off = G.shot.off || []).push(b.n); if (!G.demo) Snd.rail(14); dustPuff(G, b.x, b.y, 8, 1.4); (G.fall = G.fall || []).push({b: {n: b.n, p: b.p.slice(), q: b.q.slice()}, x: b.x, y: b.y, vx: (b.x < 0 ? -1 : b.x > FW ? 1 : 0) * 2 + rnd(-1, 1), vy: (b.y < 0 ? -1 : b.y > FH ? 1 : 0) * 2 + rnd(-1, 1), z: Math.max(10, b.z0 || 18), vz: 2, t: 0, bn: 0}); }   // thrown off the table by a jump or a violent break
+if (edgeDist(b) >= CAP_W && b.z <= 1) { b.out = true; b.vx = b.vy = 0; b.z = b.vz = 0; if (G.shot) (G.shot.off = G.shot.off || []).push(b.n); if (!G.demo) Snd.rail(14); dustPuff(G, b.x, b.y, 8, 1.4); (G.fall = G.fall || []).push({b: {n: b.n, p: b.p.slice(), q: b.q.slice()}, x: b.x, y: b.y, vx: (b.x < 0 ? -1 : b.x > FW ? 1 : 0) * 2 + rnd(-1, 1), vy: (b.y < 0 ? -1 : b.y > FH ? 1 : 0) * 2 + rnd(-1, 1), z: Math.max(10, b.z0 || 18), vz: 2, t: 0, bn: 0}); }   // thrown off the table by a jump or a violent break
 continue;
 }
 let dx = b.x - hp.hx, dy = b.y - hp.hy, rho = Math.hypot(dx, dy) || 1e-6;
@@ -2498,10 +2500,10 @@ if (vn < 0) jawHit(G, b, nx, ny, -vn);
 }
 for (const b of balls) {
 if (b.out) continue;
-if (!(b.z > 17) && (b.x < R || b.x > FW - R) && (!pockets || (b.y >= CORNER_MOUTH + CF && b.y <= FH - CORNER_MOUTH - CF))) {
+if (!(b.z > 16.9) && edgeDist(b) < R + 6 && (b.x < R || b.x > FW - R) && (!pockets || (b.y >= CORNER_MOUTH + CF && b.y <= FH - CORNER_MOUTH - CF))) {
 const left = b.x < R, hit = Math.abs(b.vx); b.x = left ? R : FW - R; if (cushion(G, b, left ? 1 : -1, 0)) onRail(G, b, hit);
 }
-if (!(b.z > 17) && (b.y < R || b.y > FH - R) && (!pockets || (b.x >= CORNER_MOUTH + CF && b.x <= FW / 2 - MID_MOUTH - MF) || (b.x >= FW / 2 + MID_MOUTH + MF && b.x <= FW - CORNER_MOUTH - CF))) {
+if (!(b.z > 16.9) && edgeDist(b) < R + 6 && (b.y < R || b.y > FH - R) && (!pockets || (b.x >= CORNER_MOUTH + CF && b.x <= FW / 2 - MID_MOUTH - MF) || (b.x >= FW / 2 + MID_MOUTH + MF && b.x <= FW - CORNER_MOUTH - CF))) {
 const top = b.y < R, hit = Math.abs(b.vy); b.y = top ? R : FH - R; if (cushion(G, b, 0, top ? 1 : -1)) onRail(G, b, hit);
 }
 }
