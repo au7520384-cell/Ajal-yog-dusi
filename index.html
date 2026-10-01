@@ -907,6 +907,22 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 .pcups{margin-bottom:8px}
 .cupi{position:relative;display:inline-block;border-radius:12px;overflow:hidden;border:2px solid var(--a1);box-shadow:0 0 8px color-mix(in srgb,var(--a1) 55%,transparent);flex:none}.cupi img{width:100%;height:100%;object-fit:cover}.cupi i{position:absolute;right:1px;bottom:0;font-style:normal;font-size:.42em;line-height:1;filter:drop-shadow(0 1px 1px #000)}
 .cupgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.cupc{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;font-size:11px;opacity:.45}.cupc.on{opacity:1}.cupc small{color:#ffe27a;font-size:15px;font-family:var(--fh)}
+
+/* premium modal skin: dark navy panel, gold frame with diamonds, italic gold titles, glossy buttons */
+#modal .panel:not(:has(.hwin)){position:relative;background:radial-gradient(ellipse at 50% 0,#1c2d6e,#0b1233 58%,#060a1c);border:2px solid #d9a22a;border-radius:16px;box-shadow:0 0 0 1px #5a3a08,0 0 22px #ffb30055,inset 0 0 0 3px #0a1030,inset 0 0 0 4px #b8861f88,0 12px 44px #000c}
+#modal .panel:not(:has(.hwin))::before,#modal .panel:not(:has(.hwin))::after{content:"";position:absolute;left:50%;width:13px;height:13px;transform:translateX(-50%) rotate(45deg);background:linear-gradient(135deg,#fff3b8,#e9b838,#8a5a0e);box-shadow:0 0 9px #ffb300;border-radius:2px;pointer-events:none;z-index:2}
+#modal .panel:not(:has(.hwin))::before{top:-8px}#modal .panel:not(:has(.hwin))::after{bottom:-8px}
+#modal .panel #mTitle{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:800;color:#ffe9a8;text-shadow:0 2px 0 #3a2400,0 0 14px #ffb30077}
+#modal .btn.green{border:1px solid #a6f27a;box-shadow:0 0 14px #3fe05255,inset 0 1px 0 #fff7,0 3px 0 #0a5a14}
+#modal .btn.gray{background:linear-gradient(#17295a,#0a1233);border:1px solid #3f62b4;color:#dfe8ff;box-shadow:inset 0 1px 0 #6a8ae255,0 3px 0 #04081a}
+#modal .btn.purple{border:1px solid #c79aff;box-shadow:0 0 14px #a45cff55,inset 0 1px 0 #fff6,0 3px 0 #3a1a80}
+#modal .reward{background:#050a1ccc;border:1px solid #2f4a9a;border-radius:14px;padding:6px 18px;color:#fff;box-shadow:inset 0 0 12px #0008}
+#modal .dm{background:linear-gradient(#10204f,#08112c);border:1px solid #234b9e;border-radius:10px}#modal .dm.rdy{border-color:#c9951e;box-shadow:0 0 10px #ffb30033}
+#modal .avs button{background:linear-gradient(#0f1b44,#08102a);border:2px solid #c9951e55;border-radius:12px}#modal .avs button.on{border-color:#ffcf3d;box-shadow:0 0 12px #ffb300aa}
+#modal .name,#modal input.name{background:#060c24;border:1px solid #2a4690;color:#fff}
+#modal .panel.scened{min-height:min(300px,100%);background:linear-gradient(180deg,#0000 0%,#0000 42%,#070d2a99 72%,#060a1cdd 100%),var(--scene) center top/cover no-repeat,#060a1c!important}
+#modal .panel.scened #mTitle{font-size:34px;letter-spacing:.5px;text-shadow:0 3px 0 #2a1a00,0 0 20px #000,0 0 18px #ffb300aa}
+#modal .mgart{height:92px;max-width:42%;object-fit:contain;filter:drop-shadow(0 4px 10px #000a);float:left;margin:0 10px 4px 0}
 </style>
 </head>
 <body>
@@ -3695,7 +3711,7 @@ function giveTable(id, why) {
 (profile.tables = profile.tables || []).includes(id) || profile.tables.push(id);
 profile.tableSkin = id; tableCache = null; save(); Net.sync();
 const t = tableById(id); Snd.tableFx(tableFxKind(id), 1); burst();
-openModal({icon: t.tier === "premium" ? "👑" : "✨", title: T(t.name), text: why || T("Stol sizniki! Endi hamma o'yinlaringizda shu stol."), extra: `<canvas class="tpcv" width="620" height="340"></canvas>`,
+openModal({icon: t.tier === "premium" ? "👑" : "✨", title: T(t.name), text: why || T("Stol sizniki! Endi hamma o'yinlaringizda shu stol."), extra: `<canvas class="tpcv" width="620" height="340"></canvas>`, scene: "lounge",
 buttons: [{label: T("Ajoyib!"), cls: "green", fn: () => {}}]});
 previewTable(t, document.querySelector("#modal .tpcv"));
 }
@@ -5878,8 +5894,31 @@ el.innerHTML = `<span class="ti">${o.img ? `<img src="${o.img}" alt="">` : `<spa
 box.appendChild(el); setTimeout(() => { el.remove(); pumpToast(); }, 3150);
 }
 }
-function openModal({icon = "", title, text = "", extra = "", buttons = []}) {
+const MSC = {};
+function modalScene(kind) {   // painted header scenes for the premium modals: pool room with a hanging lamp, night lounge with city lights, gold treasure glow
+if (MSC[kind]) return MSC[kind];
+const W = 900, H = 340, c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d"); let sd = kind.length * 977 + 13; const r = () => (sd = sd * 16807 % 2147483647) / 2147483647;
+const top = {room: "#241446", lounge: "#0a1a52", gold: "#33200a"}[kind] || "#1a1a40", bot = {room: "#05060e", lounge: "#14083a", gold: "#0c0703"}[kind] || "#05060e";
+const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, top); bg.addColorStop(1, bot); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+if (kind === "lounge") { for (let x = 0; x < W; x += 30) { const h = 60 + r() * 120; g.fillStyle = `rgba(${20 + r() * 30 | 0},${20 + r() * 30 | 0},${70 + r() * 40 | 0},.85)`; g.fillRect(x, H * 0.62 - h, 28, h + 4); for (let y = H * 0.62 - h + 6; y < H * 0.6; y += 11) for (let k = 0; k < 2; k++) if (r() < 0.45) { g.fillStyle = r() < 0.5 ? "#ffd27a" : "#9ad0ff"; g.globalAlpha = 0.5 + r() * 0.4; g.fillRect(x + 4 + k * 12, y, 7, 6); g.globalAlpha = 1; } } }
+const pal = {room: ["#ffb347", "#ff7a3d", "#ffd98a"], lounge: ["#b06aff", "#4aa8ff", "#ff7ad0"], gold: ["#ffd24d", "#ffb300", "#fff0a0"]}[kind] || ["#fff"];
+for (let k = 0; k < 46; k++) { const x = r() * W, y = r() * H * 0.7, rad = 4 + r() * 16, cl = pal[k % pal.length], rg = g.createRadialGradient(x, y, 0, x, y, rad); rg.addColorStop(0, cl + "99"); rg.addColorStop(1, cl + "00"); g.fillStyle = rg; g.beginPath(); g.arc(x, y, rad, 0, 7); g.fill(); }
+if (kind === "room") { const lg = g.createLinearGradient(0, 0, 0, H * 0.8); lg.addColorStop(0, "rgba(255,225,150,.55)"); lg.addColorStop(1, "rgba(255,225,150,0)"); g.fillStyle = lg; g.beginPath(); g.moveTo(W / 2 - 14, 22); g.lineTo(W / 2 + 14, 22); g.lineTo(W / 2 + 250, H * 0.8); g.lineTo(W / 2 - 250, H * 0.8); g.fill(); g.fillStyle = "#14101c"; g.beginPath(); g.moveTo(W / 2 - 34, 24); g.lineTo(W / 2 + 34, 24); g.lineTo(W / 2 + 18, 0); g.lineTo(W / 2 - 18, 0); g.fill(); g.fillStyle = "#ffe9a8"; g.beginPath(); g.ellipse(W / 2, 25, 26, 5, 0, 0, 7); g.fill(); }
+if (kind === "room" || kind === "lounge") {
+const fg = g.createLinearGradient(0, H * 0.6, 0, H); fg.addColorStop(0, "#1f9a9a"); fg.addColorStop(1, "#0b4a55");
+g.fillStyle = "#3a1c0c"; g.beginPath(); g.moveTo(W * 0.12, H * 0.6); g.lineTo(W * 0.88, H * 0.6); g.lineTo(W * 1.0, H); g.lineTo(0, H); g.fill();
+g.fillStyle = fg; g.beginPath(); g.moveTo(W * 0.17, H * 0.64); g.lineTo(W * 0.83, H * 0.64); g.lineTo(W * 0.95, H); g.lineTo(W * 0.05, H); g.fill();
+for (const [x, y, col] of [[0.35, 0.74, "#ff4a3a"], [0.44, 0.8, "#fff"], [0.62, 0.72, "#ffd23a"], [0.7, 0.82, "#3a8aff"], [0.52, 0.9, "#222"]]) { g.fillStyle = col; g.beginPath(); g.arc(W * x, H * y, 7 + y * 6, 0, 7); g.fill(); }
+}
+if (kind === "gold") { const gg = g.createRadialGradient(W * 0.22, H * 0.6, 4, W * 0.22, H * 0.6, 260); gg.addColorStop(0, "rgba(255,210,80,.75)"); gg.addColorStop(1, "rgba(255,210,80,0)"); g.fillStyle = gg; g.fillRect(0, 0, W, H);
+for (let s2 = 0; s2 < 4; s2++) for (let k = 0; k < 9; k++) { const x = 40 + s2 * 62 + (k % 2) * 4, y = H * 0.9 - k * 9; const cg = g.createLinearGradient(x - 26, y, x + 26, y); cg.addColorStop(0, "#8a5a0e"); cg.addColorStop(0.5, "#ffe27a"); cg.addColorStop(1, "#a8700e"); g.fillStyle = cg; g.beginPath(); g.ellipse(x, y, 26, 8, 0, 0, 7); g.fill(); }
+g.fillStyle = "#0a0a10"; g.beginPath(); g.arc(W * 0.2, H * 0.5, 50, 0, 7); g.fill(); g.fillStyle = "#fff"; g.beginPath(); g.arc(W * 0.2, H * 0.5 - 4, 20, 0, 7); g.fill(); g.fillStyle = "#0a0a10"; g.font = "bold 28px sans-serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("8", W * 0.2, H * 0.5 - 3); }
+const vg = g.createRadialGradient(W / 2, H / 2, 120, W / 2, H / 2, W * 0.62); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.55)"); g.fillStyle = vg; g.fillRect(0, 0, W, H);
+return (MSC[kind] = c.toDataURL("image/jpeg", 0.8));
+}
+function openModal({icon = "", title, text = "", extra = "", buttons = [], scene = ""}) {
   $("modal").classList.remove("cpm");
+  { const pn = document.querySelector("#modal .panel"); pn.classList.toggle("scened", !!scene); if (scene) pn.style.setProperty("--scene", `url(${modalScene(scene)})`); }
 $("mIcon").textContent = icon; $("mTitle").textContent = T(title); $("mText").textContent = T(text); $("mExtra").innerHTML = extra;
 const box = $("mBtns"); box.innerHTML = "";
 for (const b of buttons) {
@@ -5970,7 +6009,7 @@ function resultModal(humanWon, why, winner, prize, buttons) {
 const title = humanWon === null ? `${winner.name} ${T("yutdi!")}` : humanWon ? T("G'ALABA!") : T("MAG'LUBIYAT");
 const extra = prize ? `<div class="reward"><span class="coin"></span><span id="countUp">+0</span></div>` : "";
 buttons = buttons.map(b => ({...b, fn: () => y8Break(b.fn)}));
-openModal({icon: humanWon === false ? "😞" : "🏆", title, text: why, extra, buttons});
+openModal({icon: humanWon === false ? "😞" : "🏆", title, text: why, extra, buttons, scene: humanWon === false ? "" : "room"});
 if (prize) {
 const el = $("countUp");
 setTimeout(() => {
@@ -7472,7 +7511,7 @@ box.querySelectorAll(".mgc").forEach(el => el.onclick = () => ({lucky: () => sta
 function goldenShot() {
 if (!profile.goldShots) {
 if (mode !== "menu") toMenu("mini");
-return openModal({icon: "🏆", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 100 · 💵 60 · 🪙 75 000 · 🪙 50 000</div>`,
+return openModal({icon: "🏆", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 100 · 💵 60 · 🪙 75 000 · 🪙 50 000</div>`, scene: "gold",
 buttons: [...(ON_PORTAL ? [] : [{label: "💳 3 × $1.99", cls: "green", fn: () => Net.checkout("golden_3")}]),
 {label: "💎 25", cls: "purple", fn: () => { if ((profile.gems || 0) < 25) return toast("😕", T("Olmos yetmaydi"), T("Oltin zarba")); profile.gems -= 25; profile.goldShots = 3; save(); updateNav(); goldenShot(); }},
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
