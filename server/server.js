@@ -84,6 +84,7 @@ const EDITION_CAP = {l_brz: 5000, l_slv: 4000, l_gld: 3000, l_rgd: 2500, l_plt: 
   pc_brz: 5000, pc_slv: 4000, pc_gld: 3000, pc_rgd: 2500, pc_plt: 2000, pc_sap: 1500, pc_emr: 1500, pc_rby: 1200, pc_ame: 1200, pc_dia: 1000, pc_bdi: 500, pc_opl: 300,
   pf_brz: 5000, pf_slv: 4000, pf_gld: 3000, pf_rgd: 2500, pf_plt: 2000, pf_sap: 1500, pf_emr: 1500, pf_rby: 1200, pf_ame: 1200, pf_dia: 1000, pf_bdi: 500, pf_opl: 300};
 const FRAME_USD = {pf_brz: 2.49, pf_slv: 3.49, pf_gld: 4.99, pf_rgd: 5.99, pf_plt: 6.99, pf_sap: 8.49, pf_emr: 9.49, pf_rby: 10.49, pf_ame: 11.49, pf_dia: 15.99, pf_bdi: 18.99, pf_opl: 22.99};
+for (const i of [4, 10, 19, 29, 33, 37, 47, 49]) SKUS["emb_" + i] = {items: {emblems: [i]}, vip: Math.round(1.99 * 65), usd: 1.99, name: "Legendary club emblem " + (i + 1)};   // CLUB_TIER 2 emblems
 for (const [id, usd] of Object.entries(FRAME_USD)) SKUS["frame_" + id] = {items: {pframes: [id]}, vip: Math.round(usd * 65), usd, name: "Premium frame " + id.slice(3)};
 // Premium cues (real-money option; also sold in-game for cash or gems)
 const CUE_USD = {pc_brz: 3.99, pc_slv: 5.99, pc_gld: 8.99, pc_rgd: 10.99, pc_plt: 12.99, pc_sap: 15.99, pc_emr: 17.99, pc_rby: 19.99, pc_ame: 21.99, pc_dia: 29.99, pc_bdi: 36.99, pc_opl: 44.99};
