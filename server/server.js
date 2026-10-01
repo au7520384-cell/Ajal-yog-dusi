@@ -448,7 +448,7 @@ const routes = {
     if (name.length < 3) return [400, {error: "name"}];
     if (Object.values(db.clubs).some(c => c.name.toLowerCase() === name.toLowerCase())) return [400, {error: "name_taken"}];
     const id = "k" + crypto.randomBytes(6).toString("hex");
-    db.clubs[id] = {id, name, badge: int(b.badge, 23), color: int(b.color, 7), desc: String(b.desc || "").replace(/[<>]/g, "").slice(0, 80), owner: u.id, members: [u.id], created: Date.now(), chat: [], league: 0};
+    db.clubs[id] = {id, name, badge: int(b.badge, 49), color: int(b.color, 7), desc: String(b.desc || "").replace(/[<>]/g, "").slice(0, 80), owner: u.id, members: [u.id], created: Date.now(), chat: [], league: 0};
     u.club = id; markDirty();
     return {ok: true, club: clubInfo(db.clubs[id])};
   },
