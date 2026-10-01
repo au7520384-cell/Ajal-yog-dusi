@@ -5671,10 +5671,11 @@ const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, mx = dir > 0 ? 1232 : 8
 return {cx, dir, mx, y0, ye, L1, len: L1 + ye - y0};
 };
 const trayPos = (g, s) => s < g.L1 ? [g.mx + g.dir * s, g.y0] : [g.cx, g.y0 + s - g.L1];
-function trayPath(g) { ctx.beginPath(); ctx.moveTo(g.mx, g.y0); ctx.arcTo(g.cx, g.y0, g.cx, g.y0 + 22, 22); ctx.lineTo(g.cx, g.ye); }
+function trayPath(g) { ctx.beginPath(); ctx.moveTo(g.mx, g.y0); ctx.arcTo(g.cx, g.y0, g.cx, g.y0 + 36, 36); ctx.lineTo(g.cx, g.ye); }
 function drawTray(G) {
 const g = trayGeo(), W = 36;
 ctx.save(); ctx.lineCap = "round"; ctx.lineJoin = "round";
+ctx.beginPath(); if (g.dir > 0) ctx.rect(g.mx, 0, W + 200, H); else ctx.rect(-200, 0, g.mx + 200, H); ctx.clip();   // the tube starts flush at the rail edge
 const line = (w, c) => { trayPath(g); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.stroke(); };
 ctx.save(); ctx.translate(3, 4); line(W + 11, "rgba(0,0,0,.35)"); ctx.restore();
 line(W + 9, "#dfe7f5"); line(W + 7, "#6f7d98"); line(W + 5, "#eef3fb"); line(W + 2.5, "#7b88a3");   // double chrome wall
@@ -5684,9 +5685,6 @@ ctx.strokeStyle = "rgba(190,203,226,.75)"; ctx.lineWidth = 2.5; ctx.lineCap = "b
 for (let y = g.y0 + g.L1 + 40; y < g.ye - 10; y += 54) { ctx.beginPath(); ctx.moveTo(g.cx - W / 2, y); ctx.lineTo(g.cx + W / 2, y); ctx.stroke(); }
 for (const q of G.tray) if (q.delay <= 0) { const [x, y] = trayPos(g, q.s); drawBall(q.b, x, y, 1.15); }
 ctx.lineCap = "round"; ctx.save(); ctx.translate(-g.dir * (W / 2 - 3), 0); line(2, "rgba(255,255,255,.28)"); ctx.restore();
-const fx = g.dir > 0 ? g.mx - 3 : g.mx - 4;   // mouth ring set into the rail
-const fg = ctx.createLinearGradient(fx, 0, fx + 7, 0); fg.addColorStop(0, "#f4f8ff"); fg.addColorStop(0.5, "#8d9ab4"); fg.addColorStop(1, "#dfe7f5");
-ctx.fillStyle = fg; rr(fx, g.y0 - W / 2 - 6, 7, W + 12, 3); ctx.fill();
 ctx.restore();
 }
 function updateTray(G) {
@@ -8501,7 +8499,7 @@ function setOpt(k, v) { profile.set = {...(profile.set || {}), [k]: v}; save(); 
 function vib(p) { if (opt("vib") && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
 function applySettings() {
 const right = opt("power") === "right";
-POWER_BAR.x = right ? 1282 : 42; FINE.x = right ? 44 : 4; FINE.y = right ? 232 : 184; FINE.h = right ? 392 : 440; TRAY.x = right ? 6 : 1275;
+POWER_BAR.x = right ? 1282 : 42; FINE.x = right ? 50 : 4; FINE.y = right ? 232 : 184; FINE.h = right ? 392 : 440; TRAY.x = right ? 9 : 1275;
 }
 function buildSettings() {
 const tg = (k, on) => `<button class="tgl${on ? " on" : ""}" data-t="${k}"></button>`;
