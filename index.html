@@ -2769,7 +2769,7 @@ cue.x = remote.x; cue.y = remote.y; cue.vx = remote.vx; cue.vy = remote.vy; cue.
 const rw = remote.w || [0, 0, 0]; cue.wx = +rw[0] || 0; cue.wy = +rw[1] || 0; cue.wz = +rw[2] || 0; cue.vz0 = +remote.vz0 || 0;
 } else {
 const maxS = pl.isAI ? 30.5 : cueMax(cd);
-const sp = Math.max(0.6, power * maxS) * (G.isBreak ? 1.35 : 1) * (G.type === "lucky" ? 0.8 : 1);
+const sp = Math.min(G.isBreak ? 62 : 1e9, Math.max(0.6, power * maxS) * (G.isBreak ? 1.95 : 1)) * (G.type === "lucky" ? 0.8 : 1);   // break: ≈ 8 m/s at full power (real pro breaks are 8–12 m/s)
 const dx = Math.cos(G.angle), dy = Math.sin(G.angle);
 cue.vx = dx * sp; cue.vy = dy * sp; cue.dir = [dx, dy];
 const k = pl.isAI ? 0.7 : cueSpin(cd), el = G.elev || 0; cue.vz0 = 0;
