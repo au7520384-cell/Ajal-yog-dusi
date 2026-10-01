@@ -2886,14 +2886,14 @@ function bestShotSim(cx, cy, tier) {
 const G = game, cands = [], T_ = tier === undefined ? aiTier() : tier, all = [];
 for (const t of legalTargets(G.cur)) for (const pa of POCKET_AIMS) { const e = evalShot(G.balls, cx, cy, t, pa); if (e) cands.push(e); }
 cands.sort((a, b) => b.score - a.score);
-for (const c of cands.slice(0, 4)) for (const pw of T_ === 2 ? [c.power * 0.85, c.power, Math.min(1, c.power * 1.2)] : [c.power, Math.min(1, c.power * 1.2)]) for (const [spx, spy] of AI_SPIN_SETS[T_]) {
+for (const c of cands.slice(0, T_ === 2 ? 3 : 4)) for (const pw of [c.power, Math.min(1, c.power * 1.2)]) for (const [spx, spy] of AI_SPIN_SETS[T_]) {
 const pen = (spy || spx ? 0.5 : 0), sc = scoreSim(simShot(c.angle, pw, spx, spy), T_) + c.score * 1e-6 - pen;
 all.push({angle: c.angle, power: pw, score: c.score, t: c.t, sc, spx, spy, pen});
 }
 all.sort((a, b) => b.sc - a.sc);
 if (T_ > 0) {   // a shot that only works at the exact aim is fragile: re-score the best few under small aiming errors
 const d = Math.max(0.006, isFinite(G.skill) ? G.skill : 0.01);
-for (const c of all.slice(0, 6)) c.sc = (c.sc + scoreSim(simShot(c.angle - d, c.power, c.spx, c.spy), T_) + scoreSim(simShot(c.angle + d, c.power, c.spx, c.spy), T_)) / 3;
+for (const c of all.slice(0, 4)) c.sc = (c.sc + scoreSim(simShot(c.angle - d, c.power, c.spx, c.spy), T_) + scoreSim(simShot(c.angle + d, c.power, c.spx, c.spy), T_)) / 3;
 all.sort((a, b) => b.sc - a.sc);
 }
 return all[0] || null;
