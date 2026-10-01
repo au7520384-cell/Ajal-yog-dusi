@@ -705,3 +705,34 @@ Baland‖High|Громко|Yüksek|Alto|Alto|مرتفع|Tinggi|ज़्या�
 Tugmalar o'lchami‖Button size|Размер кнопок|Düğme boyutu|Tamaño de botones|Tamanho dos botões|حجم الأزرار|Ukuran tombol|बटन का आकार|Taille des boutons|Tastengröße|버튼 크기|ボタンのサイズ|按钮大小
 Oddiy‖Normal|Обычный|Normal|Normal|Normal|عادي|Normal|सामान्य|Normal|Normal|보통|標準|标准
 Kichik‖Small|Маленький|Küçük|Pequeño|Pequeno|صغير|Kecil|छोटा|Petit|Klein|작게|小さい|小
+Sinovlar‖Challenges|Испытания|Meydan okumalar|Desafíos|Desafios|التحديات|Tantangan|चुनौतियाँ|Défis|Herausforderungen|도전 과제|チャレンジ|挑战
+Bajarilgan‖Completed|Выполнено|Tamamlanan|Completado|Concluído|مكتمل|Selesai|पूर्ण|Terminé|Abgeschlossen|완료|達成済み|已完成
+Keyingi yutuqni oching‖Unlock your next achievement|Откройте следующее достижение|Bir sonraki başarımı aç|Desbloquea tu próximo logro|Desbloqueie sua próxima conquista|افتح إنجازك التالي|Buka pencapaian berikutnya|अगली उपलब्धि अनलॉक करें|Débloquez votre prochain succès|Schalte deinen nächsten Erfolg frei|다음 업적 달성하기|次の実績を解除しよう|解锁下一个成就
+Vaqt yutuqlari‖Play time achievements|Достижения по времени|Oynama süresi başarımları|Logros de tiempo de juego|Conquistas de tempo de jogo|إنجازات وقت اللعب|Pencapaian waktu bermain|खेल समय की उपलब्धियाँ|Succès de temps de jeu|Spielzeit-Erfolge|플레이 시간 업적|プレイ時間の実績|游戏时长成就
+Kombinatsiya ustasi‖Combo Master|Мастер комбинаций|Kombinasyon Ustası|Maestro de combinaciones|Mestre das combinações|سيد التوليفات|Master Kombinasi|कॉम्बिनेशन मास्टर|Maître des combinaisons|Kombi-Meister|콤비네이션 마스터|コンビネーションの達人|组合大师
+ta kombinatsiya zarbasi qiling‖combination shots|комбинационных ударов|kombinasyon vuruşu yap|tiros combinados|tacadas combinadas|ضربات توليفية|pukulan kombinasi|कॉम्बिनेशन शॉट लगाएँ|coups combinés|Kombinationsstöße|콤비네이션 샷 성공|コンビネーションショットを決める|次组合球
+Bort ustasi‖Bank Master|Мастер борта|Bant Ustası|Maestro de bandas|Mestre das tabelas|سيد الحافة|Master Pantulan|बैंक मास्टर|Maître des bandes|Banden-Meister|뱅크샷 마스터|バンクショットの達人|库边大师
+ta shar bortga tegib tushsin‖balls potted off the cushion|шаров забито от борта|top bandan sonra düşür|bolas embocadas tras banda|bolas encaçapadas após tabela|كرات بعد الاصطدام بالحافة|bola masuk setelah memantul|गेंदें बोर्ड से लगकर डालें|billes empochées après bande|Kugeln nach Bande versenkt|쿠션 맞고 들어간 공|クッション経由で入れたボール|库边后进袋的球
+Zarbdor‖Sharpshooter|Меткий стрелок|Keskin Nişancı|Tirador certero|Atirador certeiro|القناص|Penembak Jitu|तेज़ निशानेबाज़|Tireur d'élite|Scharfschütze|명사수|名スナイパー|神射手
+ta shar tushiring‖balls potted|шаров забито|top düşür|bolas embocadas|bolas encaçapadas|كرات مُدخلة|bola dimasukkan|गेंदें डालें|billes empochées|Kugeln versenkt|공 넣기|ボールを入れる|进球数
+G'olib‖Winner|Победитель|Kazanan|Ganador|Vencedor|الفائز|Pemenang|विजेता|Gagnant|Gewinner|우승자|勝者|获胜者
+ta o'yinda yuting‖matches won|побед в матчах|maç kazan|partidas ganadas|partidas vencidas|مباريات فزت بها|pertandingan dimenangkan|मैच जीतें|matchs gagnés|Spiele gewonnen|경기 승리|試合に勝つ|赢得比赛
+Sindirish ustasi‖Break Master|Мастер разбивки|Açılış Ustası|Maestro del saque|Mestre da abertura|سيد الكسر|Master Break|ब्रेक मास्टर|Maître de la casse|Break-Meister|브레이크 마스터|ブレイクの達人|开球大师
+marta sindirishda shar tushiring‖times pot a ball on the break|раз забить шар на разбивке|kez açılışta top düşür|veces embocar en el saque|vezes encaçapar na abertura|مرات إدخال كرة في الكسر|kali memasukkan bola saat break|बार ब्रेक पर गेंद डालें|fois empocher à la casse|Mal beim Break versenken|번 브레이크에서 공 넣기|回ブレイクでボールを入れる|次开球进球
+Kunlik chempion‖Daily Champion|Чемпион дня|Günün Şampiyonu|Campeón diario|Campeão diário|بطل اليوم|Juara Harian|दैनिक चैंपियन|Champion du jour|Tageschampion|일일 챔피언|デイリーチャンピオン|每日冠军
+ta kunlik turnirda qatnashing‖daily tournaments joined|ежедневных турниров|günlük turnuvaya katıl|torneos diarios jugados|torneios diários disputados|بطولات يومية شاركت بها|turnamen harian diikuti|दैनिक टूर्नामेंट में भाग लें|tournois quotidiens joués|Tagesturniere gespielt|일일 토너먼트 참가|デイリートーナメントに参加|参加每日锦标赛
+Keng tarqalgan‖Common|Обычное|Yaygın|Común|Comum|شائع|Umum|आम|Commun|Häufig|일반|一般|普通
+Noyob‖Rare|Редкое|Nadir|Poco común|Raro|نادر|Langka|दुर्लभ|Rare|Selten|희귀|レア|稀有
+Juda noyob‖Very rare|Очень редкое|Çok nadir|Muy raro|Muito raro|نادر جدًا|Sangat langka|बहुत दुर्लभ|Très rare|Sehr selten|매우 희귀|超レア|极稀有
+Afsonaviy‖Legendary|Легендарное|Efsanevi|Legendario|Lendário|أسطوري|Legendaris|महान|Légendaire|Legendär|전설|伝説|传说
+bajarildi‖done|выполнено|tamamlandı|completado|concluído|مكتمل|selesai|पूर्ण|terminé|erledigt|완료|達成|完成
+Keyingisi‖Next|Далее|Sonraki|Siguiente|Próximo|التالي|Berikutnya|अगला|Suivant|Nächste|다음|次へ|下一级
+soat‖hours|ч|saat|horas|horas|ساعة|jam|घंटे|h|Std.|시간|時間|小时
+Vaqt yutug'i‖Play time reward|Награда за время|Oyun süresi ödülü|Premio por tiempo|Prêmio por tempo|مكافأة وقت اللعب|Hadiah waktu bermain|खेल समय का इनाम|Récompense de temps|Spielzeit-Belohnung|플레이 시간 보상|プレイ時間の報酬|游戏时长奖励
+Yangi foydalanuvchi‖New user|Новичок|Yeni kullanıcı|Usuario nuevo|Novo usuário|مستخدم جديد|Pengguna baru|नया उपयोगकर्ता|Nouvel utilisateur|Neuer Nutzer|신규 유저|新規ユーザー|新用户
+Havaskor‖Dabbler|Любитель|Amatör|Aficionado|Amador|هاوٍ|Pemula|शौकीन|Amateur|Hobbyspieler|아마추어|ライトプレイヤー|业余玩家
+O'yinsevar‖Enthusiast|Энтузиаст|Meraklı|Entusiasta|Entusiasta|متحمس|Penggemar|उत्साही|Passionné|Enthusiast|애호가|愛好家|爱好者
+Doimiy mehmon‖Regular|Завсегдатай|Müdavim|Habitual|Frequentador|زائر دائم|Pelanggan tetap|नियमित|Habitué|Stammgast|단골|常連|常客
+Tajribali‖Experienced|Опытный|Deneyimli|Experimentado|Experiente|ذو خبرة|Berpengalaman|अनुभवी|Expérimenté|Erfahren|숙련자|ベテラン|资深玩家
+Usta‖Master|Мастер|Usta|Maestro|Mestre|محترف|Master|मास्टर|Maître|Meister|마스터|マスター|大师
+Afsona‖Legend|Легенда|Efsane|Leyenda|Lenda|أسطورة|Legenda|लेजेंड|Légende|Legende|전설|レジェンド|传奇
