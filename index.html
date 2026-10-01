@@ -367,6 +367,7 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 /* in-game DOM controls */
 #gameUi{position:fixed;left:max(8px,env(safe-area-inset-left));top:8px;z-index:15;display:none;flex-direction:column;gap:6px}
 #gameUi.on{display:flex}
+#zoomBox{display:flex;flex-direction:column;gap:6px;position:fixed;left:max(8px,env(safe-area-inset-left));bottom:8px;opacity:.75}#zoomBox .gbtn{background:linear-gradient(#3a4a6a,#1a2438);color:#fff;font-weight:900;font-size:20px;line-height:1;padding:0}
 .gbtn{width:36px;height:36px;border-radius:10px;border:0;cursor:pointer;font-size:17px;box-shadow:inset 0 2px 0 #fff6,0 3px 0 #0009}
 #chatPanel{position:fixed;left:70px;top:10px;z-index:16;display:none;flex-direction:column;gap:8px;width:300px;
 background:#0d1426ee;border:2px solid #34436a;border-radius:14px;padding:8px}
@@ -1069,6 +1070,7 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 <button class="gbtn blue" id="gChat" title="Chat">💬</button>
 <button class="gbtn gv" id="gVoice" title="Voice" style="display:none"></button>
 <button class="gbtn gv" id="gSpk" title="Speaker" style="display:none"></button>
+<div id="zoomBox"><button class="gbtn gray" id="zIn" title="Kattalashtirish">＋</button><button class="gbtn gray" id="zOut" title="Kichraytirish">－</button></div>
 </div>
 <div id="chatPanel"></div>
 <div id="liveFeed"></div>
@@ -2457,7 +2459,7 @@ game = G; input.power = 0; input.drag = null; input.charging = false;
 }
 function enterGameUi(type) {
 mode = "game"; showScreen(null);
-$("gameUi").classList.add("on");
+$("gameUi").classList.add("on"); setZoom(profile.zoom || 1);
 $("gChat").style.display = ["practice", "lucky", "watch"].includes(type) ? "none" : "";
 $("cheerBar").classList.toggle("on", type === "watch");
 $("shade").classList.remove("on");
@@ -2995,7 +2997,7 @@ e.preventDefault(); if (!canControl()) return;
 game.angle += Math.sign(e.deltaY) * (e.shiftKey ? 0.02 : 0.002);
 }, {passive: false});
 let ctx = cv.getContext("2d");
-let scale = 1, offX = 0, offY = 0, dpr = 1;
+let scale = 1, offX = 0, offY = 0, dpr = 1, zoom = 1;
 let rotated = false, vw = innerWidth, vh = innerHeight;
 const MQ = (() => {
 const list = [], css = [];
@@ -3023,9 +3025,10 @@ for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw :
 document.body.style.width = rotated ? vw + "px" : ""; document.body.style.height = rotated ? vh + "px" : "";
 dpr = Math.min(window.devicePixelRatio || 1, 2);
 cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
-scale = Math.min(vw / W, vh / H);
+scale = Math.min(vw / W, vh / H) * zoom;
 offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
 }
+function setZoom(z) { zoom = Math.max(0.6, Math.min(1.5, Math.round(z * 100) / 100)); if (typeof profile === "object" && profile) { profile.zoom = zoom; try { save(); } catch (e) {} } resize(); }
 addEventListener("resize", resize);
 addEventListener("orientationchange", () => setTimeout(resize, 250));
 resize();
@@ -3041,6 +3044,7 @@ const p = req && req.call(el, {navigationUI: "hide"});
 if (p && p.then) p.then(lock).catch(lock); else lock();
 } catch (e) { lock(); }
 }
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("#zIn,#zOut"); if (b) setZoom(zoom + (b.id === "zIn" ? 0.1 : -0.1)); });
 function toggleFullscreen() {
 if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
 else goFullscreen(true);
@@ -4166,7 +4170,15 @@ for (let x = 14, i = 0; x < L - 8; x += 22, i++) { const y = sn(x / 22) * 3.5, s
 rby() { for (let x = 15; x < L; x += 30) { for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2 + Math.PI / 4; F(circ(x + cs(a) * 5.5, sn(a) * 5.5, 5)); } F(circ(x, 0, 4), hl("#e0102a")); F(poly([[x + 15, 0], [x + 18, -3.5], [x + 21, 0], [x + 18, 3.5]])); } },
 ame() { S(() => { ctx.beginPath(); for (let x = 0; x <= L; x += 3) ctx.lineTo(x, -11 + sn(x / 26) * 2); }, 1.2);
 for (let x = 20, i = 0; x < L - 10; x += 30, i++) { for (const [dx, dy] of [[-5, 0], [0, 0], [5, 0], [-2.5, 5], [2.5, 5], [0, 10]]) F(circ(x + dx, -3 + dy, 2.8), hl()); F(() => { ctx.beginPath(); lp(x + 3, -10, 10, 0.5, 3.8); }); F(() => { ctx.beginPath(); lp(x - 3, -10, 10, Math.PI - 0.5, 3.8); }); } },
-lon() { S(() => { ctx.beginPath(); for (let x = 0; x <= L; x += 3) ctx.lineTo(x, sn(x / 11) * 2.5); }, 1.3, P.lo); for (let x = 18, i = 0; x < L - 10; x += 36, i++) { flower(x, 0, 12, 5, "#f7f0dc", 0.3); flower(x, 0, 8, 5, "#c8102e", 0.3 + 0.63); F(circ(x, 0, 2.6), "#e8b83a"); if (i % 1 === 0) { F(() => { ctx.beginPath(); lp(x + 14, 0, 10, -0.5, 3); }, "#2f8a3a"); F(() => { ctx.beginPath(); lp(x + 14, 0, 10, 0.5, 3); }, "#2f8a3a"); } } },
+lon() { const dm = (x, r, col) => F(poly([[x - r, 0], [x, -r * 1.5], [x + r, 0], [x, r * 1.5]]), col);
+for (let x = 0; x < L - 30; x += 90) { const t = x + 22, cr = x + 66;
+F(poly([[t - 6.5, 13], [t - 6.5, -6], [t + 6.5, -6], [t + 6.5, 13]])); F(poly([[t - 8, -6], [t - 8, -9.5], [t + 8, -9.5], [t + 8, -6]]), "#e8c868"); F(poly([[t - 6, -9.5], [t, -18.5], [t + 6, -9.5]]), "#c8102e");
+F(circ(t, -1.5, 4.8), "#f7f0dc"); S(() => { ctx.beginPath(); ctx.moveTo(t, -1.5); ctx.lineTo(t, -4.6); ctx.moveTo(t, -1.5); ctx.lineTo(t + 2.6, -0.4); }, 0.9, "#1a1008");
+for (const wy of [6, 9.5]) F(poly([[t - 2, wy], [t - 2, wy + 2], [t + 2, wy + 2], [t + 2, wy]]), "#3a1a08");
+F(poly([[cr - 10, 13], [cr - 10, 6], [cr + 10, 6], [cr + 10, 13]])); F(poly([[cr - 10, 6], [cr - 12, -8], [cr - 5, -1.5], [cr, -11], [cr + 5, -1.5], [cr + 12, -8], [cr + 10, 6]]), "#f0cc70");
+for (const [px, py] of [[-12, -8], [0, -11], [12, -8]]) F(circ(cr + px, py, 1.9), "#f7f0dc"); F(circ(cr, 9.5, 2.2), "#d8102e"); F(circ(cr - 6, 9.5, 1.3), "#2a6ad8"); F(circ(cr + 6, 9.5, 1.3), "#2a6ad8");
+dm(x + 44, 4, "#c8102e"); dm(x + 52, 4, "#f7f0dc"); dm(x + 36, 4, "#1b3a8a");
+dm(x + 88, 3, "#c8102e"); S(() => { ctx.beginPath(); ctx.moveTo(x + 76, -14.5); ctx.lineTo(x + 90, -14.5); ctx.moveTo(x + 76, 14.5); ctx.lineTo(x + 90, 14.5); }, 1.2); } },
 syd() { for (let x = 16, i = 0; x < L; x += 32, i++) { for (const [r, n] of [[4, 6], [8, 10], [12, 14]]) for (let k = 0; k < n; k++) { const a = k * TAU / n; F(circ(x + cs(a) * r, sn(a) * r, 1.4), (k + i) % 2 ? "#f2e6c8" : "#e8843a"); } F(circ(x, 0, 2), "#c8501a"); for (let d = 0; d < 3; d++) F(circ(x + 17 + d * 5, 0, 1.2), "#f2e6c8"); } },
 lis() { for (const ph of [0, Math.PI]) S(() => { ctx.beginPath(); for (let x = 0; x <= L; x += 2) ctx.lineTo(x, sn(x / 5.5 + ph) * 5); }, 3); for (let x = 32; x < L - 10; x += 64) { S(circ(x, 0, 11), 1.6); S(() => { ctx.beginPath(); ctx.ellipse(x, 0, 11, 4, 0, 0, 7); }, 1.1); S(() => { ctx.beginPath(); ctx.ellipse(x, 0, 4, 11, 0, 0, 7); }, 1.1); F(circ(x, 0, 3.4), "#3a8ae8"); } },
 tok() { for (let x = 4, i = 0; x < L; x += 40, i++) { S(() => { ctx.beginPath(); for (let t = 0; t <= 8; t += 0.3) { const r = 1.4 + t * 1.15; ctx.lineTo(x + 8 + cs(t + 3.3) * r, sn(t + 3.3) * r); } }, 1.5); S(() => { ctx.beginPath(); for (let t = 0; t <= 8; t += 0.3) { const r = 1.4 + t * 1.15; ctx.lineTo(x + 32 - cs(t + 3.3) * r, -sn(t + 3.3) * r); } }, 1.5); S(() => { ctx.beginPath(); ctx.moveTo(x + 14, 8); ctx.bezierCurveTo(x + 20, 14, x + 24, -14, x + 28, -8); }, 1.2); F(circ(x + 20, 0, 2.4), "#e83a5a"); } },
