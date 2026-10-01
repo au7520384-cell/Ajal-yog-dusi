@@ -353,6 +353,9 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 .flyspark{position:fixed;z-index:81;width:7px;height:7px;margin:-3px;border-radius:50%;background:#fff3a8;box-shadow:0 0 8px #ffd23f;pointer-events:none}
 .pot.potglow{border-color:#ffd23f;box-shadow:0 0 26px #ffd23f99,inset 0 0 14px #ffd23f55;transition:box-shadow .2s}
 .vsfee.paid{opacity:.35}
+.screen,#nav,#toasts,#gameUi,#chatPanel,#cheerBar,#liveFeed{zoom:var(--uiz,1)}
+@media (max-width:1320px){ #langBtn{display:none} .money{gap:5px} .mchip{padding:0 8px} }
+@media (max-width:1180px){ .nb-cues{display:none} }
 /* modal */
 #modal{justify-content:center;background:#000b;z-index:40;padding-top:14px}
 #modal .panel{max-width:460px;text-align:center;animation:pop .35s cubic-bezier(.2,1.5,.4,1)}
@@ -3147,11 +3150,13 @@ const touch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in windo
 rotated = touch && innerHeight > innerWidth;
 document.documentElement.classList.toggle("rot", rotated);
 vw = rotated ? innerHeight : innerWidth; vh = rotated ? innerWidth : innerHeight;
-for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) <= q.v);
+const uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : 1;
+for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) / uiz <= q.v);
 document.body.style.width = rotated ? vw + "px" : ""; document.body.style.height = rotated ? vh + "px" : "";
 dpr = Math.min(window.devicePixelRatio || 1, 2);
 cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
 scale = Math.min(vw / W, vh / H) * zoom;
+document.documentElement.style.setProperty("--uiz", uiz.toFixed(3));   // big monitors: scale the menus up with the table so nothing looks tiny
 offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
 }
 function setZoom(z) { zoom = Math.max(0.6, Math.min(1.5, Math.round(z * 100) / 100)); if (typeof profile === "object" && profile) { profile.zoom = zoom; try { save(); } catch (e) {} } resize(); }
@@ -3160,6 +3165,7 @@ addEventListener("orientationchange", () => setTimeout(resize, 250));
 resize();
 let fsTried = false;
 function goFullscreen(force) {
+if (!force && !matchMedia("(pointer: coarse)").matches) return;   // phones and tablets go fullscreen on the first tap; on a computer the game just fits its window (the ⛶ button still toggles fullscreen)
 if (fsTried && !force) return;
 fsTried = true;
 const el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
