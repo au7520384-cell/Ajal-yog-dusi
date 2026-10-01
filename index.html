@@ -1148,7 +1148,7 @@ JAW_TIPS.push([f[0] + bx / bl * kd, f[1] + by / bl * kd, KN_R]);
 f[0] += fx * tl; f[1] += fy * tl;
 }
 }
-setPockets(false);
+setPockets(true);   // WPA pocket openings are the only table now
 const MID_MOUTH = 29;
 const POCKET_AIMS = [
 {x: 5, y: 5}, {x: FW / 2, y: 1, mid: true}, {x: FW - 5, y: 5},
@@ -2562,7 +2562,6 @@ else if (type === "pvp") players = [mePlayer("1-o'yinchi"), {name: "2-o'yinchi",
 else if (type === "watch") players = [botPlayer(5, 30), botPlayer(5, 30)];
 else players = [mePlayer()];
 const G = baseGame(type, city, players);
-setPockets(!net && type !== "watch" && !!opt("proTable"));
 if (type === "ai") G.pot = city.prize;
 if (type === "tour") { const cup = CUPS.find(c => c.id === tour.cup); G.skill = cup.skill * Math.pow(0.8, Math.max(0, tour.rounds.length - 1)); G.pot = cup.prize; }
 if (type === "watch") G.skill = 0.004;
@@ -8254,7 +8253,7 @@ Net.sync(); setTimeout(() => location.reload(), 1200);
 }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), ""));
 }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
-const SET_DEF = {proTable: true, vib: true, sens: "normal", tapAim: true, fine: true, guideOff: false, power: "left", cheer: "all", allowFriend: true, showOnline: true, notifyFr: true};
+const SET_DEF = { vib: true, sens: "normal", tapAim: true, fine: true, guideOff: false, power: "left", cheer: "all", allowFriend: true, showOnline: true, notifyFr: true};
 const opt = k => profile.set && k in profile.set ? profile.set[k] : SET_DEF[k];
 const SENS = {slow: 0.55, normal: 1, fast: 1.6};
 function setOpt(k, v) { profile.set = {...(profile.set || {}), [k]: v}; save(); applySettings(); if (k === "allowFriend" || k === "showOnline") Net.sync(); }
@@ -8270,7 +8269,6 @@ const row = (n, ctl) => `<div class="setrow"><b>${T(n)}</b>${ctl}</div>`;
 $("setBody").innerHTML = `
 <div class="setsec">${T("O'yin sozlamalari")}</div>
 ${row("Ovoz", tg("sound", !profile.muted))}
-${row("Pro stol (haqiqiy cho'ntak o'lchamlari)", tg("proTable", opt("proTable")))}
 ${row("Tebranish", tg("vib", opt("vib")))}
 ${row("Kiy sezgirligi", seg("sens", [["slow", "Sekin"], ["normal", "O'rtacha"], ["fast", "Tez"]]))}
 ${row("O'yin qo'llanmasi", `<button class="btn blue" data-tut="1" style="padding:6px 14px">${T("Qayta ko'rish")}</button>`)}
