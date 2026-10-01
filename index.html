@@ -7732,7 +7732,7 @@ const NEWS = [
 {icon: "♞", title: "Showdown", text: "Har bir g'alaba Showdown ochkosi va Gambit tokeni beradi. Haftalik reytingda ko'tariling!", go: "eventsScr", n: 0},
 {icon: "🏆", title: "Jahon Kubogi", text: "60 o'yinchi, 6 raund — bosh sovrin 7,5 mln tanga!", go: "tourScr", n: 1},
 {icon: "🎟", title: "Qirib yuting", text: "Mini o'yinlarga yangi o'yin qo'shildi: har kuni bitta bepul qirish kartasi.", go: "mini", n: 2},
-{icon: "🛡", title: "Klublar", text: "6-darajadan klub tuzing yoki qo'shiling — haftalik klub mukofotlari!", go: "clubsScr", n: 3},
+{icon: "🛡", title: "Klublar", text: "3 ta shahar uzugini yig'ib, klub tuzing yoki qo'shiling — haftalik klub mukofotlari!", go: "clubsScr", n: 3},
 ];
 function buildInbox() {
 const box = $("inboxBody"), msgs = Net.inbox || [];
@@ -8484,7 +8484,8 @@ const CLUB_PRICE = [0, 40, 200];   // 💵 per tier, bought once and usable for 
 const CLUB_USD = 1.99;
 const CLUB_FX = {"2": ["#4ab8ff", "float", "ring", "spark"], "4": ["#b06aff", "slither", "rays", "spark"], "10": ["#ff8a2a", "flap", "fire", "spark"], "13": ["#c06aff", "pulse", "rays", "sweep"], "14": ["#ffb02a", "shake", "ring", ""], "15": ["#9a4aff", "sway", "fog", "spark"], "17": ["#3aff7a", "slither", "ring", "spark"], "18": ["#7ae8ff", "spin3d", "rays", "sweep"], "19": ["#ff5a2a", "flick", "fire", "spark"], "25": ["#ff3a3a", "flick", "fog", ""], "28": ["#8ab8ff", "float", "rays", "spark"], "29": ["#ff6a3a", "pulse", "fire", "sweep"], "32": ["#ffd24d", "breathe", "ring", "sweep"], "33": ["#ff2a2a", "shake", "fire", "spark"], "35": ["#3affd2", "float", "ring", "sweep"], "37": ["#ff4a4a", "slither", "fire", ""], "39": ["#b46aff", "spin3d", "rays", "spark"], "45": ["#4a9aff", "flap", "ring", "spark"], "47": ["#ff4a9a", "beat", "ring", "spark"], "49": ["#ffd24d", "pulse", "rays", "sweep"]};   // animated emblems: [aura colour, motion, effect under, effect over]
 const CLUB_COLORS = [["#ffe27a", "#b8860b"], ["#d98cff", "#6a1b9a"], ["#8fd8ff", "#1565c0"], ["#9dff9a", "#1b8a2e"], ["#ff9a8a", "#b71c1c"], ["#ffffff", "#607d8b"], ["#ffcf9a", "#e65100"], ["#2a2a2a", "#000000"]];
-const CLUB_LEVEL = 6;
+const CLUB_LEVEL = 6, CLUB_RINGS = 3;   // clubs open at level 6 AND with 3 collected city rings
+const clubLock = () => profile.level < CLUB_LEVEL ? `${CLUB_LEVEL}-${T("darajada ochiladi")}` : CITIES.filter(ringOf).length < CLUB_RINGS ? `${T("Uzuklar kerak")}: ${CITIES.filter(ringOf).length}/${CLUB_RINGS}` : "";
 const clubBadge = (c, big) => { const i = Math.max(0, Math.min(49, c.badge | 0)), t = CLUB_TIER[i], f = t ? CLUB_FX[i] : null; return `<div class="cemb${f ? ` fx t${t} o-${f[2] || "x"} p-${f[3] || "x"} m-${f[1]}` : ""}${big ? " big" : ""}"${f ? ` style="--c:${f[0]};--ca:${f[0]}77"` : ""}><img src="${CLUB_EMB[i]}" alt=""></div>`; };
 let clubTab = "members", clubTimer = null;
 function buildClubs(q = "") {
@@ -8494,10 +8495,10 @@ box.innerHTML = `<div class="muted" style="text-align:center;padding:20px">${T("
 Net.api("/api/clubs/mine").then(r => r.club ? clubHome(r) : clubList(q)).catch(() => { box.innerHTML = `<div class="muted" style="text-align:center;padding:30px">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>`; });
 }
 function clubList(q) {
-const box = $("clubBody"), locked = profile.level < CLUB_LEVEL;
+const box = $("clubBody"), lockWhy = clubLock(), locked = !!lockWhy;
 Net.api("/api/clubs" + (q ? "?q=" + encodeURIComponent(q) : "")).then(r => {
 box.innerHTML = `<p style="text-align:center;margin:0 0 6px"><b>${T("Klubga qo'shiling yoki o'zingiz yarating: reyting, mukofotlar, yangi do'stlar, sovg'alar va chat!")}</b></p>
-${locked ? `<div class="h" style="text-align:center;font-size:22px;margin-bottom:10px">🔒 ${T("Klublar")} ${CLUB_LEVEL}-${T("darajada ochiladi")}</div>` : ""}
+${locked ? `<div class="h" style="text-align:center;font-size:22px;margin-bottom:10px">🔒 ${T("Klublar")}: ${lockWhy}</div>` : ""}
 <div style="display:flex;gap:8px;margin-bottom:10px"><input class="name" id="clubQ" placeholder="🔍 ${T("Klub nomi")}" value="${esc(q)}">
 <button class="btn blue" id="clubFind">${T("Qidirish")}</button><button class="btn green" id="clubNew" ${locked ? "disabled" : ""}>＋ ${T("Klub yaratish")}</button></div>
 <div class="lbcols" style="grid-template-columns:56px 1fr 70px 90px 110px"><span></span><span>${T("Klub nomi")}</span><span>${T("Liga")}</span><span>${T("A'zolar")}</span><span></span></div>
@@ -8511,6 +8512,7 @@ box.querySelectorAll("[data-join]").forEach(b => b.onclick = () => Net.api("/api
 }).catch(() => { box.innerHTML = `<div class="muted" style="text-align:center;padding:30px">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>`; });
 }
 function clubCreate() {
+if (clubLock()) return toast("🔒", clubLock(), T("Klublar"));
 let badge = 0;
 const own = () => (profile.emb = profile.emb || []), owned = i => !CLUB_TIER[i] || own().includes(i);
 const tile = i => `<button class="emt${CLUB_TIER[i] ? " prem" : ""}" data-b="${i}" title="${esc(CLUB_BADGES[i])}">${clubBadge({badge: i})}${owned(i) ? "" : `<i class="emlock">🔒 ${CLUB_PRICE[CLUB_TIER[i]]}</i>`}</button>`;
