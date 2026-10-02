@@ -6176,7 +6176,8 @@ function toast(icon, title, sub, o = {}) { if (toastQ.length < 12) toastQ.push([
 function pumpToast() {
 const box = $("toasts");
 while (box.children.length < 2 && toastQ.length) {
-const [icon, title0, sub0, o] = toastQ.shift(), title = T(title0), sub = sub0 && T(sub0);
+let [icon, title0, sub0, o] = toastQ.shift(); const title = T(title0), sub = sub0 && T(sub0);
+if (icon === "🎁" && !o.img && !o.html && IMG.chest) o = {...o, html: `<img src="${IMG.chest}" alt="">`};   // reward route / gifts always show the chest art
 const kind = o.kind || {"🏅": "medal", "🏆": "trophy", "🎱": "cue", "📦": "box"}[icon] || "";
 const el = document.createElement("div"); el.className = "toast" + (kind ? " t-" + kind : "");
 el.innerHTML = `<span class="ti">${o.html ? `<span class="tia">${o.html}</span>` : o.img ? `<img src="${o.img}" alt="">` : `<span>${icon}</span>`}</span><div><small>${esc(sub || "")}</small><b>${esc(title)}</b></div>`;
@@ -7828,7 +7829,7 @@ tick();
 const card = (ico, t, d, btn, act) => `<div class="card freec"><div style="font-size:46px">${ico}</div><b>${T(t)}</b><div class="muted">${d}</div><button class="btn green" data-act="${act}">${T(btn)}</button></div>`;
 body.innerHTML = `<div class="freegrid">
 ${Y8.sdk && Y8.adsReady ? card("📺", "Reklama ko'rib pul oling", `+1 <span class="cash"></span> · ${T("kuniga 10 marta")}`, "Ko'rish", "ad") : ""}
-${card("🎁", "Kunlik sovg'a", T("Har kuni kirib mukofot oling"), "Olish", "rewards")}
+${card(`<img src="${IMG.chest}" alt="" style="height:56px;object-fit:contain">`, "Kunlik sovg'a", T("Har kuni kirib mukofot oling"), "Olish", "rewards")}
 ${card("🎡", "Omad g'ildiragi", T("Har kuni 1 ta bepul"), "AYLANTIRISH", "wheel")}
 ${card("🎯", "Omadli zarba", T("Har kuni 1 ta bepul"), "O'ynash", "lucky")}
 ${card("👥", "Do'stlarni taklif qiling", `+${REFERRAL.inviter.cash} <span class="cash"></span> + ${fmtS(REFERRAL.inviter.coins)} <span class="coin"></span>`, "Taklif qilish", "friends")}
@@ -8160,7 +8161,7 @@ box.innerHTML = `<div class="freetop">
 ${left ? `<button class="btn gray" disabled>⏱ ${hms(left)}</button>` : `<button class="btn green" id="frCoins">${T("Olish")}</button>`}</div>
 ${ad ? `<div class="card fr1"><div style="font-size:40px">📺</div><b>${T("Bepul tanga")}</b><small>+15 · ${T("video")}</small><button class="btn green" id="frVid">${T("Ko'rish")}</button></div>
 <div class="card fr1"><div style="font-size:40px">💵</div><b>${T("Bepul pul")}</b><small>+1 · ${T("video")}</small><button class="btn green" id="frCash">${T("Ko'rish")}</button></div>` : ""}
-<div class="card fr1"><div style="font-size:40px">🎁</div><b>${T("Sovg'alar yo'li")}</b><small>${profile.lastClaim !== today() ? T("Kunlik sovg'a tayyor!") : "⏱ " + hms(nextMidnight())}</small><button class="btn orange" data-go="rewards">${T("Ochish")}</button></div>
+<div class="card fr1"><img src="${IMG.chest}" alt="" style="height:52px;object-fit:contain"><b>${T("Sovg'alar yo'li")}</b><small>${profile.lastClaim !== today() ? T("Kunlik sovg'a tayyor!") : "⏱ " + hms(nextMidnight())}</small><button class="btn orange" data-go="rewards">${T("Ochish")}</button></div>
 </div>
 <div class="setsec">🎯 ${T("Kunlik missiyalar")}</div>
 ${p.ms.map((m, k) => { const d = MISSIONS[m.i]; return `<div class="mission msn2"><div class="mt"><b>${k + 1}. ${T(d.d)}</b><div class="mbar"><i style="width:${m.c / d.n * 100}%"></i></div><small class="muted">${m.c}/${d.n}</small></div>
