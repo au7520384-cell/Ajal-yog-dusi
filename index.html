@@ -227,6 +227,7 @@ background:linear-gradient(120deg,#5a1a00,#2a0e3a 60%,#0e1a3a);border:2px solid 
 .tblcard .ttag{position:absolute;top:12px;left:12px;background:#000a;border-radius:6px;padding:1px 6px;font-size:11px;color:#ffe27a}
 .pack{overflow:hidden}
 .ptag{position:absolute;top:10px;right:-30px;transform:rotate(35deg);background:#ff3b30;color:#fff;font-size:10px;padding:2px 34px;font-weight:900;text-transform:uppercase}
+.ftabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.ftabs .btn{padding:6px 10px;font-size:14px}
 .frow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:#1a2340;border:1px solid #2c3a60;border-radius:12px;padding:8px 10px;margin-bottom:6px}
 .frow .av{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-size:26px;position:relative}
 .frow .on{position:absolute;right:-3px;bottom:-3px;width:12px;height:12px;border-radius:50%;background:#3fe052;border:2px solid #1a2340}
@@ -7052,16 +7053,15 @@ ${T("Do'stingiz ham oladi")}: <b style="color:#8dff9a">💵 ${got.cash} + 🪙 $
 <button class="btn green" id="addFr" style="white-space:nowrap">${T("Qo'shish")}</button></div>
 <button class="btn orange" id="useRef" style="margin-top:8px;width:100%">🎁 ${T("Taklif kodini ishlatish")}</button>
 <div id="inboxBox" style="margin-top:14px"></div>
-<div class="h" style="font-size:20px;margin-top:14px">📜 ${T("Faollik")}</div><div id="actBox" class="muted" style="margin-top:4px"></div>
 </div>
 <div>
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<div class="h" style="font-size:22px">👥 ${T("Do'stlar")}</div>
-<span style="display:flex;gap:6px"><button class="btn purple" id="reqGifts" style="padding:6px 10px;font-size:14px">${T("Sovg'a so'rash")}</button>
-<button class="btn green" id="giftAll" style="padding:6px 10px;font-size:14px">🎁 ${T("Hammaga")}</button></span></div>
-<div id="frList"><div class="muted">${T("Yuklanmoqda…")}</div></div>
+<div class="ftabs">${[["fr","👥 "+T("Do'stlar")],["gf","🎁 "+T("Sovg'a yuborish")],["sg","✨ "+T("Tavsiya etilgan do'stlar")],["ac","📜 "+T("Faollik")]].map(([k,l],i)=>`<button class="btn ${i?"gray":"orange"}" data-ft="${k}">${l}</button>`).join("")}</div>
+<div id="gfHead" style="display:none;gap:6px;margin-bottom:8px"><button class="btn purple" id="reqGifts" style="padding:6px 10px;font-size:14px">${T("Sovg'a so'rash")}</button>
+<button class="btn green" id="giftAll" style="padding:6px 10px;font-size:14px">🎁 ${T("Hammaga")}</button></div>
+<div id="frList"><div class="muted">${T("Yuklanmoqda…")}</div></div><div id="gfList" style="display:none"></div><div id="sgList" style="display:none"></div><div id="actBox" class="muted" style="display:none"></div>
 </div>
 </div>`;
+document.querySelectorAll("[data-ft]").forEach(b => b.onclick = () => { document.querySelectorAll("[data-ft]").forEach(x => x.className = "btn " + (x === b ? "orange" : "gray")); const k = b.dataset.ft; $("frList").style.display = k === "fr" ? "" : "none"; $("gfList").style.display = k === "gf" ? "" : "none"; $("gfHead").style.display = k === "gf" ? "flex" : "none"; $("sgList").style.display = k === "sg" ? "" : "none"; $("actBox").style.display = k === "ac" ? "" : "none"; });
 const link = () => `${Net.base || location.origin + location.pathname}?ref=${Net.acct ? Net.acct.code : ""}`;
 $("copyCode").onclick = () => { navigator.clipboard && navigator.clipboard.writeText(Net.acct ? Net.acct.code : "").then(() => toast("📋", T("Nusxalandi!"), "ID")); };
 $("shareCode").onclick = () => {
@@ -7101,15 +7101,16 @@ $("frList").innerHTML = r.friends.length ? r.friends.map(f => `<div class="frow"
 <div><b>${esc(f.name)}</b> <small class="muted">⭐${f.level}</small><div class="muted">${f.online ? "🟢 " + T("onlayn") : T("oflayn")} · ${T("Yutgan")}: ${fmtS(f.won)}</div></div>
 <button class="btn ${f.canGift ? "green" : "gray"}" data-gift="${f.id}" ${f.canGift ? "" : "disabled"} style="padding:6px 10px;font-size:14px">🎁</button></div>`).join("")
 : `<div class="muted" style="padding:10px">${T("Hali do'stlaringiz yo'q. Kodingizni ulashing!")}</div>`;
-$("frList").querySelectorAll("[data-gift]").forEach(b => b.onclick = () => Net.api("/api/gift", {to: [b.dataset.gift]}).then(() => { toast("🎁", T("Yuborildi"), T("Sovg'a yuborish")); loadFriends(); }));
+$("gfList").innerHTML = r.friends.length ? r.friends.map(f => `<div class="frow"><div class="av">${avHTML(f.avatar, f.frame, 44)}</div><div><b>${esc(f.name)}</b><div class="muted">${f.canGift ? "🎁 " + T("Sovg'a yuborish") : "✓ " + T("Yuborildi")}</div></div><button class="btn ${f.canGift ? "green" : "gray"}" data-gift="${f.id}" ${f.canGift ? "" : "disabled"} style="padding:6px 10px;font-size:14px">🎁</button></div>`).join("") : `<div class="muted" style="padding:10px">${T("Hali do'stlaringiz yo'q. Kodingizni ulashing!")}</div>`;
+document.querySelectorAll("[data-gift]").forEach(b => b.onclick = () => Net.api("/api/gift", {to: [b.dataset.gift]}).then(() => { toast("🎁", T("Yuborildi"), T("Sovg'a yuborish")); loadFriends(); }));
 return Net.api("/api/friends/suggested").then(x => {
-if (!x.players.length) return;
-$("frList").insertAdjacentHTML("beforeend", `<div class="h" style="font-size:18px;margin:12px 0 6px;color:var(--gold)">✨ ${T("Tavsiya etilgan do'stlar")}</div>` + x.players.map(f => `<div class="frow">
+if (!x.players.length) { $("sgList").innerHTML = `<div class="muted" style="padding:10px">—</div>`; return; }
+$("sgList").innerHTML = (x.players.map(f => `<div class="frow">
 <div class="av">${avHTML(f.avatar, f.frame, 44)}${f.online ? '<i class="on"></i>' : ""}</div>
 <div><b>${flagHTML(f.country, 12)} ${esc(f.name)}</b> <small class="muted">⭐${f.level}</small><div class="muted">${f.online ? "🟢 " + T("onlayn") : T("oflayn")} · ${T("Yutgan")}: ${fmtS(f.won)}</div></div>
 <span style="display:flex;gap:4px"><button class="btn blue" data-addf="${f.code}" style="padding:6px 10px;font-size:13px">＋</button>${f.online ? `<button class="btn green" data-chalf="${f.id}" style="padding:6px 10px;font-size:13px">⚔️</button>` : ""}</span></div>`).join(""));
-$("frList").querySelectorAll("[data-addf]").forEach(b => b.onclick = () => Net.api("/api/friends/add", {code: b.dataset.addf}).then(() => { toast("👥", T("Do'st qo'shildi"), ""); loadFriends(); }).catch(e => toast("⚠️", errText(e), T("Do'stlar"))));
-$("frList").querySelectorAll("[data-chalf]").forEach(b => b.onclick = () => lobbyCreate(b.dataset.chalf));
+$("sgList").querySelectorAll("[data-addf]").forEach(b => b.onclick = () => Net.api("/api/friends/add", {code: b.dataset.addf}).then(() => { toast("👥", T("Do'st qo'shildi"), ""); loadFriends(); }).catch(e => toast("⚠️", errText(e), T("Do'stlar"))));
+$("sgList").querySelectorAll("[data-chalf]").forEach(b => b.onclick = () => lobbyCreate(b.dataset.chalf));
 });
 }).catch(() => { $("frList").innerHTML = `<div class="muted">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>`; });
 }
