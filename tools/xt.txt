@@ -858,3 +858,12 @@ Gul dastasi‖Bouquet|Букет|Buket|Ramo|Buquê|باقة ورد|Buket|गु�
 Shokolad‖Chocolate|Шоколад|Çikolata|Chocolate|Chocolate|شوكولاتة|Cokelat|चॉकलेट|Chocolat|Schokolade|초콜릿|チョコレート|巧克力
 Omad barg‖Lucky Clover|Клевер удачи|Şans Yoncası|Trébol de la suerte|Trevo da sorte|برسيم الحظ|Semanggi Keberuntungan|भाग्यशाली क्लोवर|Trèfle porte-bonheur|Glücksklee|행운의 클로버|幸運のクローバー|幸运四叶草
 Yurak‖Heart|Сердце|Kalp|Corazón|Coração|قلب|Hati|दिल|Cœur|Herz|하트|ハート|爱心
+Brenza medal‖Bronze Medal|Бронзовая медаль|Bronz Madalya|Medalla de bronce|Medalha de bronze|ميدالية برونزية|Medali Perunggu|कांस्य पदक|Médaille de bronze|Bronzemedaille|동메달|銅メダル|铜牌
+Kumush medal‖Silver Medal|Серебряная медаль|Gümüş Madalya|Medalla de plata|Medalha de prata|ميدالية فضية|Medali Perak|रजत पदक|Médaille d'argent|Silbermedaille|은메달|銀メダル|银牌
+Medalli liga‖Medal League|Лига медалей|Madalya Ligi|Liga de medallas|Liga de medalhas|دوري الميداليات|Liga Medali|मेडल लीग|Ligue des médailles|Medaillen-Liga|메달 리그|メダルリーグ|奖牌联赛
+Tezkor o'yin‖Fast Play|Быстрая игра|Hızlı Oyun|Juego rápido|Jogo rápido|لعب سريع|Main Cepat|तेज़ खेल|Jeu rapide|Schnelles Spiel|빠른 플레이|スピードプレイ|快速游戏
+Billiard ustasi‖Billiard Master|Мастер бильярда|Bilardo Ustası|Maestro del billar|Mestre do bilhar|سيد البلياردو|Master Biliar|बिलियर्ड मास्टर|Maître du billard|Billard-Meister|당구 마스터|ビリヤードマスター|台球大师
+Olmos to'plam‖Diamond Rack|Алмазный треугольник|Elmas Üçgen|Triángulo de diamantes|Triângulo de diamantes|مثلث الألماس|Segitiga Berlian|डायमंड रैक|Triangle de diamants|Diamant-Rack|다이아몬드 랙|ダイヤのラック|钻石三角架
+Tezkor zarba‖Swift Strike|Стремительный удар|Hızlı Darbe|Golpe veloz|Golpe veloz|ضربة سريعة|Pukulan Kilat|तेज़ प्रहार|Frappe rapide|Blitzschlag|신속한 일격|疾風の一撃|迅捷一击
+Afsonaviy champion‖Legendary Champion|Легендарный чемпион|Efsanevi Şampiyon|Campeón legendario|Campeão lendário|بطل أسطوري|Juara Legendaris|महान चैंपियन|Champion légendaire|Legendärer Champion|전설의 챔피언|伝説のチャンピオン|传奇冠军
+To'qqiz ball championi‖Nine-Ball Champion|Чемпион по девятке|Dokuz Top Şampiyonu|Campeón de nueve bolas|Campeão do nine-ball|بطل التسع كرات|Juara Sembilan Bola|नाइन-बॉल चैंपियन|Champion de 9 billes|Neunball-Champion|나인볼 챔피언|ナインボールチャンピオン|九球冠军
