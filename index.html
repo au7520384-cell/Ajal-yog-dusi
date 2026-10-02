@@ -959,6 +959,13 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 #modal .panel.achp #mBtns .btn.gray:before{content:"";position:absolute;inset:3px;background:linear-gradient(#10224f,#040a22);clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%);z-index:-1}
 
 
+
+/* achievements-v2 look everywhere: blurred scene background, ribbon section headers, art cards */
+#modal .panel.achp{background:linear-gradient(#050a1cb8,#050a1ce6),var(--ach2-bg-g) center/cover,#050a1c!important;background-clip:padding-box!important}
+.screen>.panel{background:linear-gradient(#050a1cb0,#050a1cdd),var(--ach2-bg-g) center/cover,#050a1c!important;background-clip:padding-box!important}
+.setsec,.chh{position:relative;display:block;text-align:center;font-family:Philosopher,Georgia,serif;font-weight:700;font-size:clamp(15px,1.7vw,21px);color:#fff;text-shadow:0 2px 3px #000;padding:clamp(7px,1.2vw,12px) 52px;margin:12px auto 8px;width:max-content;min-width:56%;max-width:100%;box-sizing:border-box;white-space:nowrap;background:var(--ach-rib-g) 0 0/100% 114% no-repeat;border:0}
+.chh i{display:none}
+.achfull .acc:not(.acwide){filter:drop-shadow(0 3px 6px #000a)}
 /* achievements v2: full-screen mockup layout */
 #modal .panel.achfull{width:min(1180px,98vw);max-width:none;border:2px solid #c9951e;border-radius:18px;padding:10px 12px;background:var(--ach2-bg) center/cover,#050a1c;box-shadow:0 0 30px #ffb30055,0 16px 50px #000}
 #modal .panel.achfull .achfx{display:none}
@@ -6147,6 +6154,7 @@ for (const k of ["green2", "dark", "purple", "gray2"]) document.documentElement.
 const MODAL_SH = {room: 166, lounge: 143, gold: 110};
 const modalScene = k => MODAL_ART[k] || "";
 (function () { const r = document.documentElement.style; r.setProperty("--ach-frame", `url(${IMG.ach_frame})`); r.setProperty("--ach-x", `url(${IMG.ach_xbtn})`); r.setProperty("--ach-card", `url(${IMG.ach_card})`); r.setProperty("--ach-ribbon", `url(${IMG.ach_ribbon})`); r.setProperty("--ach-close", `url(${IMG.ach_close})`); })();
+(function () { const r = document.documentElement.style; r.setProperty("--ach2-bg-g", `url(${IMG.ach2_bg})`); r.setProperty("--ach-rib-g", `url(${IMG.ach2_rib})`); })();
 function skinModal(pn) {   // every popup wears the mockup art: gold 9-slice frame, square X, hex Close, ribbon/card art
 pn.classList.add("achp"); pn.style.setProperty("--ach-frame", `url(${IMG.ach_frame})`); pn.style.setProperty("--ach-x", `url(${IMG.ach_xbtn})`); pn.style.setProperty("--ach-card", `url(${IMG.ach_card})`); pn.style.setProperty("--ach-ribbon", `url(${IMG.ach_ribbon})`); pn.style.setProperty("--ach-close", `url(${IMG.ach_close})`);
 }
