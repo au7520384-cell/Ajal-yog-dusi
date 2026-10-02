@@ -898,6 +898,7 @@ background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),color-mix(in srg
 .hbuy{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:auto}.hrib{background:linear-gradient(#e8483a,#a01a14);color:#fff;font-weight:900;padding:8px 18px 8px 12px;clip-path:polygon(0 0,100% 0,88% 50%,100% 100%,0 100%);font-size:15px;letter-spacing:1px}
 .hend{color:#fff;font-weight:800}.hnav{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:8px}.hdots{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:70%}.hdots i{width:9px;height:9px;border-radius:50%;background:#556}.hdots i.on{background:#fff}.hnav .btn{padding:4px 16px}
 .hsmall .hlogo{font-size:26px;margin:0 40px 2px}.hsmall .hci{font-size:22px;height:34px}.hsmall .hci img,.hsmall .hci .avx{transform:scale(.7)}.hsmall .hcol{padding:3px 2px}.hsmall .hcols{grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:4px}.hsmall .hcol b{font-size:12px}.hsmall .hstat{padding:3px 8px}.hsmall .hbr{font-size:10px}.hsmall .hbr i{height:6px}.hsmall .hbuy .btn{font-size:16px!important;padding:6px 14px!important}.hsmall .hrib{font-size:12px;padding:5px 12px}.hsmall .hcues{min-height:0}.hsmall .hnav{margin-top:2px}.hsmall .hbody{gap:6px}.hsmall .hright{gap:4px}
+.hsmall{padding:6px 10px 6px}.hsmall .hlogo{font-size:22px;margin:0 40px 0}.hsmall .hx{width:28px;height:28px;font-size:15px;top:4px;right:6px}.hsmall .hcues canvas{height:212px!important;width:106px!important}.hsmall .hcols{grid-template-columns:repeat(7,1fr)!important;gap:3px}.hsmall .hci{height:26px;font-size:18px}.hsmall .hci img,.hsmall .hci .avx{transform:scale(.5)}.hsmall .hci .coin,.hsmall .hci .cash{transform:scale(.6)}.hsmall .hcol small{font-size:9px}.hsmall .hcol b{font-size:10px}.hsmall .hstat{max-width:240px}.hsmall .hbuy{gap:6px}.hsmall .hnav .btn{padding:2px 12px;font-size:14px}.hsmall .hnav{margin-top:0;gap:6px}
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;max-height:60vh;overflow:auto}.vgc{background:#141a30;border:1px solid #34436a;border-radius:8px;padding:4px;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px}.vgc img{width:100%;height:auto}.vgc small{font-size:11px;font-weight:800}.vgc:hover{border-color:#ffcf3d}
 .mission{display:grid;grid-template-columns:40px 1fr 110px;gap:10px;align-items:center;background:#262f4a;border:1px solid #34436a;border-radius:12px;padding:8px 12px;margin-bottom:6px}
 .mbar{height:10px;border-radius:5px;background:#141a2c;overflow:hidden;margin-top:4px}.mbar i{display:block;height:100%;background:linear-gradient(90deg,#7ff7ff,#3b8cff)}
@@ -2236,9 +2237,9 @@ const VIC_NAMES = ["G'alaba", "Qora Tuynuk", "Chor", "Olmos", "Granat", "Oltin",
 "Quyosh", "Oy", "Yulduz", "Galaktika Pro"];
 CITIES.slice(1).forEach((city, k) => {
 for (let j = 0; j < 2; j++) {
-const i = k * 2 + j, rnd = cueRand(i * 31 + 7), lv = 2 + (k / (CITIES.length - 2)) * 7.5;
+const i = k * 2 + j, rnd = cueRand(i * 31 + 7), lv = 1.8 + (k / (CITIES.length - 2)) * 3.4;
 CUES.push({id: "v" + i, name: VIC_NAMES[i % VIC_NAMES.length], cat: "victory", tier: k < 5 ? "Oddiy" : k < 11 ? "Yuqori" : "Ekspert", city: k + 1, pieces: 4,
-st: [0, 0, 0, 0].map(() => clamp(Math.round(lv + (rnd() - 0.5) * 2.4), 1, 10)), ...cueLook(1)});
+st: [0, 0, 0, 0].map(() => clamp(Math.round(lv + (rnd() - 0.5) * 1.6), 1, 6)), ...cueLook(1)});   // victory cues stay weak (max 6) so premium/VIP cues remain worth buying
 }
 });
 const SUR_NAMES = ["Aksion", "Kristall Tig'", "Ekskalibur", "Ajdar Olovi", "Muz Qiroli", "Qora Feniks", "Oltin Sher", "Kosmos", "Chaqmoq Xudosi", "Zulmat",
@@ -8260,7 +8261,7 @@ gold: {b: ["#2a2208", "#060400"], s: ["#fff6d0", "#d8b84a"], m: "#ffd24d", g: "#
 };
 const HOR_LAYERS = ["skulls", "bones", "spikes", "webs", "blood", "eyes", "claws", "bats", "thorns", "cracks", "teeth", "chains", "fire", "runes", "galaxy", "crystal", "lightning", "vines", "camo", "carbon", "circuit", "gems", "neon", "wave"];
 const HOR_TABLE_SET = {has: () => true};
-const HOR_USD = [4.99, 6.99, 9.99, 12.99, 14.99, 19.99, 24.99, 29.99];
+const HOR_USD = [9.99, 12.99, 14.99, 19.99, 24.99, 29.99, 39.99, 49.99];   // price follows the cue strength (5..10)
 const horCueLayers = (i, P) => { const A = HOR_LAYERS.slice(0, 12), B = HOR_LAYERS.slice(12); return [{d: A[i % 12], c: P.c, c2: P.c2}, {d: A[(i * 5 + 3 + (i >> 4)) % 12 === i % 12 ? (i + 7) % 12 : (i * 5 + 3 + (i >> 4)) % 12], c: P.c2}, {d: B[(i * 7 + (i >> 3)) % B.length], c: P.c, c2: P.c2}]; };
 const HOR_MOT = ["bat", "ghost", "claw", "cat", "raven", "eye", "skull", "web", "storm", "tomb", "rune", "spider", "coffin", "pumpkin", "candle", "hand", "crossbones", "cauldron", "potion", "hat", "fangs", "tentacle", "axe", "noose", "dagger", "hourglass", "mask", "ribs", "lantern", "howl"];
 const HOR_USED = new Set();
@@ -8283,13 +8284,13 @@ const horrorWeek = () => { const w = weekIdx(), out = []; for (let k = 0; k < HO
 const horrorOffer = i => {
 const [name, motif, pal] = HORROR[i], P = HOR_PAL[pal], usd = HOR_USD[i % 8], tb = HOR_TABLE_SET.has(i);
 return {id: "hor_" + i, title: name, sub: tb ? "Qo'rqinchli kiy + VIP stol + ramka" : "Qo'rqinchli VIP kiy + ramka", bg: P.bg, accent: P.acc, horror: true, table: tb ? "vt_" + i : "", frame: "vf_" + i, tiers: [
-{sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", frame: "vf_" + i, goldShots: 2 + (i % 4), coins: Math.round(usd * 5000), cash: Math.round(usd * 5), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
+{sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", frame: "vf_" + i, goldShots: 2 + (i % 4), coins: Math.round(usd * 2000), cash: Math.round(usd * 2), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
 };
 const horrorLeft = () => { const s = ((weekIdx() + 1) * 7 * 864e5 - 3 * 864e5 - Date.now()) / 1000; return `${Math.floor(s / 86400)}${T("k")} ${Math.floor(s % 86400 / 3600)}${T("s")}`; };
 const SHOP_HCUES = [["Sirli tun", "violet", 0, 5], ["Yarim tun", "ice", 1, 6], ["Qabr qo'ng'irog'i", "steel", 2, 7], ["Yovuz ko'z", "crimson", 5, 8], ["Kabus o'rmoni", "toxic", 8, 9], ["Tun sayyohi", "teal", 10, 10],
 ["Suyak taqa", "bone", 1, 11], ["Jodu tayoqchasi", "neon", 9, 12], ["Qorong'u oy", "gold", 3, 13], ["Tuman shamoli", "rust", 6, 14], ["Xira chiroq", "sick", 4, 15], ["Sukunat", "blood", 7, 16]];
 SHOP_HCUES.forEach(([name, pal, l1, l2], k) => { const P = HOR_PAL[pal], A = HOR_LAYERS.slice(0, 12), c = vipCue("sh_" + k, name, [7 + (k >> 2), 7 + (k % 3), 8, 7 + (k % 2)], P.b, P.s, P.m, [{d: A[l1], c: P.c, c2: P.c2}, {d: HOR_LAYERS[12 + l2 % 12], c: P.c2}, {d: A[(l1 + 5) % 12], c: P.c}], P.g);
-c.cat = "horror"; c.tier = "Qo'rqinchli"; c.price = 40 + k * 22; c.cur = "cash"; CUES.push(c); });
+c.cat = "horror"; c.tier = "Qo'rqinchli"; c.price = 160 + k * 70; c.cur = "cash"; CUES.push(c); });
 const SHOP_HTBL = [["Qora tun", "dagger", "crimson", 120], ["Vaqt qumi", "hourglass", "gold", 160], ["Sirli niqob", "mask", "violet", 200], ["Suyaklar bog'i", "ribs", "bone", 240], ["Shamchiroq", "lantern", "pumpkin", 280], ["Oy uvillashi", "howl", "steel", 320]];
 SHOP_HTBL.forEach(([name, motif, pal, cash], k) => { const P = HOR_PAL[pal], id = "xh_" + k;
 EXTRA_TABLES.push({id, name, felt: P.felt, rail: [P.metal[1], P.metal[2]], trim: P.metal[0], gem: P.c, pat: "gold", cash});
