@@ -1445,10 +1445,10 @@ coins_52k:  {coins: 52000,   vip: 364,   usd: 4.99,  bonus: 30, img: "c5"},
 coins_20k:  {coins: 20000,   vip: 130,   usd: 1.99,  bonus: 25, img: "c6"},
 cash_2000:  {cash: 2000,     vip: 13000, usd: 99.99, bonus: 60, tag: "Eng foydali", img: "k1"},
 cash_800:   {cash: 800,      vip: 5590,  usd: 49.99, bonus: 55, tag: "Mashhur", img: "k2"},
-cash_256:   {cash: 256,      vip: 1920,  usd: 19.99, bonus: 25, img: "k3"},
+cash_256:   {cash: 250,      vip: 1920,  usd: 19.99, bonus: 25, img: "k3"},
 cash_110:   {cash: 110,      vip: 832,   usd: 9.99,  bonus: 20, img: "k4"},
 cash_50:    {cash: 50,       vip: 364,   usd: 4.99,  bonus: 15, img: "k5"},
-cash_15:    {cash: 15,       vip: 130,   usd: 1.99,  bonus: 10, img: "k6"},
+cash_15:    {cash: 20,       vip: 130,   usd: 1.99,  bonus: 10, img: "k6"},
 gems_140:   {gems: 140,      vip: 832,   usd: 9.99,  bonus: 40, tag: "Eng foydali"},
 gems_60:    {gems: 60,       vip: 364,   usd: 4.99,  bonus: 20},
 gems_20:    {gems: 20,       vip: 130,   usd: 1.99},
@@ -7756,7 +7756,7 @@ $("hRwLeft").textContent = profile.lastClaim !== today() ? T("OLISH!") : "⏱ " 
 updateHomeDots();
 const wl = weekEnds() - Date.now(); $("hLimEnds").textContent = `⏱ ${Math.floor(wl / 864e5)}${T("k")} ${Math.floor(wl % 864e5 / 36e5)}${T("s")} ${Math.floor(wl % 36e5 / 6e4)}${T("d")}`;
 $("hTourSub").textContent = `32–60 ${T("o'yinchi")}`;
-if (profile.vipPop !== today() && !ON_PORTAL) setTimeout(() => { if ($("home").classList.contains("on") && !$("modal").classList.contains("on") && profile.vipPop !== today() && performance.now() - lastTouch > 4000) { profile.vipPop = today(); save(); vipPage = new Date().getDate() % VO().length; vipOffers(); } }, 3500);
+if (!vipShownSession && !ON_PORTAL) { vipShownSession = true; const tryVip = n => setTimeout(() => { if (!$("home").classList.contains("on")) return; if ($("modal").classList.contains("on") && n < 6) return tryVip(n + 1); if ($("modal").classList.contains("on")) return; profile.vipPop = today(); save(); vipPage = new Date().getDate() % VO().length; vipOffers(); }, n ? 2500 : 1800); tryVip(0); }   // the VIP offer window opens on every app launch
 clearInterval(homeTimer);
 homeTimer = setInterval(() => {
 if (!$("home").classList.contains("on")) return clearInterval(homeTimer);
@@ -8451,6 +8451,7 @@ const VO = () => [...horrorWeek(), ...VIP_OFFERS0];
 let vipPage = 0, vipSel = {sport: 1, atom: 1, zodiac: new Date().getMonth()};
 
 
+let vipShownSession = false;
 function vipGallery() {                                // every VIP set on one page: tap a cue to open its window
   const offers = VO().filter(o => o.horror), cells = offers.map(o => { const cd = cueDef(o.tiers[0].cue), c = document.createElement("canvas"); c.width = 220; c.height = 14; const g = c.getContext("2d"); g.translate(5, 7); drawCueStick(g, 208, cd, 0.4); return `<button class="vgc" data-vg="${o.id}"><img src="${c.toDataURL()}" alt=""><small>${esc(T(o.title))}</small></button>`; }).join("");
   openModal({icon: "", title: "VIP to'plamlar", text: "", extra: `<div class="vgrid">${cells}</div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
