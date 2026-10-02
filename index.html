@@ -964,6 +964,12 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 #modal .panel.achp #mBtns .btn:before{display:none}
 .abm{filter:drop-shadow(0 3px 4px #000a)}.abm.off{filter:grayscale(.85) brightness(.6)}.acart:has(.abm){width:84px!important;height:84px;margin:-6px 0}
 .aemb img{width:92px;height:auto;display:block;filter:drop-shadow(0 4px 6px #000a)}
+
+/* mockup skin for full screens: framed panels, gold serif titles, art back button, bevelled cards */
+.screen>.panel{border:solid transparent;border-width:24px 18px 22px 18px;border-image:var(--ach-frame) 52 40 50 40 stretch;background:#091434;background-clip:padding-box;box-shadow:0 0 24px #ffb30033,0 10px 34px #000b;border-radius:0}
+.screen .head h2{font-family:Georgia,"Times New Roman",serif;font-weight:900;background:linear-gradient(#fff3b8,#f2b52a 55%,#b8801a);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 2px 0 #3a2400) drop-shadow(0 0 8px #ffb02077)}
+.screen .head .back{background:var(--ach-x) center/contain no-repeat;box-shadow:none;border-radius:0;color:#ffe08a;font-weight:900;width:46px;height:46px}
+.screen .card{border:solid transparent;border-width:12px 10px;border-image:var(--ach-card) 40 38 fill / 12px 10px stretch;background:none;border-radius:0}
 /* premium modal skin: dark navy panel, gold frame with diamonds, italic gold titles, glossy buttons */
 #modal .panel:not(:has(.hwin)){position:relative;background:radial-gradient(ellipse at 50% 0,#1c2d6e,#0b1233 58%,#060a1c);border:2px solid #d9a22a;border-radius:16px;box-shadow:0 0 0 1px #5a3a08,0 0 22px #ffb30055,inset 0 0 0 3px #0a1030,inset 0 0 0 4px #b8861f88,0 12px 44px #000c}
 #modal .panel:not(:has(.hwin))::before,#modal .panel:not(:has(.hwin))::after{content:"";position:absolute;left:50%;width:13px;height:13px;transform:translateX(-50%) rotate(45deg);background:linear-gradient(135deg,#fff3b8,#e9b838,#8a5a0e);box-shadow:0 0 9px #ffb300;border-radius:2px;pointer-events:none;z-index:2}
@@ -6100,6 +6106,7 @@ const UI_SPR = {"btn_green2": "data:image/webp;base64,UklGRmoEAABXRUJQVlA4WAoAAA
 for (const k of ["green2", "dark", "purple", "gray2"]) document.documentElement.style.setProperty("--b-" + k, `url(${UI_SPR["btn_" + k]})`);
 const MODAL_SH = {room: 166, lounge: 143, gold: 110};
 const modalScene = k => MODAL_ART[k] || "";
+(function () { const r = document.documentElement.style; r.setProperty("--ach-frame", `url(${IMG.ach_frame})`); r.setProperty("--ach-x", `url(${IMG.ach_xbtn})`); r.setProperty("--ach-card", `url(${IMG.ach_card})`); r.setProperty("--ach-ribbon", `url(${IMG.ach_ribbon})`); r.setProperty("--ach-close", `url(${IMG.ach_close})`); })();
 function skinModal(pn) {   // every popup wears the mockup art: gold 9-slice frame, square X, hex Close, ribbon/card art
 pn.classList.add("achp"); pn.style.setProperty("--ach-frame", `url(${IMG.ach_frame})`); pn.style.setProperty("--ach-x", `url(${IMG.ach_xbtn})`); pn.style.setProperty("--ach-card", `url(${IMG.ach_card})`); pn.style.setProperty("--ach-ribbon", `url(${IMG.ach_ribbon})`); pn.style.setProperty("--ach-close", `url(${IMG.ach_close})`);
 }
