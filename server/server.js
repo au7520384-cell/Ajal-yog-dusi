@@ -21,6 +21,7 @@ const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const APP_URL = (process.env.APP_URL || `http://localhost:${PORT}`).replace(/\/$/, "");
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY || "";
 const STRIPE_WHSEC = process.env.STRIPE_WEBHOOK_SECRET || "";
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
 const ROOT = path.join(__dirname, "..");
 const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/sw.js": "sw.js"};
 const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".js": "text/javascript"};
@@ -237,6 +238,28 @@ function readBody(req, limit = 64 * 1024) {
   });
 }
 async function jsonBody(req) { const b = await readBody(req); try { return JSON.parse(b.toString("utf8") || "{}"); } catch (e) { return {}; } }
+// ---------------------------------------------------------------- sign-in with Google / Facebook (tokens are always verified on the server)
+async function verifyProvider(provider, token) {
+  token = String(token || "").slice(0, 4096);
+  if (!token) return null;
+  try {
+    if (provider === "google") {
+      if (!GOOGLE_CLIENT_ID) return null;
+      const r = await fetch("https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(token)), j = await r.json();
+      if (!r.ok || j.aud !== GOOGLE_CLIENT_ID || !/^(https:\/\/)?accounts\.google\.com$/.test(j.iss || "") || (+j.exp || 0) * 1000 < Date.now() || !j.sub) return null;
+      return {sub: String(j.sub), name: j.given_name || j.name || ""};
+    }
+    if (provider === "facebook") {
+      if (!FB_APP_ID || !FB_APP_SECRET) return null;
+      const d = await (await fetch(`https://graph.facebook.com/debug_token?input_token=${encodeURIComponent(token)}&access_token=${FB_APP_ID}|${FB_APP_SECRET}`)).json();
+      if (!d.data || !d.data.is_valid || String(d.data.app_id) !== FB_APP_ID || !d.data.user_id) return null;
+      let name = ""; try { name = (await (await fetch("https://graph.facebook.com/me?fields=first_name&access_token=" + encodeURIComponent(token))).json()).first_name || ""; } catch (e) {}
+      return {sub: String(d.data.user_id), name};
+    }
+  } catch (e) { console.error("auth verify failed:", e.message); }
+  return null;
+}
+
 function auth(req) {
   const h = req.headers.authorization || "";
   const m = /^Bearer ([\w-]+):([\w-]+)$/.exec(h);
@@ -310,6 +333,24 @@ const routes = {
     return {total: clients.size, playing: rooms.size * 2, byCity};
   },
 
+  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID}; },
+  // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
+  async "POST /api/auth/login"(req) {
+    if (limited(req, "authlogin", 20)) return [429, {error: "slow down"}];
+    const b = await jsonBody(req), provider = b.provider === "facebook" ? "facebook" : b.provider === "google" ? "google" : "";
+    if (!provider) return [400, {error: "bad_provider"}];
+    const v = await verifyProvider(provider, b.token);
+    if (!v) return [401, {error: "bad_token"}];
+    const cur = auth(req), found = Object.values(db.users).find(x => x.auth && x.auth[provider] === v.sub);
+    if (found) return {existing: found.id !== (cur && cur.id), id: found.id, token: found.token, code: found.code, save: found.save || null, savedAt: found.saveAt || 0, name: found.name};
+    if (cur) { cur.auth = {...(cur.auth || {}), [provider]: v.sub}; markDirty(); return {existing: false, linked: true, id: cur.id, token: cur.token, code: cur.code, save: null, savedAt: 0, name: cur.name}; }
+    const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16), token = crypto.randomBytes(24).toString("hex"), code = newCode();
+    const u = {id, token, code, name: cleanName(v.name || b.name), avatar: int(b.avatar, 999), frame: 0, level: 1, xp: 0, won: 0, wins: 0, games: 0,
+      friends: [], referredBy: null, referrals: [], grants: [], inbox: [], gifted: {}, created: Date.now(), lastSeen: Date.now(),
+      country: geoCountry(req) || cleanCountry(b.country), league: 0, week: curWeek(), weekWon: 0, auth: {[provider]: v.sub}};
+    db.users[id] = u; db.codes[code] = id; markDirty();
+    return {existing: false, created: true, id, token, code, save: null, savedAt: 0, name: u.name};
+  },
   async "POST /api/register"(req) {
     if (limited(req, "reg", 10)) return [429, {error: "slow down"}];
     const b = await jsonBody(req);
@@ -599,7 +640,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "POST /api/register", "POST /api/recover"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
