@@ -329,8 +329,7 @@ const routes = {
     if (b.frame !== undefined) u.frame = int(b.frame, 99);
     if (cleanCountry(b.country)) u.country = cleanCountry(b.country);
     else if (!u.country) u.country = geoCountry(req);
-    // coins won on this device since the last sync also count for this week's ranking
-    if (b.won !== undefined) { const d = int(b.won) - (u.won || 0); if (d > 0) addWeekly(u, Math.min(d, 2e8)); }
+    // weekly winnings come ONLY from verified online matches (finish()); device-reported totals never count (they include AI games and can be forged)
     for (const k of ["level", "won", "wins", "games"]) if (b[k] !== undefined) u[k] = Math.max(u[k] || 0, int(b[k]));
     if (b.xp !== undefined) u.xp = int(b.xp);
     if (b.tbl !== undefined) u.tbl = /^[a-z]_[a-z]{3}$/.test(String(b.tbl)) ? String(b.tbl) : "";   // equipped exclusive table (badge)
@@ -514,6 +513,10 @@ const routes = {
       const rank = list.indexOf(u);
       const row = x => ({...publicUser(x), sd: pts(x)});
       return {scope, week: w, endsAt: weekEndsAt(), top: list.slice(0, 100).map(row), me: {...row(u), rank: rank + 1}, total: list.length};
+    }
+    if (scope === "clubs") {
+      const list = Object.values(db.clubs).map(clubInfo).sort((x, y) => y.score - x.score || y.members - x.members), mi = list.findIndex(c => c.id === u.club);
+      return {scope, week: curWeek(), endsAt: weekEndsAt(), prizes: CLUB_PRIZES, clubs: list.slice(0, 100), mine: mi < 0 ? null : {...list[mi], rank: mi + 1}, total: list.length};
     }
     const all = scope === "country" ? board("c:" + cc, x => (x.country || "") === cc)
       : scope === "league" ? board("l:" + lg, x => (x.league || 0) === lg)
