@@ -2262,7 +2262,7 @@ CUES.push({id: "c_" + cc, cc, cat: "country", tier: "Yuqori", price: 40, cur: "c
 shaft: ["#f7ecd0", "#d9b87e"], butt: ["#3a2210", "#0d0603"], metal: "#d9d9d9", deco: "flag"});
 });
 const cueName = c => c.cc ? `${countryName(c.cc)}` : c.name;
-const cuePower = c => c.cat === "vip" ? 60 + c.st.reduce((a, v) => a + v, 0) * 6 : c.cat === "pass" ? 160 : c.cat === "premium" ? 160 + Math.round(c.cash / 40) : c.cat === "surprise" ? 50 + c.st.reduce((x, v) => x + v, 0) * 5 : c.cat === "victory" ? 40 + c.city * 8 : c.cat === "country" ? 70 : c.price ? Math.round(10 + (c.cur === "cash" ? c.price / 3 : Math.log10(c.price + 1) * 12)) : 0;
+const cuePower = c => c.cat === "vip" ? 60 + c.st.reduce((a, v) => a + v, 0) * 6 : c.cat === "pass" ? 160 : c.cat === "premium" ? 160 + Math.round((c.cash0 || c.cash) / 40) : c.cat === "surprise" ? 50 + c.st.reduce((x, v) => x + v, 0) * 5 : c.cat === "victory" ? 40 + c.city * 8 : c.cat === "country" ? 70 : c.price ? Math.round(10 + (c.cur === "cash" ? c.price / 3 : Math.log10(c.price + 1) * 12)) : 0;
 const store = {
 get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
 set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -4067,9 +4067,9 @@ const setBonus = () => profile.tableSkin && profile.tableSkin.startsWith("l_") &
 const tableBonus = id => {
 const t = tableById(id); if (!t || t.city) return 0;
 if (t.vip) return 35;
-if (t.tier === "premium") return Math.round(12 + (t.cash - 500) / 4500 * 38);
-if (t.tier === "elite") return Math.round(3 + (t.cash - 300) / 450 * 6);
-return Math.round(1 + ((t.cash || 150) - 150) / 450 * 2);
+if (t.tier === "premium") return Math.round(12 + ((t.cash0 || t.cash) - 500) / 4500 * 38);
+if (t.tier === "elite") return Math.round(3 + ((t.cash0 || t.cash) - 300) / 450 * 6);
+return Math.round(1 + (((t.cash0 || t.cash) || 150) - 150) / 450 * 2);
 };
 function chooseTable(G) {
 let best = -1, rank = 0;
@@ -8171,6 +8171,12 @@ return {id: "pf_" + k, name, cur: "cash", v, gems, usd, prem: true, crown: n >= 
 gem: tb.gemrow || (tb.pave && tb.pave !== "opal" ? tb.pave : null) || t.gem || tb.metal[0], glow: tb.gemrow || (tb.pave === "opal" ? "#ff8ad8" : tb.metal[0]), c: [tb.metal[0], tb.metal[1], tb.metal[2]]};
 });
 FRAMES.push(...PREMIUM_FRAMES);
+// One economy for everything: real money is always the cheapest way to buy; 💵 cash and 💎 gems cost exactly what the biggest pack of that currency costs (cash 20 per $, gems 14 per $); coins are the weak currency (1 💵 = 1 000 🪙).
+const CASH_PER_USD = 20, GEMS_PER_USD = 14;
+const cashFor = usd => Math.max(5, Math.ceil(usd * CASH_PER_USD / 5) * 5), gemsFor = usd => Math.max(2, Math.round(usd * GEMS_PER_USD));
+for (const t of EXTRA_TABLES) if (t.usd) { t.cash0 = t.cash; t.cash = cashFor(t.usd); t.gems = gemsFor(t.usd); }
+for (const c of PREMIUM_CUES) { c.cash0 = c.cash; c.cash = cashFor(c.usd); c.gems = gemsFor(c.usd); c.price = c.cash; }
+for (const f of PREMIUM_FRAMES) { f.v0 = f.v; f.v = cashFor(f.usd); f.gems = gemsFor(f.usd); }
 const hFrame = (id, name, pal, deco, shape, extra = {}) => { const P = HOR_PAL[pal], hu = extra.hue, M = hu === undefined ? P.metal : [hsl2hex(hu, 50, 82), hsl2hex(hu, 62, 46), hsl2hex(hu, 72, 12)], gl = hu === undefined ? P.g : hsl2hex(hu, 100, 60), hh = extra.hh || {c: deco % 16, t: (deco * 3 + shape * 5) % 16, band: shape % 4, shape: [0, 1, 2, 3][shape % 4]}; return {id, name, prem: true, h: hh, metal: M, glow: gl, gem: deco % 3 === 0, c: M, cur: "cash", v: 0, ...extra}; };
 FRAMES.push(...HORROR.map(([name, , pal], i) => hFrame("vf_" + i, name, pal, i % 16, i >> 4, {vip: true, hue: horHue(i), hh: {c: i % 16, t: (i * 7 + (i >> 4) * 5 + 3) % 16, band: i >> 4, shape: i >> 4}})));
 const PASS_FR_NAMES = ["Oy ramkasi", "Sham ramkasi", "Kuzgun ramkasi", "Qovoq ramkasi", "Suyak ramkasi", "Qabr ramkasi", "Sharpa ramkasi", "To'r ramkasi", "Qon atirgul", "Shox ramkasi", "Chaqmoq ramkasi", "Yarasa to'dasi", "Go'r ramkasi", "Nur ramkasi", "Ruh ramkasi", "Qora tun"];
