@@ -8023,7 +8023,7 @@ const hms = ms => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${Math.
 const hubCard = (o) => `<div class="hcard ${o.cls || ""}" ${o.id ? `id="${o.id}"` : ""} ${o.act ? `data-hact="${o.act}"` : ""}>
 <div class="hcimg">${o.img || ""}</div><b>${o.title}</b>${o.sub ? `<small>${o.sub}</small>` : ""}${o.btn ? `<button class="btn ${o.btnCls || "green"}">${o.btn}</button>` : ""}${o.badge ? `<i class="dot">${o.badge}</i>` : ""}</div>`;
 function bindHub(box, acts) { box.querySelectorAll("[data-hact]").forEach(el => el.onclick = () => acts[el.dataset.hact] && acts[el.dataset.hact]()); }
-IMG.nv_friends = IMG.fr_inv; document.querySelectorAll("[data-img=nv_friends]").forEach(el => { el.src = IMG.fr_inv; el.classList.add("invh"); }); IMG.mg_wheel = IMG.fr_wheel; IMG.mg_dart = IMG.fr_shot;   // the 3D wheel and target everywhere
+IMG.mg_wheel = IMG.fr_wheel; IMG.mg_dart = IMG.fr_shot;   // the 3D wheel and target everywhere
 const MG_ART = {spin: "mg_wheel", wheel: "mg_wheel", lucky: "mg_dart", scratch: "mg_scr", gold: "mg_gold", golden: "mg_gold", box: "mg_box", boxes: "mg_box"};
 const mgImg = (k, h = 40) => MG_ART[k] ? `<img class="mgi" src="${IMG[MG_ART[k]]}" style="height:${h}px" alt="">` : "";
 function buildMini() {
