@@ -1134,6 +1134,12 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 .giftmini{display:flex;gap:6px;flex-wrap:wrap}.giftmini span{font-size:26px;filter:grayscale(1) brightness(.5)}.giftmini span.on{filter:none}
 .citems.g{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.citems.g button{font-size:28px;padding:6px 0}.giftfl{pointer-events:none}
 @media (max-height:460px){.gift span{font-size:30px}.gift{padding:4px 2px}.gift small{font-size:9px}.giftgrid{gap:4px}}
+.mbchest{height:92px;display:grid;place-items:center}.mbchest img{height:88px;object-fit:contain;border-radius:16px;filter:var(--mbf) drop-shadow(0 4px 8px #000a)}
+#cueTabs{gap:8px}#cueTabs .tab{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 10px;background:linear-gradient(#1b2748,#0e1530);border:2px solid #2c3a60;border-radius:14px;box-shadow:inset 0 1px 0 #ffffff1f,0 3px 8px #0006;font-size:17px;color:#cfd8ee}
+#cueTabs .tab>.ei{display:none}#cueTabs .tab.on{background:linear-gradient(#2f6fe0,#163f9a);border-color:#ffd24d;color:#fff;box-shadow:0 0 14px #ffb30088,inset 0 1px 0 #ffffff55}
+#cueTabs .stic{display:grid;place-items:center;width:44px;height:44px;flex:none;filter:drop-shadow(0 3px 3px #000a)}#cueTabs .stic img{max-width:100%;max-height:100%;object-fit:contain}#cueTabs .stic img.rnd{border-radius:12px;width:40px;height:40px;object-fit:cover}#cueTabs .stic img.tbl{border-radius:6px;width:44px;height:auto}#cueTabs .stic .stem{font-size:30px}#cueTabs .stfr{transform:scale(.95)}
+#cueTabs .tab.on .stic{filter:drop-shadow(0 0 6px #ffe27a)}
+@media (max-height:460px){#cueTabs .stic{width:30px;height:30px}#cueTabs .stic img.rnd{width:28px;height:28px}#cueTabs .tab{font-size:13px;padding:3px 6px;gap:4px}#cueTabs .stfr{transform:scale(.65)}}
 </style>
 </head>
 <body>
@@ -7671,6 +7677,17 @@ if (e.target.closest("button,.rw.now,.pchip2,.mchip")) Snd.click();
 const g = e.target.closest("[data-go]"); if (g) go(g.dataset.go, g.dataset.tab);
 });
 document.querySelectorAll("#cueTabs .tab, .shopnav button").forEach(t => t.addEventListener("click", () => buildShop(t.dataset.tab)));
+function decorateShopTabs() {   // art icons in the top shop tabs (cue, avatar, frame, table, chest, stickers)
+const ic = {};
+try { const cd = cueDef("vip_mvp") || cueDef(profile.cue), c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"); g.translate(6, 58); g.rotate(-Math.PI / 4); drawCueStick(g, 82, cd, 0.85); ic.cues = `<img src="${c.toDataURL()}" alt="">`; } catch (e) {}
+try { ic.avatars = `<img class="rnd" src="${avatarURL(Math.min(GA + 7, 99999))}" alt="">`; } catch (e) {}
+try { ic.frames = `<span class="stfr">${avHTML(profile.avatar, Math.max(1, FRAMES.findIndex(f => f.id === "pf_brz") + 3), 38)}</span>`; } catch (e) {}
+try { const t = EXTRA_TABLES.find(x => x.tier === "premium") || EXTRA_TABLES[0]; ic.tables = `<img class="tbl" src="${tableThumb(t)}" alt="">`; } catch (e) {}
+if (IMG.chest) ic.boxes = `<img src="${IMG.chest}" alt="">`;
+ic.stickers = `<span class="stem">🎭</span>`;
+document.querySelectorAll("#cueTabs .tab").forEach(t => { if (ic[t.dataset.tab] && !t.querySelector(".stic")) t.insertAdjacentHTML("afterbegin", `<span class="stic">${ic[t.dataset.tab]}</span>`); });
+}
+decorateShopTabs();
 $("pchip").onclick = () => go("profileScr");
 $("muteBtn").onclick = toggleMute;
 $("fsBtn").onclick = toggleFullscreen;
@@ -7736,7 +7753,7 @@ openModal({icon: "🎁", title: T(m.n), text: "", extra: `<div style="display:fl
 }
 function buildBoxes(body) {
 body.innerHTML = `<div class="muted" style="margin-bottom:10px">${T("Har quti kiy bo'laklarini beradi: oddiy 1, epik 2, afsonaviy 3 ta bo'lak.")}</div>
-<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${MBOX.map(m => `<div class="card" style="text-align:center;background:linear-gradient(${m.col[0]}33,${m.col[1]}cc)"><div style="font-size:64px">🎁</div><div class="h" style="font-size:20px">${T(m.n)}</div><div class="muted">🧩 ${m.perks} ${T("bo'lak")}</div>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${MBOX.map(m => `<div class="card" style="text-align:center;background:linear-gradient(${m.col[0]}33,${m.col[1]}cc)"><div class="mbchest" style="--mbf:${m.id === "rare" ? "grayscale(.85) brightness(1.1)" : m.id === "leg" ? "hue-rotate(165deg) saturate(1.2)" : "none"}"><img src="${IMG.chest}" alt=""></div><div class="h" style="font-size:20px">${T(m.n)}</div><div class="muted">🧩 ${m.perks} ${T("bo'lak")}</div>
 <button class="btn purple" data-mb="${m.id},1" style="width:100%;margin:6px 0 4px">${T("1 ta olish")} · <span class="cash"></span> ${m.cash[0]}</button><button class="btn green" data-mb="${m.id},3" style="width:100%">${T("3 ta olish")} · <span class="cash"></span> ${m.cash[1]}</button></div>`).join("")}</div>`;
 body.querySelectorAll("[data-mb]").forEach(b => b.onclick = () => { const [id, n] = b.dataset.mb.split(","); buyMBox(MBOX.find(x => x.id === id), +n); });
 }
@@ -9426,9 +9443,12 @@ const s = n.nodeValue.trim();
 if (s && !n.parentElement.closest("script,style,#chatPanel,#cheerBar")) staticText.push([n, s, n.nodeValue]);
 }
 })();
+function stripTabEmoji() { document.querySelectorAll("#cueTabs .tab").forEach(t => { for (const n of t.childNodes) if (n.nodeType === 3) n.nodeValue = n.nodeValue.replace(/^\s*[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F]+\s*/u, ""); }); }   // the art icon replaces the emoji in the top shop tabs
+stripTabEmoji();
 function applyLang(l) {
 LANG = l; document.documentElement.lang = l;
 for (const [n, s, raw] of staticText) n.nodeValue = raw.replace(s, T(s));
+stripTabEmoji();
 buildChat();
 try { fitLabels(); } catch (e) {}
 }
