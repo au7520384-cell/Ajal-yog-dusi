@@ -422,6 +422,7 @@ box-shadow:inset 0 2px 0 #ffffff30,0 0 22px var(--tg),0 12px 30px #000c;animatio
 .toast .ti::before{content:"";position:absolute;inset:-8px;border-radius:50%;background:repeating-conic-gradient(var(--tc) 0 7deg,transparent 7deg 24deg);opacity:.4;animation:tspin 7s linear infinite;
 -webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%)}
 .toast .ti>*{position:relative;animation:tpop .6s .15s cubic-bezier(.2,1.8,.4,1) both}.toast .ti img{width:50px;height:50px;object-fit:cover;border-radius:50%;filter:drop-shadow(0 3px 4px #000a)}
+.toast .ti .tia{display:grid;place-items:center;width:56px;height:56px}.toast .ti .tia img{width:54px;height:54px;border-radius:0;object-fit:contain}.toast .ti .tia svg{width:54px;height:54px}.toast .ti .tia .abring,.toast .ti .tia .achi{transform:scale(.9)}
 .toast b{display:block;font-family:var(--fh);font-weight:400;font-size:20px;color:#fff;text-shadow:0 2px 0 #0008;line-height:1.1;letter-spacing:.3px}
 .toast small{display:inline-block;background:#0007;border-radius:8px;padding:1px 8px;color:var(--tc);font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:800;margin-bottom:3px}
 .toast small:empty{display:none}
@@ -6178,7 +6179,7 @@ while (box.children.length < 2 && toastQ.length) {
 const [icon, title0, sub0, o] = toastQ.shift(), title = T(title0), sub = sub0 && T(sub0);
 const kind = o.kind || {"🏅": "medal", "🏆": "trophy", "🎱": "cue", "📦": "box"}[icon] || "";
 const el = document.createElement("div"); el.className = "toast" + (kind ? " t-" + kind : "");
-el.innerHTML = `<span class="ti">${o.img ? `<img src="${o.img}" alt="">` : `<span>${icon}</span>`}</span><div><small>${esc(sub || "")}</small><b>${esc(title)}</b></div>`;
+el.innerHTML = `<span class="ti">${o.html ? `<span class="tia">${o.html}</span>` : o.img ? `<img src="${o.img}" alt="">` : `<span>${icon}</span>`}</span><div><small>${esc(sub || "")}</small><b>${esc(title)}</b></div>`;
 box.appendChild(el); setTimeout(() => { el.remove(); pumpToast(); }, 3150);
 }
 }
@@ -8731,8 +8732,8 @@ const fresh = ACH2.filter(a => !profile.ach2[a.id] && a.check(profile));
 if (!fresh.length) return;
 fresh.forEach((a, k) => { profile.ach2[a.id] = Date.now() + k; });
 profile.coins += 500 * fresh.length; save(); updateNav(); Snd.coin(4);
-if (fresh.length <= 2) fresh.forEach(a => toast(a.icon, T(a.name), `${T("Yutuq ochildi")} · +500 🪙`, {kind: "ach", img: IMG["achb_" + a.id]}));
-else toast("🏅", `${fresh.length} ${T("ta yangi yutuq")}`, `+${fmt(500 * fresh.length)} 🪙`);
+if (fresh.length <= 2) fresh.forEach(a => toast(a.icon, T(a.name), `${T("Yutuq ochildi")} · +500 🪙`, {kind: "ach", html: achArt(a, true, 46)}));
+else toast("🏅", `${fresh.length} ${T("ta yangi yutuq")}`, `+${fmt(500 * fresh.length)} 🪙`, {kind: "ach", html: achArt(fresh[fresh.length - 1], true, 46)});
 }
 const cityTro = c => ((profile.cityTro || {})[c.id] | 0);
 const ringOf = c => !!(profile.rings || {})[c.id];
