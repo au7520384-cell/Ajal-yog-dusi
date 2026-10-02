@@ -2242,7 +2242,7 @@ save(); updateNav();
 function unlock(id) {
 if (profile.ach[id]) return;
 profile.ach[id] = today(); profile.coins += 200; save();
-const a = ACHS[id]; toast(a.icon, a.name, "Yutuq ochildi · +200 tanga", {kind: "ach"});
+const a = ACHS[id]; toast(a.icon, a.name, "Yutuq ochildi · +200 tanga", {kind: "ach", img: IMG["achb_" + id]});
 Snd.coin(4);
 if (typeof y8Achievement === "function") y8Achievement(id);
 }
@@ -8454,7 +8454,7 @@ const fresh = ACH2.filter(a => !profile.ach2[a.id] && a.check(profile));
 if (!fresh.length) return;
 fresh.forEach((a, k) => { profile.ach2[a.id] = Date.now() + k; });
 profile.coins += 500 * fresh.length; save(); updateNav(); Snd.coin(4);
-if (fresh.length <= 2) fresh.forEach(a => toast(a.icon, T(a.name), `${T("Yutuq ochildi")} · +500 🪙`, {kind: "ach"}));
+if (fresh.length <= 2) fresh.forEach(a => toast(a.icon, T(a.name), `${T("Yutuq ochildi")} · +500 🪙`, {kind: "ach", img: IMG["achb_" + a.id]}));
 else toast("🏅", `${fresh.length} ${T("ta yangi yutuq")}`, `+${fmt(500 * fresh.length)} 🪙`);
 }
 const cityTro = c => ((profile.cityTro || {})[c.id] | 0);
