@@ -8138,7 +8138,7 @@ const horrorWeek = () => { const w = weekIdx(), out = []; for (let k = 0; k < HO
 const horrorOffer = i => {
 const [name, motif, pal] = HORROR[i], P = HOR_PAL[pal], usd = HOR_USD[i % 8], tb = HOR_TABLE_SET.has(i);
 return {id: "hor_" + i, title: name, sub: tb ? "Qo'rqinchli kiy + VIP stol + ramka" : "Qo'rqinchli VIP kiy + ramka", bg: P.bg, accent: P.acc, horror: true, table: tb ? "vt_" + i : "", frame: "vf_" + i, tiers: [
-{sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", frame: "vf_" + i, goldShots: 2 + (i % 4), coins: Math.round(usd * 24000), cash: Math.round(usd * 14), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
+{sku: "hor_" + i, usd, cue: "vh_" + i, table: tb ? "vt_" + i : "", frame: "vf_" + i, goldShots: 2 + (i % 4), coins: Math.round(usd * 5000), cash: Math.round(usd * 5), sboxes: 1 + (i % 3), vip: Math.round(usd * 66)}]};
 };
 const horrorLeft = () => { const s = ((weekIdx() + 1) * 7 * 864e5 - 3 * 864e5 - Date.now()) / 1000; return `${Math.floor(s / 86400)}${T("k")} ${Math.floor(s % 86400 / 3600)}${T("s")}`; };
 const SHOP_HCUES = [["Sirli tun", "violet", 0, 5], ["Yarim tun", "ice", 1, 6], ["Qabr qo'ng'irog'i", "steel", 2, 7], ["Yovuz ko'z", "crimson", 5, 8], ["Kabus o'rmoni", "toxic", 8, 9], ["Tun sayyohi", "teal", 10, 10],
@@ -8437,15 +8437,15 @@ function vipCueShow(cd, host) {               // tall animated showcase of a VIP
 }
 const VIP_OFFERS0 = [
 {id: "sport", title: "SPORT JINNISI", sub: "Kiy + bo'laklar · maksimal ko'rsatkichlar", bg: "linear-gradient(135deg,#1a3aa8,#0a1450 55%,#d8283a)", accent: "#ffe14d", tiers: [
-{sku: "sport_1", usd: 3.99, cue: "vip_under", coins: 120000, cash: 60, sboxes: 2, vip: 332},
-{sku: "sport_2", usd: 6.99, cue: "vip_champ", coins: 258000, cash: 90, sboxes: 2, vip: 582},
-{sku: "sport_3", usd: 24.99, cue: "vip_mvp", coins: 540000, cash: 440, sboxes: 4, vip: 2708}]},
+{sku: "sport_1", usd: 3.99, cue: "vip_under", coins: 27000, cash: 15, sboxes: 2, vip: 332},
+{sku: "sport_2", usd: 6.99, cue: "vip_champ", coins: 52000, cash: 20, sboxes: 2, vip: 582},
+{sku: "sport_3", usd: 24.99, cue: "vip_mvp", coins: 138000, cash: 110, sboxes: 4, vip: 2708}]},
 {id: "atom", title: "ATOM PORTLASHI", sub: "Hammasini bitta narxda oling!", bg: "linear-gradient(135deg,#3a2a10,#120a04 55%,#6a3a08)", accent: "#ffb34d", tiers: [
-{sku: "atom_1", usd: 4.99, cue: "vip_geiger", coins: 140000, cash: 140, goldShots: 4, vip: 400},
-{sku: "atom_2", usd: 9.99, cue: "vip_kaboom", coins: 360000, cash: 360, goldShots: 9, vip: 832},
-{sku: "atom_3", usd: 39.99, cue: "vip_nemesis", coins: 1728000, cash: 1720, goldShots: 36, vip: 5000}]},
+{sku: "atom_1", usd: 4.99, cue: "vip_geiger", coins: 25000, cash: 25, goldShots: 4, vip: 400},
+{sku: "atom_2", usd: 9.99, cue: "vip_kaboom", coins: 50000, cash: 50, goldShots: 9, vip: 832},
+{sku: "atom_3", usd: 39.99, cue: "vip_nemesis", coins: 200000, cash: 200, goldShots: 36, vip: 5000}]},
 {id: "zodiac", title: "ZODIAK", sub: "Burjingiz kiyi + avatari", bg: "linear-gradient(135deg,#2a0a5a,#0a0220 55%,#6a1a8a)", accent: "#e2c2ff", zodiac: true,
-tiers: ZODIAC.map((z, i) => ({sku: "zod_" + i, usd: 24.99, cue: "vip_z" + i, avatar: ZOD_AV + i, coins: 420000, cash: 1260, sboxes: 5, vip: 2708, sign: z}))},
+tiers: ZODIAC.map((z, i) => ({sku: "zod_" + i, usd: 24.99, cue: "vip_z" + i, avatar: ZOD_AV + i, coins: 62000, cash: 185, sboxes: 5, vip: 2708, sign: z}))},
 ];
 const VO = () => [...horrorWeek(), ...VIP_OFFERS0];
 let vipPage = 0, vipSel = {sport: 1, atom: 1, zodiac: new Date().getMonth()};
