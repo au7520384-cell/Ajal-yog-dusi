@@ -1000,6 +1000,7 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 #modal .panel.achp #mText{color:#dfe9ff}
 #modal .panel.achp #mBtns .btn:before{display:none}
 .abm{filter:drop-shadow(0 3px 4px #000a)}.abm.off{filter:grayscale(.85) brightness(.6)}.acart:has(.abm){width:84px!important;height:84px;margin:-6px 0}
+.pemb{display:inline-block;width:56px;height:56px;margin-right:4px;background-size:auto 100%;background-repeat:no-repeat;background-position:0 0;filter:drop-shadow(0 2px 3px #000a)}.pemb2{display:inline-grid;place-items:center;width:56px;height:56px;margin-right:4px;background-size:100% 100%}
 .aemb img{width:92px;height:auto;display:block;filter:drop-shadow(0 4px 6px #000a)}
 
 
@@ -7156,7 +7157,7 @@ ${stat("G'alaba seriyasi", `${profile.wstreak | 0} (${T("eng yaxshi")} ${profile
 </div>
 <div class="prow">
 <div class="pbox" id="pRings"><small>${T("Uzuklar")} · ${CITIES.filter(ringOf).length}/${CITIES.length}</small><div>${CITIES.slice(0, 7).map(c => ringHTML(c, ringOf(c), 40)).join("")}</div></div>
-<div class="pbox" id="pAch"><small>${T("So'nggi yutuqlar")} · ${Object.keys(profile.ach2 || {}).length}/${ACH2.length}</small><div>${lastAch.length ? lastAch.map(a => `<span title="${esc(a.name)}">${achArt(a, true, 44)}</span>`).join("") : `<span class="muted">${T("Hali yo'q")}</span>`}</div></div>
+<div class="pbox" id="pAch"><small>${T("So'nggi yutuqlar")} · ${Object.keys(profile.ach2 || {}).length}/${ACH2.length}</small><div>${lastAch.length ? lastAch.map(a => { const ax = IMG["acx_" + a.id.replace("city_", "cy_")]; return ax ? `<span class="pemb" title="${esc(a.name)}" style="background-image:url(${ax})"></span>` : `<span title="${esc(a.name)}" class="pemb2" style="background-image:url('${WREATH_URI}')">${achArt(a, true, 34)}</span>`; }).join("") : `<span class="muted">${T("Hali yo'q")}</span>`}</div></div>
 </div>
 <div class="pbox pcups" id="pCups"><small>${T("Chempionat kuboklari")} · ${CUPS.reduce((n, c) => n + ((profile.cupWins || {})[c.id] | 0), 0)}</small><div>${cupsRow()}</div></div>
 <div class="prow">
