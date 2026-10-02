@@ -6172,6 +6172,7 @@ $("muteBtn").textContent = profile.muted ? "🔇" : "🔊";
 fitNav();
 }
 const toastQ = [];
+const icoH = (ic, px = 46) => ic === "🎁" && IMG.chest ? `<img src="${IMG.chest}" alt="" style="height:${px}px;object-fit:contain;vertical-align:middle">` : ic;   // the chest art stands for every 🎁 (surprise boxes, reward route, gifts)
 function toast(icon, title, sub, o = {}) { if (toastQ.length < 12) toastQ.push([icon, title, sub, o]); pumpToast(); }
 function pumpToast() {
 const box = $("toasts");
@@ -6200,7 +6201,7 @@ function openModal({icon = "", title, text = "", extra = "", buttons = [], scene
   $("modal").classList.remove("cpm");
   { const pn = document.querySelector("#modal .panel"); pn.classList.remove("achp"); const f = pn.querySelector(".achfx"); if (f) f.remove(); if (!scene && !extra.includes("hwin")) skinModal(pn); }
   { const pn = document.querySelector("#modal .panel"); pn.classList.toggle("scened", !!scene); if (scene) { pn.style.setProperty("--scene", `url(${modalScene(scene)})`); pn.style.setProperty("--shd", (MODAL_SH[scene] || 120) + "px"); } }
-if (icon.startsWith("img:")) $("mIcon").innerHTML = `<img class="mic" src="${UI_SPR["ic_" + icon.slice(4)]}" alt="">`; else $("mIcon").textContent = icon; $("mTitle").textContent = T(title); $("mText").textContent = T(text); $("mExtra").innerHTML = extra;
+if (icon.startsWith("img:")) $("mIcon").innerHTML = `<img class="mic" src="${UI_SPR["ic_" + icon.slice(4)]}" alt="">`; else if (icon === "🎁" && IMG.chest) $("mIcon").innerHTML = `<img class="mic" src="${IMG.chest}" alt="">`; else $("mIcon").textContent = icon; $("mTitle").textContent = T(title); $("mText").textContent = T(text); $("mExtra").innerHTML = extra;
 const box = $("mBtns"); box.innerHTML = "";
 for (const b of buttons) {
 const el = document.createElement("button"); el.className = "btn " + b.cls; el.textContent = T(b.label);
@@ -6819,7 +6820,7 @@ body.insertAdjacentHTML("beforeend", `<div class="cuehead">
 <button class="btn blue" id="cueInfo" style="padding:6px 14px">ℹ ${T("Kiy ko'rsatkichlari")}</button></div>
 <div class="tabs subtabs">${[["premium", "👑 Premium"], ["horror", "💀 Qo'rqinchli"], ["standard", "Standart"], ["victory", "G'alaba"], ["surprise", "Syurpriz"], ["country", "Davlat"], ["owned", "Meniki"]]
 .map(([k, n]) => `<button class="tab${k === cueCat ? " on" : ""}" data-cc="${k}">${T(n)}</button>`).join("")}</div>
-${cueCat === "surprise" ? `<div class="card surbox"><div style="font-size:44px">🎁</div><div style="flex:1"><b>${T("Syurpriz qutisi")}</b>
+${cueCat === "surprise" ? `<div class="card surbox"><div style="font-size:44px">${icoH("🎁", 56)}</div><div style="flex:1"><b>${T("Syurpriz qutisi")}</b>
 <div class="muted">${T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.")}</div></div>
 <button class="btn purple" id="surBtn">${profile.sbAct ? `🔒 ${profile.sbAct.n}/4` : profile.sboxes ? `${T("Ochish")} (${profile.sboxes})` : "$0.99 / 💵 " + SURPRISE_BOX}</button></div>` : ""}
 ${cueCat === "victory" ? `<p class="muted" style="margin:0 0 10px">${T("Shaharda yoki undan yuqorida yutib, kiy bo'laklarini yig'ing. 4 bo'lak = kiy.")}</p>` : ""}`);
@@ -6864,7 +6865,7 @@ let btn;
 if (sel) btn = `<button class="btn gray" disabled style="width:100%">✓ ${T("TANLANGAN")}</button>`;
 else if (owned) btn = `<button class="btn blue" style="width:100%">${T("TANLASH")}</button>`;
 else if (c.cat === "victory") btn = `<button class="btn blue" data-city="${c.city}" style="width:100%;font-size:15px">${T("O'ynash")}: ${CITIES[c.city].name}</button>`;
-else if (c.cat === "surprise") btn = `<button class="btn purple" style="width:100%;font-size:15px">🎁 ${T("Syurpriz qutisi")}</button>`;
+else if (c.cat === "surprise") btn = `<button class="btn purple" style="width:100%;font-size:15px">${icoH("🎁", 22)} ${T("Syurpriz qutisi")}</button>`;
 else if (c.cat === "vip") btn = `<button class="btn orange" style="width:100%;font-size:15px">♛ VIP</button>`;
 else btn = `<button class="btn ${c.cur === "cash" ? "purple" : "green"}" style="width:100%">${c.cur === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} ${fmtS(c.price)}</button>`;
 el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">${c.cc ? flagHTML(c.cc, 18) + " " : ""}${esc(cueName(c))}</b>
@@ -7713,7 +7714,7 @@ const ELITE_ITEMS = [
 function eliteShop() {
 const day = today(), st = profile.elite = (profile.elite && profile.elite.d === day) ? profile.elite : {d: day, b: {}};
 openModal({icon: "", title: T("Elite do'kon"), text: `💎 ${fmt(profile.gems || 0)}`, extra: `<div class="gshop">${ELITE_ITEMS.map(it => { const left = it.elite ? (isElite() && profile.eliteClaim !== profile.eliteUntil ? 1 : 0) : it.lim - (st.b[it.id] | 0), price = it.elite ? 0 : Math.round(it.gems * (isElite() ? 0.8 : 1));
-return `<div class="card gitem${left <= 0 ? " sold" : ""}"><div style="font-size:42px">${it.ic}</div><b>${T(it.n)}</b><small class="muted">${T(it.d)} · ${T("Limit")}: ${Math.max(0, left)}</small><button class="btn ${it.elite ? "green" : "blue"}" data-ei="${it.id}" ${left <= 0 ? "disabled" : ""}>${it.elite ? (isElite() ? T("Olish") : "🔒 Elite") : "💎 " + fmt(price)}</button></div>`; }).join("")}</div><div style="text-align:center;margin-top:8px"><button class="btn orange" id="goEliteBtn">👑 ${isElite() ? T("Elite") + " · " + eliteLeft() : T("Elite bo'lish")}</button></div><div class="muted" style="text-align:center;margin-top:6px">${T("Olmosni Elite stollarda (Dubay va undan yuqori) g'alaba qozonib ham topasiz")}</div>`,
+return `<div class="card gitem${left <= 0 ? " sold" : ""}"><div style="font-size:42px">${icoH(it.ic, 48)}</div><b>${T(it.n)}</b><small class="muted">${T(it.d)} · ${T("Limit")}: ${Math.max(0, left)}</small><button class="btn ${it.elite ? "green" : "blue"}" data-ei="${it.id}" ${left <= 0 ? "disabled" : ""}>${it.elite ? (isElite() ? T("Olish") : "🔒 Elite") : "💎 " + fmt(price)}</button></div>`; }).join("")}</div><div style="text-align:center;margin-top:8px"><button class="btn orange" id="goEliteBtn">👑 ${isElite() ? T("Elite") + " · " + eliteLeft() : T("Elite bo'lish")}</button></div><div class="muted" style="text-align:center;margin-top:6px">${T("Olmosni Elite stollarda (Dubay va undan yuqori) g'alaba qozonib ham topasiz")}</div>`,
 buttons: [{label: T("Olmos olish"), cls: "purple", fn: () => setTimeout(gemShort, 60)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 document.querySelectorAll("#modal [data-ei]").forEach(b => b.onclick = () => { const it = ELITE_ITEMS.find(x => x.id === b.dataset.ei); if (!it) return; if (it.elite) { if (!isElite()) return goElite(); if (profile.eliteClaim === profile.eliteUntil) return; it.give(); save(); updateNav(); Snd.coin(6); burst(); return eliteShop(); } if ((st.b[it.id] | 0) >= it.lim) return; const price = Math.round(it.gems * (isElite() ? 0.8 : 1)); if ((profile.gems || 0) < price) return gemShort(); profile.gems -= price; st.b[it.id] = (st.b[it.id] | 0) + 1; profile.elite = st; it.give(); save(); updateNav(); Snd.coin(4); burst(); toast("💎", T(it.n), "−" + fmt(price)); eliteShop(); });
 if ($("goEliteBtn")) $("goEliteBtn").onclick = goElite;
@@ -7775,7 +7776,7 @@ const LOOPS = [
 const loopNow = () => { const w = 36 * 36e5, i = Math.floor(Date.now() / w); return {o: LOOPS[i % LOOPS.length], left: (i + 1) * w - Date.now()}; };
 function loopModal() {
 const {o, left} = loopNow(), h = Math.floor(left / 36e5), m = Math.floor(left % 36e5 / 6e4);
-openModal({icon: "", title: T("Keyingi daraja aksiyasi"), text: "", extra: `<div class="loopbox" style="background:${o.bg}"><div class="loopg">${LOOP_TIERS.map(([usd, off], i) => `<div class="loopc"><span class="rib">${off}% OFF</span><div style="font-size:52px">${o.ic}</div><b>${T(o.n)}</b><div class="h" style="font-size:22px">${o.id === "coin" ? fmt(o.v[i]) : "x" + fmt(o.v[i])}</div><button class="btn green" data-loop="loop_${o.id}_${i + 1}">$${usd}</button></div>`).join("")}</div><div class="muted" style="text-align:center;margin-top:6px">⏱ ${h}${T("s")} ${m}${T("d")}</div></div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
+openModal({icon: "", title: T("Keyingi daraja aksiyasi"), text: "", extra: `<div class="loopbox" style="background:${o.bg}"><div class="loopg">${LOOP_TIERS.map(([usd, off], i) => `<div class="loopc"><span class="rib">${off}% OFF</span><div style="font-size:52px">${icoH(o.ic, 56)}</div><b>${T(o.n)}</b><div class="h" style="font-size:22px">${o.id === "coin" ? fmt(o.v[i]) : "x" + fmt(o.v[i])}</div><button class="btn green" data-loop="loop_${o.id}_${i + 1}">$${usd}</button></div>`).join("")}</div><div class="muted" style="text-align:center;margin-top:6px">⏱ ${h}${T("s")} ${m}${T("d")}</div></div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
 document.querySelectorAll("#modal [data-loop]").forEach(b => b.onclick = () => Net.checkout(b.dataset.loop, b));
 }
 function packCard(id, s) {
@@ -7807,7 +7808,7 @@ const st = SKUS.starter, left = Math.max(0, (profile.starterSeen || (profile.sta
 const gems = Object.entries(SKUS).filter(([, s]) => s.gems && !s.coins);
 body.innerHTML = `<div class="vipstrip">${VO().map(o => { const t = o.tiers[o.zodiac ? vipSel.zodiac : Math.min(1, o.tiers.length - 1)];
 return `<div class="vipcard" data-vo="${o.id}" style="background:${o.bg};--acc:${o.accent}"><span class="vipbadge">♛ VIP</span><b>${T(o.title)}</b><small>${T(o.sub)}</small><div class="vcv" data-cue="${t.cue}"></div><span class="btn green">${o.zodiac ? "$24.99" : "$" + o.tiers[0].usd + (o.tiers.length > 1 ? "+" : "")}</span></div>`; }).join("")}</div>
-<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;background:linear-gradient(135deg,#3a1a7a,#10062a)" id="loopBtn"><div style="font-size:40px">${loopNow().o.ic}</div><div style="flex:1"><b style="font-size:20px;color:#ffe27a">${T("Keyingi daraja aksiyasi")}</b><div class="muted">${T("50-80% chegirmali 3 ta taklif")} · ⏱ ${Math.floor(loopNow().left / 36e5)}${T("s")}</div></div><span class="btn green">${T("Ochish")} ›</span></div>${ON_PORTAL || profile.adfree ? "" : `<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(135deg,#4a1a6a,#1a062a)"><div style="font-size:40px">🚫</div><div style="flex:1"><b style="font-size:20px">${T("Reklamasiz — abadiy")}</b><div class="muted">${T("Videolar ko'rmasdan bepul mukofotlarni oling")}</div></div><button class="btn green" data-sku="adfree">$4.99</button></div>`}
+<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;background:linear-gradient(135deg,#3a1a7a,#10062a)" id="loopBtn"><div style="font-size:40px">${icoH(loopNow().o.ic, 46)}</div><div style="flex:1"><b style="font-size:20px;color:#ffe27a">${T("Keyingi daraja aksiyasi")}</b><div class="muted">${T("50-80% chegirmali 3 ta taklif")} · ⏱ ${Math.floor(loopNow().left / 36e5)}${T("s")}</div></div><span class="btn green">${T("Ochish")} ›</span></div>${ON_PORTAL || profile.adfree ? "" : `<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(135deg,#4a1a6a,#1a062a)"><div style="font-size:40px">🚫</div><div style="flex:1"><b style="font-size:20px">${T("Reklamasiz — abadiy")}</b><div class="muted">${T("Videolar ko'rmasdan bepul mukofotlarni oling")}</div></div><button class="btn green" data-sku="adfree">$4.99</button></div>`}
 <div class="offers">
 <div class="ltbanner"><div class="lttitle"><span>${T("CHEKLANGAN")}</span><span>${T("TAKLIFLAR!")}</span></div><img src="${IMG.chest}" alt="">
 <button class="btn green" data-sec2="money" style="font-size:22px;padding:10px 26px">${T("Xarid qilish")} ›</button></div>
@@ -8699,7 +8700,7 @@ openModal({icon: "", title: "", text: "", extra: `<div class="vipbox" style="bac
 ${o.zodiac ? `<div class="zodsel"><button class="btn gray" id="zPrev">◀</button><span class="zav"><img src="${avatarURL(t.avatar)}" alt=""></span><b>${t.sign[1]}\uFE0E ${T(t.sign[0])}</b><button class="btn gray" id="zNext">▶</button></div>` : ""}
 <div class="vipcols"><div class="vipcue"><div class="vcn">${esc(cue.name)} <small>⚡${cue.st[0]} 🎯${cue.st[1]} 🌀${cue.st[2]} ⏱${cue.st[3]}</small></div><div id="vipCv"></div></div>
 <div class="vitems">${item("🎱", "Kiy", esc(cue.name))}${t.frame ? item(`<span style="display:inline-block">${avHTML(profile.avatar, frameIdx(t.frame), 38)}</span>`, "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name))) : ""}${t.table ? item(`<img src="${tableThumb(tableById(t.table))}" style="height:34px;border-radius:4px">`, "Stol", esc(T(tableById(t.table).name))) : ""}${t.avatar ? item("🙂", "Avatar", T(t.sign[0])) : ""}${item('<span class="coin" style="width:30px;height:30px"></span>', "Tanga", fmtS(t.coins))}
-${item('<span class="cash" style="width:38px;height:28px"></span>', "Naqd pul", fmt(t.cash))}${t.sboxes ? item("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}${t.goldShots ? item("🏆", "Oltin zarba", "×" + t.goldShots) : ""}
+${item('<span class="cash" style="width:38px;height:28px"></span>', "Naqd pul", fmt(t.cash))}${t.sboxes ? item(icoH("🎁", 40), "Syurpriz qutilar", "×" + t.sboxes) : ""}${t.goldShots ? item("🏆", "Oltin zarba", "×" + t.goldShots) : ""}
 ${item('<img src="' + IMG.vip + '" style="height:30px">', "VIP ochko", fmt(t.vip))}</div></div>
       ${o.zodiac || o.tiers.length < 2 ? "" : `<div class="vtiers">${o.tiers.map((x, i) => `<button class="btn ${i === vipSel[o.id] ? "orange" : "gray"}" data-vt="${i}">$${x.usd}</button>`).join("")}</div>`}
 <div class="vbuy">${own ? `<b style="color:#8dff9a">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="vipBuy" style="font-size:22px;padding:10px 30px">$${t.usd}</button>`}</div>
