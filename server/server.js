@@ -45,6 +45,7 @@ const SKUS = {
   gems_3500:   {gems: 3500,     vip: 1924,  usd: 19.99, name: "3 500 Gems"},
   gems_9200:   {gems: 9200,     vip: 5590,  usd: 49.99, name: "9 200 Gems"},
   gems_20000:  {gems: 20000,    vip: 13000, usd: 99.99, name: "20 000 Gems"},
+  elite_30:    {items: {elite: 30}, vip: 650, usd: 9.99, name: "Go Elite (30 days)"},
   starter:     {cash: 50, coins: 100000, gems: 280, vip: 200, usd: 2.99, name: "Starter Pack", once: true},
   try_lucky:   {items: {luckyTries: 1},   vip: 60,  usd: 0.99, name: "Lucky Shot +1"},
   try_wheel:   {items: {wheelTries: 1},   vip: 60,  usd: 0.99, name: "Spin & Win +1"},
