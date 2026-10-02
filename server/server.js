@@ -161,7 +161,7 @@ function newCode() {
 function publicUser(u) {
   return {id: u.id, code: u.code, name: u.name, avatar: u.avatar, frame: u.frame || 0, level: u.level, won: u.won, wins: u.wins, games: u.games,
     country: u.country || "", league: u.league || 0, tbl: u.tbl || "", tblNo: u.tbl && u.editions ? u.editions[u.tbl] || 0 : 0, weekWon: u.week === curWeek() ? u.weekWon || 0 : 0,
-    club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "",
+    club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "", cb: u.club && db.clubs[u.club] ? [db.clubs[u.club].badge | 0, db.clubs[u.club].color | 0] : null,
     online: clients.has(u.id) && !(u.prefs && u.prefs.showOnline === false), lastSeen: u.lastSeen};
 }
 const cleanCountry = c => /^[A-Za-z]{2}$/.test(String(c || "")) ? String(c).toUpperCase() : "";
@@ -664,7 +664,7 @@ wss.on("connection", (ws, req) => {
       if (ws.room) return;
       const city = String(m.city || "lon").slice(0, 8);
       const code = m.code ? String(m.code).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8) : "";
-      ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), tbl: String(m.tbl || "").slice(0, 8), tblNo: (u.editions || {})[String(m.tbl || "")] || 0, code: u.code};
+      ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), tbl: String(m.tbl || "").slice(0, 8), tblNo: (u.editions || {})[String(m.tbl || "")] || 0, code: u.code, club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "", cb: u.club && db.clubs[u.club] ? [db.clubs[u.club].badge | 0, db.clubs[u.club].color | 0] : null};
       const qk = code ? "code:" + code : city;
       const q = queues.get(qk) || []; queues.set(qk, q);
       const opp = q.find(o => o.uid !== ws.uid && o.readyState === 1);

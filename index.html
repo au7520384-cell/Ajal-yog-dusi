@@ -2751,7 +2751,7 @@ let r = Math.random() * sum; for (let i = 0; i < ex.length; i++) if ((r -= w[i])
 return ex[0].id;
 }
 function mePlayer(name) {
-return {name: name || profile.name, avatar: profile.avatar, frame: profile.frame || 0, color: AV_COLORS[profile.avatar % AV_COLORS.length], level: profile.level, isAI: false, cue: trialCue || profile.cue, tbl: trialTable || profile.tableSkin || "", tblNo: trialTable ? 0 : (profile.editions || {})[profile.tableSkin] || 0};
+return {club: Net.me ? Net.me.club : "", cb: Net.me && Net.me.cb ? Net.me.cb : null, name: name || profile.name, avatar: profile.avatar, frame: profile.frame || 0, color: AV_COLORS[profile.avatar % AV_COLORS.length], level: profile.level, isAI: false, cue: trialCue || profile.cue, tbl: trialTable || profile.tableSkin || "", tblNo: trialTable ? 0 : (profile.editions || {})[profile.tableSkin] || 0};
 }
 function baseGame(type, city, players) {
 const G = {
@@ -5655,6 +5655,8 @@ ctx.fillStyle = "#3a2600"; ctx.font = `13px ${FONT}`; ctx.textAlign = "center"; 
 ctx.fillText(pl.level, x + 2, y + 3);
 ctx.restore();
 }
+const cbImgs = {};
+function cbImage(i) { i = Math.max(0, Math.min(49, i | 0)); if (!cbImgs[i]) { const im = new Image(); im.src = CLUB_EMB[i]; cbImgs[i] = im; } return cbImgs[i]; }
 function drawPanel(G, i, side) {
 const pl = G.players[i], active = G.cur === i && !G.over && !G.moving, s = 70;
 const ax = side < 0 ? W / 2 - 66 - s : W / 2 + 66, ay = 12;
@@ -5673,8 +5675,13 @@ ctx.font = `24px ${FONT}`; ctx.fillStyle = active ? "#fff" : "#c3cbe0";
 ctx.shadowColor = "#000"; ctx.shadowBlur = 4;
 ctx.fillText(pl.name, nx, 30, 200);
 const tb = pl.tbl && EXTRA_TABLES.find(t => t.id === pl.tbl && t.tier);
+const nw = Math.min(200, ctx.measureText(pl.name).width);
+if (pl.cb) {   // club emblem next to the name
+const im = cbImage(pl.cb[0]), es = 30, ex = side < 0 ? nx - nw - 8 - es : nx + nw + 8;
+if (im.complete && im.naturalWidth) { ctx.shadowBlur = 0; ctx.drawImage(im, ex, 30 - es / 2, es, es * 81 / 88); }
+}
 if (tb) {
-const w = Math.min(200, ctx.measureText(pl.name).width), ix = side < 0 ? nx - w - 18 : nx + w + 18;
+const w = nw + (pl.cb ? 36 : 0), ix = side < 0 ? nx - w - 18 : nx + w + 18;
 ctx.shadowColor = tb.tier === "premium" ? "#ffcf3d" : "#40c8ff"; ctx.shadowBlur = 10 + Math.sin(performance.now() / 250) * 4;
 ctx.font = "20px sans-serif"; ctx.textAlign = "center"; ctx.fillText(tb.tier === "premium" ? "👑" : "✨", ix, 29);
 }
@@ -6404,7 +6411,7 @@ if (done) { Net.send({t: "resign"}); return; }
 done = true; clearTimeout(timer);
 const o = m.opp || {};
 resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
-level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0}});
+level: o.level | 0 || 1, club: String(o.club || "").slice(0, 20), cb: Array.isArray(o.cb) ? [o.cb[0] | 0, o.cb[1] | 0] : null, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0}});
 });
 Net.send({t: "queue", city: c.id, cue: profile.cue, tbl: profile.tableSkin || ""});
 }).catch(() => { clearTimeout(timer); bot(); });
@@ -7002,7 +7009,7 @@ $("lbFlag").innerHTML = profile.country ? flagHTML(profile.country, 16) : "🏳�
 const medal = i => i < 3 ? ["🥇", "🥈", "🥉"][i] : fmt(i + 1);
 const row = (u, rank, me, cls = "") => `<div class="lbr${me ? " me" : ""} ${cls}"><div class="rk">${medal(rank)}</div>
 ${avHTML(u.avatar, u.frame, 48)}
-<div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<div style="min-width:0"><b>${esc(u.name)}</b>${tableBadge(me ? profile.tableSkin : u.tbl, me ? (profile.editions || {})[profile.tableSkin] : u.tblNo)}${me ? ` <small class="muted">(${T("siz")})</small>` : ""}<small class="sub">${leagueName(u.league)}${u.club ? ` · 🛡 ${esc(u.club)}` : ""}</small></div></div>
+<div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<div style="min-width:0"><b>${esc(u.name)}</b>${clubTag(u)}${tableBadge(me ? profile.tableSkin : u.tbl, me ? (profile.editions || {})[profile.tableSkin] : u.tblNo)}${me ? ` <small class="muted">(${T("siz")})</small>` : ""}<small class="sub">${leagueName(u.league)}${u.club ? ` · 🛡 ${esc(u.club)}` : ""}</small></div></div>
 <div class="h" style="color:#ffe27a;font-size:20px;white-space:nowrap">${fmtS(u.weekWon | 0)} <span class="coin"></span></div></div>`;
 $("lbInfo").innerHTML = ""; $("lbList").innerHTML = `<div class="muted" style="text-align:center;padding:20px">${T("Yuklanmoqda…")}</div>`;
 clearInterval(lbTimer);
@@ -7114,7 +7121,7 @@ Net.api("/api/friends").then(r => {
 Net.friends = r.friends; if (profile.friendsN !== r.friends.length) { profile.friendsN = r.friends.length; save(); }
 $("frList").innerHTML = r.friends.length ? r.friends.map(f => `<div class="frow">
 <div class="av">${avHTML(f.avatar, f.frame, 44)}${f.online ? '<i class="on"></i>' : ""}</div>
-<div><b>${esc(f.name)}</b> <small class="muted">⭐${f.level}</small><div class="muted">${f.online ? "🟢 " + T("onlayn") : T("oflayn")} · ${T("Yutgan")}: ${fmtS(f.won)}</div></div>
+<div><b>${esc(f.name)}</b>${clubTag(f)} <small class="muted">⭐${f.level}</small><div class="muted">${f.online ? "🟢 " + T("onlayn") : T("oflayn")} · ${T("Yutgan")}: ${fmtS(f.won)}</div></div>
 <button class="btn ${f.canGift ? "green" : "gray"}" data-gift="${f.id}" ${f.canGift ? "" : "disabled"} style="padding:6px 10px;font-size:14px">🎁</button></div>`).join("")
 : `<div class="muted" style="padding:10px">${T("Hali do'stlaringiz yo'q. Kodingizni ulashing!")}</div>`;
 $("gfList").innerHTML = r.friends.length ? r.friends.map(f => `<div class="frow"><div class="av">${avHTML(f.avatar, f.frame, 44)}</div><div><b>${esc(f.name)}</b><div class="muted">${f.canGift ? "🎁 " + T("Sovg'a yuborish") : "✓ " + T("Yuborildi")}</div></div><button class="btn ${f.canGift ? "green" : "gray"}" data-gift="${f.id}" ${f.canGift ? "" : "disabled"} style="padding:6px 10px;font-size:14px">🎁</button></div>`).join("") : `<div class="muted" style="padding:10px">${T("Hali do'stlaringiz yo'q. Kodingizni ulashing!")}</div>`;
@@ -7460,7 +7467,7 @@ const load = () => {
 if (!$("liveScr").classList.contains("on")) return clearInterval(liveTimer);
 Net.api("/api/live" + (liveCC ? "?country=" + liveCC : "")).then(r => {
 const chips = Object.entries(r.countries || {}).sort((a, b) => b[1] - a[1]);
-const pl = p => `<div class="lvp">${avHTML(p.avatar, p.frame, 40)}<div style="min-width:0"><b>${esc(p.name)}</b><small>${lbStar(p.level)}${flagHTML(p.country, 13)} ${esc(countryName(p.country) || "")}</small></div></div>`;
+const pl = p => `<div class="lvp">${avHTML(p.avatar, p.frame, 40)}<div style="min-width:0"><b>${esc(p.name)}</b>${clubTag(p)}<small>${lbStar(p.level)}${flagHTML(p.country, 13)} ${esc(countryName(p.country) || "")}</small></div></div>`;
 box.innerHTML = `<div class="lvchips"><button data-cc="" class="${liveCC ? "" : "on"}">🌍 ${T("Barcha davlatlar")}</button>${chips.map(([c, n]) => `<button data-cc="${c}" class="${liveCC === c ? "on" : ""}">${flagHTML(c, 14)} ${n}</button>`).join("")}</div>
 ${r.live.length ? r.live.map(m => { const city = CITIES.find(c => c.id === m.city); return `<div class="lvr">${pl(m.p[0])}<div class="lvvs">VS</div>${pl(m.p[1])}<div class="lvmeta">${city ? esc(city.name) : ""}<em>● ${T("JONLI")}</em>👁 ${m.specs}</div><button class="btn green" data-spec="${m.room}">${T("Ko'rish")}</button></div>`; }).join("")
 : `<div class="lvempty"><div style="font-size:44px">📺</div><b>${T("Hozir jonli o'yin yo'q")}</b><p>${T("Onlayn o'ynang — sizning o'yiningizni boshqalar ko'rishi mumkin!")}</p><button class="btn orange" id="lvDemo">${T("Demo o'yin")}</button></div>`}`;
@@ -8034,7 +8041,7 @@ $("evBack").onclick = buildEvents;
 box.querySelectorAll("[data-sdc]").forEach(b => b.onclick = () => { const i = +b.dataset.sdc; if (s.got[i]) return; s.got[i] = 1; giveReward2(SD_MILESTONES[i][1]); Snd.coin(6); showdownScreen(); });
 Net.sync().then(() => Net.api("/api/leaderboard?scope=showdown")).then(r => {
 const row = (u, i, me) => `<div class="lbr${me ? " me" : ""}"><div class="rk">${i < 3 ? ["🥇", "🥈", "🥉"][i] : i + 1}</div>${avHTML(u.avatar, u.frame, 40)}
-<div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<b>${esc(u.name)}</b>${tableBadge(u.tbl, u.tblNo)}</div><div class="h" style="color:#ffe27a">♞ ${fmt(u.sd)}</div></div>`;
+<div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<b>${esc(u.name)}</b>${clubTag(u)}${tableBadge(u.tbl, u.tblNo)}</div><div class="h" style="color:#ffe27a">♞ ${fmt(u.sd)}</div></div>`;
 $("sdList").innerHTML = r.top.map((u, i) => row(u, i, u.id === r.me.id)).join("") + (r.top.some(u => u.id === r.me.id) ? "" : row(r.me, r.me.rank - 1, true));
 }).catch(() => { $("sdList").innerHTML = `<div class="muted" style="text-align:center">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>`; });
 }
@@ -8158,7 +8165,7 @@ pvp: () => startMatch("pvp", CITIES[1]), practice: () => startMatch("practice", 
 box.querySelectorAll(".mgc").forEach(el => el.onclick = () => acts[el.dataset.act]());
 Net.api("/api/friends").then(r => {
 $("wfFriends").innerHTML = r.friends.length ? r.friends.map(f => `<div class="lbr"><div class="rk">${f.online ? '<span style="color:#3fe052">●</span>' : "○"}</div>${avHTML(f.avatar, f.frame, 40)}
-<div class="nm">${lbStar(f.level)}${flagHTML(f.country)}<b>${esc(f.name)}</b></div><button class="btn green" data-chal="${f.id}" ${f.online ? "" : "disabled"}>⚔️ ${T("Chaqirish")}</button></div>`).join("")
+<div class="nm">${lbStar(f.level)}${flagHTML(f.country)}<b>${esc(f.name)}</b>${clubTag(f)}</div><button class="btn green" data-chal="${f.id}" ${f.online ? "" : "disabled"}>⚔️ ${T("Chaqirish")}</button></div>`).join("")
 : `<div style="text-align:center;padding:10px">${T("Hali do'stlaringiz yo'q. Kodingizni ulashing!")} <button class="btn blue" data-go="friendsScr">${T("Do'stlar")}</button></div>`;
 box.querySelectorAll("[data-chal]").forEach(b => b.onclick = () => lobbyCreate(b.dataset.chal));
 }).catch(() => { $("wfFriends").textContent = "📡 " + T("Server bilan aloqa yo'q. Internetni tekshiring."); });
@@ -9032,6 +9039,7 @@ const CLUB_COLORS = [["#ffe27a", "#b8860b"], ["#d98cff", "#6a1b9a"], ["#8fd8ff",
 const CLUB_LEVEL = 6, CLUB_RINGS = 3;   // clubs open at level 6 AND with 3 collected city rings
 const clubLock = () => profile.level < CLUB_LEVEL ? `${CLUB_LEVEL}-${T("darajada ochiladi")}` : CITIES.filter(ringOf).length < CLUB_RINGS ? `${T("Uzuklar kerak")}: ${CITIES.filter(ringOf).length}/${CLUB_RINGS}` : "";
 const clubBadge = (c, big) => { const i = Math.max(0, Math.min(49, c.badge | 0)), t = CLUB_TIER[i], f = t ? CLUB_FX[i] : null; return `<div class="cemb${f ? ` fx t${t} o-${f[2] || "x"} p-${f[3] || "x"} m-${f[1]}` : ""}${big ? " big" : ""}"${f ? ` style="--c:${f[0]};--ca:${f[0]}77"` : ""}><img src="${CLUB_EMB[i]}" alt=""></div>`; };
+const clubTag = (u, s = 22) => u && u.cb ? `<span class="ctag" title="${esc(u.club || "")}" style="--s:${s}px;display:inline-flex;vertical-align:middle;margin-left:4px">${clubBadge({badge: u.cb[0], color: u.cb[1]})}</span>` : "";
 let clubTab = "members", clubTimer = null;
 function buildClubs(q = "") {
 const box = $("clubBody"); clearInterval(clubTimer);
