@@ -349,7 +349,7 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 .resList .rrow{position:relative;display:flex;align-items:center;gap:8px;height:var(--rh);padding:0 12px 0 calc(var(--rh) * 1.5);border:2px solid var(--c);border-radius:9px;background:linear-gradient(90deg,var(--b1),var(--b2));box-shadow:0 0 10px color-mix(in srgb,var(--c) 55%,transparent),inset 0 1px 0 #fff2;font-family:var(--fh);font-size:clamp(13px,3.2vh,21px);color:#fff;text-shadow:0 2px 0 #000,0 0 8px color-mix(in srgb,var(--c) 70%,transparent);animation:rwin .5s cubic-bezier(.2,1.3,.4,1) both}
 .resList .rrow img{position:absolute;left:clamp(2px,.6vh,6px);top:50%;height:calc(var(--rh) * .98);width:auto;max-width:calc(var(--rh) * 1.3);transform:translateY(-50%);filter:drop-shadow(0 3px 4px #000a)}
 .ei{height:1.2em;width:auto;vertical-align:-.28em;display:inline-block;filter:drop-shadow(0 1px 2px #0008)}.ei.xp{height:1em;vertical-align:-.1em}
-.bslot .bx .ei{height:52px}.ei.big3{height:1.35em;vertical-align:-.3em}.ei.inv{height:1.15em;vertical-align:-.2em}
+.bslot .bx .ei{height:52px}.ei.big3{height:1.35em;vertical-align:-.3em}.hbt img.invh{height:44px!important;width:auto!important;object-fit:contain}.ei.inv{height:1.15em;vertical-align:-.2em}
 .resList .rrow.neg{color:#ff9a90}
 .resList .rrow small{font-size:.62em;font-family:Nunito,sans-serif;font-weight:800;line-height:1.05}
 @keyframes rwin{from{transform:translateX(-120%);opacity:0}}
@@ -1209,7 +1209,7 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 <button class="hs" id="tMini" style="left:1104px;top:196px;width:266px;height:200px"><span class="hl"><b>O'ynash</b><i>Mini o'yinlar</i></span><i class="dot" id="dotMini2" style="display:none;top:-8px;right:-8px"></i></button>
 <button class="hs" id="tWithFr" style="left:1390px;top:196px;width:276px;height:200px"><span class="hl"><b>O'ynash</b><i>Do'st bilan</i></span></button>
 <div id="boxSlots"></div>
-<button class="hbt hbt-red hbt-gift" data-go="rewards" style="left:52px;top:566px"><span class="hbe">🎁</span><b>Sovg'alar</b></button>
+<button class="hbt hbt-red hbt-gift" data-go="rewards" style="left:52px;top:566px"><span class="hbe"><img data-img="chest" alt="" style="height:46px;object-fit:contain"></span><b>Sovg'alar</b></button>
 <button class="hbt hbt-cyan" data-go="friendsScr" style="left:176px;top:566px"><img data-img="nv_friends" alt=""><b>Do'stlar</b><i class="dot" id="dotFr" style="display:none">!</i></button>
 <button class="hbt hbt-purple hbt-tv" id="hWatch" style="left:432px;top:566px"><img data-img="wf_tv" alt=""><b>Tomosha</b></button>
 <button class="hs" id="hInvite" style="left:304px;top:574px;width:114px;height:110px" title="Taklif qilish"><span class="hl sm">Taklif qilish</span></button>
@@ -7107,7 +7107,7 @@ const inv = REFERRAL.inviter, got = REFERRAL.invitee;
 box.innerHTML = `
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
 <div>
-<div class="h" style="font-size:22px;color:var(--gold)">${icoH("🎁", 20)} ${T("Do'stlarni taklif qiling")}</div>
+<div class="h" style="font-size:22px;color:var(--gold)"><img src="${IMG.fr_inv}" alt="" style="height:44px;vertical-align:middle;margin-right:6px">${T("Do'stlarni taklif qiling")}</div>
 <p class="muted" style="margin:6px 0 10px">${T("Har bir taklif qilingan do'st uchun siz olasiz")}: <b style="color:#8dff9a">💵 ${inv.cash} + 🪙 ${fmt(inv.coins)}</b>.
 ${T("Do'stingiz ham oladi")}: <b style="color:#8dff9a">💵 ${got.cash} + 🪙 ${fmt(got.coins)}</b></p>
 <div class="muted">${T("Sizning ID-kodingiz")}</div>
@@ -8023,7 +8023,7 @@ const hms = ms => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${Math.
 const hubCard = (o) => `<div class="hcard ${o.cls || ""}" ${o.id ? `id="${o.id}"` : ""} ${o.act ? `data-hact="${o.act}"` : ""}>
 <div class="hcimg">${o.img || ""}</div><b>${o.title}</b>${o.sub ? `<small>${o.sub}</small>` : ""}${o.btn ? `<button class="btn ${o.btnCls || "green"}">${o.btn}</button>` : ""}${o.badge ? `<i class="dot">${o.badge}</i>` : ""}</div>`;
 function bindHub(box, acts) { box.querySelectorAll("[data-hact]").forEach(el => el.onclick = () => acts[el.dataset.hact] && acts[el.dataset.hact]()); }
-IMG.mg_wheel = IMG.fr_wheel; IMG.mg_dart = IMG.fr_shot;   // the 3D wheel and target everywhere
+IMG.nv_friends = IMG.fr_inv; document.querySelectorAll("[data-img=nv_friends]").forEach(el => { el.src = IMG.fr_inv; el.classList.add("invh"); }); IMG.mg_wheel = IMG.fr_wheel; IMG.mg_dart = IMG.fr_shot;   // the 3D wheel and target everywhere
 const MG_ART = {spin: "mg_wheel", wheel: "mg_wheel", lucky: "mg_dart", scratch: "mg_scr", gold: "mg_gold", golden: "mg_gold", box: "mg_box", boxes: "mg_box"};
 const mgImg = (k, h = 40) => MG_ART[k] ? `<img class="mgi" src="${IMG[MG_ART[k]]}" style="height:${h}px" alt="">` : "";
 function buildMini() {
