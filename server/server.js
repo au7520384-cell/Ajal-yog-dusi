@@ -380,7 +380,7 @@ const routes = {
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
-    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}};
+    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}};
   },
 
   async "POST /api/referral"(req, u) {
@@ -733,6 +733,15 @@ wss.on("connection", (ws, req) => {
       const msg = String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 60); if (!msg) return;
       const room = ws.spec, out = {t: "schat", name: String(u.name || "Player").slice(0, 16), country: u.country || "", msg};
       for (const p of room.p) wsSend(p, out); for (const sp of room.specs) wsSend(sp, out);
+    } else if (m.t === "gift" && ws.room && !ws.room.over) {   // cheer gift to the opponent: counted for both players, rate limited
+      const room = ws.room, other = room.p[1 - ws.seat], g = int(m.g, 99);
+      if (!other || g > 11 || !bucket(ws, "gift", 3, 3000)) return;
+      room.gifts = room.gifts || [0, 0]; if (room.gifts[ws.seat] >= 20) return; room.gifts[ws.seat]++;
+      const ou = db.users[other.uid];
+      u.cheer = u.cheer || {got: {}, sent: 0}; u.cheer.sent++;
+      if (ou) { ou.cheer = ou.cheer || {got: {}, sent: 0}; ou.cheer.got[g] = (ou.cheer.got[g] | 0) + 1; }
+      markDirty();
+      wsSend(other, {t: "gift", g, name: String(u.name || "").slice(0, 16)}); wsSend(ws, {t: "giftok", g});
     } else if (RELAY.has(m.t) && ws.room && !ws.room.over) {
       const room = ws.room, other = room.p[1 - ws.seat];
       if (m.t === "chat") {

@@ -839,3 +839,22 @@ Bekor qilish‖Cancel|Отмена|İptal|Cancelar|Cancelar|إلغاء|Batal|र
 Hisobni ulash (Google / Facebook)‖Link account (Google / Facebook)|Привязать аккаунт (Google / Facebook)|Hesap bağla (Google / Facebook)|Vincular cuenta (Google / Facebook)|Vincular conta (Google / Facebook)|ربط الحساب (Google / Facebook)|Hubungkan akun (Google / Facebook)|खाता जोड़ें (Google / Facebook)|Lier un compte (Google / Facebook)|Konto verknüpfen (Google / Facebook)|계정 연결 (Google / Facebook)|アカウント連携 (Google / Facebook)|绑定账号 (Google / Facebook)
 Ulash‖Link|Привязать|Bağla|Vincular|Vincular|ربط|Hubungkan|जोड़ें|Lier|Verknüpfen|연결|連携|绑定
 Klublar {0}-darajada ochiladi‖Unlock Clubs at Level {0}|Клубы откроются на {0} уровне|Kulüpler {0}. seviyede açılır|Los clubes se desbloquean en el nivel {0}|Clubes liberam no nível {0}|تُفتح الأندية عند المستوى {0}|Klub terbuka di Level {0}|क्लब लेवल {0} पर खुलते हैं|Les clubs se débloquent au niveau {0}|Clubs werden auf Level {0} freigeschaltet|클럽은 레벨 {0}에서 열립니다|クラブはレベル{0}で解放|俱乐部在{0}级解锁
+Olqish sovg'alari to'plami‖Cheer Gifts Collection|Коллекция подарков|Tezahürat Hediyeleri Koleksiyonu|Colección de regalos|Coleção de presentes|مجموعة هدايا التشجيع|Koleksi Hadiah Dukungan|चीयर गिफ्ट कलेक्शन|Collection de cadeaux|Jubel-Geschenke Sammlung|응원 선물 컬렉션|応援ギフトコレクション|应援礼物收藏
+Olqish sovg'alari‖Cheer Gifts|Подарки поддержки|Tezahürat Hediyeleri|Regalos de ánimo|Presentes de torcida|هدايا التشجيع|Hadiah Dukungan|चीयर गिफ्ट|Cadeaux d'encouragement|Jubel-Geschenke|응원 선물|応援ギフト|应援礼物
+Olingan olqishlar‖Cheers Received|Получено поддержек|Alınan tezahürat|Ánimos recibidos|Torcidas recebidas|التشجيعات المستلمة|Dukungan Diterima|मिले चीयर|Encouragements reçus|Erhaltene Jubel|받은 응원|もらった応援|收到的应援
+Yuborilgan olqishlar‖Cheers Sent|Отправлено поддержек|Gönderilen tezahürat|Ánimos enviados|Torcidas enviadas|التشجيعات المرسلة|Dukungan Terkirim|भेजे गए चीयर|Encouragements envoyés|Gesendete Jubel|보낸 응원|送った応援|发送的应援
+Olingan‖Received|Получено|Alınan|Recibidos|Recebidos|المستلم|Diterima|प्राप्त|Reçus|Erhalten|받음|受取|已收到
+Yuborilgan‖Sent|Отправлено|Gönderilen|Enviados|Enviados|المرسل|Terkirim|भेजा|Envoyés|Gesendet|보냄|送信|已发送
+Onlayn o'yinda raqibingizga sovg'a yuboring!‖Send gifts to your opponent in online games!|Отправляйте подарки сопернику в онлайн-играх!|Çevrimiçi oyunlarda rakibine hediye gönder!|¡Envía regalos a tu rival en partidas en línea!|Envie presentes ao rival em jogos online!|أرسل هدايا لخصمك في المباريات عبر الإنترنت!|Kirim hadiah ke lawan di game online!|ऑनलाइन गेम में विरोधी को उपहार भेजें!|Envoyez des cadeaux à votre adversaire en ligne !|Schicke deinem Gegner Geschenke in Online-Spielen!|온라인 대결에서 상대에게 선물을 보내세요!|オンライン対戦で相手にギフトを贈ろう！|在线对战中向对手赠送礼物！
+Samolyot‖Jet|Самолёт|Uçak|Avión|Avião|طائرة|Pesawat|विमान|Avion|Flugzeug|비행기|飛行機|飞机
+Mashina‖Sports Car|Спорткар|Spor Araba|Auto deportivo|Carro esportivo|سيارة سباق|Mobil Sport|स्पोर्ट्स कार|Voiture de sport|Sportwagen|스포츠카|スポーツカー|跑车
+Mototsikl‖Motorbike|Мотоцикл|Motosiklet|Moto|Moto|دراجة نارية|Motor|मोटरबाइक|Moto|Motorrad|오토바이|バイク|摩托车
+Olmos‖Diamond|Алмаз|Elmas|Diamante|Diamante|ألماس|Berlian|हीरा|Diamant|Diamant|다이아몬드|ダイヤモンド|钻石
+Toj‖Crown|Корона|Taç|Corona|Coroa|تاج|Mahkota|ताज|Couronne|Krone|왕관|王冠|皇冠
+Medal‖Medal|Медаль|Madalya|Medalla|Medalha|ميدالية|Medali|पदक|Médaille|Medaille|메달|メダル|奖牌
+Sharlar‖Balloons|Шары|Balonlar|Globos|Balões|بالونات|Balon|गुब्बारे|Ballons|Ballons|풍선|風船|气球
+Tort‖Cupcake|Капкейк|Kek|Pastelito|Cupcake|كب كيك|Kue Mangkuk|कपकेक|Cupcake|Cupcake|컵케이크|カップケーキ|纸杯蛋糕
+Gul dastasi‖Bouquet|Букет|Buket|Ramo|Buquê|باقة ورد|Buket|गुलदस्ता|Bouquet|Blumenstrauß|꽃다발|花束|花束
+Shokolad‖Chocolate|Шоколад|Çikolata|Chocolate|Chocolate|شوكولاتة|Cokelat|चॉकलेट|Chocolat|Schokolade|초콜릿|チョコレート|巧克力
+Omad barg‖Lucky Clover|Клевер удачи|Şans Yoncası|Trébol de la suerte|Trevo da sorte|برسيم الحظ|Semanggi Keberuntungan|भाग्यशाली क्लोवर|Trèfle porte-bonheur|Glücksklee|행운의 클로버|幸運のクローバー|幸运四叶草
+Yurak‖Heart|Сердце|Kalp|Corazón|Coração|قلب|Hati|दिल|Cœur|Herz|하트|ハート|爱心
