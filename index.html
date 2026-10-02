@@ -946,11 +946,11 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 #modal .panel.achp .acc.got:not(.acwide){border-color:#ffd76a;box-shadow:inset 0 0 0 2px #081640,inset 0 0 0 3px #6aa0ffcc,inset 0 14px 18px #ffffff1a,0 0 16px #ffb30055,0 5px 12px #000a}
 #modal .panel.achp .acinfo b{font-family:Georgia,"Times New Roman",serif;font-size:17px;color:#fff3d0;letter-spacing:.2px}#modal .panel.achp .acinfo small{color:#d4e2ff}
 @media (max-height:460px){#modal .panel.achp .ahtx b{font-size:26px}#modal .panel.achp .ahtx span{font-size:12px}.ahero .aemb svg{width:64px;height:64px}#modal .panel.achp .achfx i{width:38px;height:38px}}
-#modal .panel.achp #mBtns .btn{position:relative;isolation:isolate;min-width:150px;border:0;color:#fff;font-family:Georgia,"Times New Roman",serif;font-weight:800;font-size:20px;background:linear-gradient(#ffe9a0,#9a6a14);padding:3px;box-shadow:none;clip-path:polygon(20px 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,20px 100%,0 50%)}
-#modal .panel.achp #mBtns .btn:before{content:"";position:absolute;inset:3px;background:linear-gradient(#10224f,#040a22);clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%);z-index:-1}
+#modal .panel.achp #mBtns .btn.gray{position:relative;isolation:isolate;min-width:150px;border:0;color:#fff;font-family:Georgia,"Times New Roman",serif;font-weight:800;font-size:20px;background:linear-gradient(#ffe9a0,#9a6a14);padding:3px;box-shadow:none;clip-path:polygon(20px 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,20px 100%,0 50%)}
+#modal .panel.achp #mBtns .btn.gray:before{content:"";position:absolute;inset:3px;background:linear-gradient(#10224f,#040a22);clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%);z-index:-1}
 
 /* achievements: real mockup art (9-slice frame, card, ribbon, close, X) */
-#modal .panel.achp{border:solid transparent;border-width:34px 26px 32px 26px;border-image:var(--ach-frame) 52 40 50 40 stretch;background:#091434;background-clip:padding-box;box-shadow:0 0 30px #ffb30044,0 14px 50px #000d;border-radius:0;padding:0 4px}
+#modal .panel.achp{border:solid transparent;border-width:34px 26px 32px 26px;border-image:var(--ach-frame) 52 40 50 40 stretch;background:#091434;background-clip:padding-box;box-shadow:0 0 30px #ffb30044,0 14px 50px #000d;border-radius:0}
 #modal .panel.achp .achfx{display:none}
 #modal .panel.achp .mx{position:absolute;top:-24px;right:-14px;width:40px;height:40px;border:0;border-radius:0;background:var(--ach-x) center/contain no-repeat;color:transparent;font-size:0;box-shadow:none;z-index:6}
 #modal .panel.achp .acc:not(.acwide){border:solid transparent;border-width:16px 14px;border-image:var(--ach-card) 40 38 fill / 16px 14px stretch;background:none;box-shadow:none;border-radius:0;padding:0 6px;margin:-4px 0}
@@ -958,7 +958,9 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 #modal .panel.achp .acc:not(.acwide):after{display:none}
 #modal .panel.achp .ash{background:none;filter:none;clip-path:none;padding:0;width:max-content;min-width:60%;border:solid transparent;border-width:14px 26px;border-image:var(--ach-ribbon) 22 46 fill / 14px 26px stretch;margin:12px auto 8px}
 #modal .panel.achp .ash span{background:none;clip-path:none;padding:0 14px;margin:-6px 0}
-#modal .panel.achp #mBtns .btn{clip-path:none;background:none;padding:0 20px;min-width:160px;border:solid transparent;border-width:14px 30px;border-image:var(--ach-close) 26 50 fill / 14px 30px stretch;isolation:auto;box-shadow:none;height:auto;min-height:0;line-height:1.1}
+#modal .panel.achp #mBtns .btn.gray{clip-path:none;background:none;padding:0 20px;min-width:160px;border:solid transparent;border-width:14px 30px;border-image:var(--ach-close) 26 50 fill / 14px 30px stretch;isolation:auto;box-shadow:none;height:auto;min-height:0;line-height:1.1}
+#modal .panel.achp #mTitle{font-style:normal;font-family:Georgia,'Times New Roman',serif;font-weight:900;background:linear-gradient(#fff3b8,#f2b52a 55%,#b8801a);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 2px 0 #3a2400) drop-shadow(0 0 8px #ffb02077)}
+#modal .panel.achp #mText{color:#dfe9ff}
 #modal .panel.achp #mBtns .btn:before{display:none}
 .abm{filter:drop-shadow(0 3px 4px #000a)}.abm.off{filter:grayscale(.85) brightness(.6)}.acart:has(.abm){width:84px!important;height:84px;margin:-6px 0}
 .aemb img{width:92px;height:auto;display:block;filter:drop-shadow(0 4px 6px #000a)}
@@ -6098,9 +6100,12 @@ const UI_SPR = {"btn_green2": "data:image/webp;base64,UklGRmoEAABXRUJQVlA4WAoAAA
 for (const k of ["green2", "dark", "purple", "gray2"]) document.documentElement.style.setProperty("--b-" + k, `url(${UI_SPR["btn_" + k]})`);
 const MODAL_SH = {room: 166, lounge: 143, gold: 110};
 const modalScene = k => MODAL_ART[k] || "";
+function skinModal(pn) {   // every popup wears the mockup art: gold 9-slice frame, square X, hex Close, ribbon/card art
+pn.classList.add("achp"); pn.style.setProperty("--ach-frame", `url(${IMG.ach_frame})`); pn.style.setProperty("--ach-x", `url(${IMG.ach_xbtn})`); pn.style.setProperty("--ach-card", `url(${IMG.ach_card})`); pn.style.setProperty("--ach-ribbon", `url(${IMG.ach_ribbon})`); pn.style.setProperty("--ach-close", `url(${IMG.ach_close})`);
+}
 function openModal({icon = "", title, text = "", extra = "", buttons = [], scene = ""}) {
   $("modal").classList.remove("cpm");
-  { const pn = document.querySelector("#modal .panel"); pn.classList.remove("achp"); const f = pn.querySelector(".achfx"); if (f) f.remove(); }
+  { const pn = document.querySelector("#modal .panel"); pn.classList.remove("achp"); const f = pn.querySelector(".achfx"); if (f) f.remove(); if (!scene && !extra.includes("hwin")) skinModal(pn); }
   { const pn = document.querySelector("#modal .panel"); pn.classList.toggle("scened", !!scene); if (scene) { pn.style.setProperty("--scene", `url(${modalScene(scene)})`); pn.style.setProperty("--shd", (MODAL_SH[scene] || 120) + "px"); } }
 if (icon.startsWith("img:")) $("mIcon").innerHTML = `<img class="mic" src="${UI_SPR["ic_" + icon.slice(4)]}" alt="">`; else $("mIcon").textContent = icon; $("mTitle").textContent = T(title); $("mText").textContent = T(text); $("mExtra").innerHTML = extra;
 const box = $("mBtns"); box.innerHTML = "";
@@ -8659,7 +8664,7 @@ return `<div class="acc${a.got ? " got" : ""}"><div class="acart"${IMG["achb_" +
 openModal({icon: "", title: "", text: "", extra: `<div class="achbox"><div class="ahero"><div class="aemb"><img src="${IMG.ach_emblem}" alt=""></div><div class="ahtx"><b>${T("Yutuqlar")}</b><span>${T("Bajarilgan")}: <em>${n}/${tot}</em></span><div class="ahbar"><i style="width:${Math.max(3, Math.round(n / tot * 100))}%"></i></div></div></div>
 <div class="achlist2">${groups.map(([g, list]) => `<div class="ash"><span>${T(g)}</span></div><div class="acgrid">${list.map(card).join("")}</div>`).join("")}</div></div>`,
 buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
-{ const pn = document.querySelector("#modal .panel"); pn.classList.add("achp"); pn.style.setProperty("--ach-frame", `url(${IMG.ach_frame})`); pn.style.setProperty("--ach-x", `url(${IMG.ach_xbtn})`); pn.style.setProperty("--ach-card", `url(${IMG.ach_card})`); pn.style.setProperty("--ach-ribbon", `url(${IMG.ach_ribbon})`); pn.style.setProperty("--ach-close", `url(${IMG.ach_close})`); const f = document.createElement("div"); f.className = "achfx"; f.innerHTML = "<i></i><i></i><i></i><i></i>"; pn.appendChild(f); }
+{ const pn = document.querySelector("#modal .panel"); skinModal(pn); const f = document.createElement("div"); f.className = "achfx"; f.innerHTML = "<i></i><i></i><i></i><i></i>"; pn.appendChild(f); }
 }
 function errText(e) {
 return {code_not_found: T("Bunday kod topilmadi"), own_code: T("Bu sizning kodingiz"), already_used: T("Siz allaqachon taklif kodini ishlatgansiz"), too_late: T("Taklif kodi faqat birinchi 7 kunda ishlaydi"),
