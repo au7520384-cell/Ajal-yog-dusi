@@ -2548,7 +2548,8 @@ const rb = ac.createBuffer(1, ac.sampleRate * 6, ac.sampleRate), rd = rb.getChan
 const src = ac.createBufferSource(); src.buffer = rb; src.loop = true;
 rollF = ac.createBiquadFilter(); rollF.type = "lowpass"; rollF.frequency.value = 160; rollF.Q.value = 0.5;
 rollG = ac.createGain(); rollG.gain.value = 0;
-src.connect(rollF); rollF.connect(rollG); rollG.connect(master); src.start();
+const rollH = ac.createBiquadFilter(); rollH.type = "highpass"; rollH.frequency.value = 150; rollH.Q.value = 0.6;   // cut the sub-bass drone: a ball on cloth is a soft swish, not a hum
+src.connect(rollH); rollH.connect(rollF); rollF.connect(rollG); rollG.connect(master); src.start();
 bank = buildBank();
 if (ac.state !== "running") ac.resume();
 }
@@ -2647,9 +2648,9 @@ pocket() { if (!ok()) return; play(bank.pocket, 0.9, 0.96 + Math.random() * 0.08
 tray() { if (!ok()) return; play(pick(bank.clacks), 0.28, 0.72, 2200); const t = now(); noise(t - 0.01, 0.45, 0.035, "lowpass", 700, 0.7, 220); },
 roll(sum) {
 if (!ac || !rollG) return;
-const g = profile.muted || sum < 1.5 ? 0 : Math.min(0.02, sum * 0.0007);
-rollG.gain.setTargetAtTime(g, ac.currentTime, 0.06);
-rollF.frequency.setTargetAtTime(90 + Math.min(260, sum * 7), ac.currentTime, 0.06);
+const g = profile.muted || sum < 4 ? 0 : Math.min(0.014, (sum - 4) * 0.0006);
+rollG.gain.setTargetAtTime(g, ac.currentTime, g ? 0.06 : 0.12);
+rollF.frequency.setTargetAtTime(260 + Math.min(600, sum * 9), ac.currentTime, 0.06);
 },
 tableFx(kind, v = 1) {
 if (!ok()) return; const t = now(), bell = (tt, f, vol, d = 0.9) => { tone(tt, f, d, vol, "sine"); tone(tt, f * 2.76, d * 0.5, vol * 0.35, "sine"); tone(tt, f * 5.4, d * 0.25, vol * 0.15, "sine"); };
@@ -6165,7 +6166,7 @@ G.strike.t++;
 if (G.strike.t >= 5) { const s = G.strike; G.strike = null; try { doShoot(s.power, s.remote); } catch (e) { onFrameError(e); if (!G.moving) { G.moving = true; G.shot = G.shot || {firstHit: null, potted: [], ownBefore: -1, rails: 0, power: s.power}; } } }
 } else if (G.moving) {
 physicsFrame(G);
-if (!G.demo) Snd.roll(G.balls.reduce((s, b) => s + (b.out ? 0 : Math.hypot(b.vx, b.vy)), 0));
+if (!G.demo) Snd.roll(G.balls.reduce((s, b) => { const v = b.out ? 0 : Math.hypot(b.vx, b.vy); return s + (v > 0.6 ? v : 0); }, 0));   // creeping balls are silent, so no drone lingers after the shot
 if (!anyMoving(G.balls)) {
 G.moving = false; if (!G.demo) Snd.roll(0);
 if (G.type === "lucky") luckyFinish(); else resolveShot();
