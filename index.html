@@ -5454,6 +5454,14 @@ ctx.restore();
 }
 }
 const C = 19, cA = CORNER_MOUTH, mA = MID_MOUTH;
+{   // the border ring around the playing surface (cushion bodies and the wedges beside the pockets) gets the same cloth: base colour, fibre noise and weave
+const nm = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, fb = nm(city.felt[0]).map(v => clamp(v - 16, 0, 255));
+ctx.save(); ctx.beginPath(); ctx.rect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12); ctx.rect(0, 0, FW, FH); ctx.clip("evenodd");
+ctx.fillStyle = `rgb(${fb.join(",")})`; ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12);
+ctx.globalAlpha = 0.68; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12); ctx.globalAlpha = 1;
+ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12);
+ctx.restore();
+}
 const segs = lucky ? [
 [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
 [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
