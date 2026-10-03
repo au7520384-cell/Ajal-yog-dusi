@@ -5471,17 +5471,17 @@ const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
 const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
 const cb = f0.map(v => v - 16);   // all four cushions share one colour
 const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-g.addColorStop(0, cc(14)); g.addColorStop(0.25, cc(8)); g.addColorStop(0.7, cc(-6)); g.addColorStop(1, cc(-20));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
+g.addColorStop(0, cc(26)); g.addColorStop(0.22, cc(16)); g.addColorStop(0.7, cc(-4)); g.addColorStop(1, cc(-26));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
 ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
 if (feltNoise && feltWeave) {   // the cushion rubber is covered in the same worsted cloth as the playing surface: same fibre noise and weave
 ctx.save(); ctx.clip(); ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.globalAlpha = 1; ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.restore();
 }
 {   // soft shadow the raised cushion throws on the cloth (inwards), then the bright nose line
-const inw = {t: [0, 1], b: [0, -1], l: [1, 0], r: [-1, 0]}[side], SH = 15, sg = ctx.createLinearGradient(s[0][0], s[0][1], s[0][0] + inw[0] * SH, s[0][1] + inw[1] * SH);
-sg.addColorStop(0, "rgba(0,0,0,.30)"); sg.addColorStop(0.45, "rgba(0,0,0,.1)"); sg.addColorStop(1, "rgba(0,0,0,0)");
+const inw = {t: [0, 1], b: [0, -1], l: [1, 0], r: [-1, 0]}[side], SH = 24, sg = ctx.createLinearGradient(s[0][0], s[0][1], s[0][0] + inw[0] * SH, s[0][1] + inw[1] * SH);
+sg.addColorStop(0, "rgba(0,0,0,.42)"); sg.addColorStop(0.4, "rgba(0,0,0,.16)"); sg.addColorStop(1, "rgba(0,0,0,0)");
 ctx.fillStyle = sg; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(s[1][0] + inw[0] * SH - Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[1][1] + inw[1] * SH - Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.lineTo(s[0][0] + inw[0] * SH + Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[0][1] + inw[1] * SH + Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.closePath(); ctx.fill();
 }
-ctx.strokeStyle = "rgba(255,255,255,.24)"; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
+ctx.strokeStyle = "rgba(255,255,255,.4)"; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
 ctx.strokeStyle = "rgba(0,0,0,.28)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
 }
 if (st.glow && !lucky) {
