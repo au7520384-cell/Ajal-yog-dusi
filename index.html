@@ -5541,6 +5541,20 @@ const well = ctx.createRadialGradient(x - ox * r * 0.28, y - oy * r * 0.28, r * 
 well.addColorStop(0, "#000"); well.addColorStop(0.55, "#040101"); well.addColorStop(0.82, mar ? "#2c0808" : "#0a0405"); well.addColorStop(1, mar ? "#5a1010" : "#1c0c0a");
 ctx.fillStyle = well; ctx.beginPath(); ctx.arc(x, y, r + 0.4, 0, 7); ctx.fill();
 ctx.lineCap = "round";
+if (city.id !== "lon") {   // a bezel in the table's own accent wraps the outer side of every hole, studded with the rail's pearls
+const ac = typeof accent === "string" ? accent : "#f2c14e", a0 = Math.atan2(-oy, -ox);
+ctx.save(); ctx.beginPath(); ctx.rect(-200, -200, FW + 400, FH + 400); ctx.rect(-25, -25, FW + 50, FH + 50); ctx.clip("evenodd");
+ctx.lineCap = "butt";
+ctx.strokeStyle = "rgba(0,0,0,.55)"; ctx.lineWidth = 9; ctx.beginPath(); ctx.arc(x, y, r + 5.5, 0, 7); ctx.stroke();
+const bg = ctx.createLinearGradient(x - r - 9, y - r - 9, x + r + 9, y + r + 9); bg.addColorStop(0, shade(ac, 90)); bg.addColorStop(0.5, ac); bg.addColorStop(1, shade(ac, -90));
+ctx.strokeStyle = bg; ctx.lineWidth = 5.6; ctx.beginPath(); ctx.arc(x, y, r + 5.5, 0, 7); ctx.stroke();
+ctx.strokeStyle = "rgba(255,255,255,.45)"; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(x, y, r + 3.6, 0, 7); ctx.stroke();
+const nd = Math.round(2 * Math.PI * (r + 13) / 9);
+for (let i = 0; i < nd; i++) { const a = i / nd * 2 * Math.PI, px = x + Math.cos(a) * (r + 13), py = y + Math.sin(a) * (r + 13);
+const pg = ctx.createRadialGradient(px - 0.7, py - 0.7, 0, px, py, 2.3); pg.addColorStop(0, "#fff"); pg.addColorStop(0.6, shade(ac, 60)); pg.addColorStop(1, shade(ac, -70));
+ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(px, py, 2.3, 0, 7); ctx.fill(); }
+ctx.restore(); ctx.lineCap = "round";
+}
 if (ringOk()) { const k = (r + 0.6) / 98.8, S = 256 * k; ctx.save(); ctx.beginPath(); ctx.rect(-200, -200, FW + 400, FH + 400); ctx.rect(-25, -25, FW + 50, FH + 50); ctx.clip("evenodd"); ctx.drawImage(POCKET_RING, x - S / 2, y - S / 2, S, S); ctx.restore(); }   // the metal ring only on the wood; on the cloth side the hole is cut straight into the cloth
 else {
 ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();
