@@ -92,6 +92,13 @@ font-size:15px;min-width:92px;justify-content:space-between;cursor:pointer}
 .screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;z-index:10;
 padding:66px 14px 14px;overflow:auto;touch-action:pan-x pan-y}
 .screen.on{display:flex}
+.tapfx{position:fixed;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;pointer-events:none;z-index:9999;border:2px solid #ffe27a;box-shadow:0 0 12px #ffd76a,inset 0 0 10px #fff6;background:radial-gradient(circle,#fff8,#ffd76a33 55%,transparent 70%);animation:tapfx .5s ease-out forwards}
+@keyframes tapfx{0%{transform:scale(.4);opacity:1}100%{transform:scale(4.2);opacity:0;border-width:.5px}}
+.screen.on{animation:scrIn .24s ease-out}
+@keyframes scrIn{from{opacity:0}to{opacity:1}}
+button:active:not(:disabled){filter:brightness(1.15)}
+@media (prefers-reduced-motion:reduce){.tapfx,.screen.on{animation:none}.tapfx{display:none}}
+
 .screen.full{padding-top:14px}
 .head{display:flex;align-items:center;gap:12px;width:100%;max-width:1100px;margin-bottom:10px}
 .head h2{margin:0;font-family:var(--fh);font-weight:400;font-size:30px;color:#fff;text-shadow:0 3px 0 #0008,0 0 20px #ffcf3d55}
@@ -2669,7 +2676,25 @@ case "bubble": for (let i = 0; i < 5; i++) tone(t + i * 0.07 + n(0, 0.03), n(500
 case "amber": [784, 1175, 1568].forEach((f, i) => bell(t + i * 0.09, f, 0.07 * v, 1.2)); break;
 }
 },
-click() { if (!ok()) return; const t = now(); tone(t, 620, 0.07, 0.16, "triangle", 1250); noise(t, 0.015, 0.08, "highpass", 3000); },
+click() {   // UI press: a soft glassy "pop" with a crisp tick on top and a faint shimmer tail
+if (!ok()) return; const t = now(); if (t - (Snd._lc || 0) < 0.04) return; Snd._lc = t;
+const k = 0.96 + Math.random() * 0.08;
+tone(t, 540 * k, 0.09, 0.15, "sine", 330 * k);
+tone(t, 1620 * k, 0.14, 0.035, "sine", 1500 * k);
+tone(t + 0.012, 2430 * k, 0.1, 0.018, "sine");
+noise(t, 0.012, 0.06, "bandpass", 4200, 1.2);
+},
+enter(back) {   // screen change: an airy whoosh and a two-note chime (rising forward, falling back)
+if (!ok()) return; const t = now(); if (t - (Snd._le || 0) < 0.15) return; Snd._le = t;
+noise(t, 0.26, 0.05, "bandpass", back ? 2600 : 700, 1.4, back ? 700 : 2600);
+const a = back ? [988, 740] : [740, 1109];
+a.forEach((f, i) => { tone(t + 0.05 + i * 0.06, f, 0.32, 0.05, "sine"); tone(t + 0.05 + i * 0.06, f * 2, 0.18, 0.012, "sine"); });
+},
+pop() {   // a window opening: a quick upward bloom
+if (!ok()) return; const t = now();
+tone(t, 520, 0.16, 0.07, "sine", 1040); tone(t + 0.04, 1560, 0.22, 0.025, "sine");
+noise(t, 0.12, 0.025, "bandpass", 1500, 1, 4000);
+},
 pop() { if (!ok()) return; tone(now(), 420, 0.12, 0.22, "sine", 1500); },
 coin(n = 5) {
 if (!ok()) return; const t = now();
@@ -6300,6 +6325,8 @@ input.drag = null; input.power = 0; input.charging = false; timeoutFoul();
 }
 const MENU_SCREENS = ["eventsScr", "freeScr", "inbox", "withFrScr", "settingsScr", "clubsScr", "passScr", "home", "cities", "tourScr", "shop", "rewards", "leader", "mini", "wheelScr", "profileScr", "friendsScr"];
 function showScreen(id) {
+const prev = document.querySelector(".screen.on");
+if (prev && prev.id !== id && mode === "menu" && typeof Snd !== "undefined" && Snd.enter) Snd.enter(id === "home");
 for (const s of document.querySelectorAll(".screen")) s.classList.toggle("on", s.id === id);
 $("nav").classList.toggle("on", MENU_SCREENS.includes(id));
 }
@@ -6402,6 +6429,7 @@ function skinModal(pn) {   // every popup wears the mockup art: gold 9-slice fra
 pn.classList.add("achp"); pn.style.setProperty("--ach-frame", `url(${IMG.ach_frame})`); pn.style.setProperty("--ach-x", `url(${IMG.ach_xbtn})`); pn.style.setProperty("--ach-card", `url(${IMG.ach_card})`); pn.style.setProperty("--ach-ribbon", `url(${IMG.ach_ribbon})`); pn.style.setProperty("--ach-close", `url(${IMG.ach_close})`);
 }
 function openModal({icon = "", title, text = "", extra = "", buttons = [], scene = ""}) {
+try { if (!$("modal").classList.contains("on")) Snd.pop(); } catch (e) {}
   $("modal").classList.remove("cpm");
   { const pn = document.querySelector("#modal .panel"); pn.classList.remove("achp"); const f = pn.querySelector(".achfx"); if (f) f.remove(); if (!scene && !extra.includes("hwin")) skinModal(pn); }
   { const pn = document.querySelector("#modal .panel"); pn.classList.toggle("scened", !!scene); if (scene) { pn.style.setProperty("--scene", `url(${modalScene(scene)})`); pn.style.setProperty("--shd", (MODAL_SH[scene] || 120) + "px"); } }
@@ -7879,6 +7907,10 @@ toMenu(G.type === "lucky" ? "mini" : G.type === "tour" ? "tourScr" : "home");
 ]});
 };
 function toggleMute() { profile.muted = !profile.muted; save(); Snd.setMuted(profile.muted); updateNav(); }
+document.addEventListener("pointerdown", e => {   // press feedback: a golden ring blooms where the finger lands
+if (!e.target.closest || !e.target.closest("button,.rw.now,.pchip2,.mchip,.card,.mgc,[data-go]") || mode !== "menu") return;
+try { const r = document.createElement("i"); r.className = "tapfx"; r.style.left = e.clientX + "px"; r.style.top = e.clientY + "px"; document.body.appendChild(r); setTimeout(() => r.remove(), 520); } catch (er) {}
+}, {passive: true});
 document.addEventListener("click", e => {
 if (e.target.closest("button,.rw.now,.pchip2,.mchip")) Snd.click();
 const g = e.target.closest("[data-go]"); if (g) go(g.dataset.go, g.dataset.tab);
