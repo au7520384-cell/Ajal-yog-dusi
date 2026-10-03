@@ -2436,7 +2436,7 @@ let cloudSaveHook = null;
 const save = () => { profile.savedAt = Date.now(); store.set("bilyard8v2", profile); if (cloudSaveHook) cloudSaveHook(); if (typeof cloudQueue === "function") cloudQueue(); };
 const xpNeed = l => 100 + (l - 1) * 80;
 const cueDef = id => CUES.find(c => c.id === id) || CUES[0];
-const cueMax = c => 38 + c.st[0] * 1.0;   // 1 u/frame = 0.132 m/s: 5.0 m/s (stat 0) to 6.3 m/s (stat 10) at full power; the break adds x2.4 up to 10.5 m/s
+const cueMax = c => 56 + c.st[0] * 1.2;   // 1 u/frame = 0.132 m/s: 7.4 m/s (stat 0) to 8.9 m/s (stat 10) at full power; the break adds x1.6 up to 10.5 m/s
 const cueSpin = c => 0.35 + c.st[2] * 0.065;
 const cueTime = c => Math.round(22 + c.st[3] * 1.8);
 const cueAim = c => c.st[1];
@@ -3061,8 +3061,8 @@ if (remote) {   // opponent's shot, reproduced with the exact numbers they used
 cue.x = remote.x; cue.y = remote.y; cue.vx = remote.vx; cue.vy = remote.vy; cue.dir = remote.dir;
 const rw = remote.w || [0, 0, 0]; cue.wx = +rw[0] || 0; cue.wy = +rw[1] || 0; cue.wz = +rw[2] || 0; cue.vz0 = +remote.vz0 || 0;
 } else {
-const maxS = pl.isAI ? 38 : cueMax(cd);
-const sp = Math.min(G.isBreak ? 80 : 1e9, Math.max(0.6, power * maxS) * (G.isBreak ? 2.4 : 1)) * (G.type === "lucky" ? 0.8 : 1);   // break: ≈ 9–10.5 m/s at full power (real pro breaks are 8–12 m/s)
+const maxS = pl.isAI ? 56 : cueMax(cd);
+const sp = Math.min(G.isBreak ? 80 : 1e9, Math.max(0.6, power * maxS) * (G.isBreak ? 1.6 : 1)) * (G.type === "lucky" ? 0.8 : 1);   // break: ≈ 9–10.5 m/s at full power (real pro breaks are 8–12 m/s)
 const dx = Math.cos(G.angle), dy = Math.sin(G.angle);
 cue.vx = dx * sp; cue.vy = dy * sp; cue.dir = [dx, dy];
 const k = pl.isAI ? 0.7 : cueSpin(cd), el = G.elev || 0; cue.vz0 = 0;
@@ -3252,7 +3252,7 @@ if (!segClear(balls, cx, cy, gx, gy, [0, t.n])) return null;
 if (!segClear(balls, t.x, t.y, pa.x, pa.y, [0, t.n])) return null;
 const score = cos ** 3 * 1e5 / (d1 + d2 * 1.6 + 150);
 const speed = 0.0135 * (d1 + d2 / cos) * 1.35 + 2.5;
-return {angle: Math.atan2(vy, vx), power: clamp(speed / 38, 0.18, 1), score, t};
+return {angle: Math.atan2(vy, vx), power: clamp(speed / 56, 0.18, 1), score, t};
 }
 function bestShotFrom(cx, cy) {
 let best = null;
@@ -3263,7 +3263,7 @@ if (s && (!best || s.score > best.score)) best = s;
 return best;
 }
 function simShot(angle, power, spx, spy) {   // the AI tries a shot (with draw / follow) in the real physics engine on a copy of the table
-const G = game, balls = G.balls.map(b => ({...b, p: b.p.slice(), q: b.q.slice()})), cue = balls[0], sp = Math.max(0.6, power * 38) * (G.isBreak ? 1.35 : 1), ang = angle - (spx || 0) * 0.7 * 0.03;
+const G = game, balls = G.balls.map(b => ({...b, p: b.p.slice(), q: b.q.slice()})), cue = balls[0], sp = Math.max(0.6, power * 56) * (G.isBreak ? 1.0 : 1), ang = angle - (spx || 0) * 0.7 * 0.03;
 cue.vx = Math.cos(ang) * sp; cue.vy = Math.sin(ang) * sp; cue.z = cue.vz = 0; applyStrike(cue, spx || 0, spy || 0, 0.7, 0);
 const g = {balls, pockets: G.pockets, demo: true, shot: {firstHit: null, potted: [], rails: 0}, sinking: [], tray: [], flashes: [], sparks: [], type: G.type};
 for (let f = 0; f < 700; f++) { physicsFrame(g); if (!anyMoving(balls)) break; }
