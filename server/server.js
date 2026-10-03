@@ -735,7 +735,7 @@ wss.on("connection", (ws, req) => {
       for (const p of room.p) wsSend(p, out); for (const sp of room.specs) wsSend(sp, out);
     } else if (m.t === "gift" && ws.room && !ws.room.over) {   // cheer gift to the opponent: counted for both players, rate limited
       const room = ws.room, other = room.p[1 - ws.seat], g = int(m.g, 99);
-      if (!other || g > 11 || !bucket(ws, "gift", 3, 3000)) return;
+      if (!other || g > 12 || !bucket(ws, "gift", 3, 3000)) return;
       room.gifts = room.gifts || [0, 0]; if (room.gifts[ws.seat] >= 20) return; room.gifts[ws.seat]++;
       const ou = db.users[other.uid];
       u.cheer = u.cheer || {got: {}, sent: 0}; u.cheer.sent++;
