@@ -121,7 +121,7 @@ function claimEdition(u, id) {
 }
 const TABLE_REFUND_CASH = 1000;
 const editionsLeft = () => Object.fromEntries(Object.entries(EDITION_CAP).map(([id, cap]) => [id, {cap, sold: (db.meta.editions || {})[id] | 0}]));
-const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
+const REFERRAL = {invitee: {cash: 5, coins: 5000}, inviter: {cash: 10, coins: 15000}};
 const GIFT = {coins: 500};
 const CITY_PRIZE = {lon: 100, syd: 200, lis: 1000, tok: 5000, veg: 20000, jak: 100000, tor: 200000, cai: 500000, dub: 1000000,
   sha: 2000000, par: 5000000, rom: 8000000, bkk: 10000000, seo: 20000000, mum: 30000000, ber: 50000000, ist: 100000000, osa: 200000000,
