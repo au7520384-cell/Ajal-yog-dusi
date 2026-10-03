@@ -2579,6 +2579,7 @@ for (let i = 0; i < x.length; i++) { const o = b0 * x[i] + b2 * x2 - a1 * y1 - a
 return y;
 };
 const lp = (x, f, g = 1) => { const k = 1 - Math.exp(-2 * Math.PI * f / SR), y = new Float32Array(x.length); let s = 0; for (let i = 0; i < x.length; i++) { s += (x[i] - s) * k; y[i] = s * g; } return y; };
+const hp = (x, f) => { const l = lp(x, f); return x.map((v, i) => v - l[i]); };
 const mix = (...ys) => { const y = new Float32Array(ys[0].length); for (const a of ys) for (let i = 0; i < y.length && i < a.length; i++) y[i] += a[i]; return y; };
 const toBuf = y => {
 let pk = 0; for (const v of y) pk = Math.max(pk, Math.abs(v));
@@ -2601,9 +2602,9 @@ const x = exc(0.07, R(0.0007, 0.001));
 cues.push(toBuf(mix(bp(x, R(900, 1000), 5, 0.8), bp(x, R(1150, 1250), 6, 0.6), bp(x, R(2500, 2700), 8, 0.45), bp(x, R(650, 720), 3, 0.35))));
 }
 const rx = exc(0.14, 0.004);
-const rail = toBuf(mix(lp(rx, 900), bp(rx, 185, 3, 1.2), bp(exc(0.14, 0.00015), 2850, 12, 0.18)));
+const rail = toBuf(hp(hp(mix(bp(rx, 330, 2.5, 0.9), bp(rx, 680, 3, 0.55), bp(exc(0.14, 0.00015), 2850, 12, 0.3), lp(rx, 1500, 0.3)), 220), 220));   // a dull cushion "thock": mids, not a bass boom
 const pn = Math.ceil(0.5 * SR), th = exc(0.5, 0.006);
-const pk = mix(lp(th, 500, 1.2), bp(th, 105, 3, 1.5), bp(th, 250, 4, 0.8));
+const pk = hp(hp(mix(bp(th, 260, 4, 0.8), bp(th, 420, 4, 0.6), bp(th, 140, 3, 0.35), lp(th, 700, 0.4)), 160), 160);
 for (const [t0, a] of [[0.09, 0.55], [0.16, 0.4], [0.22, 0.3], [0.27, 0.2], [0.31, 0.13], [0.35, 0.08]]) {
 const e = exc(0.5 - t0, R(0.0002, 0.0004)), r = mix(bp(e, R(2200, 2900), 10, a), bp(e, 260, 3, a * 0.8)), o = Math.round(t0 * SR);
 for (let i = 0; i < r.length && o + i < pn; i++) pk[o + i] += r[i];
@@ -2650,8 +2651,8 @@ if (!ok()) return;
 play(pick(bank.cues), 0.35 + 0.65 * p, 0.97 + Math.random() * 0.06, 5000 + 9000 * p);
 if (p > 0.55) tone(now(), 130, 0.09, 0.07 * p, "sine", 70);   // hard strokes add a low thump
 },
-rail(v) { if (!ok()) return; const k = Math.min(1, v / 16); if (k < 0.04) return; play(bank.rail, 0.9 * Math.pow(k, 0.8), 0.94 + Math.random() * 0.12, 900 + 4000 * k); },
-pocket() { if (!ok()) return; play(bank.pocket, 0.9, 0.96 + Math.random() * 0.08); const t = now(); noise(t + 0.1, 0.55, 0.05, "lowpass", 480, 0.7, 140); },   // the ball rolls down the leather pocket net
+rail(v) { if (!ok()) return; const k = Math.min(1, v / 26); if (k < 0.06) return; const t = now(); if (t - (Snd._lr || 0) < 0.035) return; Snd._lr = t; play(bank.rail, 0.5 * Math.pow(k, 0.9), 0.94 + Math.random() * 0.12, 1200 + 4000 * k); },
+pocket() { if (!ok()) return; play(bank.pocket, 0.5, 0.96 + Math.random() * 0.08); const t = now(); noise(t + 0.1, 0.4, 0.028, "bandpass", 900, 0.8, 420); },   // the ball rolls down the leather pocket net
 tray() { if (!ok()) return; play(pick(bank.clacks), 0.28, 0.72, 2200); const t = now(); noise(t - 0.01, 0.45, 0.035, "lowpass", 700, 0.7, 220); },
 roll(sum) {
 if (!ac || !rollG) return;
