@@ -5469,7 +5469,7 @@ for (const s of segs) {
 const side = s[4], d = {t: [0, 0, 0, -C], b: [0, FH, 0, FH + C], l: [0, 0, -C, 0], r: [FW, 0, FW + C, 0]}[side];
 const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
 const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
-const cb = side === "t" || side === "b" ? f0.map(v => v - 16) : f0.map((v, i) => (v - 20) * 0.4 + (f1[i] - 22) * 0.6);
+const cb = f0.map(v => v - 16);   // all four cushions share one colour
 const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
 g.addColorStop(0, cc(14)); g.addColorStop(0.25, cc(8)); g.addColorStop(0.7, cc(-6)); g.addColorStop(1, cc(-20));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
 ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
