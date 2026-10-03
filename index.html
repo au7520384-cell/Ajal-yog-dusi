@@ -5520,11 +5520,18 @@ ctx.strokeStyle = lonW ? "rgba(240,190,70,.5)" : "rgba(255,255,255,.16)"; ctx.li
 ctx.restore();
 }
 const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1);
+ctx.save();
+if (p.mid) { ctx.beginPath(); ctx.rect(-120, -120, FW + 240, FH + 240); ctx.rect(0, 0, FW, FH); ctx.clip("evenodd"); }   // side pockets are cut off straight at the cloth edge
+else {   // corner holes: the cushion bands and the cloth lie OVER the round hole, so on the cloth side its edge is straight (vertical along the end of one cushion, horizontal along the other) like the reference
+const sx = p.dx < 0 ? 1 : -1, sy = p.dy < 0 ? 1 : -1, U = u => p.x + sx * u, V = v => p.y + sy * v, EN = cV - C, B = 400;
+ctx.beginPath(); ctx.rect(-B, -B, FW + 2 * B, FH + 2 * B);
+ctx.moveTo(U(EN), V(-C)); ctx.lineTo(U(B), V(-C)); ctx.lineTo(U(B), V(B)); ctx.lineTo(U(-C), V(B)); ctx.lineTo(U(-C), V(EN)); ctx.lineTo(U(EN), V(EN)); ctx.closePath(); ctx.clip("evenodd");
+}
 { const sh = ctx.createRadialGradient(x, y, r - 1, x, y, r + 8); sh.addColorStop(0, "rgba(0,0,0,.4)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 8, 0, 7); ctx.fill(); }
-const lip = ctx.createLinearGradient(x - r, y - r, x + r, y + r); lip.addColorStop(0, mar ? "#4a1a10" : shade(city.felt[1], -70)); lip.addColorStop(1, mar ? "#0f0403" : shade(city.felt[1], -120));
+const lip = ctx.createLinearGradient(x - r, y - r, x + r, y + r); lip.addColorStop(0, mar ? "#4a1a10" : "#1a0e0a"); lip.addColorStop(1, mar ? "#0f0403" : "#060303");
 ctx.fillStyle = lip; ctx.beginPath(); ctx.arc(x, y, r + 2.6, 0, 7); ctx.fill();
 const well = ctx.createRadialGradient(x - ox * r * 0.28, y - oy * r * 0.28, r * 0.05, x, y, r + 0.5);
-well.addColorStop(0, "#000"); well.addColorStop(0.55, "#040101"); well.addColorStop(0.82, mar ? "#2c0808" : shade(city.felt[1], -118)); well.addColorStop(1, mar ? "#5a1010" : shade(city.felt[0], -85));
+well.addColorStop(0, "#000"); well.addColorStop(0.55, "#040101"); well.addColorStop(0.82, mar ? "#2c0808" : "#0a0405"); well.addColorStop(1, mar ? "#5a1010" : "#1c0c0a");
 ctx.fillStyle = well; ctx.beginPath(); ctx.arc(x, y, r + 0.4, 0, 7); ctx.fill();
 ctx.lineCap = "round";
 if (p.mid) { ctx.save(); ctx.beginPath(); ctx.rect(-90, -90, FW + 180, FH + 180); ctx.rect(0, 0, FW, FH); ctx.clip("evenodd"); ctx.strokeStyle = "#16171c"; ctx.lineWidth = 3.2; ctx.beginPath(); ctx.arc(x, y, r + 1.8, 0, 7); ctx.stroke(); ctx.strokeStyle = city.id === "lon" ? "rgba(245,200,90,.75)" : "rgba(255,255,255,.3)"; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.arc(x, y, r + 3.7, 0, 7); ctx.stroke(); ctx.restore(); }
@@ -5533,6 +5540,7 @@ else {
 ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();
 ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r + 2.1, Math.atan2(-oy, -ox) - 0.7, Math.atan2(-oy, -ox) + 0.7); ctx.stroke();
 }
+ctx.restore();
 }
 ctx.restore();
 }
