@@ -5516,17 +5516,6 @@ ctx.fillStyle = ng; ctx.beginPath(); ctx.moveTo(xm - mA, yb); ctx.lineTo(xm + mA
 ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 1.4; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(xm - mA, yb); ctx.lineTo(xm - mA + 3, yb + sg * C); ctx.moveTo(xm + mA, yb); ctx.lineTo(xm + mA - 3, yb + sg * C); ctx.stroke();
 }
 const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1);
-if (!lucky) {   // the cloth side of every pocket is rounded: a cloth-coloured collar around the hole (only over the cushion band, never on the wood or the bed)
-const nm = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, fb = nm(city.felt[0]).map(v => v - 16), cl = o => `rgb(${fb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-const rc = (r + 0.6) * 1.255 + 7;
-ctx.save(); ctx.beginPath(); ctx.rect(-25, -25, FW + 50, FH + 50); ctx.rect(0, 0, FW, FH); ctx.clip("evenodd");
-const cg = ctx.createRadialGradient(x, y, r, x, y, rc); cg.addColorStop(0, cl(-30)); cg.addColorStop(0.45, cl(6)); cg.addColorStop(0.8, cl(18)); cg.addColorStop(1, cl(8));
-ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(x, y, rc, 0, 7); ctx.fill();
-if (feltNoise && feltWeave) { ctx.save(); ctx.clip(); ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(x - rc, y - rc, 2 * rc, 2 * rc); ctx.globalAlpha = 1; ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(x - rc, y - rc, 2 * rc, 2 * rc); ctx.restore(); }
-ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.arc(x, y, rc - 0.8, 0, 7); ctx.stroke();
-ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, rc + 0.4, 0, 7); ctx.stroke();
-ctx.restore();
-}
 { const sh = ctx.createRadialGradient(x, y, r - 1, x, y, r + 8); sh.addColorStop(0, "rgba(0,0,0,.4)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 8, 0, 7); ctx.fill(); }
 const lip = ctx.createLinearGradient(x - r, y - r, x + r, y + r); lip.addColorStop(0, mar ? "#4a1a10" : shade(city.felt[1], -70)); lip.addColorStop(1, mar ? "#0f0403" : shade(city.felt[1], -120));
 ctx.fillStyle = lip; ctx.beginPath(); ctx.arc(x, y, r + 2.6, 0, 7); ctx.fill();
@@ -5534,7 +5523,7 @@ const well = ctx.createRadialGradient(x - ox * r * 0.28, y - oy * r * 0.28, r * 
 well.addColorStop(0, "#000"); well.addColorStop(0.55, "#040101"); well.addColorStop(0.82, mar ? "#2c0808" : shade(city.felt[1], -118)); well.addColorStop(1, mar ? "#5a1010" : shade(city.felt[0], -85));
 ctx.fillStyle = well; ctx.beginPath(); ctx.arc(x, y, r + 0.4, 0, 7); ctx.fill();
 ctx.lineCap = "round";
-if (ringOk()) { const k = (r + 0.6) / 98.8, S = 256 * k; ctx.drawImage(POCKET_RING, x - S / 2, y - S / 2, S, S); }
+if (ringOk()) { const k = (r + 0.6) / 98.8, S = 256 * k; ctx.save(); ctx.beginPath(); ctx.rect(-200, -200, FW + 400, FH + 400); ctx.rect(-25, -25, FW + 50, FH + 50); ctx.clip("evenodd"); ctx.drawImage(POCKET_RING, x - S / 2, y - S / 2, S, S); ctx.restore(); }   // the metal ring only on the wood; on the cloth side the hole is cut straight into the cloth
 else {
 ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();
 ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r + 2.1, Math.atan2(-oy, -ox) - 0.7, Math.atan2(-oy, -ox) + 0.7); ctx.stroke();
