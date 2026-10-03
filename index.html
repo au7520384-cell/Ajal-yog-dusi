@@ -5504,7 +5504,8 @@ vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.1)");
 ctx.fillStyle = vig; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
 if (!lucky && city.id === "lon" && cornerOk()) for (const p of POCKETS) {
 if (p.mid) continue;
-const k = (p.dr + 0.6) / 98.8; ctx.save(); ctx.translate(p.x + p.dx, p.y + p.dy); ctx.scale((p.dx < 0 ? 1 : -1) * k, (p.dy < 0 ? 1 : -1) * k); ctx.imageSmoothingQuality = "high"; ctx.drawImage(CORNER_ART, -218.8, -216); ctx.restore();
+const k = (p.dr + 0.6) / 98.8; ctx.save(); ctx.beginPath(); ctx.rect(-200, -200, FW + 400, FH + 400); ctx.rect(-25, -25, FW + 50, FH + 50); ctx.clip("evenodd");   // the carved wood stays on the rail: the cloth runs right up to the wood, around the hole
+ctx.translate(p.x + p.dx, p.y + p.dy); ctx.scale((p.dx < 0 ? 1 : -1) * k, (p.dy < 0 ? 1 : -1) * k); ctx.imageSmoothingQuality = "high"; ctx.drawImage(CORNER_ART, -218.8, -216); ctx.restore();
 }
 if (!lucky) for (const p of POCKETS) {
 const x = p.x + p.dx, y = p.y + p.dy, r = p.dr, mar = city.id === "syd";
@@ -5515,15 +5516,6 @@ ctx.fillStyle = ng; ctx.beginPath(); ctx.moveTo(xm - mA, yb); ctx.lineTo(xm + mA
 ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 1.4; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(xm - mA, yb); ctx.lineTo(xm - mA + 3, yb + sg * C); ctx.moveTo(xm + mA, yb); ctx.lineTo(xm + mA - 3, yb + sg * C); ctx.stroke();
 }
 const ox = Math.sign(p.dx) || 0, oy = Math.sign(p.dy) || (p.y < 0 ? -1 : 1);
-if (!lucky) {   // a round wood collar around every pocket (outside the playing rectangle only), like the reference: the hole sits in the rail instead of in a cloth-coloured notch
-const lonW = city.id === "lon", wc = lonW ? ["#7a3d14", "#3b1503"] : [shade(city.rail[0], 0), shade(city.rail[1], -10)], rc = (r + 0.6) * 1.255 + 4;
-ctx.save(); ctx.beginPath(); ctx.rect(-90, -90, FW + 180, FH + 180); ctx.rect(0, 0, FW, FH); ctx.clip("evenodd");
-const cg = ctx.createRadialGradient(x - ox * rc * 0.2, y - oy * rc * 0.2, rc * 0.4, x, y, rc); cg.addColorStop(0, wc[0]); cg.addColorStop(1, wc[1]);
-ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(x, y, rc, 0, 7); ctx.fill();
-ctx.strokeStyle = "rgba(0,0,0,.4)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, rc, 0, 7); ctx.stroke();
-ctx.strokeStyle = lonW ? "rgba(240,190,70,.55)" : "rgba(255,255,255,.18)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, rc - 1.6, 0, 7); ctx.stroke();
-ctx.restore();
-}
 { const sh = ctx.createRadialGradient(x, y, r - 1, x, y, r + 8); sh.addColorStop(0, "rgba(0,0,0,.4)"); sh.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = sh; ctx.beginPath(); ctx.arc(x, y, r + 8, 0, 7); ctx.fill(); }
 const lip = ctx.createLinearGradient(x - r, y - r, x + r, y + r); lip.addColorStop(0, mar ? "#4a1a10" : shade(city.felt[1], -70)); lip.addColorStop(1, mar ? "#0f0403" : shade(city.felt[1], -120));
 ctx.fillStyle = lip; ctx.beginPath(); ctx.arc(x, y, r + 2.6, 0, 7); ctx.fill();
