@@ -1231,6 +1231,18 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 .stkcard{background:none!important;border:0!important;border-image:var(--woodcard) 22 fill/22px stretch!important;padding:14px 16px!important;box-shadow:none!important;border-radius:0!important}
 .stkcard .btn.purple,.stkcard .btn.blue{background:linear-gradient(#5a4638,#2e2218)!important;border:2px solid #d8b878!important;box-shadow:inset 0 1px 0 #ffffff33,0 3px 6px #000a!important;color:#fff!important}
 .stkcard .stk3{background:radial-gradient(circle at 50% 45%,#3a3040,#1a1420 70%);box-shadow:inset 0 -4px 6px #0009,inset 0 2px 4px #ffffff33,0 4px 7px #000a,0 0 0 2px #b8905a}
+/* wooden shop cards everywhere in the shop */
+#shop .card:not(.stkcard),#shop .avcard,#shop .pfcard,#shop .gitem{background:none!important;border:0!important;border-image:var(--woodcard) 22 fill/18px stretch!important;border-radius:0!important;box-shadow:none!important;padding:12px 12px!important;position:relative}
+#shop .avcard.sel,#shop .pfcard.sel{filter:drop-shadow(0 0 8px #ffc83a) drop-shadow(0 0 3px #ffc83a)}
+#shop .gitem.sold{opacity:.55}
+#shop .avcard .btn.purple,#shop .avcard .btn.blue,#shop .pfcard .btn.purple,#shop .pfcard .btn.blue,#shop .card .btn.purple,#shop .card .btn.blue,#shop .gitem .btn.purple,#shop .gitem .btn.blue{background:linear-gradient(#5a4638,#2e2218)!important;border:2px solid #d8b878!important;box-shadow:inset 0 1px 0 #ffffff33,0 3px 6px #000a!important;color:#fff!important}
+#shop .avcard .btn.green,#shop .pfcard .btn.green,#shop .card .btn.green{border:2px solid #d8e8a0!important}
+#shop .avcard .btn.gray,#shop .pfcard .btn.gray{background:linear-gradient(#4a4038,#2a221c)!important;border:2px solid #8a7a68!important;color:#d8cdbd!important}
+#shop .tblhead{color:#ffe9a8;text-shadow:0 2px 0 #3a2008,0 0 8px #000a}
+#shop .muted{color:#d8cdbd}
+@media (max-height:460px){#shop .card:not(.stkcard),#shop .avcard,#shop .pfcard,#shop .gitem{padding:8px 8px!important;border-image-width:14px!important}}
+/* the billiard-hall background on every menu screen (home keeps its own scene, the modal keeps the dimmed scene behind it) */
+.screen:not(#home):not(#modal):not(.full){background:linear-gradient(#0008,#0006 40%,#000a),var(--shopbg) center/cover no-repeat!important}
 </style>
 </head>
 <body>
