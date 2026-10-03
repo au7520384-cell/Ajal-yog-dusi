@@ -1220,6 +1220,11 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 .stk3{transition:transform .15s}.stk3:hover{transform:translateY(-3px) scale(1.06)}
 #chatPanel .citems.s button{border-radius:50%;background:radial-gradient(circle at 50% 40%,#5a78d8,#1d2f78 62%,#0b1438);box-shadow:inset 0 -4px 6px #0009,inset 0 2px 4px #ffffff55,0 3px 6px #000a,0 0 0 2px #d8a83a99;font-size:28px;aspect-ratio:1}
 @media (max-height:460px){.stk3{font-size:22px}.stkgrid{gap:5px;margin:4px 0}}
+.avx.fxp{animation:fxpulse 2.4s ease-in-out infinite}@keyframes fxpulse{0%,100%{filter:drop-shadow(0 0 1px var(--fc))}50%{filter:drop-shadow(0 0 7px var(--fc)) drop-shadow(0 0 2px var(--fc))}}
+.avfx{position:absolute;left:-19.5%;top:-19.5%;width:139%;height:139%;pointer-events:none}
+.avfx .eye{position:absolute;width:7%;height:3.4%;margin:-1.7% 0 0 -3.5%;border-radius:50%;background:radial-gradient(#fff 0 18%,#ffd0a0 22%,#ff2a1a 55%,transparent 75%);box-shadow:0 0 6px 2px #ff2a1a,0 0 12px 4px #ff2a1a88;animation:eyeburn 1.8s ease-in-out infinite}
+@keyframes eyeburn{0%,100%{opacity:.55;transform:scale(.8)}45%{opacity:1;transform:scale(1.25)}52%{opacity:.2}58%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.avx.fxp,.avfx .eye{animation:none}}
 </style>
 </head>
 <body>
@@ -1742,9 +1747,15 @@ if (isPremiumAv(i)) return IMG["ga" + (i - GA)];
 if (!avUrlCache.has(i)) avUrlCache.set(i, avatarCanvas(i).toDataURL());
 return avUrlCache.get(i);
 }
+// scary frame animations: skull eyes burn red, the rest pulse / flicker in their own colour (positions are % of the frame art)
+const FRAME_FX = {
+fs_0: {c: "#ff2a2a", eyes: [[50.8, 10.8], [52, 91.5]]},
+fs_1: {c: "#ff5a1a", eyes: [[8.9, 12], [90, 12], [49, 9], [9, 83.5], [89, 83.5], [49, 92]]},
+fs_2: {c: "#b05aff"}, fs_3: {c: "#ff2ad8"}, fs_4: {c: "#ff7a1a", flick: 1}, fs_5: {c: "#9fe8ff"}, fs_6: {c: "#7aff2a"}, fs_7: {c: "#ff1a3a"},
+};
 function avHTML(i, frame = 0, size = 44) {
 const f = FRAMES[frame | 0] || FRAMES[0];
-if (f.prem || f.art) return `<span class="avx avp" style="width:${size}px;height:${size}px;--fg:${f.glow}"><img src="${avatarURL(i)}" alt=""><img class="avfr" src="${frameArtURL(f)}" alt=""></span>`;
+if (f.prem || f.art) { const fx = FRAME_FX[f.id]; return `<span class="avx avp${fx ? " fxp" : ""}" style="width:${size}px;height:${size}px;--fg:${f.glow}${fx ? `;--fc:${fx.c}` : ""}"><img src="${avatarURL(i)}" alt=""><img class="avfr" src="${frameArtURL(f)}" alt="">${fx && fx.eyes ? `<span class="avfx">${fx.eyes.map(([x, y], k) => `<i class="eye" style="left:${x}%;top:${y}%;animation-delay:${(k * 0.37).toFixed(2)}s"></i>`).join("")}</span>` : ""}</span>`; }
 const border = f.c ? `border:3px solid ${f.c[1]};box-shadow:0 0 0 2px ${f.c[2]}${f.glow ? `,0 0 12px ${f.glow}` : ""}` : "border:2px solid #0006";
 return `<span class="avx" style="width:${size}px;height:${size}px;${border}"><img src="${avatarURL(i)}" alt=""></span>`;
 }
