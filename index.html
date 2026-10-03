@@ -3457,7 +3457,7 @@ for (const pw of [0.3, 0.45, 0.65]) for (const [spx, spy] of AI_SPIN_SETS[T_]) {
 return best;
 }
 function aiThink() {
-const G = game, cue = G.balls[0];
+const G = game, cue = G.balls[0]; let carry = null;
 if (G.ballInHand) {
 let best = null, pos = null;
 if (G.isBreak) pos = {x: FW * 0.25, y: FH / 2 + rnd(-60, 60)};
@@ -3467,7 +3467,7 @@ if (G.balls.some(b => !b.out && b.n !== 0 && (b.x - x) ** 2 + (b.y - y) ** 2 < (
 const s = bestShotFrom(x, y);
 if (s && (!best || s.score > best.score)) { best = s; pos = {x, y}; }
 }
-if (pos) { const sp = freeSpot(pos.x, pos.y); cue.x = sp.x; cue.y = sp.y; }
+if (pos) { const sp = freeSpot(pos.x, pos.y); if (!G.demo && !G.isBreak && Math.hypot(sp.x - cue.x, sp.y - cue.y) > 24) { carry = {x0: cue.x, y0: cue.y, x1: sp.x, y1: sp.y, t: 0, dur: Math.round(46 + Math.hypot(sp.x - cue.x, sp.y - cue.y) / 7), w: rnd(8, 22) * (Math.random() < 0.5 ? -1 : 1)}; } cue.x = sp.x; cue.y = sp.y; }
 }
 let plan;
 if (G.isBreak) {
@@ -3489,9 +3489,18 @@ let from = G.angle, to = plan.angle;
 while (to - from > Math.PI) to -= 2 * Math.PI;
 while (to - from < -Math.PI) to += 2 * Math.PI;
 G.aiTask = {from, to, power: plan.power, sx: plan.spx || 0, sy: plan.spy || 0, t: 0, dur: 40 + Math.abs(to - from) * 25};
+if (carry) { G.aiTask.carry = carry; cue.x = carry.x0; cue.y = carry.y0; }   // the plan was made for the final spot; the ball first travels there in the hand
 }
 function aiUpdate() {
-const G = game, a = G.aiTask; a.t++;
+const G = game, a = G.aiTask;
+if (a.carry) {   // ball in hand: the opponent lifts the cue ball and carries it, with a slight wobble, to where it wants to shoot from
+const c = a.carry, cue = G.balls[0]; c.t++;
+const k = Math.min(1, c.t / c.dur), e = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2, w = Math.sin(Math.PI * e) * c.w, dx = c.x1 - c.x0, dy = c.y1 - c.y0, L = Math.hypot(dx, dy) || 1;
+cue.x = c.x0 + dx * e - dy / L * w; cue.y = c.y0 + dy * e + dx / L * w;
+if (k >= 1) { cue.x = c.x1; cue.y = c.y1; a.carry = null; }
+return;
+}
+a.t++;
 const k = Math.min(1, a.t / a.dur), e = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
 G.angle = a.from + (a.to - a.from) * e;
 if (a.t > a.dur + 8) G.aiPull = Math.min(a.power, (a.t - a.dur - 8) / 22 * a.power);
@@ -6306,6 +6315,10 @@ else if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; }
 }
 }
 } else if (!G.over) {
+if (G.cueTo) {   // the other player is carrying the cue ball: glide to the last reported spot instead of jumping 11 times a second
+if (G.ballInHand && !G.moving && (curP().remote || (G.net && G.net.spec))) { const c = G.balls[0]; c.x += (G.cueTo.x - c.x) * 0.3; c.y += (G.cueTo.y - c.y) * 0.3; if (Math.hypot(G.cueTo.x - c.x, G.cueTo.y - c.y) < 0.4) { c.x = G.cueTo.x; c.y = G.cueTo.y; } }
+else G.cueTo = null;
+}
 if (G.net && G.cur === 0 && performance.now() - G.net.lastAim > 90) {
 const c = G.balls[0], key = `${G.angle.toFixed(3)}|${c.x | 0}|${c.y | 0}|${input.power.toFixed(2)}`;
 if (key !== G.net.sentA) { G.net.sentA = key; G.net.lastAim = performance.now(); Net.send({t: "aim", a: G.angle, x: c.x, y: c.y, p: input.power}); }
@@ -6376,11 +6389,11 @@ ctx.restore();
 const cue = G.balls[0];
 const human = !curP().isAI && !curP().remote && !G.demo && G.type !== "watch";
 if (!G.moving && !G.over && !cue.out && !hideHud) {
-if (G.ballInHand && human && !G.strike) drawHand(FX + cue.x, FY + cue.y, input.drag === "place");
+if (G.ballInHand && !G.strike && !G.demo && (human || curP().remote || (G.net && G.net.spec) || (G.aiTask && G.aiTask.carry))) drawHand(FX + cue.x, FY + cue.y, human ? input.drag === "place" : (G.aiTask && G.aiTask.carry) ? true : performance.now() < (G.handUntil || 0));
 const noGuide = opt("guideOff") && (G.type === "practice" || G.type === "pvp");
-if (!noGuide && ((human && !G.strike) || (G.aiTask && !G.demo) || (curP().remote && !G.strike))) drawGuide(G);
+if (!noGuide && ((human && !G.strike) || (G.aiTask && !G.demo && !G.aiTask.carry) || (curP().remote && !G.strike && !(G.ballInHand && performance.now() < (G.handUntil || 0))))) drawGuide(G);
 const pull = G.strike ? G.strike.power * Math.max(0, 1 - G.strike.t / 4) : human ? input.power : G.aiPull;
-drawCue(G, pull);
+if (!(G.aiTask && G.aiTask.carry) && !(!human && G.ballInHand && performance.now() < (G.handUntil || 0))) drawCue(G, pull);   // no cue while the ball is being carried
 }
 ctx.restore();
 if (!G.demo && !hideHud) {
@@ -7783,10 +7796,10 @@ return {api, ensure, sync, checkout, connect, send, setAcct, on: (t, f) => { han
 get acct() { return acct; }, get online() { return online; }, get base() { return BASE; }, inbox: [], me: null, friends: []};
 })();
 Net.on("aim", m => {
-const G = game; if (G && G.net && G.net.spec) { if (G.cur === m.from && !G.moving) { G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); if (G.ballInHand) { G.balls[0].x = clamp(+m.x, R, FW - R); G.balls[0].y = clamp(+m.y, R, FH - R); } } return; }
+const G = game; if (G && G.net && G.net.spec) { if (G.cur === m.from && !G.moving) { G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; } } return; }
 if (!G || !G.net || G.cur !== 1 || G.moving) return;
 G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1);
-if (G.ballInHand) { G.balls[0].x = clamp(+m.x, R, FW - R); G.balls[0].y = clamp(+m.y, R, FH - R); }
+if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; }
 });
 Net.on("shot", m => {
 const G = game; if (G && G.net && G.net.spec) { if (G.moving || G.strike) return; G.cur = m.from === 1 ? 1 : 0; G.angle = +m.a || G.angle; requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0}); return; }
