@@ -1606,7 +1606,7 @@ adfree:     {vip: 325, usd: 4.99, once: true},
 starter:    {cash: 50, coins: 100000, gems: 280, vip: 200, usd: 2.99},
 };
 for (const L of [["cash", "cash"], ["gold", "goldShots"], ["scr", "scratchTries"], ["coin", "coins"], ["box", "rbox"]]) [4.99, 9.99, 14.99].forEach((usd, i) => { const v = {cash: [100, 240, 360], gold: [6, 10, 15], scr: [5, 12, 20], coin: [60000, 140000, 300000], box: [4, 8, 20]}[L[0]][i]; SKUS[`loop_${L[0]}_${i + 1}`] = L[1] === "cash" || L[1] === "coins" ? {[L[1]]: v, vip: Math.round(usd * 65), usd} : {items: {[L[1]]: v}, vip: Math.round(usd * 65), usd}; });
-const REFERRAL = {invitee: {cash: 10, coins: 5000}, inviter: {cash: 25, coins: 15000}};
+const REFERRAL = {invitee: {cash: 5, coins: 5000}, inviter: {cash: 10, coins: 15000}};
 const STAT_NAMES = ["Kuch", "Nishon", "Aylanish", "Vaqt"];
 const AVATARS = ["😎", "🦁", "🐯", "🦅", "🐺", "🐉", "🧔", "👩", "🤠", "👑", "🦊", "🐼", "🥷", "👨‍🚀", "🧕", "🤖"];
 const AV_N = 100;
@@ -3409,8 +3409,8 @@ const LUCKY_BASE = [
 {r: 146, t: "coins", v: 500,  color: "#dfe6f5", label: "500"},
 ];
 const GOLDEN_RINGS = [
-{r: 18,  t: "cash",  v: 100,   color: "#ffd34d", label: "💵 100"},
-{r: 52,  t: "cash",  v: 60,    color: "#ff4b3e", label: "💵 60"},
+{r: 18,  t: "cash",  v: 30,    color: "#ffd34d", label: "💵 30"},
+{r: 52,  t: "cash",  v: 12,    color: "#ff4b3e", label: "💵 12"},
 {r: 96,  t: "coins", v: 75000, color: "#3b8cff", label: "75k"},
 {r: 146, t: "coins", v: 50000, color: "#dfe6f5", label: "50k"},
 ];
@@ -7505,14 +7505,16 @@ if (Y8.sdk && Y8.adsReady && Y8.matches % 2 === 0 && Date.now() - Y8.lastBreak >
 Y8.lastBreak = Date.now(); y8Ad("next", "between-matches").then(then);
 } else then();
 }
+const CASH_AD_DAILY = 2;   // 💵 is premium money (1 💵 ≈ $0.05-0.10): at most 2 per day from ads
 function y8Rewarded(name, give) {
 const d = today();
-if (profile.adfree) { give(); save(); updateNav(); Snd.coin(6); return; }
+if (name === "bank-cash") { if (profile.adCashDay !== d) { profile.adCashDay = d; profile.adCash = 0; } if (profile.adCash >= CASH_AD_DAILY) return toast("💵", T("Bugungi reklamalar tugadi"), T("Ertaga qayting")); }
+if (profile.adfree) { if (name === "bank-cash") profile.adCash = (profile.adCash | 0) + 1; give(); save(); updateNav(); Snd.coin(6); return; }
 if (profile.adDay !== d) { profile.adDay = d; profile.adCount = 0; }
 if (profile.adCount >= 10) return toast("📺", T("Bugungi reklamalar tugadi"), T("Ertaga qayting"));
 y8Ad("reward", name).then(ok => {
 if (!ok) return toast("📺", T("Reklama oxirigacha ko'rilmadi"), "");
-profile.adCount++; give(); save(); updateNav(); Snd.coin(6);
+profile.adCount++; if (name === "bank-cash") profile.adCash = (profile.adCash | 0) + 1; give(); save(); updateNav(); Snd.coin(6);
 });
 }
 function updateY8Ui() {
@@ -8179,7 +8181,7 @@ const card = (cls, act, art, title, sub, btn, btnCls, badge) => `<div class="mgc
 box.innerHTML = `<div class="mggrid">
 ${card("mg-teal", "wheel", "mg_wheel", T("Aylantirib yuting"), sub("wheel"), btn("wheel"), hasTry("wheel") ? "" : "paid", freeReady("wheel") ? 1 : "")}
 ${card("mg-gold", "lucky", "mg_dart", T("Omadli zarba"), sub("lucky"), btn("lucky"), hasTry("lucky") ? "" : "paid", freeReady("lucky") ? 1 : "")}
-${card("mg-parch", "golden", "mg_gold", T("Oltin zarba"), `${T("Katta sovrinlar")}: 💵 100 · 🪙 75k${profile.goldShots ? ` · ${T("urinish")}: ${profile.goldShots}` : ""}`, profile.goldShots ? T("O'ynash") : "💎 25 / $1.99", profile.goldShots ? "" : "paid")}
+${card("mg-parch", "golden", "mg_gold", T("Oltin zarba"), `${T("Katta sovrinlar")}: 💵 30 · 🪙 75k${profile.goldShots ? ` · ${T("urinish")}: ${profile.goldShots}` : ""}`, profile.goldShots ? T("O'ynash") : "💎 25 / $1.99", profile.goldShots ? "" : "paid")}
 ${card("mg-red", "scratch", "mg_scr", T("Qirib yuting"), sub("scratch"), btn("scratch"), hasTry("scratch") ? "" : "paid", freeReady("scratch") ? 1 : "")}
 ${card("mg-felt", "boxes", "mg_box", T("Syurpriz qutilar"), `${T("Afsonaviy kiy bo'laklari")}${profile.sboxes ? ` · ${T("qutilar")}: ${profile.sboxes}` : ""}`, profile.sboxes ? T("Ochish") : T("Pullik") + " · $0.99", profile.sboxes ? "" : "paid")}
 </div>`;
@@ -8188,7 +8190,7 @@ box.querySelectorAll(".mgc").forEach(el => el.onclick = () => ({lucky: () => sta
 function goldenShot() {
 if (!profile.goldShots) {
 if (mode !== "menu") toMenu("mini");
-return openModal({icon: "img:pile", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 100 · 💵 60 · 🪙 75 000 · 🪙 50 000</div>`, scene: "gold",
+return openModal({icon: "img:pile", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 30 · 💵 12 · 🪙 75 000 · 🪙 50 000</div>`, scene: "gold",
 buttons: [...(ON_PORTAL ? [] : [{label: "💳 3 × $1.99", cls: "green", fn: () => Net.checkout("golden_3")}]),
 {label: "💎 350", cls: "purple", fn: () => { if ((profile.gems || 0) < 350) return gemShort(); profile.gems -= 350; profile.goldShots = 3; save(); updateNav(); goldenShot(); }},
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
