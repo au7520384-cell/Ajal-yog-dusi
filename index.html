@@ -2558,7 +2558,7 @@ bank = buildBank();
 {   // swap the synthesised ball-ball clacks for the real recordings once they are decoded
 const dec = u => fetch(u).then(r => r.arrayBuffer()).then(buf => new Promise((res, rej) => ac.decodeAudioData(buf, res, rej)));
 for (const [k, u] of Object.entries(REAL_UI)) dec(u).then(b => { ui[k] = b; }).catch(() => {});
-Promise.all(REAL_CLACK.map(u => dec(u))).then(a => { if (a.length) bank.clacks = a; }).catch(() => {});
+Promise.all(REAL_CLACK.map(u => dec(u))).then(a => { if (a.length) bank.rec = a; }).catch(() => {});
 }
 if (ac.state !== "running") ac.resume();
 }
@@ -2588,11 +2588,13 @@ const b = ac.createBuffer(1, y.length, SR), d = b.getChannelData(0), k = 0.95 / 
 for (let i = 0; i < y.length; i++) d[i] = y[i] * k * (i > y.length - fade ? (y.length - i) / fade : 1);
 return b;
 };
-const clacks = [];
-// ball-ball: two phenolic balls, contact ~0.15 ms, a cluster of ring-down modes (Q 20-35 -> 3-5 ms decay), a short "table body" knock under it
-// and a faint second micro-click (the balls separate and re-touch after 3-7 ms)
-for (let v = 0; v < 16; v++) {
-const x = exc(0.1, R(0.00011, 0.00021)), parts = [], sc = R(0.94, 1.07);
+const clackT = [];
+// ball-ball: two phenolic balls; Hertz contact time falls with impact speed (soft touch ~0.35 ms and dull, hard break ~0.11 ms and bright) -> 6 speed tiers x 5 variants,
+// each a cluster of ring-down modes (Q 20-35 -> 3-5 ms decay), a short "table body" knock under it and a faint second micro-click (the balls separate and re-touch after 3-7 ms)
+for (const kk of [0.03, 0.1, 0.22, 0.4, 0.65, 1]) {
+const tier = [], slow = 1 + 2.2 * Math.pow(1 - kk, 2);
+for (let v = 0; v < 5; v++) {
+const x = exc(0.1, R(0.00011, 0.00018) * slow), parts = [], sc = R(0.94, 1.07);
 for (const [f0, f1, q0, q1, a] of [[1900, 2000, 24, 34, 1], [2200, 2320, 26, 36, 0.9], [2450, 2620, 26, 36, 0.8], [2800, 2980, 20, 28, 0.5], [3500, 4100, 10, 16, 3.2], [4200, 4800, 6, 8, 2.4], [5600, 6600, 5, 7, 1.4], [7000, 8000, 3, 3, 0.5]]) {
 const Q = R(q0, q1); parts.push(bp(x, R(f0, f1) * sc, Q, a * Q / 10));
 }
@@ -2600,20 +2602,34 @@ parts.push(bp(x, R(1250, 1500), 4, 0.25));
 parts.push(bp(exc(0.1, R(0.0006, 0.0012)), R(300, 460), 4, 0.012));   // the felt-covered slate answering underneath
 const base = mix(...parts), d = Math.round(R(0.0035, 0.007) * SR), y = new Float32Array(base.length);
 for (let i = 0; i < y.length; i++) y[i] = base[i] + (i >= d ? base[i - d] * 0.2 : 0);
-clacks.push(toBuf(y));
+tier.push(toBuf(y));
 }
-const cues = [];
-// cue strike: a leather tip on phenolic: 1 ms "tock" (mid resonances), a sharp tip "tick", the cue shaft ringing at ~270 Hz (~20 ms) and a puff of chalk noise
-for (let v = 0; v < 6; v++) {
-const x = exc(0.09, R(0.0007, 0.001)), n = Math.ceil(0.09 * SR), ch = new Float32Array(n);
+clackT.push(tier);
+}
+const clacks = clackT.flat();
+const cueT = [];
+// cue strike: a leather tip on phenolic: 1 ms "tock" (mid resonances), a sharp tip "tick", the cue shaft ringing at ~270 Hz (~20 ms) and a puff of chalk noise;
+// a harder stroke squashes the tip less per unit force: shorter contact, more tick and chalk
+for (const pp of [0.1, 0.4, 0.7, 1]) {
+const tier = [], slow = 1 + 0.9 * (1 - pp);
+for (let v = 0; v < 3; v++) {
+const x = exc(0.09, R(0.0007, 0.001) * slow), n = Math.ceil(0.09 * SR), ch = new Float32Array(n);
 for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * Math.exp(-i / (0.0025 * SR));
-cues.push(toBuf(mix(bp(x, R(900, 1000), 5, 0.8), bp(x, R(1150, 1250), 6, 0.6), bp(x, R(2500, 2700), 8, 1.3), bp(x, R(650, 720), 3, 0.35),
-bp(exc(0.09, 0.0003), R(3800, 4600), 6, 0.3), bp(exc(0.09, R(0.0010, 0.0016)), R(240, 300), 18, 0.035), bp(ch, R(5200, 6400), 2, 0.02))));
+tier.push(toBuf(mix(bp(x, R(900, 1000), 5, 0.8), bp(x, R(1150, 1250), 6, 0.6), bp(x, R(2500, 2700), 8, 1.3 * (0.5 + 0.5 * pp)), bp(x, R(650, 720), 3, 0.35),
+bp(exc(0.09, 0.0003), R(3800, 4600), 6, 0.3 * pp), bp(exc(0.09, R(0.0010, 0.0016)), R(240, 300), 18, 0.035), bp(ch, R(5200, 6400), 2, 0.02 * (0.3 + pp)))));
 }
+cueT.push(tier);
+}
+const cues = cueT.flat();
 const rx = exc(0.14, 0.004);
-const rails = [];
-// cushion: rubber + wood rail, a dull mid "thud" (not a bass boom), the rubber tick on top and the ball's own click
-for (let v = 0; v < 4; v++) { const q = exc(0.14, R(0.003, 0.005)); rails.push(toBuf(mix(lp(q, R(850, 1000), 0.3), bp(q, R(170, 200), 3, 0.5), bp(q, R(380, 460), 4, 0.9), bp(exc(0.14, 0.00015), R(2700, 3000), 12, 0.3), bp(exc(0.14, 0.0002), R(1600, 1900), 8, 0.2)))); }
+const railT = [];
+// cushion: rubber + wood rail, a dull mid "thud" (not a bass boom), the rubber tick on top and the ball's own click; a faster ball digs deeper into the rubber (longer, lower thud, more tick)
+for (const kk of [0.1, 0.35, 0.65, 1]) {
+const tier = [];
+for (let v = 0; v < 3; v++) { const q = exc(0.14, R(0.003, 0.005) * (0.8 + 0.5 * kk)); tier.push(toBuf(mix(lp(q, R(850, 1000), 0.3), bp(q, R(170, 200), 3, 0.25 + 0.4 * kk), bp(q, R(380, 460), 4, 0.9), bp(exc(0.14, 0.00015), R(2700, 3000), 12, 0.12 + 0.25 * kk), bp(exc(0.14, 0.0002), R(1600, 1900), 8, 0.2)))); }
+railT.push(tier);
+}
+const rails = railT.flat();
 const rail = rails[0];
 const pn = Math.ceil(0.5 * SR), th = exc(0.5, 0.006);
 const pk = mix(lp(th, 500, 1.2), bp(th, 105, 3, 1.5), bp(th, 250, 4, 0.8));
@@ -2621,7 +2637,7 @@ for (const [t0, a] of [[0.09, 0.55], [0.16, 0.4], [0.22, 0.3], [0.27, 0.2], [0.3
 const e = exc(0.5 - t0, R(0.0002, 0.0004)), r = mix(bp(e, R(2200, 2900), 10, a), bp(e, 260, 3, a * 0.8)), o = Math.round(t0 * SR);
 for (let i = 0; i < r.length && o + i < pn; i++) pk[o + i] += r[i];
 }
-return {clacks, cues, rail, rails, pocket: toBuf(pk)};
+return {clacks, clackT, cues, cueT, rail, rails, railT, pocket: toBuf(pk), rec: []};
 }
 // 3-D placement: the listener sits at the near end of the table; x gives the stereo position, depth (far = top of the screen) gives level, brightness and reverb
 function spat(x, y) {
@@ -2679,16 +2695,16 @@ clack(v, x, y) {
 if (!ok()) return; const t = now();
 if (t - lastClack < 0.008) return; lastClack = t;
 const k = Math.min(1, v / 13); if (k < 0.015) return;
-let ci = Math.floor(Math.random() * bank.clacks.length); if (ci === lastCi) ci = (ci + 1) % bank.clacks.length; lastCi = ci;
-const R1 = Math.random(), R2 = Math.random();   // every contact differs: its own pitch, brightness and loudness
-play(bank.clacks[ci], (0.09 + 0.91 * Math.pow(k, 1.1)) * (0.75 + 0.5 * R1), 0.8 + 0.3 * k + 0.32 * R2, 2600 + 9500 * k * k + 2500 * R1, spat(x, y));
+const T6 = bank.clackT, ti = Math.min(T6.length - 1, Math.floor(Math.sqrt(k) * T6.length)), R1 = Math.random(), vol = 0.09 + 0.91 * Math.pow(k, 1.1), sp = spat(x, y);
+play(pick(T6[ti]), vol * (0.8 + 0.4 * R1), 0.97 + 0.06 * Math.random(), 0, sp);   // physically modelled contact, tier chosen by impact speed
+if (bank.rec.length && k > 0.2) { let ci = Math.floor(Math.random() * bank.rec.length); if (ci === lastCi) ci = (ci + 1) % bank.rec.length; lastCi = ci; play(bank.rec[ci], 0.3 * vol, 0.9 + 0.2 * Math.random(), 0, sp); }   // a real recorded hit layered under it for body
 },
 cue(p, x, y) {
 if (!ok()) return; const sp = spat(x, y);
-play(pick(bank.cues), 0.35 + 0.65 * p, 0.96 + 0.06 * p + Math.random() * 0.04, 4500 + 9500 * p, sp);
+play(pick(bank.cueT[Math.min(3, Math.floor(p * 4))]), 0.3 + 0.7 * p, 0.97 + 0.06 * Math.random(), 0, sp);
 if (p > 0.55) tone(now(), 130, 0.09, 0.07 * p, "sine", 70);   // hard strokes add a low thump
 },
-rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 16); if (k < 0.04) return; play(pick(bank.rails), 0.9 * Math.pow(k, 0.8), 0.94 + Math.random() * 0.12, 900 + 4000 * k, spat(x, y)); },
+rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 16); if (k < 0.04) return; play(pick(bank.railT[Math.min(3, Math.floor(Math.sqrt(k) * 4))]), 0.9 * Math.pow(k, 0.8), 0.96 + Math.random() * 0.08, 0, spat(x, y)); },
 pocket(x, y) { if (!ok()) return; const sp = spat(x, y); play(bank.pocket, 0.9, 0.96 + Math.random() * 0.08, 0, sp); const t = now(); noise(t + 0.1, 0.55, 0.05, "lowpass", 480, 0.7, 140); },   // the ball rolls down the leather pocket net
 tray() { if (!ok()) return; play(pick(bank.clacks), 0.28, 0.72, 2200); const t = now(); if (!ui.roll) noise(t - 0.01, 0.45, 0.035, "lowpass", 700, 0.7, 220); },
 roll(sum) {
