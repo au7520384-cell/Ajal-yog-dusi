@@ -2442,8 +2442,8 @@ const MS_PER_U = 0.132;
 // Break speed: 8.6 m/s (stat 0) to 12.0 m/s (stat 10) at full power; only a top cue (stat 8+) at a perfect full-power hit can crit past the real-world record
 const BRK_WORLD = 13.4;
 const BRK_TIERS = [
-  {ms: 9.0,  name: "Professional break", coins: 5000, cash: 0, gems: 0},
-  {ms: 10.5, name: "Elite break", coins: 25000, cash: 2, gems: 20},
+  {ms: 9.0,  name: "Professional break", coins: 0, cash: 0, gems: 0},
+  {ms: 10.5, name: "Elite break", coins: 0, cash: 0, gems: 0},
   {ms: 12.0, name: "Champion break", coins: 100000, cash: 5, gems: 60},
   {ms: BRK_WORLD, name: "World record", coins: 1000000, cash: 100, gems: 1000, world: true}];
 function breakMS(cd, power, isAI) {
@@ -2461,13 +2461,13 @@ function breakResult(ms) {
   BRK_TIERS.forEach((t, i) => {
     if (ms < t.ms || got[i]) return;
     got[i] = today(); P.coins += t.coins; P.cash += t.cash; P.gems = (P.gems || 0) + t.gems;
-    setTimeout(() => { toast(t.world ? "🌍" : "💥", t.name, `${kmh(t.ms)} km/h · +${fmtS(t.coins)} 🪙${t.cash ? " +" + t.cash + " 💵" : ""}${t.gems ? " +" + t.gems + " 💎" : ""}`); if (t.world) { burst(); Snd.win(); } else Snd.coin(4); }, 1400 + i * 300);
+    setTimeout(() => { toast(t.world ? "🌍" : "💥", t.name, `${kmh(t.ms)} km/h${t.coins ? " · +" + fmtS(t.coins) + " 🪙" : ""}${t.cash ? " +" + t.cash + " 💵" : ""}${t.gems ? " +" + t.gems + " 💎" : ""}`); if (t.world) { burst(); Snd.win(); } else Snd.coin(4); }, 1400 + i * 300);
   });
   save(); updateNav();
 }
 function breakModal() {
   const best = +profile.bestBreak || 0, got = profile.brkTier || {};
-  const rows = BRK_TIERS.map((t, i) => `<div class="brkrow${got[i] ? " on" : ""}"><b>${t.world ? "🌍" : "💥"} ${T(t.name)}</b><span>${kmh(t.ms)} km/h · ${t.ms.toFixed(1)} m/s</span><em>${got[i] ? "✓" : `+${fmtS(t.coins)} 🪙${t.cash ? " +" + t.cash + " 💵" : ""}${t.gems ? " +" + t.gems + " 💎" : ""}`}</em></div>`).join("");
+  const rows = BRK_TIERS.map((t, i) => `<div class="brkrow${got[i] ? " on" : ""}"><b>${t.world ? "🌍" : "💥"} ${T(t.name)}</b><span>${kmh(t.ms)} km/h · ${t.ms.toFixed(1)} m/s</span><em>${got[i] ? "✓" : !t.coins ? "" : `+${fmtS(t.coins)} 🪙${t.cash ? " +" + t.cash + " 💵" : ""}${t.gems ? " +" + t.gems + " 💎" : ""}`}</em></div>`).join("");
   openModal({icon: "", title: T("Break rekordlari"), text: "", extra: `<div class="brkbox"><div class="brkbest"><small>${T("Eng tez break")}</small><b>${best ? kmh(best) + " km/h" : "—"}</b><span>${best ? best.toFixed(2) + " m/s" : ""}</span></div>${rows}<p class="muted">${T("Eng kuchli kiy va to'liq kuch bilan juda kam hollarda dunyo rekordidan oshib ketadi.")}</p></div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
 const cueSpin = c => 0.35 + c.st[2] * 0.065;
