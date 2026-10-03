@@ -5530,6 +5530,14 @@ ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); 
 }
 ctx.restore();
 }
+function drawMyBalls(G) {   // on your turn a thin white ring marks every ball of your group still on the table (the 8 once the group is cleared)
+const g = G.groups[0]; if (!g || G.type === "practice" || G.type === "lucky") return;
+const mine = remaining(g) === 0 ? G.balls.filter(b => b.n === 8 && !b.out) : G.balls.filter(b => !b.out && b.n && b.n !== 8 && groupOf(b.n) === g);
+const pul = 0.75 + Math.sin(performance.now() / 380) * 0.25;
+ctx.save(); ctx.translate(FX, FY); ctx.lineWidth = 2.2; ctx.shadowColor = "rgba(0,0,0,.55)"; ctx.shadowBlur = 3;
+for (const b of mine) { if ((b.z || 0) > 1) continue; ctx.strokeStyle = `rgba(255,255,255,${(0.7 * pul + 0.2).toFixed(2)})`; ctx.beginPath(); ctx.arc(b.x, b.y, R + 3.6, 0, 7); ctx.stroke(); }
+ctx.restore();
+}
 function drawGuide(G) {
 const cue = G.balls[0], a = castAim(G.balls, cue.x, cue.y, G.angle);
 const aim = curP().isAI ? 4 : cueAim(cueDef(curP().cue));
@@ -5542,8 +5550,11 @@ if (a.ball) {
 let bad = false;
 if (G.type !== "practice" && G.type !== "lucky") bad = !legalTargets(G.cur).includes(a.ball);
 if (bad) {
-ctx.strokeStyle = "#ff4d4d"; ctx.lineWidth = 3;
-ctx.beginPath(); ctx.moveTo(a.gx - 6, a.gy - 6); ctx.lineTo(a.gx + 6, a.gy + 6); ctx.moveTo(a.gx + 6, a.gy - 6); ctx.lineTo(a.gx - 6, a.gy + 6); ctx.stroke();
+{   // "not your ball": a red no-entry sign at the contact point, like the reference
+const nx = a.ball.x - a.gx, ny = a.ball.y - a.gy, nl = Math.hypot(nx, ny) || 1, sx = a.gx + nx / nl * R * 0.4, sy = a.gy + ny / nl * R * 0.4;
+ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 4; ctx.lineWidth = 3.6; ctx.strokeStyle = "#ff1f1f"; ctx.beginPath(); ctx.arc(sx, sy, 10, 0, 7); ctx.stroke();
+ctx.beginPath(); ctx.moveTo(sx - 7, sy + 7); ctx.lineTo(sx + 7, sy - 7); ctx.stroke(); ctx.shadowBlur = 0;
+}
 } else {
 const L = (30 + aim * 14) * Math.max(0.25, a.dot);
 ctx.beginPath(); ctx.moveTo(a.ball.x, a.ball.y); ctx.lineTo(a.ball.x + a.nx * L, a.ball.y + a.ny * L); ctx.stroke();
@@ -6414,6 +6425,7 @@ const human = !curP().isAI && !curP().remote && !G.demo && G.type !== "watch";
 if (!G.moving && !G.over && !cue.out && !hideHud) {
 if (G.ballInHand && !G.strike && !G.demo && (human || curP().remote || (G.net && G.net.spec) || (G.aiTask && G.aiTask.carry))) drawHand(FX + cue.x, FY + cue.y, human ? input.drag === "place" : (G.aiTask && G.aiTask.carry) ? true : performance.now() < (G.handUntil || 0));
 const noGuide = opt("guideOff") && (G.type === "practice" || G.type === "pvp");
+if (human && !G.strike && !G.ballInHand && !G.over && G.type !== "pvp" && G.type !== "watch") drawMyBalls(G);
 if (!noGuide && ((human && !G.strike) || (G.aiTask && !G.demo && !G.aiTask.carry) || (curP().remote && !G.strike && !(G.ballInHand && performance.now() < (G.handUntil || 0))))) drawGuide(G);
 const pull = G.strike ? G.strike.power * Math.max(0, 1 - G.strike.t / 4) : human ? input.power : G.aiPull;
 if (!(G.aiTask && G.aiTask.carry) && !(!human && G.ballInHand && performance.now() < (G.handUntil || 0))) drawCue(G, pull);   // no cue while the ball is being carried
