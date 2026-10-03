@@ -5343,6 +5343,16 @@ const gl = ctx.createLinearGradient(0, y - R0, 0, y); gl.addColorStop(0, "rgba(2
 ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(x, y, R0 - 4, Math.PI, 0); ctx.fill();
 };
 if (!lucky) {
+if (city.id === "lon" && lonTileOk()) {   // dark rosewood strip under the whole ornament line, so the wood between the segments (around the side pockets) matches the carved bands
+const kk = (RAIL + 8 - 23) / 40, th = 40 * kk, strip = (x, y, w, h) => {
+const gr = ctx.createLinearGradient(0, y - h / 2, 0, y + h / 2); gr.addColorStop(0, "rgba(58,22,4,0)"); gr.addColorStop(0.14, "#3d1604"); gr.addColorStop(0.5, "#5a260a"); gr.addColorStop(0.86, "#3d1604"); gr.addColorStop(1, "rgba(58,22,4,0)");
+ctx.fillStyle = gr; ctx.fillRect(x, y - h / 2, w, h);
+ctx.strokeStyle = "rgba(150,80,30,.22)"; ctx.lineWidth = 0.8; for (let i = 0; i < 7; i++) { const yy = y - h * 0.38 + i * h * 0.126; ctx.beginPath(); ctx.moveTo(x, yy); ctx.bezierCurveTo(x + w * 0.3, yy + 1.5, x + w * 0.7, yy - 1.5, x + w, yy); ctx.stroke(); }
+};
+for (const yy of [my, by]) strip(FX + 30, yy, FW - 60, th);
+ctx.save(); ctx.translate(lx, 0); ctx.rotate(Math.PI / 2); ctx.translate(0, 0); ctx.restore();
+for (const xx of [lx, rx]) { ctx.save(); ctx.translate(xx, FY + 30); ctx.rotate(Math.PI / 2); ctx.translate(0, 0); strip(0, 0, FH - 60, th); ctx.restore(); }
+}
 if (!st.lux) { for (const [a, l] of segH) { bandAlong(a, my, l); bandAlong(a, by, l); } for (const [a, l] of segV) { bandAlong(lx, a, l, true); bandAlong(rx, a, l, true); } }
 const sights = !st.pave && !st.gemrow && !st.elite && !modern, lonArt = city.id === "lon" && lonTileOk();   // the London rail art already carries its own gems
 if (modern) {
