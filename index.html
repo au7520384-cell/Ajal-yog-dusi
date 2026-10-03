@@ -2439,7 +2439,7 @@ const xpNeed = l => 100 + (l - 1) * 80;
 const cueDef = id => CUES.find(c => c.id === id) || CUES[0];
 const cueMax = c => 56 + c.st[0] * 1.2;   // 1 u/frame = 0.132 m/s: 7.4 m/s (stat 0) to 8.9 m/s (stat 10) at full power
 const MS_PER_U = 0.132;
-// Break speed: 8.6 m/s (stat 0) to 12.0 m/s (stat 10) at full power; only a top cue (stat 8+) at a perfect full-power hit can crit past the real-world record
+// Break speed: 8.6 m/s (stat 0) to 11.3 m/s (stat 10) at full power; 12.0 m/s needs a rare crit (stat 8+ cue, perfect full power, ~2-4%); the 13.4 m/s world record needs a stat-10 cue and a ~0.2% crit
 const BRK_WORLD = 13.4;
 const BRK_TIERS = [
   {ms: 9.0,  name: "Professional break", coins: 0, cash: 0, gems: 0},
@@ -2448,9 +2448,9 @@ const BRK_TIERS = [
   {ms: BRK_WORLD, name: "World record", coins: 1000000, cash: 100, gems: 1000, world: true}];
 function breakMS(cd, power, isAI) {
   if (isAI) return 10.2 * power;
-  const st = cd.st[0], top = 8.6 + st * 0.34;
+  const st = cd.st[0], top = 8.6 + st * 0.27;
   let ms = top * power;
-  if (power >= 0.985 && st >= 8) ms *= 1 + 0.17 * Math.pow(Math.random(), 16);
+  if (power >= 0.985 && st >= 8) ms *= 1 + 0.2 * Math.pow(Math.random(), 30);
   return ms;
 }
 const kmh = ms => Math.round(ms * 3.6);
