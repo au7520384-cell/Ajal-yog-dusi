@@ -5420,7 +5420,7 @@ ctx.fillStyle = shade(city.felt[1], -85); ctx.beginPath(); ctx.arc(x, y, r - 1.5
 }
 ctx.save(); ctx.translate(FX, FY);
 const fg = ctx.createRadialGradient(FW / 2, FH / 2, 20, FW / 2, FH / 2, FW * 0.62);
-fg.addColorStop(0, shade(city.felt[0], 2)); fg.addColorStop(0.5, shade(city.felt[0], -20)); fg.addColorStop(1, shade(city.felt[1], -22));
+fg.addColorStop(0, shade(city.felt[0], 0)); fg.addColorStop(0.6, shade(city.felt[0], -7)); fg.addColorStop(1, shade(city.felt[0], -18));   // nearly flat: the light falls evenly over the whole cloth
 ctx.fillStyle = fg; ctx.fillRect(-21, -21, FW + 42, FH + 42);
 if (!feltNoise) {
 feltNoise = document.createElement("canvas"); feltNoise.width = feltNoise.height = 128;
@@ -5471,12 +5471,17 @@ const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
 const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
 const cb = side === "t" || side === "b" ? f0.map(v => v - 16) : f0.map((v, i) => (v - 20) * 0.4 + (f1[i] - 22) * 0.6);
 const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-g.addColorStop(0, cc(2)); g.addColorStop(0.5, cc(-8)); g.addColorStop(1, cc(-22));   // no visible seam: the cushion starts exactly in the cloth's own colour and only darkens as the slope turns away
+g.addColorStop(0, cc(14)); g.addColorStop(0.25, cc(8)); g.addColorStop(0.7, cc(-6)); g.addColorStop(1, cc(-20));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
 ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
 if (feltNoise && feltWeave) {   // the cushion rubber is covered in the same worsted cloth as the playing surface: same fibre noise and weave
 ctx.save(); ctx.clip(); ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.globalAlpha = 1; ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.restore();
 }
-ctx.strokeStyle = "rgba(255,255,255,.09)"; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
+{   // soft shadow the raised cushion throws on the cloth (inwards), then the bright nose line
+const inw = {t: [0, 1], b: [0, -1], l: [1, 0], r: [-1, 0]}[side], SH = 15, sg = ctx.createLinearGradient(s[0][0], s[0][1], s[0][0] + inw[0] * SH, s[0][1] + inw[1] * SH);
+sg.addColorStop(0, "rgba(0,0,0,.30)"); sg.addColorStop(0.45, "rgba(0,0,0,.1)"); sg.addColorStop(1, "rgba(0,0,0,0)");
+ctx.fillStyle = sg; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(s[1][0] + inw[0] * SH - Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[1][1] + inw[1] * SH - Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.lineTo(s[0][0] + inw[0] * SH + Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[0][1] + inw[1] * SH + Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.closePath(); ctx.fill();
+}
+ctx.strokeStyle = "rgba(255,255,255,.24)"; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
 ctx.strokeStyle = "rgba(0,0,0,.28)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
 }
 if (st.glow && !lucky) {
@@ -5484,10 +5489,10 @@ ctx.save(); ctx.strokeStyle = st.glow; ctx.shadowColor = st.glow; ctx.shadowBlur
 rr(-C - 3, -C - 3, FW + 2 * C + 6, FH + 2 * C + 6, 10); ctx.stroke(); ctx.restore();
 }
 const lamp = ctx.createRadialGradient(FW / 2, FH / 2, 0, FW / 2, FH / 2, FW * 0.55);
-lamp.addColorStop(0, "rgba(255,255,240,.16)"); lamp.addColorStop(0.6, "rgba(255,255,240,.04)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
+lamp.addColorStop(0, "rgba(255,255,240,.035)"); lamp.addColorStop(0.6, "rgba(255,255,240,.012)"); lamp.addColorStop(1, "rgba(255,255,240,0)");
 ctx.fillStyle = lamp; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
 const vig = ctx.createRadialGradient(FW / 2, FH / 2, FH * 0.45, FW / 2, FH / 2, FW * 0.62);
-vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.22)");
+vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.1)");
 ctx.fillStyle = vig; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
 if (!lucky && city.id === "lon" && cornerOk()) for (const p of POCKETS) {
 if (p.mid) continue;
