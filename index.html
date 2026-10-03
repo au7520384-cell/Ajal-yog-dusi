@@ -291,16 +291,15 @@ clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,
 .lbr .av{width:40px;height:40px;border-radius:9px;display:grid;place-items:center;font-size:24px}
 .minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,320px));gap:16px;justify-content:center;width:100%}
 /* lucky wheel: steampunk scene (reference art), 1364x688 */
-#wheelScr{padding:62px 0 0;justify-content:flex-start;overflow:hidden;background:#0d0f14!important}
+#wheelScr{container-type:size;padding:62px 0 0;justify-content:flex-start;overflow:hidden;background:radial-gradient(ellipse at 50% 55%,#1a140e,#07080c 80%)!important}
 #wheelScr .head{position:absolute;top:66px;left:10px;z-index:6;width:auto;margin:0}
-.lwscene{position:relative;container-type:inline-size;width:min(100vw,calc((100vh - 62px) * 1.9826));aspect-ratio:1364/688;margin:0 auto;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.lwscene{position:relative;container-type:inline-size;width:min(100cqw,calc(100cqh * 1.9826));aspect-ratio:1364/688;margin:0 auto;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
 .lwscene>img{position:absolute;display:block;pointer-events:none;user-select:none}
 .lwbg{left:0;top:0;width:100%;height:100%}
 #wheelScr #wheel{position:absolute;left:38.64%;top:10.61%;width:23.17%;height:auto;aspect-ratio:1;border-radius:50%;background:center/100% 100% no-repeat;transition:transform 5s cubic-bezier(.12,.72,.1,1);border:0;box-shadow:none}
 #wheelScr #wheel .lwb{position:absolute;left:50%;top:50%;width:11%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-family:var(--fh);font-weight:700;font-size:4.2cqw;line-height:1;color:#fff3d0;background:radial-gradient(circle at 35% 30%,#3a5a2a,#0f2a12);border:.25cqw solid #e8c05a;text-shadow:0 .15cqw 0 #000a;box-shadow:0 .2cqw .6cqw #000a}
 .lwhub{left:calc((685 - 64) / 13.64 * 1%);top:calc((231 - 64) / 6.88 * 1%);width:9.38%}
 .lwgem{left:46.92%;top:.29%;width:6.6%}
-.lwfill{position:absolute;left:0;top:62px;width:100%;height:calc(100% - 62px);object-fit:cover;filter:blur(16px) brightness(.5) saturate(.9);transform:scale(1.08);pointer-events:none}
 .lwspin{position:absolute;left:50.2%;top:84.6%;width:20.5%;height:10.6%;transform:translateX(-50%);display:grid;place-items:center;font-family:var(--fh);font-weight:700;font-size:2.7cqw;white-space:nowrap;color:#f6ecc4;letter-spacing:.05cqw;text-shadow:0 .2cqw 0 #0a3a14,0 0 .8cqw #0a3a1488;background:var(--lwbtn) center/100% 100% no-repeat;border:0;border-radius:1.6cqw;filter:drop-shadow(0 .5cqw .8cqw #000b);cursor:pointer;padding:0 0 .3cqw}
 .lwspin:active:not(:disabled){transform:translateX(-50%) translateY(.25cqw) scale(.98);filter:drop-shadow(0 .2cqw .4cqw #000b) brightness(1.1)}
 .lwlamp{position:absolute;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#ffd98a99,#ffb04d33 45%,transparent 70%);mix-blend-mode:screen;pointer-events:none;animation:lwflick 3.4s ease-in-out infinite}
@@ -1435,7 +1434,7 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 <!-- ============ WHEEL ============ -->
 <div class="screen" id="wheelScr">
 <div class="head"><button class="back" data-go="mini">‹</button><h2>Omad g'ildiragi</h2></div>
-<img class="lwfill" id="lwFill" alt=""><div class="lwscene" id="lwScene"><img class="lwbg" id="lwBg" alt=""><i class="lwlamp" style="left:8.9%;top:10%;width:11%"></i><i class="lwlamp b" style="left:93.5%;top:18%;width:12%"></i><i class="lwaura" id="lwAura"></i><div id="wheel"></div><img class="lwhub" id="lwHub" alt=""><img class="lwgem" id="lwGem" alt=""><div class="lwdust" id="lwDust"></div>
+<div class="lwscene" id="lwScene"><img class="lwbg" id="lwBg" alt=""><i class="lwlamp" style="left:8.9%;top:10%;width:11%"></i><i class="lwlamp b" style="left:93.5%;top:18%;width:12%"></i><i class="lwaura" id="lwAura"></i><div id="wheel"></div><img class="lwhub" id="lwHub" alt=""><img class="lwgem" id="lwGem" alt=""><div class="lwdust" id="lwDust"></div>
 <button class="lwspin" id="spinBtn">AYLANTIRISH</button><div class="lwnote" id="wheelNote"></div></div>
 </div>
 <!-- ============ PROFILE ============ -->
@@ -7393,7 +7392,7 @@ $("sgList").querySelectorAll("[data-chalf]").forEach(b => b.onclick = () => lobb
 }
 let wheelRot = 0, wheelBusy = false;
 function buildWheel() {
-$("lwBg").src = IMG.lw_bg; $("lwFill").src = IMG.lw_bg; document.documentElement.style.setProperty("--lwbtn", `url(${IMG.lw_btn})`); $("lwHub").src = IMG.lw_hub; $("lwGem").src = IMG.lw_gem;
+$("lwBg").src = IMG.lw_bg; document.documentElement.style.setProperty("--lwbtn", `url(${IMG.lw_btn})`); $("lwHub").src = IMG.lw_hub; $("lwGem").src = IMG.lw_gem;
 const dust = $("lwDust"); if (!dust.firstChild) for (let i = 0; i < 16; i++) { const d = document.createElement("i"); d.style.cssText = `left:${(Math.random() * 90 + 5).toFixed(1)}%;--dx:${(Math.random() * 8 - 4).toFixed(1)}cqw;animation-duration:${(7 + Math.random() * 7).toFixed(1)}s;animation-delay:${(-Math.random() * 12).toFixed(1)}s`; dust.appendChild(d); }
 $("lwAura").classList.remove("spin");
 const w = $("wheel"); w.style.backgroundImage = `url(${IMG.lw_disc})`;
