@@ -294,6 +294,25 @@ clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,
 .lwhub{left:calc((685 - 64) / 13.64 * 1%);top:calc((231 - 64) / 6.88 * 1%);width:9.38%}
 .lwgem{left:46.92%;top:.29%;width:6.6%}
 .lwspin{position:absolute;left:50.2%;top:85%;width:21%;height:10.6%;transform:translateX(-50%);font-family:var(--fh);font-weight:700;font-size:2.7cqw;white-space:nowrap;color:#fff6d8;letter-spacing:.05cqw;text-shadow:0 .2cqw 0 #0a3a14;background:linear-gradient(#2fae4c,#0f6a26 60%,#0a4a1a);border:.28cqw solid #d9b14a;border-radius:1.4cqw;box-shadow:inset 0 .25cqw .3cqw #ffffff55,0 .5cqw 1.4cqw #000b;cursor:pointer;padding:0}
+.lwlamp{position:absolute;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#ffd98a99,#ffb04d33 45%,transparent 70%);mix-blend-mode:screen;pointer-events:none;animation:lwflick 3.4s ease-in-out infinite}
+.lwlamp.b{animation-duration:4.3s;animation-delay:-1.2s}
+@keyframes lwflick{0%,100%{opacity:.55}20%{opacity:.9}35%{opacity:.6}60%{opacity:1}80%{opacity:.7}}
+.lwaura{position:absolute;left:50.2%;top:33.6%;width:38%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#ffd76a55,#ffb30022 50%,transparent 70%);mix-blend-mode:screen;pointer-events:none;animation:lwaura 3.2s ease-in-out infinite}
+.lwaura.spin{animation:lwauraS .7s ease-in-out infinite}
+@keyframes lwaura{0%,100%{opacity:.45;transform:translate(-50%,-50%) scale(.94)}50%{opacity:.95;transform:translate(-50%,-50%) scale(1.06)}}
+@keyframes lwauraS{0%,100%{opacity:.8;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.14)}}
+#wheelScr #wheel.blur{animation:lwblur 5s ease-out}
+@keyframes lwblur{0%{filter:blur(0)}12%{filter:blur(1.7px) brightness(1.08)}60%{filter:blur(1px)}100%{filter:blur(0)}}
+.lwgem{transform-origin:50% 12%;animation:lwgem 2.6s ease-in-out infinite}
+@keyframes lwgem{0%,100%{filter:brightness(1) drop-shadow(0 0 .2cqw #fff0)}50%{filter:brightness(1.35) saturate(1.2) drop-shadow(0 0 .9cqw #fff9)}}
+#wheel .lwhl{position:absolute;inset:0;border-radius:50%;pointer-events:none;mix-blend-mode:plus-lighter;-webkit-mask:radial-gradient(circle,transparent 17%,#000 18%,#000 84%,transparent 86%);mask:radial-gradient(circle,transparent 17%,#000 18%,#000 84%,transparent 86%);animation:lwhl .55s ease-in-out infinite alternate}
+@keyframes lwhl{from{opacity:.35}to{opacity:1}}
+.lwspin.ready{animation:lwbtn 1.6s ease-in-out infinite}
+@keyframes lwbtn{0%,100%{box-shadow:inset 0 .25cqw .3cqw #ffffff55,0 .5cqw 1.4cqw #000b,0 0 0 #ffe27a00}50%{box-shadow:inset 0 .25cqw .3cqw #ffffff55,0 .5cqw 1.4cqw #000b,0 0 2.4cqw #ffe27acc}}
+.lwdust{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.lwdust i{position:absolute;bottom:-3%;width:.55cqw;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff6d8,#ffd76a99 50%,transparent 70%);opacity:0;animation:lwdust linear infinite}
+@keyframes lwdust{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:.9}100%{transform:translate(var(--dx),-70cqw) scale(1.2);opacity:0}}
+@media (prefers-reduced-motion:reduce){.lwlamp,.lwaura,.lwgem,.lwdust i,.lwspin.ready{animation:none}}
 .lwspin:disabled{filter:grayscale(.7);opacity:.7}
 .lwnote{position:absolute;left:50%;top:96%;transform:translateX(-50%);font-size:1.5cqw;color:#e6dcc0;text-shadow:0 1px 3px #000;white-space:nowrap}
 /* wheel */
@@ -1406,7 +1425,7 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 <!-- ============ WHEEL ============ -->
 <div class="screen" id="wheelScr">
 <div class="head"><button class="back" data-go="mini">‹</button><h2>Omad g'ildiragi</h2></div>
-<div class="lwscene" id="lwScene"><img class="lwbg" id="lwBg" alt=""><div id="wheel"></div><img class="lwhub" id="lwHub" alt=""><img class="lwgem" id="lwGem" alt="">
+<div class="lwscene" id="lwScene"><img class="lwbg" id="lwBg" alt=""><i class="lwlamp" style="left:8.9%;top:10%;width:11%"></i><i class="lwlamp b" style="left:93.5%;top:18%;width:12%"></i><i class="lwaura" id="lwAura"></i><div id="wheel"></div><img class="lwhub" id="lwHub" alt=""><img class="lwgem" id="lwGem" alt=""><div class="lwdust" id="lwDust"></div>
 <button class="lwspin" id="spinBtn">AYLANTIRISH</button><div class="lwnote" id="wheelNote"></div></div>
 </div>
 <!-- ============ PROFILE ============ -->
@@ -7340,9 +7359,12 @@ $("sgList").querySelectorAll("[data-chalf]").forEach(b => b.onclick = () => lobb
 let wheelRot = 0, wheelBusy = false;
 function buildWheel() {
 $("lwBg").src = IMG.lw_bg; $("lwHub").src = IMG.lw_hub; $("lwGem").src = IMG.lw_gem;
+const dust = $("lwDust"); if (!dust.firstChild) for (let i = 0; i < 16; i++) { const d = document.createElement("i"); d.style.cssText = `left:${(Math.random() * 90 + 5).toFixed(1)}%;--dx:${(Math.random() * 8 - 4).toFixed(1)}cqw;animation-duration:${(7 + Math.random() * 7).toFixed(1)}s;animation-delay:${(-Math.random() * 12).toFixed(1)}s`; dust.appendChild(d); }
+$("lwAura").classList.remove("spin");
 const w = $("wheel"); w.style.backgroundImage = `url(${IMG.lw_disc})`;
 w.innerHTML = WHEEL.filter(s => s.t === "cash" && s.v < 5).map(s => { const c = (s.a0 + s.a1) / 2; return `<div class="lwb" style="transform:translate(-50%,-50%) rotate(${c}deg) translateX(${(w.clientWidth || 300) * 0.34}px) rotate(90deg)">${s.v}</div>`; }).join("");
 const free = freeReady("wheel");
+$("spinBtn").classList.toggle("ready", !!(free || profile.wheelTries));
 $("spinBtn").textContent = free || profile.wheelTries ? T("AYLANTIRISH") + " (" + T("Bepul") + ")" : `⏳ ${fmtDur(freeLeftMs("wheel"))}`;
 $("wheelNote").textContent = free ? T("24 soatda 1 ta bepul") : profile.wheelTries ? `${T("Bepul")}: ${profile.wheelTries}` : T("Reklama yoki $0.99 bilan yana aylantiring");
 }
@@ -7357,25 +7379,28 @@ while (idx < WHEEL.length - 1 && r > WHEEL[idx].w) { r -= WHEEL[idx].w; idx++; }
 const S = WHEEL[idx], mid = (S.a0 + S.a1) / 2;
 const targetMod = ((270 - mid + rnd(-(S.a1 - S.a0) * 0.32, (S.a1 - S.a0) * 0.32)) % 360 + 360) % 360;
 wheelRot += 360 * 6 + ((targetMod - wheelRot % 360) + 360) % 360;
-const w = $("wheel"); w.style.transform = `rotate(${wheelRot}deg)`;
+const w = $("wheel"); const old = w.querySelector(".lwhl"); if (old) old.remove();
+w.classList.remove("blur"); void w.offsetWidth; w.classList.add("blur"); $("lwAura").classList.add("spin"); $("spinBtn").classList.remove("ready");
+w.style.transform = `rotate(${wheelRot}deg)`;
 let last = -1;
 const tick = () => {
 const m = getComputedStyle(w).transform;
 if (m && m !== "none") {
 const v = m.split("(")[1].split(",").map(Number), a = Math.atan2(v[1], v[0]) * 180 / Math.PI;
-const s = wheelSlotAt(a); if (s !== last) { last = s; Snd.wheelTick(); }
+const s = wheelSlotAt(a); if (s !== last) { last = s; Snd.wheelTick(); try { $("lwGem").animate([{transform: "rotate(0)"}, {transform: "rotate(-11deg)"}, {transform: "rotate(0)"}], {duration: 110}); } catch (e) {} }
 }
 if (wheelBusy) requestAnimationFrame(tick);
 };
 requestAnimationFrame(tick);
 setTimeout(() => {
-wheelBusy = false; $("spinBtn").disabled = false;
+wheelBusy = false; $("spinBtn").disabled = false; $("lwAura").classList.remove("spin");
 const p = WHEEL[idx];
+{ const hl = document.createElement("div"); hl.className = "lwhl"; hl.style.background = `conic-gradient(from ${p.a0 + 90}deg, #ffd76ad0 0 ${p.a1 - p.a0}deg, transparent 0)`; $("wheel").appendChild(hl); }
 if (p.t === "cash") profile.cash += p.v; else profile.coins += p.v;
 save(); updateNav(); Snd.win(); burst();
-openModal({icon: "🎡", title: "Tabriklaymiz!", text: "G'ildirakdan yutuq:",
+setTimeout(() => openModal({icon: "🎡", title: "Tabriklaymiz!", text: "G'ildirakdan yutuq:",
 extra: `<div class="reward">${p.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(p.v)}</div>`,
-buttons: [{label: "Ajoyib!", cls: "green", fn: () => go("wheelScr")}]});
+buttons: [{label: "Ajoyib!", cls: "green", fn: () => go("wheelScr")}]}), 1900);
 }, 5100);
 };
 function cupIcon(c, sz = 46) { return `<span class="cupi" title="${esc(T(c.name))}" style="width:${sz}px;height:${sz}px;--a1:${c.ac[0]};--a2:${c.ac[1]}"><img src="${IMG["cup_" + c.id]}" alt=""><i>${c.icon}</i></span>`; }
