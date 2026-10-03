@@ -5462,16 +5462,17 @@ ctx.globalAlpha = 0.68; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); 
 ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12);
 ctx.restore();
 }
+const cV = cA - 9;   // visual: the cushion starts right at the hole edge, its end cut at 45 degrees like the reference
 const segs = lucky ? [
 [[0, 0], [FW, 0], [FW + C, -C], [-C, -C], "t"], [[0, FH], [FW, FH], [FW + C, FH + C], [-C, FH + C], "b"],
 [[0, 0], [0, FH], [-C, FH + C], [-C, -C], "l"], [[FW, 0], [FW, FH], [FW + C, FH + C], [FW + C, -C], "r"],
 ] : [
-[[cA, 0], [FW / 2 - mA, 0], [FW / 2 - 22, -C], [cA - C, -C], "t"],
-[[FW / 2 + mA, 0], [FW - cA, 0], [FW - cA + C, -C], [FW / 2 + 22, -C], "t"],
-[[cA, FH], [FW / 2 - mA, FH], [FW / 2 - 22, FH + C], [cA - C, FH + C], "b"],
-[[FW / 2 + mA, FH], [FW - cA, FH], [FW - cA + C, FH + C], [FW / 2 + 22, FH + C], "b"],
-[[0, cA], [0, FH - cA], [-C, FH - cA + C], [-C, cA - C], "l"],
-[[FW, cA], [FW, FH - cA], [FW + C, FH - cA + C], [FW + C, cA - C], "r"],
+[[cV, 0], [FW / 2 - mA, 0], [FW / 2 - 22, -C], [cV - C, -C], "t"],
+[[FW / 2 + mA, 0], [FW - cV, 0], [FW - cV + C, -C], [FW / 2 + 22, -C], "t"],
+[[cV, FH], [FW / 2 - mA, FH], [FW / 2 - 22, FH + C], [cV - C, FH + C], "b"],
+[[FW / 2 + mA, FH], [FW - cV, FH], [FW - cV + C, FH + C], [FW / 2 + 22, FH + C], "b"],
+[[0, cV], [0, FH - cV], [-C, FH - cV + C], [-C, cV - C], "l"],
+[[FW, cV], [FW, FH - cV], [FW + C, FH - cV + C], [FW + C, cV - C], "r"],
 ];
 for (const s of segs) {
 const side = s[4], d = {t: [0, 0, 0, -C], b: [0, FH, 0, FH + C], l: [0, 0, -C, 0], r: [FW, 0, FW + C, 0]}[side];
