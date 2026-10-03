@@ -5187,7 +5187,8 @@ ctx.globalAlpha = 1;
 const INL = {classic: "wave", tribal: "chev", ikat: "diamond", gold: "dots", medal: "rope", stars: "dots"};
 const inl = st.inlay || INL[city.pat] || "rope", gem = city.gem || (city.col && city.col[1]) || trim;
 const my = FY - RAILC, by = FY + FH + RAILC, lx = FX - RAILC, rx = FX + FW + RAILC;
-const segH = [[FX + 44, FW / 2 - 88], [FX + FW / 2 + 44, FW / 2 - 88]], segV = [[FY + 44, FH - 88]];
+const hug = city.id !== "lon";   // the carved band runs right up to every pocket mouth (London's rosewood strip has its own ends)
+const segH = hug ? [[FX + 30, FW / 2 - 70], [FX + FW / 2 + 40, FW / 2 - 70]] : [[FX + 44, FW / 2 - 88], [FX + FW / 2 + 44, FW / 2 - 88]], segV = hug ? [[FY + 30, FH - 60]] : [[FY + 44, FH - 88]];
 const pearl = (x, y, r) => {
 const g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, 0, x, y, r);
 g.addColorStop(0, "#ffffff"); g.addColorStop(0.55, "#e6f2ff"); g.addColorStop(1, "#8a96c8");
