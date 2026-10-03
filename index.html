@@ -2680,7 +2680,7 @@ if (!ok()) return; const t = now();
 if (t - lastClack < 0.008) return; lastClack = t;
 const k = Math.min(1, v / 13); if (k < 0.015) return;
 let ci = Math.floor(Math.random() * bank.clacks.length); if (ci === lastCi) ci = (ci + 1) % bank.clacks.length; lastCi = ci;
-play(bank.clacks[ci], 0.04 + 0.96 * Math.pow(k, 1.15), 0.78 + 0.4 * k + (Math.random() - 0.5) * 0.12, 1100 + 10000 * k * k, spat(x, y));   // soft touches are dull, low and quiet; hard hits bright, high and loud   // harder hits are shorter contacts: higher and brighter
+play(bank.clacks[ci], 0.09 + 0.91 * Math.pow(k, 1.1), 0.78 + 0.4 * k + (Math.random() - 0.5) * 0.12, 1100 + 10000 * k * k, spat(x, y));   // soft touches are dull, low and quiet; hard hits bright, high and loud   // harder hits are shorter contacts: higher and brighter
 },
 cue(p, x, y) {
 if (!ok()) return; const sp = spat(x, y);
@@ -6015,10 +6015,10 @@ ctx.restore();
 const cbImgs = {};
 function cbImage(i) { i = Math.max(0, Math.min(49, i | 0)); if (!cbImgs[i]) { const im = new Image(); im.src = CLUB_EMB[i]; cbImgs[i] = im; } return cbImgs[i]; }
 function drawPanel(G, i, side) {
-const pl = G.players[i], active = G.cur === i && !G.over && !G.moving, s = 70;
+const pl = G.players[i], active = G.cur === i && !G.over, s = 70;   // the shooter keeps the green frame through the stroke and the rolling, until the turn passes
 const ax = side < 0 ? W / 2 - 66 - s : W / 2 + 66, ay = 12;
-let frac;
-if (active && !pl.isAI && timed() && G.turnLimit) frac = clamp(1 - (performance.now() - G.turnStart) / (G.turnLimit * 1000), 0, 1);
+let frac = active ? 1 : undefined;
+if (active && !G.moving && !pl.isAI && timed() && G.turnLimit) frac = clamp(1 - (performance.now() - G.turnStart) / (G.turnLimit * 1000), 0, 1);
 drawAvatar(ax, ay, s, pl, active, frac);
 if (G.city && G.city.id && IMG["rg_" + G.city.id] && (G.type === "ai" || G.type === "tour")) {
 const mine = !pl.isAI && !pl.remote, c = G.city;
