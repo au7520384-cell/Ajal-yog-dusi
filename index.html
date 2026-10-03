@@ -2655,7 +2655,7 @@ pocket() { if (!ok()) return; play(bank.pocket, 0.9, 0.96 + Math.random() * 0.08
 tray() { if (!ok()) return; play(pick(bank.clacks), 0.28, 0.72, 2200); const t = now(); noise(t - 0.01, 0.45, 0.035, "lowpass", 700, 0.7, 220); },
 roll(sum) {
 if (!ac || !rollG) return;
-const g = profile.muted || sum < 3 ? 0 : Math.min(0.012, (sum - 3) * 0.0005);   // a faint cloth swish, only while balls really travel
+const g = 0;   // rolling is silent (a real ball on cloth is nearly inaudible); every rumble/swish variant was heard as a drone
 rollG.gain.setTargetAtTime(g, ac.currentTime, g ? 0.06 : 0.1);
 rollF.frequency.setTargetAtTime(700 + Math.min(1100, sum * 14), ac.currentTime, 0.06);
 },
