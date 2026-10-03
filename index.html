@@ -1243,6 +1243,21 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 @media (max-height:460px){#shop .card:not(.stkcard),#shop .avcard,#shop .pfcard,#shop .gitem{padding:8px 8px!important;border-image-width:14px!important}}
 /* the billiard-hall background on every menu screen (home keeps its own scene, the modal keeps the dimmed scene behind it) */
 .screen:not(#home):not(#modal):not(.full){background:linear-gradient(#0008,#0006 40%,#000a),var(--shopbg) center/cover no-repeat!important}
+/* wooden frames for Pass, Profile and Minigames */
+#passScr .ptier,#mini .mgc,#mini .card,.prof2 .pcard,.prof2 .pbar2,.prof2 .pst,.prof2 .pbox{border:0!important;border-image:var(--woodcard) 22 fill/16px stretch!important;border-radius:0!important;box-shadow:none!important;padding:14px 14px}
+#passScr .ptier{padding:14px 8px}
+#passScr .ptier.prem,#mini .mgc{border-image:var(--woodcard) 22/16px stretch!important;background-clip:padding-box!important;border-style:solid!important;border-color:transparent!important;border-width:16px!important}
+#passScr .ptier.prem{background:radial-gradient(circle at 50% 30%,#ffc84a,#a85a04 80%)!important}
+#passScr .ptier.free{background:none!important}
+#passScr .ptier.big{filter:drop-shadow(0 0 10px #ffcf3d)}
+#passScr .ptier.c-epic{filter:drop-shadow(0 0 8px #ff4fd8)}
+#mini .mgc{padding:0}
+.prof2 .pst,.prof2 .pbar2{padding:8px 12px}
+.prof2 .pbox{padding:12px 14px}
+.prof2 .pcard{padding:18px 16px}
+.prof2 .pst small,.prof2 .pbar2 small,.prof2 .pbox small{color:#e0d2bc}
+.prof2 .btn.purple,#passScr .btn.purple{background:linear-gradient(#5a4638,#2e2218)!important;border:2px solid #d8b878!important;box-shadow:inset 0 1px 0 #ffffff33,0 3px 6px #000a!important}
+@media (max-height:460px){#passScr .ptier,#mini .mgc,.prof2 .pcard,.prof2 .pbar2,.prof2 .pst,.prof2 .pbox{border-image-width:11px!important}.prof2 .pst,.prof2 .pbar2,.prof2 .pbox{padding:5px 8px}#passScr .ptier.prem,#mini .mgc{border-width:11px!important}}
 </style>
 </head>
 <body>
