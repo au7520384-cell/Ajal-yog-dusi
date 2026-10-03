@@ -1214,6 +1214,12 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 #modal .panel:has(.chbox)::before,#modal .panel:has(.chbox)::after{display:none!important}
 .chtime{background:linear-gradient(#0d2562,#061236)!important;border:2px solid #d8a83a!important;border-radius:6px!important;box-shadow:inset 0 0 0 1px #0008,0 0 12px #ffb30044!important}
 @media (max-height:460px){#modal .panel:has(.chbox){padding:20px 26px 12px!important}.chbox{max-height:calc(100vh - 70px);overflow-y:auto;scrollbar-width:thin}.chc{width:132px!important;padding:16px 10px 10px!important}.chc .chbadge{width:56px!important;height:56px!important}.chhero b{font-size:24px!important}.chhero .chheroR{display:block!important}.chhero .chheroR img{width:44px!important;height:44px!important}.chh.chh1,.chh.chh2{height:36px}}
+.stkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0 10px}
+.stk3{position:relative;display:grid;place-items:center;aspect-ratio:1;font-size:30px;line-height:1;border-radius:50%;background:radial-gradient(circle at 34% 26%,#ffffff55 0 14%,transparent 15%),radial-gradient(circle at 50% 40%,#5a78d8,#1d2f78 62%,#0b1438);box-shadow:inset 0 -5px 8px #0009,inset 0 3px 5px #ffffff55,0 5px 8px #000a,0 0 0 2px #d8a83a99;text-shadow:0 3px 3px #0008}
+.stk3::after{content:"";position:absolute;left:14%;top:8%;width:46%;height:26%;border-radius:50%;background:linear-gradient(#ffffff66,transparent);pointer-events:none}
+.stk3{transition:transform .15s}.stk3:hover{transform:translateY(-3px) scale(1.06)}
+#chatPanel .citems.s button{border-radius:50%;background:radial-gradient(circle at 50% 40%,#5a78d8,#1d2f78 62%,#0b1438);box-shadow:inset 0 -4px 6px #0009,inset 0 2px 4px #ffffff55,0 3px 6px #000a,0 0 0 2px #d8a83a99;font-size:28px;aspect-ratio:1}
+@media (max-height:460px){.stk3{font-size:22px}.stkgrid{gap:5px;margin:4px 0}}
 </style>
 </head>
 <body>
@@ -7868,7 +7874,7 @@ const STICKER_PACKS = [
 function buildStickers(body) {
 const own = profile.stk = profile.stk || [];
 body.innerHTML = `<div class="muted" style="margin-bottom:10px">${T("Stikerlar o'yin ichidagi suhbatda (🎭 tugmasi) raqibga yuboriladi.")}</div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">${STICKER_PACKS.map(p => { const has = own.includes(p.id);
-return `<div class="card" style="text-align:center"><div class="h" style="font-size:18px">${T(p.n)}</div><div style="font-size:30px;letter-spacing:4px;margin:6px 0">${p.e.join(" ")}</div>${has ? `<b style="color:#8dff9a">✓ ${T("Sizda bor")}</b>` : `<button class="btn purple" data-sk="${p.id},cash" style="margin:2px"><span class="cash"></span> 10</button><button class="btn blue" data-sk="${p.id},gems" style="margin:2px">💎 100</button>`}</div>`; }).join("")}</div>`;
+return `<div class="card" style="text-align:center"><div class="h" style="font-size:18px">${T(p.n)}</div><div class="stkgrid">${p.e.map(e => `<span class="stk3">${e}</span>`).join("")}</div>${has ? `<b style="color:#8dff9a">✓ ${T("Sizda bor")}</b>` : `<button class="btn purple" data-sk="${p.id},cash" style="margin:2px"><span class="cash"></span> 10</button><button class="btn blue" data-sk="${p.id},gems" style="margin:2px">💎 100</button>`}</div>`; }).join("")}</div>`;
 body.querySelectorAll("[data-sk]").forEach(b => b.onclick = () => { const [id, cur] = b.dataset.sk.split(","), pr = cur === "cash" ? 10 : 100;
 if ((cur === "cash" ? profile.cash : profile.gems || 0) < pr) return cur === "gems" ? gemShort() : toast("😕", T("Pul yetmaydi"), "");
 if (cur === "cash") profile.cash -= pr; else profile.gems -= pr; own.push(id); save(); updateNav(); Snd.coin(4); toast("🎭", T(STICKER_PACKS.find(p => p.id === id).n), T("Sotib olindi!")); buildStickers(body); });
