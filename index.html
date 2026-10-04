@@ -2695,9 +2695,9 @@ const s = ac.createBufferSource(); s.buffer = ui.search; s.loop = true; const g 
 setMuted(m) { if (master) master.gain.setTargetAtTime(m ? 0 : level(), ac.currentTime, 0.02); },
 clack(v, x, y) {
 if (!ok()) return; const t = now();
-if (t - lastClack < 0.008) return; lastClack = t;
-const k = Math.min(1, v / 13); if (k < 0.015) return;
-const vol = 0.05 + 0.95 * Math.pow(k, 1.2), sp = spat(x, y), R1 = Math.random();
+if (t - lastClack < 0.004) return; lastClack = t;
+const k = Math.min(1, v / 55); if (k < 0.006) return;   // contact speeds run 0.4-70 u/frame (0.05-9 m/s): 55 u/f is a hard hit, anything below is graded softer
+const vol = 0.05 + 0.95 * Math.pow(k, 0.9), sp = spat(x, y), R1 = Math.random();
 if (bank.r_clack) {   // real recorded contacts, ordered dull -> bright: a harder impact picks a brighter, shorter contact (Hertz), a soft touch a duller one
 const N = bank.r_clack.length, hi = Math.round(Math.pow(k, 0.55) * (N - 1) + (Math.random() - 0.5) * 6), idx = Math.max(0, Math.min(N - 1, hi));
 play(bank.r_clack[idx], vol * (0.85 + 0.3 * R1), 0.96 + 0.07 * k + (Math.random() - 0.5) * 0.05, k < 0.55 ? 2200 + 9000 * k : 0, sp);
@@ -2708,11 +2708,11 @@ play(pick(T6[ti]), vol * (0.8 + 0.4 * R1), 0.97 + 0.06 * Math.random(), 0, sp);
 },
 cue(p, x, y) {
 if (!ok()) return; const sp = spat(x, y);
-if (bank.r_cue) play(pick(bank.r_cue), 0.25 + 0.75 * p, 0.92 + 0.14 * p + (Math.random() - 0.5) * 0.04, p < 0.5 ? 3000 + 8000 * p : 0, sp);   // a real cue strike: a harder stroke is higher and brighter
+if (bank.r_cue) play(bank.r_cue[Math.max(0, Math.min(bank.r_cue.length - 1, Math.round(p * (bank.r_cue.length - 1) + (Math.random() - 0.5) * 4)))], 0.25 + 0.75 * p, 0.92 + 0.14 * p + (Math.random() - 0.5) * 0.04, p < 0.5 ? 3000 + 8000 * p : 0, sp);   // a real cue strike: a harder stroke is higher and brighter
 else play(pick(bank.cueT[Math.min(3, Math.floor(p * 4))]), 0.3 + 0.7 * p, 0.97 + 0.06 * Math.random(), 0, sp);
 if (p > 0.55) tone(now(), 130, 0.09, 0.07 * p, "sine", 70);   // hard strokes add a low thump
 },
-rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 16); if (k < 0.04) return; play(pick(bank.rails0), 0.9 * Math.pow(k, 0.8), 0.94 + Math.random() * 0.12, 900 + 4000 * k, spat(x, y)); },
+rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 40); if (k < 0.012) return; play(pick(bank.rails0), 0.9 * Math.pow(k, 0.8), 0.94 + Math.random() * 0.12, 900 + 4000 * k, spat(x, y)); },
 pocket(x, y) { if (!ok()) return; const sp = spat(x, y); play(bank.pocket, 0.9, 0.96 + Math.random() * 0.08, 0, sp); const t = now(); noise(t + 0.1, 0.55, 0.05, "lowpass", 480, 0.7, 140); },   // the ball rolls down the leather pocket net
 tray() { if (!ok()) return; play(pick(bank.clacks), 0.28, 0.72, 2200); const t = now(); if (!ui.roll) noise(t - 0.01, 0.45, 0.035, "lowpass", 700, 0.7, 220); },
 roll(sum) {
