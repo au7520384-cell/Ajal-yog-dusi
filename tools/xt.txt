@@ -883,3 +883,15 @@ Bugungi limit tugadi‖Today's limit reached|Дневной лимит исче�
 Qutini 3 marta bosing‖Tap the box 3 times|Нажмите на ящик 3 раза|Kutuya 3 kez dokun|Toca la caja 3 veces|Toque na caixa 3 vezes|اضغط على الصندوق 3 مرات|Ketuk kotak 3 kali|बॉक्स को 3 बार टैप करें|Touchez le coffre 3 fois|Tippe 3 Mal auf die Kiste|상자를 3번 탭하세요|箱を3回タップ|点击箱子3次
 Davom etish uchun bosing‖Tap to continue|Нажмите, чтобы продолжить|Devam etmek için dokun|Toca para continuar|Toque para continuar|اضغط للمتابعة|Ketuk untuk melanjutkan|जारी रखने के लिए टैप करें|Touchez pour continuer|Zum Fortfahren tippen|계속하려면 탭하세요|タップして続ける|点击继续
 DARAJA OSHDI!‖LEVEL UP!|НОВЫЙ УРОВЕНЬ!|SEVİYE ATLADIN!|¡SUBES DE NIVEL!|SUBIU DE NÍVEL!|ارتفع المستوى!|NAIK LEVEL!|लेवल अप!|NIVEAU SUPÉRIEUR !|LEVEL UP!|레벨 업!|レベルアップ!|升级了!
+Qo'rqinchli‖Horror|Хоррор|Korku|Terror|Terror|رعب|Horor|हॉरर|Horreur|Horror|공포|ホラー|恐怖
+Boshlang'ich‖Starter|Начальный|Başlangıç|Inicial|Inicial|مبتدئ|Pemula|शुरुआती|Débutant|Anfänger|초보자|初心者|新手
+Ovoz sinovi‖Sound test|Проверка звука|Ses testi|Prueba de sonido|Teste de som|اختبار الصوت|Tes suara|ध्वनि परीक्षण|Test sonore|Soundtest|사운드 테스트|サウンドテスト|音效测试
+Premium mukofotlarni ochish uchun Pass oling.‖Get the Pass to unlock the premium rewards.|Получите пропуск, чтобы открыть премиум-награды.|Premium ödüllerin kilidini açmak için Pass al.|Consigue el Pase para desbloquear las recompensas premium.|Obtenha o Passe para desbloquear as recompensas premium.|احصل على التذكرة لفتح المكافآت المميزة.|Dapatkan Pass untuk membuka hadiah premium.|प्रीमियम इनाम अनलॉक करने के लिए पास लें।|Prenez le Pass pour débloquer les récompenses premium.|Hol dir den Pass, um die Premium-Belohnungen freizuschalten.|프리미엄 보상을 열려면 패스를 받으세요.|プレミアム報酬を解除するにはパスを入手しましょう。|获取通行证以解锁高级奖励。
+Gul fasli‖Season of Flowers|Сезон цветов|Çiçek Mevsimi|Temporada de flores|Temporada das flores|موسم الأزهار|Musim Bunga|फूलों का मौसम|Saison des fleurs|Blumensaison|꽃의 시즌|花の季節|花之季
+Yozgi chaqmoq‖Summer Lightning|Летняя молния|Yaz Şimşeği|Relámpago de verano|Relâmpago de verão|برق الصيف|Kilat Musim Panas|ग्रीष्म बिजली|Éclair d'été|Sommerblitz|여름 번개|夏の稲妻|夏日闪电
+Cho'l quyoshi‖Desert Sun|Солнце пустыни|Çöl Güneşi|Sol del desierto|Sol do deserto|شمس الصحراء|Matahari Gurun|रेगिस्तानी सूरज|Soleil du désert|Wüstensonne|사막의 태양|砂漠の太陽|沙漠之日
+Okean sirlari‖Ocean Secrets|Тайны океана|Okyanus Sırları|Secretos del océano|Segredos do oceano|أسرار المحيط|Rahasia Samudra|समुद्र के रहस्य|Secrets de l'océan|Ozeangeheimnisse|바다의 비밀|海の秘密|海洋之谜
+Kuz bargi‖Autumn Leaf|Осенний лист|Sonbahar Yaprağı|Hoja de otoño|Folha de outono|ورقة الخريف|Daun Musim Gugur|पतझड़ का पत्ता|Feuille d'automne|Herbstblatt|가을 낙엽|秋の葉|秋叶
+Qon oyi‖Blood Moon|Кровавая луна|Kan Ayı|Luna de sangre|Lua de sangue|قمر الدم|Bulan Darah|ब्लड मून|Lune de sang|Blutmond|블러드 문|ブラッドムーン|血月
+Tuman shohligi‖Kingdom of Mist|Королевство тумана|Sis Krallığı|Reino de la niebla|Reino da névoa|مملكة الضباب|Kerajaan Kabut|कोहरे का साम्राज्य|Royaume de brume|Nebelreich|안개의 왕국|霧の王国|雾之国
+Qor malikasi‖Snow Queen|Снежная королева|Kar Kraliçesi|Reina de las nieves|Rainha da neve|ملكة الثلج|Ratu Salju|स्नो क्वीन|Reine des neiges|Schneekönigin|눈의 여왕|雪の女王|冰雪女王
