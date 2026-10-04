@@ -6717,6 +6717,7 @@ function pumpToast() {
 const box = $("toasts");
 while (box.children.length < 2 && toastQ.length) {
 let [icon, title0, sub0, o] = toastQ.shift(); const title = T(title0), sub = sub0 && T(sub0);
+if (icon === "🧩" && !o.img && !o.html) o = {...o, html: pcImg(40)};
 { const ri = {"🪙": 0, "🎯": 1, "💵": 3, "🎡": 4, "💎": 5, "👑": 7}[icon]; if (ri !== undefined && !o.img && !o.html && IMG["ri" + ri]) o = {...o, html: riImg(ri, 40)}; }
 if (icon === "🎁" && !o.img && !o.html && IMG.chest) o = {...o, html: `<img src="${IMG.chest}" alt="">`};   // reward route / gifts always show the chest art
 const kind = o.kind || {"🏅": "medal", "🏆": "trophy", "🎱": "cue", "📦": "box"}[icon] || "";
@@ -7325,7 +7326,7 @@ const got = () => { (profile.tables = profile.tables || []).push(t.id); use(); }
 const locked = !own && t.lvl && profile.level < t.lvl;
 if (t.tier && !own) {
 const pr = tablePrice(t), pc = (profile.tpieces || {})[t.id] | 0;
-const el = add(t, own, sel, `<b>${t.tier === "premium" ? "👑 " : "✨ "}${T(t.name)}${pr.deal ? ' <span class="tdeal">−40%</span>' : ""}${pc ? ` <span class="tpc">🧩 ${pc}/4</span>` : ""}</b>`, `${T(t.tier === "premium" ? "Premium hoshiya · tovlanadi" : "Eksklyuziv hoshiya")}${EDITION_CAP[t.id] ? edLine(t.id) : ""}<br><span class="tbon">🪙 +${tableBonus(t.id)}% · ♞ +${tableBonus(t.id)}% · XP +${tableBonus(t.id)}%</span>`,
+const el = add(t, own, sel, `<b>${t.tier === "premium" ? "👑 " : "✨ "}${T(t.name)}${pr.deal ? ' <span class="tdeal">−40%</span>' : ""}${pc ? ` <span class="tpc">${pcImg(18)} ${pc}/4</span>` : ""}</b>`, `${T(t.tier === "premium" ? "Premium hoshiya · tovlanadi" : "Eksklyuziv hoshiya")}${EDITION_CAP[t.id] ? edLine(t.id) : ""}<br><span class="tbon">🪙 +${tableBonus(t.id)}% · ♞ +${tableBonus(t.id)}% · XP +${tableBonus(t.id)}%</span>`,
 `<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(pr.cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(pr.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">$${t.usd}</button>`}</div>
 <div class="tpay"><button class="btn orange" data-p="try">▶ ${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">👁 ${T("Ko'rish")}</button></div>`, null);
 const so = soldOut(t.id);
@@ -8371,12 +8372,12 @@ const got = [];
 for (let i = 0; i < n; i++) { const pool = CUES.filter(c => c.cat === m.pool && !profile.cues.includes(c.id)); if (!pool.length) { addCoins(20000 * m.perks); got.push("🪙 " + fmt(20000 * m.perks)); continue; } const c = pick(pool); for (let k = 0; k < m.perks; k++) addCuePiece(c); got.push(`${cueName(c)} ×${m.perks}`); }
 save(); updateNav(); return got;
 }
-function mboxResult(m, got, after) { Snd.win(); burst(); openModal({icon: "box:" + m.id, title: T(m.n), text: "", extra: `<div style="display:flex;flex-direction:column;gap:6px">${got.map(g => `<div class="card boxres" style="padding:8px"><b>🧩 ${esc(g)}</b></div>`).join("")}</div>`, buttons: [{label: T("Ajoyib!"), cls: "green", fn: after || (() => { if ($("shop").classList.contains("on")) buildShop("boxes"); })}]}); }
+function mboxResult(m, got, after) { Snd.win(); burst(); openModal({icon: "box:" + m.id, title: T(m.n), text: "", extra: `<div style="display:flex;flex-direction:column;gap:6px">${got.map(g => `<div class="card boxres" style="padding:8px"><b>${pcImg(26)} ${esc(g)}</b></div>`).join("")}</div>`, buttons: [{label: T("Ajoyib!"), cls: "green", fn: after || (() => { if ($("shop").classList.contains("on")) buildShop("boxes"); })}]}); }
 function buyMBox(m, n) {
 const price = m.cash[n === 3 ? 1 : 0];
 if (profile.cash < price) return toast("😕", T("Pul yetmaydi"), T(m.n));
 profile.cash -= price; const got = mboxGrant(m, n); Snd.coin(6);
-boxOpenAnim(m.id, () => mboxResult(m, got, () => buildShop("boxes")), got.map(g => /^🪙/.test(g) ? esc(g) : "🧩 " + esc(g)));
+boxOpenAnim(m.id, () => mboxResult(m, got, () => buildShop("boxes")), got.map(g => /^🪙/.test(g) ? esc(g) : pcImg(28) + " " + esc(g)));
 }
 const BOX_GLOW = {rare: "#ffb86a", epic: "#6ae8ff", leg: "#6affb0", sb: "#ffd24d"};
 function boxOpenAnim(key, then, items = []) {   // the box drops in; tap it three times (it shakes harder and glows each time), the third tap bursts it and the prizes pop out one by one
@@ -8414,7 +8415,7 @@ el.querySelector(".bxskip").onclick = e => { e.stopPropagation(); if (!opened) {
 }
 function buildBoxes(body) {
 body.innerHTML = `<div class="muted" style="margin-bottom:10px">${T("Har quti kiy bo'laklarini beradi: oddiy 1, epik 2, afsonaviy 3 ta bo'lak.")}</div>
-<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${MBOX.map(m => `<div class="card" style="text-align:center;background:linear-gradient(${m.col[0]}33,${m.col[1]}cc)"><div class="mbchest">${boxImg(m.id, 84)}</div><div class="h" style="font-size:20px">${T(m.n)}</div><div class="muted">🧩 ${m.perks} ${T("bo'lak")}</div>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${MBOX.map(m => `<div class="card" style="text-align:center;background:linear-gradient(${m.col[0]}33,${m.col[1]}cc)"><div class="mbchest">${boxImg(m.id, 84)}</div><div class="h" style="font-size:20px">${T(m.n)}</div><div class="muted">${pcImg(20)} ${m.perks} ${T("bo'lak")}</div>
 <button class="btn purple" data-mb="${m.id},1" style="width:100%;margin:6px 0 4px">${T("1 ta olish")} · <span class="cash"></span> ${m.cash[0]}</button><button class="btn green" data-mb="${m.id},3" style="width:100%">${T("3 ta olish")} · <span class="cash"></span> ${m.cash[1]}</button></div>`).join("")}</div>`;
 body.querySelectorAll("[data-mb]").forEach(b => b.onclick = () => { const [id, n] = b.dataset.mb.split(","); buyMBox(MBOX.find(x => x.id === id), +n); });
 }
@@ -8555,7 +8556,7 @@ const b = profile.boxes[i], city = CITIES.find(c => c.id === b.city) || CITIES[0
 const coins = Math.round(city.prize * (0.25 + Math.random() * 0.35) / 10) * 10 + 100;   // boxes give coins and cue pieces only, never cash
 profile.boxes[i] = null; addCoins(coins);
 let piece = "";
-if (Math.random() < [0.2, 0.35, 0.55, 0.9][t]) { const pool = CUES.filter(c => (c.cat === "victory" || c.cat === "surprise") && !profile.cues.includes(c.id)); if (pool.length) { const c = pick(pool); addCuePiece(c); piece = `<div>🧩 ${esc(cueName(c))}</div>`; } }
+if (Math.random() < [0.2, 0.35, 0.55, 0.9][t]) { const pool = CUES.filter(c => (c.cat === "victory" || c.cat === "surprise") && !profile.cues.includes(c.id)); if (pool.length) { const c = pick(pool); addCuePiece(c); piece = `<div>${pcImg(26)} ${esc(cueName(c))}</div>`; } }
 save(); updateNav();
 boxOpenAnim(["rare", "rare", "epic", "leg"][t] || "rare", () => { Snd.win(); burst();
 openModal({icon: BOX_TIERS[t].i, title: T(BOX_TIERS[t].n), text: "", extra: `<div class="reward boxres"><span class="coin"></span> +${fmt(coins)}</div>${piece}`,
@@ -8767,8 +8768,8 @@ const row = (u, i, me) => `<div class="lbr${me ? " me" : ""}"><div class="rk">${
 $("sdList").innerHTML = r.top.map((u, i) => row(u, i, u.id === r.me.id)).join("") + (r.top.some(u => u.id === r.me.id) ? "" : row(r.me, r.me.rank - 1, true));
 }).catch(() => { $("sdList").innerHTML = `<div class="muted" style="text-align:center">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>`; });
 }
-const rewIcon2 = r => r.k === "mbox" ? [boxImg(r.id, 40), `${T(MBOX.find(x => x.id === r.id).n)} x${r.n}`] : r.k === "piece" && r.n > 1 ? ["🧩", "x" + r.n] : r.k === "tokens" ? ["♛", `${fmt(r.v)} ${T("token")}`] : r.k === "gems" ? [riImg(5, 46), r.v] : rewIcon(r);
-function giveReward2(r) { if (r.k === "mbox") { const m = MBOX.find(x => x.id === r.id), got = mboxGrant(m, r.n); boxOpenAnim(m.id, () => mboxResult(m, got, () => {}), got.map(g => /^🪙/.test(g) ? esc(g) : "🧩 " + esc(g))); } else if (r.k === "piece" && r.n > 1) { for (let i = 0; i < r.n; i++) giveReward({k: "piece"}); } else if (r.k === "tokens") { profile.tokens = (profile.tokens || 0) + r.v; save(); } else if (r.k === "gems") { profile.gems = (profile.gems || 0) + r.v; save(); updateNav(); } else giveReward(r); }
+const rewIcon2 = r => r.k === "mbox" ? [boxImg(r.id, 40), `${T(MBOX.find(x => x.id === r.id).n)} x${r.n}`] : r.k === "piece" && r.n > 1 ? [pcImg(58), "x" + r.n] : r.k === "tokens" ? ["♛", `${fmt(r.v)} ${T("token")}`] : r.k === "gems" ? [riImg(5, 46), r.v] : rewIcon(r);
+function giveReward2(r) { if (r.k === "mbox") { const m = MBOX.find(x => x.id === r.id), got = mboxGrant(m, r.n); boxOpenAnim(m.id, () => mboxResult(m, got, () => {}), got.map(g => /^🪙/.test(g) ? esc(g) : pcImg(28) + " " + esc(g))); } else if (r.k === "piece" && r.n > 1) { for (let i = 0; i < r.n; i++) giveReward({k: "piece"}); } else if (r.k === "tokens") { profile.tokens = (profile.tokens || 0) + r.v; save(); } else if (r.k === "gems") { profile.gems = (profile.gems || 0) + r.v; save(); updateNav(); } else giveReward(r); }
 
 // ---- Trophy Road: lifetime trophy points unlock prizes along a long track (like the reference game)
 const ROAD_N = 240;   // like the reference: 240 prizes, spaced closer at first (8, 16, 28 …) and ~1 000 apart at the end (→ 19 000+ points)
@@ -10001,10 +10002,12 @@ if (!prem) return [{k: "coins", v: Math.round(300 * t * g / 50) * 50}, {k: "spin
 return [{k: "coins", v: Math.round(1500 * t * g / 100) * 100}, {k: "box"}, {k: "cash", v: 6 + (t / 5 | 0)}, {k: "gold", v: 2}, {k: "tpiece", id: PASS_ELITE[(t + 3) % PASS_ELITE.length], n: 1}, {k: "tokens", v: 15 + (t / 5 | 0)},
 {k: "spin", v: 3}, {k: "piece"}, {k: "coins", v: Math.round(3000 * t * g / 100) * 100}, {k: "scratch", v: 2}, {k: "lucky", v: 3}, {k: "tpiece", id: PASS_ELITE[(t + 7) % PASS_ELITE.length], n: 2}][cyc];
 };
+const PIECE_URI = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%0A%3CradialGradient%20id%3D%22g%22%20cx%3D%22.35%22%20cy%3D%22.25%22%20r%3D%22.95%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23b8ff9a%22/%3E%3Cstop%20offset%3D%22.45%22%20stop-color%3D%22%2327c04a%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230a5a24%22/%3E%3C/radialGradient%3E%0A%3ClinearGradient%20id%3D%22b%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff1a8%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%23e8a824%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%238a5200%22/%3E%3C/linearGradient%3E%0A%3ClinearGradient%20id%3D%22w%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%220%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f3d9a8%22/%3E%3Cstop%20offset%3D%22.6%22%20stop-color%3D%22%23b9783a%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%235a3010%22/%3E%3C/linearGradient%3E%3C/defs%3E%0A%3Cpath%20d%3D%22M20%2C22%20H40%20C40%2C12%2044%2C10%2050%2C10%20C56%2C10%2060%2C12%2060%2C22%20H80%20V42%20C90%2C42%2092%2C46%2092%2C52%20C92%2C58%2090%2C62%2080%2C62%20V82%20H60%20C60%2C72%2056%2C70%2050%2C70%20C44%2C70%2040%2C72%2040%2C82%20H20%20V62%20C30%2C62%2032%2C58%2032%2C52%20C32%2C46%2030%2C42%2020%2C42%20Z%22%20fill%3D%22%23000%22%20opacity%3D%22.35%22%20transform%3D%22translate%282%2C5%29%22/%3E%0A%3Cpath%20d%3D%22M20%2C20%20H40%20C40%2C10%2044%2C8%2050%2C8%20C56%2C8%2060%2C10%2060%2C20%20H80%20V40%20C90%2C40%2092%2C44%2092%2C50%20C92%2C56%2090%2C60%2080%2C60%20V80%20H60%20C60%2C70%2056%2C68%2050%2C68%20C44%2C68%2040%2C70%2040%2C80%20H20%20V60%20C30%2C60%2032%2C56%2032%2C50%20C32%2C44%2030%2C40%2020%2C40%20Z%22%20fill%3D%22url%28%23g%29%22%20stroke%3D%22url%28%23b%29%22%20stroke-width%3D%223.6%22%20stroke-linejoin%3D%22round%22/%3E%0A%3Cpath%20d%3D%22M24%2C24%20H42%20C42%2C14%2046%2C12%2050%2C12%20C54%2C12%2058%2C14%2058%2C24%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.55%22%20stroke-width%3D%222.4%22%20stroke-linecap%3D%22round%22/%3E%0A%3Cellipse%20cx%3D%2238%22%20cy%3D%2230%22%20rx%3D%2213%22%20ry%3D%227%22%20fill%3D%22%23fff%22%20opacity%3D%22.28%22%20transform%3D%22rotate%28-25%2038%2030%29%22/%3E%0A%3Cg%20transform%3D%22rotate%28-45%2050%2050%29%22%3E%3Crect%20x%3D%2214%22%20y%3D%2246.5%22%20width%3D%2272%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22url%28%23w%29%22%20stroke%3D%22%232a1404%22%20stroke-width%3D%221%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2246.5%22%20width%3D%229%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%232a2a2a%22/%3E%3Crect%20x%3D%2276%22%20y%3D%2246.5%22%20width%3D%2210%22%20height%3D%227%22%20rx%3D%223.5%22%20fill%3D%22%234aa8ff%22/%3E%3Crect%20x%3D%2273%22%20y%3D%2246.5%22%20width%3D%223%22%20height%3D%227%22%20fill%3D%22%23fff%22/%3E%3C/g%3E%0A%3C/svg%3E";
+const pcImg = (h = 28) => `<img class="pcimg" src="${PIECE_URI}" alt="" style="height:${h}px;width:${h}px;object-fit:contain;vertical-align:middle;filter:drop-shadow(0 2px 3px #000a)">`;   // the cue-piece art: a glossy puzzle piece with a cue through it
 const riImg = (n, h = 46) => `<img src="${IMG["ri" + n]}" alt="" style="height:${h}px;max-width:${h * 1.3}px;object-fit:contain;filter:drop-shadow(0 2px 3px #000a)">`;
 const riOf = r => r.k === "coins" ? (r.v >= 5000 ? 7 : r.v >= 1000 ? 2 : 0) : r.k === "cash" ? 3 : r.k === "gems" ? 5 : r.k === "lucky" ? 1 : r.k === "spin" || r.k === "wheel" ? 4 : r.k === "box" ? 6 : -1;   // the daily-streak art, used wherever a prize is shown
 const rewIcon = r => { const v0 = rewIcon0(r), v = typeof v0 === "function" ? v0() : v0; const ri = riOf(r); if (ri >= 0 && v) return [riImg(ri, 46), v[1]]; return MG_ART[r.k] && v ? [mgImg(r.k, 46), v[1]] : v; };
-const rewIcon0 = r => ({coins: ["🪙", fmtS(r.v)], cash: ["💵", r.v], piece: ["🧩", "x1"], spin: ["🎡", "x" + r.v], lucky: ["🎯", "x" + r.v], box: ["🎁", "x1"],
+const rewIcon0 = r => ({coins: ["🪙", fmtS(r.v)], cash: ["💵", r.v], piece: [pcImg(58), "x1"], spin: ["🎡", "x" + r.v], lucky: ["🎯", "x" + r.v], box: ["🎁", "x1"],
 cue: ["🎱", cueName(cueDef(r.id))], frame: ["🖼", T("Ramka")], gems: ["💎", r.v], tokens: ["♛", r.v], scratch: ["🎟", "x" + r.v], gold: ["🏆", "x" + r.v],
 tpiece: () => ["🧱", `${T(tableById(r.id).name)} ${r.n}/4`], table: () => ["🎱", T(tableById(r.id).name)], avatar: () => ["🙂", avName(r.id)]}[r.k]);
 const rewKind = r => ({coins: "c-coin", cash: "c-cash", gems: "c-gem", tokens: "c-tok", box: "c-box", cue: "c-epic", frame: "c-epic", table: "c-epic", avatar: "c-epic", tpiece: "c-box", gold: "c-gold"}[r.k] || "c-std");
