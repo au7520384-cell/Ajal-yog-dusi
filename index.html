@@ -5627,6 +5627,20 @@ ctx.fillStyle = lamp; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
 const vig = ctx.createRadialGradient(FW / 2, FH / 2, FH * 0.45, FW / 2, FH / 2, FW * 0.62);
 vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.1)");
 ctx.fillStyle = vig; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
+if (!lucky) {   // 3-D rail: the wooden frame stands above the cloth: a lit top lip, a shaded inner wall dropping to the cushion and a soft shadow thrown onto the felt
+const x0 = -C, y0 = -C, x1 = FW + C, y1 = FH + C, W3 = 14, lp = 8;   // y0/x0 = where the cloth border begins; lp = how far the lit lip sits inside it
+ctx.save();
+const side = (ax, ay, bx, by, cx, cy, ex, ey, dx, dy, w, h) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(255,255,255,.0)"); g.addColorStop(0.2, "rgba(255,255,255,.0)"); g.addColorStop(0.55, "rgba(0,0,0,.35)"); g.addColorStop(1, "rgba(0,0,0,.8)"); ctx.fillStyle = g; ctx.fillRect(cx, cy, w, h); };
+side(0, y0 - W3, 0, y0, x0 - 4, y0 - W3, 0, 0, 0, 0, x1 - x0 + 8, W3);
+side(0, y1 + W3, 0, y1, x0 - 4, y1, 0, 0, 0, 0, x1 - x0 + 8, W3);
+side(x0 - W3, 0, x0, 0, x0 - W3, y0, 0, 0, 0, 0, W3, y1 - y0);
+side(x1 + W3, 0, x1, 0, x1, y0, 0, 0, 0, 0, W3, y1 - y0);
+ctx.restore();
+ctx.save(); ctx.lineJoin = "round";
+ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.lineWidth = 1.6; ctx.strokeRect(x0 + lp, y0 + lp, x1 - x0 - 2 * lp, y1 - y0 - 2 * lp);   // the lip where the top meets the inner wall
+const shd = (ax, ay, bx, by, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(0,0,0,.6)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };
+shd(0, y0, 0, y0 + 24, x0, y0, x1 - x0, 24); shd(0, y1, 0, y1 - 24, x0, y1 - 24, x1 - x0, 24); shd(x0, 0, x0 + 24, 0, x0, y0, 24, y1 - y0); shd(x1, 0, x1 - 24, 0, x1 - 24, y0, 24, y1 - y0);
+ctx.restore(); }
 if (!lucky && city.id === "lon" && cornerOk() && !artOf("lon")) for (const p of POCKETS) {
 if (p.mid) continue;
 const k = (p.dr + 0.6) / 98.8; ctx.save(); ctx.beginPath(); ctx.rect(-200, -200, FW + 400, FH + 400); ctx.rect(-25, -25, FW + 50, FH + 50); ctx.clip("evenodd");   // the carved wood stays on the rail: the cloth runs right up to the wood, around the hole
