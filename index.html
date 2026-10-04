@@ -8550,14 +8550,14 @@ function boxLeft(b) { return b.start ? Math.max(0, b.start + BOX_TIERS[b.tier].m
 function openBox(i) {
 navHold = true; setTimeout(() => { navHold = false; }, 12000);   // the prize counters wait until the box is opened
 const b = profile.boxes[i], city = CITIES.find(c => c.id === b.city) || CITIES[0], t = b.tier;
-const coins = Math.round(city.prize * (0.25 + Math.random() * 0.35) / 10) * 10 + 100, cash = [1, 2, 5, 12][t] + (Math.random() * [1, 2, 4, 8][t] | 0);
-profile.boxes[i] = null; addCoins(coins); profile.cash += cash;
+const coins = Math.round(city.prize * (0.25 + Math.random() * 0.35) / 10) * 10 + 100;   // boxes give coins and cue pieces only, never cash
+profile.boxes[i] = null; addCoins(coins);
 let piece = "";
 if (Math.random() < [0.2, 0.35, 0.55, 0.9][t]) { const pool = CUES.filter(c => (c.cat === "victory" || c.cat === "surprise") && !profile.cues.includes(c.id)); if (pool.length) { const c = pick(pool); addCuePiece(c); piece = `<div>🧩 ${esc(cueName(c))}</div>`; } }
 save(); updateNav();
 boxOpenAnim(["rare", "rare", "epic", "leg"][t] || "rare", () => { Snd.win(); burst();
-openModal({icon: BOX_TIERS[t].i, title: T(BOX_TIERS[t].n), text: "", extra: `<div class="reward boxres"><span class="coin"></span> +${fmt(coins)}</div> <div class="reward boxres"><span class="cash"></span> +${cash}</div>${piece}`,
-buttons: [{label: T("Ajoyib!"), cls: "green", fn: () => buildHome()}]}); }, [`<span class="coin"></span> +${fmt(coins)}`, `<span class="cash"></span> +${cash}`].concat(piece ? [piece.replace(/<\/?div>/g, "")] : []));
+openModal({icon: BOX_TIERS[t].i, title: T(BOX_TIERS[t].n), text: "", extra: `<div class="reward boxres"><span class="coin"></span> +${fmt(coins)}</div>${piece}`,
+buttons: [{label: T("Ajoyib!"), cls: "green", fn: () => buildHome()}]}); }, [`<span class="coin"></span> +${fmt(coins)}`].concat(piece ? [piece.replace(/<\/?div>/g, "")] : []));
 }
 function boxClick(i) {
 const bx = (profile.boxes || [])[i]; if (!bx) return toast("📦", T("Bo'sh joy"), T("1 ga 1 o'yinda yutib quti oling"));
