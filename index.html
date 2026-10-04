@@ -9664,6 +9664,27 @@ SPIN_BTN.r = sm ? 22 : 30; CUE_BTN.r = sm ? 18 : 24;
 try { Snd.setMuted(!!profile.muted); } catch (e) {}
 POWER_BAR.x = right ? 1296 : 48; FINE.x = right ? 52 : 6; FINE.y = right ? 240 : 200; FINE.h = right ? 350 : 390; TRAY.x = right ? 9 : 1287;
 }
+function openSoundLab() {   // listen to every recorded hit used by the game and mark it good / bad
+let ov = document.getElementById("soundLab"); if (ov) ov.remove();
+ov = document.createElement("div"); ov.id = "soundLab";
+ov.style.cssText = "position:fixed;inset:0;z-index:99999;background:#0d1426;color:#e8eefc;overflow:auto;padding:14px;font:15px system-ui,sans-serif;-webkit-overflow-scrolling:touch";
+const names = {clack: "Sharlar urilishi", cue: "Kiy zarbasi", rail: "Bort urilishi"}, st = {}, bufs = {}; let ctxA = null;
+const ac2 = () => ctxA || (ctxA = new (window.AudioContext || window.webkitAudioContext)());
+const get = async (id, u) => bufs[id] || (bufs[id] = await ac2().decodeAudioData(await (await fetch(u)).arrayBuffer()));
+let h = '<div style="display:flex;gap:10px;align-items:center"><b style="font-size:20px;flex:1">🎧 Ovoz sinovi</b><button id="slX" style="padding:10px 16px;border:0;border-radius:10px;background:#c0392b;color:#fff;font-size:16px">✕ Yopish</button></div><p style="color:#9fb0d8">▶ ni bosib tinglang, so\'ng 👍 (yaxshi) yoki 👎 (yomon) deb belgilang. Oxirida «Nusxalash» ni bosing va natijani menga yuboring.</p>';
+const items = [];
+for (const [g, list] of Object.entries(REAL_HITS)) { h += `<h3 style="color:#ffd24d;margin:16px 0 6px">${names[g] || g}</h3>`; list.forEach((u, i) => { const id = g + (i + 1); items.push([id, u]);
+h += `<div style="display:flex;gap:8px;align-items:center;margin:6px 0;padding:8px;background:#16213f;border-radius:12px"><b style="min-width:64px">${id}</b><button data-p="${id}" style="padding:10px 16px;border:0;border-radius:10px;background:#2d6cdf;color:#fff;font-size:16px">▶</button><span style="flex:1"></span><button data-g="${id}" style="padding:10px 14px;border:0;border-radius:10px;background:#1f9d55;color:#fff;font-size:16px">👍</button><button data-b="${id}" style="padding:10px 14px;border:0;border-radius:10px;background:#c0392b;color:#fff;font-size:16px">👎</button></div>`; }); }
+h += '<div style="position:sticky;bottom:0;background:#0d1426;padding:10px 0"><button id="slCp" style="padding:12px 18px;border:0;border-radius:10px;background:#e67e22;color:#fff;font-size:16px">📋 Nusxalash</button><textarea id="slOut" style="width:100%;height:110px;margin-top:8px;background:#16213f;color:#e8eefc;border:1px solid #2d3b66;border-radius:10px;padding:8px;box-sizing:border-box" placeholder="Natija shu yerda chiqadi"></textarea></div>';
+ov.innerHTML = h; document.body.appendChild(ov);
+const U = Object.fromEntries(items);
+ov.querySelector("#slX").onclick = () => ov.remove();
+ov.querySelectorAll("[data-p]").forEach(b => b.onclick = async () => { try { const a = ac2(); if (a.state !== "running") await a.resume(); const bf = await get(b.dataset.p, U[b.dataset.p]), sr = a.createBufferSource(); sr.buffer = bf; sr.connect(a.destination); sr.start(); } catch (e) { alert("Ovoz xatosi: " + e.message); } });
+const mark = (id, v, a, b) => { st[id] = v; a.style.opacity = 1; b.style.opacity = 0.35; };
+ov.querySelectorAll("[data-g]").forEach(b => b.onclick = () => mark(b.dataset.g, "yaxshi", b, b.nextElementSibling));
+ov.querySelectorAll("[data-b]").forEach(b => b.onclick = () => mark(b.dataset.b, "yomon", b, b.previousElementSibling));
+ov.querySelector("#slCp").onclick = () => { const t = items.map(([id]) => id + ": " + (st[id] || "-")).join("\n"), o = ov.querySelector("#slOut"); o.value = t; o.select(); try { navigator.clipboard.writeText(t).catch(() => {}); } catch (e) {} };
+}
 function buildSettings() {
 const tg = (k, on) => `<button class="tgl${on ? " on" : ""}" data-t="${k}"></button>`;
 const seg = (k, opts) => `<div class="seg">${opts.map(([v, n]) => `<button class="${opt(k) === v ? "on" : ""}" data-s="${k}" data-v="${JSON.stringify(v).replace(/"/g, "&quot;")}">${T(n)}</button>`).join("")}</div>`;
@@ -9693,8 +9714,10 @@ ${row("Yangi telefonga o'tish uchun kalit", `<button class="btn orange" id="setK
 ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setRecover" style="padding:6px 14px">📲 ${T("Tiklash")}</button>`)}
 <div class="setsec">${T("Boshqa")}</div>
 ${row("Til", `<button class="btn blue" id="setLang" style="padding:6px 14px">🌐 ${LANGS[LANG]}</button>`)}
+<div class="setrow"><b>🎧 Ovoz sinovi</b><button class="btn orange" id="setLab" style="padding:6px 14px">▶ Ochish</button></div>
 ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:6px 14px">👤 ${esc(profile.name)}</button>`)}
 <div class="muted" style="text-align:center;margin-top:10px">Bilyard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}</div>`;
+{ const lb = $("setLab"); if (lb) lb.onclick = openSoundLab; }
 $("setBody").querySelectorAll("[data-t]").forEach(b => b.onclick = () => {
 const k = b.dataset.t;
 if (k === "sound") toggleMute(); else setOpt(k, !opt(k));
