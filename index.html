@@ -1180,6 +1180,7 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 #cueTabs .stic{display:grid;place-items:center;width:44px;height:44px;flex:none;filter:drop-shadow(0 3px 3px #000a)}#cueTabs .stic img{max-width:100%;max-height:100%;object-fit:contain}#cueTabs .stic img.rnd{border-radius:12px;width:40px;height:40px;object-fit:cover}#cueTabs .stic img.tbl{border-radius:6px;width:44px;height:auto}#cueTabs .stic .stem{font-size:30px}#cueTabs .stfr{transform:scale(.95)}
 #cueTabs .tab.on .stic{filter:drop-shadow(0 0 6px #ffe27a)}
 @media (max-height:460px){#cueTabs .stic{width:30px;height:30px}#cueTabs .stic img.rnd{width:28px;height:28px}#cueTabs .tab{font-size:13px;padding:3px 6px;gap:4px}#cueTabs .stfr{transform:scale(.65)}}
+.bsh{position:absolute;inset:0 auto 0 0;width:40%;pointer-events:none;background:linear-gradient(90deg,transparent,#ffffffcc,transparent);border-radius:inherit}
 .rwfly{position:fixed;z-index:99995;pointer-events:none;width:28px;height:28px;margin:-14px 0 0 -14px;background:var(--i-coin) center/contain no-repeat;filter:drop-shadow(0 2px 3px #000a) drop-shadow(0 0 8px #ffd24d99)}
 .rwfly.cash{width:40px;height:28px;margin:-14px 0 0 -20px;background-image:var(--i-cash)}.rwfly.gem{background-image:var(--i-gem);filter:drop-shadow(0 2px 3px #000a) drop-shadow(0 0 8px #c47dff)}
 #navXp{transition:width .9s cubic-bezier(.3,.8,.3,1)}
@@ -6686,6 +6687,25 @@ S.shown = landed >= n && !S.fly ? S.target : Math.min(S.target, S.shown + step);
 try { el.parentElement.animate([{transform: "scale(1)"}, {transform: "scale(1.16)", filter: "brightness(1.5)"}, {transform: "scale(1)"}], {duration: 220}); if (landed % 2 === 1) Snd.coin(1); } catch (e) {} };
 }, i * 70 + 60);
 }
+// ---- progress bars: every bar fills smoothly (from where it was last seen, or from zero), a light sweep runs along it and a full bar flashes
+const BAR_SEL = ".mbar>i,.dmb>i,.chbar>i,.vcb>i,.pbar>i,.sbar>i,.dmb i";
+const barPrev = new Map();
+function animBars(root) {
+if (!root || !root.querySelectorAll) return;
+const list = root.matches && root.matches(BAR_SEL) ? [root] : [...root.querySelectorAll(BAR_SEL)];
+list.forEach((b, n) => {
+if (b.dataset.bd) return; const w = parseFloat(b.style.width); if (isNaN(w)) return; b.dataset.bd = "1";
+const card = b.closest(".mission,.dm,.acc,.acx,.card,.vcbar,.chrow") || b.parentElement, key = (card && (card.querySelector("b,.rl,h3") || {}).textContent || "") + "|" + n;
+const from = barPrev.has(key) ? barPrev.get(key) : 0; barPrev.set(key, w);
+if (from === w) return;
+const dur = Math.min(1500, 500 + Math.abs(w - from) * 12);
+b.animate([{width: from + "%"}, {width: w + "%"}], {duration: dur, delay: 120 + n * 60, easing: "cubic-bezier(.25,.8,.3,1)", fill: "backwards"});
+const sh = document.createElement("u"); sh.className = "bsh"; if (getComputedStyle(b).position === "static") b.style.position = "relative"; b.appendChild(sh);
+sh.animate([{transform: "translateX(-120%)", opacity: 0.9}, {transform: "translateX(260%)", opacity: 0}], {duration: dur + 300, delay: 120 + n * 60, easing: "ease-out"}).onfinish = () => sh.remove();
+if (w >= 99.5) setTimeout(() => { try { b.animate([{filter: "brightness(1)"}, {filter: "brightness(1.9)"}, {filter: "brightness(1)"}], {duration: 650, iterations: 2}); Snd.pop(); } catch (e) {} }, 120 + n * 60 + dur);
+});
+}
+new MutationObserver(ms => { for (const m of ms) for (const nd of m.addedNodes) if (nd.nodeType === 1) animBars(nd); }).observe(document.body, {childList: true, subtree: true});
 function updateNav() {
 navVal("coinTxt", "coins", profile.coins, v => v >= 1e7 ? fmtS(v) : fmt(v), "coin");
 navVal("cashTxt", "cash", profile.cash, fmt, "cash");
