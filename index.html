@@ -2622,6 +2622,8 @@ cueT.push(tier);
 }
 const cues = cueT.flat();
 const rx = exc(0.14, 0.004);
+const rails0 = [];   // the original cushion sound (kept exactly as it was)
+for (let v = 0; v < 4; v++) { const q = exc(0.14, R(0.003, 0.005)); rails0.push(toBuf(mix(lp(q, R(850, 1000), 0.3), bp(q, R(170, 200), 3, 0.5), bp(q, R(380, 460), 4, 0.9), bp(exc(0.14, 0.00015), R(2700, 3000), 12, 0.3), bp(exc(0.14, 0.0002), R(1600, 1900), 8, 0.2)))); }
 const railT = [];
 // cushion: rubber + wood rail, a dull mid "thud" (not a bass boom), the rubber tick on top and the ball's own click; a faster ball digs deeper into the rubber (longer, lower thud, more tick)
 for (const kk of [0.1, 0.35, 0.65, 1]) {
@@ -2637,7 +2639,7 @@ for (const [t0, a] of [[0.09, 0.55], [0.16, 0.4], [0.22, 0.3], [0.27, 0.2], [0.3
 const e = exc(0.5 - t0, R(0.0002, 0.0004)), r = mix(bp(e, R(2200, 2900), 10, a), bp(e, 260, 3, a * 0.8)), o = Math.round(t0 * SR);
 for (let i = 0; i < r.length && o + i < pn; i++) pk[o + i] += r[i];
 }
-return {clacks, clackT, cues, cueT, rail, rails, railT, pocket: toBuf(pk)};
+return {clacks, clackT, cues, cueT, rail, rails, rails0, railT, pocket: toBuf(pk)};
 }
 // 3-D placement: the listener sits at the near end of the table; x gives the stereo position, depth (far = top of the screen) gives level, brightness and reverb
 function spat(x, y) {
@@ -2710,8 +2712,7 @@ if (bank.r_cue) play(pick(bank.r_cue), 0.25 + 0.75 * p, 0.92 + 0.14 * p + (Math.
 else play(pick(bank.cueT[Math.min(3, Math.floor(p * 4))]), 0.3 + 0.7 * p, 0.97 + 0.06 * Math.random(), 0, sp);
 if (p > 0.55) tone(now(), 130, 0.09, 0.07 * p, "sine", 70);   // hard strokes add a low thump
 },
-rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 16); if (k < 0.04) return; const sp = spat(x, y); play(pick(bank.railT[Math.min(3, Math.floor(Math.sqrt(k) * 4))]), 0.55 * Math.pow(k, 0.8), 0.96 + Math.random() * 0.08, 0, sp);   // the rubber's own dull thump (synthesised) ...
-if (bank.r_rail) play(pick(bank.r_rail), 0.7 * Math.pow(k, 0.9), 0.85 + 0.3 * k + (Math.random() - 0.5) * 0.08, 1500 + 7000 * k, sp); },   // ... under the real cushion contact
+rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 16); if (k < 0.04) return; play(pick(bank.rails0), 0.9 * Math.pow(k, 0.8), 0.94 + Math.random() * 0.12, 900 + 4000 * k, spat(x, y)); },
 pocket(x, y) { if (!ok()) return; const sp = spat(x, y); play(bank.pocket, 0.9, 0.96 + Math.random() * 0.08, 0, sp); const t = now(); noise(t + 0.1, 0.55, 0.05, "lowpass", 480, 0.7, 140); },   // the ball rolls down the leather pocket net
 tray() { if (!ok()) return; play(pick(bank.clacks), 0.28, 0.72, 2200); const t = now(); if (!ui.roll) noise(t - 0.01, 0.45, 0.035, "lowpass", 700, 0.7, 220); },
 roll(sum) {
