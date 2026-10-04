@@ -1186,6 +1186,10 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 #cueTabs .tab.on .stic{filter:drop-shadow(0 0 6px #ffe27a)}
 @media (max-height:460px){#cueTabs .stic{width:30px;height:30px}#cueTabs .stic img.rnd{width:28px;height:28px}#cueTabs .tab{font-size:13px;padding:3px 6px;gap:4px}#cueTabs .stfr{transform:scale(.65)}}
 .bsh{position:absolute;inset:0 auto 0 0;width:40%;pointer-events:none;background:linear-gradient(90deg,transparent,#ffffffcc,transparent);border-radius:inherit}
+.cpmk{position:absolute;left:0;bottom:-6px;width:96px;z-index:6;pointer-events:none;display:flex;flex-direction:column;align-items:center;will-change:transform}
+.cpmk i{border:7px solid transparent;border-bottom:9px solid #ffcf3d;border-top:0}
+.cpmk div{display:flex;align-items:center;gap:6px;background:linear-gradient(#2a1a5a,#120a2c);border:2px solid #ffcf3d;border-radius:12px;padding:3px 10px 3px 4px;box-shadow:0 0 14px #ffb30088}
+.cpmk .av{width:24px;height:24px;border-radius:50%;border:2px solid #ffd24d;background:#0b1224 center/cover}.cpmk b{font:800 17px var(--fh);color:#fff;min-width:34px;text-align:center}
 .rwfly{position:fixed;z-index:99995;pointer-events:none;width:28px;height:28px;margin:-14px 0 0 -14px;background:var(--i-coin) center/contain no-repeat;filter:drop-shadow(0 2px 3px #000a) drop-shadow(0 0 8px #ffd24d99)}
 .rwfly.cash{width:40px;height:28px;margin:-14px 0 0 -20px;background-image:var(--i-cash)}.rwfly.gem{background-image:var(--i-gem);filter:drop-shadow(0 2px 3px #000a) drop-shadow(0 0 8px #c47dff)}
 #navXp{transition:width .9s cubic-bezier(.3,.8,.3,1)}
@@ -9014,6 +9018,16 @@ function collectionTrack() {
   $("modal").classList.add("cpm");
   const tr = document.querySelector(".cptrack2"), first = Math.max(0, L.findIndex((n, i) => !got[i]));
   if (tr) tr.scrollLeft = Math.max(0, (first - 1) * 130);
+  if (tr) { const g = tr.querySelector(".cpg"), bars = [...g.querySelectorAll(".cpb")]; g.style.position = "relative";   // the player's power marker rides the track and counts up to the current value
+    const posAt = v => { let i = L.findIndex(n => v < n); if (i < 0) i = L.length - 1; const b = bars[i], lo = i ? L[i - 1] : 0, f = clamp((v - lo) / (L[i] - lo), 0, 1); return b.offsetLeft + b.offsetWidth * f; };
+    const mk = document.createElement("div"); mk.className = "cpmk"; mk.innerHTML = `<i></i><div><span class="av" style="background-image:url(${avatarURL(profile.avatar)})"></span><b>${fmt(profile.cpSeen === undefined ? pw : profile.cpSeen)}</b></div>`; g.appendChild(mk);
+    const nb = mk.querySelector("b"), seen = profile.cpSeen === undefined ? pw : profile.cpSeen, x0 = posAt(seen), x1 = posAt(pw), t0 = performance.now() + 400, dur = seen === pw ? 1 : 1800;
+    const put = x => { mk.style.transform = `translateX(${x - 48}px)`; };
+    put(x0);
+    const step = now => { if (!mk.isConnected) return; const u = clamp((now - t0) / dur, 0, 1), e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2; put(x0 + (x1 - x0) * e); nb.textContent = fmt(Math.round(seen + (pw - seen) * e));
+      if (seen !== pw) tr.scrollLeft += (Math.max(0, x0 + (x1 - x0) * e - tr.clientWidth / 2) - tr.scrollLeft) * 0.15;
+      if (u < 1) requestAnimationFrame(step); else { profile.cpSeen = pw; try { save(); } catch (er) {} } };
+    requestAnimationFrame(step); }
   const grant = i => { got[i] = 1; giveReward(cpReward(i)); };
   document.querySelectorAll("[data-cp]").forEach(b => b.onclick = () => { const i = +b.dataset.cp; if (got[i]) return; const left = tr.scrollLeft; grant(i); Snd.coin(6); collectionTrack(); document.querySelector(".cptrack2").scrollLeft = left; updateHomeDots(); });
   if ($("cpAll")) $("cpAll").onclick = () => { const left = tr.scrollLeft; claimable.forEach(grant); Snd.coin(6); burst(); collectionTrack(); document.querySelector(".cptrack2").scrollLeft = left; updateHomeDots(); };
