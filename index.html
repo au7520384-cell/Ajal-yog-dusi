@@ -2706,15 +2706,16 @@ const T6 = bank.clackT, ti = Math.min(T6.length - 1, Math.floor(Math.sqrt(k) * T
 play(pick(T6[ti]), vol * (0.8 + 0.4 * R1), 0.97 + 0.06 * Math.random(), 0, sp);
 }
 },
-cue(p, x, y) {
+cue(p, x, y, spin = 0) {   // an off-centre hit slips on the tip: a sharper tick, a touch higher
 if (!ok()) return; const sp = spat(x, y);
-if (bank.r_cue) play(bank.r_cue[Math.max(0, Math.min(bank.r_cue.length - 1, Math.round(p * (bank.r_cue.length - 1) + (Math.random() - 0.5) * 4)))], 0.25 + 0.75 * p, 0.92 + 0.14 * p + (Math.random() - 0.5) * 0.04, p < 0.5 ? 3000 + 8000 * p : 0, sp);   // a real cue strike: a harder stroke is higher and brighter
+if (bank.r_cue) play(bank.r_cue[Math.max(0, Math.min(bank.r_cue.length - 1, Math.round((p + 0.25 * spin) * (bank.r_cue.length - 1) + (Math.random() - 0.5) * 4)))], 0.25 + 0.75 * p, 0.92 + 0.14 * p + (Math.random() - 0.5) * 0.04, p < 0.5 ? 3000 + 8000 * p : 0, sp);   // a real cue strike: a harder stroke is higher and brighter
 else play(pick(bank.cueT[Math.min(3, Math.floor(p * 4))]), 0.3 + 0.7 * p, 0.97 + 0.06 * Math.random(), 0, sp);
 if (p > 0.55) tone(now(), 130, 0.09, 0.07 * p, "sine", 70);   // hard strokes add a low thump
 },
 rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 40); if (k < 0.012) return; play(pick(bank.rails0), 0.9 * Math.pow(k, 0.8), 0.94 + Math.random() * 0.12, 900 + 4000 * k, spat(x, y)); },
-pocket(x, y) { if (!ok()) return; const sp = spat(x, y); play(bank.pocket, 0.9, 0.96 + Math.random() * 0.08, 0, sp); const t = now(); noise(t + 0.1, 0.55, 0.05, "lowpass", 480, 0.7, 140); },   // the ball rolls down the leather pocket net
-tray() { if (!ok()) return; play(pick(bank.clacks), 0.28, 0.72, 2200); const t = now(); if (!ui.roll) noise(t - 0.01, 0.45, 0.035, "lowpass", 700, 0.7, 220); },
+pocket(x, y, v = 20) { if (!ok()) return; const sp = spat(x, y), k = Math.min(1, v / 35);   // a faster ball hits the jaws and the net harder: louder, higher, longer rattle
+play(bank.pocket, 0.4 + 0.6 * k, 0.92 + 0.1 * k + Math.random() * 0.06, 2500 + 9000 * k, sp); const t = now(); noise(t + 0.1, 0.35 + 0.3 * k, 0.02 + 0.04 * k, "lowpass", 380 + 200 * k, 0.7, 140); },   // the ball rolls down the leather pocket net
+tray(vy = 8) { if (!ok()) return; const k = Math.min(1, vy / 14); play(pick(bank.clacks), 0.12 + 0.3 * k, 0.66 + 0.1 * k, 1800 + 800 * k); const t = now(); if (!ui.roll) noise(t - 0.01, 0.45, 0.035, "lowpass", 700, 0.7, 220); },
 roll(sum) {
 if (!ac || !rollG) return;
 const g = 0;   // rolling is silent (a real ball on cloth is nearly inaudible); every rumble/swish variant was heard as a drone
@@ -2974,7 +2975,7 @@ const copy = {n: b.n, p: b.p.slice(), q: b.q.slice()};
 G.sinking.push({b: copy, x: b.x, y: b.y, px: p.x + p.dx, py: p.y + p.dy, t: 0});
 if (b.n !== 0) G.tray.push({b: {n: b.n, p: b.p.slice(), q: b.q.slice()}, s: 0, vy: 3, delay: 16});
 G.flashes.push({x: p.x + p.dx, y: p.y + p.dy, t: 0});
-if (!G.demo) { Snd.pocket(p.x + p.dx, p.y + p.dy); vib(30); if (b.n && isHuman(G.cur) && !G.players[G.cur].remote && G.type !== "watch") mission("pot"); profile.potted = (profile.potted | 0) + 1; }
+if (!G.demo) { Snd.pocket(p.x + p.dx, p.y + p.dy, Math.hypot(b.vx || 0, b.vy || 0)); vib(30); if (b.n && isHuman(G.cur) && !G.players[G.cur].remote && G.type !== "watch") mission("pot"); profile.potted = (profile.potted | 0) + 1; }
 }
 function onHit(G, a, b, rel, x, y) {
 if (G.shot && G.shot.firstHit === null) {
@@ -3242,7 +3243,7 @@ const g = G.groups[G.cur];
 G.shot = {firstHit: null, potted: [], ownBefore: g ? remaining(g) : -1, rails: 0, power};
 G.moving = true; G.ballInHand = false; input.power = 0; G.aiPull = 0;
 if (G.isBreak) G.shake = 10 * power;
-if (!G.demo) { Snd.cue(power, cue.x, cue.y); if (!remote) vib(12 + power * 25 | 0); dustPuff(G, cue.x, cue.y, 3 + (power * 5 | 0), 0.8); }
+if (!G.demo) { Snd.cue(power, cue.x, cue.y, remote ? 0 : Math.hypot(G.spin.x, G.spin.y)); if (!remote) vib(12 + power * 25 | 0); dustPuff(G, cue.x, cue.y, 3 + (power * 5 | 0), 0.8); }
 try { const cd = cueDef(curP().cue); if (cd.lux && !G.demo) { spawnFx(G, cd.fx, G.balls[0].x, G.balls[0].y, 0.35 + power * 0.55); Snd.tableFx(tableFxKind(cd.fx), 0.35 + power * 0.4); } } catch (e) { console.error("cue fx", e); }
 }
 function freeSpot(x, y) {
@@ -6271,7 +6272,7 @@ const target = g.len - R - 3 - i * (2 * R * 1.15 + 1);
 if (q.s < target) {
 q.vy = q.s < g.L1 ? Math.max(q.vy, 3) : Math.min(q.vy + 0.7, 14); q.s += q.vy;
 if (q.s < g.L1) rollBall(q.b, g.dir * q.vy, 0); else rollBall(q.b, 0, q.vy);
-if (q.s >= target) { q.s = target; Snd.trayStop(q.snd); q.snd = null; if (q.vy > 3 && !G.demo) Snd.tray(); q.vy = 0; }
+if (q.s >= target) { q.s = target; Snd.trayStop(q.snd); q.snd = null; if (q.vy > 3 && !G.demo) Snd.tray(q.vy); q.vy = 0; }
 }
 });
 }
