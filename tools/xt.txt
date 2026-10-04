@@ -895,3 +895,199 @@ Kuz bargi‖Autumn Leaf|Осенний лист|Sonbahar Yaprağı|Hoja de otoñ
 Qon oyi‖Blood Moon|Кровавая луна|Kan Ayı|Luna de sangre|Lua de sangue|قمر الدم|Bulan Darah|ब्लड मून|Lune de sang|Blutmond|블러드 문|ブラッドムーン|血月
 Tuman shohligi‖Kingdom of Mist|Королевство тумана|Sis Krallığı|Reino de la niebla|Reino da névoa|مملكة الضباب|Kerajaan Kabut|कोहरे का साम्राज्य|Royaume de brume|Nebelreich|안개의 왕국|霧の王国|雾之国
 Qor malikasi‖Snow Queen|Снежная королева|Kar Kraliçesi|Reina de las nieves|Rainha da neve|ملكة الثلج|Ratu Salju|स्नो क्वीन|Reine des neiges|Schneekönigin|눈의 여왕|雪の女王|冰雪女王
+London‖London|Лондон|Londra|Londres|Londres|لندن|London|लंदन|Londres|London|런던|ロンドン|伦敦
+Sidney‖Sydney|Сидней|Sidney|Sídney|Sydney|سيدني|Sydney|सिडनी|Sydney|Sydney|시드니|シドニー|悉尼
+Lissabon‖Lisbon|Лиссабон|Lizbon|Lisboa|Lisboa|لشبونة|Lisbon|लिस्बन|Lisbonne|Lissabon|리스본|リスボン|里斯本
+Tokio‖Tokyo|Токио|Tokyo|Tokio|Tóquio|طوكيو|Tokyo|टोक्यो|Tokyo|Tokio|도쿄|東京|东京
+Las-Vegas‖Las Vegas|Лас-Вегас|Las Vegas|Las Vegas|Las Vegas|لاس فيغاس|Las Vegas|लास वेगास|Las Vegas|Las Vegas|라스베이거스|ラスベガス|拉斯维加斯
+Jakarta‖Jakarta|Джакарта|Cakarta|Yakarta|Jacarta|جاكرتا|Jakarta|जकार्ता|Jakarta|Jakarta|자카르타|ジャカルタ|雅加达
+Toronto‖Toronto|Торонто|Toronto|Toronto|Toronto|تورنتو|Toronto|टोरंटो|Toronto|Toronto|토론토|トロント|多伦多
+Qohira‖Cairo|Каир|Kahire|El Cairo|Cairo|القاهرة|Kairo|काहिरा|Le Caire|Kairo|카이로|カイロ|开罗
+Dubay‖Dubai|Дубай|Dubai|Dubái|Dubai|دبي|Dubai|दुबई|Dubaï|Dubai|두바이|ドバイ|迪拜
+Shanxay‖Shanghai|Шанхай|Şanghay|Shanghái|Xangai|شنغهاي|Shanghai|शंघाई|Shanghai|Shanghai|상하이|上海|上海
+Parij‖Paris|Париж|Paris|París|Paris|باريس|Paris|पेरिस|Paris|Paris|파리|パリ|巴黎
+Rim‖Rome|Рим|Roma|Roma|Roma|روما|Roma|रोम|Rome|Rom|로마|ローマ|罗马
+Bangkok‖Bangkok|Бангкок|Bangkok|Bangkok|Bangkok|بانكوك|Bangkok|बैंकॉक|Bangkok|Bangkok|방콕|バンコク|曼谷
+Seul‖Seoul|Сеул|Seul|Seúl|Seul|سيول|Seoul|सियोल|Séoul|Seoul|서울|ソウル|首尔
+Mumbay‖Mumbai|Мумбаи|Mumbai|Bombay|Mumbai|مومباي|Mumbai|मुंबई|Bombay|Mumbai|뭄바이|ムンバイ|孟买
+Berlin‖Berlin|Берлин|Berlin|Berlín|Berlim|برلين|Berlin|बर्लिन|Berlin|Berlin|베를린|ベルリン|柏林
+Istanbul‖Istanbul|Стамбул|İstanbul|Estambul|Istambul|إسطنبول|Istanbul|इस्तांबुल|Istanbul|Istanbul|이스탄불|イスタンブール|伊斯坦布尔
+Osaka‖Osaka|Осака|Osaka|Osaka|Osaka|أوساكا|Osaka|ओसाका|Osaka|Osaka|오사카|大阪|大阪
+Toshkent‖Tashkent|Ташкент|Taşkent|Taskent|Tashkent|طشقند|Tashkent|ताशकंद|Tachkent|Taschkent|타슈켄트|タシケント|塔什干
+Rio‖Rio|Рио|Rio|Río|Rio|ريو|Rio|रियो|Rio|Rio|리우|リオ|里约
+Nyu-York‖New York|Нью-Йорк|New York|Nueva York|Nova Iorque|نيويورك|New York|न्यूयॉर्क|New York|New York|뉴욕|ニューヨーク|纽约
+Moskva‖Moscow|Москва|Moskova|Moscú|Moscou|موسكو|Moskow|मॉस्को|Moscou|Moskau|모스크바|モスクワ|莫斯科
+Chinor‖Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree
+Konfet‖Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy
+Moviy Osmon‖Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky
+Kumush Oy‖Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon
+Oltin O'rda‖Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde
+Multimillioner‖Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire
+Milliarder‖Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire
+Imperator‖Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor
+Ajdarho‖Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon
+Klassik‖Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic
+Qora Marvarid‖Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl
+Safir‖Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire
+Bo'ron‖Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm
+Chaqmoq‖Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning
+Burgut‖Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle
+Qoplon‖Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard
+To'lqin‖Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave
+Marmar‖Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble
+Yo'lbars‖Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger
+Nuqta‖Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot
+Vulqon‖Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano
+Muz‖Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice
+Sahro‖Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert
+O'rmon‖Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest
+Okean‖Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean
+Tun‖Night|Night|Night|Night|Night|Night|Night|Night|Night|Night|Night|Night|Night
+Tong‖Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn
+Shafaq‖Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight
+Kumush Tulki‖Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox
+Oltin Burgut‖Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle
+Qirol‖King|King|King|King|King|King|King|King|King|King|King|King|King
+Malika‖Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen
+Samuray‖Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai
+Pirat‖Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate
+Sfinks‖Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx
+Feniks‖Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix
+Grifon‖Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin
+Kometa‖Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet
+Orbita‖Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit
+Qora Tuynuk‖Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole
+Chor‖Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar
+Granat‖Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet
+Oltin‖Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold
+Grandioz‖Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand
+Temir‖Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron
+Shamol‖Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind
+Qum‖Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand
+Yashin‖Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash
+Fazo‖Space|Space|Space|Space|Space|Space|Space|Space|Space|Space|Space|Space|Space
+Rubin‖Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby
+Onix‖Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx
+Nefrit‖Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade
+Korall‖Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral
+Platina‖Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum
+Quyosh‖Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun
+Oy‖Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon
+Galaktika Pro‖Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro
+Aksion‖Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom
+Kristall Tig'‖Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade
+Ekskalibur‖Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur
+Ajdar Olovi‖Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire
+Muz Qiroli‖Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King
+Qora Feniks‖Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix
+Oltin Sher‖Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion
+Chaqmoq Xudosi‖Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God
+Zulmat‖Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness
+Nur‖Light|Light|Light|Light|Light|Light|Light|Light|Light|Light|Light|Light|Light
+Sehrgar‖Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer
+Imperiya‖Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire
+Vikinglar‖Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings
+Firavn‖Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh
+Poseydon‖Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon
+Simurg‖Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh
+Humo‖Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma
+Registon‖Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan
+Ulug'bek‖Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg
+Amir Temur‖Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur
+Bobur‖Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur
+Ot yurishi‖Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move
+Geyger‖Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger
+Yadro Nemesis‖Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis
+Vampir‖Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire
+Zombi‖Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie
+Skelet‖Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton
+Arvoh‖Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost
+Jodugar‖Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch
+Bo'ri odam‖Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf
+Mumiya‖Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy
+Frankenshteyn‖Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein
+Qora mushuk‖Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat
+Qabriston‖Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard
+Iblis‖Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil
+Kuzgun‖Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven
+Qon oy‖Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon
+Shayton ko'zi‖Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye
+Yovvoyi ruh‖Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit
+Bosh suyagi‖Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull
+Hayqiriq‖Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream
+Qorong'u o'rmon‖Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest
+Zulmat malikasi‖Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness
+Kabus‖Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare
+Gargoyl‖Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle
+Bo'ron arvohi‖Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost
+Tungi ovchi‖Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter
+Lanat‖Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse
+Kuldon‖Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn
+Zahar‖Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison
+Jallod‖Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner
+Nekromant‖Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer
+Ilon‖Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake
+O'rgimchak‖Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider
+Yirtqich‖Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator
+Tuman‖Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist
+Drakula‖Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula
+Tobut‖Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin
+G'ul‖Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul
+Qovoq qiroli‖Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King
+Banshi‖Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee
+Sham ruhi‖Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit
+Qora ritsar‖Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight
+Kalla ovchisi‖Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter
+Go'rkov qo'li‖Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand
+Qonxo'r‖Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty
+Chirigan‖Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten
+Suyak shohi‖Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King
+Soyalar ovchisi‖Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter
+Sehrli qozon‖Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron
+Jinni‖Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie
+Zahar sharbati‖Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion
+Bo'ri shoh‖Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King
+Yarasa shoh‖Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King
+Sehrgar shlyapasi‖Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat
+Ajal farishtasi‖Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death
+Qonli tishlar‖Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs
+Tog' arvohi‖Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost
+Kemadagi arvoh‖Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship
+Chuqurlik dahshati‖Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep
+Shamchiroq ruhi‖Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit
+Qora gulxan‖Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire
+Jallod boltasi‖Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe
+Sirli niqob‖Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask
+Dor‖Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows
+Yig'loqi ruh‖Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit
+Oxirgi kabus‖Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare
+Sirli tun‖Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night
+Yarim tun‖Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight
+Qabr qo'ng'irog'i‖Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell
+Yovuz ko'z‖Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye
+Kabus o'rmoni‖Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest
+Tun sayyohi‖Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler
+Suyak taqa‖Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe
+Jodu tayoqchasi‖Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand
+Qorong'u oy‖Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon
+Tuman shamoli‖Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind
+Xira chiroq‖Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp
+Sukunat‖Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence
+Bronza‖Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze
+Kumush‖Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver
+Oy nuri‖Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight
+Qon sharob‖Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine
+Qor bo'roni‖Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm
+Yashil olov‖Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire
+Oltin burgut‖Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle
+Samoviy ajdar‖Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon
+Tun pari‖Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy
+Shoh gambiti II‖King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II
+Yalang'och daraxt‖Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree
+Sirli soat‖Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock
+Tungi gul‖Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower
+Oy ovchisi‖Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter
+Qora atirgul‖Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose
+Hayot daraxti‖Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life
+Sharpa yo'li‖Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path
+Tumanli ko'l‖Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake
