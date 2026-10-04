@@ -1146,12 +1146,17 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 @media (max-height:460px){ .embtop{grid-template-columns:90px 1fr} .cemb.big{--s:78px} .embn{font-size:16px} }
 
 .rdhead{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-bottom:8px}.rdhead b{font-family:var(--fh);font-size:26px;color:#ffe27a}.rdhead span{color:#cfe0ff;font-size:13px;flex:1;min-width:180px}.rdhead em{color:#ffcf3d;font-style:normal;font-weight:800}
-.rdtrack{position:relative;display:flex;gap:10px;overflow-x:auto;padding:30px 10px 12px;scrollbar-width:thin;touch-action:pan-x}
-.rdline{position:absolute;left:0;right:0;top:132px;height:10px;border-radius:5px;background:#0a1228;border:1px solid #2a4690;min-width:calc(120 * 112px);z-index:0}.rdline i{display:block;height:100%;border-radius:5px;background:linear-gradient(#ffe14d,#ff9d00)}
-.rdwalk{position:absolute;top:0;left:0;z-index:5;width:46px;height:56px;pointer-events:none;will-change:transform}
-.rdwalk .av{width:44px;height:44px;border-radius:50%;border:3px solid #ffd24d;background:#0b1224 center/cover;box-shadow:0 0 16px #ffb300,0 4px 8px #000a;margin:0 1px}
-.rdwalk .pin{position:absolute;left:50%;bottom:4px;margin-left:-8px;border:8px solid transparent;border-top:10px solid #ffd24d;border-bottom:0;filter:drop-shadow(0 2px 2px #0008)}
+.rdtrack{position:relative;display:flex;gap:10px;overflow-x:auto;padding:6px 10px 50px;scrollbar-width:thin;touch-action:pan-x}
+.rdline{position:absolute;left:0;right:0;bottom:28px;height:14px;border-radius:4px;background:#120a2c;border:2px solid #ffcf3d;min-width:calc(120 * 112px);z-index:0;overflow:hidden}.rdline i{display:block;height:100%;background:linear-gradient(#ffe14d,#ff9d00);box-shadow:0 0 12px #ffb300}
+.rdwalk{position:absolute;bottom:0;left:0;z-index:5;pointer-events:none;will-change:transform;display:flex;flex-direction:column;align-items:center;width:96px}
+.rdwalk .pin{border:7px solid transparent;border-bottom:9px solid #ffcf3d;border-top:0;margin-bottom:-1px;filter:drop-shadow(0 -2px 4px #ffb300)}
+.rdwalk .pill{display:flex;align-items:center;gap:6px;background:linear-gradient(#2a1a5a,#120a2c);border:2px solid #ffcf3d;border-radius:12px;padding:3px 10px 3px 4px;box-shadow:0 0 14px #ffb30088,0 4px 8px #000a}
+.rdwalk .av{width:24px;height:24px;border-radius:50%;border:2px solid #ffd24d;background:#0b1224 center/cover}
+.rdwalk b{font:800 17px var(--fh);color:#fff;text-shadow:0 2px 0 #000a;min-width:34px;text-align:center}
 .rdwalk.walk .av{animation:rdbob .32s ease-in-out infinite alternate}
+.rdtk{position:absolute;bottom:4px;transform:translateX(-50%);color:#c9b8ff;font:800 14px var(--fh);text-align:center;pointer-events:none}.rdtk:before{content:"";display:block;width:2px;height:10px;background:#ffcf3d;margin:0 auto 19px}
+.rdtk.on{color:#ffe27a}
+@media (max-width:560px),(max-height:440px){.rdnote{display:none}}
 .rdn.pend{filter:grayscale(.7) brightness(.8)}.rdn.pend .btn{visibility:hidden}.rdn.pop{animation:rdpop .55s cubic-bezier(.3,1.6,.5,1)}
 @keyframes rdbob{from{transform:translateY(0) rotate(-6deg)}to{transform:translateY(-7px) rotate(6deg)}}
 @keyframes rdpop{0%{transform:scale(1)}40%{transform:scale(1.18);filter:brightness(1.6)}100%{transform:scale(1)}}
@@ -8811,12 +8816,15 @@ if (i >= items.length) return cx(items.length - 1);
 return cx(i - 1) + (cx(i) - cx(i - 1)) * cl01((t - items[i - 1].at) / (items[i].at - items[i - 1].at)); };
 const seen = profile.roadSeen === undefined ? tp : profile.roadSeen;
 const mk = document.createElement("div"); mk.className = "rdwalk";
-mk.innerHTML = `<div class="av" style="background-image:url(${avatarURL(profile.avatar)})"></div><i class="pin"></i>`; tr.appendChild(mk);
-const fill = tr.querySelector(".rdline i"), put = x => { mk.style.transform = `translateX(${x - 23}px)`; if (fill) fill.style.width = x + "px"; };
+mk.innerHTML = `<i class="pin"></i><div class="pill"><div class="av" style="background-image:url(${avatarURL(profile.avatar)})"></div><b>${fmt(seen)}</b></div>`; tr.appendChild(mk);
+const nb = mk.querySelector("b");
+const lineH = tr.querySelector(".rdline"); const barBottom = lineH ? 50 : 0;   // the marker hangs under the bar, so it never covers a prize
+nodes.forEach((n, i) => { if (i % 2) return; const tk = document.createElement("div"); tk.className = "rdtk" + (items[i].at <= tp ? " on" : ""); tk.style.left = cx(i) + "px"; tk.textContent = fmt(Math.ceil(items[i].at)); tr.appendChild(tk); });
+const fill = tr.querySelector(".rdline i"), put = x => { mk.style.transform = `translateX(${x - 48}px)`; if (fill) fill.style.width = x + "px"; };
 if (fill) fill.style.transition = "none";
 const x1 = posFor(tp);
 const done = () => { mk.classList.remove("walk"); profile.roadSeen = tp; try { save(); } catch (e) {} };
-if (seen === tp) { put(x1); profile.roadSeen = tp; return; }
+if (seen === tp) { put(x1); nb.textContent = fmt(tp); profile.roadSeen = tp; return; }
 const x0 = posFor(seen), pend = nodes.filter((n, i) => items[i].at > Math.min(seen, tp) && items[i].at <= Math.max(seen, tp) && items[i].at <= tp);
 pend.forEach(n => n.classList.add("pend")); put(x0); mk.classList.add("walk");
 const passed = Math.abs(nodes.filter((n, i) => cx(i) > Math.min(x0, x1) && cx(i) <= Math.max(x0, x1)).length), dur = Math.max(1300, Math.min(3400, 900 + passed * 380)), t0 = performance.now() + 450;
@@ -8824,9 +8832,9 @@ let last = x0;
 const step = now => {
 if (!tr.isConnected) return;
 const u = cl01((now - t0) / dur), e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2, x = x0 + (x1 - x0) * e;
-put(x); tr.scrollLeft += (Math.max(0, x - tr.clientWidth / 2) - tr.scrollLeft) * 0.18;
+put(x); nb.textContent = fmt(Math.round(seen + (tp - seen) * e)); tr.scrollLeft += (Math.max(0, x - tr.clientWidth / 2) - tr.scrollLeft) * 0.18;
 nodes.forEach((n, i) => { const c = cx(i); if (n.classList.contains("pend") && ((x1 >= x0 && c <= x) || (x1 < x0 && c >= x))) { n.classList.remove("pend"); n.classList.add("pop"); try { Snd.coin(1); vib(10); } catch (er) {} setTimeout(() => n.classList.remove("pop"), 600); } });
-if (u < 1) requestAnimationFrame(step); else { put(x1); done(); try { Snd.pop(); } catch (er) {} }
+if (u < 1) requestAnimationFrame(step); else { put(x1); nb.textContent = fmt(tp); done(); try { Snd.pop(); } catch (er) {} }
 };
 requestAnimationFrame(step);
 }
@@ -8842,7 +8850,7 @@ return `<div class="rdn${ok ? " ok" : ""}${cl ? " cl" : ""}${i === cur ? " cur" 
 const prev = cur ? items[cur - 1].at : 0, frac = Math.min(1, Math.max(0, (tp - prev) / Math.max(1, items[cur].at - prev)));
 box.innerHTML = `<div class="rdhead"><b>🏆 ${fmt(tp)}</b><span>${T("G'alaba qozonib kubok ochkolarini to'plang va sovg'alarni oching!")}</span><em>${T("Keyingi sovg'a")}: 🏆 ${fmt(Math.ceil(items[cur].at))}</em></div>
 <div class="rdtrack" id="rdTrack"><div class="rdline" style="min-width:${items.length * 112}px"><i style="width:${Math.min(100, (cur + frac) / items.length * 100)}%"></i></div>${items.map(node).join("")}</div>
-<div class="muted" style="margin-top:8px">${T("G'alaba kubok ochkosini beradi, mag'lubiyat kamaytiradi. Olingan sovg'alar yo'qolmaydi.")}</div>`;
+<div class="muted rdnote" style="margin-top:6px">${T("G'alaba kubok ochkosini beradi, mag'lubiyat kamaytiradi. Olingan sovg'alar yo'qolmaydi.")}</div>`;
 const tr = $("rdTrack"), cn = tr.querySelector(".cur"); if (cn) tr.scrollLeft = Math.max(0, cn.offsetLeft - tr.clientWidth / 2 + 55);
 roadWalk(tr, items, tp);
 tr.querySelectorAll("[data-rc]").forEach(b => b.onclick = () => { const k = +b.dataset.rc; if (got[k] || roadTP() < roadAt(k)) return; got[k] = Date.now(); giveReward2(roadRew(k)); save(); Snd.coin(6); burst(); buildRoad(); });
