@@ -2627,7 +2627,7 @@ rollG = ac.createGain(); rollG.gain.value = 0;
 const rollH = ac.createBiquadFilter(); rollH.type = "highpass"; rollH.frequency.value = 320; rollH.Q.value = 0.7;   // no sub-bass: the old 90-350 Hz rumble was the drone heard after hard shots
 src.connect(rollH); rollH.connect(rollF); rollF.connect(rollG); rollG.connect(master); src.start();
 { const sl = ac.createBufferSource(); sl.buffer = nb; sl.loop = true; const sf = ac.createBiquadFilter(); sf.type = "bandpass"; sf.frequency.value = 3800; sf.Q.value = 0.9;
-slideG = ac.createGain(); slideG.gain.value = 0; sl.connect(sf); sf.connect(slideG); slideG.connect(master); sl.start(); }   // a ball sliding on the cloth (draw, stun, masse): a faint high 'ssh' only while it slips
+slideG = ac.createGain(); slideG.gain.value = 0; sl.connect(sf); sf.connect(slideG); slideG.connect(master); /* not started: no cloth hiss */ }   // a ball sliding on the cloth (draw, stun, masse): a faint high 'ssh' only while it slips
 bank = buildBank();
 {   // swap the synthesised ball-ball clacks for the real recordings once they are decoded
 const dec = u => fetch(u).then(r => r.arrayBuffer()).then(buf => new Promise((res, rej) => ac.decodeAudioData(buf, res, rej)));
@@ -2662,25 +2662,21 @@ const b = ac.createBuffer(1, y.length, SR), d = b.getChannelData(0), k = 0.95 / 
 for (let i = 0; i < y.length; i++) d[i] = y[i] * k * (i > y.length - fade ? (y.length - i) / fade : 1);
 return b;
 };
-const clackT = [];
-// ball-ball: two phenolic balls; Hertz contact time falls with impact speed (soft touch ~0.35 ms and dull, hard break ~0.11 ms and bright) -> 6 speed tiers x 5 variants,
-// each a cluster of ring-down modes (Q 20-35 -> 3-5 ms decay), a short "table body" knock under it and a faint second micro-click (the balls separate and re-touch after 3-7 ms)
-for (const kk of [0.02, 0.06, 0.12, 0.22, 0.36, 0.55, 0.77, 1]) {
-const tier = [], slow = 1 + 2.4 * Math.pow(1 - kk, 2);
-for (let v = 0; v < 5; v++) {
-const x = exc(0.1, R(0.00011, 0.00018) * slow), parts = [], sc = R(0.94, 1.07);
+const clacks = [];
+// ball-ball: two phenolic balls, contact ~0.15 ms, a cluster of ring-down modes (Q 20-35 -> 3-5 ms decay), a short "table body" knock under it
+// and a faint second micro-click (the balls separate and re-touch after 3-7 ms)
+for (let v = 0; v < 16; v++) {
+const x = exc(0.1, R(0.00011, 0.00021)), parts = [], sc = R(0.94, 1.07);
 for (const [f0, f1, q0, q1, a] of [[1900, 2000, 24, 34, 1], [2200, 2320, 26, 36, 0.9], [2450, 2620, 26, 36, 0.8], [2800, 2980, 20, 28, 0.5], [3500, 4100, 10, 16, 3.2], [4200, 4800, 6, 8, 2.4], [5600, 6600, 5, 7, 1.4], [7000, 8000, 3, 3, 0.5]]) {
-const Q = R(q0, q1), ae = a * (f0 >= 3000 ? 0.1 + 0.9 * Math.pow(kk, 1.3) : 1 + 0.6 * (1 - kk)); parts.push(bp(x, R(f0, f1) * sc, Q, ae * Q / 10));   // a soft contact is too slow to excite the high modes: only the dull low ones ring
+const Q = R(q0, q1); parts.push(bp(x, R(f0, f1) * sc, Q, a * Q / 10));
 }
-parts.push(bp(x, R(1250, 1500), 4, 0.25 + 0.3 * (1 - kk)));
-parts.push(bp(exc(0.1, R(0.0006, 0.0012)), R(300, 460), 4, 0.012 + 0.03 * (1 - kk)));   // the felt-covered slate answering underneath (more audible when the click is soft)
+parts.push(bp(x, R(1250, 1500), 4, 0.25));
+parts.push(bp(exc(0.1, R(0.0006, 0.0012)), R(300, 460), 4, 0.012));   // the felt-covered slate answering underneath
 const base = mix(...parts), d = Math.round(R(0.0035, 0.007) * SR), y = new Float32Array(base.length);
 for (let i = 0; i < y.length; i++) y[i] = base[i] + (i >= d ? base[i - d] * 0.2 : 0);
-tier.push(toBuf(y));
+clacks.push(toBuf(y));
 }
-clackT.push(tier);
-}
-const clacks = clackT.flat();
+const clackT = [clacks];
 const cueT = [];
 // cue strike: a leather tip on phenolic: 1 ms "tock" (mid resonances), a sharp tip "tick", the cue shaft ringing at ~270 Hz (~20 ms) and a puff of chalk noise;
 // a harder stroke squashes the tip less per unit force: shorter contact, more tick and chalk
@@ -2770,14 +2766,9 @@ const s = ac.createBufferSource(); s.buffer = ui.search; s.loop = true; const g 
 setMuted(m) { if (master) master.gain.setTargetAtTime(m ? 0 : level(), ac.currentTime, 0.02); },
 clack(v, x, y) {
 if (!ok()) return; const t = now();
-if (t - lastClack < 0.004) return; lastClack = t;
-const k = Math.min(1, v / 55); if (k < 0.006) return;   // contact speeds run 0.4-70 u/frame (0.05-9 m/s): 55 u/f is a hard hit, anything below is graded softer
-const vol = Math.pow(10, -30 * (1 - Math.sqrt(k)) / 20), sp = spat(x, y), R1 = Math.random();   // loudness follows the impact speed over a 30 dB range
-const w = Math.max(0, Math.min(1, (k - 0.25) / 0.5));   // soft and medium touches are the modelled contact (long, dull -> short, bright); real recordings fade in under hard hits
-const T6 = bank.clackT, ti = Math.min(T6.length - 1, Math.floor(Math.pow(k, 0.45) * T6.length));
-play(pick(T6[ti]), vol * (1 - 0.45 * w) * (0.85 + 0.3 * R1), 0.97 + 0.06 * Math.random(), 1500 + 12000 * Math.pow(k, 0.6), sp);   // brightness ladder: the harder the contact, the more highs pass
-if (bank.r_clack && w > 0) { const N = bank.r_clack.length, idx = Math.max(0, Math.min(N - 1, Math.round(Math.pow(k, 0.55) * (N - 1) + (Math.random() - 0.5) * 5)));
-play(bank.r_clack[idx], vol * w * (0.85 + 0.3 * R1), 0.96 + 0.07 * k + (Math.random() - 0.5) * 0.05, 0, sp); }
+if (t - lastClack < 0.008) return; lastClack = t;
+const k = Math.min(1, v / 13); if (k < 0.015) return;
+play(pick(bank.clacks), 0.1 + 0.9 * Math.pow(k, 0.7), 0.94 + 0.1 * k + Math.random() * 0.05, 2000 + 8000 * k, spat(x, y));   // harder hits are shorter contacts: higher and brighter
 },
 cue(p, x, y, spin = 0) {   // an off-centre hit slips on the tip: a sharper tick, a touch higher
 if (!ok()) return; const sp = spat(x, y);
@@ -3060,7 +3051,7 @@ if (G.shot && G.shot.firstHit === null) {
 if (a.n === 0) G.shot.firstHit = b.n; else if (b.n === 0) G.shot.firstHit = a.n;
 }
 if (G.shot && a.n && b.n) { const oo = G.shot.oo || (G.shot.oo = new Set()); oo.add(a.n); oo.add(b.n); }   // object balls that were struck by another object ball (combination shots)
-if (!G.demo) { Snd.clack(rel, x, y); if (lastRubJ > 0.35) Snd.rub(lastRubJ, x, y); }
+if (!G.demo) Snd.clack(rel, x, y);
 if (rel > 9) for (let i = 0; i < Math.min(10, rel | 0); i++) G.sparks.push({x, y, vx: rnd(-3, 3), vy: rnd(-3, 3), life: rnd(8, 16)});
 }
 function dustPuff(G, x, y, n, sz) {   // chalk / cloth dust: soft translucent puffs that drift and fade
@@ -6496,10 +6487,9 @@ G.strike.t++;
 if (G.strike.t >= 5) { const s = G.strike; G.strike = null; try { doShoot(s.power, s.remote); } catch (e) { onFrameError(e); if (!G.moving) { G.moving = true; G.shot = G.shot || {firstHit: null, potted: [], ownBefore: -1, rails: 0, power: s.power}; } } }
 } else if (G.moving) {
 physicsFrame(G);
-if (!G.demo) Snd.slide(G.balls.reduce((s, b) => { if (b.out || (b.z || 0) > 0.5) return s; const sx = b.vx - R * (b.wy || 0), sy = b.vy + R * (b.wx || 0), sv = Math.hypot(sx, sy); return s + (sv > 2 && Math.hypot(b.vx, b.vy) > 1 ? sv : 0); }, 0));
 if (!G.demo) Snd.roll(G.balls.reduce((s, b) => { const v = b.out ? 0 : Math.hypot(b.vx, b.vy); return s + (v > 0.6 ? v : 0); }, 0));
 if (!anyMoving(G.balls)) {
-G.moving = false; if (!G.demo) { Snd.roll(0); Snd.slide(0); }
+G.moving = false; if (!G.demo) Snd.roll(0);
 if (G.type === "lucky") luckyFinish(); else resolveShot();
 if (G.net) {
 if (G.net.spec) { if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; } }
