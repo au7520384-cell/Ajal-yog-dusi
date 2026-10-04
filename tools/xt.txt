@@ -880,3 +880,5 @@ Kimga yuborilmoqda‖Sending to|Кому отправляем|Gönderilen kişi|
 Yuborish‖Send|Отправить|Gönder|Enviar|Enviar|إرسال|Kirim|भेजें|Envoyer|Senden|보내기|送る|发送
 Bomba‖Bomb|Бомба|Bomba|Bomba|Bomba|قنبلة|Bom|बम|Bombe|Bombe|폭탄|爆弾|炸弹
 Bugungi limit tugadi‖Today's limit reached|Дневной лимит исчерпан|Bugünkü limit doldu|Límite de hoy alcanzado|Limite de hoje atingido|تم بلوغ حد اليوم|Batas hari ini tercapai|आज की सीमा पूरी हो गई|Limite du jour atteinte|Tageslimit erreicht|오늘 한도 도달|本日の上限に達しました|今日额度已用完
+Qutini 3 marta bosing‖Tap the box 3 times|Нажмите на ящик 3 раза|Kutuya 3 kez dokun|Toca la caja 3 veces|Toque na caixa 3 vezes|اضغط على الصندوق 3 مرات|Ketuk kotak 3 kali|बॉक्स को 3 बार टैप करें|Touchez le coffre 3 fois|Tippe 3 Mal auf die Kiste|상자를 3번 탭하세요|箱を3回タップ|点击箱子3次
+Davom etish uchun bosing‖Tap to continue|Нажмите, чтобы продолжить|Devam etmek için dokun|Toca para continuar|Toque para continuar|اضغط للمتابعة|Ketuk untuk melanjutkan|जारी रखने के लिए टैप करें|Touchez pour continuer|Zum Fortfahren tippen|계속하려면 탭하세요|タップして続ける|点击继续
