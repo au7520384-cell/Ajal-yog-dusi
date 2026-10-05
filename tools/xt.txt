@@ -1096,3 +1096,8 @@ VA‖AND|И|VE|Y|E|و|DAN|और|ET|UND|그리고|そして|并
 YUTING‖WIN|ВЫИГРАЙТЕ|KAZAN|GANA|GANHE|اربح|MENANG|जीतें|GAGNEZ|GEWINNEN|이기세요|勝とう|赢取
 BOSING‖TAP TO SPIN|НАЖМИ|DOKUN|TOCA|TOQUE|اضغط|KETUK|दबाएँ|TOUCHE|TIPPEN|탭|タップ|点击
 Aylantirish‖Spins|Вращения|Çevirme|Giros|Giros|الدورات|Putaran|स्पिन|Tours|Drehungen|스핀|スピン|转动
+Haftalik natijalar‖Weekly Results|Итоги недели|Haftalık Sonuçlar|Resultados semanales|Resultados semanais|نتائج الأسبوع|Hasil Mingguan|साप्ताहिक परिणाम|Résultats de la semaine|Wochenergebnisse|주간 결과|週間結果|每周结果
+Top 3 sovrin‖Top 3 Prizes|Призы топ-3|İlk 3 Ödülü|Premios del Top 3|Prêmios do Top 3|جوائز أفضل 3|Hadiah Top 3|टॉप 3 पुरस्कार|Prix du Top 3|Top-3-Preise|상위 3 상금|トップ3賞金|前三名奖励
+O'RIN‖RANK|МЕСТО|SIRA|PUESTO|POSIÇÃO|المركز|PERINGKAT|रैंक|RANG|RANG|순위|順位|排名
+ISM‖NAME|ИМЯ|İSİM|NOMBRE|NOME|الاسم|NAMA|नाम|NOM|NAME|이름|名前|名称
+HAFTALIK YUTUQ‖WEEKLY WINNINGS|ВЫИГРЫШ ЗА НЕДЕЛЮ|HAFTALIK KAZANÇ|GANANCIAS SEMANALES|GANHOS SEMANAIS|أرباح الأسبوع|KEMENANGAN MINGGUAN|साप्ताहिक जीत|GAINS DE LA SEMAINE|WOCHENGEWINN|주간 획득|週間獲得|每周赢取

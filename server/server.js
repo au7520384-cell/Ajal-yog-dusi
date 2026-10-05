@@ -171,7 +171,7 @@ const cleanCountry = c => /^[A-Za-z]{2}$/.test(String(c || "")) ? String(c).toUp
 // Weeks start Monday 00:00 UTC. Every player earns "weekly winnings"; at the end of the week the world top 3 get cash,
 // and inside each league the top 20% move up, the bottom 20% move down.
 const LEAGUES = ["bronze", "silver", "gold", "platinum", "lightning", "billiard", "diamond", "comet", "legend", "nine"];
-const WEEK_PRIZES = [150, 75, 40];
+const WEEK_PRIZES = [1500, 750, 400];
 function weekStart(t = Date.now()) {
   const d = new Date(t), day = (d.getUTCDay() + 6) % 7;
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day);
