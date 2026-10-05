@@ -1708,7 +1708,7 @@ adfree:     {vip: 325, usd: 4.99, once: true},
 starter:    {cash: 50, coins: 100000, gems: 280, vip: 200, usd: 2.99},
 };
 for (const L of [["cash", "cash"], ["gold", "goldShots"], ["scr", "scratchTries"], ["coin", "coins"], ["box", "rbox"]]) [4.99, 9.99, 14.99].forEach((usd, i) => { const v = {cash: [100, 240, 360], gold: [6, 10, 15], scr: [5, 12, 20], coin: [60000, 140000, 300000], box: [4, 8, 20]}[L[0]][i]; SKUS[`loop_${L[0]}_${i + 1}`] = L[1] === "cash" || L[1] === "coins" ? {[L[1]]: v, vip: Math.round(usd * 65), usd} : {items: {[L[1]]: v}, vip: Math.round(usd * 65), usd}; });
-const REFERRAL = {invitee: {cash: 5, coins: 5000}, inviter: {cash: 10, coins: 15000}};
+const REFERRAL = {invitee: {cash: 3, coins: 5000}, inviter: {cash: 5, coins: 15000}};
 const STAT_NAMES = ["Kuch", "Nishon", "Aylanish", "Vaqt"];
 const AVATARS = ["😎", "🦁", "🐯", "🦅", "🐺", "🐉", "🧔", "👩", "🤠", "👑", "🦊", "🐼", "🥷", "👨‍🚀", "🧕", "🤖"];
 const AV_N = 100;
@@ -1905,7 +1905,7 @@ const REWARDS = [
 {t: "cash",  v: 1,    icon: "💵", label: "1 pul"},
 {t: "wheel", v: 1,    icon: "🎡", label: "G'ildirak x1"},
 {t: "coins", v: 1000, icon: "💎", label: "1 000 tanga"},
-{t: "cash",  v: 3,    icon: "🎁", label: "3 pul — katta sovg'a"},
+{t: "cash",  v: 2,    icon: "🎁", label: "2 pul — katta sovg'a"},
 {t: "coins", v: 2500, icon: "👑", label: "2 500 tanga"},
 ];
 const WHEEL = [   // clockwise from the pointer, exactly as painted on the disc
@@ -2547,8 +2547,8 @@ const BRK_WORLD = 13.4;
 const BRK_TIERS = [
   {ms: 9.0,  name: "Professional break", coins: 0, cash: 0, gems: 0},
   {ms: 10.5, name: "Elite break", coins: 0, cash: 0, gems: 0},
-  {ms: 12.0, name: "Champion break", coins: 100000, cash: 5, gems: 60},
-  {ms: BRK_WORLD, name: "World record", coins: 1000000, cash: 100, gems: 1000, world: true}];
+  {ms: 12.0, name: "Champion break", coins: 100000, cash: 3, gems: 60},
+  {ms: BRK_WORLD, name: "World record", coins: 1000000, cash: 20, gems: 1000, world: true}];
 function breakMS(cd, power, isAI) {
   if (isAI) return 10.2 * power;
   const st = cd.st[0], top = 8.6 + st * 0.27;
@@ -2581,7 +2581,7 @@ function addXp(n) {
 profile.xp += n; let gb = 0, gc = 0, up = false;
 while (profile.xp >= xpNeed(profile.level)) {
 profile.xp -= xpNeed(profile.level); profile.level++; up = true;
-const bonus = 100 * profile.level, cashB = profile.level % 5 === 0 ? profile.level / 5 : 0;
+const bonus = 100 * profile.level, cashB = profile.level % 10 === 0 ? profile.level / 10 : 0;
 profile.coins += bonus; profile.cash += cashB; profile.vip = (profile.vip | 0) + 4 + (cashB ? 6 : 0);   // levelling up also earns VIP points
 gb += bonus; gc += cashB;
 }
@@ -3619,7 +3619,7 @@ if (a.t > a.dur + 8) G.aiPull = Math.min(a.power, (a.t - a.dur - 8) / 22 * a.pow
 if (a.t > a.dur + 36) { G.aiTask = null; G.spin = {x: a.sx || 0, y: a.sy || 0}; requestShot(a.power); }
 }
 const LUCKY_BASE = [
-{r: 18,  t: "cash",  v: 5,    color: "#ffd34d", label: "💵 5"},
+{r: 18,  t: "cash",  v: 3,    color: "#ffd34d", label: "💵 3"},
 {r: 52,  t: "coins", v: 2500, color: "#ff4b3e", label: "2 500"},
 {r: 96,  t: "coins", v: 1000, color: "#3b8cff", label: "1 000"},
 {r: 146, t: "coins", v: 500,  color: "#dfe6f5", label: "500"},
@@ -8757,7 +8757,7 @@ buttons: [...(ON_PORTAL ? [] : [{label: "💳 3 × $1.99", cls: "green", fn: () 
 }
 profile.goldShots--; save(); startLucky(true);
 }
-const SCRATCH = [{i: "🪙", t: "coins", v: 500, w: 34}, {i: "💰", t: "coins", v: 5000, w: 20}, {i: "💵", t: "cash", v: 3, w: 16}, {i: "🎡", t: "spin", v: 1, w: 14}, {i: "🎯", t: "lucky", v: 1, w: 10}, {i: "💎", t: "gems", v: 70, w: 6}];
+const SCRATCH = [{i: "🪙", t: "coins", v: 500, w: 34}, {i: "💰", t: "coins", v: 5000, w: 20}, {i: "💵", t: "cash", v: 2, w: 16}, {i: "🎡", t: "spin", v: 1, w: 14}, {i: "🎯", t: "lucky", v: 1, w: 10}, {i: "💎", t: "gems", v: 70, w: 6}];
 const SCRATCH_FREE = 3, SCRATCH_PRICE = 1, SCRATCH_WIN = 0.3;   // a card gives 3 free scratches; each extra scratch costs 💵1
 function scratchGame() {
 if (!takeTry("scratch")) return noTries("scratch", scratchGame);
@@ -8818,7 +8818,7 @@ addEventListener("pointerup", () => { down = false; });
 cv.addEventListener("dblclick", () => { if (!take()) return; found.add(i); cv.style.opacity = 0; check(); });
 });
 }
-const SD_MILESTONES = [[300, {k: "coins", v: 2000}], [800, {k: "tokens", v: 100}], [1500, {k: "cash", v: 5}], [2500, {k: "box"}], [4000, {k: "tokens", v: 300}], [6000, {k: "cash", v: 15}], [9000, {k: "piece"}], [13000, {k: "gems", v: 280}]];
+const SD_MILESTONES = [[300, {k: "coins", v: 2000}], [800, {k: "tokens", v: 100}], [1500, {k: "cash", v: 3}], [2500, {k: "box"}], [4000, {k: "tokens", v: 300}], [6000, {k: "cash", v: 8}], [9000, {k: "piece"}], [13000, {k: "gems", v: 280}]];
 function sdState() { const w = seasonId() + ":" + new Date(weekEnds()).toISOString().slice(0, 10); if (!profile.sd || profile.sd.w !== w) profile.sd = {w, week: srvWeek(), pts: 0, got: {}}; return profile.sd; }
 const srvWeek = () => { const d = new Date(), day = (d.getUTCDay() + 6) % 7; return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day)).toISOString().slice(0, 10); };
 function addShowdown(city, won) {
@@ -8866,7 +8866,7 @@ const roadNext = () => { for (let k = 0; k < ROAD_N; k++) if (roadAt(k) > roadTP
 function roadRew(k) {
 if (k % 15 === 14) return {k: "tokens", v: 200 + k * 4};
 const m = k % 10, c = 1 + (k / 8 | 0), tier = k < 80 ? "rare" : k < 160 ? "epic" : "leg";
-return [{k: "coins", v: 1000 * c * 3}, {k: "cash", v: 3 + (k / 12 | 0)}, {k: "spin", v: 1 + (k / 60 | 0)}, {k: "piece", n: 1 + (k / 40 | 0) * 2 + (k % 20 === 3 ? 2 : 0)}, {k: "scratch", v: 2 + (k / 30 | 0) * 2}, {k: "mbox", id: tier, n: 1 + (k / 100 | 0)}, {k: "coins", v: 5000 * c}, {k: "cash", v: 4 + (k / 8 | 0)}, {k: "gems", v: Math.round((20 + k * 3) / 10) * 10}, {k: "box"}][m];
+return [{k: "coins", v: 1000 * c * 3}, {k: "cash", v: 2 + (k / 30 | 0)}, {k: "spin", v: 1 + (k / 60 | 0)}, {k: "piece", n: 1 + (k / 40 | 0) * 2 + (k % 20 === 3 ? 2 : 0)}, {k: "scratch", v: 2 + (k / 30 | 0) * 2}, {k: "mbox", id: tier, n: 1 + (k / 100 | 0)}, {k: "coins", v: 5000 * c}, {k: "cash", v: 3 + (k / 20 | 0)}, {k: "gems", v: Math.round((20 + k * 3) / 10) * 10}, {k: "box"}][m];
 }
 // the player's marker walks along the Trophy Road: it steps from the last seen trophy count to the new one, each prize it reaches lights up and pops
 function roadWalk(tr, items, tp) {
