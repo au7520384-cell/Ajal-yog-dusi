@@ -1091,3 +1091,8 @@ Qora atirgul‖Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose
 Hayot daraxti‖Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life
 Sharpa yo'li‖Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path
 Tumanli ko'l‖Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake
+AYLANTIRING‖SPIN|КРУТИТЕ|ÇEVİR|GIRA|GIRE|أدر|PUTAR|घुमाएँ|TOURNEZ|DREHEN|돌리고|回して|转动
+VA‖AND|И|VE|Y|E|و|DAN|और|ET|UND|그리고|そして|并
+YUTING‖WIN|ВЫИГРАЙТЕ|KAZAN|GANA|GANHE|اربح|MENANG|जीतें|GAGNEZ|GEWINNEN|이기세요|勝とう|赢取
+BOSING‖TAP TO SPIN|НАЖМИ|DOKUN|TOCA|TOQUE|اضغط|KETUK|दबाएँ|TOUCHE|TIPPEN|탭|タップ|点击
+Aylantirish‖Spins|Вращения|Çevirme|Giros|Giros|الدورات|Putaran|स्पिन|Tours|Drehungen|스핀|スピン|转动
