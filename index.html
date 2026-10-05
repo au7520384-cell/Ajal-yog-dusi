@@ -5485,9 +5485,9 @@ for (const xx of [lx, rx]) { ctx.save(); ctx.translate(xx, FY + 30); ctx.rotate(
 const raiseBands = bands => {
 for (const [x, y, w, h, v] of bands) {
 const g = v ? ctx.createLinearGradient(x, 0, x + w, 0) : ctx.createLinearGradient(0, y, 0, y + h);
-g.addColorStop(0, "rgba(255,255,255,.38)"); g.addColorStop(0.14, "rgba(255,255,255,.12)"); g.addColorStop(0.5, "rgba(255,255,255,0)"); g.addColorStop(0.82, "rgba(0,0,0,.18)"); g.addColorStop(1, "rgba(0,0,0,.55)");
+g.addColorStop(0, "rgba(255,255,255,.56)"); g.addColorStop(0.14, "rgba(255,255,255,.2)"); g.addColorStop(0.5, "rgba(255,255,255,0)"); g.addColorStop(0.82, "rgba(0,0,0,.3)"); g.addColorStop(1, "rgba(0,0,0,.78)");
 ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
-ctx.strokeStyle = "rgba(255,255,255,.75)"; ctx.lineWidth = 1.4; ctx.beginPath(); if (v) { ctx.moveTo(x + 0.7, y); ctx.lineTo(x + 0.7, y + h); } else { ctx.moveTo(x, y + 0.7); ctx.lineTo(x + w, y + 0.7); } ctx.stroke();
+ctx.strokeStyle = "rgba(255,255,255,.92)"; ctx.lineWidth = 1.7; ctx.beginPath(); if (v) { ctx.moveTo(x + 0.7, y); ctx.lineTo(x + 0.7, y + h); } else { ctx.moveTo(x, y + 0.7); ctx.lineTo(x + w, y + 0.7); } ctx.stroke();
 ctx.strokeStyle = "rgba(0,0,0,.7)"; ctx.lineWidth = 1.6; ctx.beginPath(); if (v) { ctx.moveTo(x + w - 0.8, y); ctx.lineTo(x + w - 0.8, y + h); } else { ctx.moveTo(x, y + h - 0.8); ctx.lineTo(x + w, y + h - 0.8); } ctx.stroke(); }
 };
 const artImg = artOf(city.id);
@@ -5634,7 +5634,7 @@ const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
 const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
 const cb = f0.map(v => v - 16);   // all four cushions share one colour
 const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-g.addColorStop(0, cc(52)); g.addColorStop(0.42, cc(40)); g.addColorStop(0.5, cc(-6)); g.addColorStop(1, cc(-36));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
+g.addColorStop(0, cc(68)); g.addColorStop(0.42, cc(48)); g.addColorStop(0.5, cc(-10)); g.addColorStop(1, cc(-52));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
 ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
 if (feltNoise && feltWeave) {   // the cushion rubber is covered in the same worsted cloth as the playing surface: same fibre noise and weave
 ctx.save(); ctx.clip(); ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.globalAlpha = 1; ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.restore();
@@ -5658,20 +5658,21 @@ const vig = ctx.createRadialGradient(FW / 2, FH / 2, FH * 0.45, FW / 2, FH / 2, 
 vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,.1)");
 ctx.fillStyle = vig; ctx.fillRect(-C, -C, FW + 2 * C, FH + 2 * C);
 if (!lucky) {   // 3-D rail: the wooden frame stands above the cloth: a lit top lip, a shaded inner wall dropping to the cushion and a soft shadow thrown onto the felt
-const x0 = -C, y0 = -C, x1 = FW + C, y1 = FH + C, W3 = 24, lp = 9;   // y0/x0 = where the cloth border begins; lp = how far the lit lip sits inside it
+const x0 = -C, y0 = -C, x1 = FW + C, y1 = FH + C, W3 = 34, lp = 11;   // y0/x0 = where the cloth border begins; lp = how far the lit lip sits inside it
 ctx.save();
-const lit = (ax, ay, bx, by, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(1, "rgba(255,255,255,.3)"); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };   // the flat top of the rail catches the light just before it turns down
-lit(0, y0 - W3 - 12, 0, y0 - W3, x0 - W3, y0 - W3 - 12, x1 - x0 + 2 * W3, 12); lit(0, y1 + W3 + 12, 0, y1 + W3, x0 - W3, y1 + W3, x1 - x0 + 2 * W3, 12); lit(x0 - W3 - 12, 0, x0 - W3, 0, x0 - W3 - 12, y0 - W3, 12, y1 - y0 + 2 * W3); lit(x1 + W3 + 12, 0, x1 + W3, 0, x1 + W3, y0 - W3, 12, y1 - y0 + 2 * W3);
-const side = (ax, ay, bx, by, cx, cy, ex, ey, dx, dy, w, h) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(255,255,255,.0)"); g.addColorStop(0.1, "rgba(0,0,0,.05)"); g.addColorStop(0.5, "rgba(0,0,0,.42)"); g.addColorStop(1, "rgba(0,0,0,.88)"); ctx.fillStyle = g; ctx.fillRect(cx, cy, w, h); };
+const lit = (ax, ay, bx, by, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(1, "rgba(255,255,255,.52)"); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };   // the flat top of the rail catches the light just before it turns down
+lit(0, y0 - W3 - 16, 0, y0 - W3, x0 - W3, y0 - W3 - 16, x1 - x0 + 2 * W3, 16); lit(0, y1 + W3 + 16, 0, y1 + W3, x0 - W3, y1 + W3, x1 - x0 + 2 * W3, 16); lit(x0 - W3 - 16, 0, x0 - W3, 0, x0 - W3 - 16, y0 - W3, 16, y1 - y0 + 2 * W3); lit(x1 + W3 + 16, 0, x1 + W3, 0, x1 + W3, y0 - W3, 16, y1 - y0 + 2 * W3);
+const side = (ax, ay, bx, by, cx, cy, ex, ey, dx, dy, w, h) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(255,255,255,.0)"); g.addColorStop(0.08, "rgba(255,255,255,.14)"); g.addColorStop(0.2, "rgba(0,0,0,.12)"); g.addColorStop(0.55, "rgba(0,0,0,.55)"); g.addColorStop(1, "rgba(0,0,0,.95)"); ctx.fillStyle = g; ctx.fillRect(cx, cy, w, h); };
 side(0, y0 - W3, 0, y0, x0 - 4, y0 - W3, 0, 0, 0, 0, x1 - x0 + 8, W3);
 side(0, y1 + W3, 0, y1, x0 - 4, y1, 0, 0, 0, 0, x1 - x0 + 8, W3);
 side(x0 - W3, 0, x0, 0, x0 - W3, y0, 0, 0, 0, 0, W3, y1 - y0);
 side(x1 + W3, 0, x1, 0, x1, y0, 0, 0, 0, 0, W3, y1 - y0);
 ctx.restore();
 ctx.save(); ctx.lineJoin = "round";
-ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.lineWidth = 1.6; ctx.strokeRect(x0 + lp, y0 + lp, x1 - x0 - 2 * lp, y1 - y0 - 2 * lp);   // the lip where the top meets the inner wall
-const shd = (ax, ay, bx, by, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(0,0,0,.7)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };
-shd(0, y0, 0, y0 + 36, x0, y0, x1 - x0, 36); shd(0, y1, 0, y1 - 36, x0, y1 - 36, x1 - x0, 36); shd(x0, 0, x0 + 36, 0, x0, y0, 36, y1 - y0); shd(x1, 0, x1 - 36, 0, x1 - 36, y0, 36, y1 - y0);
+ctx.strokeStyle = "rgba(255,255,255,.78)"; ctx.lineWidth = 1.8; ctx.strokeRect(x0 + lp, y0 + lp, x1 - x0 - 2 * lp, y1 - y0 - 2 * lp);
+ctx.strokeStyle = "rgba(0,0,0,.55)"; ctx.lineWidth = 1.4; ctx.strokeRect(x0 + lp + 2.2, y0 + lp + 2.2, x1 - x0 - 2 * lp - 4.4, y1 - y0 - 2 * lp - 4.4);   // the lip where the top meets the inner wall
+const shd = (ax, ay, bx, by, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(0,0,0,.88)"); g.addColorStop(0.35, "rgba(0,0,0,.34)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };
+shd(0, y0, 0, y0 + 54, x0, y0, x1 - x0, 54); shd(0, y1, 0, y1 - 54, x0, y1 - 54, x1 - x0, 54); shd(x0, 0, x0 + 54, 0, x0, y0, 54, y1 - y0); shd(x1, 0, x1 - 54, 0, x1 - 54, y0, 54, y1 - y0);
 ctx.restore(); }
 if (!lucky && city.id === "lon" && cornerOk() && !artOf("lon")) for (const p of POCKETS) {
 if (p.mid) continue;
