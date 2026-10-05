@@ -7795,7 +7795,14 @@ document.querySelector("#modal .panel").classList.add("wkp");
 showWeeklyResults(r);
 }
 function showLastWeek() {
-Net.api("/api/leaderboard/lastweek").then(openWeeklyResults).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), ""));
+Net.api("/api/leaderboard/lastweek").then(r => {
+const me = r.me, lw = r.lastWeek;
+const list = lw && lw.top.length ? lw.top.map((u, i) => `<div class="lbr" style="grid-template-columns:40px 40px 1fr auto"><div class="rk">${i < 3 ? ["🥇", "🥈", "🥉"][i] : i + 1}</div>${avHTML(u.avatar, u.frame, 36)}
+<div class="nm">${flagHTML(u.country)}<b>${esc(u.name)}</b></div><div class="h" style="color:#ffe27a">${fmtS(u.won)}</div></div>`).join("") : `<div class="muted">${T("Hali natija yo'q")}</div>`;
+const mine = me ? `<div class="card" style="margin-bottom:10px">${T("Sizning o'rningiz")}: <b>#${fmt(me.rank)}</b> · ${fmtS(me.won)} 🪙 ·
+${me.move > 0 ? "⬆ " + T("Ligangiz ko'tarildi!") : me.move < 0 ? "⬇ " + T("Ligangiz tushdi") : leagueName(me.league)}</div>` : "";
+openModal({icon: "📅", title: T("O'tgan hafta"), text: "", extra: `<div style="max-height:50vh;overflow:auto;text-align:left">${mine}${list}</div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
+}).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), ""));
 }
 let wkChecked = "";
 function maybeWeeklyPopup(sr) {   // once per finished week, when you are back in the menu
