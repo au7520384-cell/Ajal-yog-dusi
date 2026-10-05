@@ -1585,6 +1585,7 @@ const POWER_BAR = {x: 48, y: 200, w: 38, h: 390};
 const TRAY = {x: 1287, y: 184, w: 30, h: 440};   // outside the table frame (which ends at x = 1232), like a real ball return
 const FINE = {x: 6, y: 200, w: 30, h: 390};
 const SPIN_BTN = {x: 1300, y: 56, r: 30};
+const VIEW_BTN = {x: 1232, y: 56, r: 21};
 const CUE_BTN = {x: 1300, y: 130, r: 24};
 const SPIN_UI = {x: W / 2, y: H / 2 + 20, r: 150};
 const ELEV_X = SPIN_UI.x + SPIN_UI.r + 150;
@@ -3153,7 +3154,7 @@ game = G; input.power = 0; input.drag = null; input.charging = false;
 }
 function enterGameUi(type) {
 mode = "game"; showScreen(null);
-$("gameUi").classList.add("on"); setZoom(profile.zoom || 1);
+$("gameUi").classList.add("on"); setZoom(profile.zoom || 1); view3 = !!profile.view3;
 $("gChat").style.display = ["practice", "lucky", "watch"].includes(type) ? "none" : "";
 $("cheerBar").classList.toggle("on", type === "watch");
 $("shade").classList.remove("on");
@@ -3712,7 +3713,7 @@ cv.addEventListener("pointerdown", e => {
 if (mode !== "game" || !game) return;
 if (introOn(game)) { game.intro.dur = Math.max(0, performance.now() - game.intro.t0); return; }
 closeChat(); if ($("giftPanel").classList.contains("in")) { closeGifts(); return; }
-const p = toWorld(e), G = game;
+const p = toWorld(e), G = game, q = v3unproj(p);
 if (G.spinOpen) {
 if (Math.abs(p.x - ELEV_X) < 40 && Math.abs(p.y - SPIN_UI.y) <= SPIN_UI.r + 20) { input.drag = "elev"; setElevFrom(p); try { cv.setPointerCapture(e.pointerId); } catch (_) {} }
 else if (Math.hypot(p.x - SPIN_UI.x, p.y - SPIN_UI.y) <= SPIN_UI.r * 1.1) { input.drag = "spin"; setSpinFrom(p); try { cv.setPointerCapture(e.pointerId); } catch (_) {} }
@@ -3720,6 +3721,7 @@ else G.spinOpen = false;
 return;
 }
 if (giftsOn(G) && Math.hypot(p.x - GIFT_BTN.x, p.y - GIFT_BTN.y) < GIFT_BTN.r + 10) { Snd.click(); openGiftPanel(); return; }
+if (Math.hypot(p.x - VIEW_BTN.x, p.y - VIEW_BTN.y) < VIEW_BTN.r + 8) { Snd.click(); setView3(!view3); return; }
 if (G.type !== "watch" && !G.moving && Math.hypot(p.x - CUE_BTN.x, p.y - CUE_BTN.y) < CUE_BTN.r + 6) { Snd.click(); cuePicker(); return; }
 if (!canControl()) return;
 try { cv.setPointerCapture(e.pointerId); } catch (_) {}
@@ -3729,14 +3731,14 @@ input.drag = "power"; input.y0 = p.y; input.power = 0;
 input.span = clamp(Math.min(H - 12, POWER_BAR.y + POWER_BAR.h) - p.y, 100, POWER_BAR.h * 0.85); return;
 }
 if (opt("fine") && inRect(p, FINE)) { input.drag = "fine"; input.lastY = p.y; return; }
-const c = G.balls[0], fx = p.x - FX, fy = p.y - FY;
+const c = G.balls[0], fx = q.x - FX, fy = q.y - FY;
 if (G.ballInHand && Math.hypot(fx - c.x, fy - c.y) < R * 3) { input.drag = "place"; return; }
-input.drag = "aim"; input.sx = p.x; input.sy = p.y; input.moved = false; input.t0 = performance.now();
+input.drag = "aim"; input.sx = q.x; input.sy = q.y; input.moved = false; input.t0 = performance.now();
 input.lastA = Math.atan2(fy - c.y, fx - c.x);
 });
 cv.addEventListener("pointermove", e => {
 if (!input.drag || !game) return;
-const p = toWorld(e), G = game;
+const pw = toWorld(e), G = game, p = input.drag === "power" || input.drag === "fine" || input.drag === "spin" || input.drag === "elev" ? pw : v3unproj(pw);
 if (input.drag === "spin") { setSpinFrom(p); return; }
 if (input.drag === "elev") { setElevFrom(p); return; }
 if (!canControl()) { input.drag = null; return; }
@@ -3757,7 +3759,7 @@ function endDrag(e) {
 const G = game;
 if (input.drag === "power") { if (canControl()) requestShot(input.power); input.power = 0; }
 else if (input.drag === "aim" && !input.moved && G && canControl() && opt("tapAim") && performance.now() - input.t0 < 350 && e) {
-const p = toWorld(e), c = G.balls[0];
+const p = v3unproj(toWorld(e)), c = G.balls[0];
 G.angle = Math.atan2(p.y - FY - c.y, p.x - FX - c.x);
 }
 input.drag = null;
@@ -3785,6 +3787,39 @@ e.preventDefault(); if (!canControl()) return;
 game.angle += Math.sign(e.deltaY) * (e.shiftKey ? 0.02 : 0.002);
 }, {passive: false});
 let ctx = cv.getContext("2d");
+const MCTX = ctx;
+// ---- 2D / 3D view: the 3D view draws the table into an off-screen layer, bends it with a perspective (far end narrower) and stands the balls on it as round sprites
+let view3 = false, v3t = 0;
+const V3S0 = 0.62, V3PAD = RAIL + 16;
+const wcv = document.createElement("canvas"), wctx = wcv.getContext("2d");
+function v3g() { const k = 1 / (1 - (1 - V3S0) * v3t) - 1; return {s0: 1 - (1 - V3S0) * v3t, k, sx0: offX + (FX - V3PAD) * scale, sx1: offX + (FX + FW + V3PAD) * scale, ys0: offY + (FY - V3PAD) * scale, ys1: offY + (FY + FH + V3PAD) * scale, yd0: offY + (FY - V3PAD) * scale + v3t * 34 * scale, yd1: offY + (FY + FH + V3PAD) * scale - v3t * 26 * scale, cx: offX + (FX + FW / 2) * scale}; }
+function v3proj(wx, wy) {   // table-frame world coordinates → screen position and size factor
+const g = v3g(), lx = offX + wx * scale, ly = offY + wy * scale, v = (ly - g.ys0) / (g.ys1 - g.ys0), s = 1 / (1 + g.k * (1 - v)), yn = (s - g.s0) / (1 - g.s0);
+return {x: g.cx + (lx - g.cx) * s, y: g.yd0 + yn * (g.yd1 - g.yd0), s};
+}
+function v3unproj(p) {   // world coordinates of a tap (as toWorld gives them) → the point of the table plane under it
+if (v3t < 0.5) return p;
+const g = v3g(), lx = offX + p.x * scale, ly = offY + p.y * scale, yn = Math.max(-0.4, (ly - g.yd0) / (g.yd1 - g.yd0)), s = Math.max(0.25, g.s0 + yn * (1 - g.s0)), v = 1 - (1 / s - 1) / g.k;
+return {x: (g.cx + (lx - g.cx) / s - offX) / scale, y: (g.ys0 + v * (g.ys1 - g.ys0) - offY) / scale};
+}
+function v3warp(tableDark) {   // bend the off-screen table layer onto the main canvas, row by row
+const g = v3g(), c = MCTX, st = 3, X0 = g.sx0 * dpr, XW = (g.sx1 - g.sx0) * dpr, Y0 = Math.floor(g.yd0 * dpr), Y1 = Math.ceil(g.yd1 * dpr);
+const vOf = y => { const yn = (y / dpr - g.yd0) / (g.yd1 - g.yd0), s = g.s0 + yn * (1 - g.s0); return [1 - (1 / s - 1) / g.k, s]; };
+c.save(); c.setTransform(1, 0, 0, 1, 0, 0);
+{   // the table's shadow on the floor and its front face
+const b = v3proj(FX + FW / 2, FY + FH + RAIL * 0.9), w = (FW + RAIL * 2) * scale * 0.5;
+c.fillStyle = "rgba(0,0,0,.45)"; c.beginPath(); c.ellipse(b.x * dpr, (b.y + 30 * scale) * dpr, w * dpr * 1.04, 38 * scale * dpr, 0, 0, 7); c.fill();
+const fy = g.yd1 - V3PAD * 0.5 * scale * 0.9, fh = 40 * scale, fw = (g.sx1 - g.sx0) * 0.93 / 2, fg = c.createLinearGradient(0, fy * dpr, 0, (fy + fh) * dpr);
+fg.addColorStop(0, tableDark[0]); fg.addColorStop(1, tableDark[1]);
+c.fillStyle = fg; c.beginPath(); c.moveTo((g.cx - fw) * dpr, fy * dpr); c.lineTo((g.cx + fw) * dpr, fy * dpr); c.lineTo((g.cx + fw * 0.95) * dpr, (fy + fh) * dpr); c.lineTo((g.cx - fw * 0.95) * dpr, (fy + fh) * dpr); c.fill();
+}
+c.imageSmoothingEnabled = true;
+for (let dy = Y0; dy < Y1; dy += st) {
+const [v1, s] = vOf(dy), [v2] = vOf(dy + st), sy = (g.ys0 + v1 * (g.ys1 - g.ys0)) * dpr, sh = Math.max(1, (v2 - v1) * (g.ys1 - g.ys0) * dpr);
+c.drawImage(wcv, X0, sy, XW, sh, (g.cx + (g.sx0 - g.cx) * s) * dpr, dy, XW * s, st + 0.7);
+}
+c.restore();
+}
 let scale = 1, offX = 0, offY = 0, dpr = 1, zoom = 1;
 let rotated = false, vw = innerWidth, vh = innerHeight;
 const MQ = (() => {
@@ -3818,6 +3853,7 @@ scale = Math.min(vw / W, vh / H) * zoom;
 document.documentElement.style.setProperty("--uiz", uiz.toFixed(3));   // big monitors: scale the menus up with the table so nothing looks tiny
 offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
 }
+function setView3(on) { view3 = !!on; if (typeof profile === "object" && profile) { profile.view3 = view3; try { save(); } catch (e) {} } }
 function setZoom(z) { zoom = Math.max(0.6, Math.min(1.5, Math.round(z * 100) / 100)); if (typeof profile === "object" && profile) { profile.zoom = zoom; try { save(); } catch (e) {} } resize(); }
 addEventListener("resize", () => { resize(); setTimeout(fitNav, 60); });
 addEventListener("orientationchange", () => setTimeout(resize, 250));
@@ -6283,6 +6319,13 @@ ctx.fillStyle = "#0d1426"; ctx.beginPath(); ctx.arc(sb.x, sb.y, sb.r + 6, 0, 7);
 drawBall({n: 0, p: [0, 0, 1], plain: true}, sb.x, sb.y, sb.r / R);
 ctx.fillStyle = "#e11d1d"; ctx.beginPath(); ctx.arc(sb.x + G.spin.x * sb.r * 0.7, sb.y + G.spin.y * sb.r * 0.7, 5, 0, 7); ctx.fill();
 ctx.restore();
+{   // 2D ↔ 3D view button
+const vb = VIEW_BTN;
+ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 3;
+ctx.fillStyle = "#0d1426"; ctx.beginPath(); ctx.arc(vb.x, vb.y, vb.r + 4, 0, 7); ctx.fill(); ctx.restore();
+ctx.save(); ctx.strokeStyle = "rgba(255,255,255,.5)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(vb.x, vb.y, vb.r + 4, 0, 7); ctx.stroke();
+ctx.fillStyle = "#fff"; ctx.font = `bold 17px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(view3 ? "2D" : "3D", vb.x, vb.y + 1); ctx.restore();
+}
 if (G.type !== "watch") {
 const b = CUE_BTN, bg = ctx.createLinearGradient(0, b.y - b.r, 0, b.y + b.r);
 bg.addColorStop(0, "#5aa8ff"); bg.addColorStop(1, "#1a4fb0");
@@ -6559,6 +6602,13 @@ ctx.setTransform(scale * dpr, 0, 0, scale * dpr, offX * dpr, offY * dpr);
 const G = game;
 drawBackground();
 if (!G) { drawConfetti(); return; }
+v3t += ((view3 ? 1 : 0) - v3t) * 0.2; if (Math.abs(v3t - (view3 ? 1 : 0)) < 0.01) v3t = view3 ? 1 : 0;
+const V3 = v3t > 0.001 && !introOn(G), sprites = [];
+if (V3) {   // 3D: the table layer goes to an off-screen canvas first
+if (wcv.width !== cv.width || wcv.height !== cv.height) { wcv.width = cv.width; wcv.height = cv.height; }
+ctx = wctx; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, wcv.width, wcv.height); ctx.setTransform(scale * dpr, 0, 0, scale * dpr, offX * dpr, offY * dpr);
+}
+const putBall = V3 ? (b, x, y, sc = 1, al = 1) => sprites.push([b, FX + x, FY + y, sc, al]) : (b, x, y, sc, al) => drawBall(b, x, y, sc, al);
 ctx.save();
 const hideHud = introCamera(G);
 if (G.shake > 0.3) ctx.translate(rnd(-G.shake, G.shake), rnd(-G.shake, G.shake));
@@ -6571,13 +6621,13 @@ f.t++; ctx.strokeStyle = `rgba(255,230,140,${1 - f.t / 24})`; ctx.lineWidth = 4;
 ctx.beginPath(); ctx.arc(f.x, f.y, 20 + f.t * 1.6, 0, 7); ctx.stroke();
 }
 G.sinking = G.sinking.filter(s => s.t < 14);
-for (const s of G.sinking) { s.t++; const k = s.t / 14; drawBall(s.b, s.x + (s.px - s.x) * k * (2 - k), s.y + (s.py - s.y) * k * (2 - k), 1 - k * k * 0.55, 1 - k * k * 0.9); }
+for (const s of G.sinking) { s.t++; const k = s.t / 14; putBall(s.b, s.x + (s.px - s.x) * k * (2 - k), s.y + (s.py - s.y) * k * (2 - k), 1 - k * k * 0.55, 1 - k * k * 0.9); }
 for (const b of G.balls) if (!b.out) {
 if (b.z > 0) {
 ctx.save(); ctx.fillStyle = `rgba(0,0,0,${Math.max(0.12, 0.4 - b.z * 0.015)})`; ctx.beginPath(); ctx.ellipse(b.x + 2, b.y + 4, R * (1 - b.z * 0.01), R * 0.8 * (1 - b.z * 0.01), 0, 0, 7); ctx.fill(); ctx.restore();
-drawBall(b, b.x, b.y - b.z * 1.1, 1 + b.z * 0.014);
-} else if (b.z < 0) drawBall(b, b.x, b.y - b.z * 0.4, Math.max(0.4, 1 + b.z * 0.03), Math.max(0.1, 1 + b.z * 0.07));
-else drawBall(b, b.x, b.y);
+putBall(b, b.x, b.y - b.z * 1.1, 1 + b.z * 0.014);
+} else if (b.z < 0) putBall(b, b.x, b.y - b.z * 0.4, Math.max(0.4, 1 + b.z * 0.03), Math.max(0.1, 1 + b.z * 0.07));
+else putBall(b, b.x, b.y);
 }
 G.sparks = G.sparks.filter(s => s.life-- > 0);
 ctx.fillStyle = "#fff";
@@ -6587,7 +6637,7 @@ f.t++; f.x += f.vx; f.y += f.vy; f.vz -= 0.7; f.z += f.vz;
 if (f.z < -260) { f.z = -260; f.vz = -f.vz * 0.5; f.bn++; f.vx *= 0.85; f.vy *= 0.85; if (f.bn < 4 && !G.demo) Snd.clack(Math.abs(f.vz) * 1.2); if (f.bn >= 4) f.vz = 0; }
 const k = Math.max(0.45, 1 + f.z / 700), a = Math.min(1, (170 - f.t) / 40);
 ctx.globalAlpha = 0.35 * a; ctx.fillStyle = "#000"; ctx.beginPath(); ctx.ellipse(f.x + 4, f.y + 6 - f.z * 0.18, R * k, R * k * 0.7, 0, 0, 7); ctx.fill();
-ctx.globalAlpha = a; drawBall(f.b, f.x, f.y - f.z * 0.18, k); ctx.globalAlpha = 1; } }
+ctx.globalAlpha = a; putBall(f.b, f.x, f.y - f.z * 0.18, k, a); ctx.globalAlpha = 1; } }
 if (G.dust && G.dust.length) { G.dust = G.dust.filter(d => d.life-- > 0); for (const d of G.dust) { d.x += d.vx; d.y += d.vy; d.vx *= 0.97; d.vy *= 0.97; d.r += 0.12; const k = d.life / d.l0, g = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.r); g.addColorStop(0, `rgba(205,225,255,${0.34 * k})`); g.addColorStop(1, "rgba(205,225,255,0)"); ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, 7); ctx.fill(); } ctx.fillStyle = "#fff"; }
 ctx.globalAlpha = 1;
 drawFx(G);
@@ -6603,6 +6653,12 @@ const pull = G.strike ? G.strike.power * Math.max(0, 1 - G.strike.t / 4) : human
 if (!(G.aiTask && G.aiTask.carry) && !(!human && G.ballInHand && performance.now() < (G.handUntil || 0))) drawCue(G, pull);   // no cue while the ball is being carried
 }
 ctx.restore();
+if (V3) {
+ctx = MCTX; { const L = tableLook(G.city); v3warp([shade(L.rail[1], -10), shade(L.rail[1], -70)]); }
+sprites.sort((a, b) => a[2] - b[2]);
+for (const [b, wx, wy, sc, al] of sprites) { const q = v3proj(wx, wy), k = scale * q.s; ctx.save(); ctx.setTransform(k * dpr, 0, 0, k * dpr, q.x * dpr, (q.y - R * 0.55 * k) * dpr); drawBall(b, 0, 0, sc, al); ctx.restore(); }
+ctx.setTransform(scale * dpr, 0, 0, scale * dpr, offX * dpr, offY * dpr);
+}
 if (!G.demo && !hideHud) {
 drawHUD(G);
 drawControls(G, human); if (G.tut) drawTut(G);
@@ -6620,7 +6676,7 @@ drawConfetti();
 let frameErr = 0;
 function frame() {
 try { update(); watchdog(); } catch (e) { onFrameError(e); }
-try { render(); } catch (e) { onFrameError(e); try { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; } catch (_) {} }
+try { render(); } catch (e) { ctx = MCTX; onFrameError(e); try { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; } catch (_) {} }
 requestAnimationFrame(frame);
 }
 function onFrameError(e) {
