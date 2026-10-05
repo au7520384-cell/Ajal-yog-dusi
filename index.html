@@ -3625,8 +3625,8 @@ const LUCKY_BASE = [
 {r: 146, t: "coins", v: 500,  color: "#dfe6f5", label: "500"},
 ];
 const GOLDEN_RINGS = [
-{r: 18,  t: "cash",  v: 30,    color: "#ffd34d", label: "💵 30"},
-{r: 52,  t: "cash",  v: 12,    color: "#ff4b3e", label: "💵 12"},
+{r: 18,  t: "cash",  v: 10,    color: "#ffd34d", label: "💵 10"},
+{r: 52,  t: "cash",  v: 5,     color: "#ff4b3e", label: "💵 5"},
 {r: 96,  t: "coins", v: 75000, color: "#3b8cff", label: "75k"},
 {r: 146, t: "coins", v: 50000, color: "#dfe6f5", label: "50k"},
 ];
@@ -8741,7 +8741,7 @@ const card = (cls, act, art, title, sub, btn, btnCls, badge) => `<div class="mgc
 box.innerHTML = `<div class="mggrid">
 ${card("mg-teal", "wheel", "mg_wheel", T("Aylantirib yuting"), sub("wheel"), btn("wheel"), hasTry("wheel") ? "" : "paid", freeReady("wheel") ? 1 : "")}
 ${card("mg-gold", "lucky", "mg_dart", T("Omadli zarba"), sub("lucky"), btn("lucky"), hasTry("lucky") ? "" : "paid", freeReady("lucky") ? 1 : "")}
-${card("mg-parch", "golden", "mg_gold", T("Oltin zarba"), `${T("Katta sovrinlar")}: 💵 30 · 🪙 75k${profile.goldShots ? ` · ${T("urinish")}: ${profile.goldShots}` : ""}`, profile.goldShots ? T("O'ynash") : "💎 25 / $1.99", profile.goldShots ? "" : "paid")}
+${card("mg-parch", "golden", "mg_gold", T("Oltin zarba"), `${T("Katta sovrinlar")}: 💵 10 · 🪙 75k${profile.goldShots ? ` · ${T("urinish")}: ${profile.goldShots}` : ""}`, profile.goldShots ? T("O'ynash") : "💎 25 / $1.99", profile.goldShots ? "" : "paid")}
 ${card("mg-red", "scratch", "mg_scr", T("Qirib yuting"), sub("scratch"), btn("scratch"), hasTry("scratch") ? "" : "paid", freeReady("scratch") ? 1 : "")}
 ${card("mg-felt", "boxes", "mg_box", T("Syurpriz qutilar"), `${T("Afsonaviy kiy bo'laklari")}${profile.sboxes ? ` · ${T("qutilar")}: ${profile.sboxes}` : ""}`, profile.sboxes ? T("Ochish") : T("Pullik") + " · $0.99", profile.sboxes ? "" : "paid")}
 </div>`;
@@ -8750,7 +8750,7 @@ box.querySelectorAll(".mgc").forEach(el => el.onclick = () => ({lucky: () => sta
 function goldenShot() {
 if (!profile.goldShots) {
 if (mode !== "menu") toMenu("mini");
-return openModal({icon: "img:pile", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 30 · 💵 12 · 🪙 75 000 · 🪙 50 000</div>`, scene: "gold",
+return openModal({icon: "img:pile", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 10 · 💵 5 · 🪙 75 000 · 🪙 50 000</div>`, scene: "gold",
 buttons: [...(ON_PORTAL ? [] : [{label: "💳 3 × $1.99", cls: "green", fn: () => Net.checkout("golden_3")}]),
 {label: "💎 350", cls: "purple", fn: () => { if ((profile.gems || 0) < 350) return gemShort(); profile.gems -= 350; profile.goldShots = 3; save(); updateNav(); goldenShot(); }},
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
