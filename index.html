@@ -5482,6 +5482,14 @@ for (const yy of [my, by]) strip(FX + 30, yy, FW - 60, th);
 ctx.save(); ctx.translate(lx, 0); ctx.rotate(Math.PI / 2); ctx.translate(0, 0); ctx.restore();
 for (const xx of [lx, rx]) { ctx.save(); ctx.translate(xx, FY + 30); ctx.rotate(Math.PI / 2); ctx.translate(0, 0); strip(0, 0, FH - 60, th); ctx.restore(); }
 }
+const raiseBands = bands => {
+for (const [x, y, w, h, v] of bands) {
+const g = v ? ctx.createLinearGradient(x, 0, x + w, 0) : ctx.createLinearGradient(0, y, 0, y + h);
+g.addColorStop(0, "rgba(255,255,255,.38)"); g.addColorStop(0.14, "rgba(255,255,255,.12)"); g.addColorStop(0.5, "rgba(255,255,255,0)"); g.addColorStop(0.82, "rgba(0,0,0,.18)"); g.addColorStop(1, "rgba(0,0,0,.55)");
+ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
+ctx.strokeStyle = "rgba(255,255,255,.75)"; ctx.lineWidth = 1.4; ctx.beginPath(); if (v) { ctx.moveTo(x + 0.7, y); ctx.lineTo(x + 0.7, y + h); } else { ctx.moveTo(x, y + 0.7); ctx.lineTo(x + w, y + 0.7); } ctx.stroke();
+ctx.strokeStyle = "rgba(0,0,0,.7)"; ctx.lineWidth = 1.6; ctx.beginPath(); if (v) { ctx.moveTo(x + w - 0.8, y); ctx.lineTo(x + w - 0.8, y + h); } else { ctx.moveTo(x, y + h - 0.8); ctx.lineTo(x + w, y + h - 0.8); } ctx.stroke(); }
+};
 const artImg = artOf(city.id);
 if (artImg) {
 ctx.save(); ctx.beginPath(); rr(OX + 3, OY + 3, OW - 6, OH - 6, 35); ctx.clip();   // the table's own rail artwork, laid in as drawn: corner -> side pocket along the long rails, corner -> corner along the ends
@@ -5496,14 +5504,10 @@ const bands = [[a0, my - Hd / 2, FW + 2 * RAIL, Hd, 0], [a0, by - Hd / 2, FW + 2
 for (const [x, y, w, h] of bands) { ctx.save(); ctx.shadowColor = "rgba(0,0,0,.65)"; ctx.shadowBlur = 9; ctx.shadowOffsetY = 3; ctx.fillStyle = "#000"; ctx.fillRect(x, y, w, h); ctx.restore(); }
 for (const [yc, k] of [[my, 1], [by, -1]]) { run(hz, a0, l0, false, yc, k); run(hz, a1, l0, true, yc, k); }
 for (const [xc, k] of [[lx, 1], [rx, -1]]) { run(vt, v0, vl / 2, false, xc, k); run(vt, v0 + vl / 2, vl / 2, true, xc, k); }
-for (const [x, y, w, h, v] of bands) {
-const g = v ? ctx.createLinearGradient(x, 0, x + w, 0) : ctx.createLinearGradient(0, y, 0, y + h);
-g.addColorStop(0, "rgba(255,255,255,.38)"); g.addColorStop(0.14, "rgba(255,255,255,.12)"); g.addColorStop(0.5, "rgba(255,255,255,0)"); g.addColorStop(0.82, "rgba(0,0,0,.18)"); g.addColorStop(1, "rgba(0,0,0,.55)");
-ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
-ctx.strokeStyle = "rgba(255,255,255,.75)"; ctx.lineWidth = 1.4; ctx.beginPath(); if (v) { ctx.moveTo(x + 0.7, y); ctx.lineTo(x + 0.7, y + h); } else { ctx.moveTo(x, y + 0.7); ctx.lineTo(x + w, y + 0.7); } ctx.stroke();
-ctx.strokeStyle = "rgba(0,0,0,.7)"; ctx.lineWidth = 1.6; ctx.beginPath(); if (v) { ctx.moveTo(x + w - 0.8, y); ctx.lineTo(x + w - 0.8, y + h); } else { ctx.moveTo(x, y + h - 0.8); ctx.lineTo(x + w, y + h - 0.8); } ctx.stroke(); }
+raiseBands(bands);
 ctx.restore();
 } else if (!st.lux) { for (const [a, l] of segH) { bandAlong(a, my, l); bandAlong(a, by, l); } for (const [a, l] of segV) { bandAlong(lx, a, l, true); bandAlong(rx, a, l, true); } }
+if (!artImg) { const Hg = RAIL - 12, g0 = FX - RAIL, w0 = FY - RAIL; ctx.save(); ctx.beginPath(); rr(OX + 3, OY + 3, OW - 6, OH - 6, 35); ctx.clip(); raiseBands([[g0, my - Hg / 2, FW + 2 * RAIL, Hg, 0], [g0, by - Hg / 2, FW + 2 * RAIL, Hg, 0], [lx - Hg / 2, w0, Hg, FH + 2 * RAIL, 1], [rx - Hg / 2, w0, Hg, FH + 2 * RAIL, 1]]); ctx.restore(); }   // every other table: the same raised-inlay bevel on its rail bands
 const sights = !st.pave && !st.gemrow && !st.elite && !modern, lonArt = (city.id === "lon" && lonTileOk()) || !!artOf(city.id);   // the London rail art already carries its own gems
 if (modern) {
 let n = 0;
