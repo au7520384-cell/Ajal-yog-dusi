@@ -5479,8 +5479,17 @@ const vt = (p, l, o, xc, k) => { ctx.save(); ctx.transform(k * Hd / iw, 0, 0, o 
 const run = (fn, start, L, fromEnd, c, k) => { const n = Math.max(1, Math.round(L / nat)), l = L / n;   // the art repeats (mirrored) along a long rail so it keeps its proportions
 for (let j = 0; j < n; j++) { const odd = j % 2; if (!fromEnd) fn(start + j * l, l, odd ? -1 : 1, c, k); else fn(start + L - (j + 1) * l, l, odd ? 1 : -1, c, k); } };
 const a0 = FX - RAIL, l0 = FW / 2 + RAIL + 20, a1 = FX + FW / 2 - 20, v0 = FY - RAIL, vl = FH + 2 * RAIL;   // the art runs on under the pockets, so no bare rail is left around them
+// raised inlay: the artwork band stands proud of the wood: a shadow cast around it, a lit bevel along its top/outer edge, a dark lower edge and a glossy cylinder shading across it
+const bands = [[a0, my - Hd / 2, FW + 2 * RAIL, Hd, 0], [a0, by - Hd / 2, FW + 2 * RAIL, Hd, 0], [lx - Hd / 2, v0, Hd, vl, 1], [rx - Hd / 2, v0, Hd, vl, 1]];
+for (const [x, y, w, h] of bands) { ctx.save(); ctx.shadowColor = "rgba(0,0,0,.65)"; ctx.shadowBlur = 9; ctx.shadowOffsetY = 3; ctx.fillStyle = "#000"; ctx.fillRect(x, y, w, h); ctx.restore(); }
 for (const [yc, k] of [[my, 1], [by, -1]]) { run(hz, a0, l0, false, yc, k); run(hz, a1, l0, true, yc, k); }
 for (const [xc, k] of [[lx, 1], [rx, -1]]) { run(vt, v0, vl / 2, false, xc, k); run(vt, v0 + vl / 2, vl / 2, true, xc, k); }
+for (const [x, y, w, h, v] of bands) {
+const g = v ? ctx.createLinearGradient(x, 0, x + w, 0) : ctx.createLinearGradient(0, y, 0, y + h);
+g.addColorStop(0, "rgba(255,255,255,.38)"); g.addColorStop(0.14, "rgba(255,255,255,.12)"); g.addColorStop(0.5, "rgba(255,255,255,0)"); g.addColorStop(0.82, "rgba(0,0,0,.18)"); g.addColorStop(1, "rgba(0,0,0,.55)");
+ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
+ctx.strokeStyle = "rgba(255,255,255,.75)"; ctx.lineWidth = 1.4; ctx.beginPath(); if (v) { ctx.moveTo(x + 0.7, y); ctx.lineTo(x + 0.7, y + h); } else { ctx.moveTo(x, y + 0.7); ctx.lineTo(x + w, y + 0.7); } ctx.stroke();
+ctx.strokeStyle = "rgba(0,0,0,.7)"; ctx.lineWidth = 1.6; ctx.beginPath(); if (v) { ctx.moveTo(x + w - 0.8, y); ctx.lineTo(x + w - 0.8, y + h); } else { ctx.moveTo(x, y + h - 0.8); ctx.lineTo(x + w, y + h - 0.8); } ctx.stroke(); }
 ctx.restore();
 } else if (!st.lux) { for (const [a, l] of segH) { bandAlong(a, my, l); bandAlong(a, by, l); } for (const [a, l] of segV) { bandAlong(lx, a, l, true); bandAlong(rx, a, l, true); } }
 const sights = !st.pave && !st.gemrow && !st.elite && !modern, lonArt = (city.id === "lon" && lonTileOk()) || !!artOf(city.id);   // the London rail art already carries its own gems
