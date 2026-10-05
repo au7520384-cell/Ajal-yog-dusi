@@ -121,7 +121,7 @@ function claimEdition(u, id) {
 }
 const TABLE_REFUND_CASH = 1000;
 const editionsLeft = () => Object.fromEntries(Object.entries(EDITION_CAP).map(([id, cap]) => [id, {cap, sold: (db.meta.editions || {})[id] | 0}]));
-const REFERRAL = {invitee: {cash: 5, coins: 5000}, inviter: {cash: 10, coins: 15000}};
+const REFERRAL = {invitee: {cash: 3, coins: 5000}, inviter: {cash: 5, coins: 15000}};
 const GIFT = {coins: 500};
 const CITY_PRIZE = {lon: 100, syd: 200, lis: 1000, tok: 5000, veg: 20000, jak: 100000, tor: 200000, cai: 500000, dub: 1000000,
   sha: 2000000, par: 5000000, rom: 8000000, bkk: 10000000, seo: 20000000, mum: 30000000, ber: 50000000, ist: 100000000, osa: 200000000,
@@ -171,7 +171,7 @@ const cleanCountry = c => /^[A-Za-z]{2}$/.test(String(c || "")) ? String(c).toUp
 // Weeks start Monday 00:00 UTC. Every player earns "weekly winnings"; at the end of the week the world top 3 get cash,
 // and inside each league the top 20% move up, the bottom 20% move down.
 const LEAGUES = ["bronze", "silver", "gold", "platinum", "lightning", "billiard", "diamond", "comet", "legend", "nine"];
-const WEEK_PRIZES = [1500, 750, 400];
+const WEEK_PRIZES = [150, 75, 40];
 function weekStart(t = Date.now()) {
   const d = new Date(t), day = (d.getUTCDay() + 6) % 7;
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day);
@@ -215,7 +215,7 @@ function rollWeek() {
 }
 setInterval(rollWeek, 60000);
 function grant(u, g) { (u.grants = u.grants || []).push({...g, at: Date.now()}); markDirty(); }
-const CLUB_MAX = 50, CLUB_LEVEL = 6, CLUB_PRIZES = [50, 25, 10];
+const CLUB_MAX = 50, CLUB_LEVEL = 6, CLUB_PRIZES = [20, 10, 5];
 function clubScore(c) { const w = curWeek(); return c.members.reduce((a, id) => a + (db.users[id] && db.users[id].week === w ? db.users[id].weekWon || 0 : 0), 0); }
 function clubInfo(c) { return {id: c.id, name: c.name, badge: c.badge || 0, color: c.color || 0, members: c.members.length, score: clubScore(c), league: c.league || 0}; }
 function clubSay(c, u, text) {
