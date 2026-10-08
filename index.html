@@ -8755,7 +8755,7 @@ st.style.setProperty("--iky", (1 / ky).toFixed(4));
 st.style.transform = `translate(${(w - 1866 * s) / 2}px,${top + (hh - 707 * sy) / 2}px) scale(${s},${sy})`;
 }
 addEventListener("resize", () => setTimeout(layoutHome, 50));
-const BOX_TIERS = [{n: "Bronza quti", i: "⟦box0⟧", min: 15, c: "#cd7f32"}, {n: "Kumush quti", i: "⟦box1⟧", min: 60, c: "#b8c4d8"}, {n: "Oltin quti", i: "⟦box2⟧", min: 180, c: "#ffcf3d"}, {n: "Olmos quti", i: "⟦box3⟧", min: 480, c: "#9fe8ff"}];
+const BOX_TIERS = [{n: "Bronza quti", i: "⟦box0⟧", min: 180, c: "#cd7f32"}, {n: "Kumush quti", i: "⟦box1⟧", min: 360, c: "#b8c4d8"}, {n: "Oltin quti", i: "⟦box2⟧", min: 720, c: "#ffcf3d"}, {n: "Olmos quti", i: "⟦box3⟧", min: 1440, c: "#9fe8ff"}];
 function addBox(city) {
 profile.boxes = profile.boxes || [null, null, null, null];
 const free = profile.boxes.findIndex(b => !b); if (free < 0) return false;
@@ -8768,10 +8768,10 @@ function boxLeft(b) { return b.start ? Math.max(0, b.start + BOX_TIERS[b.tier].m
 function openBox(i) {
 navHold = true; setTimeout(() => { navHold = false; }, 12000);   // the prize counters wait until the box is opened
 const b = profile.boxes[i], city = CITIES.find(c => c.id === b.city) || CITIES[0], t = b.tier;
-const lgM = LEAGUE_COIN_MULT[Math.min(profile.league | 0, LEAGUE_COIN_MULT.length - 1)], coins = Math.round((Math.round(city.prize * (0.25 + Math.random() * 0.35) / 10) * 10 + 100) * lgM / 10) * 10;   // boxes give coins and cue pieces only, never cash; your league multiplies the coins
+const lgM = LEAGUE_COIN_MULT[Math.min(profile.league | 0, LEAGUE_COIN_MULT.length - 1)], tierM = [1, 2, 3.5, 6][t] || 1, coins = Math.round((Math.round(city.prize * (0.25 + Math.random() * 0.35) / 10) * 10 + 100) * tierM * lgM / 10) * 10;   // boxes give coins and cue pieces only, never cash; your league multiplies the coins
 profile.boxes[i] = null; addCoins(coins);
 let piece = "";
-const nPieces = (Math.random() < [0.2, 0.35, 0.55, 0.9][t] ? 1 : 0) + ((profile.league | 0) >= 1 ? 1 : 0);   // league perk: +1 cue piece from Silver up
+const nPieces = (Math.random() < [0.25, 0.4, 0.65, 1][t] ? 1 : 0) + (t === 3 && Math.random() < 0.5 ? 1 : 0) + ((profile.league | 0) >= 1 ? 1 : 0);   // league perk: +1 cue piece from Silver up
 for (let k = 0; k < nPieces; k++) { const pool = CUES.filter(c => (c.cat === "victory" || c.cat === "surprise") && !profile.cues.includes(c.id)); if (pool.length) { const c = pick(pool); addCuePiece(c); piece += `<div>${pcImg(26)} ${esc(cueName(c))}</div>`; } }
 save(); updateNav();
 boxOpenAnim(["rare", "rare", "epic", "leg"][t] || "rare", () => { Snd.win(); burst();
@@ -8786,7 +8786,7 @@ if (!bx.start) {
 if (profile.boxes.some(b => b && b.start && boxLeft(b) > 0)) return toast("⏳", T("Boshqa quti ochilmoqda"), T(BOX_TIERS[bx.tier].n));
 bx.start = Date.now(); save(); Snd.click(); return buildHome();
 }
-const gems = Math.max(10, Math.ceil(left / 600e3) * 14);
+const gems = Math.max(10, Math.ceil(left / 600e3) * 4);
 openModal({icon: BOX_TIERS[bx.tier].i, title: T(BOX_TIERS[bx.tier].n), text: `${T("Ochilishiga")}: ${fmtDur(left)}`, extra: "",
 buttons: [{label: `💎 ${gems} — ${T("Hozir ochish")}`, cls: "purple", fn: () => {
 if ((profile.gems || 0) < gems) return toast("😕", T("Olmos yetmaydi"), "");
