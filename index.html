@@ -167,6 +167,7 @@ border:3px solid #ffffff30;box-shadow:inset 0 3px 0 #ffffff40,0 10px 30px #000b;
 .city .cnm b{font-family:var(--fh);font-weight:400;font-size:8.6cqw;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;background:linear-gradient(#fffbe0,#ffd24d 55%,#c07a00);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #3a1a00) drop-shadow(0 0 6px #000a)}
 .city .cnm.lg b{font-size:6.6cqw}
 .city .cnm i{font-family:var(--fh);font-style:italic;font-size:5.4cqw;color:color-mix(in srgb,var(--ac,#fff) 35%,#fff);text-shadow:0 1px 0 #000,0 0 6px #000;white-space:nowrap}
+@media (max-height:400px){.city .crow:not(:has([data-online])){display:none}.city .cban{max-height:calc(100vh - 243px)!important}.city .cplay::after{content:" · 🪙 " attr(data-fee);font-size:.8em;opacity:.95}}
 .city .cplay{background:linear-gradient(color-mix(in srgb,var(--ac,#2fd04a) 75%,#fff),var(--ac,#2fd04a) 48%,color-mix(in srgb,var(--ac,#2fd04a) 60%,#000))!important;border:2px solid color-mix(in srgb,var(--ac,#2fd04a) 55%,#fff)!important;color:#fff!important;text-shadow:0 2px 0 #0008;box-shadow:inset 0 2px 0 #fff6,0 3px 8px #000a}
 .city .prize{background:#0a1030cc!important;backdrop-filter:blur(2px)}.city .crow{background:#0a1030b0!important}
 .city .felt{height:70px;border-radius:12px;border:7px solid;position:relative;box-shadow:inset 0 0 20px #0008}
@@ -7202,7 +7203,7 @@ el.innerHTML = `
 <div class="prize"><div class="pl">${T("Yutuq")}</div><div class="pv"><span class="coin" style="width:28px;height:28px"></span>${fmtS(c.prize)}</div><span class="cpass">+${passOf(c)} ♞</span></div>
 <div class="crow"><span>${T("Kirish narxi")}</span><span><span class="coin" style="width:14px;height:14px"></span> ${fmtS(c.fee)}</span></div>
 <div class="crow"><span>${T("O'yinchilar onlayn")}</span><span style="color:#8dff9a" data-online="${c.id}">● —</span></div>
-<button class="btn green cplay" ${locked ? "disabled" : ""}>${T("O'YNASH")}</button>
+<button class="btn green cplay" data-fee="${fmtS(c.fee)}" ${locked ? "disabled" : ""}>${T("O'YNASH")}</button>
 ${locked ? `<div class="lock"><div><div>🔒</div>${lockWhy}</div></div>` : ""}`;
 el.querySelector("button.btn").onclick = () => playCity(c);
 if (!locked) el.querySelector(".cban").onclick = () => playCity(c);
