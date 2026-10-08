@@ -1101,3 +1101,4 @@ Top 3 sovrin‖Top 3 Prizes|Призы топ-3|İlk 3 Ödülü|Premios del Top 
 O'RIN‖RANK|МЕСТО|SIRA|PUESTO|POSIÇÃO|المركز|PERINGKAT|रैंक|RANG|RANG|순위|順位|排名
 ISM‖NAME|ИМЯ|İSİM|NOMBRE|NOME|الاسم|NAMA|नाम|NOM|NAME|이름|名前|名称
 HAFTALIK YUTUQ‖WEEKLY WINNINGS|ВЫИГРЫШ ЗА НЕДЕЛЮ|HAFTALIK KAZANÇ|GANANCIAS SEMANALES|GANHOS SEMANAIS|أرباح الأسبوع|KEMENANGAN MINGGUAN|साप्ताहिक जीत|GAINS DE LA SEMAINE|WOCHENGEWINN|주간 획득|週間獲得|每周赢取
+Davlat reytingi sovrini‖Country ranking prize|Приз рейтинга страны|Ülke sıralaması ödülü|Premio del ranking del país|Prêmio do ranking do país|جائزة ترتيب الدولة|Hadiah peringkat negara|देश रैंकिंग पुरस्कार|Prix du classement du pays|Länder-Ranglistenpreis|국가 랭킹 상금|国内ランキング賞金|国家排名奖励

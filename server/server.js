@@ -171,7 +171,8 @@ const cleanCountry = c => /^[A-Za-z]{2}$/.test(String(c || "")) ? String(c).toUp
 // Weeks start Monday 00:00 UTC. Every player earns "weekly winnings"; at the end of the week the world top 3 get cash,
 // and inside each league the top 20% move up, the bottom 20% move down.
 const LEAGUES = ["bronze", "silver", "gold", "platinum", "lightning", "billiard", "diamond", "comet", "legend", "nine"];
-const WEEK_PRIZES = [1500, 750, 400];
+const WEEK_PRIZES = [1500, 750, 400];      // world top 3 (cash)
+const COUNTRY_PRIZES = [400, 200, 100];    // top 3 inside each country (cash)
 function weekStart(t = Date.now()) {
   const d = new Date(t), day = (d.getUTCDay() + 6) % 7;
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day);
@@ -194,6 +195,13 @@ function rollWeek() {
     u.lastWeek = {week: prev, won: u.weekWon, rank: i + 1, league: u.league || 0, move: 0};
     if (i < WEEK_PRIZES.length) grant(u, {cash: WEEK_PRIZES[i], coins: 0, kind: "weekly", from: `#${i + 1}`});
   });
+  const byCountry = {};   // country top 3: cash as well, on top of any world prize
+  played.forEach(u => { const cc = u.country || ""; if (cc) (byCountry[cc] = byCountry[cc] || []).push(u); });
+  const countries = {};
+  for (const [cc, list] of Object.entries(byCountry)) {
+    list.slice(0, COUNTRY_PRIZES.length).forEach((u, i) => grant(u, {cash: COUNTRY_PRIZES[i], coins: 0, kind: "country", from: `#${i + 1} ${cc}`}));
+    countries[cc] = list.slice(0, 3).map(u => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: cc, level: u.level, won: u.weekWon}));
+  }
   for (let t = 0; t < LEAGUES.length; t++) {
     const tier = played.filter(u => u.lastWeek.league === t), n = tier.length;   // league at the start of the week: move at most one step
     const up = t < LEAGUES.length - 1 ? Math.max(1, Math.ceil(n * 0.2)) : 0;
@@ -208,7 +216,7 @@ function rollWeek() {
     .filter(x => x.score > 0).sort((a, b) => b.score - a.score);
   clubRank.slice(0, CLUB_PRIZES.length).forEach((x, i) => x.c.members.forEach(id => db.users[id] && grant(db.users[id], {cash: CLUB_PRIZES[i], coins: 0, kind: "club", from: x.c.name})));
   clubRank.forEach((x, i) => { x.c.lastWeek = {rank: i + 1, score: x.score}; x.c.league = Math.min(6, Math.floor(Math.log10(x.score + 1) / 1.4)); });
-  state.lastWeek = {week: prev, top: played.slice(0, 20).map(u => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, won: u.weekWon}))};
+  state.lastWeek = {week: prev, countries, top: played.slice(0, 20).map(u => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, won: u.weekWon}))};
   state.week = curWeek();
   lbCache.clear(); markDirty();
   console.log(`week ${prev} closed: ${played.length} players ranked`);
@@ -566,14 +574,15 @@ const routes = {
       : board("world", () => true);
     const rank = all.findIndex(x => x.id === u.id);
     const n = all.length;
-    return {scope, week: curWeek(), endsAt: weekEndsAt(), prizes: WEEK_PRIZES, leagues: LEAGUES, country: cc, league: lg,
+    return {scope, week: curWeek(), endsAt: weekEndsAt(), prizes: scope === "country" ? COUNTRY_PRIZES : WEEK_PRIZES, leagues: LEAGUES, country: cc, league: lg,
       promote: scope === "league" && lg < LEAGUES.length - 1 ? Math.max(1, Math.ceil(n * 0.2)) : 0,
       demote: scope === "league" && lg > 0 && n >= 5 ? Math.floor(n * 0.2) : 0,
       top: all.slice(0, 100).map(publicUser), me: {...publicUser(u), rank: rank < 0 ? null : rank + 1}, total: n};
   },
   "GET /api/leaderboard/lastweek"(req, u) {
     const s = (db.meta && db.meta.state) || {};
-    return {lastWeek: s.lastWeek || null, me: u.lastWeek || null, prizes: WEEK_PRIZES};
+    const lw = s.lastWeek ? {...s.lastWeek, countries: undefined} : null;
+    return {lastWeek: lw, me: u.lastWeek || null, prizes: WEEK_PRIZES, countryPrizes: COUNTRY_PRIZES, countryTop: ((s.lastWeek && s.lastWeek.countries) || {})[u.country || ""] || []};
   },
 
   async "POST /api/checkout"(req, u) {
