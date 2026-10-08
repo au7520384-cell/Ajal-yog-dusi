@@ -162,8 +162,8 @@ border:3px solid #ffffff30;box-shadow:inset 0 3px 0 #ffffff40,0 10px 30px #000b;
 .city>*{position:relative;z-index:1}
 .city .cban{margin:-12px -12px 2px;overflow:hidden;aspect-ratio:364/110;box-shadow:0 6px 14px #000a}.city .cban img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
 .city{border-color:var(--ac,#ffcf3d)!important;box-shadow:0 0 18px color-mix(in srgb,var(--ac,#ffb300) 45%,transparent),0 10px 30px #000b!important}
-.city .cban{container-type:inline-size;position:relative;aspect-ratio:456/281!important;margin:-12px -12px 4px!important}
-.city .cnm{position:absolute;left:31%;width:57.5%;top:65.8%;height:29%;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;line-height:1.05}
+.city .cban img{object-position:50% 100%}.city .cban{container-type:inline-size;position:relative;aspect-ratio:456/281!important;margin:-12px -12px 4px!important}
+.city .cnm{position:absolute;left:31%;width:57.5%;top:auto;bottom:3.2cqw;height:17.9cqw;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;line-height:1.05}
 .city .cnm b{font-family:var(--fh);font-weight:400;font-size:8.6cqw;letter-spacing:.02em;text-transform:uppercase;white-space:nowrap;background:linear-gradient(#fffbe0,#ffd24d 55%,#c07a00);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #3a1a00) drop-shadow(0 0 6px #000a)}
 .city .cnm.lg b{font-size:6.6cqw}
 .city .cnm i{font-family:var(--fh);font-style:italic;font-size:5.4cqw;color:color-mix(in srgb,var(--ac,#fff) 35%,#fff);text-shadow:0 1px 0 #000,0 0 6px #000;white-space:nowrap}
@@ -959,7 +959,7 @@ background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),color-mix(in srg
 @media (max-width:760px){ .tiles{grid-template-columns:repeat(3,1fr)} }
 @media (max-height:520px){                 /* phone landscape: compact city card so the banner and PLAY button always fit */
 #cities .head{margin-bottom:0} #cities .head h2{font-size:22px} #cities .carousel{padding:4px 16px 6px}
-.city{gap:4px;padding:8px} .city .cban{flex:0 0 auto;margin:-8px -8px 0!important;aspect-ratio:auto!important;height:98px} .city .cban img{object-position:50% 100%} .city .cnm{top:55%;height:39%} .city .prize .pv{font-size:19px} .city .ctro{margin-top:-1px}
+.city{gap:4px;padding:8px;flex:0 0 clamp(190px,22vw,225px)} .city .cban{flex:0 0 auto;margin:-8px -8px 0!important;aspect-ratio:456/281!important;height:auto;max-height:calc(100vh - 268px)} .city .cban img{object-position:50% 100%} .city .prize .pv{font-size:19px} .city .ctro{margin-top:-1px}
 .city .ctro{padding:2px 5px;gap:4px} .ctro span{font-size:9px} .ctro span b{font-size:12px} .cring .ringimg,.cring .ring{width:28px!important;height:28px!important}
 .city .cbar em{font-size:11px} .ctip,.city .crow:has([data-online]){display:none}
 .city .prize{padding:2px 6px;flex:0 0 auto} .prize .pl{display:none} .prize .pv{font-size:22px} .prize .pv .coin{width:20px!important;height:20px!important} .cpass{font-size:11px;padding:2px 6px}
