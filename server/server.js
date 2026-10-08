@@ -173,6 +173,8 @@ const cleanCountry = c => /^[A-Za-z]{2}$/.test(String(c || "")) ? String(c).toUp
 const LEAGUES = ["bronze", "silver", "gold", "platinum", "lightning", "billiard", "diamond", "comet", "legend", "nine"];
 const WEEK_PRIZES = [1500, 750, 400];      // world top 3 (cash)
 const COUNTRY_PRIZES = [400, 200, 100];    // top 3 inside each country (cash)
+const LEAGUE_PRIZE_1ST = [10000, 15000, 25000, 40000, 60000, 90000, 130000, 190000, 270000, 400000];   // My League: top 3 of every league win COINS (not cash): 1st / 70% / 40%, rising with the league
+const LEAGUE_SPLIT = [1, 0.7, 0.4];
 function weekStart(t = Date.now()) {
   const d = new Date(t), day = (d.getUTCDay() + 6) % 7;
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day);
@@ -204,6 +206,7 @@ function rollWeek() {
   }
   for (let t = 0; t < LEAGUES.length; t++) {
     const tier = played.filter(u => u.lastWeek.league === t), n = tier.length;   // league at the start of the week: move at most one step
+    tier.slice(0, LEAGUE_SPLIT.length).forEach((u, i) => grant(u, {cash: 0, coins: Math.round(LEAGUE_PRIZE_1ST[t] * LEAGUE_SPLIT[i] / 100) * 100, kind: "league", from: `#${i + 1}`}));
     const up = t < LEAGUES.length - 1 ? Math.max(1, Math.ceil(n * 0.2)) : 0;
     const down = t > 0 && n >= 5 ? Math.floor(n * 0.2) : 0;
     tier.forEach((u, i) => {

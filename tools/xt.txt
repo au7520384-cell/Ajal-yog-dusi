@@ -1102,3 +1102,4 @@ O'RIN‖RANK|МЕСТО|SIRA|PUESTO|POSIÇÃO|المركز|PERINGKAT|रैं�
 ISM‖NAME|ИМЯ|İSİM|NOMBRE|NOME|الاسم|NAMA|नाम|NOM|NAME|이름|名前|名称
 HAFTALIK YUTUQ‖WEEKLY WINNINGS|ВЫИГРЫШ ЗА НЕДЕЛЮ|HAFTALIK KAZANÇ|GANANCIAS SEMANALES|GANHOS SEMANAIS|أرباح الأسبوع|KEMENANGAN MINGGUAN|साप्ताहिक जीत|GAINS DE LA SEMAINE|WOCHENGEWINN|주간 획득|週間獲得|每周赢取
 Davlat reytingi sovrini‖Country ranking prize|Приз рейтинга страны|Ülke sıralaması ödülü|Premio del ranking del país|Prêmio do ranking do país|جائزة ترتيب الدولة|Hadiah peringkat negara|देश रैंकिंग पुरस्कार|Prix du classement du pays|Länder-Ranglistenpreis|국가 랭킹 상금|国内ランキング賞金|国家排名奖励
+Liga sovrini‖League prize|Приз лиги|Lig ödülü|Premio de liga|Prêmio da liga|جائزة الدوري|Hadiah liga|लीग पुरस्कार|Prix de ligue|Ligapreis|리그 상금|リーグ賞金|联赛奖励
