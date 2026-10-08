@@ -175,6 +175,13 @@ const WEEK_PRIZES = [1500, 750, 400];      // world top 3 (cash)
 const COUNTRY_PRIZES = [400, 200, 100];    // top 3 inside each country (cash)
 const LEAGUE_PRIZE_1ST = [10000, 15000, 25000, 40000, 60000, 90000, 130000, 190000, 270000, 400000];   // My League: top 3 of every league win COINS (not cash): 1st / 70% / 40%, rising with the league
 const LEAGUE_SPLIT = [1, 0.7, 0.4];
+const LEAGUE_INSTANT = t => 250000 * (t + 1);   // weekly winnings that promote you at once (Silver = 500k) and pay the league's top prize
+function instantPromote(u) {
+  const w = curWeek(), t = u.league || 0;
+  if (t >= LEAGUES.length - 1 || u.instantWeek === w || (u.weekWon || 0) < LEAGUE_INSTANT(t)) return;
+  u.instantWeek = w; u.league = t + 1;
+  grant(u, {cash: 0, coins: LEAGUE_PRIZE_1ST[t], kind: "league", from: "\u2191 " + LEAGUES[t + 1]});
+}
 function weekStart(t = Date.now()) {
   const d = new Date(t), day = (d.getUTCDay() + 6) % 7;
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day);
@@ -185,6 +192,7 @@ function addWeekly(u, amount) {
   const w = curWeek();
   if (u.week !== w) { u.week = w; u.weekWon = 0; }
   u.weekWon = (u.weekWon || 0) + Math.max(0, amount);
+  instantPromote(u);
   lbCache.clear(); markDirty();
 }
 function rollWeek() {
@@ -205,7 +213,7 @@ function rollWeek() {
     countries[cc] = list.slice(0, 3).map(u => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: cc, level: u.level, won: u.weekWon}));
   }
   for (let t = 0; t < LEAGUES.length; t++) {
-    const tier = played.filter(u => u.lastWeek.league === t), n = tier.length;   // league at the start of the week: move at most one step
+    const tier = played.filter(u => u.lastWeek.league === t && u.instantWeek !== prev), n = tier.length;   // those already promoted instantly this week keep their new league   // league at the start of the week: move at most one step
     tier.slice(0, LEAGUE_SPLIT.length).forEach((u, i) => grant(u, {cash: 0, coins: Math.round(LEAGUE_PRIZE_1ST[t] * LEAGUE_SPLIT[i] / 100) * 100, kind: "league", from: `#${i + 1}`}));
     const up = t < LEAGUES.length - 1 ? Math.max(1, Math.ceil(n * 0.2)) : 0;
     const down = t > 0 && n >= 5 ? Math.floor(n * 0.2) : 0;
@@ -580,6 +588,7 @@ const routes = {
     return {scope, week: curWeek(), endsAt: weekEndsAt(), prizes: scope === "country" ? COUNTRY_PRIZES : WEEK_PRIZES, leagues: LEAGUES, country: cc, league: lg,
       promote: scope === "league" && lg < LEAGUES.length - 1 ? Math.max(1, Math.ceil(n * 0.2)) : 0,
       demote: scope === "league" && lg > 0 && n >= 5 ? Math.floor(n * 0.2) : 0,
+      instant: LEAGUE_INSTANT(lg), lgPrize: LEAGUE_PRIZE_1ST[Math.min(lg, LEAGUE_PRIZE_1ST.length - 1)],
       top: all.slice(0, 100).map(publicUser), me: {...publicUser(u), rank: rank < 0 ? null : rank + 1}, total: n};
   },
   "GET /api/leaderboard/lastweek"(req, u) {
