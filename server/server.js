@@ -481,6 +481,16 @@ const routes = {
     }
     return {sent};
   },
+  async "POST /api/champion"(req, u) {   // tell friends and club mates that this player just won a championship cup
+    const b = await jsonBody(req), cup = ["c1", "c2", "c3", "c4"].includes(b.cup) ? b.cup : null;
+    if (!cup) return [400, {error: "bad_cup"}];
+    const now = Date.now(); if (u.champAt && now - u.champAt < 60e3) return {sent: 0};
+    u.champAt = now;
+    const ids = new Set(u.friends || []); if (u.club && db.clubs[u.club]) for (const id of db.clubs[u.club].members) ids.add(id);
+    ids.delete(u.id); let sent = 0;
+    for (const id of ids) if (db.users[id]) { grant(db.users[id], {cash: 0, coins: 0, kind: "champ", from: u.name, cup}); sent++; }
+    return {sent};
+  },
   async "POST /api/gift/request"(req, u) {
     const b = await jsonBody(req), ids = [].concat(b.to || []).slice(0, 100);
     let sent = 0;
