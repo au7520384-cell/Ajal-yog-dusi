@@ -8856,6 +8856,7 @@ return true;
 }
 function boxLeft(b) { return b.start ? Math.max(0, b.start + BOX_TIERS[b.tier].min * 60e3 - Date.now()) : Infinity; }
 function openBox(i) {
+if (!(profile.boxes || [])[i]) return;   // empty slot: nothing to open
 navHold = true; setTimeout(() => { navHold = false; }, 12000);   // the prize counters wait until the box is opened
 const b = profile.boxes[i], city = CITIES.find(c => c.id === b.city) || CITIES[0], t = b.tier;
 const lgM = LEAGUE_COIN_MULT[Math.min(profile.league | 0, LEAGUE_COIN_MULT.length - 1)], tierM = [1, 2, 3.5, 6][t] || 1, coins = Math.round((Math.round(city.prize * (0.25 + Math.random() * 0.35) / 10) * 10 + 100) * tierM * lgM / 10) * 10;   // boxes give coins and cue pieces only, never cash; your league multiplies the coins
