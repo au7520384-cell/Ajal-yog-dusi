@@ -123,7 +123,7 @@ const TABLE_REFUND_CASH = 1000;
 const editionsLeft = () => Object.fromEntries(Object.entries(EDITION_CAP).map(([id, cap]) => [id, {cap, sold: (db.meta.editions || {})[id] | 0}]));
 const REFERRAL = {invitee: {cash: 3, coins: 5000}, inviter: {cash: 5, coins: 15000}};
 const GIFT = {coins: 500};
-const CITY_PRIZE = {lon: 100, syd: 200, lis: 1000, tok: 5000, veg: 20000, jak: 100000, tor: 200000, cai: 500000, dub: 1000000,
+const CITY_PRIZE = {mad: 2000, bue: 50000, mex: 320000, sin: 1400000, ams: 6000000, kul: 14000000, ath: 40000000, cas: 140000000, lon: 100, syd: 200, lis: 1000, tok: 5000, veg: 20000, jak: 100000, tor: 200000, cai: 500000, dub: 1000000,
   sha: 2000000, par: 5000000, rom: 8000000, bkk: 10000000, seo: 20000000, mum: 30000000, ber: 50000000, ist: 100000000, osa: 200000000,
   tas: 400000000, rio: 800000000, nyc: 1600000000, mos: 3000000000};
 
