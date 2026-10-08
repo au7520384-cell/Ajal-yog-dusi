@@ -2933,10 +2933,10 @@ if (bank.r_cue && w > 0) play(bank.r_cue[Math.max(0, Math.min(bank.r_cue.length 
 if (p > 0.55) tone(now(), 130, 0.09, 0.07 * p, "sine", 70);   // hard strokes add a low thump
 },
 rub(j, x, y) { if (!ok()) return; const t = now(); if (t - lastRub < 0.03) return; lastRub = t; const k = Math.min(1, j / 3); play(bank.rubB, 0.03 + 0.2 * k, 0.9 + 0.3 * k + Math.random() * 0.1, 0, spat(x, y)); },   // the friction impulse of a ball-ball contact (cut throw) scrapes
-rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 85); if (k < 0.01) return;   // cushion contact speeds run ~1-90 u/frame (a break is ~65-90): the old /40 scale saturated for every normal shot, so soft and hard hits sounded the same
-const sp = spat(x, y), q = Math.pow(k, 0.55), vol = 0.95 * Math.pow(10, -34 * (1 - q) / 20);   // loudness over a 34 dB range
-play(pick(bank.rails0), vol, 0.91 + 0.16 * k + (Math.random() - 0.5) * 0.04, 450 + 6200 * k * k, sp);   // soft = dull, low and quiet; hard = bright, higher and loud
-if (k > 0.45) play(pick(bank.railT[3]), 0.5 * (k - 0.45) / 0.55 * vol, 0.98 + Math.random() * 0.05, 0, sp);   // a hard hit adds the deeper rubber thud
+rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 45); if (k < 0.008) return;   // measured cushion contact speeds: soft 1-8, medium 10-25, hard 40-60 u/frame
+const sp = spat(x, y), q = Math.sqrt(k), vol = 0.95 * Math.pow(10, -26 * (1 - q) / 20);   // loudness over a 26 dB range: a soft tap is still clearly audible, a hard hit is full
+play(pick(bank.rails0), vol, 0.92 + 0.14 * k + (Math.random() - 0.5) * 0.04, 1000 + 5500 * k, sp);   // soft = duller and a touch lower, hard = brighter and higher
+if (k > 0.5) play(pick(bank.railT[3]), 0.45 * (k - 0.5) / 0.5 * vol, 0.98 + Math.random() * 0.05, 0, sp);   // a hard hit adds the deeper rubber thud
 },
 pocket(x, y, v = 20) { if (!ok()) return; const sp = spat(x, y), k = Math.min(1, v / 35);   // a faster ball hits the jaws and the net harder: louder, higher, longer rattle
 play(bank.pocket, 0.4 + 0.6 * k, 0.92 + 0.1 * k + Math.random() * 0.06, 2500 + 9000 * k, sp); const t = now(); noise(t + 0.1, 0.35 + 0.3 * k, 0.02 + 0.04 * k, "lowpass", 380 + 200 * k, 0.7, 140); },   // the ball rolls down the leather pocket net
@@ -5753,7 +5753,7 @@ ctx.restore();
 }
 const C = 19, cA = CORNER_MOUTH, mA = MID_MOUTH;
 {   // the border ring around the playing surface (cushion bodies and the wedges beside the pockets) gets the same cloth: base colour, fibre noise and weave
-const nm = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, fb = nm(city.felt[0]).map(v => clamp(v + 4, 0, 255));
+const nm = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, fb = nm(city.felt[0]).map(v => clamp(v - 16, 0, 255));
 ctx.save(); ctx.beginPath(); ctx.rect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12); ctx.rect(0, 0, FW, FH); ctx.clip("evenodd");
 ctx.fillStyle = `rgb(${fb.join(",")})`; ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12);
 ctx.globalAlpha = 0.68; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12); ctx.globalAlpha = 1;
@@ -5784,8 +5784,8 @@ if (feltNoise && feltWeave) {   // the cushion rubber is covered in the same wor
 ctx.save(); ctx.clip(); ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.globalAlpha = 1; ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.restore();
 }
 {   // soft shadow the raised cushion throws on the cloth (inwards), then the bright nose line
-const inw = {t: [0, 1], b: [0, -1], l: [1, 0], r: [-1, 0]}[side], SH = 11, sg = ctx.createLinearGradient(s[0][0], s[0][1], s[0][0] + inw[0] * SH, s[0][1] + inw[1] * SH);
-sg.addColorStop(0, "rgba(0,0,0,.2)"); sg.addColorStop(0.4, "rgba(0,0,0,.07)"); sg.addColorStop(1, "rgba(0,0,0,0)");   // a faint contact shadow only
+const inw = {t: [0, 1], b: [0, -1], l: [1, 0], r: [-1, 0]}[side], SH = 24, sg = ctx.createLinearGradient(s[0][0], s[0][1], s[0][0] + inw[0] * SH, s[0][1] + inw[1] * SH);
+sg.addColorStop(0, "rgba(0,0,0,.62)"); sg.addColorStop(0.35, "rgba(0,0,0,.24)"); sg.addColorStop(1, "rgba(0,0,0,0)");
 ctx.fillStyle = sg; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(s[1][0] + inw[0] * SH - Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[1][1] + inw[1] * SH - Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.lineTo(s[0][0] + inw[0] * SH + Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[0][1] + inw[1] * SH + Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.closePath(); ctx.fill();
 }
 ctx.strokeStyle = "rgba(255,255,255,.75)"; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
