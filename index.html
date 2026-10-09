@@ -5389,11 +5389,12 @@ const key = city.felt[0] + city.felt[1];
 if (TINT_TBL[key]) return TINT_TBL[key];
 const W = SYD_TBL.naturalWidth, H = SYD_TBL.naturalHeight, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
 const g = cv.getContext("2d"); g.drawImage(SYD_TBL, 0, 0);
-const id = g.getImageData(0, 0, W, H), d = id.data, hx = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = hx(city.felt[0]), f1 = hx(city.felt[1]);
-const mid = f0.map((v, i) => v * 0.55 + f1[i] * 0.45);
+const id = g.getImageData(0, 0, W, H), d = id.data, hx = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = hx(city.felt[0]), f1 = hx(city.felt[1]), rl = hx(city.rail[0]).map((v, i) => v * 0.6 + hx(city.rail[1])[i] * 0.4);
+const mid = f0.map((v, i) => v * 0.55 + f1[i] * 0.45), cb = f0.map((v, i) => Math.min(255, v * 0.82 + f1[i] * 0.18 + 20));   // cb: the city's own cushion colour (as on its old table)
 for (let i = 0; i < d.length; i += 4) {
 const r = d[i], gg = d[i + 1], b = d[i + 2];
-if (gg > r + 12 && gg > b + 8 && gg > 25) { const k = Math.min(1.5, gg / 100); d[i] = Math.min(255, mid[0] * k); d[i + 1] = Math.min(255, mid[1] * k); d[i + 2] = Math.min(255, mid[2] * k); }
+if (r > gg * 1.8 && r > 18 && b < gg + 6) { const kw = Math.min(1.6, r / 70); d[i] = d[i] * 0.15 + Math.min(255, rl[0] * kw) * 0.85; d[i + 1] = d[i + 1] * 0.15 + Math.min(255, rl[1] * kw) * 0.85; d[i + 2] = d[i + 2] * 0.15 + Math.min(255, rl[2] * kw) * 0.85; }   // the wooden frame takes the city's rail colour
+else if (gg > r + 12 && gg > b + 8 && gg > 25) { const k = Math.min(1.5, gg / 100), kc = Math.min(1.3, gg / 128), w = Math.max(0, Math.min(1, (gg - 112) / 12)); d[i] = Math.min(255, mid[0] * k * (1 - w) + cb[0] * kc * w); d[i + 1] = Math.min(255, mid[1] * k * (1 - w) + cb[1] * kc * w); d[i + 2] = Math.min(255, mid[2] * k * (1 - w) + cb[2] * kc * w); }
 }
 g.putImageData(id, 0, 0);
 return TINT_TBL[key] = cv;
