@@ -5753,7 +5753,7 @@ ctx.restore();
 }
 const C = 19, cA = CORNER_MOUTH, mA = MID_MOUTH;
 {   // the border ring around the playing surface (cushion bodies and the wedges beside the pockets) gets the same cloth: base colour, fibre noise and weave
-const nm = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, fb = nm(city.felt[0]).map((v, i) => clamp(Math.round(v * 0.82 + nm(city.felt[1])[i] * 0.18), 0, 255));   // the border ring = the cloth colour the player sees
+const nm = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, fb = nm(city.felt[0]).map((v, i) => clamp(Math.round(v * 0.82 + nm(city.felt[1])[i] * 0.18) + 24, 0, 255));   // the border ring = the cloth colour the player sees
 ctx.save(); ctx.beginPath(); ctx.rect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12); ctx.rect(0, 0, FW, FH); ctx.clip("evenodd");
 ctx.fillStyle = `rgb(${fb.join(",")})`; ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12);
 ctx.globalAlpha = 0.68; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12); ctx.globalAlpha = 1;
@@ -5776,9 +5776,9 @@ for (const s of segs) {
 const side = s[4], d = {t: [0, 0, 0, -C], b: [0, FH, 0, FH + C], l: [0, 0, -C, 0], r: [FW, 0, FW + C, 0]}[side];
 const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
 const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
-const cb = f0.map((v, i) => Math.round(v * 0.82 + f1[i] * 0.18));   // all four cushions are the same colour as the playing cloth
+const cb = f0.map((v, i) => Math.round(v * 0.82 + f1[i] * 0.18) + 20);   // all four cushions share one clean, slightly brighter cloth tone (a distinct raised band, like the reference table)
 const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-g.addColorStop(0, cc(8)); g.addColorStop(0.5, cc(4)); g.addColorStop(1, cc(0));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
+g.addColorStop(0, cc(12)); g.addColorStop(0.55, cc(6)); g.addColorStop(1, cc(-10));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
 ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
 if (feltNoise && feltWeave) {   // the cushion rubber is covered in the same worsted cloth as the playing surface: same fibre noise and weave
 ctx.save(); ctx.clip(); ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.globalAlpha = 1; ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.restore();
@@ -5788,7 +5788,7 @@ const inw = {t: [0, 1], b: [0, -1], l: [1, 0], r: [-1, 0]}[side], SH = 15, sg = 
 sg.addColorStop(0, "rgba(0,0,0,.4)"); sg.addColorStop(0.35, "rgba(0,0,0,.14)"); sg.addColorStop(1, "rgba(0,0,0,0)");
 ctx.fillStyle = sg; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(s[1][0] + inw[0] * SH - Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[1][1] + inw[1] * SH - Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.lineTo(s[0][0] + inw[0] * SH + Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[0][1] + inw[1] * SH + Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.closePath(); ctx.fill();
 }
-ctx.strokeStyle = "rgba(255,255,255,.4)"; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
+ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
 ctx.strokeStyle = "rgba(0,0,0,.28)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
 }
 if (st.glow && !lucky) {
@@ -5806,7 +5806,7 @@ const x0 = -C, y0 = -C, x1 = FW + C, y1 = FH + C, W3 = 34, lp = 11;   // y0/x0 =
 ctx.save();
 const lit = (ax, ay, bx, by, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(1, "rgba(255,255,255,.52)"); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };   // the flat top of the rail catches the light just before it turns down
 lit(0, y0 - W3 - 16, 0, y0 - W3, x0 - W3, y0 - W3 - 16, x1 - x0 + 2 * W3, 16); lit(0, y1 + W3 + 16, 0, y1 + W3, x0 - W3, y1 + W3, x1 - x0 + 2 * W3, 16); lit(x0 - W3 - 16, 0, x0 - W3, 0, x0 - W3 - 16, y0 - W3, 16, y1 - y0 + 2 * W3); lit(x1 + W3 + 16, 0, x1 + W3, 0, x1 + W3, y0 - W3, 16, y1 - y0 + 2 * W3);
-const side = (ax, ay, bx, by, cx, cy, ex, ey, dx, dy, w, h) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(255,255,255,.0)"); g.addColorStop(0.08, "rgba(255,255,255,.14)"); g.addColorStop(0.2, "rgba(0,0,0,.12)"); g.addColorStop(0.55, "rgba(0,0,0,.55)"); g.addColorStop(1, "rgba(0,0,0,.95)"); ctx.fillStyle = g; ctx.fillRect(cx, cy, w, h); };
+const side = (ax, ay, bx, by, cx, cy, ex, ey, dx, dy, w, h) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(255,255,255,.0)"); g.addColorStop(0.08, "rgba(255,255,255,.14)"); g.addColorStop(0.2, "rgba(0,0,0,.05)"); g.addColorStop(0.55, "rgba(0,0,0,.24)"); g.addColorStop(1, "rgba(0,0,0,.6)"); ctx.fillStyle = g; ctx.fillRect(cx, cy, w, h); };
 side(0, y0 - W3, 0, y0, x0 - 4, y0 - W3, 0, 0, 0, 0, x1 - x0 + 8, W3);
 side(0, y1 + W3, 0, y1, x0 - 4, y1, 0, 0, 0, 0, x1 - x0 + 8, W3);
 side(x0 - W3, 0, x0, 0, x0 - W3, y0, 0, 0, 0, 0, W3, y1 - y0);
