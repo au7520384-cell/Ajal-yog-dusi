@@ -9922,9 +9922,10 @@ let vipPage = 0, vipSel = {sport: 1, atom: 1, zodiac: new Date().getMonth()};
 
 let vipShownSession = false;
 function vipGallery() {                                // every VIP set on one page: tap a cue to open its window
-  const offers = VO().filter(o => o.horror), cells = offers.map(o => { const cd = cueDef(o.tiers[0].cue), c = document.createElement("canvas"); c.width = 220; c.height = 14; const g = c.getContext("2d"); g.translate(5, 7); drawCueStick(g, 208, cd, 0.4); return `<button class="vgc" data-vg="${o.id}"><img src="${c.toDataURL()}" alt=""><small>${esc(T(o.title))}</small></button>`; }).join("");
+  const cell = (o, ti) => { const t = o.tiers[ti], cd = cueDef(t.cue), c = document.createElement("canvas"); c.width = 220; c.height = 14; const g = c.getContext("2d"); g.translate(5, 7); drawCueStick(g, 208, cd, 0.4); return `<button class="vgc" data-vg="${o.id}" data-ti="${ti}"><img src="${c.toDataURL()}" alt=""><small>${esc(T(o.horror ? o.title : cd.name))}</small></button>`; };
+  const offers = [...VO().filter(o => !o.horror), ...VO().filter(o => o.horror)], cells = offers.map(o => o.horror ? cell(o, 0) : o.tiers.map((_, ti) => cell(o, ti)).join("")).join("");
   openModal({icon: "", title: "VIP to'plamlar", text: "", extra: `<div class="vgrid">${cells}</div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
-  document.querySelectorAll("[data-vg]").forEach(b => b.onclick = () => { vipOffers(b.dataset.vg); });
+  document.querySelectorAll("[data-vg]").forEach(b => b.onclick = () => { const id = b.dataset.vg; if (b.dataset.ti && id === "zodiac") vipSel.zodiac = +b.dataset.ti; else if (b.dataset.ti && !id.startsWith("hor_")) vipSel[id] = +b.dataset.ti; vipOffers(id); });
 }
 function horrorOfferModal(o, t) {
   const i = +o.id.slice(4), [name, , pal] = HORROR[i], P = HOR_PAL[pal], cue = cueDef(t.cue), ownC = profile.cues.includes(cue.id), tbl = t.table ? tableById(t.table) : null, offers = VO();
@@ -9937,7 +9938,7 @@ function horrorOfferModal(o, t) {
       <div class="hstat">${bars}<div class="hpw">🔓 +${cuePower(cue)} ⚜</div></div>
       <div class="hcols">${col("🎱", "Kiy", esc(cue.name))}${col('<span class="coin" style="width:40px;height:40px"></span>', "Tanga", fmtS(t.coins))}${col('<span class="cash" style="width:50px;height:36px"></span>', "Naqd pul", fmt(t.cash))}${col("🏆", "Oltin zarba", "×" + t.goldShots)}${col(avHTML(profile.avatar, frameIdx(t.frame), 54), "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name)))}${tbl ? col(`<img src="${tableThumb(tbl)}" style="height:40px;border-radius:5px">`, "Stol", esc(T(tbl.name))) : ""}${t.sboxes ? col("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}</div>
       <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} $${t.usd}</button>`}<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small></div></div></div>
-    <div class="hnav"><button class="btn gray" id="hPrev">‹</button><span class="hdots" style="color:#fff;font-weight:800">${vipPage % offers.length + 1} / ${offers.length}</span><button class="btn gray" id="hNext">›</button><button class="btn blue" id="hAll">▦ ${T("Hammasi")} (64)</button></div></div>`, buttons: []});
+    <div class="hnav"><button class="btn gray" id="hPrev">‹</button><span class="hdots" style="color:#fff;font-weight:800">${vipPage % offers.length + 1} / ${offers.length}</span><button class="btn gray" id="hNext">›</button><button class="btn blue" id="hAll">▦ ${T("Hammasi")} (82)</button></div></div>`, buttons: []});
   vipCueShow(cue, $("hCue"));
   $("hClose").onclick = () => $("modal").classList.remove("on");
   $("hAll").onclick = vipGallery;
