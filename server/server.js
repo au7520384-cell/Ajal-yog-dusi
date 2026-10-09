@@ -20,6 +20,7 @@ const PORT = +process.env.PORT || 8080;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const APP_URL = (process.env.APP_URL || `http://localhost:${PORT}`).replace(/\/$/, "");
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY || "";
+const ADMIN_KEY = process.env.ADMIN_KEY || "";
 const STRIPE_WHSEC = process.env.STRIPE_WEBHOOK_SECRET || "";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
 const ROOT = path.join(__dirname, "..");
@@ -325,6 +326,20 @@ const routes = {
     return {iceServers};
   },
   "GET /api/skus": () => ({skus: SKUS, payments: !!STRIPE_KEY, referral: REFERRAL}),
+  // game announcements shown in the in-game Inbox (public read; posting needs the ADMIN_KEY env var)
+  "GET /api/news": () => { const now = Date.now(); return {news: ((db.meta && db.meta.news) || []).filter(n => !n.until || n.until > now).slice(-30).reverse()}; },
+  async "POST /api/news/post"(req) {   // curl -X POST $SERVER/api/news/post -H "x-admin-key: $ADMIN_KEY" -d '{"title":"..","text":"..","go":"eventsScr","btn":"Go now","days":7}'
+    if (!ADMIN_KEY || req.headers["x-admin-key"] !== ADMIN_KEY) return [403, {error: "forbidden"}];
+    const b = await jsonBody(req), clip = (v, n) => String(v || "").slice(0, n);
+    if (!clip(b.title, 80) || !clip(b.text, 600)) return [400, {error: "title_text_required"}];
+    db.meta = db.meta || {}; const list = db.meta.news = db.meta.news || [];
+    const item = {id: "n" + Date.now().toString(36), title: clip(b.title, 80), text: clip(b.text, 600), btn: clip(b.btn, 24), go: /^[a-zA-Z0-9]{1,24}$/.test(b.go || "") ? b.go : "", url: /^https:\/\//.test(b.url || "") ? clip(b.url, 300) : "", art: /^[0-9]$/.test(String(b.art)) ? +b.art : null, at: Date.now(), until: b.days > 0 ? Date.now() + Math.min(365, +b.days) * 864e5 : 0};
+    list.push(item); if (list.length > 60) list.splice(0, list.length - 60); markDirty(); return {ok: true, item};
+  },
+  async "POST /api/news/delete"(req) {
+    if (!ADMIN_KEY || req.headers["x-admin-key"] !== ADMIN_KEY) return [403, {error: "forbidden"}];
+    const b = await jsonBody(req); db.meta = db.meta || {}; db.meta.news = (db.meta.news || []).filter(n => n.id !== b.id); markDirty(); return {ok: true};
+  },
   "GET /api/editions": () => editionsLeft(),
   async "POST /api/editions/claim"(req, u) {
     if (limited(req, "ed", 30)) return [429, {error: "slow_down"}];
@@ -671,7 +686,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);

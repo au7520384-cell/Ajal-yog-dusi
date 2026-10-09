@@ -16,6 +16,8 @@ services:
         sync: false
       - key: APP_URL          # e.g. https://bilyard8.onrender.com
         sync: false
+      - key: ADMIN_KEY         # secret for posting in-game news (POST /api/news/post)
+        sync: false
       - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_WEBHOOK_SECRET

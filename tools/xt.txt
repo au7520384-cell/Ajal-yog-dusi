@@ -1111,3 +1111,9 @@ CHEMPIONI‖CHAMPION|ЧЕМПИОН|ŞAMPİYONU|CAMPEÓN|CAMPEÃO|البطل|JUA
 Kuboklar javoni‖Trophy Cabinet|Витрина кубков|Kupa Vitrini|Vitrina de trofeos|Estante de troféus|خزانة الكؤوس|Lemari Piala|ट्रॉफी अलमारी|Vitrine des trophées|Pokalschrank|트로피 진열장|トロフィー棚|奖杯柜
 Hali yutilmagan‖Not won yet|Ещё не выигран|Henüz kazanılmadı|Aún no ganado|Ainda não conquistado|لم يُكسب بعد|Belum dimenangkan|अभी तक नहीं जीता|Pas encore gagné|Noch nicht gewonnen|아직 획득 못함|未獲得|尚未获得
 Do'stingiz chempion bo'ldi‖Your friend became champion|Ваш друг стал чемпионом|Arkadaşın şampiyon oldu|Tu amigo es campeón|Seu amigo virou campeão|أصبح صديقك بطلاً|Temanmu menjadi juara|आपका दोस्त चैंपियन बना|Votre ami est champion|Dein Freund ist Champion|친구가 챔피언이 되었습니다|友達がチャンピオンになりました|你的好友夺冠了
+daq‖min|мин|dk|min|min|د|mnt|मिनट|min|Min.|분|分|分钟
+soat‖h|ч|sa|h|h|س|j|घं|h|Std.|시간|時間|小时
+kun‖d|дн|g|d|d|ي|hr|दिन|j|T|일|日|天
+O'qilmagan‖Unread|Непрочитано|Okunmamış|Sin leer|Não lidas|غير مقروءة|Belum dibaca|अपठित|Non lus|Ungelesen|읽지 않음|未読|未读
+Xabarlar yo'q‖No messages|Нет сообщений|Mesaj yok|Sin mensajes|Sem mensagens|لا رسائل|Tidak ada pesan|कोई संदेश नहीं|Aucun message|Keine Nachrichten|메시지 없음|メッセージなし|没有消息
+Yangiliklar va mukofotlar‖News & rewards|Новости и награды|Haberler ve ödüller|Noticias y premios|Novidades e prêmios|الأخبار والمكافآت|Berita & hadiah|समाचार और पुरस्कार|Actus et récompenses|News & Belohnungen|소식 및 보상|ニュースと報酬|新闻和奖励
