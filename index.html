@@ -5813,8 +5813,8 @@ side(x0 - W3, 0, x0, 0, x0 - W3, y0, 0, 0, 0, 0, W3, y1 - y0);
 side(x1 + W3, 0, x1, 0, x1, y0, 0, 0, 0, 0, W3, y1 - y0);
 ctx.restore();
 ctx.save(); ctx.lineJoin = "round";
-ctx.strokeStyle = "rgba(255,255,255,.78)"; ctx.lineWidth = 1.8; ctx.strokeRect(x0 + lp, y0 + lp, x1 - x0 - 2 * lp, y1 - y0 - 2 * lp);
-ctx.strokeStyle = "rgba(0,0,0,.55)"; ctx.lineWidth = 1.4; ctx.strokeRect(x0 + lp + 2.2, y0 + lp + 2.2, x1 - x0 - 2 * lp - 4.4, y1 - y0 - 2 * lp - 4.4);   // the lip where the top meets the inner wall
+
+   // the lip where the top meets the inner wall
 const shd = (ax, ay, bx, by, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(0,0,0,.34)"); g.addColorStop(0.35, "rgba(0,0,0,.1)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };   // the rail wall throws only a light shadow: the cushion stays a bright cloth-coloured band
 shd(0, y0, 0, y0 + 26, x0, y0, x1 - x0, 26); shd(0, y1, 0, y1 - 26, x0, y1 - 26, x1 - x0, 26); shd(x0, 0, x0 + 26, 0, x0, y0, 26, y1 - y0); shd(x1, 0, x1 - 26, 0, x1 - 26, y0, 26, y1 - y0);
 ctx.restore(); }
