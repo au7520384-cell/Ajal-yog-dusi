@@ -5382,6 +5382,7 @@ const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255], m 
 return "#" + c.map(v => clamp(Math.round(m + (v - m) * 1.25) * k + add, 0, 255)).map(v => Math.round(v).toString(16).padStart(2, "0")).join("");
 }
 function paintTable(city) {
+if (city.id === "syd" && SYD_TBL.complete && SYD_TBL.naturalWidth) { ctx.drawImage(SYD_TBL, FX - RAIL - 6, FY - RAIL - 6, FW + 2 * RAIL + 12, FH + 2 * RAIL + 12); return; }   // Sydney: only the supplied table is drawn (no trace of our own frame)
 const [r1, r2] = city.rail, trim = city.trim, lucky = city.pat === "lucky";
 const OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
 let seed = 11; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -5858,7 +5859,6 @@ ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); 
 ctx.restore();
 }
 ctx.restore();
-if (city.id === "syd" && SYD_TBL.complete && SYD_TBL.naturalWidth) ctx.drawImage(SYD_TBL, FX - RAIL - 3, FY - RAIL - 3, FW + 2 * RAIL + 6, FH + 2 * RAIL + 6);   // Sydney: the supplied table (rails, cushions, pockets AND cloth) replaces ours completely
 }
 function drawMyBalls(G) {   // on your turn a thin white ring marks every ball of your group still on the table (the 8 once the group is cleared)
 const age = performance.now() - (G.turnStart || 0), fade = clamp((3000 - age) / 500, 0, 1); if (fade <= 0) return;   // the rings show for 3 s at the start of your turn, then fade away
