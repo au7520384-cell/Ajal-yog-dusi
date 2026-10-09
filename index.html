@@ -5403,30 +5403,32 @@ function paintImgTable(city) {
 const syd = city.id === "syd";
 ctx.drawImage(syd ? SYD_TBL : tintedTable(city), FX - 61, FY - 70, 1122.6, 677.5);   // the picture's cushion noses sit exactly on the playing field (balls touch the cushion, not the wood)
 if (syd) return;
-const x0 = FX - RAIL - 80, y0 = FY - RAIL - 80, w = FW + 2 * RAIL + 160, h = FH + 2 * RAIL + 160, K = 2;   // render the city's own table once, then lift its rail ornament into the picture's wooden panels
+const K = 5, T = artOf(city.id) ? 54 : 44, ix = x => -61 + x * 0.6702, iy = y => -70 + y * 0.7215, rc = RAILC;   // render the city's own rail bands (sharp, 5 px per unit) and lift them into the picture's wooden panels
+const band = (x, y, w, h) => {
 const oc = document.createElement("canvas"); oc.width = Math.ceil(w * K); oc.height = Math.ceil(h * K);
-const saved = ctx; ctx = oc.getContext("2d"); ctx.setTransform(K, 0, 0, K, -x0 * K, -y0 * K); OLD_MODE = true;
+const saved = ctx; ctx = oc.getContext("2d"); ctx.setTransform(K, 0, 0, K, -(FX + x) * K, -(FY + y) * K); OLD_MODE = true;
 try { paintTable(city); } finally { OLD_MODE = false; ctx = saved; }
-const T = artOf(city.id) ? 54 : 40, ix = x => -61 + x * 0.6702, iy = y => -70 + y * 0.7215;
-const panel = (dx, dy, dw, dh, vert, sa, sb, c) => {   // dest rect (table units), source run sa..sb along the band, band centre line c
+return oc;
+};
+const panel = (oc, bx, by, dx, dy, dw, dh, vert, sa, sb) => {   // oc = band canvas whose origin is local (bx, by); dest rect in table units; source run sa..sb along the band
 const s = (vert ? dw : dh) / T, Ls = sb - sa, Ss = Ls * s, len = vert ? dh : dw, n = Math.ceil(len / Ss);
-ctx.save(); ctx.beginPath(); ctx.rect(FX + dx, FY + dy, dw, dh); ctx.clip();
+ctx.save(); ctx.beginPath(); ctx.rect(FX + dx, FY + dy, dw, dh); ctx.clip(); ctx.imageSmoothingQuality = "high";
 for (let j = 0; j < n; j++) {
 const o = j * Ss, flip = j % 2;
 ctx.save();
-if (!vert) { ctx.translate(FX + dx + o + (flip ? Ss : 0), FY + dy); ctx.scale(flip ? -1 : 1, 1); ctx.drawImage(oc, (FX + sa - x0) * K, (FY + c - T / 2 - y0) * K, Ls * K, T * K, 0, 0, Ss, dh); }
-else { ctx.translate(FX + dx, FY + dy + o + (flip ? Ss : 0)); ctx.scale(1, flip ? -1 : 1); ctx.drawImage(oc, (FX + c - T / 2 - x0) * K, (FY + sa - y0) * K, T * K, Ls * K, 0, 0, dw, Ss); }
+if (!vert) { ctx.translate(FX + dx + o + (flip ? Ss : 0), FY + dy); ctx.scale(flip ? -1 : 1, 1); ctx.drawImage(oc, (sa - bx) * K, 0, Ls * K, T * K, 0, 0, Ss, dh); }
+else { ctx.translate(FX + dx, FY + dy + o + (flip ? Ss : 0)); ctx.scale(1, flip ? -1 : 1); ctx.drawImage(oc, 0, (sa - by) * K, T * K, Ls * K, 0, 0, dw, Ss); }
 ctx.restore();
 }
 ctx.restore();
 };
-const rc = RAILC;
-panel(ix(154), iy(30), ix(727) - ix(154), iy(63) - iy(30), false, 20, 460, -rc);
-panel(ix(948), iy(30), ix(1521) - ix(948), iy(63) - iy(30), false, 540, 980, -rc);
-panel(ix(154), iy(830), ix(727) - ix(154), iy(868) - iy(830), false, 20, 460, FH + rc);
-panel(ix(948), iy(830), ix(1521) - ix(948), iy(868) - iy(830), false, 540, 980, FH + rc);
-panel(ix(14), iy(238), ix(50) - ix(14), iy(702) - iy(238), true, 70, 430, -rc);
-panel(ix(1625), iy(238), ix(1661) - ix(1625), iy(702) - iy(238), true, 70, 430, FW + rc);
+const top = band(0, -rc - T / 2, FW, T), bot = band(0, FH + rc - T / 2, FW, T), lef = band(-rc - T / 2, 0, T, FH), rig = band(FW + rc - T / 2, 0, T, FH);
+panel(top, 0, -rc - T / 2, ix(154), iy(30), ix(727) - ix(154), iy(63) - iy(30), false, 30, 460);
+panel(top, 0, -rc - T / 2, ix(948), iy(30), ix(1521) - ix(948), iy(63) - iy(30), false, 540, 970);
+panel(bot, 0, FH + rc - T / 2, ix(154), iy(830), ix(727) - ix(154), iy(868) - iy(830), false, 30, 460);
+panel(bot, 0, FH + rc - T / 2, ix(948), iy(830), ix(1521) - ix(948), iy(868) - iy(830), false, 540, 970);
+panel(lef, -rc - T / 2, 0, ix(16), iy(160), ix(48) - ix(16), iy(779) - iy(160), true, 30, 470);
+panel(rig, FW + rc - T / 2, 0, ix(1627), iy(160), ix(1659) - ix(1627), iy(779) - iy(160), true, 30, 470);
 }
 function paintTable(city) {
 if (!OLD_MODE && SYD_TBL.complete && SYD_TBL.naturalWidth && isCityTable(city)) { paintImgTable(city); return; }   // every city plays on the ornate picture table; the city only changes cloth colour and rail ornament
