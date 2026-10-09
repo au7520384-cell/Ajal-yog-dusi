@@ -1346,7 +1346,7 @@ button:active:not(:disabled),.btn:active:not(:disabled),.nb:active,.mchip:active
 .ibd-ban{width:100%;max-width:520px;height:130px;border-radius:12px;display:grid;place-items:center;background:var(--art,linear-gradient(135deg,#4a2a8a,#1a2a6a)) center/cover no-repeat;border:1.5px solid #c9a24a;box-shadow:inset 0 0 40px #0008}
 .ibd-ban img{height:100px;filter:drop-shadow(0 4px 6px #000a)}.ibd-ban i{font-size:56px;font-style:normal}
 .ibd-empty{margin:auto;opacity:.7}
-.ibsoc{text-align:center;font-size:11px;opacity:.65;padding-top:6px}
+.ibsoc{text-align:center;font-size:11px;padding-top:8px}.ibsoc>span{opacity:.65}.ibsl{display:flex;gap:10px;justify-content:center;margin-top:6px}.ibsb{display:flex;align-items:center;gap:8px;border:0;border-radius:22px;padding:8px 16px;background:var(--c);color:#fff;font:inherit;cursor:pointer;box-shadow:0 3px 8px #0008}.ibsb:active{transform:scale(.96)}.ibsb b{font-size:13px}
 @media (max-height:460px){.ibd h3{font-size:17px}.ibd-t{font-size:12px}.ibd-ban{height:78px}.ibd-ban img{height:60px}.ibi b{font-size:11px}.ibl{flex-basis:38%}.ibd-ban i{font-size:36px}}
 @media (max-height:460px){.ibplq{height:44px}.ibplq span{font-size:22px}.ibnews{height:40px}.ibnews span{font-size:22px}#inbox .nwi{height:46px}#inbox .nwt b{font-size:16px}#inbox .nwt div{font-size:11px}.ibbtn{min-width:96px;height:38px}.ibbtn span{font-size:13px}}
 .rrtitle{flex:1;max-width:520px;height:80px;margin:0 auto 0 8px;display:flex;align-items:center;padding-left:140px;background:var(--rrt) left center/100% 100% no-repeat}.rrtitle span{font-family:Philosopher,var(--fh);font-weight:700;font-size:38px;color:#ffe9a8;text-shadow:0 3px 0 #5a3a08,0 0 12px #000a;white-space:nowrap}
@@ -9320,6 +9320,8 @@ const NEWS = [
 {icon: "🎟", title: "Qirib yuting", text: "Mini o'yinlarga yangi o'yin qo'shildi: har kuni bitta bepul qirish kartasi.", go: "mini", n: 2},
 {icon: "🛡", title: "Klublar", text: "3 ta shahar uzugini yig'ib, klub tuzing yoki qo'shiling — haftalik klub mukofotlari!", go: "clubsScr", n: 3},
 ];
+// social pages: an empty url hides the button; fill the others in when the pages exist
+const SOCIAL = [{n: "Facebook", url: "https://www.facebook.com/share/1EtcDnkeaU/", c: "#1877f2", i: "f"}, {n: "Telegram", url: "", c: "#229ed9", i: "✈"}, {n: "Instagram", url: "", c: "#d62976", i: "◎"}, {n: "TikTok", url: "", c: "#111", i: "♪"}];
 const NEWS_L = NEWS.map(n => ({id: "l" + n.n, title: n.title, text: n.text, go: n.go, art: n.n, icon: n.icon, at: 0, local: true}));
 let newsList = [], newsSel = null;
 async function loadNews() {
@@ -9348,7 +9350,7 @@ const bg = art(cur) ? `style="--art:url(${art(cur)})"` : "";
 return `<div class="ibd-ban" ${bg}>${cur.n && IMG["ib_i" + cur.n.art] ? `<img src="${IMG["ib_i" + cur.n.art]}" alt="">` : `<i>${cur.icon}</i>`}</div><h3>${cur.title}</h3><div class="ibd-t">${cur.text}</div>${cur.n && cur.n.at ? `<small class="muted">${ibAgo(cur.n.at)}</small>` : ""}${go}`;
 })();
 box.innerHTML = `<div class="ibsplit"><div class="ibl"><div class="ibunread">${T("O'qilmagan")}: ${unreadN}</div>${items.map(i => `<button class="ibi${i.id === newsSel ? " on" : ""}${(i.kind === "news" ? !isRead(i.id) : true) && i.id !== newsSel ? " un" : ""}" data-sel="${esc(i.id)}"><span class="ibic">${i.icon}</span><b>${i.title}</b></button>`).join("")}</div><div class="ibd">${det}</div></div>
-<div class="ibsoc"><span>${T("Yangiliklar va mukofotlar")}</span></div>`;
+<div class="ibsoc"><span>${T("Yangiliklar va mukofotlar")}</span><div class="ibsl">${SOCIAL.filter(x => x.url).map(x => `<button class="ibsb" data-url="${esc(x.url)}" title="${x.n}" style="--c:${x.c}">${x.i}<b>${x.n}</b></button>`).join("")}</div></div>`;
 box.querySelectorAll("[data-sel]").forEach(b => b.onclick = () => { newsSel = b.dataset.sel; buildInbox(); });
 box.querySelectorAll("[data-url]").forEach(b => b.onclick = () => { try { window.open(b.dataset.url, "_blank", "noopener"); } catch (e) {} });
 box.querySelectorAll("[data-acc]").forEach(b => b.onclick = () => { Net.api("/api/inbox/clear", {kind: "challenge"}).catch(() => {}); Net.inbox = (Net.inbox || []).filter(m => m.kind !== "challenge"); lobbyJoin(b.dataset.acc, b.dataset.city); });
