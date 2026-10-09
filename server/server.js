@@ -327,7 +327,19 @@ const routes = {
   },
   "GET /api/skus": () => ({skus: SKUS, payments: !!STRIPE_KEY, referral: REFERRAL}),
   // game announcements shown in the in-game Inbox (public read; posting needs the ADMIN_KEY env var)
-  "GET /api/news": () => { const now = Date.now(); return {news: ((db.meta && db.meta.news) || []).filter(n => !n.until || n.until > now).slice(-30).reverse()}; },
+  "GET /api/news": () => {
+    db.meta = db.meta || {};
+    if (!Array.isArray(db.meta.news)) {   // first run: a few welcome announcements so the in-game Inbox is never empty
+      const t = Date.now();
+      db.meta.news = [
+        {id: "w3", title: "Yangi stollar", text: "Barcha 30 shahar va do'kondagi stollar yangi, hashamatli ramka bilan. Har bir shaharning o'z rangi va naqshi bor!", btn: "Shaharlar", go: "cities", art: null, at: t - 3e3, until: 0},
+        {id: "w2", title: "Jahon Kubogi", text: "60 o'yinchi, 6 raund. G'olib kubok va katta sovrin oladi. Qatnashing!", btn: "Turnirlar", go: "tourScr", art: 1, at: t - 2e3, until: 0},
+        {id: "w1", title: "Xush kelibsiz!", text: "Billiard 8 ga xush kelibsiz! Har kuni bepul sovg'alar, g'ildirak va qutilar sizni kutmoqda. Yangiliklar shu yerga keladi.", btn: "Sovg'alar", go: "rewards", art: 0, at: t - 1e3, until: 0}];
+      markDirty();
+    }
+    const now = Date.now(); return {news: db.meta.news.filter(n => !n.until || n.until > now).slice(-30).reverse()};
+  },
+  "GET /admin/news": () => [200, {__html: `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Billiard 8 yangiliklar</title><style>body{font:16px system-ui;background:#0b1226;color:#e8eef7;max-width:560px;margin:20px auto;padding:0 14px}input,textarea,select,button{width:100%;box-sizing:border-box;margin:6px 0;padding:12px;border-radius:10px;border:1px solid #3b4a74;background:#141d38;color:#fff;font:inherit}button{background:#1f9d4a;border:0;font-weight:700}small{opacity:.7}</style><h2>Yangi e'lon qo'yish</h2><input id=k type=password placeholder="Admin kalit (ADMIN_KEY)"><input id=t placeholder="Sarlavha"><textarea id=x rows=4 placeholder="Matn"></textarea><input id=b placeholder="Tugma nomi (masalan: Hozir)"><select id=g><option value="">Tugma yo'q</option><option value=eventsScr>Tadbirlar</option><option value=tourScr>Turnirlar</option><option value=cities>Shaharlar</option><option value=rewards>Sovg'alar</option><option value=clubsScr>Klublar</option><option value=shop>Do'kon</option><option value=mini>Mini o'yinlar</option></select><input id=u placeholder="Yoki havola (https://...)"><select id=a><option value="">Rasm: oddiy</option><option value=0>Showdown</option><option value=1>Jahon kubogi</option><option value=2>Qirib yuting</option><option value=3>Klublar</option><option value=4>Halloween</option></select><input id=d type=number placeholder="Necha kun ko'rinsin (bo'sh = doim)"><button onclick=go()>E'lon qilish</button><p id=m></p><script>async function go(){const r=await fetch('/api/news/post',{method:'POST',headers:{'x-admin-key':k.value,'content-type':'application/json'},body:JSON.stringify({title:t.value,text:x.value,btn:b.value,go:g.value,url:u.value,art:a.value===''?null:+a.value,days:+d.value||0})});m.textContent=r.ok?"Tayyor! O'yinchilarda 5 daqiqa ichida chiqadi.":"Xato: "+r.status}</script>`}],
   async "POST /api/news/post"(req) {   // curl -X POST $SERVER/api/news/post -H "x-admin-key: $ADMIN_KEY" -d '{"title":"..","text":"..","go":"eventsScr","btn":"Go now","days":7}'
     if (!ADMIN_KEY || req.headers["x-admin-key"] !== ADMIN_KEY) return [403, {error: "forbidden"}];
     const b = await jsonBody(req), clip = (v, n) => String(v || "").slice(0, n);
@@ -686,10 +698,11 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
+      if (Array.isArray(out) && out[1] && out[1].__html) { res.writeHead(out[0], {"Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store"}); return res.end(out[1].__html); }
       return Array.isArray(out) ? send(res, out[0], out[1]) : send(res, 200, out);
     }
     const file = STATIC[url.pathname];
