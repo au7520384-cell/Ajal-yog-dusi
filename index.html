@@ -5753,7 +5753,7 @@ ctx.restore();
 }
 const C = 19, cA = CORNER_MOUTH, mA = MID_MOUTH;
 {   // the border ring around the playing surface (cushion bodies and the wedges beside the pockets) gets the same cloth: base colour, fibre noise and weave
-const nm = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, fb = nm(city.felt[0]);
+const nm = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, fb = nm(city.felt[0]).map(v => clamp(v + 14, 0, 255));
 ctx.save(); ctx.beginPath(); ctx.rect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12); ctx.rect(0, 0, FW, FH); ctx.clip("evenodd");
 ctx.fillStyle = `rgb(${fb.join(",")})`; ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12);
 ctx.globalAlpha = 0.68; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 6, -C - 6, FW + 2 * C + 12, FH + 2 * C + 12); ctx.globalAlpha = 1;
@@ -5778,7 +5778,7 @@ const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
 const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
 const cb = f0;   // all four cushions share the cloth colour of the table
 const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-g.addColorStop(0, cc(40)); g.addColorStop(0.5, cc(26)); g.addColorStop(0.85, cc(10)); g.addColorStop(1, cc(-8));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
+g.addColorStop(0, cc(22)); g.addColorStop(0.5, cc(16)); g.addColorStop(0.85, cc(8)); g.addColorStop(1, cc(0));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
 ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
 if (feltNoise && feltWeave) {   // the cushion rubber is covered in the same worsted cloth as the playing surface: same fibre noise and weave
 ctx.save(); ctx.clip(); ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.globalAlpha = 1; ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.restore();
