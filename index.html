@@ -5381,9 +5381,54 @@ function liftHex(hex, k, add) {
 const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255], m = (c[0] + c[1] + c[2]) / 3;
 return "#" + c.map(v => clamp(Math.round(m + (v - m) * 1.25) * k + add, 0, 255)).map(v => Math.round(v).toString(16).padStart(2, "0")).join("");
 }
+let OLD_MODE = false;
+const isCityTable = c => !!c && !!c.id && !c.ring && c.pat !== "lucky" && c.id !== "golden" && CITIES.some(q => q.id === c.id);
+const TINT_TBL = {};
+function tintedTable(city) {
+const key = city.felt[0] + city.felt[1];
+if (TINT_TBL[key]) return TINT_TBL[key];
+const W = SYD_TBL.naturalWidth, H = SYD_TBL.naturalHeight, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+const g = cv.getContext("2d"); g.drawImage(SYD_TBL, 0, 0);
+const id = g.getImageData(0, 0, W, H), d = id.data, hx = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = hx(city.felt[0]), f1 = hx(city.felt[1]);
+const mid = f0.map((v, i) => v * 0.55 + f1[i] * 0.45);
+for (let i = 0; i < d.length; i += 4) {
+const r = d[i], gg = d[i + 1], b = d[i + 2];
+if (gg > r + 12 && gg > b + 8 && gg > 25) { const k = Math.min(1.5, gg / 100); d[i] = Math.min(255, mid[0] * k); d[i + 1] = Math.min(255, mid[1] * k); d[i + 2] = Math.min(255, mid[2] * k); }
+}
+g.putImageData(id, 0, 0);
+return TINT_TBL[key] = cv;
+}
+function paintImgTable(city) {
+const syd = city.id === "syd";
+ctx.drawImage(syd ? SYD_TBL : tintedTable(city), FX - 61, FY - 70, 1122.6, 677.5);   // the picture's cushion noses sit exactly on the playing field (balls touch the cushion, not the wood)
+if (syd) return;
+const x0 = FX - RAIL - 80, y0 = FY - RAIL - 80, w = FW + 2 * RAIL + 160, h = FH + 2 * RAIL + 160, K = 2;   // render the city's own table once, then lift its rail ornament into the picture's wooden panels
+const oc = document.createElement("canvas"); oc.width = Math.ceil(w * K); oc.height = Math.ceil(h * K);
+const saved = ctx; ctx = oc.getContext("2d"); ctx.setTransform(K, 0, 0, K, -x0 * K, -y0 * K); OLD_MODE = true;
+try { paintTable(city); } finally { OLD_MODE = false; ctx = saved; }
+const T = artOf(city.id) ? 54 : 40, ix = x => -61 + x * 0.6702, iy = y => -70 + y * 0.7215;
+const panel = (dx, dy, dw, dh, vert, sa, sb, c) => {   // dest rect (table units), source run sa..sb along the band, band centre line c
+const s = (vert ? dw : dh) / T, Ls = sb - sa, Ss = Ls * s, len = vert ? dh : dw, n = Math.ceil(len / Ss);
+ctx.save(); ctx.beginPath(); ctx.rect(FX + dx, FY + dy, dw, dh); ctx.clip();
+for (let j = 0; j < n; j++) {
+const o = j * Ss, flip = j % 2;
+ctx.save();
+if (!vert) { ctx.translate(FX + dx + o + (flip ? Ss : 0), FY + dy); ctx.scale(flip ? -1 : 1, 1); ctx.drawImage(oc, (FX + sa - x0) * K, (FY + c - T / 2 - y0) * K, Ls * K, T * K, 0, 0, Ss, dh); }
+else { ctx.translate(FX + dx, FY + dy + o + (flip ? Ss : 0)); ctx.scale(1, flip ? -1 : 1); ctx.drawImage(oc, (FX + c - T / 2 - x0) * K, (FY + sa - y0) * K, T * K, Ls * K, 0, 0, dw, Ss); }
+ctx.restore();
+}
+ctx.restore();
+};
+const rc = RAILC;
+panel(ix(154), iy(30), ix(727) - ix(154), iy(63) - iy(30), false, 20, 460, -rc);
+panel(ix(948), iy(30), ix(1521) - ix(948), iy(63) - iy(30), false, 540, 980, -rc);
+panel(ix(154), iy(830), ix(727) - ix(154), iy(868) - iy(830), false, 20, 460, FH + rc);
+panel(ix(948), iy(830), ix(1521) - ix(948), iy(868) - iy(830), false, 540, 980, FH + rc);
+panel(ix(14), iy(238), ix(50) - ix(14), iy(702) - iy(238), true, 70, 430, -rc);
+panel(ix(1625), iy(238), ix(1661) - ix(1625), iy(702) - iy(238), true, 70, 430, FW + rc);
+}
 function paintTable(city) {
-if (city.id === "syd" && SYD_TBL.complete && SYD_TBL.naturalWidth) { ctx.drawImage(SYD_TBL, FX - 61, FY - 70, 1122.6, 677.5);   // the picture's cushion noses sit exactly on the playing field (balls touch the cushion, not the wood)
-return; }   // Sydney: only the supplied table is drawn (no trace of our own frame)
+if (!OLD_MODE && SYD_TBL.complete && SYD_TBL.naturalWidth && isCityTable(city)) { paintImgTable(city); return; }   // every city plays on the ornate picture table; the city only changes cloth colour and rail ornament
 const [r1, r2] = city.rail, trim = city.trim, lucky = city.pat === "lucky";
 const OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
 let seed = 11; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -6526,7 +6571,7 @@ ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.textAlign = 
 ctx.restore();
 }
 const trayGeo = () => {
-const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, syd = game && game.city && game.city.id === "syd", mx = dir > 0 ? FX + FW + (syd ? 59 : RAIL + 8) : FX - (syd ? 59 : RAIL + 8), y0 = 190, ye = TRAY.y + TRAY.h, L1 = Math.abs(cx - mx);
+const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, syd = !!(game && game.city && isCityTable(game.city)), mx = dir > 0 ? FX + FW + (syd ? 59 : RAIL + 8) : FX - (syd ? 59 : RAIL + 8), y0 = 190, ye = TRAY.y + TRAY.h, L1 = Math.abs(cx - mx);
 return {cx, dir, mx, y0, ye, L1, len: L1 + ye - y0};
 };
 const trayPos = (g, s) => s < g.L1 ? [g.mx + g.dir * s, g.y0] : [g.cx, g.y0 + s - g.L1];
