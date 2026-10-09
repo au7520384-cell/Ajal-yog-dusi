@@ -1843,13 +1843,13 @@ const CITIES = [
 {id: "mum", name: "Mumbay",    sub: "Maharaja Palace",   fee: 15000000,  prize: 30000000,  lvl: 28, felt: ["#c0287a", "#50082e"], rail: ["#8e4e2e", "#472717"], trim: "#ffd24d", pat: "gold",    skill: 0.0036, col: ["#ffe6a0", "#ff8a1f"]},
 {id: "ath", name: "Afina", sub: "Acropolis Hall", fee: 20000000, prize: 40000000, lvl: 29, felt: ["#3a8ae0", "#0a3a7a"], rail: ["#e8e4d8", "#8a867a"], trim: "#ffffff", pat: "classic", skill: 0.0033, col: ["#ffffff", "#7ab8ff"]},
 {id: "ber", name: "Berlin",    sub: "Platz Arena",       fee: 25000000,  prize: 50000000,  lvl: 31, felt: ["#1e8a8a", "#073a3a"], rail: ["#397fa3", "#1c3f51"], trim: "#ffcf3d", pat: "medal",   skill: 0.003,  col: ["#ffffff", "#ffcf3d"]},
-{id: "ist", name: "Istanbul",  sub: "Bosphorus Palace",  fee: 50000000,  prize: 100000000, lvl: 34, felt: ["#8a1434", "#3a0414"], rail: ["#943f20", "#4a1f10"], trim: "#e2c2ff", pat: "ikat",    skill: 0.0022, col: ["#f5e8ff", "#a45cff"]},
-{id: "cas", name: "Kasablanka", sub: "Medina Riad", fee: 70000000, prize: 140000000, lvl: 36, felt: ["#a8501f", "#4a1a06"], rail: ["#2a6a6a", "#10303a"], trim: "#ffd24d", pat: "tribal", skill: 0.0015, col: ["#ffe0a0", "#e0802a"]},
-{id: "osa", name: "Osaka",     sub: "Skyline",           fee: 100000000, prize: 200000000, lvl: 38, felt: ["#3a2aa0", "#120a44"], rail: ["#463387", "#231943"], trim: "#ffd24d", pat: "gold",    skill: 0.001,  col: ["#fff6c8", "#ffcf3d"]},
-{id: "tas", name: "Toshkent", sub: "Silk Road",        fee: 200000000,  prize: 400000000,  lvl: 42, felt: ["#1a9ab8", "#054458"], rail: ["#1a88a8", "#0d4454"], trim: "#ffd24d", pat: "ikat",    skill: 0.0008, col: ["#e8fbff", "#27b8e0"]},
-{id: "rio", name: "Rio",      sub: "Carnival Hall",    fee: 400000000,  prize: 800000000,  lvl: 46, felt: ["#16b050", "#044d1c"], rail: ["#71673b", "#38331d"], trim: "#2a8aff", pat: "tribal",  skill: 0.0006, col: ["#fffbb0", "#22d65a"]},
-{id: "nyc", name: "Nyu-York", sub: "Penthouse Loft",   fee: 800000000,  prize: 1600000000, lvl: 50, felt: ["#2a3a52", "#0a1018"], rail: ["#694235", "#34211a"], trim: "#ffcf3d", pat: "classic", skill: 0.0005, col: ["#ffffff", "#7ad0ff"]},
-{id: "mos", name: "Moskva",   sub: "Red Square",       fee: 1500000000, prize: 3000000000, lvl: 55, felt: ["#a01c24", "#3c0408"], rail: ["#1d4269", "#0e2134"], trim: "#ffd24d", pat: "medal",   skill: 0.0004, col: ["#fff0d0", "#e03a3a"]},
+{id: "ist", name: "Istanbul",  sub: "Bosphorus Palace",  fee: 35000000,  prize: 70000000, lvl: 34, felt: ["#8a1434", "#3a0414"], rail: ["#943f20", "#4a1f10"], trim: "#e2c2ff", pat: "ikat",    skill: 0.0022, col: ["#f5e8ff", "#a45cff"]},
+{id: "cas", name: "Kasablanka", sub: "Medina Riad", fee: 45000000, prize: 90000000, lvl: 36, felt: ["#a8501f", "#4a1a06"], rail: ["#2a6a6a", "#10303a"], trim: "#ffd24d", pat: "tribal", skill: 0.0015, col: ["#ffe0a0", "#e0802a"]},
+{id: "osa", name: "Osaka",     sub: "Skyline",           fee: 55000000, prize: 110000000, lvl: 38, felt: ["#3a2aa0", "#120a44"], rail: ["#463387", "#231943"], trim: "#ffd24d", pat: "gold",    skill: 0.001,  col: ["#fff6c8", "#ffcf3d"]},
+{id: "tas", name: "Toshkent", sub: "Silk Road",        fee: 65000000,  prize: 130000000,  lvl: 42, felt: ["#1a9ab8", "#054458"], rail: ["#1a88a8", "#0d4454"], trim: "#ffd24d", pat: "ikat",    skill: 0.0008, col: ["#e8fbff", "#27b8e0"]},
+{id: "rio", name: "Rio",      sub: "Carnival Hall",    fee: 75000000,  prize: 150000000,  lvl: 46, felt: ["#16b050", "#044d1c"], rail: ["#71673b", "#38331d"], trim: "#2a8aff", pat: "tribal",  skill: 0.0006, col: ["#fffbb0", "#22d65a"]},
+{id: "nyc", name: "Nyu-York", sub: "Penthouse Loft",   fee: 87500000,  prize: 175000000, lvl: 50, felt: ["#2a3a52", "#0a1018"], rail: ["#694235", "#34211a"], trim: "#ffcf3d", pat: "classic", skill: 0.0005, col: ["#ffffff", "#7ad0ff"]},
+{id: "mos", name: "Moskva",   sub: "Red Square",       fee: 100000000, prize: 200000000, lvl: 55, felt: ["#a01c24", "#3c0408"], rail: ["#1d4269", "#0e2134"], trim: "#ffd24d", pat: "medal",   skill: 0.0004, col: ["#fff0d0", "#e03a3a"]},
 ];
 CITIES.forEach(c => { const base = c.name; Object.defineProperty(c, "name", {get: () => T(base), set: v => { }, enumerable: true, configurable: true}); });   // city names follow the interface language (Sidney -> Sydney, Qohira -> Cairo ...)
 const TROPHY = {mad: [9, 1, 65], bue: [14, 5, 110], mex: [22, 11, 180], sin: [32, 19, 250], ams: [42, 30, 325], kul: [52, 42, 440], ath: [70, 61, 1800], cas: [84, 76, 3375], lon: [4, 0, 15], syd: [6, 0, 30], lis: [8, 1, 60], tok: [10, 2, 75], veg: [13, 4, 100], jak: [16, 6, 125], tor: [20, 9, 160], cai: [25, 13, 200],
@@ -9004,6 +9004,7 @@ st.style.setProperty("--iky", (1 / ky).toFixed(4));
 st.style.transform = `translate(${(w - 1866 * s) / 2}px,${top + (hh - 707 * sy) / 2}px) scale(${s},${sy})`;
 }
 addEventListener("resize", () => setTimeout(layoutHome, 50));
+const MAX_COIN_PRIZE = 200000000;   // no single coin prize is ever bigger than this
 const BOX_TIERS = [{n: "Bronza quti", i: "⟦box0⟧", min: 180, c: "#cd7f32"}, {n: "Kumush quti", i: "⟦box1⟧", min: 360, c: "#b8c4d8"}, {n: "Oltin quti", i: "⟦box2⟧", min: 720, c: "#ffcf3d"}, {n: "Olmos quti", i: "⟦box3⟧", min: 1440, c: "#9fe8ff"}];
 function addBox(city) {
 profile.boxes = profile.boxes || [null, null, null, null];
@@ -9018,7 +9019,7 @@ function openBox(i) {
 if (!(profile.boxes || [])[i]) return;   // empty slot: nothing to open
 navHold = true; setTimeout(() => { navHold = false; }, 12000);   // the prize counters wait until the box is opened
 const b = profile.boxes[i], city = CITIES.find(c => c.id === b.city) || CITIES[0], t = b.tier;
-const lgM = LEAGUE_COIN_MULT[Math.min(profile.league | 0, LEAGUE_COIN_MULT.length - 1)], tierM = [1, 2, 3.5, 6][t] || 1, coins = Math.round((Math.round(city.prize * (0.25 + Math.random() * 0.35) / 10) * 10 + 100) * tierM * lgM / 10) * 10;   // boxes give coins and cue pieces only, never cash; your league multiplies the coins
+const lgM = LEAGUE_COIN_MULT[Math.min(profile.league | 0, LEAGUE_COIN_MULT.length - 1)], tierM = [1, 2, 3.5, 6][t] || 1, coins = Math.min(MAX_COIN_PRIZE, Math.round((Math.round(city.prize * (0.25 + Math.random() * 0.35) / 10) * 10 + 100) * tierM * lgM / 10) * 10);   // boxes give coins and cue pieces only, never cash; your league multiplies the coins
 profile.boxes[i] = null; addCoins(coins);
 let piece = "";
 const nPieces = (Math.random() < [0.25, 0.4, 0.65, 1][t] ? 1 : 0) + (t === 3 && Math.random() < 0.5 ? 1 : 0) + ((profile.league | 0) >= 1 ? 1 : 0);   // league perk: +1 cue piece from Silver up
