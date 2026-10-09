@@ -6526,7 +6526,7 @@ ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.textAlign = 
 ctx.restore();
 }
 const trayGeo = () => {
-const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, mx = dir > 0 ? FX + FW + RAIL + 8 : FX - RAIL - 8, y0 = 190, ye = TRAY.y + TRAY.h, L1 = Math.abs(cx - mx);
+const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, syd = game && game.city && game.city.id === "syd", mx = dir > 0 ? FX + FW + (syd ? 59 : RAIL + 8) : FX - (syd ? 59 : RAIL + 8), y0 = 190, ye = TRAY.y + TRAY.h, L1 = Math.abs(cx - mx);
 return {cx, dir, mx, y0, ye, L1, len: L1 + ye - y0};
 };
 const trayPos = (g, s) => s < g.L1 ? [g.mx + g.dir * s, g.y0] : [g.cx, g.y0 + s - g.L1];
