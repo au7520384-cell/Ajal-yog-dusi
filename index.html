@@ -5393,7 +5393,7 @@ const lc = document.createElement("canvas"); lc.width = W; lc.height = H; const 
 for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
 const i = (y * W + x) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
 const inside = x > x0 && x < x1 && y > y0 && y < y1, edge = Math.min(x - x0, x1 - x, y - y0, y1 - y) < (RAIL + 14) * K;
-const cloth = inside && g > 22 && g > r + 12 && g > b + 8 && (g < 106 || !edge);
+const cloth = inside && g > 22 && g > r + 12 && g > b + 8;
 let t = 0; if (cloth && g < 66) { const lx = ox - FX + x / K, ly = oy - FY + y / K; let dm = 1e9; for (const q of PKS) dm = Math.min(dm, Math.hypot(lx - q[0], ly - q[1])); if (dm < 70) t = Math.min(1, (66 - g) / 16) * Math.min(1, (70 - dm) / 15); }
 lf[i] = 15; lf[i + 1] = 100; lf[i + 2] = 56; lf[i + 3] = Math.round(t * 255);
 d[i] = d[i + 1] = d[i + 2] = 0; d[i + 3] = cloth ? 255 : 0;
