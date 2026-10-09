@@ -1117,3 +1117,4 @@ kun‖d|дн|g|d|d|ي|hr|दिन|j|T|일|日|天
 O'qilmagan‖Unread|Непрочитано|Okunmamış|Sin leer|Não lidas|غير مقروءة|Belum dibaca|अपठित|Non lus|Ungelesen|읽지 않음|未読|未读
 Xabarlar yo'q‖No messages|Нет сообщений|Mesaj yok|Sin mensajes|Sem mensagens|لا رسائل|Tidak ada pesan|कोई संदेश नहीं|Aucun message|Keine Nachrichten|메시지 없음|メッセージなし|没有消息
 Yangiliklar va mukofotlar‖News & rewards|Новости и награды|Haberler ve ödüller|Noticias y premios|Novidades e prêmios|الأخبار والمكافآت|Berita & hadiah|समाचार और पुरस्कार|Actus et récompenses|News & Belohnungen|소식 및 보상|ニュースと報酬|新闻和奖励
+Yangi xabar‖New message|Новое сообщение|Yeni mesaj|Nuevo mensaje|Nova mensagem|رسالة جديدة|Pesan baru|नया संदेश|Nouveau message|Neue Nachricht|새 메시지|新着メッセージ|新消息
