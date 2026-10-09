@@ -5385,9 +5385,27 @@ function paintTable(city) {
 if (city.id === "syd" && SYD_TBL.complete && SYD_TBL.naturalWidth) { ctx.drawImage(SYD_TBL, FX - RAIL - 6, FY - RAIL - 6, FW + 2 * RAIL + 12, FH + 2 * RAIL + 12);
 if (!feltNoise) { feltNoise = document.createElement("canvas"); feltNoise.width = feltNoise.height = 128; const ng = feltNoise.getContext("2d"), id = ng.createImageData(128, 128); for (let i = 0; i < id.data.length; i += 4) { const v = Math.random() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 22; } ng.putImageData(id, 0, 0); }
 if (!feltWeave) { feltWeave = document.createElement("canvas"); feltWeave.width = feltWeave.height = 4; const wg2 = feltWeave.getContext("2d"); wg2.fillStyle = "rgba(255,255,255,.095)"; wg2.fillRect(0, 0, 2, 2); wg2.fillRect(2, 2, 2, 2); wg2.fillStyle = "rgba(0,0,0,.12)"; wg2.fillRect(2, 0, 2, 2); wg2.fillRect(0, 2, 2, 2); }
-ctx.save(); ctx.translate(FX, FY); ctx.beginPath(); ctx.rect(-22, -22, FW + 44, FH + 44);   // the worsted cloth weave over the cloth and the cushions (the wooden rails and pockets stay clean)
-for (const [qx, qy, qr] of [[-32.5, -32.5, 37], [FW + 32.5, -32.5, 37], [-32.5, FH + 32.5, 37], [FW + 32.5, FH + 32.5, 37], [FW / 2, -49, 27], [FW / 2, FH + 49, 27]]) { ctx.moveTo(qx + qr, qy); ctx.arc(qx, qy, qr, 0, 7, true); }   // only the black holes of the picture stay clean; the cushion funnels around them get the cloth weave too
-ctx.clip("evenodd"); ctx.globalAlpha = 0.68; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-22, -22, FW + 44, FH + 44); ctx.globalAlpha = 1; ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-22, -22, FW + 44, FH + 44); ctx.restore(); return; }   // Sydney: only the supplied table is drawn (no trace of our own frame)
+{   // the worsted weave goes only where the picture shows cloth (incl. the dark funnel wedges); cushions, rails and holes stay clean
+const K = 2, ox = FX - RAIL - 6, oy = FY - RAIL - 6, ow = FW + 2 * RAIL + 12, oh = FH + 2 * RAIL + 12, W = ow * K, H = oh * K;
+const mk = document.createElement("canvas"); mk.width = W; mk.height = H; const mg = mk.getContext("2d"); mg.drawImage(SYD_TBL, 0, 0, W, H);
+const id = mg.getImageData(0, 0, W, H), d = id.data, x0 = 12 * K, x1 = W - 12 * K, y0 = 12 * K, y1 = H - 12 * K;
+const lc = document.createElement("canvas"); lc.width = W; lc.height = H; const lg = lc.getContext("2d"), lid = lg.createImageData(W, H), lf = lid.data, PKS = [[-6, -6], [FW + 6, -6], [-6, FH + 6], [FW + 6, FH + 6], [FW / 2, -18], [FW / 2, FH + 18]];
+for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+const i = (y * W + x) * 4, r = d[i], g = d[i + 1], b = d[i + 2];
+const inside = x > x0 && x < x1 && y > y0 && y < y1, edge = Math.min(x - x0, x1 - x, y - y0, y1 - y) < (RAIL + 14) * K;
+const cloth = inside && g > 22 && g > r + 12 && g > b + 8 && (g < 106 || !edge);
+let t = 0; if (cloth && g < 66) { const lx = ox - FX + x / K, ly = oy - FY + y / K; let dm = 1e9; for (const q of PKS) dm = Math.min(dm, Math.hypot(lx - q[0], ly - q[1])); if (dm < 70) t = Math.min(1, (66 - g) / 16) * Math.min(1, (70 - dm) / 15); }
+lf[i] = 15; lf[i + 1] = 100; lf[i + 2] = 56; lf[i + 3] = Math.round(t * 255);
+d[i] = d[i + 1] = d[i + 2] = 0; d[i + 3] = cloth ? 255 : 0;
+}
+lg.putImageData(lid, 0, 0); mg.putImageData(id, 0, 0); const mk2 = document.createElement("canvas"); mk2.width = W; mk2.height = H; const m2 = mk2.getContext("2d"); m2.filter = "blur(" + K * 0.6 + "px)"; m2.drawImage(mk, 0, 0);
+const wv = document.createElement("canvas"); wv.width = W; wv.height = H; const wg = wv.getContext("2d"); wg.scale(K, K);
+wg.globalAlpha = 0.68; wg.fillStyle = wg.createPattern(feltNoise, "repeat"); wg.fillRect(0, 0, ow, oh); wg.globalAlpha = 1; wg.fillStyle = wg.createPattern(feltWeave, "repeat"); wg.fillRect(0, 0, ow, oh);
+wg.setTransform(1, 0, 0, 1, 0, 0); wg.globalCompositeOperation = "destination-in"; wg.drawImage(mk2, 0, 0);
+const lb = document.createElement("canvas"); lb.width = W; lb.height = H; const lbg = lb.getContext("2d"); lbg.filter = "blur(" + K * 1.5 + "px)"; lbg.drawImage(lc, 0, 0); ctx.drawImage(lb, ox, oy, ow, oh);   // the dark funnel wedges beside the pockets are lifted to cloth colour
+ctx.drawImage(wv, ox, oy, ow, oh);
+}
+return; }   // Sydney: only the supplied table is drawn (no trace of our own frame)
 const [r1, r2] = city.rail, trim = city.trim, lucky = city.pat === "lucky";
 const OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
 let seed = 11; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
