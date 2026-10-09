@@ -5778,17 +5778,17 @@ const g = ctx.createLinearGradient(d[0], d[1], d[2], d[3]);
 const num = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = num(city.felt[0]), f1 = num(city.felt[1]);
 const cb = f0;   // all four cushions share the cloth colour of the table
 const cc = o => `rgb(${cb.map(v => clamp(Math.round(v + o), 0, 255)).join(",")})`;
-g.addColorStop(0, cc(68)); g.addColorStop(0.42, cc(48)); g.addColorStop(0.5, cc(-10)); g.addColorStop(1, cc(-52));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
+g.addColorStop(0, cc(40)); g.addColorStop(0.5, cc(26)); g.addColorStop(0.85, cc(10)); g.addColorStop(1, cc(-8));   // a raised rubber cushion: its top face catches the light, then the slope falls away to the wood
 ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(...s[2]); ctx.lineTo(...s[3]); ctx.closePath(); ctx.fill();
 if (feltNoise && feltWeave) {   // the cushion rubber is covered in the same worsted cloth as the playing surface: same fibre noise and weave
 ctx.save(); ctx.clip(); ctx.globalAlpha = 0.5; ctx.fillStyle = ctx.createPattern(feltNoise, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.globalAlpha = 1; ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(-C - 4, -C - 4, FW + 2 * C + 8, FH + 2 * C + 8); ctx.restore();
 }
 {   // soft shadow the raised cushion throws on the cloth (inwards), then the bright nose line
-const inw = {t: [0, 1], b: [0, -1], l: [1, 0], r: [-1, 0]}[side], SH = 24, sg = ctx.createLinearGradient(s[0][0], s[0][1], s[0][0] + inw[0] * SH, s[0][1] + inw[1] * SH);
-sg.addColorStop(0, "rgba(0,0,0,.62)"); sg.addColorStop(0.35, "rgba(0,0,0,.24)"); sg.addColorStop(1, "rgba(0,0,0,0)");
+const inw = {t: [0, 1], b: [0, -1], l: [1, 0], r: [-1, 0]}[side], SH = 15, sg = ctx.createLinearGradient(s[0][0], s[0][1], s[0][0] + inw[0] * SH, s[0][1] + inw[1] * SH);
+sg.addColorStop(0, "rgba(0,0,0,.4)"); sg.addColorStop(0.35, "rgba(0,0,0,.14)"); sg.addColorStop(1, "rgba(0,0,0,0)");
 ctx.fillStyle = sg; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.lineTo(s[1][0] + inw[0] * SH - Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[1][1] + inw[1] * SH - Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.lineTo(s[0][0] + inw[0] * SH + Math.sign(s[1][0] - s[0][0]) * SH * 0.6 * (inw[0] === 0), s[0][1] + inw[1] * SH + Math.sign(s[1][1] - s[0][1]) * SH * 0.6 * (inw[1] === 0)); ctx.closePath(); ctx.fill();
 }
-ctx.strokeStyle = "rgba(255,255,255,.75)"; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
+ctx.strokeStyle = "rgba(255,255,255,.4)"; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(...s[0]); ctx.lineTo(...s[1]); ctx.stroke();
 ctx.strokeStyle = "rgba(0,0,0,.28)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...s[2]); ctx.lineTo(...s[3]); ctx.stroke();
 }
 if (st.glow && !lucky) {
@@ -5815,8 +5815,8 @@ ctx.restore();
 ctx.save(); ctx.lineJoin = "round";
 ctx.strokeStyle = "rgba(255,255,255,.78)"; ctx.lineWidth = 1.8; ctx.strokeRect(x0 + lp, y0 + lp, x1 - x0 - 2 * lp, y1 - y0 - 2 * lp);
 ctx.strokeStyle = "rgba(0,0,0,.55)"; ctx.lineWidth = 1.4; ctx.strokeRect(x0 + lp + 2.2, y0 + lp + 2.2, x1 - x0 - 2 * lp - 4.4, y1 - y0 - 2 * lp - 4.4);   // the lip where the top meets the inner wall
-const shd = (ax, ay, bx, by, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(0,0,0,.88)"); g.addColorStop(0.35, "rgba(0,0,0,.34)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };
-shd(0, y0, 0, y0 + 54, x0, y0, x1 - x0, 54); shd(0, y1, 0, y1 - 54, x0, y1 - 54, x1 - x0, 54); shd(x0, 0, x0 + 54, 0, x0, y0, 54, y1 - y0); shd(x1, 0, x1 - 54, 0, x1 - 54, y0, 54, y1 - y0);
+const shd = (ax, ay, bx, by, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(ax, ay, bx, by); g.addColorStop(0, "rgba(0,0,0,.34)"); g.addColorStop(0.35, "rgba(0,0,0,.1)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(rx, ry, rw, rh); };   // the rail wall throws only a light shadow: the cushion stays a bright cloth-coloured band
+shd(0, y0, 0, y0 + 26, x0, y0, x1 - x0, 26); shd(0, y1, 0, y1 - 26, x0, y1 - 26, x1 - x0, 26); shd(x0, 0, x0 + 26, 0, x0, y0, 26, y1 - y0); shd(x1, 0, x1 - 26, 0, x1 - 26, y0, 26, y1 - y0);
 ctx.restore(); }
 if (!lucky && city.id === "lon" && cornerOk() && !artOf("lon")) for (const p of POCKETS) {
 if (p.mid) continue;
