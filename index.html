@@ -5382,10 +5382,10 @@ const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255], m 
 return "#" + c.map(v => clamp(Math.round(m + (v - m) * 1.25) * k + add, 0, 255)).map(v => Math.round(v).toString(16).padStart(2, "0")).join("");
 }
 let OLD_MODE = false;
-const isCityTable = c => !!c && !!c.id && !c.ring && c.pat !== "lucky" && c.id !== "golden" && CITIES.some(q => q.id === c.id);
+const isCityTable = c => !!c && !!c.id && c.pat !== "lucky" && c.id !== "golden" && !!c.felt && !!c.rail;   // every table, city or shop skin, wears the ornate picture frame
 const TINT_TBL = {};
 function tintedTable(city) {
-const key = city.felt[0] + city.felt[1];
+const key = city.felt[0] + city.felt[1] + city.rail[0] + city.rail[1];
 if (TINT_TBL[key]) return TINT_TBL[key];
 const W = SYD_TBL.naturalWidth, H = SYD_TBL.naturalHeight, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
 const g = cv.getContext("2d"); g.drawImage(SYD_TBL, 0, 0);
@@ -6574,7 +6574,7 @@ ctx.fillStyle = "#a7b2cc"; ctx.font = "11px Nunito,sans-serif"; ctx.textAlign = 
 ctx.restore();
 }
 const trayGeo = () => {
-const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, syd = !!(game && game.city && isCityTable(game.city)), mx = dir > 0 ? FX + FW + (syd ? 59 : RAIL + 8) : FX - (syd ? 59 : RAIL + 8), y0 = 190, ye = TRAY.y + TRAY.h, L1 = Math.abs(cx - mx);
+const cx = TRAY.x + TRAY.w / 2, dir = cx > 640 ? 1 : -1, syd = !!(game && game.city && isCityTable(tableLook(game.city))), mx = dir > 0 ? FX + FW + (syd ? 59 : RAIL + 8) : FX - (syd ? 59 : RAIL + 8), y0 = 190, ye = TRAY.y + TRAY.h, L1 = Math.abs(cx - mx);
 return {cx, dir, mx, y0, ye, L1, len: L1 + ye - y0};
 };
 const trayPos = (g, s) => s < g.L1 ? [g.mx + g.dir * s, g.y0] : [g.cx, g.y0 + s - g.L1];
