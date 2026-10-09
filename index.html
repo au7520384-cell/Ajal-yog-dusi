@@ -2920,7 +2920,7 @@ if (!ok()) return; const t = now();
 if (t - lastClack < 0.004) return; lastClack = t;
 const k = Math.min(1, v / 55); if (k < 0.006) return;   // contact speeds run 0.4-70 u/frame: 55 u/f is a hard hit
 const vol = Math.pow(10, -28 * (1 - Math.sqrt(k)) / 20), sp = spat(x, y), R1 = Math.random();   // loudness follows the impact speed over a 28 dB range
-if (bank.r_soft && bank.r_soft.length && k < 0.14) { play(pick(bank.r_soft), vol * (0.9 + 0.3 * R1) * 1.25, 0.97 + (Math.random() - 0.5) * 0.06, 0, sp); return; }   // a gentle touch: the recorded soft clicks
+if (bank.r_soft && bank.r_soft.length && k < 0.14 && Math.random() < 0.5) { play(pick(bank.r_soft), vol * (0.9 + 0.3 * R1) * 1.25, 0.97 + (Math.random() - 0.5) * 0.06, 0, sp); return; }   // a gentle touch: the recorded soft clicks
 if (bank.r_hard && bank.r_hard.length && k > 0.8 && Math.random() < 0.55) { play(pick(bank.r_hard), vol * (0.9 + 0.2 * R1), 0.98 + (Math.random() - 0.5) * 0.04, 0, sp); return; }   // a hard crack: the recorded sharp hits
 if (bank.r_clack) {   // the approved recorded contacts, ordered dull -> bright: a harder impact picks a brighter, shorter contact (Hertz), a soft touch a duller one
 const N = bank.r_clack.length, idx = Math.max(0, Math.min(N - 1, Math.round(Math.pow(k, 0.6) * (N - 1) + (Math.random() - 0.5) * 3)));
@@ -2934,11 +2934,10 @@ play(pick(bank.cueT[Math.min(3, Math.floor(pe * 4))]), (0.2 + 0.8 * pe) * (1 - 0
 if (bank.r_cue && w > 0) play(bank.r_cue[Math.max(0, Math.min(bank.r_cue.length - 1, Math.round(pe * (bank.r_cue.length - 1) + (Math.random() - 0.5) * 4)))], (0.25 + 0.75 * pe) * w, 0.92 + 0.14 * pe + (Math.random() - 0.5) * 0.04, 0, sp);
 if (p > 0.55) tone(now(), 130, 0.09, 0.07 * p, "sine", 70);   // hard strokes add a low thump
 },
-rub(j, x, y) { if (!ok() || j < 1.6) return;   // only a strong cut-throw scrape is audible (the old light "shhh" on every touch is gone)
- const t = now(); if (t - lastRub < 0.03) return; lastRub = t; const k = Math.min(1, j / 3); play(bank.rubB, 0.03 + 0.2 * k, 0.9 + 0.3 * k + Math.random() * 0.1, 0, spat(x, y)); },   // the friction impulse of a ball-ball contact (cut throw) scrapes
+rub(j, x, y) { if (!ok()) return;  const t = now(); if (t - lastRub < 0.03) return; lastRub = t; const k = Math.min(1, j / 3); play(bank.rubB, 0.03 + 0.2 * k, 0.9 + 0.3 * k + Math.random() * 0.1, 0, spat(x, y)); },   // the friction impulse of a ball-ball contact (cut throw) scrapes
 rail(v, x, y) { if (!ok()) return; const k = Math.min(1, v / 45); if (k < 0.008) return;   // measured cushion contact speeds: soft 1-8, medium 10-25, hard 40-60 u/frame
 const sp = spat(x, y), q = Math.sqrt(k), vol = 0.95 * Math.pow(10, -26 * (1 - q) / 20);   // loudness over a 26 dB range: a soft tap is still clearly audible, a hard hit is full
-if (bank.r_rail && bank.r_rail.length) {   // the real cushion recordings, ordered soft -> hard: a harder hit picks a harder, brighter one
+if (bank.r_rail && bank.r_rail.length && Math.random() < 0.5) {   // the added real cushion recordings (half of the hits; the original sounds stay in the rotation), ordered soft -> hard: a harder hit picks a harder, brighter one
 const N = bank.r_rail.length, idx = Math.max(0, Math.min(N - 1, Math.round(Math.pow(k, 0.7) * (N - 1) + (Math.random() - 0.5) * 1.6)));
 play(bank.r_rail[idx], Math.min(1, vol * (0.9 + 0.2 * Math.random())), 0.96 + 0.08 * k + (Math.random() - 0.5) * 0.04, 0, sp);
 } else {
@@ -2947,7 +2946,7 @@ if (k > 0.5) play(pick(bank.railT[3]), 0.45 * (k - 0.5) / 0.5 * vol, 0.98 + Math
 }
 },
 pocket(x, y, v = 20) { if (!ok()) return; const sp = spat(x, y), k = Math.min(1, v / 35);   // a faster ball hits the jaws and the net harder: louder, higher, longer rattle
-if (bank.r_pocket && bank.r_pocket.length) { play(pick(bank.r_pocket), 0.55 + 0.45 * k, 0.96 + 0.08 * Math.random(), 0, sp); return; }   // the real recorded drop into the pocket
+if (bank.r_pocket && bank.r_pocket.length && Math.random() < 0.5) { play(pick(bank.r_pocket), 0.55 + 0.45 * k, 0.96 + 0.08 * Math.random(), 0, sp); return; }   // the real recorded drop into the pocket
 play(bank.pocket, 0.4 + 0.6 * k, 0.92 + 0.1 * k + Math.random() * 0.06, 2500 + 9000 * k, sp); const t = now(); noise(t + 0.1, 0.35 + 0.3 * k, 0.02 + 0.04 * k, "lowpass", 380 + 200 * k, 0.7, 140); },   // the ball rolls down the leather pocket net
 tray(vy = 8) { if (!ok()) return; const k = Math.min(1, vy / 14); play(pick(bank.clacks), 0.12 + 0.3 * k, 0.66 + 0.1 * k, 1800 + 800 * k); const t = now(); if (!ui.roll) noise(t - 0.01, 0.45, 0.035, "lowpass", 700, 0.7, 220); },
 slide(sum) { if (!ac || !slideG) return; slideG.gain.setTargetAtTime(Math.min(0.018, sum * 0.0005), ac.currentTime, sum ? 0.04 : 0.08); },
