@@ -9921,24 +9921,58 @@ let vipPage = 0, vipSel = {sport: 1, atom: 1, zodiac: new Date().getMonth()};
 
 
 let vipShownSession = false;
-function vipGallery() {                                // every VIP set on one page: tap a cue to open its window
-  const cell = (o, ti) => { const t = o.tiers[ti], cd = cueDef(t.cue), c = document.createElement("canvas"); c.width = 220; c.height = 14; const g = c.getContext("2d"); g.translate(5, 7); drawCueStick(g, 208, cd, 0.4); return `<button class="vgc" data-vg="${o.id}" data-ti="${ti}"><img src="${c.toDataURL()}" alt=""><small>${esc(T(o.horror ? o.title : cd.name))}</small></button>`; };
-  const offers = [...VO().filter(o => !o.horror), ...VO().filter(o => o.horror)], cells = offers.map(o => o.horror ? cell(o, 0) : o.tiers.map((_, ti) => cell(o, ti)).join("")).join("");
+function vipGallery() {                                // every VIP cue on one page: tap a cue to open its window
+  const cells = VOP().map(o => { const cd = cueDef(o.tiers[0].cue), c = document.createElement("canvas"); c.width = 220; c.height = 14; const g = c.getContext("2d"); g.translate(5, 7); drawCueStick(g, 208, cd, 0.4); return `<button class="vgc" data-vg="${o.id}"><img src="${c.toDataURL()}" alt=""><small>${esc(T(o.horror ? o.title : cd.name))}</small></button>`; }).join("");
   openModal({icon: "", title: "VIP to'plamlar", text: "", extra: `<div class="vgrid">${cells}</div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
-  document.querySelectorAll("[data-vg]").forEach(b => b.onclick = () => { const id = b.dataset.vg; if (b.dataset.ti && id === "zodiac") vipSel.zodiac = +b.dataset.ti; else if (b.dataset.ti && !id.startsWith("hor_")) vipSel[id] = +b.dataset.ti; vipOffers(id); });
+  document.querySelectorAll("[data-vg]").forEach(b => b.onclick = () => { vipOffers(b.dataset.vg); });
 }
+function themeScene(o, t) {                        // cinematic backdrop for the sport / atom / zodiac sets (same size & role as horrorScene)
+  const key = "th:" + o.id; if (HSCENE[key]) return HSCENE[key];
+  const cd = cueDef(t.cue), col = o.theme.g, W = 980, H = 420, c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d"); let sd = o.id.length * 131 + (t.sku || "").length * 17 + 5 + (o.idx | 0) * 977; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+  const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, shade(o.theme.c1, 25)); bg.addColorStop(0.65, o.theme.c1); bg.addColorStop(1, "#02030a"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  const glow = (x, y, r, a) => { const rg = g.createRadialGradient(x, y, 2, x, y, r); rg.addColorStop(0, col + a); rg.addColorStop(1, col + "00"); g.fillStyle = rg; g.fillRect(0, 0, W, H); };
+  if (o.kind === "sport") {
+    for (const [x, ang] of [[170, 0.35], [W * 0.5, 0], [W - 170, -0.35]]) { g.save(); g.translate(x, -10); g.rotate(ang); const lg = g.createLinearGradient(0, 0, 0, H); lg.addColorStop(0, "rgba(255,255,255,.34)"); lg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = lg; g.beginPath(); g.moveTo(-14, 0); g.lineTo(14, 0); g.lineTo(150, H + 40); g.lineTo(-150, H + 40); g.fill(); g.restore(); }
+    glow(W * 0.72, 120, 320, "66");
+    g.fillStyle = "#03040a"; for (let r = 0; r < 4; r++) for (let x = -10; x < W + 20; x += 15) { const y = 300 + r * 34 + rnd() * 6; g.beginPath(); g.arc(x + (r % 2) * 7, y, 8 + rnd() * 3, 0, 7); g.rect(x - 7 + (r % 2) * 7, y + 4, 15, 60); g.fill(); }
+    for (let k = 0; k < 90; k++) { g.fillStyle = [col, "#fff", "#ffd24d", "#ff4a6a"][k % 4]; g.globalAlpha = 0.5 + rnd() * 0.5; g.save(); g.translate(rnd() * W, rnd() * 330); g.rotate(rnd() * 6); g.fillRect(-4, -2, 8, 4); g.restore(); } g.globalAlpha = 1;
+  } else if (o.kind === "atom") {
+    glow(W * 0.66, 190, 330, "88"); g.save(); g.translate(W * 0.66, 190);
+    for (let k = 0; k < 28; k++) { const a = k / 28 * 6.283 + rnd() * 0.1, l = 150 + rnd() * 240, w = 0.04 + rnd() * 0.03; g.fillStyle = col; g.globalAlpha = 0.12 + rnd() * 0.18; g.beginPath(); g.moveTo(0, 0); g.arc(0, 0, l, a - w, a + w); g.fill(); } g.globalAlpha = 1;
+    g.lineWidth = 2.5; for (let k = 0; k < 3; k++) { g.strokeStyle = col; g.globalAlpha = 0.7; g.save(); g.rotate(k * 1.047); g.beginPath(); g.ellipse(0, 0, 150, 52, 0, 0, 7); g.stroke(); const e = rnd() * 6.28; g.fillStyle = "#fff"; g.shadowColor = col; g.shadowBlur = 12; g.beginPath(); g.arc(Math.cos(e) * 150, Math.sin(e) * 52, 7, 0, 7); g.fill(); g.restore(); } g.globalAlpha = 1;
+    g.shadowColor = col; g.shadowBlur = 30; g.fillStyle = "#fff6d0"; g.beginPath(); g.arc(0, 0, 20, 0, 7); g.fill(); g.restore();
+    for (let k = 0; k < 70; k++) { g.fillStyle = col; g.globalAlpha = 0.3 + rnd() * 0.6; g.beginPath(); g.arc(rnd() * W, rnd() * H, 0.8 + rnd() * 2.2, 0, 7); g.fill(); } g.globalAlpha = 1;
+    g.fillStyle = "#04050a"; g.beginPath(); g.moveTo(0, H); for (let x = 0; x <= W; x += 20) g.lineTo(x, H - 30 - rnd() * 40); g.lineTo(W, H); g.fill();
+  } else {
+    for (let k = 0; k < 4; k++) glow(150 + rnd() * 700, 40 + rnd() * 300, 190 + rnd() * 120, "33");
+    for (let k = 0; k < 160; k++) { g.fillStyle = "#fff"; g.globalAlpha = 0.25 + rnd() * 0.75; g.beginPath(); g.arc(rnd() * W, rnd() * H, rnd() * 1.6 + 0.3, 0, 7); g.fill(); } g.globalAlpha = 1;
+    const cx = W * 0.68, cy = 200; g.strokeStyle = col; g.lineWidth = 2; for (const r of [150, 168]) { g.globalAlpha = r < 160 ? 0.55 : 0.25; g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke(); }
+    g.globalAlpha = 0.4; for (let k = 0; k < 12; k++) { const a = k / 12 * 6.283; g.beginPath(); g.moveTo(cx + Math.cos(a) * 150, cy + Math.sin(a) * 150); g.lineTo(cx + Math.cos(a) * 168, cy + Math.sin(a) * 168); g.stroke(); } g.globalAlpha = 1;
+    const pts = Array.from({length: 7}, (_, k) => [cx - 100 + k * 34 + rnd() * 18, cy - 70 + rnd() * 140]); g.strokeStyle = "#fff"; g.globalAlpha = 0.6; g.lineWidth = 1.5; g.beginPath(); pts.forEach(([x, y], k) => k ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); g.globalAlpha = 1;
+    pts.forEach(([x, y]) => { g.save(); g.shadowColor = col; g.shadowBlur = 14; g.fillStyle = "#fff"; g.beginPath(); g.arc(x, y, 4.5, 0, 7); g.fill(); g.restore(); });
+    g.save(); g.globalAlpha = 0.16; g.fillStyle = col; g.font = "900 230px serif"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(o.sym + "\uFE0E", cx, cy + 6); g.restore();
+  }
+  const vg = g.createRadialGradient(W / 2, H / 2, 120, W / 2, H / 2, W * 0.62); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.7)"); g.fillStyle = vg; g.fillRect(0, 0, W, H);
+  return (HSCENE[key] = c.toDataURL("image/jpeg", 0.82));
+}
+let VOP_CACHE = null;
+const VOP = () => {                                // pager pages: the 18 sport/atom/zodiac cues first (one page per cue), then this week's 64 horror sets
+  if (!VOP_CACHE) VOP_CACHE = VIP_OFFERS0.flatMap(o => o.tiers.map((t, i) => { const cd = cueDef(t.cue), el = o.zodiac ? ELEM[ZODIAC[i][2]] : null; return {id: o.id + "#" + i, base: o.id, idx: i, kind: o.zodiac ? "zodiac" : o.id, title: o.zodiac ? t.sign[0] : cd.name, sym: o.zodiac ? t.sign[1] : "", sub: o.sub, accent: o.accent, bg: o.bg, flat: true, tiers: [t],
+    theme: {acc: o.zodiac ? el.g : cd.glow || o.accent, g: cd.glow || o.accent, c1: o.zodiac ? el.bg[1] : o.id === "atom" ? "#2a1606" : (cd.butt && cd.butt[0] !== "#000000" ? shade(cd.butt[0], -30) : "#0a2a12")}}; }));
+  return [...VOP_CACHE, ...horrorWeek()];
+};
 function horrorOfferModal(o, t) {
-  const i = +o.id.slice(4), [name, , pal] = HORROR[i], P = HOR_PAL[pal], cue = cueDef(t.cue), ownC = profile.cues.includes(cue.id), tbl = t.table ? tableById(t.table) : null, offers = VO();
+  const i = o.horror ? +o.id.slice(4) : -1, name = o.horror ? HORROR[i][0] : (o.sym ? o.sym + "\uFE0E " : "") + o.title, pal = o.horror ? HORROR[i][2] : "", P = o.horror ? HOR_PAL[pal] : {acc: o.theme.acc, g: o.theme.g}, scene = o.horror ? horrorScene(pal, i) : themeScene(o, t), cue = cueDef(t.cue), ownC = profile.cues.includes(cue.id), tbl = t.table ? tableById(t.table) : null, offers = VOP();
   const col = (ic, lab, val) => `<div class="hcol"><div class="hci">${ic}</div><small>${T(lab)}</small><b>${val}</b></div>`;
   const bars = cue.st.map((v, k) => `<div class="hbr"><span>${T(STAT_NAMES[k])}</span><div>${Array.from({length: 10}, (_, q) => `<i class="${q < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("");
   const left = Math.max(0, ((weekIdx() + 1) * 7 * 864e5 - 3 * 864e5 - Date.now()) / 1000);
-  openModal({icon: "", title: "", text: "", extra: `<div class="hwin${vh < 560 ? " hsmall" : ""}" style="width:${Math.min(960, vw * 0.97)}px;--acc:${P.acc};--hg:${P.g};background:linear-gradient(#0003,#0008),url(${horrorScene(pal, i)}) center/cover">
+  openModal({icon: "", title: "", text: "", extra: `<div class="hwin${vh < 560 ? " hsmall" : ""}" style="width:${Math.min(960, vw * 0.97)}px;--acc:${P.acc};--hg:${P.g};background:linear-gradient(#0003,#0008),url(${scene}) center/cover">
     <button class="hx" id="hClose">✕</button><div class="hlogo">${esc(T(name))}</div>
     <div class="hbody"><div class="hcues" id="hCue"></div><div class="hright">
       <div class="hstat">${bars}<div class="hpw">🔓 +${cuePower(cue)} ⚜</div></div>
-      <div class="hcols">${col("🎱", "Kiy", esc(cue.name))}${col('<span class="coin" style="width:40px;height:40px"></span>', "Tanga", fmtS(t.coins))}${col('<span class="cash" style="width:50px;height:36px"></span>', "Naqd pul", fmt(t.cash))}${col("🏆", "Oltin zarba", "×" + t.goldShots)}${col(avHTML(profile.avatar, frameIdx(t.frame), 54), "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name)))}${tbl ? col(`<img src="${tableThumb(tbl)}" style="height:40px;border-radius:5px">`, "Stol", esc(T(tbl.name))) : ""}${t.sboxes ? col("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}</div>
-      <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} $${t.usd}</button>`}<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small></div></div></div>
-    <div class="hnav"><button class="btn gray" id="hPrev">‹</button><span class="hdots" style="color:#fff;font-weight:800">${vipPage % offers.length + 1} / ${offers.length}</span><button class="btn gray" id="hNext">›</button><button class="btn blue" id="hAll">▦ ${T("Hammasi")} (82)</button></div></div>`, buttons: []});
+      <div class="hcols">${col("🎱", "Kiy", esc(cue.name))}${col('<span class="coin" style="width:40px;height:40px"></span>', "Tanga", fmtS(t.coins))}${col('<span class="cash" style="width:50px;height:36px"></span>', "Naqd pul", fmt(t.cash))}${t.goldShots ? col("🏆", "Oltin zarba", "×" + t.goldShots) : ""}${t.avatar ? col(`<img src="${avatarURL(t.avatar)}" style="height:54px;width:54px;border-radius:50%;border:2px solid ${P.g}">`, "Avatar", esc(T(o.title))) : ""}${t.frame ? col(avHTML(profile.avatar, frameIdx(t.frame), 54), "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name))) : ""}${tbl ? col(`<img src="${tableThumb(tbl)}" style="height:40px;border-radius:5px">`, "Stol", esc(T(tbl.name))) : ""}${t.sboxes ? col("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}</div>
+      <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} $${t.usd}</button>`}${o.horror ? `<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small>` : ""}</div></div></div>
+    <div class="hnav"><button class="btn gray" id="hPrev">‹</button><span class="hdots" style="color:#fff;font-weight:800">${vipPage % offers.length + 1} / ${offers.length}</span><button class="btn gray" id="hNext">›</button><button class="btn blue" id="hAll">▦ ${T("Hammasi")} (${offers.length})</button></div></div>`, buttons: []});
   vipCueShow(cue, $("hCue"));
   $("hClose").onclick = () => $("modal").classList.remove("on");
   $("hAll").onclick = vipGallery;
@@ -9947,9 +9981,9 @@ function horrorOfferModal(o, t) {
   if ($("hBuy")) $("hBuy").onclick = () => Net.checkout(t.sku, $("hBuy"));
 }
 function vipOffers(start) {
-if (typeof start === "string") vipPage = Math.max(0, VO().findIndex(o => o.id === start));
-const offers = VO(), o = offers[vipPage % offers.length], t = o.tiers[(vipSel[o.id] | 0) % o.tiers.length];
-  if (o.horror) return horrorOfferModal(o, t);
+if (typeof start === "string") { const P = VOP(); let k = P.findIndex(o => o.id === start); if (k < 0) k = P.findIndex(o => o.id === start + "#" + (start === "zodiac" ? vipSel.zodiac : (vipSel[start] | 0))); vipPage = Math.max(0, k); }
+const offers = VOP(), o = offers[vipPage % offers.length], t = o.tiers[(vipSel[o.id] | 0) % o.tiers.length];
+  if (o.horror || o.flat) return horrorOfferModal(o, t);
   const cue = cueDef(t.cue), own = profile.cues.includes(cue.id);
 const item = (ic, n, v) => `<div class="vitem"><div class="vic">${ic}</div><small>${T(n)}</small><b>${v}</b></div>`;
 openModal({icon: "", title: "", text: "", extra: `<div class="vipbox" style="background:${o.bg};--acc:${o.accent}">
