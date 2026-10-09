@@ -1118,3 +1118,5 @@ O'qilmagan‖Unread|Непрочитано|Okunmamış|Sin leer|Não lidas|غي�
 Xabarlar yo'q‖No messages|Нет сообщений|Mesaj yok|Sin mensajes|Sem mensagens|لا رسائل|Tidak ada pesan|कोई संदेश नहीं|Aucun message|Keine Nachrichten|메시지 없음|メッセージなし|没有消息
 Yangiliklar va mukofotlar‖News & rewards|Новости и награды|Haberler ve ödüller|Noticias y premios|Novidades e prêmios|الأخبار والمكافآت|Berita & hadiah|समाचार और पुरस्कार|Actus et récompenses|News & Belohnungen|소식 및 보상|ニュースと報酬|新闻和奖励
 Yangi xabar‖New message|Новое сообщение|Yeni mesaj|Nuevo mensaje|Nova mensagem|رسالة جديدة|Pesan baru|नया संदेश|Nouveau message|Neue Nachricht|새 메시지|新着メッセージ|新消息
+Kiylar‖Cues|Кии|Isteka|Tacos|Tacos|العصي|Stik|क्यू|Queues|Queues|큐|キュー|球杆
+Uslubingizni tanlang‖Choose your style|Выберите свой стиль|Tarzını seç|Elige tu estilo|Escolha seu estilo|اختر أسلوبك|Pilih gayamu|अपना स्टाइल चुनें|Choisissez votre style|Wähle deinen Stil|스타일을 선택하세요|スタイルを選ぼう|选择你的风格
