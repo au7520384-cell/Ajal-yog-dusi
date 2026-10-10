@@ -2727,7 +2727,7 @@ CUES.push({id: "c_" + cc, cc, cat: "country", tier: "Yuqori", price: 40, cur: "c
 shaft: ["#f7ecd0", "#d9b87e"], butt: ["#3a2210", "#0d0603"], metal: "#d9d9d9", deco: "flag"});
 });
 const cueName = c => c.cc ? `${countryName(c.cc)}` : T(c.name);
-const cuePower = c => c.cat === "vip" ? 60 + c.st.reduce((a, v) => a + v, 0) * 6 : c.cat === "pass" ? 160 : c.cat === "premium" ? 160 + Math.round((c.cash0 || c.cash) / 40) : c.cat === "surprise" ? 50 + c.st.reduce((x, v) => x + v, 0) * 5 : c.cat === "victory" ? 40 + c.city * 8 : c.cat === "country" ? 70 : c.price ? Math.round(10 + (c.cur === "cash" ? c.price / 3 : Math.log10(c.price + 1) * 12)) : 0;
+const cuePower = c => c.cat === "event" ? 200 : c.cat === "vip" ? 60 + c.st.reduce((a, v) => a + v, 0) * 6 : c.cat === "pass" ? 160 : c.cat === "premium" ? 160 + Math.round((c.cash0 || c.cash) / 40) : c.cat === "surprise" ? 50 + c.st.reduce((x, v) => x + v, 0) * 5 : c.cat === "victory" ? 40 + c.city * 8 : c.cat === "country" ? 70 : c.price ? Math.round(10 + (c.cur === "cash" ? c.price / 3 : Math.log10(c.price + 1) * 12)) : 0;
 const store = {
 get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
 set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -7908,7 +7908,7 @@ cards.forEach(c => { c[0]._c = c; io.observe(c[0]); });
 return;
 }
 const owns = c => profile.cues.includes(c.id);
-const list = CUES.filter(c => cueCat === "owned" ? owns(c) : c.cat === cueCat);
+const list = CUES.filter(c => cueCat === "owned" ? owns(c) : (c.cat === cueCat || (cueCat === "surprise" && c.cat === "event")));   // the Grandmaster event cue is listed with the gift (surprise) cues
 if (cueCat === "country") list.sort((a, b) => (b.cc === profile.country) - (a.cc === profile.country) || cueName(a).localeCompare(cueName(b)));
 const power = CUES.filter(owns).reduce((a, c) => a + cuePower(c), 0);
 body.insertAdjacentHTML("beforeend", `<div class="cuehead">
@@ -7963,6 +7963,7 @@ else if (owned) btn = `<button class="btn blue" style="width:100%">${T("TANLASH"
 else if (c.cat === "victory") btn = `<button class="btn blue" data-city="${c.city}" style="width:100%;font-size:15px">${T("O'ynash")}: ${CITIES[c.city].name}</button>`;
 else if (c.cat === "surprise") btn = `<button class="btn purple" style="width:100%;font-size:15px">${icoH("🎁", 22)} ${T("Syurpriz qutisi")}</button>`;
 else if (c.cat === "vip") btn = `<button class="btn orange" style="width:100%;font-size:15px">♛ VIP</button>`;
+else if (c.cat === "event") btn = `<button class="btn orange" style="width:100%;font-size:15px">🏆 ${T("Kirish ›")}</button>`;
 else btn = `<button class="btn ${c.cur === "cash" ? "purple" : "green"}" style="width:100%">${c.cur === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} ${fmtS(c.price)}</button>`;
 el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">${c.cc ? flagHTML(c.cc, 18) + " " : ""}${esc(cueName(c))}</b>
 <span style="color:${tierCol[c.tier] || "#ffe27a"}">${T(c.tier)}${c.pieces && !owned ? ` <span class="pcs">${pcs}/${c.pieces} 🔒</span>` : ""}</span></div><div class="cuecvw"></div></div>
@@ -7976,6 +7977,7 @@ const keep = $("shop").scrollTop;
 if (!owned) {
 if (c.cat === "victory") { go("cities"); return; }
 if (c.cat === "surprise") { openSurpriseBox(); return; }
+if (c.cat === "event") { go("eventsScr"); return; }
 if (c.cat === "vip") { const o = VO().find(o => o.tiers.some(t => t.cue === c.id)); if (o) { if (o.zodiac) vipSel.zodiac = Math.max(0, o.tiers.findIndex(t => t.cue === c.id)); else vipSel[o.id] = Math.max(0, o.tiers.findIndex(t => t.cue === c.id)); vipOffers(o.id); } return; }
 const bal = c.cur === "cash" ? profile.cash : profile.coins;
 if (bal < c.price) { toast("😕", T(c.cur === "cash" ? "Pul yetmaydi" : "Tanga yetmaydi"), cueName(c)); return; }
@@ -10925,7 +10927,7 @@ function cuePicker() {
 const G = game; if (!G || G.moving) return;
 let cat = "owned";
 const render = () => {
-const list = CUES.filter(c => cat === "owned" ? profile.cues.includes(c.id) : c.cat === cat);
+const list = CUES.filter(c => cat === "owned" ? profile.cues.includes(c.id) : (c.cat === cat || (cat === "surprise" && c.cat === "event")));
 $("mExtra").innerHTML = `<div class="tabs subtabs">${[["owned", "Meniki"], ["standard", "Standart"], ["country", "Davlat"], ["surprise", "Syurpriz"], ["victory", "G'alaba"]]
 .map(([k, n]) => `<button class="tab${k === cat ? " on" : ""}" data-pc="${k}" style="font-size:14px;padding:6px">${T(n)}</button>`).join("")}</div>
 <div id="pickList" style="max-height:48vh;overflow:auto;text-align:left">${list.map(c => {
