@@ -5481,8 +5481,15 @@ if (!vert) { const hw = dw / 2; ctx.drawImage(pa, FX + dx, FY + dy, hw, dh); ctx
 else { const hl = dh / 2; ctx.translate(FX + dx + dw, FY + dy); ctx.rotate(Math.PI / 2); ctx.drawImage(pa, 0, 0, hl, dw); ctx.translate(dh, 0); ctx.scale(-1, 1); ctx.drawImage(pa, 0, 0, hl, dw); }
 ctx.restore();
 };
-art(ix(152) - 3, iy(30) - 1.2, ix(754) - ix(152) + 6, iy(63) - iy(30) + 2.4, false); art(ix(921) - 3, iy(30) - 1.2, ix(1523) - ix(921) + 6, iy(63) - iy(30) + 2.4, false);
-art(ix(152) - 3, iy(830) - 1.2, ix(754) - ix(152) + 6, iy(868) - iy(830) + 2.4, false); art(ix(921) - 3, iy(830) - 1.2, ix(1523) - ix(921) + 6, iy(868) - iy(830) + 2.4, false);
+const bar = (dx, dw, dy, dh, up) => {   // clean rail bar around the artwork: smooth rail-coloured frame (no tinted wood streaks, no leftover end ornaments) with thin gold lines
+const [c1, c2] = city.rail, g = ctx.createLinearGradient(0, FY + dy, 0, FY + dy + dh); g.addColorStop(0, up ? shade(c1, 25) : shade(c2, -20)); g.addColorStop(0.5, c1); g.addColorStop(1, up ? shade(c2, -30) : shade(c1, 20));
+ctx.save(); ctx.fillStyle = g; ctx.fillRect(FX + dx, FY + dy, dw, dh);
+ctx.fillStyle = "rgba(255,225,150,.85)"; ctx.fillRect(FX + dx, FY + dy + 0.6, dw, 0.9); ctx.fillRect(FX + dx, FY + dy + dh - 1.5, dw, 0.9); ctx.restore();
+};
+const M = 9, hb = (x0, x1, y0, y1, up) => { bar(x0 - M, x1 - x0 + 2 * M, y0 - (up ? 11.4 : 2.5), y1 - y0 + 13.9, up); const ay = up ? y0 - 8.6 : y0 - 1.2, ah = up ? y1 - y0 + 9.8 : y1 - y0 + 9.8; art(x0 - M, ay, x1 - x0 + 2 * M, ah, false);
+for (const ex of [x0 - M, x1 + M - 2.2]) { const gg = ctx.createLinearGradient(FX + ex, 0, FX + ex + 2.2, 0); gg.addColorStop(0, "#7a5a1c"); gg.addColorStop(0.5, "#ffe6a0"); gg.addColorStop(1, "#8a6420"); ctx.fillStyle = gg; ctx.fillRect(FX + ex, FY + ay, 2.2, ah); } };
+hb(ix(152), ix(754), iy(30), iy(63), true); hb(ix(921), ix(1523), iy(30), iy(63), true);
+hb(ix(152), ix(754), iy(830), iy(868), false); hb(ix(921), ix(1523), iy(830), iy(868), false);
 art(ix(16), iy(160), ix(48) - ix(16), iy(779) - iy(160), true); art(ix(1627), iy(160), ix(1659) - ix(1627), iy(779) - iy(160), true);
 return;
 }
