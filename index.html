@@ -5599,6 +5599,11 @@ ctx.restore();
 if (lxp) { ctx.save(); ctx.lineWidth = 1.2; ctx.strokeStyle = "rgba(255,255,255,.55)"; rr(FX + dx - 1.2, FY + dy - 1.2, dw + 2.4, dh + 2.4, pr + 1.2); ctx.stroke(); ctx.restore(); }
 };
 const top = band(0, -rc - T / 2, FW, T), bot = band(0, FH + rc - T / 2, FW, T), lef = band(-rc - T / 2, 0, T, FH), rig = band(FW + rc - T / 2, 0, T, FH);
+if ((tblOf(city) || {}).lux) {   // premium: the inlay fills the whole rail band, from collar to collar and from the outer lip to the cushion
+const hz = (x0, x1, y0, y1) => panel(top, 0, 0, ix(x0), iy(y0), ix(x1) - ix(x0), iy(y1) - iy(y0), false, 0, 0), vt = (x0, x1, y0, y1) => panel(lef, 0, 0, ix(x0), iy(y0), ix(x1) - ix(x0), iy(y1) - iy(y0), true, 0, 0);
+hz(139, 741, 17, 61); hz(878, 1480, 17, 61); hz(139, 741, 804, 848); hz(878, 1480, 804, 848); vt(10, 52, 142, 720); vt(1567, 1609, 142, 720);
+return;
+}
 panel(top, 0, -rc - T / 2, ix(152), iy(30), ix(754) - ix(152), iy(63) - iy(30), false, 30, 460);
 panel(top, 0, -rc - T / 2, ix(921), iy(30), ix(1523) - ix(921), iy(63) - iy(30), false, 540, 970);
 panel(bot, 0, FH + rc - T / 2, ix(152), iy(830), ix(754) - ix(152), iy(868) - iy(830), false, 30, 460);
