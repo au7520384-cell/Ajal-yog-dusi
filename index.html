@@ -5572,6 +5572,17 @@ return oc;
 const panel = (oc, bx, by, dx, dy, dw, dh, vert, sa, sb) => {   // oc = band canvas whose origin is local (bx, by); dest rect in table units; source run sa..sb along the band
 const s = (vert ? dw : dh) / T, Ls = sb - sa, Ss = Ls * s, len = vert ? dh : dw, n = Math.ceil(len / Ss), lxp = !!(tblOf(city) || {}).lux, pr = Math.min(dw, dh) * 0.5;
 ctx.save(); ctx.beginPath(); if (lxp) rr(FX + dx, FY + dy, dw, dh, pr); else ctx.rect(FX + dx, FY + dy, dw, dh); ctx.clip(); ctx.imageSmoothingQuality = "high";
+if (lxp) {   // premium: the inlay is drawn straight into the channel at full sharpness: dark enamel ground, bright metal ornament filling the whole height, a jewel in the middle
+const stp = tblOf(city), [mh, mm, mlo] = stp.metal, bgc = stp.bg || ["#2a3448", "#06080e"], kind = stp.orn || {l_dia: "x_dia", l_bdi: "x_blk", l_opl: "x_aur"}[city.id] || "x_dia";
+const eg = ctx.createLinearGradient(FX + dx, FY + dy, vert ? FX + dx + dw : FX + dx, vert ? FY + dy : FY + dy + dh); eg.addColorStop(0, bgc[1]); eg.addColorStop(0.5, shade(bgc[0], 18)); eg.addColorStop(1, bgc[1]);
+ctx.fillStyle = eg; ctx.fillRect(FX + dx, FY + dy, dw, dh);
+const th = vert ? dw : dh, kk = th / 36, Lr = len / kk;
+ctx.save(); if (!vert) { ctx.translate(FX + dx, FY + dy + dh / 2); } else { ctx.translate(FX + dx + dw / 2, FY + dy); ctx.rotate(Math.PI / 2); } ctx.scale(kk, kk);
+ornDraw(kind, Lr, {hi: shade(mh, 20), mid: mh, lo: mm, gem: stp.gemrow || (stp.pave && stp.pave !== "opal" ? stp.pave : null) || mh});
+ctx.restore();
+const gc = stp.gemrow || (stp.pave && stp.pave !== "opal" ? stp.pave : null) || city.gem || mh, cx2 = FX + dx + dw / 2, cy2 = FY + dy + dh / 2, gr0 = th * 0.36;
+ctx.save(); ctx.fillStyle = shade(mm, -30); ctx.beginPath(); ctx.arc(cx2, cy2, gr0 + 2.2, 0, 7); ctx.fill(); const bz = ctx.createLinearGradient(cx2, cy2 - gr0, cx2, cy2 + gr0); bz.addColorStop(0, mh); bz.addColorStop(1, mlo); ctx.fillStyle = bz; ctx.beginPath(); ctx.arc(cx2, cy2, gr0 + 1.2, 0, 7); ctx.fill(); luxGem(cx2, cy2, gr0, gc, Math.random); ctx.restore();
+} else
 for (let j = 0; j < n; j++) {
 const o = j * Ss, flip = j % 2;
 ctx.save();
