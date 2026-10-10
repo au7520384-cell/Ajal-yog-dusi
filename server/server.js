@@ -99,6 +99,8 @@ const HOR_NAMES = ["Vampire", "Zombie", "Skeleton", "Ghost", "Witch", "Werewolf"
 const HOR_USD = [9.99, 12.99, 14.99, 19.99, 24.99, 29.99, 39.99, 49.99], HOR_TABLES = {has: () => true};
 HOR_NAMES.forEach((nm, i) => { const usd = HOR_USD[i % 8], items = {cues: ["vh_" + i], pframes: ["vf_" + i], goldShots: 2 + (i % 4), sboxes: 1 + (i % 3)}; if (HOR_TABLES.has(i)) items.tables = ["vt_" + i];
   SKUS["hor_" + i] = {coins: Math.round(usd * 2000), cash: Math.round(usd * 2), vip: Math.round(usd * 66), items, usd, name: "VIP Horror: " + nm}; });
+// the 18 sport / atom / zodiac VIP cues also come with their own table (vs_N) and avatar frame (vz_N)
+["sport_1", "sport_2", "sport_3", "atom_1", "atom_2", "atom_3", ...Array.from({length: 12}, (_, i) => "zod_" + i)].forEach((k, n) => { const it = SKUS[k].items; it.tables = ["vs_" + n]; it.pframes = ["vz_" + n]; if (!it.goldShots) it.goldShots = 3 + (n % 4); });
 const TABLE_SKUS = {l_brz: 4.99, l_slv: 6.99, l_gld: 9.99, l_rgd: 11.99, l_plt: 14.99, l_sap: 17.99, l_emr: 19.99, l_rby: 21.99, l_ame: 22.99, l_dia: 34.99, l_bdi: 39.99, l_opl: 49.99, e_sak: 2.99, e_ros: 3.49, e_lol: 3.79, e_lot: 3.99, e_pax: 4.19, e_orx: 4.49, e_kun: 2.99, e_atl: 4.79, e_smq: 4.99, e_mal: 5.49, e_laz: 5.79, e_prl: 5.99, e_muz: 5.99, e_drg: 6.49, e_olv: 6.49, e_kos: 6.99, e_qah: 6.99, e_tov: 7.49};
 for (const [id, usd] of Object.entries(TABLE_SKUS)) SKUS["tbl_" + id] = {items: {tables: [id]}, vip: Math.round(usd * 65), usd, name: "Table: " + TABLE_NAMES[id]};
 // Limited editions: only EDITION_CAP[id] copies of these tables will ever exist; every owner gets a serial number.
