@@ -5481,13 +5481,18 @@ if (!vert) { const hw = dw / 2; ctx.drawImage(pa, FX + dx, FY + dy, hw, dh); ctx
 else { const hl = dh / 2; ctx.translate(FX + dx + dw, FY + dy); ctx.rotate(Math.PI / 2); ctx.drawImage(pa, 0, 0, hl, dw); ctx.translate(dh, 0); ctx.scale(-1, 1); ctx.drawImage(pa, 0, 0, hl, dw); }
 ctx.restore();
 };
-const bar = (dx, dw, dy, dh, up) => {   // clean rail bar around the artwork: smooth rail-coloured frame (no tinted wood streaks, no leftover end ornaments) with thin gold lines
-const [c1, c2] = city.rail, g = ctx.createLinearGradient(0, FY + dy, 0, FY + dy + dh); g.addColorStop(0, up ? shade(c1, 25) : shade(c2, -20)); g.addColorStop(0.5, c1); g.addColorStop(1, up ? shade(c2, -30) : shade(c1, 20));
+const avgCol = (() => { const c = document.createElement("canvas"); c.width = c.height = 1; const g = c.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(pa, 0, 0, 1, 1); const d = g.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]]; })();
+const mixc = (hex, a, k) => { const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255]; return "rgb(" + c.map((v, q) => Math.round(v * (1 - k) + a[q] * k)).join(",") + ")"; };
+const bar = (dx, dw, dy, dh, up) => {   // rail bar around the artwork: takes its colour from the artwork itself so the two blend, thin gold edge lines
+const c1 = mixc(city.rail[0], avgCol, 0.55), c2 = mixc(city.rail[1], avgCol, 0.35), g = ctx.createLinearGradient(0, FY + dy, 0, FY + dy + dh); g.addColorStop(0, up ? c1 : c2); g.addColorStop(0.5, c1); g.addColorStop(1, up ? c2 : c1);
 ctx.save(); ctx.fillStyle = g; ctx.fillRect(FX + dx, FY + dy, dw, dh);
-ctx.fillStyle = "rgba(255,225,150,.85)"; ctx.fillRect(FX + dx, FY + dy + 0.6, dw, 0.9); ctx.fillRect(FX + dx, FY + dy + dh - 1.5, dw, 0.9); ctx.restore();
+ctx.fillStyle = "rgba(255,225,150,.7)"; ctx.fillRect(FX + dx, FY + dy + 0.6, dw, 0.8); ctx.fillRect(FX + dx, FY + dy + dh - 1.4, dw, 0.8); ctx.restore();
 };
-const hb = (x0, x1, y0, y1, up, ml = 9, mr = 9) => { const M = 0; bar(x0 - ml, x1 - x0 + ml + mr, y0 - (up ? 11.4 : 2.5), y1 - y0 + 13.9, up); const ay = up ? y0 - 8.6 : y0 - 1.2, ah = up ? y1 - y0 + 9.8 : y1 - y0 + 9.8; art(x0 - ml, ay, x1 - x0 + ml + mr, ah, false);
-for (const ex of [x0 - ml, x1 + mr - 2.2]) { const gg = ctx.createLinearGradient(FX + ex, 0, FX + ex + 2.2, 0); gg.addColorStop(0, "#7a5a1c"); gg.addColorStop(0.5, "#ffe6a0"); gg.addColorStop(1, "#8a6420"); ctx.fillStyle = gg; ctx.fillRect(FX + ex, FY + ay, 2.2, ah); } };
+const soft = (x, y, w, h) => {   // dark feathered edges: the artwork melts into the frame instead of ending on a hard line
+const L = (x0, y0, x1, y1, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(FX + x0, FY + y0, FX + x1, FY + y1); g.addColorStop(0, "rgba(0,0,0,.6)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(FX + rx, FY + ry, rw, rh); };
+L(x, y, x + 5, y, x, y, 5, h); L(x + w, y, x + w - 5, y, x + w - 5, y, 5, h); L(x, y, x, y + 3.2, x, y, w, 3.2); L(x, y + h, x, y + h - 3.2, x, y + h - 3.2, w, 3.2);
+};
+const hb = (x0, x1, y0, y1, up, ml = 9, mr = 9) => { bar(x0 - ml, x1 - x0 + ml + mr, y0 - (up ? 11.4 : 2.5), y1 - y0 + 13.9, up); const ay = up ? y0 - 8.6 : y0 - 1.2, ah = y1 - y0 + 9.8; ctx.save(); ctx.beginPath(); ctx.rect(FX + x0 - ml, FY + ay, x1 - x0 + ml + mr, ah); ctx.clip(); art(x0 - ml, ay, x1 - x0 + ml + mr, ah, false); soft(x0 - ml, ay, x1 - x0 + ml + mr, ah); ctx.restore(); };
 hb(ix(152), ix(754), iy(30), iy(63), true, 11, 16); hb(ix(921), ix(1523), iy(30), iy(63), true, 16, 11);
 hb(ix(152), ix(754), iy(830), iy(868), false, 11, 16); hb(ix(921), ix(1523), iy(830), iy(868), false, 16, 11);
 art(ix(16), iy(160), ix(48) - ix(16), iy(779) - iy(160), true); art(ix(1627), iy(160), ix(1659) - ix(1627), iy(779) - iy(160), true);
