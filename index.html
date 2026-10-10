@@ -5612,8 +5612,9 @@ if (lxp) { ctx.save(); ctx.lineWidth = 1.2; ctx.strokeStyle = "rgba(255,255,255,
 };
 const top = band(0, -rc - T / 2, FW, T), bot = band(0, FH + rc - T / 2, FW, T), lef = band(-rc - T / 2, 0, T, FH), rig = band(FW + rc - T / 2, 0, T, FH);
 if ((tblOf(city) || {}).lux) {   // premium: the inlay fills the whole rail band, from collar to collar and from the outer lip to the cushion
-const hz = (x0, x1, y0, y1) => panel(top, 0, 0, ix(x0), iy(y0), ix(x1) - ix(x0), iy(y1) - iy(y0), false, 0, 0), vt = (x0, x1, y0, y1) => panel(lef, 0, 0, ix(x0), iy(y0), ix(x1) - ix(x0), iy(y1) - iy(y0), true, 0, 0);
-hz(139, 741, 17, 61); hz(878, 1480, 17, 61); hz(139, 741, 804, 848); hz(878, 1480, 804, 848); vt(10, 52, 142, 720); vt(1567, 1609, 142, 720);
+const px = x => -61 + x * 0.693, py = y => -70 + y * 0.7428;   // the picture is drawn at 1122.6 x 677.5 table units
+const hz = (x0, x1, y0, y1) => panel(top, 0, 0, px(x0), py(y0), px(x1) - px(x0), py(y1) - py(y0), false, 0, 0), vt = (x0, x1, y0, y1) => panel(lef, 0, 0, px(x0), py(y0), px(x1) - px(x0), py(y1) - py(y0), true, 0, 0);
+hz(136, 741, 17, 61); hz(878, 1483, 17, 61); hz(136, 741, 804, 848); hz(878, 1483, 804, 848); vt(10, 52, 139, 723); vt(1567, 1609, 139, 723);
 return;
 }
 panel(top, 0, -rc - T / 2, ix(152), iy(30), ix(754) - ix(152), iy(63) - iy(30), false, 30, 460);
