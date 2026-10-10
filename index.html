@@ -5492,9 +5492,9 @@ const soft = (x, y, w, h) => {   // dark feathered edges: the artwork melts into
 const L = (x0, y0, x1, y1, rx, ry, rw, rh) => { const g = ctx.createLinearGradient(FX + x0, FY + y0, FX + x1, FY + y1); g.addColorStop(0, "rgba(0,0,0,.6)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(FX + rx, FY + ry, rw, rh); };
 L(x, y, x + 5, y, x, y, 5, h); L(x + w, y, x + w - 5, y, x + w - 5, y, 5, h); L(x, y, x, y + 3.2, x, y, w, 3.2); L(x, y + h, x, y + h - 3.2, x, y + h - 3.2, w, 3.2);
 };
-const hb = (x0, x1, y0, y1, up, ml = 9, mr = 9) => { bar(x0 - ml, x1 - x0 + ml + mr, y0 - (up ? 11.4 : 2.5), y1 - y0 + 13.9, up); const ay = up ? y0 - 8.6 : y0 - 1.2, ah = y1 - y0 + 9.8; ctx.save(); ctx.beginPath(); ctx.rect(FX + x0 - ml, FY + ay, x1 - x0 + ml + mr, ah); ctx.clip(); art(x0 - ml, ay, x1 - x0 + ml + mr, ah, false); soft(x0 - ml, ay, x1 - x0 + ml + mr, ah); ctx.restore(); };
-hb(ix(152), ix(754), iy(30), iy(63), true, 11, 16); hb(ix(921), ix(1523), iy(30), iy(63), true, 16, 11);
-hb(ix(152), ix(754), iy(830), iy(868), false, 11, 16); hb(ix(921), ix(1523), iy(830), iy(868), false, 16, 11);
+const hb = (x0, x1, y0, y1, up, ml = 9, mr = 9) => { bar(x0 - ml, x1 - x0 + ml + mr, y0 - (up ? 15.6 : 2.5), y1 - y0 + 18.1, up); const ay = up ? y0 - 14.2 : y0 - 1.2, ah = up ? y1 - y0 + 15.4 : y1 - y0 + 15.4; ctx.save(); ctx.beginPath(); ctx.rect(FX + x0 - ml, FY + ay, x1 - x0 + ml + mr, ah); ctx.clip(); art(x0 - ml, ay, x1 - x0 + ml + mr, ah, false); soft(x0 - ml, ay, x1 - x0 + ml + mr, ah); ctx.restore(); };
+hb(ix(152), ix(754), iy(30), iy(63), true, 17, 16); hb(ix(921), ix(1523), iy(30), iy(63), true, 16, 17);
+hb(ix(152), ix(754), iy(830), iy(868), false, 17, 16); hb(ix(921), ix(1523), iy(830), iy(868), false, 16, 17);
 art(ix(16), iy(160), ix(48) - ix(16), iy(779) - iy(160), true); art(ix(1627), iy(160), ix(1659) - ix(1627), iy(779) - iy(160), true);
 return;
 }
