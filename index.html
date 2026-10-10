@@ -5171,6 +5171,18 @@ const lonTileOk = () => LON_TILE.complete && LON_TILE.naturalWidth > 0;
 const ORN_KIND = {};
 const CITY_ORN = new Set(["lon", "syd", "lis", "tok", "veg", "jak", "tor", "cai", "dub", "sha", "par", "rom", "bkk", "seo", "mum", "ber", "ist", "osa", "x_dia", "x_gal", "x_drg", "x_aur", "x_lav", "x_roy", "x_ice", "x_blk", "tas", "rio", "nyc", "mos"]);
 Object.assign(ORN_KIND, {mad: "rom+lis", bue: "par+veg", mex: "cai+mum", sin: "sha+ber", ams: "lon+lis", kul: "tok+bkk", ath: "rom+syd", cas: "ist+dub", tas: "ist+mum", rio: "bkk+tok", nyc: "ber+veg", mos: "par+rom"});
+const ORN_EXT = {};
+function ornExtent(kind) {   // half-height of an ornament band (in its own units), measured once, so every pattern can be scaled to fill its channel
+if (ORN_EXT[kind]) return ORN_EXT[kind];
+let e = 18; try {
+const c = document.createElement("canvas"); c.width = 240; c.height = 60; const sv = ctx; ctx = c.getContext("2d"); ctx.translate(0, 30);
+try { ornDraw(kind, 240, {hi: "#fff", mid: "#fff", lo: "#fff", gem: "#fff"}); } finally { ctx = sv; }
+const d = c.getContext("2d").getImageData(0, 0, 240, 60).data; let y0 = 60, y1 = 0;
+for (let y = 0; y < 60; y++) for (let x = 0; x < 240; x++) if (d[(y * 240 + x) * 4 + 3] > 60) { if (y < y0) y0 = y; if (y > y1) y1 = y; }
+if (y1 > y0) e = Math.max(6, Math.max(30 - y0, y1 - 30));
+} catch (er) {}
+return ORN_EXT[kind] = e;
+}
 function ornDraw(kind, L, P) {
   if (kind.includes("+")) { const [ka, kb] = kind.split("+"); for (let x = 0, k = 0; x < L; x += 150, k++) { ctx.save(); ctx.beginPath(); ctx.rect(x, -20, Math.min(150, L - x), 40); ctx.clip(); ornDraw(k % 2 ? kb : ka, L, P); ctx.restore(); } return; }
 const g = ctx.createLinearGradient(0, -16, 0, 16); g.addColorStop(0, P.hi); g.addColorStop(0.5, P.mid); g.addColorStop(1, P.lo);
@@ -5576,7 +5588,7 @@ if (lxp) {   // premium: the inlay is drawn straight into the channel at full sh
 const stp = tblOf(city), [mh, mm, mlo] = stp.metal, bgc = stp.bg || ["#2a3448", "#06080e"], kind = stp.orn || {l_dia: "x_dia", l_bdi: "x_blk", l_opl: "x_aur"}[city.id] || "x_dia";
 const eg = ctx.createLinearGradient(FX + dx, FY + dy, vert ? FX + dx + dw : FX + dx, vert ? FY + dy : FY + dy + dh); eg.addColorStop(0, bgc[1]); eg.addColorStop(0.5, shade(bgc[0], 18)); eg.addColorStop(1, bgc[1]);
 ctx.fillStyle = eg; ctx.fillRect(FX + dx, FY + dy, dw, dh);
-const th = vert ? dw : dh, kk = th / 36, Lr = len / kk;
+const th = vert ? dw : dh, kk = th * 0.84 / (2 * ornExtent(kind)), Lr = len / kk;
 ctx.save(); if (!vert) { ctx.translate(FX + dx, FY + dy + dh / 2); } else { ctx.translate(FX + dx + dw / 2, FY + dy); ctx.rotate(Math.PI / 2); } ctx.scale(kk, kk);
 ornDraw(kind, Lr, {hi: shade(mh, 20), mid: mh, lo: mm, gem: stp.gemrow || (stp.pave && stp.pave !== "opal" ? stp.pave : null) || mh});
 ctx.restore();
