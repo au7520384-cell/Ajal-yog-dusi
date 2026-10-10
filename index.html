@@ -5469,12 +5469,25 @@ if (r > gg * 1.12 && r > 18 && b < gg + 8) { const kw = lx ? 0.82 + Math.min(1, 
 else if (gg > r + 12 && gg > b + 8 && gg > 25) { const k = Math.min(1.5, gg / 100), kc = Math.min(1.3, gg / 128), w = Math.max(0, Math.min(1, (gg - 112) / 12)); d[i] = Math.min(255, mid[0] * k * (1 - w) + cb[0] * kc * w); d[i + 1] = Math.min(255, mid[1] * k * (1 - w) + cb[1] * kc * w); d[i + 2] = Math.min(255, mid[2] * k * (1 - w) + cb[2] * kc * w); }
 }
 g.putImageData(id, 0, 0);
-if (lx) {   // metal tables: the picture's outer lip, corner pieces and pocket collars are repainted as clean polished metal (the photo's wood specks / grey crumbs never show)
-const mt = tblOf(city).metal, sx2 = 0.967, sy2 = 0.9713, ml = document.createElement("canvas"); ml.width = W; ml.height = H;
-const m2 = ml.getContext("2d"), mg = m2.createLinearGradient(0, 0, W * 0.5, H); [[0, mt[1]], [0.12, mt[0]], [0.3, mt[2]], [0.5, mt[1]], [0.7, mt[0]], [0.9, mt[2]], [1, mt[1]]].forEach(([o, c]) => mg.addColorStop(o, c));
-m2.fillStyle = mg; m2.fillRect(0, 0, W, H); m2.globalCompositeOperation = "destination-out"; m2.fillRect(48 * sx2, 63 * sy2, (1627 - 48) * sx2, (830 - 63) * sy2);
-for (const q of (typeof POCKETS !== "undefined" ? POCKETS : [])) { const cx = (q.x + q.dx + 61) / 0.693, cy = (q.y + q.dy + 70) / 0.7428, r0 = (q.dr + 9) / 0.693, rg = m2.createRadialGradient(cx, cy, r0 - 4, cx, cy, r0 + 1); rg.addColorStop(0, "rgba(0,0,0,1)"); rg.addColorStop(1, "rgba(0,0,0,0)"); m2.fillStyle = rg; m2.beginPath(); m2.arc(cx, cy, r0 + 2, 0, Math.PI * 2); m2.fill(); }
-g.save(); g.globalCompositeOperation = "source-atop"; g.globalAlpha = 0.93; g.drawImage(ml, 0, 0); g.restore();
+if (lx) {   // metal tables: the picture's outer lip, corner pieces and pocket collars are re-cast in the table's metal: the carving's own light and shade stays (blurred a touch), the dark wood specks are lifted out
+const mt = tblOf(city).metal.map(h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }), sx2 = 0.967, sy2 = 0.9713;
+const o = g.createImageData(W, H); { const c2 = document.createElement("canvas"); c2.width = W; c2.height = H; const q2 = c2.getContext("2d"); q2.drawImage(SYD_TBL, 0, 0); o.data.set(q2.getImageData(0, 0, W, H).data); }
+const L0 = new Float32Array(W * H), L1 = new Float32Array(W * H);
+for (let n = 0, k = 0; n < W * H; n++, k += 4) L0[n] = (o.data[k] * 0.3 + o.data[k + 1] * 0.59 + o.data[k + 2] * 0.11) / 255;
+const R = 3;   // separable box blur
+for (let y = 0; y < H; y++) { let a = 0; for (let x = -R; x <= R; x++) a += L0[y * W + Math.min(W - 1, Math.max(0, x))]; for (let x = 0; x < W; x++) { L1[y * W + x] = a / (2 * R + 1); a += L0[y * W + Math.min(W - 1, x + R + 1)] - L0[y * W + Math.max(0, x - R)]; } }
+for (let x = 0; x < W; x++) { let a = 0; for (let y = -R; y <= R; y++) a += L1[Math.min(H - 1, Math.max(0, y)) * W + x]; for (let y = 0; y < H; y++) { L0[y * W + x] = a / (2 * R + 1); a += L1[Math.min(H - 1, y + R + 1) * W + x] - L1[Math.max(0, y - R) * W + x]; } }
+const x0 = 48 * sx2, x1 = 1627 * sx2, y0 = 63 * sy2, y1 = 830 * sy2, pk = (typeof POCKETS !== "undefined" ? POCKETS : []).map(q => [(q.x + q.dx + 61) / 0.693, (q.y + q.dy + 70) / 0.7428, (q.dr + 9) / 0.693]);
+const lo = Math.min(...Array.from({length: 0})), ramp = t => { const s3 = [[0, mt[2]], [0.5, mt[1]], [1, mt[0]]]; for (let k = 1; k < 3; k++) if (t <= s3[k][0]) { const [ta, ca] = s3[k - 1], [tb, cb] = s3[k], u = (t - ta) / (tb - ta); return [ca[0] + (cb[0] - ca[0]) * u, ca[1] + (cb[1] - ca[1]) * u, ca[2] + (cb[2] - ca[2]) * u]; } return mt[0]; };
+for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+const n = y * W + x, k = n * 4; if (!d[k + 3]) continue;
+let w = 1; if (x > x0 && x < x1 && y > y0 && y < y1) w = 0;
+if (w) for (const [cx, cy, r0] of pk) { const dd = Math.hypot(x - cx, y - cy); if (dd < r0 + 1) { w = Math.min(w, Math.max(0, (dd - r0 + 4) / 5)); } }
+if (!w) continue;
+const t = Math.min(1, Math.max(0, (Math.max(L0[n], 0.32) - 0.32) / 0.5)), sh = Math.sin((x * 0.5 + y) / (W * 0.5 + H) * Math.PI * 3) * 0.12, c = ramp(Math.min(1, Math.max(0, t * 0.8 + 0.15 + sh)));
+d[k] = d[k] * (1 - w) + c[0] * w; d[k + 1] = d[k + 1] * (1 - w) + c[1] * w; d[k + 2] = d[k + 2] * (1 - w) + c[2] * w;
+}
+g.putImageData(id, 0, 0);
 }
 return TINT_TBL[key] = cv;
 }
