@@ -5457,7 +5457,7 @@ let OLD_MODE = false;
 const isCityTable = c => !!c && !!c.id && c.pat !== "lucky" && c.id !== "golden" && !!c.felt && !!c.rail;   // every table, city or shop skin, wears the ornate picture frame
 const TINT_TBL = {};
 function tintedTable(city) {
-const key = city.felt[0] + city.felt[1] + city.rail[0] + city.rail[1];
+const lx = !!(tblOf(city) || {}).lux, key = city.felt[0] + city.felt[1] + city.rail[0] + city.rail[1] + (lx ? "L" : "");
 if (TINT_TBL[key]) return TINT_TBL[key];
 const W = SYD_TBL.naturalWidth, H = SYD_TBL.naturalHeight, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
 const g = cv.getContext("2d"); g.drawImage(SYD_TBL, 0, 0);
@@ -5465,10 +5465,17 @@ const id = g.getImageData(0, 0, W, H), d = id.data, hx = h => { const n = parseI
 const mid = f0.map((v, i) => v * 0.55 + f1[i] * 0.45), cb = f0.map((v, i) => Math.min(255, v * 0.82 + f1[i] * 0.18 + 20));   // cb: the city's own cushion colour (as on its old table)
 for (let i = 0; i < d.length; i += 4) {
 const r = d[i], gg = d[i + 1], b = d[i + 2];
-if (r > gg * 1.12 && r > 18 && b < gg + 8) { const kw = Math.min(1.6, r / 70), w = Math.min(1, (r / Math.max(1, gg) - 1.12) / 0.3) * 0.85; d[i] = d[i] * (1 - w) + Math.min(255, rl[0] * kw) * w; d[i + 1] = d[i + 1] * (1 - w) + Math.min(255, rl[1] * kw) * w; d[i + 2] = d[i + 2] * (1 - w) + Math.min(255, rl[2] * kw) * w; }   // the wooden frame takes the city's rail colour
+if (r > gg * 1.12 && r > 18 && b < gg + 8) { const kw = lx ? 0.82 + Math.min(1, r / 200) * 0.5 : Math.min(1.6, r / 70), w = Math.min(1, (r / Math.max(1, gg) - 1.12) / 0.3) * (lx ? 0.95 : 0.85); d[i] = d[i] * (1 - w) + Math.min(255, rl[0] * kw) * w; d[i + 1] = d[i + 1] * (1 - w) + Math.min(255, rl[1] * kw) * w; d[i + 2] = d[i + 2] * (1 - w) + Math.min(255, rl[2] * kw) * w; }   // the wooden frame takes the city's rail colour
 else if (gg > r + 12 && gg > b + 8 && gg > 25) { const k = Math.min(1.5, gg / 100), kc = Math.min(1.3, gg / 128), w = Math.max(0, Math.min(1, (gg - 112) / 12)); d[i] = Math.min(255, mid[0] * k * (1 - w) + cb[0] * kc * w); d[i + 1] = Math.min(255, mid[1] * k * (1 - w) + cb[1] * kc * w); d[i + 2] = Math.min(255, mid[2] * k * (1 - w) + cb[2] * kc * w); }
 }
 g.putImageData(id, 0, 0);
+if (lx) {   // metal tables: the picture's outer lip, corner pieces and pocket collars are repainted as clean polished metal (the photo's wood specks / grey crumbs never show)
+const mt = tblOf(city).metal, sx2 = 0.967, sy2 = 0.9713, ml = document.createElement("canvas"); ml.width = W; ml.height = H;
+const m2 = ml.getContext("2d"), mg = m2.createLinearGradient(0, 0, W * 0.5, H); [[0, mt[1]], [0.12, mt[0]], [0.3, mt[2]], [0.5, mt[1]], [0.7, mt[0]], [0.9, mt[2]], [1, mt[1]]].forEach(([o, c]) => mg.addColorStop(o, c));
+m2.fillStyle = mg; m2.fillRect(0, 0, W, H); m2.globalCompositeOperation = "destination-out"; m2.fillRect(48 * sx2, 63 * sy2, (1627 - 48) * sx2, (830 - 63) * sy2);
+for (const q of (typeof POCKETS !== "undefined" ? POCKETS : [])) { const cx = (q.x + q.dx + 61) / 0.693, cy = (q.y + q.dy + 70) / 0.7428, r0 = (q.dr + 9) / 0.693, rg = m2.createRadialGradient(cx, cy, r0 - 4, cx, cy, r0 + 1); rg.addColorStop(0, "rgba(0,0,0,1)"); rg.addColorStop(1, "rgba(0,0,0,0)"); m2.fillStyle = rg; m2.beginPath(); m2.arc(cx, cy, r0 + 2, 0, Math.PI * 2); m2.fill(); }
+g.save(); g.globalCompositeOperation = "source-atop"; g.globalAlpha = 0.93; g.drawImage(ml, 0, 0); g.restore();
+}
 return TINT_TBL[key] = cv;
 }
 function woodMask() {   // alpha mask of the picture's wooden rail (soft), used to cut the rail out so artwork can sit *behind* the cushions, arcs and pockets
