@@ -5555,13 +5555,17 @@ if (vs) {   // VIP tables: the supplied ornate rail replaces the picture's top a
 const ix = x => -61 + x * 0.6702, iy = y => -70 + y * 0.7215, pa = vs.band;
 const hh = hexHueOf(city.gem), c1 = hslS(hh, 70, 20), c2 = hslS(hh, 75, 12), fg = ctx.createLinearGradient(0, FY - 70, 0, FY + 607); fg.addColorStop(0, c1); fg.addColorStop(0.5, c2); fg.addColorStop(1, c1);
 ctx.fillStyle = fg; ctx.fillRect(FX - 61, FY - 70, 1122.6, 677.5);
-for (const vx of [ix(16) - 3, ix(1627) - 3]) { const dw = ix(48) - ix(16) + 6, dy = iy(110), dh = iy(806) - iy(110), hl = dh / 2;
-ctx.save(); ctx.beginPath(); ctx.rect(FX + vx, FY + dy, dw, dh); ctx.clip(); ctx.imageSmoothingQuality = "high"; ctx.translate(FX + vx + dw, FY + dy); ctx.rotate(Math.PI / 2); ctx.drawImage(pa, 0, 0, hl, dw); ctx.translate(dh, 0); ctx.scale(-1, 1); ctx.drawImage(pa, 0, 0, hl, dw); ctx.restore(); }
+for (const vx of [ix(16) - 3, ix(1627) - 3]) { const dw = ix(48) - ix(16) + 6, dy = iy(110), dh = iy(806) - iy(110);   // upright side rail: dark band, gold edge lines, medallions and diamonds cut from the supplied strip (never rotated)
+ctx.save(); ctx.beginPath(); ctx.rect(FX + vx, FY + dy, dw, dh); ctx.clip(); const bg = ctx.createLinearGradient(FX + vx, 0, FX + vx + dw, 0); bg.addColorStop(0, hslS(hh, 80, 14)); bg.addColorStop(0.5, hslS(hh, 85, 8)); bg.addColorStop(1, hslS(hh, 80, 14)); ctx.fillStyle = bg; ctx.fillRect(FX + vx, FY + dy, dw, dh);
+ctx.imageSmoothingQuality = "high"; const med = dw * 0.9, dia = dw * 0.62;
+const cc = (sx, sy, sw, sh, cx, cy, d) => { ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, d / 2 - 0.3, 0, 7); ctx.clip(); ctx.drawImage(vs.cv, sx, sy, sw, sh, cx - d / 2, cy - d / 2, d, d); ctx.restore(); };
+for (let y = dy + 46; y < dy + dh - 30; y += 112) { cc(350, 37, 56, 56, FX + vx + dw / 2, FY + y, med); for (const o of [-52, 52]) cc(293, 49, 30, 30, FX + vx + dw / 2, FY + y + o, dia); }
+ctx.fillStyle = "#e0b04e"; ctx.fillRect(FX + vx, FY + dy, 1.1, dh); ctx.fillRect(FX + vx + dw - 1.1, FY + dy, 1.1, dh); ctx.restore(); }
 ctx.drawImage(holedTable(city), FX - 61, FY - 70, 1122.6, 677.5);
-const SW = 1122.6, SH = SW * vs.cv.height / vs.cv.width, cut = SH * 0.5, topY = FY - 84, botY = FY + 569;   // strip's cushion lip lands exactly on the playing-field edge
-ctx.save(); ctx.fillStyle = hslS(hh, 60, 22); ctx.fillRect(FX - 61, botY, SW, FY + 608 - botY); ctx.restore();
-ctx.save(); ctx.beginPath(); ctx.rect(FX - 61, topY + 9, SW, cut - 9); ctx.clip(); ctx.drawImage(vs.cv, FX - 61, topY, SW, SH); ctx.restore();
-ctx.save(); ctx.beginPath(); ctx.rect(FX - 61, botY - cut, SW, cut - 9); ctx.clip(); ctx.translate(0, botY); ctx.scale(1, -1); ctx.drawImage(vs.cv, FX - 61, 0, SW, SH); ctx.restore();
+const SW = 1145.6, SH = SW * vs.cv.height / vs.cv.width, cut = SH * 0.5, topY = FY - 86.5, botY = FY + 575.7, X0 = FX - 73;   // scaled/shifted so the strip's pockets sit exactly on the picture's pockets   // strip's cushion lip lands exactly on the playing-field edge
+ctx.save(); ctx.fillStyle = hslS(hh, 60, 22); ctx.fillRect(FX - 61, botY - 4, 1122.6, FY + 608 - botY + 4); ctx.restore();
+ctx.save(); ctx.beginPath(); ctx.rect(FX - 61, topY + 7, 1122.6, cut - 7); ctx.clip(); ctx.drawImage(vs.cv, X0, topY, SW, SH); ctx.restore();
+ctx.save(); ctx.beginPath(); ctx.rect(FX - 61, botY - cut, 1122.6, cut - 7); ctx.clip(); ctx.translate(0, botY); ctx.scale(1, -1); ctx.drawImage(vs.cv, X0, 0, SW, SH); ctx.restore();
 return;
 }
 ctx.drawImage(syd ? SYD_TBL : tintedTable(city), FX - 61, FY - 70, 1122.6, 677.5);   // the picture's cushion noses sit exactly on the playing field (balls touch the cushion, not the wood)
