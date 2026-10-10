@@ -5625,7 +5625,8 @@ panel(lef, -rc - T / 2, 0, ix(16), iy(160), ix(48) - ix(16), iy(779) - iy(160), 
 panel(rig, FW + rc - T / 2, 0, ix(1627), iy(160), ix(1659) - ix(1627), iy(779) - iy(160), true, 30, 470);
 }
 function paintTable(city) {
-if (!OLD_MODE && SYD_TBL.complete && SYD_TBL.naturalWidth && isCityTable(city)) { paintImgTable(city); return; }   // every city plays on the ornate picture table; the city only changes cloth colour and rail ornament
+if ((tblOf(city) || {}).lux && !city._viv) city = Object.assign({}, city, {felt: city.felt.map(vividHex), _viv: 1});   // premium cloth: clear bright colour, never black
+if (!OLD_MODE && SYD_TBL.complete && SYD_TBL.naturalWidth && isCityTable(city) && !(tblOf(city) || {}).lux) { paintImgTable(city); return; }   // every city plays on the ornate picture table; the city only changes cloth colour and rail ornament
 const [r1, r2] = city.rail, trim = city.trim, lucky = city.pat === "lucky";
 const OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
 let seed = 11; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -5980,7 +5981,7 @@ const wg2 = feltWeave.getContext("2d"); wg2.fillStyle = "rgba(255,255,255,.095)"
 ctx.fillStyle = ctx.createPattern(feltWeave, "repeat"); ctx.fillRect(0, 0, FW, FH);
 const edge = (x, y, w, h, x1, y1, x2, y2) => { const g = ctx.createLinearGradient(x1, y1, x2, y2); g.addColorStop(0, "rgba(0,0,0,.14)"); g.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = g; ctx.fillRect(x, y, w, h); };
 edge(0, 0, FW, 12, 0, 0, 0, 12); edge(0, FH - 12, FW, 12, 0, FH, 0, FH - 12); edge(0, 0, 12, FH, 0, 0, 12, 0); edge(FW - 12, 0, 12, FH, FW, 0, FW - 12, 0);
-if (!lucky) {
+if (!lucky && !(tblOf(city) || {}).lux) {   // premium tables keep a clean cloth (no printed logo / venue name)
 const rid = city.ring || city.id, rim = rid && ringPicSoft(rid);
 if (rim) {                                  // the city's ring printed on the cloth, like a table logo
 ctx.save(); ctx.globalAlpha = typeof ringOf === "function" && ringOf({id: rid}) ? 0.4 : 0.2; ctx.globalCompositeOperation = "luminosity";
