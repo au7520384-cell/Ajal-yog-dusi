@@ -5586,11 +5586,11 @@ const s = (vert ? dw : dh) / T, Ls = sb - sa, Ss = Ls * s, len = vert ? dh : dw,
 ctx.save(); ctx.beginPath(); if (lxp) rr(FX + dx, FY + dy, dw, dh, pr); else ctx.rect(FX + dx, FY + dy, dw, dh); ctx.clip(); ctx.imageSmoothingQuality = "high";
 if (lxp) {   // premium: the inlay is drawn straight into the channel at full sharpness: dark enamel ground, bright metal ornament filling the whole height, a jewel in the middle
 const stp = tblOf(city), [mh, mm, mlo] = stp.metal, bgc = stp.bg || ["#2a3448", "#06080e"], kind = stp.orn || {l_dia: "x_dia", l_bdi: "x_blk", l_opl: "x_aur"}[city.id] || "x_dia";
-const eg = ctx.createLinearGradient(FX + dx, FY + dy, vert ? FX + dx + dw : FX + dx, vert ? FY + dy : FY + dy + dh); eg.addColorStop(0, bgc[1]); eg.addColorStop(0.5, shade(bgc[0], 18)); eg.addColorStop(1, bgc[1]);
+const eg = ctx.createLinearGradient(FX + dx, FY + dy, vert ? FX + dx + dw : FX + dx, vert ? FY + dy : FY + dy + dh); [[0, mlo], [0.12, mm], [0.3, mh], [0.5, mm], [0.72, mh], [0.9, mm], [1, mlo]].forEach(([o, c]) => eg.addColorStop(o, c));   // the whole band is polished metal, the ornament is raised on it
 ctx.fillStyle = eg; ctx.fillRect(FX + dx, FY + dy, dw, dh);
 const th = vert ? dw : dh, kk = th * 0.84 / (2 * ornExtent(kind)), Lr = len / kk;
 ctx.save(); if (!vert) { ctx.translate(FX + dx, FY + dy + dh / 2); } else { ctx.translate(FX + dx + dw / 2, FY + dy); ctx.rotate(Math.PI / 2); } ctx.scale(kk, kk);
-ornDraw(kind, Lr, {hi: shade(mh, 20), mid: mh, lo: mm, gem: stp.gemrow || (stp.pave && stp.pave !== "opal" ? stp.pave : null) || mh});
+ornDraw(kind, Lr, {hi: shade(mh, 30), mid: shade(mm, -25), lo: shade(mlo, -45), gem: stp.gemrow || (stp.pave && stp.pave !== "opal" ? stp.pave : null) || mh});
 ctx.restore();
 const gc = stp.gemrow || (stp.pave && stp.pave !== "opal" ? stp.pave : null) || city.gem || mh, cx2 = FX + dx + dw / 2, cy2 = FY + dy + dh / 2, gr0 = th * 0.36;
 ctx.save(); ctx.fillStyle = shade(mm, -30); ctx.beginPath(); ctx.arc(cx2, cy2, gr0 + 2.2, 0, 7); ctx.fill(); const bz = ctx.createLinearGradient(cx2, cy2 - gr0, cx2, cy2 + gr0); bz.addColorStop(0, mh); bz.addColorStop(1, mlo); ctx.fillStyle = bz; ctx.beginPath(); ctx.arc(cx2, cy2, gr0 + 1.2, 0, 7); ctx.fill(); luxGem(cx2, cy2, gr0, gc, Math.random); ctx.restore();
@@ -5603,7 +5603,7 @@ else { ctx.translate(FX + dx, FY + dy + o + (flip ? Ss : 0)); ctx.scale(1, flip 
 ctx.restore();
 }
 if (lxp) {   // recessed channel: dark inner shadow along the top/left, a bright lip along the bottom/right, rounded ends
-const ig = ctx.createLinearGradient(FX + dx, FY + dy, vert ? FX + dx + dw : FX + dx, vert ? FY + dy : FY + dy + dh); ig.addColorStop(0, "rgba(0,0,0,.55)"); ig.addColorStop(0.18, "rgba(0,0,0,0)"); ig.addColorStop(0.82, "rgba(0,0,0,0)"); ig.addColorStop(1, "rgba(0,0,0,.35)");
+const ig = ctx.createLinearGradient(FX + dx, FY + dy, vert ? FX + dx + dw : FX + dx, vert ? FY + dy : FY + dy + dh); ig.addColorStop(0, "rgba(0,0,0,.28)"); ig.addColorStop(0.12, "rgba(0,0,0,0)"); ig.addColorStop(0.88, "rgba(0,0,0,0)"); ig.addColorStop(1, "rgba(0,0,0,.22)");
 ctx.fillStyle = ig; ctx.fillRect(FX + dx, FY + dy, dw, dh);
 ctx.lineWidth = 1.6; ctx.strokeStyle = "rgba(0,0,0,.6)"; rr(FX + dx + 0.8, FY + dy + 0.8, dw - 1.6, dh - 1.6, pr - 0.8); ctx.stroke();
 }
@@ -5614,7 +5614,7 @@ const top = band(0, -rc - T / 2, FW, T), bot = band(0, FH + rc - T / 2, FW, T), 
 if ((tblOf(city) || {}).lux) {   // premium: the inlay fills the whole rail band, from collar to collar and from the outer lip to the cushion
 const px = x => -61 + x * 0.693, py = y => -70 + y * 0.7428;   // the picture is drawn at 1122.6 x 677.5 table units
 const hz = (x0, x1, y0, y1) => panel(top, 0, 0, px(x0), py(y0), px(x1) - px(x0), py(y1) - py(y0), false, 0, 0), vt = (x0, x1, y0, y1) => panel(lef, 0, 0, px(x0), py(y0), px(x1) - px(x0), py(y1) - py(y0), true, 0, 0);
-hz(136, 741, 17, 61); hz(878, 1483, 17, 61); hz(136, 741, 804, 848); hz(878, 1483, 804, 848); vt(10, 52, 139, 723); vt(1567, 1609, 139, 723);
+hz(133, 744, 11, 64); hz(875, 1486, 11, 64); hz(133, 744, 801, 856); hz(875, 1486, 801, 856); vt(5, 55, 136, 726); vt(1564, 1614, 136, 726);
 return;
 }
 panel(top, 0, -rc - T / 2, ix(152), iy(30), ix(754) - ix(152), iy(63) - iy(30), false, 30, 460);
@@ -5626,7 +5626,7 @@ panel(rig, FW + rc - T / 2, 0, ix(1627), iy(160), ix(1659) - ix(1627), iy(779) -
 }
 function paintTable(city) {
 if ((tblOf(city) || {}).lux && !city._viv) city = Object.assign({}, city, {felt: city.felt.map(vividHex), _viv: 1});   // premium cloth: clear bright colour, never black
-if (!OLD_MODE && SYD_TBL.complete && SYD_TBL.naturalWidth && isCityTable(city) && !(tblOf(city) || {}).lux) { paintImgTable(city); return; }   // every city plays on the ornate picture table; the city only changes cloth colour and rail ornament
+if (!OLD_MODE && SYD_TBL.complete && SYD_TBL.naturalWidth && isCityTable(city)) { paintImgTable(city); return; }   // every city plays on the ornate picture table; the city only changes cloth colour and rail ornament
 const [r1, r2] = city.rail, trim = city.trim, lucky = city.pat === "lucky";
 const OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
 let seed = 11; const rn = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
