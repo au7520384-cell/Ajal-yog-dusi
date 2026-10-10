@@ -5503,8 +5503,9 @@ const trim = (x, y, w, h) => { ctx.save(); ctx.fillStyle = "rgba(0,0,0,.35)"; ct
 const hb = (x0, x1, y0, y1, up, ml, mr) => { const ay = up ? y0 - 14.2 : y0 - 1.2, ah = y1 - y0 + (up ? 15.4 : 19.4); ctx.save(); ctx.beginPath(); ctx.rect(FX + x0 - ml, FY + ay + 3, x1 - x0 + ml + mr, ah - 3); ctx.clip(); art(x0 - ml, ay, x1 - x0 + ml + mr, ah, false); ctx.restore(); trim(x0 - ml, ay + 3, x1 - x0 + ml + mr, ah - 3); };
 hb(ix(152), ix(754), iy(30), iy(63), true, 17, 16); hb(ix(921), ix(1523), iy(30), iy(63), true, 16, 17);
 hb(ix(152), ix(754), iy(830), iy(868), false, 17, 16); hb(ix(921), ix(1523), iy(830), iy(868), false, 16, 17);
-for (const vx of [ix(16) - 3, ix(1627) - 3]) { ctx.save(); ctx.beginPath(); ctx.rect(FX + vx, FY + iy(133), ix(48) - ix(16) + 6, iy(806) - iy(133)); ctx.clip(); art(vx, iy(128), ix(48) - ix(16) + 6, iy(812) - iy(128), true); ctx.restore(); } trim(ix(16) - 3, iy(133), ix(48) - ix(16) + 6, iy(806) - iy(133)); trim(ix(1627) - 3, iy(133), ix(1659) - ix(1627) + 6, iy(806) - iy(133));
+for (const vx of [ix(16) - 3, ix(1627) - 3]) { ctx.save(); ctx.beginPath(); ctx.rect(FX + vx, FY + iy(110), ix(48) - ix(16) + 6, iy(806) - iy(110)); ctx.clip(); art(vx, iy(128), ix(48) - ix(16) + 6, iy(812) - iy(128), true); ctx.restore(); } trim(ix(16) - 3, iy(110), ix(48) - ix(16) + 6, iy(806) - iy(110)); trim(ix(1627) - 3, iy(110), ix(1659) - ix(1627) + 6, iy(806) - iy(110));
 ctx.drawImage(holedTable(city), FX - 61, FY - 70, 1122.6, 677.5);
+ctx.save(); ctx.fillStyle = c1; for (const [x0, x1] of [[ix(152) - 17, ix(754) + 16], [ix(921) - 16, ix(1523) + 17]]) { ctx.fillRect(FX + x0, FY + iy(12), x1 - x0, iy(30) - iy(12) - 5.4); ctx.fillRect(FX + x0, FY + iy(868) + 1.4, x1 - x0, iy(884) - iy(868)); } ctx.restore();   // plain rail colour above/below the inlays: hides the picture's leftover dark specks
 return;
 }
 ctx.drawImage(syd ? SYD_TBL : tintedTable(city), FX - 61, FY - 70, 1122.6, 677.5);   // the picture's cushion noses sit exactly on the playing field (balls touch the cushion, not the wood)
