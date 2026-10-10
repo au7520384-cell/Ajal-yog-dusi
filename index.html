@@ -5486,10 +5486,10 @@ const [c1, c2] = city.rail, g = ctx.createLinearGradient(0, FY + dy, 0, FY + dy 
 ctx.save(); ctx.fillStyle = g; ctx.fillRect(FX + dx, FY + dy, dw, dh);
 ctx.fillStyle = "rgba(255,225,150,.85)"; ctx.fillRect(FX + dx, FY + dy + 0.6, dw, 0.9); ctx.fillRect(FX + dx, FY + dy + dh - 1.5, dw, 0.9); ctx.restore();
 };
-const M = 9, hb = (x0, x1, y0, y1, up) => { bar(x0 - M, x1 - x0 + 2 * M, y0 - (up ? 11.4 : 2.5), y1 - y0 + 13.9, up); const ay = up ? y0 - 8.6 : y0 - 1.2, ah = up ? y1 - y0 + 9.8 : y1 - y0 + 9.8; art(x0 - M, ay, x1 - x0 + 2 * M, ah, false);
-for (const ex of [x0 - M, x1 + M - 2.2]) { const gg = ctx.createLinearGradient(FX + ex, 0, FX + ex + 2.2, 0); gg.addColorStop(0, "#7a5a1c"); gg.addColorStop(0.5, "#ffe6a0"); gg.addColorStop(1, "#8a6420"); ctx.fillStyle = gg; ctx.fillRect(FX + ex, FY + ay, 2.2, ah); } };
-hb(ix(152), ix(754), iy(30), iy(63), true); hb(ix(921), ix(1523), iy(30), iy(63), true);
-hb(ix(152), ix(754), iy(830), iy(868), false); hb(ix(921), ix(1523), iy(830), iy(868), false);
+const hb = (x0, x1, y0, y1, up, ml = 9, mr = 9) => { const M = 0; bar(x0 - ml, x1 - x0 + ml + mr, y0 - (up ? 11.4 : 2.5), y1 - y0 + 13.9, up); const ay = up ? y0 - 8.6 : y0 - 1.2, ah = up ? y1 - y0 + 9.8 : y1 - y0 + 9.8; art(x0 - ml, ay, x1 - x0 + ml + mr, ah, false);
+for (const ex of [x0 - ml, x1 + mr - 2.2]) { const gg = ctx.createLinearGradient(FX + ex, 0, FX + ex + 2.2, 0); gg.addColorStop(0, "#7a5a1c"); gg.addColorStop(0.5, "#ffe6a0"); gg.addColorStop(1, "#8a6420"); ctx.fillStyle = gg; ctx.fillRect(FX + ex, FY + ay, 2.2, ah); } };
+hb(ix(152), ix(754), iy(30), iy(63), true, 11, 16); hb(ix(921), ix(1523), iy(30), iy(63), true, 16, 11);
+hb(ix(152), ix(754), iy(830), iy(868), false, 11, 16); hb(ix(921), ix(1523), iy(830), iy(868), false, 16, 11);
 art(ix(16), iy(160), ix(48) - ix(16), iy(779) - iy(160), true); art(ix(1627), iy(160), ix(1659) - ix(1627), iy(779) - iy(160), true);
 return;
 }
