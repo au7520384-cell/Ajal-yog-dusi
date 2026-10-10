@@ -229,6 +229,9 @@ transform:translateX(-120%);animation:luxsh 2.8s linear infinite;will-change:tra
 .tbadge.te{background:linear-gradient(90deg,#10406a,#8fe8ff,#10406a);color:#04202e;box-shadow:0 0 8px #40c8ff66}
 .tbon{color:#8dff9a;font-weight:900}
 .pfgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.frstage{position:relative;width:100%;display:flex;justify-content:center;padding:12px 0 8px;margin-bottom:2px;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse 85% 75% at 50% 48%,var(--gl,rgba(255,200,90,.8)),rgba(0,0,0,0) 78%),radial-gradient(circle at 18% 22%,rgba(255,255,255,.18) 0 1.5px,transparent 2.5px),radial-gradient(circle at 82% 30%,rgba(255,255,255,.16) 0 1.5px,transparent 2.5px),radial-gradient(circle at 70% 78%,rgba(255,255,255,.12) 0 1.2px,transparent 2px),linear-gradient(#241d42,#0a0814);box-shadow:inset 0 0 0 1px rgba(255,214,120,.35),inset 0 -16px 20px rgba(0,0,0,.55)}
+.frstage:after{content:"";position:absolute;left:14%;right:14%;bottom:5px;height:9px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.7),transparent 70%)}
+.frstage>*{position:relative;z-index:1}
 .pfcard{border-color:#ffcf3d;background:linear-gradient(#3a2e5e,#1b1433);gap:4px}.pfcard .tpay{width:100%}.pfcard .tedn{width:100%;font-size:11px}
 .pcrow{border-color:#ffcf3d!important;background:linear-gradient(90deg,#3a2e5e,#1b1433)!important;box-shadow:0 0 16px #ffcf3d44}
 .pcrow .tpay{margin-bottom:4px}
@@ -7675,13 +7678,14 @@ body.innerHTML = `<div class="tblhead">👑 ${T("Premium ramkalar")} <small>${T(
 <div class="tblhead">💀 ${T("Qo'rqinchli ramkalar")}</div><div class="avgrid pfgrid" id="hfGrid"></div>
 <div class="tblhead">♛ ${T("VIP ramkalar")} <small>${T("VIP to'plamlar bilan birga beriladi")}</small></div><div class="avgrid pfgrid" id="vfGrid"></div>
 <div class="tblhead">🖼 ${T("Ramkalar")}</div><div class="avgrid" id="frGrid"></div>`;
+const frGlow = (el, f) => { const u = FRIMG[f.id]; if (!u) return; const im = new Image(); im.onload = () => { try { const c = document.createElement("canvas"); c.width = c.height = 24; const x = c.getContext("2d"); x.drawImage(im, 0, 0, 24, 24); const d = x.getImageData(0, 0, 24, 24).data; let r = 0, g = 0, b = 0, w = 0; for (let k = 0; k < d.length; k += 4) { const a = d[k + 3] / 255, mx = Math.max(d[k], d[k + 1], d[k + 2]), mn = Math.min(d[k], d[k + 1], d[k + 2]), q = a * (mx - mn + 8) * mx; r += d[k] * q; g += d[k + 1] * q; b += d[k + 2] * q; w += q; } if (w > 0) { const m = Math.max(r, g, b) / w; el.querySelector(".frstage").style.setProperty("--gl", `rgba(${Math.round(r / w * 255 / m)},${Math.round(g / w * 255 / m)},${Math.round(b / w * 255 / m)},.85)`); } } catch (e) { } }; im.src = u; };
 const pg = $("pfGrid");
 FRAMES.forEach((f, i) => {
 if (!f.prem || f.shopH) return;
 const owned = profile.frames.includes(i), sel = (profile.frame | 0) === i, no = (profile.editions || {})[f.id], so = soldOut(f.id);
 if (f.vip || (f.ps && !owned)) return;
 const el = document.createElement("div"); el.className = "avcard pfcard" + (sel ? " sel" : "");
-el.innerHTML = `${avHTML(profile.avatar, i, 70)}<small class="h" style="color:#ffe27a">👑 ${esc(T(f.name))}</small>${no ? `<small class="muted">№ ${fmt(no)} / ${fmt(EDITION_CAP[f.id])}</small>` : owned ? "" : edLine(f.id)}
+el.innerHTML = `<div class="frstage">${avHTML(profile.avatar, i, 70)}</div><small class="h" style="color:#ffe27a">👑 ${esc(T(f.name))}</small>${no ? `<small class="muted">№ ${fmt(no)} / ${fmt(EDITION_CAP[f.id])}</small>` : owned ? "" : edLine(f.id)}
 ${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`)
 : `<div class="tpay"><button class="btn purple" data-p="cash" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💵 ${fmt(f.v)}`}</button><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>💎 ${f.gems}</button></div>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd" ${so ? "disabled" : ""}>$${f.usd}</button>`}`}`;
 const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = fn; };
@@ -7690,28 +7694,28 @@ on("use", use);
 on("cash", () => buyFrame(f, i, "cash", f.v).then(ok => ok && buildShop("frames")));
 on("gems", () => buyFrame(f, i, "gems", f.gems).then(ok => ok && buildShop("frames")));
 on("usd", () => Net.checkout("frame_" + f.id, el.querySelector('[data-p="usd"]')));
-pg.appendChild(el);
+frGlow(el, f); pg.appendChild(el);
 });
 const vg = $("vfGrid");
 FRAMES.forEach((f, i) => {   // all 82 VIP frames: owners can wear them, others open the VIP bundle that contains the frame
 if (!f.vip) return;
 const owned = profile.frames.includes(i), sel = (profile.frame | 0) === i, el = document.createElement("div"); el.className = "avcard pfcard" + (sel ? " sel" : "");
-el.innerHTML = `${avHTML(profile.avatar, i, 70)}<small class="h" style="color:#ffd24d">♛ ${esc(T(f.name))}</small>${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`) : `<button class="btn orange" data-p="vip">♛ VIP</button>`}`;
+el.innerHTML = `<div class="frstage">${avHTML(profile.avatar, i, 70)}</div><small class="h" style="color:#ffd24d">♛ ${esc(T(f.name))}</small>${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`) : `<button class="btn orange" data-p="vip">♛ VIP</button>`}`;
 const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = fn; };
 on("use", () => { profile.frame = i; save(); updateNav(); Net.sync(); buildShop("frames"); });
 on("vip", () => { const pg = VOP().find(o => o.tiers.some(x => x.frame === f.id)); if (pg) { $("modal").classList.remove("on"); vipOffers(pg.id); } });
-vg.appendChild(el);
+frGlow(el, f); vg.appendChild(el);
 });
 const hg = $("hfGrid");
 FRAMES.forEach((f, i) => {
 if (!f.shopH) return;
 const owned = profile.frames.includes(i), sel = (profile.frame | 0) === i, el = document.createElement("div"); el.className = "avcard pfcard" + (sel ? " sel" : "");
-el.innerHTML = `${avHTML(profile.avatar, i, 70)}<small class="h" style="color:#ff9a9a">💀 ${esc(T(f.name))}</small>${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`) : `<div class="tpay"><button class="btn purple" data-p="cash">💵 ${fmt(f.v)}</button><button class="btn blue" data-p="gems">💎 ${f.gems}</button></div>`}`;
+el.innerHTML = `<div class="frstage">${avHTML(profile.avatar, i, 70)}</div><small class="h" style="color:#ff9a9a">💀 ${esc(T(f.name))}</small>${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`) : `<div class="tpay"><button class="btn purple" data-p="cash">💵 ${fmt(f.v)}</button><button class="btn blue" data-p="gems">💎 ${f.gems}</button></div>`}`;
 const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = fn; };
 on("use", () => { profile.frame = i; save(); updateNav(); Net.sync(); buildShop("frames"); });
 on("cash", () => buyFrame(f, i, "cash", f.v).then(ok => ok && buildShop("frames")));
 on("gems", () => buyFrame(f, i, "gems", f.gems).then(ok => ok && buildShop("frames")));
-hg.appendChild(el);
+frGlow(el, f); hg.appendChild(el);
 });
 const grid = $("frGrid");
 FRAMES.forEach((f, i) => {
