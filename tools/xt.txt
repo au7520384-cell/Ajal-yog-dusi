@@ -1121,3 +1121,4 @@ Yangi xabar‖New message|Новое сообщение|Yeni mesaj|Nuevo mensaje
 VIP stollar‖VIP tables|VIP-столы|VIP masalar|Mesas VIP|Mesas VIP|طاولات VIP|Meja VIP|VIP टेबल|Tables VIP|VIP-Tische|VIP 테이블|VIPテーブル|VIP球桌
 VIP to'plam‖VIP bundle|VIP-набор|VIP paket|Paquete VIP|Pacote VIP|حزمة VIP|Paket VIP|VIP बंडल|Pack VIP|VIP-Paket|VIP 패키지|VIPセット|VIP礼包
 VIP to'plamlar bilan birga beriladi‖Given together with VIP bundles|Выдаются вместе с VIP-наборами|VIP paketlerle birlikte verilir|Se entregan con los paquetes VIP|Vêm junto com os pacotes VIP|تُمنح مع حزم VIP|Diberikan bersama paket VIP|VIP बंडल के साथ मिलते हैं|Offerts avec les packs VIP|Gibt es zusammen mit VIP-Paketen|VIP 패키지와 함께 제공|VIPセットと一緒に入手|随VIP礼包一同赠送
+VIP ramkalar‖VIP frames|VIP-рамки|VIP çerçeveler|Marcos VIP|Molduras VIP|إطارات VIP|Bingkai VIP|VIP फ़्रेम|Cadres VIP|VIP-Rahmen|VIP 프레임|VIPフレーム|VIP头像框
