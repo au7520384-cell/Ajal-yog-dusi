@@ -5521,6 +5521,12 @@ g.save(); g.translate(cx, cy); g.scale(1, ry); const hg = g.createRadialGradient
 g.fillStyle = hg; g.beginPath(); g.arc(0, 0, ri + 1, 0, Math.PI * 2); g.fill(); g.strokeStyle = "rgba(0,0,0,.75)"; g.lineWidth = 2.4; g.beginPath(); g.arc(0, 0, ri + 1.4, 0, Math.PI * 2); g.stroke(); g.restore(); }
 g.restore();
 }
+function cityEdgeClean(g, W, H) {   // city / special tables: the picture's outer silhouette is redrawn as a clean rounded edge with a crisp line (no soft fringe), the carved wood itself is untouched
+const OY0 = 8, OY1 = 871, ry = 0.933, CR = 66, bumps = [[809.5, 52, 56], [809.5, 809, 56]];
+g.save(); g.globalCompositeOperation = "destination-in"; g.beginPath(); g.roundRect ? g.roundRect(1, OY0, W - 2, OY1 - OY0, CR) : g.rect(1, OY0, W - 2, OY1 - OY0); for (const [cx, cy, rb] of bumps) { g.moveTo(cx + rb, cy); g.ellipse(cx, cy, rb, rb * ry, 0, 0, Math.PI * 2); } g.fill("nonzero"); g.restore();
+g.save(); g.globalCompositeOperation = "source-atop"; g.lineWidth = 3; g.strokeStyle = "rgba(0,0,0,.55)"; g.beginPath(); g.roundRect ? g.roundRect(1.5, OY0 + 1.5, W - 3, OY1 - OY0 - 3, CR) : g.rect(1.5, OY0 + 1.5, W - 3, OY1 - OY0 - 3); g.stroke();
+g.lineWidth = 1.6; g.strokeStyle = "rgba(255,255,255,.28)"; g.beginPath(); g.roundRect ? g.roundRect(4, OY0 + 4, W - 8, OY1 - OY0 - 8, CR - 3) : g.rect(4, OY0 + 4, W - 8, OY1 - OY0 - 8); g.stroke(); g.restore();
+}
 function tintedTable(city) {
 const lx = !!(tblOf(city) || {}).lux, key = city.felt[0] + city.felt[1] + city.rail[0] + city.rail[1] + (lx ? "L" : "");
 if (TINT_TBL[key]) return TINT_TBL[key];
@@ -5535,6 +5541,7 @@ else if (gg > r + 12 && gg > b + 8 && gg > 25) { const k = Math.min(1.5, gg / 10
 }
 g.putImageData(id, 0, 0);
 if (lx) { g.putImageData(id, 0, 0); { const st9 = tblOf(city); luxFrameOver(g, W, H, st9.metal, st9.gemrow || (st9.pave && st9.pave !== "opal" ? st9.pave : null) || city.gem || st9.metal[0]); } }
+else cityEdgeClean(g, W, H);
 return TINT_TBL[key] = cv;
 }
 function woodMask() {   // alpha mask of the picture's wooden rail (soft), used to cut the rail out so artwork can sit *behind* the cushions, arcs and pockets
@@ -5610,7 +5617,7 @@ ctx.save(); if (!vert) { ctx.translate(FX + dx, FY + dy + dh / 2); } else { ctx.
 ornDraw(kind, Lr, {hi: shade(mh, 30), mid: shade(mm, -25), lo: shade(mlo, -45), gem: stp.gemrow || (stp.pave && stp.pave !== "opal" ? stp.pave : null) || mh});
 ctx.restore();
 const gc = stp.gemrow || (stp.pave && stp.pave !== "opal" ? stp.pave : null) || city.gem || mh, cx2 = FX + dx + dw / 2, cy2 = FY + dy + dh / 2, gr0 = th * 0.36;
-ctx.save(); ctx.fillStyle = shade(mm, -30); ctx.beginPath(); ctx.arc(cx2, cy2, gr0 + 2.2, 0, 7); ctx.fill(); const bz = ctx.createLinearGradient(cx2, cy2 - gr0, cx2, cy2 + gr0); bz.addColorStop(0, mh); bz.addColorStop(1, mlo); ctx.fillStyle = bz; ctx.beginPath(); ctx.arc(cx2, cy2, gr0 + 1.2, 0, 7); ctx.fill(); luxGem(cx2, cy2, gr0, gc, Math.random); ctx.restore();
+ctx.save(); { const dg = ctx.createLinearGradient(cx2, cy2 - gr0 * 1.9, cx2, cy2 + gr0 * 1.9); dg.addColorStop(0, mh); dg.addColorStop(0.5, mm); dg.addColorStop(1, mlo); ctx.fillStyle = dg; ctx.beginPath(); ctx.arc(cx2, cy2, gr0 * 1.75, 0, 7); ctx.fill(); ctx.strokeStyle = "rgba(0,0,0,.4)"; ctx.lineWidth = 1; ctx.stroke(); } ctx.fillStyle = shade(mm, -30); ctx.beginPath(); ctx.arc(cx2, cy2, gr0 + 2.2, 0, 7); ctx.fill(); const bz = ctx.createLinearGradient(cx2, cy2 - gr0, cx2, cy2 + gr0); bz.addColorStop(0, mh); bz.addColorStop(1, mlo); ctx.fillStyle = bz; ctx.beginPath(); ctx.arc(cx2, cy2, gr0 + 1.2, 0, 7); ctx.fill(); luxGem(cx2, cy2, gr0, gc, Math.random); ctx.restore();
 } else
 for (let j = 0; j < n; j++) {
 const o = j * Ss, flip = j % 2;
