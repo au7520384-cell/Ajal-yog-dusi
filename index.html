@@ -5489,7 +5489,7 @@ function vividHex(hex) {   // lifts dull/dark felt colours into clear, bright on
 const n = parseInt(hex.slice(1), 16); let r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
 const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; let h = 0, l = (mx + mn) / 2, sa = d ? d / (1 - Math.abs(2 * l - 1)) : 0;
 if (d) h = mx === r ? ((g - b) / d + 6) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60;
-if (sa < 0.12) return hex;   // grey/black/white cloths stay as designed
+if (sa < 0.12) { if (l > 0.8) return hex; h = 214; l = l * 0.4 + 0.3; sa = 0.8; return hsl2hex(h, 80, Math.round(Math.min(46, Math.max(36, l * 100)))); }   // black / grey cloths become a clear bright blue (white stays)
 return hsl2hex(Math.round(h), Math.round(Math.max(sa, 0.62) * 100), Math.round(Math.min(Math.max(l * 100, 33), 46)));
 }
 const hexHueOf = hx => { const n = parseInt((hx || "#ffd24d").slice(1), 16), r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255, mx = Math.max(r, g, b), d = mx - Math.min(r, g, b); if (!d) return 40; const h = mx === r ? ((g - b) / d + 6) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; return Math.round(h * 60); };
