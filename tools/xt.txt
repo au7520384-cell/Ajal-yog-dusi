@@ -1118,3 +1118,6 @@ O'qilmagan‖Unread|Непрочитано|Okunmamış|Sin leer|Não lidas|غي�
 Xabarlar yo'q‖No messages|Нет сообщений|Mesaj yok|Sin mensajes|Sem mensagens|لا رسائل|Tidak ada pesan|कोई संदेश नहीं|Aucun message|Keine Nachrichten|메시지 없음|メッセージなし|没有消息
 Yangiliklar va mukofotlar‖News & rewards|Новости и награды|Haberler ve ödüller|Noticias y premios|Novidades e prêmios|الأخبار والمكافآت|Berita & hadiah|समाचार और पुरस्कार|Actus et récompenses|News & Belohnungen|소식 및 보상|ニュースと報酬|新闻和奖励
 Yangi xabar‖New message|Новое сообщение|Yeni mesaj|Nuevo mensaje|Nova mensagem|رسالة جديدة|Pesan baru|नया संदेश|Nouveau message|Neue Nachricht|새 메시지|新着メッセージ|新消息
+VIP stollar‖VIP tables|VIP-столы|VIP masalar|Mesas VIP|Mesas VIP|طاولات VIP|Meja VIP|VIP टेबल|Tables VIP|VIP-Tische|VIP 테이블|VIPテーブル|VIP球桌
+VIP to'plam‖VIP bundle|VIP-набор|VIP paket|Paquete VIP|Pacote VIP|حزمة VIP|Paket VIP|VIP बंडल|Pack VIP|VIP-Paket|VIP 패키지|VIPセット|VIP礼包
+VIP to'plamlar bilan birga beriladi‖Given together with VIP bundles|Выдаются вместе с VIP-наборами|VIP paketlerle birlikte verilir|Se entregan con los paquetes VIP|Vêm junto com os pacotes VIP|تُمنح مع حزم VIP|Diberikan bersama paket VIP|VIP बंडल के साथ मिलते हैं|Offerts avec les packs VIP|Gibt es zusammen mit VIP-Paketen|VIP 패키지와 함께 제공|VIPセットと一緒に入手|随VIP礼包一同赠送
