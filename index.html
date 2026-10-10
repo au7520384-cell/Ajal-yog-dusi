@@ -5564,8 +5564,8 @@ try { paintTable(city); } finally { OLD_MODE = false; ctx = saved; }
 return oc;
 };
 const panel = (oc, bx, by, dx, dy, dw, dh, vert, sa, sb) => {   // oc = band canvas whose origin is local (bx, by); dest rect in table units; source run sa..sb along the band
-const s = (vert ? dw : dh) / T, Ls = sb - sa, Ss = Ls * s, len = vert ? dh : dw, n = Math.ceil(len / Ss);
-ctx.save(); ctx.beginPath(); ctx.rect(FX + dx, FY + dy, dw, dh); ctx.clip(); ctx.imageSmoothingQuality = "high";
+const s = (vert ? dw : dh) / T, Ls = sb - sa, Ss = Ls * s, len = vert ? dh : dw, n = Math.ceil(len / Ss), lxp = !!(tblOf(city) || {}).lux, pr = Math.min(dw, dh) * 0.5;
+ctx.save(); ctx.beginPath(); if (lxp) rr(FX + dx, FY + dy, dw, dh, pr); else ctx.rect(FX + dx, FY + dy, dw, dh); ctx.clip(); ctx.imageSmoothingQuality = "high";
 for (let j = 0; j < n; j++) {
 const o = j * Ss, flip = j % 2;
 ctx.save();
@@ -5573,7 +5573,13 @@ if (!vert) { ctx.translate(FX + dx + o + (flip ? Ss : 0), FY + dy); ctx.scale(fl
 else { ctx.translate(FX + dx, FY + dy + o + (flip ? Ss : 0)); ctx.scale(1, flip ? -1 : 1); ctx.drawImage(oc, 0, (sa - by) * K, T * K, Ls * K, 0, 0, dw, Ss); }
 ctx.restore();
 }
+if (lxp) {   // recessed channel: dark inner shadow along the top/left, a bright lip along the bottom/right, rounded ends
+const ig = ctx.createLinearGradient(FX + dx, FY + dy, vert ? FX + dx + dw : FX + dx, vert ? FY + dy : FY + dy + dh); ig.addColorStop(0, "rgba(0,0,0,.55)"); ig.addColorStop(0.18, "rgba(0,0,0,0)"); ig.addColorStop(0.82, "rgba(0,0,0,0)"); ig.addColorStop(1, "rgba(0,0,0,.35)");
+ctx.fillStyle = ig; ctx.fillRect(FX + dx, FY + dy, dw, dh);
+ctx.lineWidth = 1.6; ctx.strokeStyle = "rgba(0,0,0,.6)"; rr(FX + dx + 0.8, FY + dy + 0.8, dw - 1.6, dh - 1.6, pr - 0.8); ctx.stroke();
+}
 ctx.restore();
+if (lxp) { ctx.save(); ctx.lineWidth = 1.2; ctx.strokeStyle = "rgba(255,255,255,.55)"; rr(FX + dx - 1.2, FY + dy - 1.2, dw + 2.4, dh + 2.4, pr + 1.2); ctx.stroke(); ctx.restore(); }
 };
 const top = band(0, -rc - T / 2, FW, T), bot = band(0, FH + rc - T / 2, FW, T), lef = band(-rc - T / 2, 0, T, FH), rig = band(FW + rc - T / 2, 0, T, FH);
 panel(top, 0, -rc - T / 2, ix(152), iy(30), ix(754) - ix(152), iy(63) - iy(30), false, 30, 460);
@@ -5812,8 +5818,9 @@ ctx.save(); ctx.shadowColor = "rgba(0,0,0,.7)"; ctx.shadowBlur = 7; ctx.shadowOf
 const bz = ctx.createLinearGradient(x - R0, y - R0, x + R0, y + R0); bz.addColorStop(0, shade(trim, 110)); bz.addColorStop(0.45, trim); bz.addColorStop(1, shade(trim, -100));
 ctx.fillStyle = bz; ctx.beginPath(); ctx.arc(x, y, R0, 0, 7); ctx.fill(); ctx.restore();
 ctx.fillStyle = shade(r2, -70); ctx.beginPath(); ctx.arc(x, y, R0 - 4, 0, 7); ctx.fill();
-const rid = city.ring || city.id, im = rid && ringPicSoft(rid);
-if (im) { ctx.save(); ctx.beginPath(); ctx.arc(x, y, R0 - 4.5, 0, 7); ctx.clip(); ctx.drawImage(im, x - R0 - 2, y - R0 - 3, 2 * R0 + 4, 2 * R0 + 4); ctx.restore(); }
+const rid = city.ring || city.id, im = !(tblOf(city) || {}).lux && rid && ringPicSoft(rid);
+if ((tblOf(city) || {}).lux) { jewel(x, y, R0 - 7); }
+else if (im) { ctx.save(); ctx.beginPath(); ctx.arc(x, y, R0 - 4.5, 0, 7); ctx.clip(); ctx.drawImage(im, x - R0 - 2, y - R0 - 3, 2 * R0 + 4, 2 * R0 + 4); ctx.restore(); }
 else { ctx.fillStyle = trim; star8(x, y, R0 - 8); }
 for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6; pearl(x + Math.cos(a) * (R0 - 1.8), y + Math.sin(a) * (R0 - 1.8), 1.4); }
 const gl = ctx.createLinearGradient(0, y - R0, 0, y); gl.addColorStop(0, "rgba(255,255,255,.35)"); gl.addColorStop(1, "rgba(255,255,255,0)");
