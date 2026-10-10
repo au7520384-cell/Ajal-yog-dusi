@@ -5468,7 +5468,7 @@ return "#" + c.map(v => clamp(Math.round(m + (v - m) * 1.25) * k + add, 0, 255))
 let OLD_MODE = false;
 const isCityTable = c => !!c && !!c.id && c.pat !== "lucky" && c.id !== "golden" && !!c.felt && !!c.rail;   // every table, city or shop skin, wears the ornate picture frame
 const TINT_TBL = {};
-function luxFrameOver(g, W, H, metal) {   // premium tables: the picture's outer rail, corner/side pocket collars are redrawn as crisp polished metal (clean bevels, no photo specks); the cloth, cushions and pocket holes stay the picture's own
+function luxFrameOver(g, W, H, metal, gemc) {   // premium tables: the picture's outer rail, corner/side pocket collars are redrawn as crisp polished metal (clean bevels, no photo specks); the cloth, cushions and pocket holes stay the picture's own
 const [hi, mid, lo] = metal, ml = document.createElement("canvas"); ml.width = W; ml.height = H; const m = ml.getContext("2d");
 const OX0 = 0, OY0 = 8, OX1 = W, OY1 = 871, IX0 = 57, IY0 = 66, IX1 = 1560, IY1 = 799;   // picture px: outer edge and the cushion line
 const prof = (gr, flip) => { const st = [[0, lo], [0.05, hi], [0.13, mid], [0.24, hi], [0.36, mid], [0.62, mid], [0.8, lo], [0.9, hi], [1, lo]]; st.forEach(([o, c]) => gr.addColorStop(flip ? 1 - o : o, c)); return gr; };
@@ -5487,6 +5487,23 @@ m.fillStyle = rg; m.beginPath(); m.arc(0, 0, ro, 0, Math.PI * 2); m.fill();
 m.strokeStyle = "rgba(0,0,0,.45)"; m.lineWidth = 1.6; m.beginPath(); m.arc(0, 0, ro - 0.8, 0, Math.PI * 2); m.stroke();
 m.restore();
 if (legs) for (const sd of [-1, 1]) { const y0 = cy, y1 = legs > 0 ? IY0 + 2 : IY1 - 2, xa = cx + sd * ri, xb = cx + sd * ro, lg = m.createLinearGradient(xa, 0, xb, 0); [[0, lo], [0.12, hi], [0.3, mid], [0.55, hi], [0.8, mid], [0.92, hi], [1, lo]].forEach(([o, c]) => lg.addColorStop(o, c)); m.fillStyle = lg; m.fillRect(Math.min(xa, xb), Math.min(y0, y1), Math.abs(xb - xa), Math.abs(y1 - y0)); }
+{ // the collar is engraved too: two fine grooves and a ring of jewels alternating with metal leaves
+m.save(); m.translate(cx, cy); m.scale(1, ry);
+const rm = (ri + ro) / 2, bw = ro - ri;
+for (const rr0 of [ri + bw * 0.14, ro - bw * 0.14]) { m.strokeStyle = "rgba(0,0,0,.45)"; m.lineWidth = 1.3; m.beginPath(); m.arc(0, 0, rr0, 0, Math.PI * 2); m.stroke(); m.strokeStyle = "rgba(255,255,255,.55)"; m.lineWidth = 0.7; m.beginPath(); m.arc(0, 0, rr0 + 1, 0, Math.PI * 2); m.stroke(); }
+const n = Math.round(2 * Math.PI * rm / (bw * 0.95)) & ~1;
+for (let k = 0; k < n; k++) {
+const a = k / n * Math.PI * 2, x = Math.cos(a) * rm, y = Math.sin(a) * rm;
+if (k % 2) {   // a leaf / lozenge pointing along the ring
+m.save(); m.translate(x, y); m.rotate(a + Math.PI / 2); const L2 = bw * 0.42, w2 = bw * 0.21;
+m.fillStyle = "rgba(0,0,0,.45)"; m.beginPath(); m.moveTo(-L2 + 0.8, 1); m.quadraticCurveTo(0.8, -w2 + 1, L2 + 0.8, 1); m.quadraticCurveTo(0.8, w2 + 1, -L2 + 0.8, 1); m.fill();
+const lgr = m.createLinearGradient(0, -w2, 0, w2); lgr.addColorStop(0, hi); lgr.addColorStop(1, lo); m.fillStyle = lgr; m.beginPath(); m.moveTo(-L2, 0); m.quadraticCurveTo(0, -w2, L2, 0); m.quadraticCurveTo(0, w2, -L2, 0); m.fill(); m.strokeStyle = "rgba(0,0,0,.55)"; m.lineWidth = 0.9; m.stroke(); m.strokeStyle = "rgba(0,0,0,.4)"; m.beginPath(); m.moveTo(-L2 * 0.8, 0); m.lineTo(L2 * 0.8, 0); m.stroke(); m.restore();
+} else {
+const r3 = bw * 0.2, sv = ctx; ctx = m; try { m.fillStyle = lo; m.beginPath(); m.arc(x, y, r3 + 1.4, 0, 7); m.fill(); m.fillStyle = hi; m.beginPath(); m.arc(x, y, r3 + 0.6, 0, 7); m.fill(); luxGem(x, y, r3, gemc || hi, Math.random); } finally { ctx = sv; }
+}
+}
+m.restore();
+}
 }
 m.globalCompositeOperation = "destination-out"; m.fillRect(IX0, IY0, IX1 - IX0, IY1 - IY0);
 for (const [cx, cy, ri] of P) { m.save(); m.translate(cx, cy); m.scale(1, ry); m.beginPath(); m.arc(0, 0, ri, 0, Math.PI * 2); m.fill(); m.restore(); }
@@ -5517,7 +5534,7 @@ if (r > gg * 1.12 && r > 18 && b < gg + 8) { const kw = lx ? 0.82 + Math.min(1, 
 else if (gg > r + 12 && gg > b + 8 && gg > 25) { const k = Math.min(1.5, gg / 100), kc = Math.min(1.3, gg / 128), w = Math.max(0, Math.min(1, (gg - 112) / 12)); d[i] = Math.min(255, mid[0] * k * (1 - w) + cb[0] * kc * w); d[i + 1] = Math.min(255, mid[1] * k * (1 - w) + cb[1] * kc * w); d[i + 2] = Math.min(255, mid[2] * k * (1 - w) + cb[2] * kc * w); }
 }
 g.putImageData(id, 0, 0);
-if (lx) { g.putImageData(id, 0, 0); luxFrameOver(g, W, H, tblOf(city).metal); }
+if (lx) { g.putImageData(id, 0, 0); { const st9 = tblOf(city); luxFrameOver(g, W, H, st9.metal, st9.gemrow || (st9.pave && st9.pave !== "opal" ? st9.pave : null) || city.gem || st9.metal[0]); } }
 return TINT_TBL[key] = cv;
 }
 function woodMask() {   // alpha mask of the picture's wooden rail (soft), used to cut the rail out so artwork can sit *behind* the cushions, arcs and pockets
