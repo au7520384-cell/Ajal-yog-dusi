@@ -5476,11 +5476,17 @@ m.strokeStyle = "rgba(0,0,0,.45)"; m.lineWidth = 1.6; m.beginPath(); m.arc(0, 0,
 m.restore();
 if (legs) for (const sd of [-1, 1]) { const y0 = cy, y1 = legs > 0 ? IY0 + 2 : IY1 - 2, xa = cx + sd * ri, xb = cx + sd * ro, lg = m.createLinearGradient(xa, 0, xb, 0); [[0, lo], [0.12, hi], [0.3, mid], [0.55, hi], [0.8, mid], [0.92, hi], [1, lo]].forEach(([o, c]) => lg.addColorStop(o, c)); m.fillStyle = lg; m.fillRect(Math.min(xa, xb), Math.min(y0, y1), Math.abs(xb - xa), Math.abs(y1 - y0)); }
 }
-m.strokeStyle = "rgba(0,0,0,.55)"; m.lineWidth = 2; m.strokeRect(IX0 - 1, IY0 - 1, IX1 - IX0 + 2, IY1 - IY0 + 2);   // crisp line where the metal meets the cushion
 m.globalCompositeOperation = "destination-out"; m.fillRect(IX0, IY0, IX1 - IX0, IY1 - IY0);
 for (const [cx, cy, ri] of P) { m.save(); m.translate(cx, cy); m.scale(1, ry); m.beginPath(); m.arc(0, 0, ri, 0, Math.PI * 2); m.fill(); m.restore(); }
-g.save(); g.globalCompositeOperation = "source-atop"; g.drawImage(ml, 0, 0);
-g.globalCompositeOperation = "source-over"; g.clearRect(0, 0, W, OY0 - 1); g.clearRect(0, OY1 + 1, W, H);   // the photo's soft fringe above / below the rail
+g.save(); g.drawImage(ml, 0, 0);
+const CR = 66, outer = () => { g.beginPath(); g.roundRect ? g.roundRect(1, OY0, W - 2, OY1 - OY0, CR) : g.rect(1, OY0, W - 2, OY1 - OY0); };   // the table's own clean silhouette: a rounded rectangle hugging the corner pockets
+const bumps = P.filter(([cx, cy, ri]) => cy - (ri + 13) * ry < OY0 + 2 || cy + (ri + 13) * ry > OY1 - 2).map(([cx, cy, ri]) => [cx, cy, ri + 13]);   // a side pocket that reaches the edge gets a rounded bulge of metal around it
+const bump = () => { g.beginPath(); for (const [cx, cy, rb] of bumps) g.ellipse(cx, cy, rb, rb * ry, 0, 0, Math.PI * 2); };
+g.globalCompositeOperation = "destination-in"; g.beginPath(); g.roundRect ? g.roundRect(1, OY0, W - 2, OY1 - OY0, CR) : g.rect(1, OY0, W - 2, OY1 - OY0); for (const [cx, cy, rb] of bumps) { g.moveTo(cx + rb, cy); g.ellipse(cx, cy, rb, rb * ry, 0, 0, Math.PI * 2); } g.fill("nonzero");
+g.globalCompositeOperation = "source-over"; g.lineWidth = 2.4; g.strokeStyle = "rgba(0,0,0,.65)";
+g.save(); g.beginPath(); g.rect(-9, -9, W + 18, H + 18); for (const [cx, cy, rb] of bumps) { g.moveTo(cx + rb, cy); g.ellipse(cx, cy, rb, rb * ry, 0, 0, Math.PI * 2); } g.clip("evenodd"); outer(); g.stroke(); g.restore();
+g.save(); g.beginPath(); g.rect(-9, -9, W + 18, H + 18); g.rect(1, OY0, W - 2, OY1 - OY0); g.clip("evenodd"); bump(); g.stroke(); g.restore();
+g.save(); outer(); g.clip(); g.lineWidth = 2; g.strokeStyle = "rgba(255,255,255,.55)"; g.beginPath(); g.roundRect ? g.roundRect(3.5, OY0 + 2.5, W - 7, OY1 - OY0 - 5, CR - 2.5) : g.rect(3.5, OY0 + 2.5, W - 7, OY1 - OY0 - 5); g.stroke(); g.restore();
 for (const [cx, cy, ri] of P) {   // a clean, round pocket hole (the photo's rim is ragged)
 g.save(); g.translate(cx, cy); g.scale(1, ry); const hg = g.createRadialGradient(-ri * 0.15, -ri * 0.2, ri * 0.1, 0, 0, ri + 1); hg.addColorStop(0, "#000"); hg.addColorStop(0.7, "#050505"); hg.addColorStop(0.93, "#141414"); hg.addColorStop(1, "#2a2a2a");
 g.fillStyle = hg; g.beginPath(); g.arc(0, 0, ri + 1, 0, Math.PI * 2); g.fill(); g.strokeStyle = "rgba(0,0,0,.75)"; g.lineWidth = 2.4; g.beginPath(); g.arc(0, 0, ri + 1.4, 0, Math.PI * 2); g.stroke(); g.restore(); }
