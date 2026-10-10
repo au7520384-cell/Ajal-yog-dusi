@@ -5304,6 +5304,7 @@ ctx.restore();
 }
 const luxSpark = {};
 function drawLuxFx(city) {
+return;   // premium tables: the travelling white shine band and twinkling stars were removed (they read as dirty smudges moving over the rail art)
 const st = tblOf(city); if (!st.lux) return;
 const t = performance.now() / 1000, OX = FX - RAIL - 8, OY = FY - RAIL - 8, OW = FW + 2 * RAIL + 16, OH = FH + 2 * RAIL + 16;
 const k = (t % 4.2) / 4.2, cx = OX - 300 + (OW + 600) * k, cy = OY + OH / 2, bw = FY - 18 - OY;
@@ -5464,7 +5465,7 @@ const id = g.getImageData(0, 0, W, H), d = id.data, hx = h => { const n = parseI
 const mid = f0.map((v, i) => v * 0.55 + f1[i] * 0.45), cb = f0.map((v, i) => Math.min(255, v * 0.82 + f1[i] * 0.18 + 20));   // cb: the city's own cushion colour (as on its old table)
 for (let i = 0; i < d.length; i += 4) {
 const r = d[i], gg = d[i + 1], b = d[i + 2];
-if (r > gg * 1.8 && r > 18 && b < gg + 6) { const kw = Math.min(1.6, r / 70); d[i] = d[i] * 0.15 + Math.min(255, rl[0] * kw) * 0.85; d[i + 1] = d[i + 1] * 0.15 + Math.min(255, rl[1] * kw) * 0.85; d[i + 2] = d[i + 2] * 0.15 + Math.min(255, rl[2] * kw) * 0.85; }   // the wooden frame takes the city's rail colour
+if (r > gg * 1.12 && r > 18 && b < gg + 8) { const kw = Math.min(1.6, r / 70), w = Math.min(1, (r / Math.max(1, gg) - 1.12) / 0.3) * 0.85; d[i] = d[i] * (1 - w) + Math.min(255, rl[0] * kw) * w; d[i + 1] = d[i + 1] * (1 - w) + Math.min(255, rl[1] * kw) * w; d[i + 2] = d[i + 2] * (1 - w) + Math.min(255, rl[2] * kw) * w; }   // the wooden frame takes the city's rail colour
 else if (gg > r + 12 && gg > b + 8 && gg > 25) { const k = Math.min(1.5, gg / 100), kc = Math.min(1.3, gg / 128), w = Math.max(0, Math.min(1, (gg - 112) / 12)); d[i] = Math.min(255, mid[0] * k * (1 - w) + cb[0] * kc * w); d[i + 1] = Math.min(255, mid[1] * k * (1 - w) + cb[1] * kc * w); d[i + 2] = Math.min(255, mid[2] * k * (1 - w) + cb[2] * kc * w); }
 }
 g.putImageData(id, 0, 0);
@@ -6021,7 +6022,7 @@ const pg = ctx.createRadialGradient(px - 0.7, py - 0.7, 0, px, py, 2.3); pg.addC
 ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(px, py, 2.3, 0, 7); ctx.fill(); }
 ctx.restore(); ctx.lineCap = "round";
 }
-if (ringOk()) { const k = (r + 0.6) / 98.8, S = 256 * k; ctx.save(); ctx.beginPath(); ctx.rect(-200, -200, FW + 400, FH + 400); ctx.rect(-25, -25, FW + 50, FH + 50); ctx.clip("evenodd"); ctx.drawImage(POCKET_RING, x - S / 2, y - S / 2, S, S); ctx.restore(); }   // the metal ring only on the wood; on the cloth side the hole is cut straight into the cloth
+if (ringOk() && !(tblOf(city) || {}).lux) { const k = (r + 0.6) / 98.8, S = 256 * k; ctx.save(); ctx.beginPath(); ctx.rect(-200, -200, FW + 400, FH + 400); ctx.rect(-25, -25, FW + 50, FH + 50); ctx.clip("evenodd"); ctx.drawImage(POCKET_RING, x - S / 2, y - S / 2, S, S); ctx.restore(); }   // the metal ring only on the wood; on the cloth side the hole is cut straight into the cloth
 else {
 ctx.strokeStyle = mar ? "rgba(255,150,120,.22)" : "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, r - 1.2, Math.atan2(-oy, -ox) - 0.9, Math.atan2(-oy, -ox) + 0.9); ctx.stroke();
 ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y, r + 2.1, Math.atan2(-oy, -ox) - 0.7, Math.atan2(-oy, -ox) + 0.7); ctx.stroke();
