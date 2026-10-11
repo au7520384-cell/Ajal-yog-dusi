@@ -1302,6 +1302,13 @@ button:active:not(:disabled),.btn:active:not(:disabled),.nb:active,.mchip:active
 #cabinet .cabn{font:800 clamp(12px,2.2vw,17px) var(--fh,inherit);color:#ffe9a8}
 #cabinet .cabc:not(.on) .cabn{color:#8a90ac}
 #cabinet .cabm{font:700 clamp(10px,1.7vw,13px) var(--fh,inherit);color:#aab4d8;margin-top:2px}
+#cabinet .cabp{max-height:94vh;overflow-y:auto}
+#cabinet .cabsec{margin:16px 0 6px;text-align:center;font:900 clamp(14px,2.4vw,20px) var(--fh,inherit);color:#ffe9a8}
+#cabinet .cabrow.cc{grid-template-columns:repeat(6,1fr);gap:8px}
+#cabinet .cabrow.cc .cabc img{height:clamp(64px,16vh,112px)}
+#cabinet .cabrow.cc .cabn{font-size:clamp(10px,1.7vw,13px)}
+@media (max-width:760px){#cabinet .cabrow.cc{grid-template-columns:repeat(3,1fr)}}
+.tcsec{text-align:center;font-size:22px;color:#ffe27a;margin:22px 0 2px}.tcsub{text-align:center;margin-bottom:12px}.tcups.cities .tcup{min-height:210px}
 #cabinet .cabf{text-align:center;margin-top:10px;color:#cfd6ee;font-weight:800}
 #cabinet .cabf b{color:#ffc83a}
 .cabbtn{margin-left:auto;background:linear-gradient(#1c2250,#0a1030)!important;border:2px solid #d9a63c!important;color:#ffe9a8!important;border-radius:12px;padding:8px 16px;font-weight:800;box-shadow:0 0 12px #ffb83055}
@@ -1593,7 +1600,7 @@ button:active:not(:disabled),.btn:active:not(:disabled),.nb:active,.mchip:active
 <span class="hrank" style="left:1602.1px;top:72.3px;width:123.9px;height:40.5px">Darajani oshiring!</span>
 <span class="hshield" id="hPassTier" style="left:1761.7px;top:74.6px;width:16.6px;height:26.8px">0</span>
 <button class="hs hplay" id="tPlay" style="left:196px;top:192px;width:282px;height:208px"><img data-img="play1" alt=""><span class="hl gold"><b>O'ynash</b><i>1 ga 1</i></span></button>
-<button class="hb hb2" id="tTour"><img class="hic" data-img="b2" alt=""><span class="hbtag">KUBOKLAR</span><small id="hTourSub">32–60</small></button>
+<button class="hb hb2" id="tTour"><img class="hic" data-img="b2" alt=""><span class="hbtag">KUBOKLAR</span><small id="hTourSub">16–60</small></button>
 <button class="hs" id="tEvents" style="left:796px;top:196px;width:284px;height:200px"><span class="hl"><b>O'ynash</b><i>Tadbirlar</i></span><i class="dot" id="dotEv" style="display:none;top:-8px;right:-8px"></i></button>
 <button class="hs" id="tMini" style="left:1104px;top:196px;width:266px;height:200px"><span class="hl"><b>O'ynash</b><i>Mini o'yinlar</i></span><i class="dot" id="dotMini2" style="display:none;top:-8px;right:-8px"></i></button>
 <button class="hs" id="tWithFr" style="left:1390px;top:196px;width:276px;height:200px"><span class="hl"><b>O'ynash</b><i>Do'st bilan</i></span></button>
@@ -1873,6 +1880,10 @@ const CUPS = [
 {id: "c3", region: "EU", sub: "Yevropa bilyard chempionati", who: "Yevropa o'yinchilari", ac: ["#ffd24d", "#2a4fc0"], name: "Yevropa Kubogi",           n: 48, fee: 20000,  prize: 600000,  lvl: 8,  city: CITIES.findIndex(c => c.id === "par"), skill: 0.007, icon: "🌍", bg: ["#6fa8ff", "#1f3aa8", "#081244"]},
 {id: "c4", region: null, sub: "Bilyard bo'yicha dunyo chempionati", who: "Dunyo bo'ylab", ac: ["#ffd24d", "#3a7bd5"], name: "Jahon Kubogi",             n: 60, fee: 200000, prize: 7500000, lvl: 13, city: CITIES.findIndex(c => c.id === "dub"),  skill: 0.004, icon: "🏆", bg: ["#fff1b8", "#d9a63a", "#5a3a04"]},
 ];
+// 30 city championships: every city has its own separate cup (played on that city's table; the city trophy road and rings stay as they were)
+const CITY_CUPS = CITIES.map((ct, i) => { const n = i < 12 ? 16 : 32;
+return {id: "cc_" + ct.id, cityCup: true, region: null, sub: "Shahar chempionati", who: "Hamma uchun", ac: [ct.col[1], ct.felt[0]], hue: ct.col[1], city: i, n, fee: ct.fee * 4, prize: ct.prize * n / 2, lvl: ct.lvl, skill: ct.skill, icon: "🏙️", get name() { return ct.name + " " + T("Kubogi"); }}; });
+const ALL_CUPS = CUPS.concat(CITY_CUPS);
 const CUES = [
 {id: "start",     name: "Boshlang'ich",    price: 0,     cur: "coin", st: [3, 3, 3, 3],     shaft: ["#f5e2b8", "#d9b074"], butt: ["#7a4318", "#2b1405"], metal: "#2a2a2a", deco: "plain"},
 {id: "chinor",    name: "Chinor",          price: 5000,       cur: "coin", st: [4, 4, 3, 4],     shaft: ["#f5e6c0", "#d4ae72"], butt: ["#2f6d2a", "#0f2a12"], metal: "#e8c77a", deco: "points", dc: "#e8c77a"},
@@ -2437,6 +2448,10 @@ const DICT = {
 "Kiylar va boshqalar": ["Cues & More", "Кии и другое"],
 "Tadbirlar": ["Events", "События"],
 "KUBOKLAR": ["CUPS", "КУБКИ"],
+"Kubogi": ["Cup", "Кубок"],
+"Shahar kuboklari": ["City Cups", "Кубки городов"],
+"Shahar chempionati": ["City championship", "Чемпионат города"],
+"Har shaharning o'z chempionati: kubok shu shahar stolida o'ynaladi va stol ochilgach ochiladi.": ["Every city has its own championship: the cup is played on that city's table and opens together with the table.", "У каждого города свой чемпионат: кубок играется за столом этого города и открывается вместе с ним."],
 "Darajani oshirish!": ["Rank up!", "Повысь уровень!"],
 "CHEKLANGAN KIY": ["LIMITED CUE", "ЛИМИТИРОВАННЫЙ КИЙ"],
 "Quti joyiga qo'shildi": ["Added to a box slot", "Добавлен в слот"],
@@ -7849,7 +7864,7 @@ return m.map(([a, b]) => [a, b, b === null ? a : a === 0 || b === 0 ? undefined 
 }
 const DAILY_HOURS = [4, 10, 16, 22], DAILY_OPEN = 3;   // UTC start hours of the daily cups; each stays open for 3 hours
 const DAILY_CUP = {id: "daily", region: null, sub: "Kunlik turnir", who: "Hamma uchun", ac: ["#5fd0ff", "#2a5ad8"], name: "Kunlik Kubok", n: 16, fee: 1000, prize: 30000, lvl: 1, city: CITIES.findIndex(c => c.id === "lis"), skill: 0.012, icon: "📅"};
-const cupOf = id => id === "daily" ? DAILY_CUP : CUPS.find(q => q.id === id);
+const cupOf = id => id === "daily" ? DAILY_CUP : ALL_CUPS.find(q => q.id === id);
 function dailyList() {
 const now = Date.now(), d = new Date(now), day = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()), done = profile.dailyDone || {};
 const list = DAILY_HOURS.map(h => { const t = day + h * 36e5; return {t, open: now >= t && now < t + DAILY_OPEN * 36e5, past: now >= t + DAILY_OPEN * 36e5, joined: !!done[t]}; });
@@ -7872,10 +7887,10 @@ ${hist.length ? `<div class="muted" style="margin-top:8px">${T("Natijalaringiz")
 const dj = dc.querySelector("[data-dj]"); if (dj) dj.onclick = () => joinTour(DAILY_CUP);
 body.appendChild(dc);
 const grid = document.createElement("div"); grid.className = "tcups";
-CUPS.forEach(c => {
+const addCup = (c, grid) => {
 const lockWhy = cupLock(c), locked = !!lockWhy;
 const el = document.createElement("div"); el.className = "tcup"; el.style.setProperty("--a1", c.ac[0]); el.style.setProperty("--a2", c.ac[1]);
-el.innerHTML = `<div class="tcart" style="background-image:url(${IMG["cup_" + c.id]})"></div>
+el.innerHTML = `<div class="tcart" style="background-image:url(${cupImg(c)})"></div>
 <div class="tcpn"><div class="tch"><span class="tcic">${c.icon}</span><div><b>${T(c.name)}</b><small>${T(c.sub)}</small></div></div>
 <div class="tcpz"><span class="coin"></span>${fmt(c.prize)}</div>
 <div class="tcr"><span>${T("Kirish narxi")}</span><b><span class="coin" style="width:14px;height:14px"></span> ${fmtS(c.fee)}</b></div>
@@ -7885,8 +7900,12 @@ el.innerHTML = `<div class="tcart" style="background-image:url(${IMG["cup_" + c.
 ${locked ? `<div class="lock"><div><div>🔒</div>${lockWhy}</div></div>` : ""}`;
 el.querySelector("button").onclick = () => joinTour(c);
 grid.appendChild(el);
-});
+};
+CUPS.forEach(c => addCup(c, grid));
 body.appendChild(grid);
+const hd = document.createElement("div"); hd.className = "h tcsec"; hd.textContent = "🏙️ " + T("Shahar kuboklari"); body.appendChild(hd);
+const sub = document.createElement("div"); sub.className = "muted tcsub"; sub.textContent = T("Har shaharning o'z chempionati: kubok shu shahar stolida o'ynaladi va stol ochilgach ochiladi."); body.appendChild(sub);
+const grid2 = document.createElement("div"); grid2.className = "tcups cities"; CITY_CUPS.forEach(c => addCup(c, grid2)); body.appendChild(grid2);
 return;
 }
 const c = cupOf(tour.cup), P = tour.players, R = tour.rounds.length - 1, total = tourRounds(c.n);
@@ -8555,9 +8574,41 @@ extra: `<div class="reward">${p.t === "cash" ? '<span class="cash"></span>' : p.
 buttons: [{label: "Ajoyib!", cls: "green", fn: () => go("wheelScr")}]});
 }, 5100);
 };
-function cupIcon(c, sz = 46) { return `<span class="cupi" title="${esc(T(c.name))}" style="width:${sz}px;height:${sz}px;--a1:${c.ac[0]};--a2:${c.ac[1]}"><img src="${IMG["cup_" + c.id]}" alt=""><i>${c.icon}</i></span>`; }
+// city cup art: the gold world cup is re-coloured to the city's accent colour and its plate is re-lettered with the city name (the app writes the text, so it follows the interface language)
+const _cupBase = new Image(); _cupBase.src = IMG.cup_c4; const _cupArt = {};
+function cityCupArt(c) {
+const k = LANG + c.id; if (_cupArt[k]) return _cupArt[k];
+if (!_cupBase.complete || !_cupBase.naturalWidth) return IMG.cup_c4;
+const W = _cupBase.naturalWidth, H = _cupBase.naturalHeight, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+const g = cv.getContext("2d", {willReadFrequently: true}); g.drawImage(_cupBase, 0, 0);
+const hx = parseInt(c.hue.slice(1), 16), R = hx >> 16, G = hx >> 8 & 255, B = hx & 255, mx = Math.max(R, G, B), mn = Math.min(R, G, B), dl = mx - mn;
+let ht = dl ? (mx === R ? ((G - B) / dl + 6) % 6 : mx === G ? (B - R) / dl + 2 : (R - G) / dl + 4) * 60 : 40; const st = mx ? dl / mx : 0;
+const delta = ht - 40, sf = Math.max(0.25, Math.min(1.1, st / 0.8));
+const im = g.getImageData(0, 0, W, H), d = im.data;
+for (let i = 0; i < d.length; i += 4) {
+if (!d[i + 3]) continue;
+const r = d[i] / 255, gg = d[i + 1] / 255, b = d[i + 2] / 255, v = Math.max(r, gg, b), m = Math.min(r, gg, b), dd = v - m;
+if (dd < 0.05) continue;
+let h = (v === r ? ((gg - b) / dd + 6) % 6 : v === gg ? (b - r) / dd + 2 : (r - gg) / dd + 4) * 60, s2 = Math.min(1, dd / v * sf);
+h = ((h + delta) % 360 + 360) % 360;
+const f = n => { const kk = (n + h / 60) % 6; return v - v * s2 * Math.max(0, Math.min(kk, 4 - kk, 1)); };
+d[i] = f(5) * 255; d[i + 1] = f(3) * 255; d[i + 2] = f(1) * 255;
+}
+g.putImageData(im, 0, 0);
+g.save(); g.shadowColor = "#06080f"; g.shadowBlur = 7; g.fillStyle = "#06080f"; g.fillRect(98, 614, 148, 52); g.restore();   // wipe the old lettering off the plate
+const FF = getComputedStyle(document.documentElement).getPropertyValue("--fh") || "sans-serif", name = String(CITIES[c.city].name).toUpperCase(), sub = T("Kubogi").toUpperCase();
+g.textAlign = "center"; g.textBaseline = "middle";
+const fit = (txt, size, maxW) => { let fs = size; g.font = `900 ${fs}px ${FF}`; while (g.measureText(txt).width > maxW && fs > 9) g.font = `900 ${--fs}px ${FF}`; };
+const gr = g.createLinearGradient(0, 612, 0, 666); gr.addColorStop(0, `hsl(${ht},95%,82%)`); gr.addColorStop(1, `hsl(${ht},88%,52%)`); g.fillStyle = gr;
+fit(name, 26, 142); g.fillText(name, W / 2, 630);
+fit(sub, 16, 120); g.fillText(sub, W / 2, 654);
+return _cupArt[k] = cv.toDataURL("image/png");
+}
+const cupImg = c => c.cityCup ? cityCupArt(c) : IMG["cup_" + c.id];
+{ let wi = 0; const warm = () => { if (wi >= CITY_CUPS.length) return; let busy = false; try { busy = !!(typeof G !== "undefined" && G && !G.over); } catch (e) {} if (!busy && _cupBase.complete) cityCupArt(CITY_CUPS[wi++]); setTimeout(warm, busy ? 2000 : 150); }; setTimeout(warm, 6000); }   // prepare the 30 city cups in the background, one per tick, so the cups screen opens instantly
+function cupIcon(c, sz = 46) { return `<span class="cupi" title="${esc(T(c.name))}" style="width:${sz}px;height:${sz}px;--a1:${c.ac[0]};--a2:${c.ac[1]}"><img src="${cupImg(c)}" alt=""><i>${c.icon}</i></span>`; }
 function cupsRow() {
-const list = []; for (const c of CUPS) for (let k = 0; k < ((profile.cupWins || {})[c.id] | 0); k++) list.push(c);
+const list = []; for (const c of ALL_CUPS) for (let k = 0; k < ((profile.cupWins || {})[c.id] | 0); k++) list.push(c);
 if (!list.length) return `<span class="muted" style="font-size:12px">${T("Hali kubok yo'q — chempionatda g'alaba qozoning!")}</span>`;
 return list.slice(0, 14).map(c => cupIcon(c)).join("") + (list.length > 14 ? `<b style="color:#ffe27a">+${list.length - 14}</b>` : "");
 }
@@ -8566,7 +8617,7 @@ function shareCup(c) { try { if (typeof Net !== "undefined" && Net.acct) Net.api
 function cupCeremony(c, coins, xp, then) {   // the final is won: the cup rises on a full-screen stage with rays and confetti
 const old = $("cupCer"); if (old) old.remove();
 const el = document.createElement("div"); el.id = "cupCer"; el.style.setProperty("--a1", c.ac[0]); el.style.setProperty("--a2", c.ac[1]);
-el.innerHTML = `<div class="ccrays"></div><div class="ccglow"></div><div class="cctitle"><small>${T("TABRIKLAYMIZ!")}</small><b>${esc(T(c.name)).toUpperCase()}<br>${esc(T("CHEMPIONI"))}</b></div><img class="cccup" src="${IMG["cup_" + c.id]}" alt="">
+el.innerHTML = `<div class="ccrays"></div><div class="ccglow"></div><div class="cctitle"><small>${T("TABRIKLAYMIZ!")}</small><b>${esc(T(c.name)).toUpperCase()}<br>${esc(T("CHEMPIONI"))}</b></div><img class="cccup" src="${cupImg(c)}" alt="">
 <div class="ccwho">${avHTML(profile.avatar, profile.frame, 64)}<b>${esc(profile.name)}</b></div><div class="ccrew"><span><span class="coin"></span> +${fmt(coins)}</span><span class="ccxp">XP +${xp}</span></div><button class="btn green ccgo">${T("Davom etish")}</button>`;
 document.body.appendChild(el);
 const cols = [c.ac[0], "#fff", "#ffd24d", "#ff5a7a", "#5ad8ff", "#7aff9a"], timers = [];
@@ -8584,11 +8635,15 @@ function openCabinet() {   // the trophy cabinet: every championship cup with ho
 const old = $("cabinet"); if (old) old.remove();
 const w = profile.cupWins || {}, log = profile.cupLog || [], last = id => { for (let i = log.length - 1; i >= 0; i--) if (log[i].id === id) return log[i].d; return ""; };
 const fd = d => d ? new Date(d + "T12:00").toLocaleDateString([], {day: "numeric", month: "short", year: "numeric"}) : "";
-const total = CUPS.reduce((n, c) => n + (w[c.id] | 0), 0);
+const total = ALL_CUPS.reduce((n, c) => n + (w[c.id] | 0), 0);
 const el = document.createElement("div"); el.id = "cabinet";
+const card = c => { const n = w[c.id] | 0, d = last(c.id); return `<div class="cabc${n ? " on" : ""}" style="--a1:${c.ac[0]};--a2:${c.ac[1]}"><div class="cabspot"></div><img src="${cupImg(c)}" alt=""><div class="cabshelf"></div>
+<div class="cabn">${esc(T(c.name))}</div><div class="cabm">${n ? `×${n}${d ? " · " + fd(d) : ""}` : "🔒 " + T("Hali yutilmagan")}</div></div>`; };
+const cityWon = CITY_CUPS.filter(c => w[c.id] | 0).length;
 el.innerHTML = `<div class="cabp"><button class="cabx">✕</button><div class="cabh" style="background-image:url(${IMG.wk_plate})"><span>${T("Kuboklar javoni")}</span></div>
-<div class="cabrow">${CUPS.map(c => { const n = w[c.id] | 0, d = last(c.id); return `<div class="cabc${n ? " on" : ""}" style="--a1:${c.ac[0]};--a2:${c.ac[1]}"><div class="cabspot"></div><img src="${IMG["cup_" + c.id]}" alt=""><div class="cabshelf"></div>
-<div class="cabn">${esc(T(c.name))}</div><div class="cabm">${n ? `×${n}${d ? " · " + fd(d) : ""}` : "🔒 " + T("Hali yutilmagan")}</div></div>`; }).join("")}</div>
+<div class="cabrow">${CUPS.map(card).join("")}</div>
+<div class="cabsec">🏙️ ${T("Shahar kuboklari")} · ${cityWon}/${CITY_CUPS.length}</div>
+<div class="cabrow cc">${CITY_CUPS.map(card).join("")}</div>
 <div class="cabf">🏆 ${T("Chempionat kuboklari")}: <b>${total}</b></div></div>`;
 document.body.appendChild(el);
 const close = () => el.remove(); el.querySelector(".cabx").onclick = close; el.onclick = e => { if (e.target === el) close(); };
@@ -8628,7 +8683,7 @@ ${stat("G'alaba seriyasi", `${profile.wstreak | 0} (${T("eng yaxshi")} ${profile
 <div class="pbox" id="pRings"><small>${T("Uzuklar")} · ${CITIES.filter(ringOf).length}/${CITIES.length}</small><div>${CITIES.slice(0, 7).map(c => ringHTML(c, ringOf(c), 40)).join("")}</div></div>
 <div class="pbox" id="pAch"><small>${T("So'nggi yutuqlar")} · ${Object.keys(profile.ach2 || {}).length}/${ACH2.length}</small><div>${lastAch.length ? lastAch.map(a => { const ax = IMG["acx_" + a.id.replace("city_", "cy_")]; return ax ? `<span class="pemb" title="${esc(a.name)}" style="background-image:url(${ax})"></span>` : `<span title="${esc(a.name)}" class="pemb2" style="background-image:url('${WREATH_URI}')">${achArt(a, true, 34)}</span>`; }).join("") : `<span class="muted">${T("Hali yo'q")}</span>`}</div></div>
 </div>
-<div class="pbox pcups" id="pCups"><small>${T("Chempionat kuboklari")} · ${CUPS.reduce((n, c) => n + ((profile.cupWins || {})[c.id] | 0), 0)}</small><div>${cupsRow()}</div></div>
+<div class="pbox pcups" id="pCups"><small>${T("Chempionat kuboklari")} · ${ALL_CUPS.reduce((n, c) => n + ((profile.cupWins || {})[c.id] | 0), 0)}</small><div>${cupsRow()}</div></div>
 <div class="prow">
 <div class="pbox" id="pCh"><small>${T("Sinovlar")} · ${Object.keys(profile.ch || {}).length}</small><div class="chminirow">${chMini()}</div></div>
 <div class="pbox" id="pMed"><small>${T("Medallar")} · ${MEDALS.filter((m, i) => (profile.medals || {})[i]).length}/${MEDALS.length}</small><div>${MEDALS.map((m, i) => i).filter(i => (profile.medals || {})[i]).slice(-6).map(i => medalImg(i, 38, true)).join("") || MEDALS.slice(0, 6).map((m, i) => medalImg(i, 38, false)).join("")}</div></div>
@@ -8771,7 +8826,7 @@ if (!registering) registering = api("/api/register", {name: profile.name, avatar
 return registering;
 }
 function applyGrant(g) {
-if (g.kind === "champ") { const cc = CUPS.find(x => x.id === g.cup); toast("🏆", esc(g.from || ""), `${T("Do'stingiz chempion bo'ldi")}: ${cc ? T(cc.name) : ""}`); try { Snd.banner(); } catch (e) {} return; }
+if (g.kind === "champ") { const cc = cupOf(g.cup); toast("🏆", esc(g.from || ""), `${T("Do'stingiz chempion bo'ldi")}: ${cc ? T(cc.name) : ""}`); try { Snd.banner(); } catch (e) {} return; }
 profile.cash += g.cash || 0; profile.coins += g.coins || 0; profile.gems = (profile.gems || 0) + (g.gems || 0); profile.vip = (profile.vip || 0) + (g.vip || 0);
 for (const [k, v] of Object.entries(g.items || {})) {
 if (["luckyTries", "wheelTries", "scratchTries", "goldShots", "sboxes"].includes(k)) profile[k] = (profile[k] | 0) + (v | 0);
@@ -9482,13 +9537,13 @@ document.querySelectorAll(".bslot.empty b").forEach(el => fitNode(el, el.parentE
 function buildHome() {
 layoutHome(); renderBoxes(); fitLabels();
 const p = passState(), tier = Math.floor(p.pts / PASS_STEP), left = seasonEnds() - Date.now();
-{ const cb = profile.cupBan, el = $("hCupBan"), c = cb && cb.until > Date.now() && CUPS.find(x => x.id === cb.id); if (el) { el.style.display = c ? "" : "none"; if (c) { el.innerHTML = `${cupIcon(c, 46)}<span><small>${T("Siz chempionsiz!")}</small><b>${esc(T(c.name))}</b></span>`; el.onclick = () => openCabinet(); } } }
+{ const cb = profile.cupBan, el = $("hCupBan"), c = cb && cb.until > Date.now() && cupOf(cb.id); if (el) { el.style.display = c ? "" : "none"; if (c) { el.innerHTML = `${cupIcon(c, 46)}<span><small>${T("Siz chempionsiz!")}</small><b>${esc(T(c.name))}</b></span>`; el.onclick = () => openCabinet(); } } }
 $("hPassTier").textContent = tier; $("hPassLeft").textContent = `${Math.floor(left / 864e5)}${T("k")} ${Math.floor(left % 864e5 / 36e5)}${T("s")}`;
 $("hRwLeft").textContent = profile.lastClaim !== today() ? T("OLISH!") : "⏱ " + hms(nextMidnight());
 updateHomeDots();
 const wl = weekEnds() - Date.now(); if ($("hLoop")) { $("hLoop").onclick = loopModal; const lo = loopNow(); $("hLoopT").textContent = `${Math.floor(lo.left / 36e5)}${T("s")} ${Math.floor(lo.left % 36e5 / 6e4)}${T("d")}`; }
 $("hLimEnds").textContent = `⏱ ${Math.floor(wl / 864e5)}${T("k")} ${Math.floor(wl % 864e5 / 36e5)}${T("s")} ${Math.floor(wl % 36e5 / 6e4)}${T("d")}`;
-$("hTourSub").textContent = `32–60 ${T("o'yinchi")}`;
+$("hTourSub").textContent = `16–60 ${T("o'yinchi")}`;
 if (!vipShownSession) setTimeout(loginFirst, 1200);
 if (!vipShownSession && !ON_PORTAL) { vipShownSession = true; const tryVip = n => setTimeout(() => { if (!$("home").classList.contains("on")) return; if ($("modal").classList.contains("on") && n < 6) return tryVip(n + 1); if ($("modal").classList.contains("on")) return; profile.vipPop = today(); save(); vipPage = new Date().getDate() % VO().length; vipOffers(); }, n ? 2500 : 1800); tryVip(0); }   // the VIP offer window opens on every app launch
 clearInterval(homeTimer);
@@ -10469,6 +10524,7 @@ const ringOf = c => !!(profile.rings || {})[c.id];
 const CUP_RINGS = {c1: 0, c2: 2, c3: 5, c4: 8};   // rings a player must have collected before a tournament opens
 const cupLock = c => {
 if (profile.level < c.lvl) return `${c.lvl}-${T("daraja kerak")}`;
+if (c.cityCup) return cityLock(CITIES[c.city]);   // a city cup opens together with that city's table
 const need = CUP_RINGS[c.id] | 0, have = CITIES.filter(ringOf).length;
 return have >= need ? "" : `${T("Uzuklar kerak")}: ${have}/${need}`;
 };

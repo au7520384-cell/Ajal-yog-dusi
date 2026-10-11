@@ -511,7 +511,7 @@ const routes = {
     return {sent};
   },
   async "POST /api/champion"(req, u) {   // tell friends and club mates that this player just won a championship cup
-    const b = await jsonBody(req), cup = ["c1", "c2", "c3", "c4"].includes(b.cup) ? b.cup : null;
+    const b = await jsonBody(req), cup = ["c1", "c2", "c3", "c4"].includes(b.cup) || /^cc_[a-z]{2,4}$/.test(String(b.cup)) ? b.cup : null;   // c1-c4 continental cups, cc_<city> city cups
     if (!cup) return [400, {error: "bad_cup"}];
     const now = Date.now(); if (u.champAt && now - u.champAt < 60e3) return {sent: 0};
     u.champAt = now;
