@@ -1784,7 +1784,7 @@ const ON_PORTAL = /(^|\.)y8\.com$|(^|\.)id\.net$/.test(location.hostname) || /y8
 const W = 1340, H = 720;
 const FX = 188, FY = 148, FW = 1000, FH = 500, RAIL = 66, R = 16;   // ball radius (was 17): about 6 % smaller balls, pockets unchanged
 const RAILC = (RAIL + 8 + 19) / 2;
-const POWER_BAR = {x: 48, y: 200, w: 38, h: 390};
+const POWER_BAR = {x: 66, y: 200, w: 38, h: 390};   // moved 18 px right: a clear gap between the ANIQ and KUCH bars so one never catches the other
 const TRAY = {x: 1287, y: 184, w: 30, h: 440};   // outside the table frame (which ends at x = 1232), like a real ball return
 const FINE = {x: 6, y: 200, w: 30, h: 390};
 const SPIN_BTN = {x: 1300, y: 56, r: 30};
@@ -10876,7 +10876,7 @@ function applySettings() {
 const right = opt("power") === "right", sm = opt("btnSz") === "small";
 SPIN_BTN.r = sm ? 22 : 30; CUE_BTN.r = sm ? 18 : 24;
 try { Snd.setMuted(!!profile.muted); } catch (e) {}
-POWER_BAR.x = right ? 1296 : 48; FINE.x = right ? 52 : 6; FINE.y = right ? 240 : 200; FINE.h = right ? 350 : 390; TRAY.x = right ? 9 : 1287;
+POWER_BAR.x = right ? 1296 : 66; FINE.x = right ? 52 : 6; FINE.y = right ? 240 : 200; FINE.h = right ? 350 : 390; TRAY.x = right ? 9 : 1287;
 }
 function openSoundLab() {   // listen to every recorded hit used by the game and mark it good / bad
 let ov = document.getElementById("soundLab"); if (ov) ov.remove();
