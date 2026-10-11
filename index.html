@@ -2452,7 +2452,9 @@ const DICT = {
 "Kubogi": ["Cup", "Кубок"],
 "Shahar kuboklari": ["City Cups", "Кубки городов"],
 "Shahar chempionati": ["City championship", "Чемпионат города"],
-"Har shaharning o'z chempionati: kubok shu shahar stolida o'ynaladi va stol ochilgach ochiladi.": ["Every city has its own championship: the cup is played on that city's table and opens together with the table.", "У каждого города свой чемпионат: кубок играется за столом этого города и открывается вместе с ним."],
+"Har shaharning o'z chempionati. Bitta kubokni yutsangiz, keyingisi ertasi kuni ochiladi.": ["Every city has its own championship. Win one cup and the next opens the following day.", "У каждого города свой чемпионат. Выиграли один кубок — следующий откроется на следующий день."],
+"Ertaga ochiladi": ["Opens tomorrow", "Откроется завтра"],
+"Ochiq": ["Open", "Открыт"],
 "Darajani oshirish!": ["Rank up!", "Повысь уровень!"],
 "CHEKLANGAN KIY": ["LIMITED CUE", "ЛИМИТИРОВАННЫЙ КИЙ"],
 "Quti joyiga qo'shildi": ["Added to a box slot", "Добавлен в слот"],
@@ -7896,7 +7898,7 @@ el.innerHTML = `<div class="tcart" style="background-image:url(${cupImg(c)})"></
 <div class="tcpz"><span class="coin"></span>${fmt(c.prize)}</div>
 <div class="tcr"><span>${T("Kirish narxi")}</span><b><span class="coin" style="width:14px;height:14px"></span> ${fmtS(c.fee)}</b></div>
 <div class="tcr"><span>${T("QATNASHISH")}</span><b>👥 ${c.n} · ${tourRounds(c.n)} ${T("raund")}</b></div>
-<div class="tcr"><span>${T("O'yinchilar")}</span><b>${T(c.who)}</b></div>
+<div class="tcr"><span>${T("O'yinchilar")}</span><b>${T(c.who)}</b></div>${(w => w && w.open ? `<div class="tcr"><span>${T("Ochiq")}</span><b>⏳ ${leftTxt(w.left)}</b></div>` : "")(cupWindow(c))}
 <button class="tcgo" ${locked ? "disabled" : ""}>${T("QATNASHISH")} ›</button></div>
 ${locked ? `<div class="lock"><div><div>🔒</div>${lockWhy}</div></div>` : ""}`;
 el.querySelector("button").onclick = () => joinTour(c);
@@ -7905,7 +7907,7 @@ grid.appendChild(el);
 CUPS.forEach(c => addCup(c, grid));
 body.appendChild(grid);
 const hd = document.createElement("div"); hd.className = "h tcsec"; hd.textContent = "🏙️ " + T("Shahar kuboklari"); body.appendChild(hd);
-const sub = document.createElement("div"); sub.className = "muted tcsub"; sub.textContent = T("Har shaharning o'z chempionati: kubok shu shahar stolida o'ynaladi va stol ochilgach ochiladi."); body.appendChild(sub);
+const sub = document.createElement("div"); sub.className = "muted tcsub"; sub.textContent = T("Har shaharning o'z chempionati. Bitta kubokni yutsangiz, keyingisi ertasi kuni ochiladi."); body.appendChild(sub);
 const grid2 = document.createElement("div"); grid2.className = "tcups cities"; CITY_CUPS.forEach(c => addCup(c, grid2)); body.appendChild(grid2);
 return;
 }
@@ -7931,7 +7933,7 @@ if (cupLock(c)) return toast("🔒", cupLock(c), T(c.name));
 if (profile.coins < c.fee) return openModal({icon: "😕", title: T("Tanga yetmaydi"), text: `${fmt(c.fee)} 🪙`, buttons: [{label: "OK", cls: "gray", fn: () => go("tourScr")}]});
 if (c.region && profile.country && CONT[profile.country] !== c.region)
 return openModal({icon: "🌍", title: T("Bu kubokda qatnasha olmaysiz"), text: `${T("Bu kubok faqat quyidagi o'yinchilar uchun")}: ${T(c.who)}. ${T("Jahon Kubogi hamma uchun ochiq.")}`, buttons: [{label: T("Jahon Kubogi"), cls: "orange", fn: () => go("tourScr")}, {label: "OK", cls: "gray", fn: () => {}}]});
-profile.coins -= c.fee; if (slot) (profile.dailyDone = profile.dailyDone || {})[slot] = 1; save(); updateNav();
+profile.coins -= c.fee; if (slot) (profile.dailyDone = profile.dailyDone || {})[slot] = 1; { const cw = cupWindow(c); if (cw) (profile.cupEntered = profile.cupEntered || {})[c.id] = cw.idx; } save(); updateNav();
 const city = CITIES[c.city], players = [mePlayer()], used = new Set([profile.name]);
 const pool = c.region ? COUNTRY_CODES.filter(cc => CONT[cc] === c.region) : COUNTRY_CODES;
 while (players.length < c.n) {
@@ -7967,6 +7969,7 @@ const next = cur.map(m => m[2]);
 if (next.length === 1) {
 dailyRecord("🏆");
 tour = null; profile.tours++; profile.cupWins = profile.cupWins || {}; profile.cupWins[c.id] = (profile.cupWins[c.id] | 0) + 1; profile.won += c.prize; save(); unlock("champ"); addXp(100); y8Score(); y8Event("tournament_win", c.prize); mission("tour");
+if (c.cityCup) profile.cityCupDay = today();
 profile.cupLog = (profile.cupLog || []).concat([{id: c.id, d: today()}]).slice(-80); profile.cupBan = {id: c.id, until: Date.now() + 3 * 864e5}; save(); shareCup(c);
 return cupCeremony(c, c.prize, 100, () => resultModal(true, `${T(c.name)} — ${T("Siz chempionsiz!")} 👑`, mePlayer(), c.prize, [{label: T("Menyu"), cls: "green", fn: () => toMenu()}]));
 }
@@ -10492,11 +10495,29 @@ else toast("🏅", `${fresh.length} ${T("ta yangi yutuq")}`, `+${fmt(500 * fresh
 const cityTro = c => ((profile.cityTro || {})[c.id] | 0);
 const ringOf = c => !!(profile.rings || {})[c.id];
 const CUP_RINGS = {c1: 0, c2: 2, c3: 5, c4: 8};   // rings a player must have collected before a tournament opens
+// Cup schedule: every player counts from the same UTC epoch, so a cup is open for everybody at the same moments
+const DAY = 864e5, CUP_EPOCH = Date.UTC(2026, 9, 12);
+const CUP_PLAN = {c1: {wait: 7, open: 3, off: 0}, c2: {wait: 7, open: 3, off: 2}, c3: {wait: 7, open: 3, off: 4}, c4: {wait: 10, open: 3, off: 0}};   // days closed, then days open (Asia / South America / Europe every 7 days, World every 10)
+function cupWindow(c, now = Date.now()) {
+const p = CUP_PLAN[c.id]; if (!p) return null;
+const cyc = (p.wait + p.open) * DAY, raw = now - CUP_EPOCH - p.off * DAY, t = (raw % cyc + cyc) % cyc, w = p.wait * DAY, idx = Math.floor(raw / cyc);
+return t >= w ? {open: true, idx, left: cyc - t, next: cyc - t + w} : {open: false, idx, left: w - t, next: w - t};
+}
+function leftTxt(ms) {
+const U = LANG === "ru" ? ["д", "ч", "м"] : LANG === "uz" ? ["k", "s", "d"] : ["d", "h", "m"], m = Math.max(1, Math.ceil(ms / 6e4)), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60);
+return d ? `${d}${U[0]} ${h}${U[1]}` : h ? `${h}${U[1]} ${m % 60}${U[2]}` : `${m}${U[2]}`;
+}
 const cupLock = c => {
 if (profile.level < c.lvl) return `${c.lvl}-${T("daraja kerak")}`;
-if (c.cityCup) return cityLock(CITIES[c.city]);   // a city cup opens together with that city's table
+if (c.cityCup) {   // a city cup opens together with that city's table; after one city cup is won the next one opens the following day
+const lk = cityLock(CITIES[c.city]); if (lk) return lk;
+return (profile.cityCupDay || "") === today() ? T("Ertaga ochiladi") : "";
+}
 const need = CUP_RINGS[c.id] | 0, have = CITIES.filter(ringOf).length;
-return have >= need ? "" : `${T("Uzuklar kerak")}: ${have}/${need}`;
+if (have < need) return `${T("Uzuklar kerak")}: ${have}/${need}`;
+const w = cupWindow(c); if (!w) return "";
+if (!w.open) return `${T("Ochiladi")}: ${leftTxt(w.left)}`;
+return ((profile.cupEntered || {})[c.id] === w.idx) ? `${T("Qatnashdingiz")} · ${T("Ochiladi")}: ${leftTxt(w.next)}` : "";
 };
 const cityPrev = c => { const i = CITIES.indexOf(c); return i > 0 ? CITIES[i - 1] : null; };
 const cityLock = c => {   // a table opens only after the previous city's ring is fully collected (players who already played it keep it)
