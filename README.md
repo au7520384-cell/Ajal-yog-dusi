@@ -1,4 +1,4 @@
-# 🎱 Bilyard 8 — Masters League
+# 🎱 Billiard 8 — Masters League
 
 An 8-ball pool game for phones and computers. The game is `index.html`; the online part (real opponents, friends, invite bonuses, global leaderboard, real-money purchases) is the small Node.js server in `server/`.
 
@@ -35,7 +35,7 @@ Open `http://localhost:8080` and the game connects to the server automatically. 
 Player data is stored in Postgres when `DATABASE_URL` is set; without it the server uses a JSON file (local use).
 1. **Database:** create a free project at neon.tech and copy the connection string (`postgresql://…?sslmode=require`). The server creates its tables itself.
 2. **Server:** on render.com choose **New → Blueprint** and pick this repo. `render.yaml` sets everything up (free plan, root `server`).
-3. Fill in `DATABASE_URL` (the Neon string) and `APP_URL` (`https://bilyard8.onrender.com`). Leave the Stripe keys empty for now.
+3. Fill in `DATABASE_URL` (the Neon string) and `APP_URL` (`https://billiard8.onrender.com`). Leave the Stripe keys empty for now.
 4. The log should say `storage postgres`. Open the URL and play.
 
 The free Render plan sleeps after ~15 minutes without visitors; the first visitor then waits about 30 s. Data is safe in Neon either way. A paid instance removes the sleep.
@@ -44,7 +44,7 @@ The free Render plan sleeps after ~15 minutes without visitors; the first visito
 The game has the Y8 SDK built in (login, cloud save, ads, leaderboard, achievements). It stays off until you fill in `CONFIG` at the top of the script in `index.html`:
 ```js
 const CONFIG = {
-  server: "https://bilyard8.onrender.com",   // your Render URL (online play from Y8)
+  server: "https://billiard8.onrender.com",   // your Render URL (online play from Y8)
   y8AppId: "…",                               // https://account.y8.com/applications/ → create an app
   y8GameId: "…",                              // sent by the Y8 team after approval (ads)
   y8Leaderboard: "Leaderboard",

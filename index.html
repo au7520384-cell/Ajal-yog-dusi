@@ -15,7 +15,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
-<title>Bilyard 8 — Masters League</title>
+<title>Billiard 8 — Masters League</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
@@ -1762,12 +1762,12 @@ button:active:not(:disabled),.btn:active:not(:disabled),.nb:active,.mchip:active
 <script>
 "use strict";
 /* =====================================================================
-BILYARD 8 — Ustalar Ligasi
+BILLIARD 8 — Ustalar Ligasi
 Bitta faylli 8-shar bilyard: 3D aylanadigan sharlar, aylanish (spin),
 sintez qilingan realistik tovushlar, AI raqiblar, turnir, sovg'alar.
 ===================================================================== */
 const CONFIG = {
-server: "https://bilyard8.onrender.com",
+server: "https://billiard8.onrender.com",
 y8AppId: "",                                // Y8 account App ID — https://account.y8.com/applications/
 y8GameId: "",
 y8Leaderboard: "Leaderboard",
@@ -2207,7 +2207,7 @@ const DICT = {
 "Yuklanmoqda…": ["Loading…", "Загрузка…"], "o'yinchi": ["players", "игроков"], "Hali hech kim yo'q — birinchi bo'ling!": ["Nobody yet — be the first!", "Пока никого — будьте первым!"],
 "Har bir taklif qilingan do'st uchun siz olasiz": ["For every friend you invite you get", "За каждого приглашённого друга вы получаете"],
 "Do'stingiz ham oladi": ["Your friend gets", "Ваш друг получает"], "Taklif kodini ishlatish": ["Redeem invite code", "Активировать код приглашения"],
-"Hammaga": ["All", "Всем"], "Men bilan Bilyard 8 o'ynang! Kodim": ["Play Bilyard 8 with me! My code", "Сыграй со мной в Bilyard 8! Мой код"],
+"Hammaga": ["All", "Всем"], "Men bilan Billiard 8 o'ynang! Kodim": ["Play Billiard 8 with me! My code", "Сыграй со мной в Billiard 8! Мой код"],
 "Bunday kod topilmadi": ["Code not found", "Код не найден"], "Bu sizning kodingiz": ["That's your own code", "Это ваш код"],
 "Siz allaqachon taklif kodini ishlatgansiz": ["You already used an invite code", "Вы уже активировали код"], "Taklif kodi faqat birinchi 7 kunda ishlaydi": ["Invite codes work only in your first 7 days", "Код действует только первые 7 дней"],
 "Do'st qo'shildi": ["Friend added", "Друг добавлен"], "Sovg'a so'rovlari": ["Gift requests", "Запросы подарков"], "Hammasiga yuborish": ["Send to all", "Отправить всем"],
@@ -2754,12 +2754,12 @@ const profile = Object.assign({
 coins: 1500, cash: 5, xp: 0, level: 1, wins: 0, games: 0, won: 0, name: "Siz", avatar: PV + (Math.random() * PV_N | 0),
 cue: "start", cues: ["start"], lastLucky: "", luckyTries: 0, lastWheel: "", wheelTries: 0,
 streak: 0, lastClaim: "", ach: {}, muted: false, tours: 0, avs: [], frames: [0], frame: 0, tables: [], tableSkin: "", country: "", pieces: {}, gems: 0, vip: 0,
-}, store.get("bilyard8v2", {}));
+}, store.get("billiard8v2", store.get("bilyard8v2", {})));   // players of the old "bilyard8v2" save keep their progress
 profile.tables = (profile.tables || []).filter(id => id !== "x_cls"); if (profile.tableSkin === "x_cls") profile.tableSkin = "";
 if ((profile.avatar | 0) < 20) profile.avatar = PV + (profile.avatar | 0) * 3 % PV_N;
 const ownsAvatar = i => avPrice(i).v === 0 || profile.avs.includes(i);
 let cloudSaveHook = null;
-const save = () => { profile.savedAt = Date.now(); store.set("bilyard8v2", profile); if (cloudSaveHook) cloudSaveHook(); if (typeof cloudQueue === "function") cloudQueue(); };
+const save = () => { profile.savedAt = Date.now(); store.set("billiard8v2", profile); if (cloudSaveHook) cloudSaveHook(); if (typeof cloudQueue === "function") cloudQueue(); };
 const xpNeed = l => 100 + (l - 1) * 80;
 const cueDef = id => CUES.find(c => c.id === id) || CUES[0];
 const cueMax = c => 56 + c.st[0] * 1.2;   // 1 u/frame = 0.132 m/s: 7.4 m/s (stat 0) to 8.9 m/s (stat 10) at full power
@@ -7571,8 +7571,8 @@ buttons = buttons.map(b => ({...b, fn: () => y8Break(b.fn)}));
 const menuBtn = buttons.find(b => b.cls === "gray"), rest = buttons.filter(b => b !== menuBtn);
 if (menuBtn) mk("back", "❮", menuBtn.fn);
 {
-const url = /^https?:/.test(location.href) ? location.origin + location.pathname : "https://bilyard8.onrender.com/";
-const txt = humanWon ? `🎱 ${me.name} — ${city.name} ${city.sub}: +${fmt(prize || 0)} 🪙 | Bilyard 8` : `🎱 Bilyard 8 — ${city.name} ${city.sub}`;
+const url = /^https?:/.test(location.href) ? location.origin + location.pathname : "https://billiard8.onrender.com/";
+const txt = humanWon ? `🎱 ${me.name} — ${city.name} ${city.sub}: +${fmt(prize || 0)} 🪙 | Billiard 8` : `🎱 Billiard 8 — ${city.name} ${city.sub}`;
 const open = u => { try { const w = window.open(u, "_blank", "noopener"); if (!w && navigator.share) navigator.share({text: txt, url}); } catch (e) {} };
 mk("share fb", `<svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M14 8V6.5c0-.7.2-1 1.2-1H17V2.2C16.600 2.100 15.500 2 14.300 2 11.700 2 10 3.600 10 6.400V8H7v3.600h3V22h4v-10.400h2.800L17.300 8z"/></svg>${T("Ulashish")}`, () => open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(txt)));
 mk("share xx", `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#fff" d="M17.800 3h3.100l-6.800 7.700L22 21h-6.200l-4.900-6.400L5.300 21H2.200l7.300-8.300L2 3h6.400l4.400 5.900zm-1.100 16.200h1.700L7.400 4.700H5.600z"/></svg>${T("Ulashish")}`, () => open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(txt) + "&url=" + encodeURIComponent(url)));
@@ -8488,8 +8488,8 @@ document.querySelectorAll("[data-ft]").forEach(b => b.onclick = () => { document
 const link = () => `${Net.base || location.origin + location.pathname}?ref=${Net.acct ? Net.acct.code : ""}`;
 $("copyCode").onclick = () => { navigator.clipboard && navigator.clipboard.writeText(Net.acct ? Net.acct.code : "").then(() => toast("📋", T("Nusxalandi!"), "ID")); };
 $("shareCode").onclick = () => {
-const text = `${T("Men bilan Bilyard 8 o'ynang! Kodim")}: ${Net.acct ? Net.acct.code : ""}`;
-if (navigator.share) navigator.share({title: "Bilyard 8", text, url: link()}).catch(() => {});
+const text = `${T("Men bilan Billiard 8 o'ynang! Kodim")}: ${Net.acct ? Net.acct.code : ""}`;
+if (navigator.share) navigator.share({title: "Billiard 8", text, url: link()}).catch(() => {});
 else navigator.clipboard && navigator.clipboard.writeText(`${text} ${link()}`).then(() => toast("📋", T("Nusxalandi!"), T("Ulashish")));
 };
 const codeVal = () => $("frCode").value.trim().toUpperCase();
@@ -8714,7 +8714,7 @@ if (!profile.name || profile.name === "Siz" || profile.name === "Player") { prof
 Y8.sdk.loadData({key: "save"}).then(v => {
 const cloud = v ? JSON.parse(v) : null;
 if (cloud && (cloud.savedAt || 0) > (profile.savedAt || 0)) {
-Object.assign(profile, cloud); store.set("bilyard8v2", profile); updateNav();
+Object.assign(profile, cloud); store.set("billiard8v2", profile); updateNav();
 toast("☁️", T("Saqlangan o'yin yuklandi"), "Y8");
 } else y8QueueSave();
 }).catch(() => {});
@@ -9218,8 +9218,8 @@ $("tEvents").onclick = () => go("eventsScr");
 $("tWithFr").onclick = () => go("withFrScr");
 $("hWatch").onclick = () => go("liveScr");
 $("hInvite").onclick = () => { const code = Net.acct ? Net.acct.code : ""; const base = /^https?:/.test(location.protocol) && !ON_PORTAL ? location.origin + location.pathname : (Net.base || CONFIG.server) + "/", url = base + (code ? "?ref=" + code : "");
-const text = `${T("Men bilan Bilyard 8 o'ynang! Kodim")}: ${code}`;
-if (navigator.share) navigator.share({title: "Bilyard 8", text, url}).catch(() => {}); else { try { navigator.clipboard.writeText(text + " " + url); toast("📋", T("Nusxalandi!"), ""); } catch (e) {} go("friendsScr"); } };
+const text = `${T("Men bilan Billiard 8 o'ynang! Kodim")}: ${code}`;
+if (navigator.share) navigator.share({title: "Billiard 8", text, url}).catch(() => {}); else { try { navigator.clipboard.writeText(text + " " + url); toast("📋", T("Nusxalandi!"), ""); } catch (e) {} go("friendsScr"); } };
 $("hLimited").onclick = limitedCue;
 document.querySelectorAll("[data-img]").forEach(el => { el.src = IMG[el.dataset.img]; });
 { const wv = $("hWatchV"); if (wv) { wv.src = WATCH_VID; wv.muted = true; const go = () => { const pl = wv.play(); if (pl && pl.catch) pl.catch(() => {}); }; go(); try { new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? go() : wv.pause())).observe(wv); } catch (e) {} } }
@@ -10729,7 +10729,7 @@ let cloudReady = false, cloudTimer = null, cloudBusy = false, cloudAt = 0;
 function applySave(sv) {
 for (const k of Object.keys(profile)) delete profile[k];
 Object.assign(profile, sv);
-store.set("bilyard8v2", profile);
+store.set("billiard8v2", profile);
 updateNav(); applySettings(); if (profile.lang && LANGS[profile.lang]) applyLang(profile.lang);
 const on = document.querySelector(".screen.on"); if (mode === "menu" && on) go(on.id);
 }
@@ -10765,7 +10765,7 @@ Net.ensure().then(() => Net.api("/api/recovery/key", {})).then(r => {
 openModal({icon: "🔑", title: T("Tiklash kaliti"), text: T("Buni yozib qo'ying! Yangi telefonda ID va shu kalit bilan kirasiz."),
 extra: `<div class="card" style="font-family:var(--fh);font-size:22px;line-height:1.6">ID: <b style="color:#ffe27a">${esc(Net.acct.code)}</b><br>${T("Kalit")}: <b style="color:#7ff7ff">${esc(r.key)}</b></div>
 <p class="muted" style="margin:6px 0 0">${T("Yangi kalit olsangiz, eskisi ishlamay qoladi.")}</p>`,
-buttons: [{label: T("Nusxalash"), cls: "blue", fn: () => { try { navigator.clipboard.writeText(`Bilyard 8 · ID ${Net.acct.code} · ${r.key}`); toast("📋", T("Nusxalandi!"), ""); } catch (e) {} }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+buttons: [{label: T("Nusxalash"), cls: "blue", fn: () => { try { navigator.clipboard.writeText(`Billiard 8 · ID ${Net.acct.code} · ${r.key}`); toast("📋", T("Nusxalandi!"), ""); } catch (e) {} }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }).catch(e => toast("⚠️", errText(e), T("Tiklash kaliti")));
 }
 function recoverAccount() {
@@ -10911,7 +10911,7 @@ ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setReco
 ${row("Til", `<button class="btn blue" id="setLang" style="padding:6px 14px">🌐 ${LANGS[LANG]}</button>`)}
 <div class="setrow"><b>🎧 ${T("Ovoz sinovi")}</b><button class="btn orange" id="setLab" style="padding:6px 14px">▶ ${T("Ochish")}</button></div>
 ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:6px 14px">👤 ${esc(profile.name)}</button>`)}
-<div class="muted" style="text-align:center;margin-top:10px">Bilyard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}</div>`;
+<div class="muted" style="text-align:center;margin-top:10px">Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}</div>`;
 { const lb = $("setLab"); if (lb) lb.onclick = openSoundLab; }
 $("setBody").querySelectorAll("[data-t]").forEach(b => b.onclick = () => {
 const k = b.dataset.t;
