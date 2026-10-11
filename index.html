@@ -4055,7 +4055,7 @@ vw = rotated ? innerHeight : innerWidth; vh = rotated ? innerWidth : innerHeight
 const uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : 1;
 for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) / uiz <= q.v);
 document.body.style.width = rotated ? vw + "px" : ""; document.body.style.height = rotated ? vh + "px" : "";
-dpr = Math.min(window.devicePixelRatio || 1, 2);
+dpr = Math.min(window.devicePixelRatio || 1, 1.5);   // cap at 1.5: phones render about 45 % fewer pixels per frame (smoother rolling)
 cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
 scale = Math.min(vw / W, vh / H) * zoom;
 document.documentElement.style.setProperty("--uiz", uiz.toFixed(3));   // big monitors: scale the menus up with the table so nothing looks tiny
@@ -4116,7 +4116,7 @@ return g;
 function ballSprite(b) {
 const T = ballTexData[b.n]; if (!T) return null;
 let e = b._sp;
-if (e && Math.abs(e.p0 - b.p[0]) + Math.abs(e.p1 - b.p[1]) + Math.abs(e.p2 - b.p[2]) + Math.abs(e.q0 - b.q[0]) + Math.abs(e.q1 - b.q[1]) + Math.abs(e.q2 - b.q[2]) < 0.012) return e.cv;
+if (e && Math.abs(e.p0 - b.p[0]) + Math.abs(e.p1 - b.p[1]) + Math.abs(e.p2 - b.p[2]) + Math.abs(e.q0 - b.q[0]) + Math.abs(e.q1 - b.q[1]) + Math.abs(e.q2 - b.q[2]) < 0.05) return e.cv;   // re-render the sprite only after ~3° of rolling (was 0.7°): rolling balls redraw far less often
 if (!e) { const cv = document.createElement("canvas"); cv.width = cv.height = SPR; e = b._sp = {cv, id: cv.getContext("2d").createImageData(SPR, SPR)}; }
 const [p0, p1, p2] = b.p, [q0, q1, q2] = b.q, x0 = p1 * q2 - p2 * q1, x1 = p2 * q0 - p0 * q2, x2 = p0 * q1 - p1 * q0;
 const d = e.id.data, W = T.width, H = T.height, td = T.data;
