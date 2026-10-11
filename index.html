@@ -5561,7 +5561,9 @@ const w = srcImg.naturalWidth, h = srcImg.naturalHeight, c = document.createElem
 const hue = hx => { const n = parseInt(hx.slice(1), 16), r = (n >> 16 & 255) / 255, gg = (n >> 8 & 255) / 255, b = (n & 255) / 255, mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), d = mx - mn; if (!d) return 220; const H = mx === r ? ((gg - b) / d) % 6 : mx === gg ? (b - r) / d + 2 : (r - gg) / d + 4; return (H * 60 + 360) % 360; };
 const dh = hue(neon) - 220, im = g.getImageData(0, 0, w, h), d = im.data;
 for (let i = 0; i < d.length; i += 4) {
-const r = d[i] / 255, gg = d[i + 1] / 255, b = d[i + 2] / 255, mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), dl = mx - mn, l = (mx + mn) / 2; if (dl < 0.08) continue;
+const r = d[i] / 255, gg = d[i + 1] / 255, b = d[i + 2] / 255, mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), dl = mx - mn, l = (mx + mn) / 2;
+if (silver) { const y = (0.3 * r + 0.59 * gg + 0.11 * b) * 255; d[i] = y * 0.92; d[i + 1] = y * 0.97; d[i + 2] = Math.min(255, y * 1.07); continue; }   // silver tables: the whole collar is neutral silver, no coloured fringe from the source rail
+if (dl < 0.08) continue;
 let H = mx === r ? ((gg - b) / dl) % 6 : mx === gg ? (b - r) / dl + 2 : (r - gg) / dl + 4; H = (H * 60 + 360) % 360;
 if (H > 20 && H < 70) { if (silver && S0(dl, l) > 0.3) { const y = (0.3 * r + 0.59 * gg + 0.11 * b) * 255 * 1.05; d[i] = y * 0.93; d[i + 1] = y * 0.97; d[i + 2] = Math.min(255, y * 1.06); } continue; }   // gold (silver tables: the gold is turned to silver)
 const S = dl / (1 - Math.abs(2 * l - 1)), H2 = (H + dh + 720) % 360, C = (1 - Math.abs(2 * l - 1)) * S, X = C * (1 - Math.abs((H2 / 60) % 2 - 1)), m = l - C / 2, k = H2 / 60 | 0, t = [[C, X, 0], [X, C, 0], [0, C, X], [0, X, C], [X, 0, C], [C, 0, X]][k];
@@ -5578,7 +5580,7 @@ function royalCollars(g, id) {   // the circled collars of the reference rail (c
 if (!royalSetOk(id)) return;
 const neon = ROYAL_NEON[id] || "#2a6aff", silver = ROYAL_SILVER.test(id);
 const P = [[65, 73, 49, "co", 1, 1], [1554, 73, 49, "co", -1, 1], [65, 789, 49, "co", 1, -1], [1554, 789, 49, "co", -1, -1], [809.5, 52, 43, "mi", 1, 1], [809.5, 809, 43, "mi", 1, -1]], ry = 0.933;
-for (const [cx, cy, ri, k, fx, fy] of P) { const c = ROYAL_COL[k], mid = k === "mi", sc = (ri + (mid ? 0 : 2.5)) / c.r; g.save(); g.translate(cx, cy + (mid && fy > 0 ? 3 : 0)); g.scale(sc * fx, sc * fy * ry); g.imageSmoothingQuality = "high"; g.shadowColor = "rgba(0,0,0,.6)"; g.shadowBlur = 6; g.shadowOffsetY = 2; g.drawImage(royalTinted(neon, c.im, k + (silver ? "s" : ""), silver), -c.cx, -c.cy); g.restore(); }
+for (const [cx, cy, ri, k, fx, fy] of P) { const c = ROYAL_COL[k], mid = k === "mi", sc = (ri + (mid ? 5 : 3.5)) / c.r; g.save(); g.translate(cx, cy + (mid && fy > 0 ? 3 : 0)); g.scale(sc * fx, sc * fy * ry); g.imageSmoothingQuality = "high"; g.shadowColor = "rgba(0,0,0,.6)"; g.shadowBlur = 6; g.shadowOffsetY = 2; if (mid && fy < 0) { g.beginPath(); g.rect(-400, -61, 800, 400); g.clip(); } g.drawImage(royalTinted(neon, c.im, k + (silver ? "s" : ""), silver), -c.cx, -c.cy); g.restore(); }
 }
 function royalBand(x, y, w, h, vert, neon, metal, tid) {   // royal rail inlay: dark enamel charged with neon light, thin gold rules, gold crowns / fleur-de-lis / jewelled lozenges, a jewelled medallion in the middle
 const [gh, gm, gl] = metal, L = vert ? h : w, H = vert ? w : h, sv = ctx;
