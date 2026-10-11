@@ -5619,11 +5619,19 @@ ctx.save(); ctx.translate(FX - 61, FY - 70); ctx.scale(1122.6 / SYD_TBL.naturalW
 if (st.royal) royalCollars(ctx, city.id, unit); else premCollars(ctx, city.id, unit);
 ctx.restore();
 }
+const ROYAL_BANDS = {};
+function royalBandCanvas(id, vert) {   // the supplied left segment of this table's rail, repeated as [S][mirrored S] along the long rails and [S][mirrored S][S] down the sides: every joint is a mirror line, so the pattern flows on without a seam
+const k = id + (vert ? "v" : "h"); if (ROYAL_BANDS[k]) return ROYAL_BANDS[k];
+const src = ROYAL_SET[id].ch, W = src.naturalWidth, h = src.naturalHeight, sw = W >> 1, n = vert ? 3 : 2, c = document.createElement("canvas");
+c.width = sw * n; c.height = h; const g = c.getContext("2d"); g.imageSmoothingQuality = "high";
+for (let i = 0; i < n; i++) { g.save(); g.translate(i * sw + (i % 2 ? sw : 0), 0); if (i % 2) g.scale(-1, 1); g.drawImage(src, 0, 0, sw, h, 0, 0, sw, h); g.restore(); }
+return ROYAL_BANDS[k] = c;
+}
 function royalBand(x, y, w, h, vert, neon, metal, tid) {   // royal rail inlay: dark enamel charged with neon light, thin gold rules, gold crowns / fleur-de-lis / jewelled lozenges, a jewelled medallion in the middle
 const [gh, gm, gl] = metal, L = vert ? h : w, H = vert ? w : h, sv = ctx;
 ctx.save(); ctx.translate(x, y); if (vert) { ctx.translate(w, 0); ctx.rotate(Math.PI / 2); }
 ctx.beginPath(); ctx.rect(0, 0, L, H); ctx.clip();
-if (royalSetOk(tid)) { ctx.imageSmoothingQuality = "high"; ctx.drawImage(ROYAL_SET[tid].ch, 0, 0, L, H); ctx.restore(); return; }
+if (royalSetOk(tid)) { ctx.imageSmoothingQuality = "high"; ctx.drawImage(royalBandCanvas(tid, vert), 0, 0, L, H); ctx.restore(); return; }
 const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, shade(neon, -200)); bg.addColorStop(0.5, shade(neon, -235)); bg.addColorStop(1, shade(neon, -190)); ctx.fillStyle = bg; ctx.fillRect(0, 0, L, H);
 let sd = 7 + Math.round(L * 3.1) + (neon.charCodeAt(2) || 0); const rn = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
 ctx.lineCap = ctx.lineJoin = "round";
