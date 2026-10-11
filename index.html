@@ -415,10 +415,10 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 .rowb{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 .reward{display:inline-flex;align-items:center;gap:10px;background:#0b1020;border:2px solid #3b4a74;border-radius:14px;padding:8px 18px;font-family:var(--fh);font-size:30px;color:#ffe27a}
 /* in-game DOM controls */
-#gameUi{position:fixed;left:max(8px,env(safe-area-inset-left));top:8px;z-index:15;display:none;flex-direction:column;gap:6px}
+#gameUi{position:fixed;right:max(8px,env(safe-area-inset-right));top:52px;z-index:15;display:none;flex-direction:column;gap:6px;align-items:flex-end}   /* menu/chat/voice column moved to the right so the cue stick never sweeps across it */
 #gameUi.on{display:flex}
 #gFs{position:fixed;right:max(6px,env(safe-area-inset-right));top:4px;width:30px;height:30px;font-size:15px;padding:0;opacity:.8;border-radius:9px}
-#zoomBox{display:flex;flex-direction:column;gap:6px;position:fixed;left:max(8px,env(safe-area-inset-left));bottom:8px;opacity:.75}#zoomBox .gbtn{background:linear-gradient(#3a4a6a,#1a2438);color:#fff;font-weight:900;font-size:20px;line-height:1;padding:0}
+#zoomBox{display:flex;flex-direction:column;gap:6px;position:fixed;left:max(2px,env(safe-area-inset-left));bottom:2px;opacity:.75}   /* zoom moved to the bottom-left edge, out of the cue path */#zoomBox .gbtn{background:linear-gradient(#3a4a6a,#1a2438);color:#fff;font-weight:900;font-size:20px;line-height:1;padding:0}
 .gbtn{width:36px;height:36px;border-radius:10px;border:0;cursor:pointer;font-size:17px;box-shadow:inset 0 2px 0 #fff6,0 3px 0 #0009}
 #chatPanel{position:fixed;left:70px;top:10px;z-index:16;display:none;flex-direction:column;gap:8px;width:300px;
 background:#0d1426ee;border:2px solid #34436a;border-radius:14px;padding:8px}
