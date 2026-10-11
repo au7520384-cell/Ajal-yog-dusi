@@ -9927,7 +9927,7 @@ const HOR_USED = new Set();
 const HOR_LA = ["skulls", "bones", "spikes", "webs", "blood", "eyes", "claws", "bats", "thorns", "cracks", "teeth", "chains"];
 const HOR_LM = ["lsys", "lissa", "sierp", "rosette", "flow", "koch", "hilbert", "phyllo", "bolt", "ca30", "ca90", "moire"];
 const HOR_LB = ["fire", "runes", "galaxy", "crystal", "lightning", "vines", "camo", "carbon", "circuit", "gems", "neon", "wave"];
-const hsl2hex = (h, s2, l) => { s2 /= 100; l /= 100; const a = s2 * Math.min(l, 1 - l), f = n => { const k = (n + h / 30) % 12, c = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(255 * c).toString(16).padStart(2, "0"); }; return `#${f(0)}${f(8)}${f(4)}`; };
+function hsl2hex(h, s2, l) { s2 /= 100; l /= 100; const a = s2 * Math.min(l, 1 - l), f = n => { const k = (n + h / 30) % 12, c = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)); return Math.round(255 * c).toString(16).padStart(2, "0"); }; return `#${f(0)}${f(8)}${f(4)}`; }   // a hoisted declaration: table thumbnails are painted while the script is still starting up
 const horHue = i => (i * 47 + 13) % 360, HOR_FXN = ["alanga uchqunlari", "qon tomchilari", "ko'rshapalaklar", "chaqmoq", "tutun", "o't-o'lanlar", "kul", "to'lqin halqalari"];
 HORROR.forEach(([name, , pal], i) => {
   const h = horHue(i), glow = hsl2hex(h, 100, 58), light = hsl2hex(h, 85, 82), fx = (i * 3 + (i >> 3)) % 8;
