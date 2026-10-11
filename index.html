@@ -2450,6 +2450,11 @@ const DICT = {
 "Kiylar va boshqalar": ["Cues & More", "Кии и другое"],
 "Tadbirlar": ["Events", "События"],
 "KUBOKLAR": ["CUPS", "КУБКИ"],
+"Ilovani o'rnatish": ["Install the app", "Установить приложение"],
+"Ilovani telefon yoki kompyuteringizga o'rnating yoki do'stlaringizga ulashing.": ["Install the app on your phone or computer, or share it with friends.", "Установите приложение на телефон или компьютер или поделитесь с друзьями."],
+"Havolani nusxalash": ["Copy link", "Скопировать ссылку"],
+"O'rnatish": ["Install", "Установить"],
+"Billiard 8 — bilyard o'yini": ["Billiard 8 — a billiards game", "Billiard 8 — бильярд"],
 "Ulanmoqda…": ["Connecting…", "Подключение…"],
 "Ulandi": ["Connected", "Подключено"],
 "Ulanmadi": ["Not connected", "Не удалось подключиться"],
@@ -10899,6 +10904,20 @@ ov.querySelectorAll("[data-g]").forEach(b => b.onclick = () => mark(b.dataset.g,
 ov.querySelectorAll("[data-b]").forEach(b => b.onclick = () => mark(b.dataset.b, "yomon", b, b.previousElementSibling));
 ov.querySelector("#slCp").onclick = () => { const t = items.map(([id]) => id + ": " + (st[id] || "-")).join("\n"), o = ov.querySelector("#slOut"); o.value = t; o.select(); try { navigator.clipboard.writeText(t).catch(() => {}); } catch (e) {} };
 }
+// "Install the app" card at the top of Settings: the public link to share, copy/share buttons, and a one-tap install when the browser allows it
+let deferredInstall = null;
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredInstall = e; });
+function addInstallCard() {
+const body = $("setBody"); if (!body || body.querySelector(".instcard")) return;
+const url = location.origin + location.pathname;
+const el = document.createElement("div"); el.className = "setrow instcard"; el.style.cssText = "flex-wrap:wrap";
+el.innerHTML = `<b>📲 ${T("Ilovani o'rnatish")}</b><div class="muted" style="width:100%;margin:4px 0 8px">${T("Ilovani telefon yoki kompyuteringizga o'rnating yoki do'stlaringizga ulashing.")}</div><code style="word-break:break-all;width:100%;font-size:13px">${esc(url)}</code><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn gray" id="instCopy">${T("Havolani nusxalash")}</button><button class="btn orange" id="instShare">${T("Ulashish")}</button>${deferredInstall ? `<button class="btn green" id="instGo">${T("O'rnatish")}</button>` : ""}</div>`;
+body.prepend(el);
+el.querySelector("#instCopy").onclick = () => { navigator.clipboard && navigator.clipboard.writeText(url).then(() => toast("📋", T("Nusxalandi!"), url)); };
+el.querySelector("#instShare").onclick = () => { if (navigator.share) navigator.share({title: "Billiard 8", text: T("Billiard 8 — bilyard o'yini"), url}).catch(() => {}); else el.querySelector("#instCopy").click(); };
+const g = el.querySelector("#instGo"); if (g) g.onclick = async () => { deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch (e) {} deferredInstall = null; g.remove(); };
+}
+{ const _buildSettings = buildSettings; buildSettings = function () { _buildSettings.apply(this, arguments); addInstallCard(); }; }
 function buildSettings() {
 const tg = (k, on) => `<button class="tgl${on ? " on" : ""}" data-t="${k}"></button>`;
 const seg = (k, opts) => `<div class="seg">${opts.map(([v, n]) => `<button class="${opt(k) === v ? "on" : ""}" data-s="${k}" data-v="${JSON.stringify(v).replace(/"/g, "&quot;")}">${T(n)}</button>`).join("")}</div>`;
