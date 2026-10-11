@@ -5763,20 +5763,20 @@ ctx.fillStyle = g; ctx.fillRect(0, 0, L, th);
 ctx.fillStyle = "rgba(0,0,0,.4)"; ctx.fillRect(0, th - 0.7, L, 0.7); ctx.fillStyle = "rgba(255,255,255,.28)"; ctx.fillRect(0, 0, L, 0.6);
 ctx.restore();
 }
-function vipPanels(pa) {   // VIP rails: the table's own art strip is laid, undistorted, into the six rail channels of the picture; its end-cap sits next to the pockets and mirrored copies continue from it, so the rail is symmetric about both axes
-const ix = x => -61 + x * 0.6702, iy = y => -70 + y * 0.7215, w0 = pa.naturalWidth, h0 = pa.naturalHeight;
+function vipPanels(pa) {   // VIP rails: the table's own art strip is laid, undistorted, into the six rail channels of the picture (channel sizes measured on the Sydney picture); its end-cap sits next to the pockets and mirrored copies continue from it, so the rail is symmetric about both axes
+const ix = x => -61 + x * 0.6702, w0 = pa.naturalWidth, h0 = pa.naturalHeight;
 const run = (ox, oy, ux, uy, vx, vy, L, th) => {   // anchored at the pocket end: the art's cap at t = 0, then mirrored tiles outwards until L
 const s = th / h0, Lt = w0 * s;
 ctx.save(); ctx.transform(ux, uy, vx, vy, ox, oy); ctx.beginPath(); ctx.rect(0, 0, L, th); ctx.clip(); ctx.imageSmoothingQuality = "high";
 for (let j = 0; j * Lt < L; j++) { ctx.save(); if (j % 2 === 0) { ctx.translate((j + 1) * Lt + 0.3, 0); ctx.scale(-s, s); } else { ctx.translate(j * Lt - 0.3, 0); ctx.scale(s, s); } ctx.drawImage(pa, 0, 0); ctx.restore(); }
 ctx.restore();
 };
-for (const [x0, x1, y0, y1, top] of [[152, 754, 30, 63, 1], [921, 1523, 30, 63, 1], [152, 754, 830, 868, 0], [921, 1523, 830, 868, 0]]) {
-const dx = FX + ix(x0), dw = ix(x1) - ix(x0), dy = FY + iy(y0), dh = iy(y1) - iy(y0), left = x0 < 800, vy = top ? 1 : -1, oy = top ? dy : dy + dh;
+for (const [x0, x1, top] of [[152, 754, 1], [921, 1523, 1], [152, 754, 0], [921, 1523, 0]]) {
+const dx = FX + ix(x0), dw = ix(x1) - ix(x0), dh = top ? 25.3 : 28.2, dy = top ? FY - 49.9 : FY + 527.2, left = x0 < 800, vy = top ? 1 : -1, oy = top ? dy : dy + dh;
 run(left ? dx + dw : dx, oy, left ? -1 : 1, 0, 0, vy, dw, dh); artShade(dx, oy, 1, 0, 0, vy, dw, dh);
 }
-for (const [x0, x1, left] of [[16, 48, 1], [1627, 1659, 0]]) {
-const dx = FX + ix(x0), dw = ix(x1) - ix(x0), dy = FY + 46, dh = FH - 92, ox = left ? dx : dx + dw, vx = left ? 1 : -1;
+for (const [dx, left] of [[FX - 52, 1], [FX + 1027.7, 0]]) {
+const dw = 24.3, dy = FY + 42.2, dh = 401.1, ox = left ? dx : dx + dw, vx = left ? 1 : -1;
 run(ox, dy, 0, 1, vx, 0, dh / 2, dw); run(ox, dy + dh, 0, -1, vx, 0, dh / 2, dw); artShade(ox, dy, 0, 1, vx, 0, dh, dw);
 }
 }
@@ -5836,15 +5836,15 @@ ctx.save(); ctx.transform(ux, uy, vx, vy, ox, oy); ctx.imageSmoothingQuality = "
 for (let j = 0; j < n; j++) { ctx.save(); if (j % 2) { ctx.translate((j + 1) * l + ov, 0); ctx.scale(-1, 1); ctx.drawImage(st, 0, 0, l + 2 * ov, th); } else ctx.drawImage(st, j * l - ov, 0, l + 2 * ov, th); ctx.restore(); }
 ctx.restore();
 };
-const artPanels = () => {   // all six rail panels straight from the art: whole mirrored tiles that start and end exactly at the collars, so the rail is symmetric about both table axes
+const artPanels = () => {   // all six rail panels straight from the art, filling the picture's own channels exactly (measured on the Sydney picture): whole mirrored tiles that start and end at the end blocks, symmetric about both table axes
 const st = artStrip(city.id); if (!st) return false;
-const px = x => FX - 61 + x * 0.6702, py = y => FY - 70 + y * 0.7215;
-for (const [x0, x1, y0, y1, top] of [[152, 754, 30, 63, 1], [921, 1523, 30, 63, 1], [152, 754, 830, 868, 0], [921, 1523, 830, 868, 0]]) {
-const dx = px(x0), dw = px(x1) - px(x0), dy = py(y0), dh = py(y1) - py(y0), left = x0 < 800, ux = left ? 1 : -1, vy = top ? 1 : -1, ox = left ? dx : dx + dw, oy = top ? dy : dy + dh;
+const px = x => FX - 61 + x * 0.6702;
+for (const [x0, x1, top] of [[152, 754, 1], [921, 1523, 1], [152, 754, 0], [921, 1523, 0]]) {
+const dx = px(x0), dw = px(x1) - px(x0), dh = top ? 25.3 : 28.2, dy = top ? FY - 49.9 : FY + 527.2, left = x0 < 800, ux = left ? 1 : -1, vy = top ? 1 : -1, ox = left ? dx : dx + dw, oy = top ? dy : dy + dh;
 ctx.save(); ctx.beginPath(); ctx.rect(dx, dy, dw, dh); ctx.clip(); artRun(st, ox, oy, ux, 0, 0, vy, dw, dh); artShade(ox, oy, ux, 0, 0, vy, dw, dh); ctx.restore();
 }
-for (const [x0, x1, left] of [[16, 48, 1], [1627, 1659, 0]]) {
-const dx = px(x0), dw = px(x1) - px(x0), dy = FY + 46, dh = FH - 92, vx = left ? 1 : -1, ox = left ? dx : dx + dw;   // symmetric about the table's centre: it stops short of both pocket collars by the same distance
+for (const [dx, left] of [[FX - 52, 1], [FX + 1027.7, 0]]) {
+const dw = 24.3, dy = FY + 42.2, dh = 401.1, vx = left ? 1 : -1, ox = left ? dx : dx + dw;   // the picture's own channel: from the gold bar of the upper end block to the gold bar of the lower one
 ctx.save(); ctx.beginPath(); ctx.rect(dx, dy, dw, dh); ctx.clip();
 for (const top of [1, 0]) { const oy = top ? dy : dy + dh, uy = top ? 1 : -1; artRun(st, ox, oy, 0, uy, vx, 0, dh / 2, dw); artShade(ox, oy, 0, uy, vx, 0, dh / 2, dw); }
 ctx.restore();
