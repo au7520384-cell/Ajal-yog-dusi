@@ -5583,11 +5583,21 @@ const W = SYD_TBL.naturalWidth, H = SYD_TBL.naturalHeight, cv = document.createE
 const g = cv.getContext("2d"); g.drawImage(SYD_TBL, 0, 0);
 const id = g.getImageData(0, 0, W, H), d = id.data, hx = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = hx(vividHex(city.felt[0])), f1 = hx(vividHex(city.felt[1])), rl = hx(city.rail[0]).map((v, i) => v * 0.6 + hx(city.rail[1])[i] * 0.4);
 const wmask = new Uint8Array(W * H);
+// one even cloth colour: the picture's own lit centre / dark edge falloff is measured (large masked blur of the felt) and divided out, so only the fibre detail is kept
+const lowG = new Float32Array(W * H); { const gm = new Float32Array(W * H), mm = new Float32Array(W * H);
+for (let n = 0, i = 0; n < W * H; n++, i += 4) { const r0 = d[i], g0 = d[i + 1], b0 = d[i + 2]; if (g0 > r0 + 12 && g0 > b0 + 8 && g0 > 25 && g0 < 112) { gm[n] = g0; mm[n] = 1; } }
+const box = (arr, R) => { const t = new Float32Array(W * H), o = new Float32Array(W * H);
+for (let y = 0; y < H; y++) { let a2 = 0; const o0 = y * W; for (let x = -R; x <= R; x++) a2 += arr[o0 + Math.min(W - 1, Math.max(0, x))]; for (let x = 0; x < W; x++) { t[o0 + x] = a2; a2 += arr[o0 + Math.min(W - 1, x + R + 1)] - arr[o0 + Math.max(0, x - R)]; } }
+for (let x = 0; x < W; x++) { let a2 = 0; for (let y = -R; y <= R; y++) a2 += t[Math.min(H - 1, Math.max(0, y)) * W + x]; for (let y = 0; y < H; y++) { o[y * W + x] = a2; a2 += t[Math.min(H - 1, y + R + 1) * W + x] - t[Math.max(0, y - R) * W + x]; } }
+return o; };
+let bg = box(gm, 70), bm = box(mm, 70); bg = box(bg, 40); bm = box(bm, 40);
+for (let n = 0; n < W * H; n++) lowG[n] = bm[n] > 1 ? bg[n] / bm[n] : 0; }
+const FLATG = 104;   // the target level every felt pixel is normalised to
 const mid = f0.map((v, i) => v * 0.55 + f1[i] * 0.45), cb = f0.map((v, i) => Math.min(255, v * 0.82 + f1[i] * 0.18 + 20));   // cb: the city's own cushion colour (as on its old table)
 for (let i = 0; i < d.length; i += 4) {
 const r = d[i], gg = d[i + 1], b = d[i + 2];
 if (r > gg * 1.12 && r > 18 && b < gg + 8) { const kw = lx ? 0.82 + Math.min(1, r / 200) * 0.5 : Math.min(1.6, r / 70), w = Math.min(1, (r / Math.max(1, gg) - 1.12) / 0.3) * (lx ? 0.95 : 0.85); d[i] = d[i] * (1 - w) + Math.min(255, rl[0] * kw) * w; d[i + 1] = d[i + 1] * (1 - w) + Math.min(255, rl[1] * kw) * w; d[i + 2] = d[i + 2] * (1 - w) + Math.min(255, rl[2] * kw) * w; }   // the wooden frame takes the city's rail colour
-else if (gg > r + 12 && gg > b + 8 && gg > 25) { if (wmask) wmask[i >> 2] = 1; const k = gg < 120 ? Math.max(0.8, Math.min(1.45, 1 + (gg - 100) / 100 * 1.15)) : Math.min(1.5, gg / 100), kc = Math.min(1.3, gg / 128), w = Math.max(0, Math.min(1, (gg - 112) / 12)); d[i] = Math.min(255, mid[0] * k * (1 - w) + cb[0] * kc * w); d[i + 1] = Math.min(255, mid[1] * k * (1 - w) + cb[1] * kc * w); d[i + 2] = Math.min(255, mid[2] * k * (1 - w) + cb[2] * kc * w); }
+else if (gg > r + 12 && gg > b + 8 && gg > 25) { if (wmask) wmask[i >> 2] = 1; const k = (gg < 112 && lowG[i >> 2] > 20) ? Math.max(0.78, Math.min(1.3, 1.0 + (gg - lowG[i >> 2]) / lowG[i >> 2] * 1.9)) : Math.min(1.5, gg / 100), kc = Math.min(1.3, gg / 128), w = Math.max(0, Math.min(1, (gg - 112) / 12)); d[i] = Math.min(255, mid[0] * k * (1 - w) + cb[0] * kc * w); d[i + 1] = Math.min(255, mid[1] * k * (1 - w) + cb[1] * kc * w); d[i + 2] = Math.min(255, mid[2] * k * (1 - w) + cb[2] * kc * w); }
 }
 g.putImageData(id, 0, 0);
 if (city.cloth === "worsted") worstedFelt(g, W, H, wmask); else sharpFelt(g, W, H, wmask);
