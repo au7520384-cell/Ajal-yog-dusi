@@ -5762,7 +5762,7 @@ const top = band(0, -rc - T / 2, FW, T), bot = band(0, FH + rc - T / 2, FW, T), 
 if (luxStyle(city)) {   // premium: the inlay fills the whole rail band, from collar to collar and from the outer lip to the cushion
 const px = x => -61 + x * 0.693, py = y => -70 + y * 0.7428;   // the picture is drawn at 1122.6 x 677.5 table units
 const hz = (x0, x1, y0, y1) => panel(top, 0, 0, px(x0), py(y0), px(x1) - px(x0), py(y1) - py(y0), false, 0, 0), vt = (x0, x1, y0, y1) => panel(lef, 0, 0, px(x0), py(y0), px(x1) - px(x0), py(y1) - py(y0), true, 0, 0);
-hz(133, 744, 11, 64); hz(875, 1486, 11, 64); hz(133, 744, 801, 856); hz(875, 1486, 801, 856); vt(5, 55, 136, 726); vt(1564, 1614, 136, 726);
+hz(133, 744, 11, 64); hz(875, 1486, 11, 64); hz(133, 744, 808, 863); hz(875, 1486, 808, 863); vt(5, 55, 136, 726); vt(1564, 1614, 136, 726);
 return;
 }
 panel(top, 0, -rc - T / 2, ix(152), iy(30), ix(754) - ix(152), iy(63) - iy(30), false, 30, 460);
