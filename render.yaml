@@ -2,7 +2,7 @@
 # Runs on the free plan; player data lives in a free Postgres database (e.g. Neon) given as DATABASE_URL.
 services:
   - type: web
-    name: bilyard8
+    name: billiard8
     runtime: node
     rootDir: server
     buildCommand: npm install
@@ -14,7 +14,7 @@ services:
         value: "20"
       - key: DATABASE_URL     # postgresql://…?sslmode=require  (from neon.tech → Connection string)
         sync: false
-      - key: APP_URL          # e.g. https://bilyard8.onrender.com
+      - key: APP_URL          # e.g. https://billiard8.onrender.com
         sync: false
       - key: ADMIN_KEY         # secret for posting in-game news (POST /api/news/post)
         sync: false

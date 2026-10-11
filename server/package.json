@@ -1,7 +1,7 @@
 {
-  "name": "bilyard8-server",
+  "name": "billiard8-server",
   "version": "1.0.0",
-  "description": "Backend for Bilyard 8: accounts, friends & referrals, global leaderboard, online 1v1 matchmaking, payments",
+  "description": "Backend for Billiard 8: accounts, friends & referrals, global leaderboard, online 1v1 matchmaking, payments",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {

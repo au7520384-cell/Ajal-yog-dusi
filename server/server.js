@@ -1,6 +1,6 @@
 "use strict";
 /*
- * Bilyard 8 — backend
+ * Billiard 8 — backend
  *  - guest accounts (id + secret token), profile sync
  *  - unique player ID / invite code, referral bonuses, friends, daily gifts
  *  - global leaderboard
@@ -648,7 +648,7 @@ const routes = {
       client_reference_id: u.id, "metadata[userId]": u.id, "metadata[sku]": b.sku,
       "line_items[0][quantity]": "1", "line_items[0][price_data][currency]": "usd",
       "line_items[0][price_data][unit_amount]": String(Math.round(sku.usd * 100)),
-      "line_items[0][price_data][product_data][name]": `Bilyard 8 — ${sku.name}`,
+      "line_items[0][price_data][product_data][name]": `Billiard 8 — ${sku.name}`,
     });
     let r, s;
     try {
@@ -844,5 +844,5 @@ store.load().then(loaded => {
   if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}}, loaded);
   db.meta = db.meta || {}; db.clubs = db.clubs || {};
   rollWeek();
-  server.listen(PORT, () => console.log(`Bilyard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${STRIPE_KEY ? "ON" : "off"})`));
+  server.listen(PORT, () => console.log(`Billiard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${STRIPE_KEY ? "ON" : "off"})`));
 }).catch(e => { console.error("Could not load the database:", e.message); process.exit(1); });
