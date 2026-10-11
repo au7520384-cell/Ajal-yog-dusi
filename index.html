@@ -5580,7 +5580,7 @@ function royalCollars(g, id) {   // the circled collars of the reference rail (c
 if (!royalSetOk(id)) return;
 const neon = ROYAL_NEON[id] || "#2a6aff", silver = ROYAL_SILVER.test(id);
 const P = [[65, 73, 49, "co", 1, 1], [1554, 73, 49, "co", -1, 1], [65, 789, 49, "co", 1, -1], [1554, 789, 49, "co", -1, -1], [809.5, 52, 43, "mi", 1, 1], [809.5, 809, 43, "mi", 1, -1]], ry = 0.933;
-for (const [cx, cy, ri, k, fx, fy] of P) { const c = ROYAL_COL[k], mid = k === "mi", sc = (ri + (mid ? 5 : 3.5)) / c.r; g.save(); g.translate(cx, cy + (mid && fy > 0 ? 3 : 0)); g.scale(sc * fx, sc * fy * ry); g.imageSmoothingQuality = "high"; g.shadowColor = "rgba(0,0,0,.6)"; g.shadowBlur = 6; g.shadowOffsetY = 2; if (mid && fy < 0) { g.beginPath(); g.rect(-400, -61, 800, 400); g.clip(); } g.drawImage(royalTinted(neon, c.im, k + (silver ? "s" : ""), silver), -c.cx, -c.cy); g.restore(); }
+for (const [cx, cy, ri, k, fx, fy] of P) { const c = ROYAL_COL[k], mid = k === "mi", sc = (ri + (mid ? 5 : 3.5)) / c.r; g.save(); g.translate(cx, cy + (mid && fy > 0 ? 3 : 0)); g.scale(sc * fx, sc * fy * ry); g.imageSmoothingQuality = "high"; g.shadowColor = "rgba(0,0,0,.6)"; g.shadowBlur = 6; g.shadowOffsetY = 2; g.drawImage(royalTinted(neon, c.im, k + (silver ? "s" : ""), silver), -c.cx, -c.cy); g.restore(); }
 }
 function royalBand(x, y, w, h, vert, neon, metal, tid) {   // royal rail inlay: dark enamel charged with neon light, thin gold rules, gold crowns / fleur-de-lis / jewelled lozenges, a jewelled medallion in the middle
 const [gh, gm, gl] = metal, L = vert ? h : w, H = vert ? w : h, sv = ctx;
