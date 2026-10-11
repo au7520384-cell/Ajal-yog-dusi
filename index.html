@@ -5468,6 +5468,29 @@ return "#" + c.map(v => clamp(Math.round(m + (v - m) * 1.25) * k + add, 0, 255))
 let OLD_MODE = false;
 const isCityTable = c => !!c && !!c.id && c.pat !== "lucky" && c.id !== "golden" && !!c.felt && !!c.rail;   // every table, city or shop skin, wears the ornate picture frame
 const TINT_TBL = {};
+const WOODG = {};
+function woodGround(x, y, w, h, vert, seed) {   // polished mahogany: dark red-brown body, long grain lines, warm sheen on the lit edge, small dark pores, bevelled edges
+const key = [Math.round(w), Math.round(h), vert ? 1 : 0].join(), K = 3;
+if (!WOODG[key]) {
+const L = vert ? h : w, T = vert ? w : h, oc = document.createElement("canvas"); oc.width = Math.ceil(L * K); oc.height = Math.ceil(T * K); const g = oc.getContext("2d");
+let sd = 77 + Math.round(L) % 97; const rn = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+const gr = g.createLinearGradient(0, 0, 0, oc.height); [[0, "#2a0d06"], [0.12, "#6a2412"], [0.38, "#8c3a1c"], [0.55, "#7a2e16"], [0.8, "#4a170b"], [1, "#240a05"]].forEach(([o, c]) => gr.addColorStop(o, c));
+g.fillStyle = gr; g.fillRect(0, 0, oc.width, oc.height);
+for (let i = 0; i < Math.round(T * 2.2); i++) {   // long grain lines, slightly wavy
+const yy = rn() * oc.height, wob = (rn() - 0.5) * 6 * K, len = oc.width * (0.4 + rn() * 0.6), x0 = rn() * (oc.width - len);
+g.strokeStyle = rn() < 0.55 ? `rgba(20,4,0,${0.12 + rn() * 0.22})` : `rgba(255,170,110,${0.05 + rn() * 0.12})`; g.lineWidth = (0.4 + rn() * 1.3) * K * 0.5;
+g.beginPath(); g.moveTo(x0, yy); g.bezierCurveTo(x0 + len * 0.3, yy + wob, x0 + len * 0.7, yy - wob, x0 + len, yy + wob * 0.4); g.stroke();
+}
+for (let i = 0; i < L * T * 0.02; i++) { g.fillStyle = `rgba(15,3,0,${0.1 + rn() * 0.3})`; g.fillRect(rn() * oc.width, rn() * oc.height, K * (0.6 + rn() * 2.4), K * 0.4); }   // pores
+const sh = g.createLinearGradient(0, 0, 0, oc.height); sh.addColorStop(0, "rgba(255,200,150,.0)"); sh.addColorStop(0.2, "rgba(255,190,140,.28)"); sh.addColorStop(0.32, "rgba(255,190,140,.0)"); sh.addColorStop(1, "rgba(0,0,0,.25)");
+g.fillStyle = sh; g.fillRect(0, 0, oc.width, oc.height);
+g.fillStyle = "rgba(255,225,190,.5)"; g.fillRect(0, 0, oc.width, K * 0.9); g.fillStyle = "rgba(0,0,0,.55)"; g.fillRect(0, oc.height - K * 1.2, oc.width, K * 1.2);
+WOODG[key] = oc;
+}
+ctx.save(); ctx.imageSmoothingQuality = "high";
+if (!vert) ctx.drawImage(WOODG[key], x, y, w, h); else { ctx.translate(x + w, y); ctx.rotate(Math.PI / 2); ctx.drawImage(WOODG[key], 0, 0, h, w); }
+ctx.restore();
+}
 function luxFrameOver(g, W, H, metal, gemc) {   // premium tables: the picture's outer rail, corner/side pocket collars are redrawn as crisp polished metal (clean bevels, no photo specks); the cloth, cushions and pocket holes stay the picture's own
 const [hi, mid, lo] = metal, ml = document.createElement("canvas"); ml.width = W; ml.height = H; const m = ml.getContext("2d");
 const OX0 = 0, OY0 = 8, OX1 = W, OY1 = 871, IX0 = 57, IY0 = 66, IX1 = 1560, IY1 = 799;   // picture px: outer edge and the cushion line
@@ -5533,7 +5556,7 @@ const st = tblOf(city) || {}; if (st.lux) return st;
 if (!city || !LUX_LOOK.test(city.id || "")) return null;
 if (city._ls) return city._ls;
 const tr = city.trim || "#d9ad5a", sh = (typeof shade === "function") ? shade : (c => c);
-return city._ls = Object.assign({}, st, {lux: 1, metal: [sh(tr, 70), tr, sh(tr, -90)], orn: /^x_/.test(city.id) ? city.id : "x_blk", gemrow: st.glow || tr});
+return city._ls = Object.assign({}, st, {lux: 1, metal: [sh(tr, 28), tr, sh(tr, -75)], orn: /^x_/.test(city.id) ? city.id : "x_blk", gemrow: st.glow || tr});
 }
 function tintedTable(city) {
 const lsx = luxStyle(city), lx = !!lsx, key = city.felt[0] + city.felt[1] + city.rail[0] + city.rail[1] + (lx ? "L" : "");
@@ -5620,6 +5643,8 @@ if (lxp) {   // premium: the inlay is drawn straight into the channel at full sh
 const stp = luxStyle(city), [mh, mm, mlo] = stp.metal, bgc = stp.bg || ["#2a3448", "#06080e"], kind = stp.orn || {l_dia: "x_dia", l_bdi: "x_blk", l_opl: "x_aur"}[city.id] || "x_dia";
 const eg = ctx.createLinearGradient(FX + dx, FY + dy, vert ? FX + dx + dw : FX + dx, vert ? FY + dy : FY + dy + dh); [[0, mlo], [0.12, mm], [0.3, mh], [0.5, mm], [0.72, mh], [0.9, mm], [1, mlo]].forEach(([o, c]) => eg.addColorStop(o, c));   // the whole band is polished metal, the ornament is raised on it
 ctx.fillStyle = eg; ctx.fillRect(FX + dx, FY + dy, dw, dh);
+const wn = parseInt(mm.slice(1), 16), warm = ((wn >> 16) & 255) - (wn & 255) > 40;   // gold / bronze / copper tables: the inlay sits in real polished mahogany
+if (warm) woodGround(FX + dx, FY + dy, dw, dh, vert, wn);
 const th = vert ? dw : dh, kk = th * 0.84 / (2 * ornExtent(kind)), Lr = len / kk;
 ctx.save(); if (!vert) { ctx.translate(FX + dx, FY + dy + dh / 2); } else { ctx.translate(FX + dx + dw / 2, FY + dy); ctx.rotate(Math.PI / 2); } ctx.scale(kk, kk);
 ornDraw(kind, Lr, {hi: shade(mh, 30), mid: shade(mm, -25), lo: shade(mlo, -45), gem: stp.gemrow || (stp.pave && stp.pave !== "opal" ? stp.pave : null) || mh});
