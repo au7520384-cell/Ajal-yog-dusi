@@ -2751,10 +2751,11 @@ get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : 
 set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
 };
 const profile = Object.assign({
-coins: 1500, cash: 5, xp: 0, level: 1, wins: 0, games: 0, won: 0, name: "Siz", avatar: PV + (Math.random() * PV_N | 0),
+coins: 1500, cash: 5, xp: 0, level: 1, wins: 0, games: 0, won: 0, name: "O'yinchi" + (1000 + Math.random() * 9000 | 0), avatar: PV + (Math.random() * PV_N | 0),
 cue: "start", cues: ["start"], lastLucky: "", luckyTries: 0, lastWheel: "", wheelTries: 0,
 streak: 0, lastClaim: "", ach: {}, muted: false, tours: 0, avs: [], frames: [0], frame: 0, tables: [], tableSkin: "", country: "", pieces: {}, gems: 0, vip: 0,
 }, store.get("billiard8v2", store.get("bilyard8v2", {})));   // players of the old "bilyard8v2" save keep their progress
+if (!profile.name || profile.name === "Siz") profile.name = "O'yinchi" + (1000 + Math.random() * 9000 | 0);   // saved with the next save   // old saves that still carry the default "Siz" get a real name
 profile.tables = (profile.tables || []).filter(id => id !== "x_cls"); if (profile.tableSkin === "x_cls") profile.tableSkin = "";
 if ((profile.avatar | 0) < 20) profile.avatar = PV + (profile.avatar | 0) * 3 % PV_N;
 const ownsAvatar = i => avPrice(i).v === 0 || profile.avs.includes(i);
@@ -8668,7 +8669,7 @@ ${Y8.sdk ? `<div class="card" style="display:flex;align-items:center;gap:10px;fl
 ${Y8.user ? `<button class="btn blue" id="y8Ach">🏅</button>` : `<button class="btn green" id="y8Login">${T("Kirish")}</button>`}</div>` : ""}
 </div></div>`;
 $("pCueCv").appendChild(cueCanvas(cue));
-$("pName").oninput = e => { profile.name = e.target.value.trim() || "Siz"; save(); updateNav(); };
+$("pName").oninput = e => { profile.name = e.target.value.trim() || "O'yinchi"; save(); updateNav(); };
 $("pCountry").value = profile.country || "";
 $("pCountry").onchange = e => { profile.country = e.target.value; profile.countryManual = true; save(); Net.sync(); buildProfile(); };
 $("pVip").onclick = vipClubModal; document.querySelectorAll(".pst").forEach(e => { if (e.firstChild && e.firstChild.textContent === T("Eng tez break")) { e.style.cursor = "pointer"; e.onclick = breakModal; } }); $("pGifts").onclick = cheerCollection;
@@ -8710,7 +8711,7 @@ s.onload = () => { if (window.y8 && window.y8.emitReadyEvent) window.y8.emitRead
 document.head.appendChild(s);
 }
 function y8LoadCloud() {
-if (!profile.name || profile.name === "Siz" || profile.name === "Player") { profile.name = String(Y8.user.nickname || profile.name).slice(0, 14); }
+if (!profile.name || profile.name === "Siz" || profile.name === "Player") { profile.name = String(Y8.user.nickname || "O'yinchi" + (1000 + Math.random() * 9000 | 0)).slice(0, 14); }
 Y8.sdk.loadData({key: "save"}).then(v => {
 const cloud = v ? JSON.parse(v) : null;
 if (cloud && (cloud.savedAt || 0) > (profile.savedAt || 0)) {
