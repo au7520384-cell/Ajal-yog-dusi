@@ -2449,6 +2449,14 @@ const DICT = {
 "Kiylar va boshqalar": ["Cues & More", "Кии и другое"],
 "Tadbirlar": ["Events", "События"],
 "KUBOKLAR": ["CUPS", "КУБКИ"],
+"Ulanmoqda…": ["Connecting…", "Подключение…"],
+"Ulandi": ["Connected", "Подключено"],
+"Ulanmadi": ["Not connected", "Не удалось подключиться"],
+"Raqib bilan aloqa o'rnatilmoqda": ["Connecting to your opponent", "Подключаемся к сопернику"],
+"Endi bir-biringizni eshitasiz": ["You can hear each other now", "Теперь вы слышите друг друга"],
+"Tarmoq to'sdi, qayta urinib ko'ring": ["The network blocked it, try again", "Сеть заблокировала соединение, попробуйте снова"],
+"TURN kerak: mobil internetda ulanish uchun TURN relay sozlanmagan": ["TURN needed: no TURN relay is set up for mobile networks", "Нужен TURN: relay для мобильных сетей не настроен"],
+"Raqib kutilmoqda…": ["Waiting for opponent…", "Ждём соперника…"],
 "Kubogi": ["Cup", "Кубок"],
 "Shahar kuboklari": ["City Cups", "Кубки городов"],
 "Shahar chempionati": ["City championship", "Чемпионат города"],
@@ -8949,7 +8957,7 @@ setPill("👁 " + T("Jonli tomosha"), 3000);
 function leaveSpectate() { Net.send({t: "unspec"}); toMenu("liveScr"); }
 Net.on("specEnd", m => { const G = game; if (G && G.net && G.net.spec && !G.over) { G.over = true; const w = m.winner === 1 ? 1 : 0; burst(); setBanner(TT("{0} YUTDI!", G.players[w].name.toUpperCase()), "#ffe27a"); setTimeout(() => { if (game === G && mode === "game") leaveSpectate(); }, 4500); } });
 const Voice = (() => {
-let pc = null, mic = null, on = false, muted = false, remoteReady = false, spkOff = false, ice = null, audioEl = null, queued = [];
+let pc = null, mic = null, on = false, muted = false, remoteReady = false, spkOff = false, ice = null, audioEl = null, queued = [], stat = "";
 const btn = () => $("gVoice"), spk = () => $("gSpk");
 const online = () => { const G = game; return !!(G && G.net && !G.net.spec && !G.over && mode === "game"); };
 const shown = () => { const G = game; return online() || !!(G && !G.net && !G.over && mode === "game" && (G.type === "ai" || G.type === "tour")); };
@@ -8967,7 +8975,7 @@ btn().className = "gbtn gv " + st; spk().className = "gbtn gv" + (spkOff ? " off
 const mi = muted || !on ? IC.micOff : IC.mic, si = spkOff ? IC.spkOff : IC.spk;
 if (btn().dataset.i !== mi) { btn().dataset.i = mi; btn().innerHTML = mi; }
 if (spk().dataset.i !== si) { spk().dataset.i = si; spk().innerHTML = si; }
-btn().title = T(!on ? "Ovozli suhbat" : muted ? "Mikrofon o'chiq" : st === "on" ? "Ovozli suhbat ulandi" : "Raqib kutilmoqda…");
+btn().title = T(!on ? "Ovozli suhbat" : muted ? "Mikrofon o'chiq" : st === "on" ? "Ovozli suhbat ulandi" : stat === "failed" ? "Ulanmadi" : stat === "connecting" ? "Ulanmoqda…" : "Raqib kutilmoqda…");
 }
 async function iceServers() {
 if (ice) return ice;
@@ -8980,6 +8988,15 @@ pc = new RTCPeerConnection({iceServers: await iceServers()});
 mic.getTracks().forEach(t => pc.addTrack(t, mic));
 pc.onicecandidate = e => { if (e.candidate) send("ice", e.candidate.toJSON()); };
 pc.ontrack = e => { if (!audioEl) { audioEl = document.createElement("audio"); audioEl.autoplay = true; audioEl.playsInline = true; document.body.appendChild(audioEl); } audioEl.srcObject = e.streams[0]; audioEl.muted = spkOff; audioEl.play().catch(() => {}); };
+// connection status shown to the player: connecting / connected / failed (with a hint when no TURN relay is configured)
+const hasTurn = () => (ice || []).some(x => [].concat(x.urls).some(u => String(u).startsWith("turn")));
+const setStat = (k, title, msg) => { if (stat === k) return; stat = k; ui(); toast("🎤", T(title), T(msg)); };
+pc.oniceconnectionstatechange = () => {
+const st = pc && pc.iceConnectionState;
+if (st === "checking") setStat("connecting", "Ulanmoqda…", "Raqib bilan aloqa o'rnatilmoqda");
+else if (st === "connected" || st === "completed") setStat("connected", "Ulandi", "Endi bir-biringizni eshitasiz");
+else if (st === "failed") setStat("failed", "Ulanmadi", hasTurn() ? "Tarmoq to'sdi, qayta urinib ko'ring" : "TURN kerak: mobil internetda ulanish uchun TURN relay sozlanmagan");
+};
 pc.onconnectionstatechange = () => { ui(); if (pc && (pc.connectionState === "failed")) toast("🎤", T("Ovozli aloqa uzildi"), ""); };
 return pc;
 }
@@ -9006,7 +9023,7 @@ if (tell && on) send("bye");
 if (pc) { try { pc.close(); } catch (e) {} pc = null; }
 if (mic) { mic.getTracks().forEach(t => t.stop()); mic = null; }
 if (audioEl) { audioEl.srcObject = null; }
-on = false; muted = false; remoteReady = false; queued = []; ui();
+on = false; muted = false; remoteReady = false; queued = []; stat = ""; ui();
 }
 btn().onclick = () => {
 if (!online()) return toast("🎤", T("Ovozli suhbat faqat haqiqiy o'yinchi bilan ishlaydi"), T("Onlayn raqib topilganda yoqiladi"));
