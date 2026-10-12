@@ -22,3 +22,9 @@ services:
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
+      - key: TURN_URLS         # comma-separated turn:/turns: URLs of your TURN relay (voice chat on mobile networks)
+        sync: false
+      - key: TURN_USER
+        sync: false
+      - key: TURN_PASS
+        sync: false
