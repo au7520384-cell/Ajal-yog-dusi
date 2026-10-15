@@ -5729,7 +5729,7 @@ function premCollars(g, id, unit) {   // the table's own jewelled collars at all
 if (!PREM_COL_SRC[id] || !premColsReady(id)) return;
 const set = PREM_COL_SRC[id], I = PREM_COL_IMG[id];
 const P = [[65, 73, 49, "co", 1, 1], [1554, 73, 49, "co", -1, 1], [65, 789, 49, "co", 1, -1], [1554, 789, 49, "co", -1, -1], [809.5, 52, 43, "mi", 1, 1], [809.5, 809, 43, "mi", 1, -1]], ry = 0.933;
-for (const [cx, cy, ri, k, fx, fy] of P) { const [, [hx, hy, rx]] = set[k], sc = ri / rx; g.save(); g.translate(cx, cy); g.scale(sc * fx, sc * fy * ry); g.imageSmoothingQuality = "high"; g.shadowColor = "rgba(0,0,0,.55)"; g.shadowBlur = 4 * (unit || 1); g.shadowOffsetY = 1.4 * (unit || 1); if (ELITE_ART.has(id) && k === "co") g.rotate(-Math.PI / 4); g.drawImage(I[k], -hx, -hy); g.restore(); }
+for (const [cx, cy, ri, k, fx, fy] of P) { const [, [hx, hy, rx]] = set[k], sc = ri / rx; g.save(); g.translate(cx, cy); g.scale(sc * fx, sc * fy * ry); g.imageSmoothingQuality = "high"; g.shadowColor = "rgba(0,0,0,.55)"; g.shadowBlur = 4 * (unit || 1); g.shadowOffsetY = 1.4 * (unit || 1); if (ELITE_ART.has(id)) g.rotate(k === "co" ? 3 * Math.PI / 4 : Math.PI);   /* the supplied art is a bottom-rail strip: its ring wraps the hole on the rail side, away from the field */ g.drawImage(I[k], -hx, -hy); g.restore(); }
 }
 function collarsTop(city) {   // pocket collars are drawn last, over the channel inlays, so the strip ends tuck under the collar feet
 const st = luxStyle(city); if (!st || !SYD_TBL.naturalWidth) return;
@@ -5927,7 +5927,7 @@ ctx.save(); ctx.beginPath(); if (lxp) rr(FX + dx, FY + dy, dw, dh, pr); else ctx
 if (lxp) {   // premium: the inlay is drawn straight into the channel at full sharpness: dark enamel ground, bright metal ornament filling the whole height, a jewel in the middle
 const stp = luxStyle(city);
 if (stp.royal) { royalBand(FX + dx, FY + dy, dw, dh, vert, stp.neon, stp.metal, city.id); ctx.restore(); return; }
-if (PREM_STRIP[city.id] && premBand(city.id, vert, FX + dx, FY + dy, dw, dh, ELITE_ART.has(city.id) && vert && dx < 400, ELITE_ART.has(city.id) && !vert && dy > 400)) { ctx.restore(); return; }   // premium: the supplied ornament strip fills the channel
+if (PREM_STRIP[city.id] && premBand(city.id, vert, FX + dx, FY + dy, dw, dh, ELITE_ART.has(city.id) && vert && dx > 400, ELITE_ART.has(city.id) && !vert && dy < 400)) { ctx.restore(); return; }   // premium: the supplied ornament strip fills the channel
 const [mh, mm, mlo] = stp.metal, bgc = stp.bg || ["#2a3448", "#06080e"], kind = stp.orn || {l_dia: "x_dia", l_bdi: "x_blk", l_opl: "x_aur"}[city.id] || "x_dia";
 const eg = ctx.createLinearGradient(FX + dx, FY + dy, vert ? FX + dx + dw : FX + dx, vert ? FY + dy : FY + dy + dh); [[0, mlo], [0.12, mm], [0.3, mh], [0.5, mm], [0.72, mh], [0.9, mm], [1, mlo]].forEach(([o, c]) => eg.addColorStop(o, c));   // the whole band is polished metal, the ornament is raised on it
 ctx.fillStyle = eg; ctx.fillRect(FX + dx, FY + dy, dw, dh);
