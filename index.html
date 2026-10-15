@@ -1558,6 +1558,52 @@ button:active:not(:disabled),.btn:active:not(:disabled),.nb:active,.mchip:active
 .prof2 .btn.purple,#passScr .btn.purple{background:linear-gradient(#5a4638,#2e2218)!important;border:2px solid #d8b878!important;box-shadow:inset 0 1px 0 #ffffff33,0 3px 6px #000a!important}
 @media (max-height:460px){#passScr .ptier,#mini .mgc,.prof2 .pcard,.prof2 .pbar2,.prof2 .pst,.prof2 .pbox{border-image-width:11px!important}.prof2 .pst,.prof2 .pbar2,.prof2 .pbox{padding:5px 8px}#passScr .ptier.prem,#mini .mgc{border-width:11px!important}}
 </style>
+<style id="specCss">
+#specUi{position:fixed;inset:0;z-index:16;display:none;pointer-events:none;zoom:var(--uiz,1)}
+#specUi.on{display:block}
+#specUi>*{pointer-events:auto}
+#specTag{position:absolute;left:10px;top:8px;background:#0b1226cc;border:1px solid #34436a;border-radius:12px;padding:3px 10px;font-size:13px;color:#8fc4ff;font-style:italic;pointer-events:none}
+#specTurn{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);background:#000b;border-radius:9px;padding:3px 12px;font-size:13px;color:#fff;pointer-events:none;max-width:50vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#specTurn:empty{display:none}
+#specEye{position:absolute;left:54px;bottom:12px;width:46px;height:46px;border-radius:50%;border:2px solid #7cc0ff;background:linear-gradient(#2d6cdf,#123a8e);color:#fff;font-size:22px;cursor:pointer;padding:0;box-shadow:0 3px 8px #0009}
+#specEye i{position:absolute;right:-8px;top:-8px;min-width:22px;height:22px;border-radius:11px;background:#25c25a;border:2px solid #0b1226;color:#fff;font:800 12px/18px system-ui;font-style:normal;padding:0 4px;box-sizing:border-box}
+#specChatBtn{position:absolute;right:12px;bottom:14px;width:46px;height:40px;border-radius:10px;border:0;background:linear-gradient(#ffd24d,#f0a30a);font-size:22px;cursor:pointer;padding:0;box-shadow:0 3px 8px #0009}
+#specChat{position:absolute;right:0;top:0;bottom:0;width:min(46vw,380px);background:#0a1020e6;border-left:1px solid #34436a;display:none;flex-direction:column;padding:6px 8px 8px}
+#specChat.on{display:flex}
+.sp-h{display:flex;align-items:center;justify-content:space-between;color:#fff;font-size:18px}
+.sp-h button,#splX{width:30px;height:30px;border-radius:50%;border:0;background:#c0392b;color:#fff;cursor:pointer;font-size:15px}
+#specLog{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:6px 2px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.splr{display:flex;align-items:flex-end;gap:8px}.splr.me{justify-content:flex-end}
+.splb{background:#2a3350;border-radius:10px;padding:6px 10px;color:#fff;font-size:14px;max-width:78%;word-break:break-word}
+.splb b{display:block;color:#7cc0ff;font-size:12px;margin-bottom:1px}
+.splr.me .splb{background:#1f3f8a}.splr.me .splb b{color:#ffd24d}
+.splb.big{font-size:30px;line-height:1.1}
+.splsys{align-self:center;background:#0b1226;border:1px solid #34436a;border-radius:12px;padding:3px 10px;color:#ffd24d;font-size:12px}
+#spEmoRow{display:none;flex-wrap:wrap;gap:4px;padding:4px 0}#spEmoRow.on{display:flex}
+#spEmoRow button{border:0;background:#1b2543;border-radius:8px;font-size:22px;padding:3px 6px;cursor:pointer}
+.sp-in{display:flex;gap:6px;align-items:center}
+.sp-in input{flex:1;min-width:0;height:34px;border-radius:9px;border:1px solid #34436a;background:#0b1226;color:#fff;padding:0 10px;font-size:15px}
+.sp-in button{width:36px;height:34px;border:0;border-radius:9px;background:#2d6cdf;color:#fff;font-size:17px;cursor:pointer;padding:0}
+#specList{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(320px,86vw);max-height:76vh;background:#0e1730f2;border:2px solid #3b4a74;border-radius:14px;display:none;flex-direction:column;padding:10px}
+#specList.on{display:flex}
+.spl-h{display:flex;align-items:center;justify-content:space-between;color:#fff;font-size:16px;margin-bottom:6px}
+.spl-b{overflow:auto;display:flex;flex-direction:column;gap:6px}
+.spl-i{display:flex;align-items:center;gap:8px;background:#1b2543;border-radius:10px;padding:5px 8px;color:#fff}
+.spl-i b{display:block;font-size:14px}.spl-i small{color:#9fb0d8;font-size:12px}
+.lvtabs{display:flex;gap:6px;margin-bottom:8px}
+.lvtabs button{flex:1;border:0;border-radius:10px 10px 0 0;padding:9px 6px;background:#243153;color:#cfe0ff;font:800 15px var(--fh,system-ui);cursor:pointer}
+.lvtabs button.on{background:linear-gradient(#3b8cff,#1553b3);color:#fff}
+.lvr2{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:linear-gradient(#1f2b4b,#141c33);border:2px solid #2f3e69;margin-bottom:8px}
+.lvp2{display:flex;align-items:center;gap:8px;flex:1;min-width:0;justify-content:flex-end}.lvp2.r{justify-content:flex-start}
+.lvn{min-width:0;text-align:right}.lvp2.r .lvn{text-align:left}
+.lvn b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:inline-block;max-width:100%;vertical-align:middle}
+.lvn small{display:flex;gap:4px;align-items:center;justify-content:flex-end;color:#9fb0d8;font-size:12px}.lvp2.r .lvn small{justify-content:flex-start}
+.lvvn{flex:none;width:104px;text-align:center;line-height:1.15}
+.lvvn b{display:block;font-family:var(--fh,system-ui);color:#ffd24d;font-size:15px}.lvvn small{display:block;color:#9fb0d8;font-size:11px}.lvvn em{font-style:normal;color:#ffe9a0;font-size:12px}
+.lvact{flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:84px}
+.lveye{background:#0b1226;border-radius:10px;padding:2px 10px;color:#fff;font-weight:800;font-size:14px}
+@media (max-height:460px){.lvr2{padding:5px 8px;margin-bottom:5px}.lvn b{font-size:13px}.lvvn{width:84px}.lvvn b{font-size:13px}.lvtabs button{padding:6px 4px;font-size:13px}}
+</style>
 </head>
 <body>
 <canvas id="c"></canvas>
@@ -1747,6 +1793,14 @@ button:active:not(:disabled),.btn:active:not(:disabled),.nb:active,.mchip:active
 </div>
 <div id="chatPanel"></div>
 <div id="liveFeed"></div>
+<div id="specUi">
+<div id="specTag">👁 <span id="specTagT"></span></div>
+<div id="specTurn"></div>
+<button id="specEye" title="Viewers">👁<i id="specN">0</i></button>
+<button id="specChatBtn" title="Chat">💬</button>
+<div id="specChat"><div class="sp-h"><b>💬</b><button id="specChatX">✕</button></div><div id="specLog"></div><div id="spEmoRow"></div><div class="sp-in"><button id="spEmo">😀</button><input id="spInput" maxlength="60" autocomplete="off"><button id="spSend">➤</button></div></div>
+<div id="specList"></div>
+</div>
 <div id="giftPanel"></div>
 <div id="cheerBar"><button>👏</button><button>🔥</button><button>😮</button><button>🎉</button><button>💪</button></div>
 <!-- ============ MODAL ============ -->
@@ -2314,6 +2368,14 @@ const DICT = {
 "O'ng": ["Right", "Справа"],
 "Olqish animatsiyalari": ["Cheering animations", "Анимации поддержки"],
 "Grafika": ["Graphics", "Графика"],
+"Top o'yinlar": ["Top matches", "Топ матчи"],
+"Barcha o'yinlar": ["All matches", "Все матчи"],
+"Tomoshabinlar": ["Spectators", "Зрители"],
+"{0}ning navbati": ["{0}'s turn", "Ход: {0}"],
+"Hali tomoshabin yo'q": ["No spectators yet", "Пока нет зрителей"],
+"Do'stlaringiz hozir o'ynamayapti": ["None of your friends are playing right now", "Ваши друзья сейчас не играют"],
+"Tomosha rejimi": ["Spectating", "Просмотр"],
+"Siz": ["You", "Вы"],
 "Grafika sifati": ["Graphics quality", "Качество графики"],
 "Kadr tezligi": ["Frame rate", "Частота кадров"],
 "Avto": ["Auto", "Авто"],
@@ -3975,7 +4037,7 @@ else if (Math.hypot(p.x - SPIN_UI.x, p.y - SPIN_UI.y) <= SPIN_UI.r * 1.1) { inpu
 else G.spinOpen = false;
 return;
 }
-if (giftsOn(G) && Math.hypot(p.x - GIFT_BTN.x, p.y - GIFT_BTN.y) < GIFT_BTN.r + 10) { Snd.click(); openGiftPanel(); return; }
+if (giftsOn(G)) { const gb = giftBtns(G).find(b => Math.hypot(p.x - b.x, p.y - b.y) < b.r + 10); if (gb) { Snd.click(); G.giftTo = gb.to; openGiftPanel(); return; } }
 if (G.type !== "watch" && !G.moving && Math.hypot(p.x - CUE_BTN.x, p.y - CUE_BTN.y) < CUE_BTN.r + 6) { Snd.click(); cuePicker(); return; }
 if (!canControl()) return;
 try { cv.setPointerCapture(e.pointerId); } catch (_) {}
@@ -6943,8 +7005,9 @@ bb.lines.forEach((l, li) => ctx.fillText(l, 0, 1 + li * 22));
 ctx.restore();
 }
 }
-function drawGiftBtn(G) {   // 👍 beside the opponent's ball tray: opens the Cheer Gifts Collection
-const b = GIFT_BTN, pul = 1 + Math.sin(performance.now() / 420) * 0.04;
+function drawGiftBtn(G) { for (const b of giftBtns(G)) drawGiftBtn1(b); }
+function drawGiftBtn1(b) {   // 👍 beside a player's ball tray: opens the Cheer Gifts Collection
+const pul = 1 + Math.sin(performance.now() / 420) * 0.04;
 ctx.save(); ctx.translate(b.x, b.y + 9); ctx.scale(pul, pul);   // +9: undo the HUD lift so the button sits at GIFT_BTN
 const g = ctx.createLinearGradient(0, -b.r, 0, b.r); g.addColorStop(0, "#5aa8ff"); g.addColorStop(1, "#1a4fb0");
 ctx.shadowColor = "#0009"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 2; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, b.r, 0, 7); ctx.fill();
@@ -8936,9 +8999,20 @@ const G = game; if (!G || !G.net) return;
 if (G.moving || G.strike) G.pendingState = m; else applyState(m);
 });
 Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, String(m.msg || "").slice(0, 40)); });
-Net.on("specs", m => { if (game && game.net) game.viewers = m.n | 0; });
+Net.on("specs", m => { if (game && game.net) { game.viewers = m.n | 0; if (Array.isArray(m.list)) specInfo.list = m.list; specRefresh(); } });
+Net.on("sgift", m => {   // a spectator cheered one of the players: everybody in the room sees the gift fly to that player
+const G = game; if (!G || !G.net) return;
+const g = m.g | 0; if (g < 0 || g > 12) return;
+const to = m.to === 1 ? 1 : 0, spec = !!G.net.spec, li = spec ? to : localOf(to);   // li: 0 = left / me, 1 = right / opponent
+const at = toScreen(li === 0 ? HUD_ME : HUD_OPP), lk = (GIFT_BY_G[g] || {likes: 1}).likes;
+giftFlyAnim(g, {x: vw / 2, y: vh - 30}, at, () => giftLand(g, at, lk));
+if (!spec && li === 0) { const d = cheerData(); d.got[g] = (d.got[g] | 0) + 1; d.likes = cheerLikes() + lk; save(); toast(CHEER_GIFTS[g][0], T(CHEER_GIFTS[g][1]), `${T("Sovg'a")}: ${esc(m.name || "")}`); }
+specLogAdd({sys: true, msg: `${CHEER_GIFTS[g][0]} ${String(m.name || "").slice(0, 16)} → ${esc((G.players[to] || {}).name || "")}`});
+});
 Net.on("schat", m => {
 if (!game || !game.net) return;
+specLogAdd({name: String(m.name || "").slice(0, 16), avatar: m.avatar | 0, frame: m.frame | 0, msg: String(m.msg || "").slice(0, 60), me: !!(game.net.spec && profile && m.name === profile.name)});
+if (game.net.spec && $("specChat").classList.contains("on")) return;   // the open chat panel already shows it
 const feed = $("liveFeed"), row = document.createElement("div"); row.className = "lf";
 const b = document.createElement("b"); b.textContent = String(m.name || "").slice(0, 16); row.appendChild(b);
 row.appendChild(document.createTextNode(": " + String(m.msg || "").slice(0, 60)));
@@ -8955,18 +9029,25 @@ const G = game; if (!G || !G.net || G.over) return;
 toast("🏃", T("Raqib o'yinni tark etdi"), "");
 endGame(0, T("Raqib o'yinni tark etdi"));
 });
-let liveCC = "", liveTimer = 0;
+let liveCC = "", liveTimer = 0, liveTab = "all";
 function buildLive() {
 const box = $("liveBody"); if (!box) return;
 clearInterval(liveTimer);
+const feeOf = m => (CITIES.find(c => c.id === m.city) || {fee: 0}).fee;
+const lvp2 = (p, right) => { const nm = `<div class="lvn"><b>${esc(p.name)}</b>${clubTag(p, 16)}<small>${lbStar(p.level)}${flagHTML(p.country, 12)}</small></div>`; return `<div class="lvp2${right ? " r" : ""}">${right ? avHTML(p.avatar, p.frame, 44) + nm : nm + avHTML(p.avatar, p.frame, 44)}</div>`; };
 const load = () => {
 if (!$("liveScr").classList.contains("on")) return clearInterval(liveTimer);
-Net.api("/api/live" + (liveCC ? "?country=" + liveCC : "")).then(r => {
+Net.api("/api/live" + (liveCC && liveTab === "all" ? "?country=" + liveCC : "")).then(r => {
 const chips = Object.entries(r.countries || {}).sort((a, b) => b[1] - a[1]);
-const pl = p => `<div class="lvp">${avHTML(p.avatar, p.frame, 40)}<div style="min-width:0"><b>${esc(p.name)}</b>${clubTag(p)}<small>${lbStar(p.level)}${flagHTML(p.country, 13)} ${esc(countryName(p.country) || "")}</small></div></div>`;
-box.innerHTML = `<div class="lvchips"><button data-cc="" class="${liveCC ? "" : "on"}">🌍 ${T("Barcha davlatlar")}</button>${chips.map(([c, n]) => `<button data-cc="${c}" class="${liveCC === c ? "on" : ""}">${flagHTML(c, 14)} ${n}</button>`).join("")}</div>
-${r.live.length ? r.live.map(m => { const city = CITIES.find(c => c.id === m.city); return `<div class="lvr">${pl(m.p[0])}<div class="lvvs">VS</div>${pl(m.p[1])}<div class="lvmeta">${city ? esc(city.name) : ""}<em>● ${T("JONLI")}</em>👁 ${m.specs}</div><button class="btn green" data-spec="${m.room}">${T("Ko'rish")}</button></div>`; }).join("")
-: `<div class="lvempty"><div style="font-size:44px">📺</div><b>${T("Hozir jonli o'yin yo'q")}</b><p>${T("Onlayn o'ynang — sizning o'yiningizni boshqalar ko'rishi mumkin!")}</p><button class="btn orange" id="lvDemo">${T("Demo o'yin")}</button></div>`}`;
+let list = (r.live || []).slice();
+if (liveTab === "fr") list = list.filter(m => m.friend);
+else if (liveTab === "top") list = list.sort((a, b) => feeOf(b) - feeOf(a) || b.specs - a.specs).slice(0, 10);
+const empty = liveTab === "fr" ? T("Do'stlaringiz hozir o'ynamayapti") : T("Hozir jonli o'yin yo'q");
+box.innerHTML = `<div class="lvtabs">${[["all", "Barcha o'yinlar"], ["fr", "Do'stlar"], ["top", "Top o'yinlar"]].map(([k, n]) => `<button data-lt="${k}" class="${liveTab === k ? "on" : ""}">${T(n)}</button>`).join("")}</div>
+${liveTab === "all" ? `<div class="lvchips"><button data-cc="" class="${liveCC ? "" : "on"}">🌍 ${T("Barcha davlatlar")}</button>${chips.map(([c, n]) => `<button data-cc="${c}" class="${liveCC === c ? "on" : ""}">${flagHTML(c, 14)} ${n}</button>`).join("")}</div>` : ""}
+${list.length ? list.map(m => { const city = CITIES.find(c => c.id === m.city); return `<div class="lvr2">${lvp2(m.p[0], false)}<div class="lvvn"><b>${city ? esc(city.name) : ""}</b><small>${city ? esc(city.sub) : ""}</small><em>${city ? "🪙 " + fmtS(city.fee) : ""}</em></div>${lvp2(m.p[1], true)}<div class="lvact"><span class="lveye">👁 ${m.specs | 0}</span><button class="btn green" data-spec="${m.room}">${T("Ko'rish")}</button></div></div>`; }).join("")
+: `<div class="lvempty"><div style="font-size:44px">📺</div><b>${empty}</b><p>${T("Onlayn o'ynang — sizning o'yiningizni boshqalar ko'rishi mumkin!")}</p><button class="btn orange" id="lvDemo">${T("Demo o'yin")}</button></div>`}`;
+box.querySelectorAll("[data-lt]").forEach(b => b.onclick = () => { liveTab = b.dataset.lt; buildLive(); });
 box.querySelectorAll("[data-cc]").forEach(b => b.onclick = () => { liveCC = b.dataset.cc; buildLive(); });
 box.querySelectorAll("[data-spec]").forEach(b => b.onclick = () => joinSpectate(b.dataset.spec));
 const d = $("lvDemo"); if (d) d.onclick = () => startMatch("watch", pick(CITIES));
@@ -8989,7 +9070,8 @@ const city = CITIES.find(c => c.id === m.city) || CITIES[0];
 const mk = o => ({name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length], level: o.level | 0 || 1,
 isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0, country: o.country || ""});
 const G = baseGame("spec", city, [mk(m.p[0] || {}), mk(m.p[1] || {})]);
-G.net = {seat: 0, spec: true, room: m.room, lastAim: 0, sentA: null}; G.viewers = m.specs | 0;
+G.net = {seat: 0, spec: true, room: m.room, lastAim: 0, sentA: null}; G.viewers = m.specs | 0; G.giftTo = 0;
+specInfo.list = Array.isArray(m.list) ? m.list : []; specInfo.log = (m.log || []).map(x => ({name: String(x.name || "").slice(0, 16), avatar: x.avatar | 0, frame: x.frame | 0, msg: String(x.msg || "").slice(0, 60), me: !!(profile && x.name === profile.name)}));
 G.balls = rack(m.seed); G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
 G.cur = m.first === 1 ? 1 : 0; G.tbl = G.players[0].tbl || ""; G.tblOwner = 0; G.demo = false;
 setGame(G); enterGameUi("spec"); nextTurn(true);
@@ -9103,7 +9185,8 @@ const HEART_SVG = '<svg viewBox="0 0 128 128"><defs><radialGradient id="hg" cx="
 
 const giftIcon = g => { const it = GIFT_BY_G[g]; if (it && it.art === "heart") return HEART_SVG; if (it && it.art && IMG["gi_" + it.art]) return `<img src="${IMG["gi_" + it.art]}" alt="">`; return `<span>${CHEER_GIFTS[g][0]}</span>`; };
 const giftInv = () => { const d = today(); if (!profile.cheerInv || profile.cheerInv.d !== d) profile.cheerInv = {d, own: {10: 1, 9: 1}, heart: 5}; return profile.cheerInv; };   // every day: 1 free clover, 1 free chocolate, 5 hearts
-const giftsOn = G => !!G && mode === "game" && !G.over && !G.demo && !!G.players[1] && !["pvp", "practice", "lucky", "watch", "spec"].includes(G.type) && !(G.net && G.net.spec);
+const giftsOn = G => !!G && mode === "game" && !G.over && !G.demo && !!G.players[1] && !["pvp", "practice", "lucky", "watch"].includes(G.type);
+const giftBtns = G => G && G.net && G.net.spec ? [{...GIFT_BTN, x: W - GIFT_BTN.x, to: 0}, {...GIFT_BTN, to: 1}] : [{...GIFT_BTN, to: 1}];   // spectators get a 👍 next to each player
 const GIFT_BTN = {x: 1046, y: 55, r: 15};   // the 👍 button beside the opponent's ball tray (canvas coordinates, after the HUD lift)
 const HUD_OPP = {x: 955, y: 50}, HUD_ME = {x: 440, y: 46};
 const toScreen = p => ({x: offX + p.x * scale, y: offY + p.y * scale});
@@ -9111,7 +9194,7 @@ function closeGifts() { const el = $("giftPanel"); el.classList.remove("in"); se
 function openGiftPanel() {
 const G = game, el = $("giftPanel"); if (!giftsOn(G)) return;
 if (el.classList.contains("in")) return closeGifts();
-const inv = giftInv(), opp = G.players[1];
+const inv = giftInv(), opp = G.players[G.net && G.net.spec ? (G.giftTo | 0) : 1];
 el.innerHTML = `<button class="gp-x" id="gpX">✕</button><div class="gp-top"><small>${T("Kimga yuborilmoqda")}</small><div class="av" id="gpAv"></div><b>${esc(opp.name)}</b></div>
 <div class="gp-list">${GIFT_SHOP.map((it, i) => { const own = inv.own[it.g] | 0, left = it.daily ? inv.heart | 0 : 0, can = own > 0 || (it.daily ? left > 0 : true);
 return `<div class="gp-it"><div class="gp-ic">${giftIcon(it.g)}${own ? `<i class="gp-own">${own}</i>` : it.daily ? `<i class="gp-left">${left}/${it.daily}</i>` : ""}</div><div class="gp-lk">👍 ×${fmt(it.likes)}</div>
@@ -9156,6 +9239,7 @@ save(); updateNav(); Snd.coin(3);
 const ic = btn ? btn.closest(".gp-it").querySelector(".gp-ic").getBoundingClientRect() : null;
 const from = ic ? {x: ic.left + ic.width / 2, y: ic.top + ic.height / 2} : {x: vw / 2, y: 80};
 closeGifts();
+if (G.net && G.net.spec) { Net.send({t: "sgift", to: G.giftTo | 0, g: it.g}); return; }   // a spectator's gift: the server shows it to everyone in the room (me included)
 giftFlyAnim(it.g, from, toScreen(HUD_OPP), () => { giftLand(it.g, toScreen(HUD_OPP), it.likes); Snd.win && Snd.coin(2); });
 if (G.net) Net.send({t: "gift", g: it.g});
 else if (G.players[1] && G.players[1].isAI) setTimeout(() => game === G && bubble(1, pick(["😍", "🙏", "👍", "🥰"])), 1400);
@@ -9218,6 +9302,43 @@ if (rep || Math.random() < 0.3) setTimeout(() => game === G && bubble(1, pick(re
 }
 }
 buildChat();
+const specInfo = {list: [], log: []};
+function specLogAdd(m) { specInfo.log.push(m); if (specInfo.log.length > 60) specInfo.log.shift(); if ($("specChat").classList.contains("on")) specDrawLog(); }
+function specDrawLog() {
+const el = $("specLog"); if (!el) return;
+el.innerHTML = specInfo.log.map(m => m.sys ? `<div class="splsys">${m.msg}</div>` : m.me ? `<div class="splr me"><div class="splb${/^\p{Extended_Pictographic}+$/u.test(m.msg) ? " big" : ""}"><b>${T("Siz")}</b>${esc(m.msg)}</div>${avHTML(profile.avatar, profile.frame, 34)}</div>`
+: `<div class="splr">${avHTML(m.avatar, m.frame, 34)}<div class="splb${/^\p{Extended_Pictographic}+$/u.test(m.msg) ? " big" : ""}"><b>${esc(m.name)}</b>${esc(m.msg)}</div></div>`).join("");
+el.scrollTop = el.scrollHeight;
+}
+function specRefresh() {
+const G = game; if (!G || !G.net) return;
+const n = $("specN"); if (n) n.textContent = G.viewers | 0;
+const L = $("specList"); if (L && L.classList.contains("on")) specDrawList();
+}
+function specDrawList() {
+const L = $("specList"), lst = specInfo.list || [];
+L.innerHTML = `<div class="spl-h"><b>👁 ${T("Tomoshabinlar")} · ${game ? game.viewers | 0 : lst.length}</b><button id="splX">✕</button></div><div class="spl-b">${lst.length ? lst.map(u => `<div class="spl-i">${avHTML(u.avatar, u.frame, 34)}<div><b>${esc(u.name)}</b><small>${lbStar(u.level)}${flagHTML(u.country, 12)}</small></div></div>`).join("") : `<p class="muted" style="text-align:center">${T("Hali tomoshabin yo'q")}</p>`}</div>`;
+$("splX").onclick = () => L.classList.remove("on");
+}
+$("specEye").onclick = () => { const L = $("specList"); if (L.classList.toggle("on")) { $("specChat").classList.remove("on"); specDrawList(); } };
+$("specChatBtn").onclick = () => { const C = $("specChat"); if (C.classList.toggle("on")) { $("specList").classList.remove("on"); specDrawLog(); } };
+$("specChatX").onclick = () => $("specChat").classList.remove("on");
+{
+const send = txt => { const v = String(txt || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 60); if (!v || performance.now() - (send.last || 0) < 700) return false; send.last = performance.now(); Net.send({t: "schat", msg: v}); return true; };
+$("spSend").onclick = () => { if (send($("spInput").value)) $("spInput").value = ""; };
+$("spInput").onkeydown = e => { if (e.key === "Enter") $("spSend").click(); e.stopPropagation(); };
+$("spEmoRow").innerHTML = EMOJIS.map(e => `<button>${e}</button>`).join("");
+$("spEmoRow").querySelectorAll("button").forEach(b => b.onclick = () => { send(b.textContent); });
+$("spEmo").onclick = () => $("spEmoRow").classList.toggle("on");
+}
+setInterval(() => {   // the spectator overlay is only visible while watching a live match
+const G = game, on = !!(mode === "game" && G && G.net && G.net.spec), ui = $("specUi");
+ui.classList.toggle("on", on);
+if (on) $("specTagT").textContent = T("Tomosha rejimi");
+if (!on) { $("specChat").classList.remove("on"); $("specList").classList.remove("on"); return; }
+specRefresh();
+const pl = G.players[G.cur]; $("specTurn").textContent = pl && !G.over ? TT("{0}ning navbati", pl.name) : "";
+}, 400);
 $("gChat").onclick = () => $("chatPanel").classList.toggle("on");
 $("cheerBar").querySelectorAll("button").forEach(b => b.onclick = () => {
 const G = game; if (!G) return;
