@@ -5803,13 +5803,16 @@ const g = cv.getContext("2d"); g.drawImage(SYD_TBL, 0, 0);
 const id = g.getImageData(0, 0, W, H), d = id.data, hx = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }, f0 = hx(vividHex(city.felt[0])), f1 = hx(vividHex(city.felt[1])), rl = hx(city.rail[0]).map((v, i) => v * 0.6 + hx(city.rail[1])[i] * 0.4);
 const inF = n => { const tx = (n % W) * 0.693 - 61, ty = ((n / W) | 0) * 0.7428 - 70; return tx > 14 && tx < FW - 14 && ty > 14 && ty < FH - 14; };   // the playing field proper (cushions are outside it)
 const wmask = new Uint8Array(W * H), fmask = new Uint8Array(W * H);
-const RAMP = new Uint8ClampedArray(768); { // the carved rail keeps the picture's own light and shade (deep outer lip, mid channel, bright edge lines, glossy collars): luminance -> the table's rail material, so every table's frame is as crisp and rich as Sydney's
-const A = hx(city.rail[0]), B = hx(city.rail[1]), WH = [255, 255, 255], lum = c => 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2], mx = (p, q, t) => p.map((v, i) => v + (q[i] - v) * t);
+const RAMP = new Uint8ClampedArray(768); { // the carved rail keeps the picture's own light and shade (deep outer lip, mid channel, bright edge lines, glossy collars): luminance -> the table's rail material at the SAME luminance, so every frame has Sydney's contrast, with the material's colour kept rich (bronze stays bronze, gold stays gold) instead of washing out to pastel
+const A = hx(city.rail[0]), B = hx(city.rail[1]), lum = c => 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2];
 let M = A.map((v, i) => v * 0.6 + B[i] * 0.4); { const l0 = lum(M); M = M.map(v => Math.max(0, l0 + (v - l0) * 1.2)); }   // a little richer than the plain mix
 const lm = lum(M), kM = lm > 100 ? 100 / lm : lm < 52 ? Math.min(1.8, 52 / Math.max(1, lm)) : 1; M = M.map(v => Math.min(255, v * kM));
-const br = (c, f) => c.map(v => Math.min(255, v * f));   // lit metal keeps the material's own colour (bronze, gold, steel blue) instead of turning milky grey
-const st = [[0, B.map(v => v * 0.1)], [26, B.map(v => v * 0.45 * kM)], [68, M], [112, br(M, 1.45)], [165, mx(br(M, 2), WH, 0.25)], [215, mx(br(M, 2.6), WH, 0.6)], [255, WH]];
-for (let y = 0, k = 0; y < 256; y++) { while (k < st.length - 2 && y > st[k + 1][0]) k++; const [y0, c0] = st[k], [y1, c1] = st[k + 1], t = Math.min(1, Math.max(0, (y - y0) / (y1 - y0))); for (let c = 0; c < 3; c++) RAMP[y * 3 + c] = c0[c] + (c1[c] - c0[c]) * t; }
+const mxc = Math.max(...M), mnc = Math.min(...M), dlt = mxc - mnc, S0 = mxc ? Math.min(0.92, dlt / mxc * 1.12) : 0;   // hue and saturation of the material
+const H0 = !dlt ? 0 : mxc === M[0] ? ((M[1] - M[2]) / dlt + 6) % 6 * 60 : mxc === M[1] ? ((M[2] - M[0]) / dlt + 2) * 60 : ((M[0] - M[1]) / dlt + 4) * 60;
+const hsv = (h, s, v) => { const f = n => { const k = (n + h / 60) % 6; return (v - v * s * Math.max(0, Math.min(k, 4 - k, 1))) * 255; }; return [f(5), f(3), f(1)]; };
+const colAt = (y, s) => { let lo = 0, hi = 1; for (let it = 0; it < 14; it++) { const v = (lo + hi) / 2; if (lum(hsv(H0, s, v)) < y) lo = v; else hi = v; } let c = hsv(H0, s, hi); const l = lum(c); if (l < y - 0.5) { const t = Math.min(1, (y - l) / (255 - l)); c = c.map(v => v + (255 - v) * t); } return c; };
+const sat = [[0, 0.85], [30, 0.95], [150, 0.95], [215, 0.75], [245, 0.32], [255, 0.08]];   // the material keeps its colour from deep shade to bright metal; only the last specular glints turn white
+for (let y = 0; y < 256; y++) { let k = 0; while (k < sat.length - 2 && y > sat[k + 1][0]) k++; const [y0, f0] = sat[k], [y1, f1] = sat[k + 1], f = f0 + (f1 - f0) * Math.min(1, Math.max(0, (y - y0) / (y1 - y0))), c = colAt(y, Math.min(1, S0 * f)); for (let q = 0; q < 3; q++) RAMP[y * 3 + q] = c[q]; }
 }
 // one even cloth colour: the picture's own lit centre / dark edge falloff is measured (large masked blur of the felt) and divided out, so only the fibre detail is kept
 const lowG = new Float32Array(W * H); { const gm = new Float32Array(W * H), mm = new Float32Array(W * H);
@@ -11093,6 +11096,7 @@ el.querySelector("#instShare").onclick = () => { if (navigator.share) navigator.
 const g = el.querySelector("#instGo"); if (g) g.onclick = async () => { deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch (e) {} deferredInstall = null; g.remove(); };
 }
 { const _buildSettings = buildSettings; buildSettings = function () { _buildSettings.apply(this, arguments); addInstallCard(); }; }
+let SRV_BUILD = "";   // the server's deployed commit, shown at the bottom of Settings
 function buildSettings() {
 const tg = (k, on) => `<button class="tgl${on ? " on" : ""}" data-t="${k}"></button>`;
 const seg = (k, opts) => `<div class="seg">${opts.map(([v, n]) => `<button class="${opt(k) === v ? "on" : ""}" data-s="${k}" data-v="${JSON.stringify(v).replace(/"/g, "&quot;")}">${T(n)}</button>`).join("")}</div>`;
@@ -11128,8 +11132,9 @@ ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setReco
 ${row("Til", `<button class="btn blue" id="setLang" style="padding:6px 14px">🌐 ${LANGS[LANG]}</button>`)}
 <div class="setrow"><b>🎧 ${T("Ovoz sinovi")}</b><button class="btn orange" id="setLab" style="padding:6px 14px">▶ ${T("Ochish")}</button></div>
 ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:6px 14px">👤 ${esc(profile.name)}</button>`)}
-<div class="muted" style="text-align:center;margin-top:10px">Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}<br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a></div>`;
+<div class="muted" style="text-align:center;margin-top:10px">Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}<span id="setBuild"></span><br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a></div>`;
 { const lb = $("setLab"); if (lb) lb.onclick = openSoundLab; }
+{ const bl = $("setBuild"), show = b => { if (bl) bl.textContent = b ? " · v " + b : ""; }; if (SRV_BUILD) show(SRV_BUILD); else Net.api("/api/health").then(r => { SRV_BUILD = (r && r.build) || ""; show(SRV_BUILD); }).catch(() => {}); }
 $("setBody").querySelectorAll("[data-t]").forEach(b => b.onclick = () => {
 const k = b.dataset.t;
 if (k === "sound") toggleMute(); else setOpt(k, !opt(k));
