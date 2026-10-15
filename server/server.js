@@ -24,6 +24,7 @@ const ADMIN_KEY = process.env.ADMIN_KEY || "";
 const STRIPE_WHSEC = process.env.STRIPE_WEBHOOK_SECRET || "";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
 const ROOT = path.join(__dirname, "..");
+const BUILD = (process.env.RENDER_GIT_COMMIT || "").slice(0, 7) || "local";   // the deployed commit (Render sets it); shown in /api/health and in the game's Settings so anyone can see which version is running
 const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js"};
 const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript"};
 
@@ -356,7 +357,7 @@ function geoCountry(req) {   // set by some hosts / CDNs (Cloudflare, Vercel…)
 
 // ---------------------------------------------------------------- routes
 const routes = {
-  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: !!STRIPE_KEY}),
+  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: !!STRIPE_KEY, build: BUILD}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
   "GET /api/ice": () => {
     const iceServers = [{urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}];
