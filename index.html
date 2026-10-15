@@ -5642,7 +5642,7 @@ const r3 = bw * 0.2, sv = ctx; ctx = m; try { m.fillStyle = lo; m.beginPath(); m
 m.restore();
 }
 }
-m.globalCompositeOperation = "destination-out"; m.fillRect(IX0, IY0, IX1 - IX0, IY1 - IY0);
+m.globalCompositeOperation = "destination-out"; m.fillStyle = "#000"; m.fillRect(IX0, IY0, IX1 - IX0, IY1 - IY0);   // an opaque fill: with the sheen gradient still set (tables whose collars are drawn elsewhere) the cut-out was only partial and left a milky haze over the cloth
 for (const [cx, cy, ri] of P) { m.save(); m.translate(cx, cy); m.scale(1, ry); m.beginPath(); m.arc(0, 0, ri, 0, Math.PI * 2); m.fill(); m.restore(); }
 g.save(); g.drawImage(ml, 0, 0);
 const CR = 66, outer = () => { g.beginPath(); g.roundRect ? g.roundRect(1, OY0, W - 2, OY1 - OY0, CR) : g.rect(1, OY0, W - 2, OY1 - OY0); };   // the table's own clean silhouette: a rounded rectangle hugging the corner pockets
