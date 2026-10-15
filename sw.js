@@ -1,5 +1,5 @@
 // Minimal offline cache so the installed app opens without network (online features need the server).
-const CACHE = "billiard8-v4";
+const CACHE = "billiard8-v5";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {
