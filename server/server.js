@@ -363,14 +363,14 @@ const routes = {
     return r.error ? [409, {error: r.error, ...editionsLeft()[id]}] : {id, serial: r.serial, cap: r.cap};
   },
   // real matches in progress, for the Live screen (optionally filtered by the players' country)
-  "GET /api/live": req => {
+  "GET /api/live": (req, u) => {
     const cc = (new URL(req.url, "http://x").searchParams.get("country") || "").toUpperCase().slice(0, 2);
     const list = [];
     for (const r of rooms.values()) {
       if (r.over || !r.p[0] || !r.p[1]) continue;
       const p = r.p.map(s => ({name: s.profile.name, avatar: s.profile.avatar, frame: s.profile.frame, country: s.profile.country, level: s.profile.level}));
       if (cc && !p.some(x => (x.country || "").toUpperCase() === cc)) continue;
-      list.push({room: r.id, city: r.city, started: r.startedAt, specs: r.specs.size, p});
+      list.push({room: r.id, city: r.city, started: r.startedAt, specs: r.specs.size, p, friend: !!(u && r.p.some(s => s.uid !== u.id && (u.friends || []).includes(s.uid)))});
     }
     list.sort((a, b) => b.specs - a.specs || a.started - b.started);
     const countries = {}; for (const r of rooms.values()) if (!r.over) for (const s of r.p) { const c = (s.profile.country || "").toUpperCase(); if (c) countries[c] = (countries[c] || 0) + 1; }
@@ -728,7 +728,8 @@ const clients = new Map();          // userId -> ws
 const queues = new Map();           // cityId -> [ws]
 const rooms = new Map();            // roomId -> room
 const RELAY = new Set(["aim", "shot", "state", "chat", "place", "spin", "rtc"]);
-const specCount = room => { const msg = {t: "specs", n: room.specs.size}; for (const p of room.p) wsSend(p, msg); for (const sp of room.specs) wsSend(sp, msg); };   // everyone in the room sees how many people are watching
+const specList = room => [...room.specs].slice(0, 40).map(s => { const d = db.users[s.uid] || {}; return {name: String(d.name || "Player").slice(0, 16), avatar: d.avatar | 0, frame: d.frame | 0, country: d.country || "", level: d.level | 0}; });
+const specCount = room => { const msg = {t: "specs", n: room.specs.size, list: specList(room)}; for (const p of room.p) wsSend(p, msg); for (const sp of room.specs) wsSend(sp, msg); };   // everyone in the room sees how many people are watching
 const SPEC_FWD = new Set(["aim", "shot", "state", "place", "spin"]);   // what spectators get (no voice signalling, no chat)
 function bucket(ws, key, max, perMs) {   // small token bucket per socket
   const now = Date.now(), b = ws.bk || (ws.bk = {}), x = b[key] || (b[key] = {n: max, t: now});
@@ -786,13 +787,24 @@ wss.on("connection", (ws, req) => {
       if (!room || room.over || room.specs.size >= 200) return wsSend(ws, {t: "nospec"});
       room.specs.add(ws); ws.spec = room;
       specCount(room);
-      wsSend(ws, {t: "spec", room: room.id, seed: room.seed, first: room.first, city: room.city, p: room.p.map(s => { const {code, ...r} = s.profile; return r; }), state: room.last, specs: room.specs.size});
+      wsSend(ws, {t: "spec", room: room.id, seed: room.seed, first: room.first, city: room.city, p: room.p.map(s => { const {code, ...r} = s.profile; return r; }), state: room.last, specs: room.specs.size, list: specList(room), log: room.slog || []});
     } else if (m.t === "unspec") {
       if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
     } else if (m.t === "schat" && ws.spec && !ws.spec.over) {   // a spectator writes to the players and the other spectators
       if (!bucket(ws, "schat", 4, 4000)) return;
       const msg = String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 60); if (!msg) return;
-      const room = ws.spec, out = {t: "schat", name: String(u.name || "Player").slice(0, 16), country: u.country || "", msg};
+      const room = ws.spec, out = {t: "schat", name: String(u.name || "Player").slice(0, 16), country: u.country || "", avatar: u.avatar | 0, frame: u.frame | 0, msg};
+      (room.slog = room.slog || []).push({...out, t: undefined, at: Date.now()}); if (room.slog.length > 30) room.slog.shift();
+      for (const p of room.p) wsSend(p, out); for (const sp of room.specs) wsSend(sp, out);
+    } else if (m.t === "sgift" && ws.spec && !ws.spec.over) {   // a spectator cheers one of the two players: everyone in the room sees the gift fly to that player
+      const room = ws.spec, to = int(m.to, 1) === 1 ? 1 : 0, g = int(m.g, 99);
+      if (g > 12 || !room.p[to] || !bucket(ws, "sgift", 3, 3000)) return;
+      room.sgifts = room.sgifts || [0, 0]; if (room.sgifts[to] >= 60) return; room.sgifts[to]++;
+      const tu = db.users[room.p[to].uid];
+      u.cheer = u.cheer || {got: {}, sent: 0}; u.cheer.sent++;
+      if (tu) { tu.cheer = tu.cheer || {got: {}, sent: 0}; tu.cheer.got[g] = (tu.cheer.got[g] | 0) + 1; }
+      markDirty();
+      const out = {t: "sgift", to, g, name: String(u.name || "Player").slice(0, 16), avatar: u.avatar | 0, frame: u.frame | 0};
       for (const p of room.p) wsSend(p, out); for (const sp of room.specs) wsSend(sp, out);
     } else if (m.t === "gift" && ws.room && !ws.room.over) {   // cheer gift to the opponent: counted for both players, rate limited
       const room = ws.room, other = room.p[1 - ws.seat], g = int(m.g, 99);
