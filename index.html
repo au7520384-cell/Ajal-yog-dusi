@@ -2376,6 +2376,8 @@ const DICT = {
 "Do'stlaringiz hozir o'ynamayapti": ["None of your friends are playing right now", "Ваши друзья сейчас не играют"],
 "Tomosha rejimi": ["Spectating", "Просмотр"],
 "Siz": ["You", "Вы"],
+"Maxfiylik siyosati": ["Privacy Policy", "Политика конфиденциальности"],
+"Foydalanish shartlari": ["Terms of Service", "Условия использования"],
 "Grafika sifati": ["Graphics quality", "Качество графики"],
 "Kadr tezligi": ["Frame rate", "Частота кадров"],
 "Avto": ["Auto", "Авто"],
@@ -11110,7 +11112,7 @@ ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setReco
 ${row("Til", `<button class="btn blue" id="setLang" style="padding:6px 14px">🌐 ${LANGS[LANG]}</button>`)}
 <div class="setrow"><b>🎧 ${T("Ovoz sinovi")}</b><button class="btn orange" id="setLab" style="padding:6px 14px">▶ ${T("Ochish")}</button></div>
 ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:6px 14px">👤 ${esc(profile.name)}</button>`)}
-<div class="muted" style="text-align:center;margin-top:10px">Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}</div>`;
+<div class="muted" style="text-align:center;margin-top:10px">Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}<br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a></div>`;
 { const lb = $("setLab"); if (lb) lb.onclick = openSoundLab; }
 $("setBody").querySelectorAll("[data-t]").forEach(b => b.onclick = () => {
 const k = b.dataset.t;
