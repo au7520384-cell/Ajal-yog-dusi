@@ -27,6 +27,42 @@ const ROOT = path.join(__dirname, "..");
 const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js"};
 const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript"};
 
+
+// ---------------------------------------------------------------- legal pages (required by Google / Facebook sign-in and by the stores)
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || "";
+function legalPage(res, which) {
+  const contact = CONTACT_EMAIL ? `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>` : "the developer through the game (Settings)";
+  const css = `body{font:16px/1.55 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:18px;color:#1b2236;background:#fff}h1{font-size:26px}h2{font-size:19px;margin-top:26px}a{color:#1553b3}.u{color:#555;font-size:14px}`;
+  const privacy = `<h1>Privacy Policy — Billiard 8</h1><p class="u">Last updated: October 2026</p>
+<p>Billiard 8 ("the game") is an online pool game. This page explains what information the game uses and why. By playing you agree to it.</p>
+<h2>What we collect</h2><ul>
+<li><b>Account:</b> a random player ID and secret token created on your device. If you sign in with Google or Facebook, we receive the provider's user ID and your first name. We never receive your Google/Facebook password.</li>
+<li><b>Profile and progress:</b> the name and avatar you choose, country, level, coins, items, friends, club, match results and leaderboard scores.</li>
+<li><b>Messages:</b> chat phrases and messages you send during matches or while spectating are relayed to the other people in that match. We do not keep a permanent chat history; the most recent spectator messages stay in memory only while the match is live.</li>
+<li><b>Voice chat:</b> audio goes directly between players (WebRTC). If a direct connection is not possible it is relayed through a third-party TURN relay service. We do not record or store audio.</li>
+<li><b>Payments:</b> if purchases are enabled they are processed by Stripe. We never see or store your card number; we only keep a record of what you bought.</li>
+<li><b>On your device:</b> the game stores settings and a copy of your progress in your browser's local storage.</li></ul>
+<h2>How we use it</h2><p>To run the game: log you in, save progress, show leaderboards, friends, clubs and live matches, match you with opponents, deliver purchases, and prevent cheating and abuse.</p>
+<h2>What other players see</h2><p>Your name, avatar, country, level and club are visible to other players, in leaderboards and in the live-matches list. You can limit who can add you as a friend and whether your online status is shown in Settings.</p>
+<h2>Services we use</h2><p>Hosting (Render), database (Neon), payments (Stripe), voice relay (Metered), and sign-in (Google, Facebook). They process data only to provide their service to us. Hosting providers may keep standard technical server logs. We do not sell your data and we do not show third-party ads based on your data.</p>
+<h2>Keeping and deleting data</h2><p>We keep your account while it is in use. To ask for your data to be deleted, contact ${contact}; we will delete your account and progress.</p>
+<h2>Children</h2><p>The game is not directed to children under 13 and we do not knowingly collect their data.</p>
+<h2>Changes</h2><p>We may update this page; the date above shows the latest version.</p>
+<h2>Contact</h2><p>${contact}</p>
+<hr><p class="u"><b>Maxfiylik siyosati (qisqacha, o'zbekcha):</b> o'yin sizning ismingiz, avatar, davlat, daraja va o'yin natijalaringizni saqlaydi; Google/Facebook orqali kirsangiz faqat foydalanuvchi ID va ismingizni oladi (parolni emas). Karta ma'lumotlari bizda saqlanmaydi (Stripe orqali). Ovozli chat yozib olinmaydi. Ma'lumotlarni o'chirish uchun biz bilan bog'laning. Ma'lumotlaringiz sotilmaydi.</p>`;
+  const terms = `<h1>Terms of Service — Billiard 8</h1><p class="u">Last updated: October 2026</p>
+<p>By playing Billiard 8 you agree to these terms.</p>
+<h2>Fair play</h2><p>Do not cheat, use bots or exploits, harass other players or post offensive names, avatars or messages. We may mute, suspend or delete accounts that break these rules.</p>
+<h2>Virtual items</h2><p>Coins, cash, gems, cues, tables, gifts and other items are virtual, have no real-world monetary value and cannot be exchanged for money. Purchases are final except where the law says otherwise.</p>
+<h2>Your account</h2><p>You are responsible for keeping your account key safe. We may change or remove features, prices and rewards.</p>
+<h2>No warranty</h2><p>The game is provided "as is" without warranties. To the extent allowed by law we are not liable for losses caused by using the game or by downtime.</p>
+<h2>Privacy and contact</h2><p>See the <a href="/privacy">Privacy Policy</a>. Contact: ${contact}.</p>
+<hr><p class="u"><b>Shartlar (qisqacha):</b> aldamang, boshqalarni haqorat qilmang. O'yindagi tanga va buyumlar haqiqiy pul qiymatiga ega emas. O'yin "borligicha" taqdim etiladi.</p>`;
+  const body = which === "/terms" ? terms : privacy;
+  res.writeHead(200, {"Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=3600"});
+  res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${which === "/terms" ? "Terms of Service" : "Privacy Policy"} — Billiard 8</title><style>${css}</style></head><body>${body}<p class="u"><a href="/">← Billiard 8</a></p></body></html>`);
+}
+
 // ---------------------------------------------------------------- catalog (server is the source of truth for prices)
 const SKUS = {
   coins_20k:   {coins: 20000,   vip: 130,   usd: 1.99,  name: "20 000 Coins"},
@@ -697,6 +733,7 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, "http://x");
     if (req.method === "OPTIONS") return send(res, 204, {});
     if (req.method === "POST" && url.pathname === "/api/stripe/webhook") return stripeWebhook(req, res);
+    if (req.method === "GET" && (url.pathname === "/privacy" || url.pathname === "/terms")) return legalPage(res, url.pathname);
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
