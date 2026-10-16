@@ -14,5 +14,7 @@ blob = base64.b64encode(zlib.compress(xt.encode("utf8"), 9)).decode()
 p = root / "index.html"; s = p.read_text(encoding="utf8")
 s, n = re.subn(r'const XT_Z = "[^"]*";', 'const XT_Z = "%s";' % blob, s)
 assert n == 1, "XT_Z marker not found"
+s, n = re.subn(r'const XT_LEN = \d+;', 'const XT_LEN = %d;' % len(xt.encode("utf8")), s)   # exact byte length: the fallback inflate (browsers without DecompressionStream) needs it
+assert n == 1, "XT_LEN marker not found"
 p.write_text(s, encoding="utf8")
 print("xt lines:", xt.count("\n") + 1, "blob KB:", len(blob) // 1024)

@@ -7,9 +7,9 @@ Mini‖Mini|Mini|Mini|مصغرة|Mini|मिनी|Mini|Mini|미니|ミニ|小
 o'yinlar‖oyunlar|juegos|jogos|ألعاب|game|गेम्स|jeux|Spiele|게임|ゲーム|游戏
 Omadli zarba, g'ildirak‖Şanslı vuruş, çark|Tiro de la suerte, ruleta|Tacada da sorte, roleta|ضربة الحظ والعجلة|Tembakan beruntung, roda|लकी शॉट, चक्र|Coup chanceux, roue|Glücksstoß, Rad|럭키 샷, 룰렛|ラッキーショット、ルーレット|幸运一击、转盘
 Ustalar o'yinini ko'ring‖Ustaların oyununu izle|Mira jugar a los maestros|Veja os mestres jogarem|شاهد المحترفين يلعبون|Tonton para ahli bermain|प्रो खिलाड़ियों को खेलते देखें|Regardez jouer les pros|Sieh den Profis beim Spielen zu|프로들의 경기를 관전하세요|プロの対戦を観戦|观看高手对局
-● JONLI‖● CANLI|● EN VIVO|● AO VIVO|● مباشر|● LANGSUNG|● लाइव|● EN DIRECT|● LIVE|● 라이브|● ライブ|● 直播
+● JONLI‖● LIVE|● ЭФИР|● CANLI|● EN VIVO|● AO VIVO|● مباشر|● LANGSUNG|● लाइव|● EN DIRECT|● LIVE|● 라이브|● ライブ|● 直播
 Qoidalarsiz, oflayn‖Kuralsız, çevrimdışı|Sin reglas, sin conexión|Sem regras, offline|بلا قواعد، بدون إنترنت|Tanpa aturan, offline|बिना नियम, ऑफ़लाइन|Sans règles, hors ligne|Ohne Regeln, offline|규칙 없음, 오프라인|ルールなし・オフライン|无规则,离线
-Taklif qiling, bonus oling‖Davet et, bonus kazan|Invita y gana bonos|Convide e ganhe bônus|ادعُ واربح مكافآت|Undang & dapatkan bonus|आमंत्रित करें, बोनस पाएँ|Invitez et gagnez des bonus|Lade ein & erhalte Boni|초대하고 보너스 받기|招待してボーナスGET|邀请好友赢奖励
+Taklif qiling, bonus oling‖Davet et, bonus kazan|Invita y gana bonos|Convide e ganhe bônus|ادعُ واربح مكافآت|Undang & dapatkan bonus|आमंत्रित करें, बोनस पाएँ|Invitez et gagnez des bonus|Lade ein & erhalte Boni|초대하고 보너스 받기|招待してボーナスをゲット|邀请好友赢奖励
 Omadli‖Şanslı|De la suerte|Da sorte|الحظ|Beruntung|लकी|Chanceux|Glücks-|럭키|ラッキー|幸运
 zarba‖vuruş|tiro|tacada|ضربة|tembakan|शॉट|coup|stoß|샷|ショット|一击
 Omad‖Şans|Rueda|Roda|عجلة|Roda|चक्र|Roue|Glücks-|행운|運命の|幸运
@@ -19,7 +19,6 @@ AYLANTIRISH‖ÇEVİR|GIRAR|GIRAR|أدِر|PUTAR|घुमाएँ|TOURNER|DREH
 Kiylar_tab‖Sopalar|Tacos|Tacos|العصي|Stik|क्यू|Queues|Queues|큐|キュー|球杆
 Almashtirish‖Takas|Canjear|Trocar|استبدال|Tukar|एक्सचेंज|Échanger|Tauschen|교환|交換|兑换
 🔥 Kunlik seriya:‖🔥 Günlük seri:|🔥 Racha diaria:|🔥 Sequência diária:|🔥 السلسلة اليومية:|🔥 Beruntun harian:|🔥 दैनिक स्ट्रीक:|🔥 Série quotidienne :|🔥 Tagesserie:|🔥 연속 출석:|🔥 連続ログイン:|🔥 连续登录:
-kun‖gün|días|dias|أيام|hari|दिन|jours|Tage|일|日|天
 Naqd pulga sotib olish‖Gerçek parayla satın al|Comprar con dinero real|Comprar com dinheiro real|الشراء بمال حقيقي|Beli dengan uang asli|असली पैसे से खरीदें|Acheter avec de l'argent réel|Mit echtem Geld kaufen|현금으로 구매|リアルマネーで購入|用真实货币购买
 Pulni tangaga almashtirish‖Nakiti jetona çevir|Cambiar efectivo por monedas|Trocar dinheiro por moedas|استبدال النقد بعملات|Tukar uang tunai ke koin|कैश को सिक्कों में बदलें|Échanger du cash contre des pièces|Cash in Münzen tauschen|캐시를 코인으로 교환|キャッシュをコインに交換|将现金兑换为金币
 ALMASHTIRISH‖TAKAS|CANJEAR|TROCAR|استبدال|TUKAR|एक्सचेंज|ÉCHANGER|TAUSCHEN|교환|交換する|兑换
@@ -44,8 +43,7 @@ ZO'R!‖SÜPER!|¡GENIAL!|LEGAL!|رائع!|KEREN!|शानदार!|SUPER !|TO
 AJOYIB!‖MUHTEŞEM!|¡INCREÍBLE!|INCRÍVEL!|مذهل!|LUAR BIASA!|कमाल!|INCROYABLE !|WUNDERBAR!|대단해요!|素晴らしい!|太棒了!
 MASHQ‖ANTRENMAN|PRÁCTICA|TREINO|تدريب|LATIHAN|अभ्यास|ENTRAÎNEMENT|ÜBUNG|연습|練習|练习
 Sizning ID-kodingiz‖Benzersiz kimliğin|Tu ID único|Seu ID único|معرّفك الفريد|ID unik Anda|आपकी यूनीक आईडी|Votre ID unique|Deine eindeutige ID|나의 고유 ID|あなたの固有ID|你的专属ID
-Nusxalash‖Kopyala|Copiar|Copiar|نسخ|Salin|कॉपी करें|Copier|Kopieren|복사|コピー|复制
-Ulashish‖Paylaş|Compartir|Compartilhar|مشاركة|Bagikan|शेयर करें|Partager|Teilen|공유|共有|分享
+Nusxalash‖Copy|Копировать|Kopyala|Copiar|Copiar|نسخ|Salin|कॉपी करें|Copier|Kopieren|복사|コピー|复制
 Nusxalandi!‖Kopyalandı!|¡Copiado!|Copiado!|تم النسخ!|Tersalin!|कॉपी हो गया!|Copié !|Kopiert!|복사됨!|コピーしました!|已复制!
 Do'st kodini kiriting‖Arkadaşının kodunu gir|Introduce el código de un amigo|Digite o código de um amigo|أدخل رمز صديق|Masukkan kode teman|दोस्त का कोड डालें|Entrez le code d'un ami|Freundescode eingeben|친구 코드 입력|友達のコードを入力|输入好友代码
 Qo'shish‖Ekle|Añadir|Adicionar|إضافة|Tambah|जोड़ें|Ajouter|Hinzufügen|추가|追加|添加
@@ -80,8 +78,8 @@ Taklif bonusi‖Davet bonusu|Bono de invitación|Bônus de convite|مكافأة 
 Do'stingiz qo'shildi‖Arkadaşın katıldı|Tu amigo se unió|Seu amigo entrou|انضم صديقك|Temanmu bergabung|आपका दोस्त जुड़ गया|Votre ami a rejoint|Dein Freund ist beigetreten|친구가 참여했습니다|友達が参加しました|好友已加入
 Sovg'a‖Hediye|Regalo|Presente|هدية|Hadiah|उपहार|Cadeau|Geschenk|선물|ギフト|礼物
 Chiqsangiz, o'yin mag'lubiyat hisoblanadi.‖Çıkarsan maçı kaybetmiş sayılırsın.|Si sales, pierdes la partida.|Se sair, você perde a partida.|إذا خرجت تخسر المباراة.|Jika keluar, Anda kalah dalam pertandingan.|छोड़ने पर मैच हार माना जाएगा।|Si vous quittez, vous perdez la partie.|Wenn du gehst, verlierst du das Spiel.|나가면 경기에서 패배 처리됩니다.|退出すると敗北になります。|退出将判负。
-🔊 Ovozni yoqish‖🔊 Sesi aç|🔊 Activar sonido|🔊 Ativar som|🔊 تشغيل الصوت|🔊 Nyalakan suara|🔊 आवाज़ चालू करें|🔊 Activer le son|🔊 Ton an|🔊 소리 켜기|🔊 サウンドON|🔊 开启声音
-🔇 Ovozni o'chirish‖🔇 Sesi kapat|🔇 Silenciar|🔇 Desativar som|🔇 إيقاف الصوت|🔇 Matikan suara|🔇 आवाज़ बंद करें|🔇 Couper le son|🔇 Ton aus|🔇 소리 끄기|🔇 サウンドOFF|🔇 关闭声音
+🔊 Ovozni yoqish‖🔊 Sesi aç|🔊 Activar sonido|🔊 Ativar som|🔊 تشغيل الصوت|🔊 Nyalakan suara|🔊 आवाज़ चालू करें|🔊 Activer le son|🔊 Ton an|🔊 소리 켜기|🔊 サウンドをオンにする|🔊 开启声音
+🔇 Ovozni o'chirish‖🔇 Sesi kapat|🔇 Silenciar|🔇 Desativar som|🔇 إيقاف الصوت|🔇 Matikan suara|🔇 आवाज़ बंद करें|🔇 Couper le son|🔇 Ton aus|🔇 소리 끄기|🔇 サウンドをオフにする|🔇 关闭声音
 Oq shar lunkaga tushdi‖Beyaz top cebe girdi|La bola blanca entró en tronera|A bola branca caiu|دخلت الكرة البيضاء الجيب|Bola putih masuk lubang|सफ़ेद गेंद पॉकेट में गई|La blanche est empochée|Weiße Kugel versenkt|흰 공이 들어갔습니다|白球がポケットに入った|白球落袋
 Hech bir sharga tegmadi‖Hiçbir topa çarpmadı|No tocó ninguna bola|Não tocou em nenhuma bola|لم تلمس أي كرة|Tidak mengenai bola apa pun|किसी गेंद को नहीं छुआ|Aucune bille touchée|Keine Kugel getroffen|어떤 공도 맞히지 못했습니다|どの球にも当たらなかった|未击中任何球
 Avval o'z sharingizga tegish kerak‖Önce kendi topuna vurmalısın|Debes golpear primero tu propia bola|Você deve acertar primeiro a sua bola|يجب أن تضرب كرتك أولًا|Anda harus mengenai bola sendiri dulu|पहले अपनी गेंद पर मारना ज़रूरी है|Vous devez d'abord toucher votre bille|Du musst zuerst deine eigene Kugel treffen|먼저 자신의 공을 맞혀야 합니다|まず自分の球に当てる必要があります|必须先击中自己的球
@@ -115,7 +113,7 @@ Hali natija yo'q‖Henüz sonuç yok|Aún no hay resultados|Ainda sem resultados
 Yana ko'p avatarlar‖Daha fazla avatar|Más avatares|Mais avatares|المزيد من الصور الرمزية|Lebih banyak avatar|और अवतार|Plus d'avatars|Mehr Avatare|더 많은 아바타|さらにアバター|更多头像
 Haftalik reyting sovrini‖Haftalık sıralama ödülü|Premio del ranking semanal|Prêmio do ranking semanal|جائزة الترتيب الأسبوعي|Hadiah peringkat mingguan|साप्ताहिक रैंकिंग इनाम|Récompense du classement hebdomadaire|Wochenranglisten-Preis|주간 랭킹 보상|週間ランキング賞品|每周排行榜奖励
 G'alaba %‖Kazanma %|% de victorias|% de vitórias|نسبة الفوز %|Menang %|जीत %|% de victoires|Siegquote %|승률 %|勝率 %|胜率 %
-Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.‖Her kutu efsanevi bir sopanın 1 parçasını verir. 4 parça = sopa.|Cada caja da 1 pieza de un taco legendario. 4 piezas = el taco.|Cada caixa dá 1 peça de um taco lendário. 4 peças = o taco.|كل صندوق يمنح قطعة واحدة من عصا أسطورية. 4 قطع = العصا.|Setiap kotak memberi 1 keping stik legendaris. 4 keping = stik.|हर बॉक्स से एक legendary क्यू का 1 टुकड़ा मिलता है। 4 टुकड़े = क्यू।|Chaque coffre donne 1 pièce d'une queue légendaire. 4 pièces = la queue.|Jede Kiste gibt 1 Teil eines legendären Queues. 4 Teile = der Queue.|상자마다 전설 큐 조각 1개가 나옵니다. 4조각 = 큐 1개.|各ボックスから伝説キューのパーツが1つ出ます。4個でキュー完成。|每个箱子给出传说球杆的1块碎片,集齐4块即可合成球杆。
+Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.‖Her kutu efsanevi bir sopanın 1 parçasını verir. 4 parça = sopa.|Cada caja da 1 pieza de un taco legendario. 4 piezas = el taco.|Cada caixa dá 1 peça de um taco lendário. 4 peças = o taco.|كل صندوق يمنح قطعة واحدة من عصا أسطورية. 4 قطع = العصا.|Setiap kotak memberi 1 keping stik legendaris. 4 keping = stik.|हर बॉक्स से एक महान क्यू का 1 टुकड़ा मिलता है। 4 टुकड़े = क्यू।|Chaque coffre donne 1 pièce d'une queue légendaire. 4 pièces = la queue.|Jede Kiste gibt 1 Teil eines legendären Queues. 4 Teile = der Queue.|상자마다 전설 큐 조각 1개가 나옵니다. 4조각 = 큐 1개.|各ボックスから伝説キューのパーツが1つ出ます。4個でキュー完成。|每个箱子给出传说球杆的1块碎片,集齐4块即可合成球杆。
 Shaharda yoki undan yuqorida yutib, kiy bo'laklarini yig'ing. 4 bo'lak = kiy.‖Şehirde veya daha üstünde kazanarak sopa parçalarını topla. 4 parça = sopa.|Gana en la ciudad o superior para reunir piezas. 4 piezas = el taco.|Vença na cidade ou acima para juntar peças. 4 peças = o taco.|اربح في المدينة أو أعلى لجمع القطع. 4 قطع = العصا.|Menang di kota ini atau lebih tinggi untuk mengumpulkan keping. 4 keping = stik.|इस शहर या उससे ऊपर जीतकर टुकड़े जुटाएँ। 4 टुकड़े = क्यू।|Gagnez dans la ville ou au-dessus pour récolter des pièces. 4 pièces = la queue.|Gewinne in der Stadt oder höher, um Teile zu sammeln. 4 Teile = der Queue.|이 도시 이상에서 승리해 조각을 모으세요. 4조각 = 큐.|この都市以上で勝ってパーツを集めよう。4個でキュー完成。|在该城市或更高城市获胜以收集碎片,集齐4块即得球杆。
 Yana ochish‖Bir tane daha aç|Abrir otra|Abrir outra|افتح واحدًا آخر|Buka satu lagi|एक और खोलें|En ouvrir une autre|Noch eine öffnen|하나 더 열기|もう1つ開ける|再开一个
 Osiyo Kubogi‖Asya Kupası|Copa de Asia|Copa da Ásia|كأس آسيا|Piala Asia|एशिया कप|Coupe d'Asie|Asien-Pokal|아시아 컵|アジアカップ|亚洲杯
@@ -188,7 +186,7 @@ Kuch paneli joyi‖Güç çubuğu konumu|Ubicación de la barra de fuerza|Posiç
 Chap‖Sol|Izquierda|Esquerda|يسار|Kiri|बाएँ|Gauche|Links|왼쪽|左|左
 O'ng‖Sağ|Derecha|Direita|يمين|Kanan|दाएँ|Droite|Rechts|오른쪽|右|右
 Olqish animatsiyalari‖Tezahürat animasyonları|Animaciones de vítores|Animações de comemoração|رسوم التشجيع|Animasi sorak|चीयर एनिमेशन|Animations d'encouragement|Jubel-Animationen|응원 애니메이션|応援アニメーション|欢呼动画
-Hammasi‖Hepsini oynat|Jugar todo|Jogar tudo|تشغيل الكل|Putar semua|सब चलाएँ|Tout jouer|Alle abspielen|모두 재생|すべて再生|全部播放
+Hammasi‖All|Все|Hepsi|Todos|Todos|الكل|Semua|सभी|Tous|Alle|전체|すべて|全部
 Faqat meniki‖Sadece benimki|Solo el mío|Só o meu|الخاص بي فقط|Hanya milik saya|सिर्फ़ मेरा|Seulement le mien|Nur meiner|내 것만|自分のみ|仅自己
 Do'st qo'shishga ruxsat‖Arkadaş olarak eklenmeye izin ver|Permitir que me añadan como amigo|Permitir ser adicionado como amigo|السماح بإضافتي كصديق|Izinkan ditambahkan sebagai teman|दोस्त के रूप में जोड़ने की अनुमति दें|Autoriser l'ajout en ami|Freundschaftsanfragen erlauben|친구 추가 허용|フレンド追加を許可|允许被添加为好友
 Hamma‖Herkes|Todos|Todos|الجميع|Semua orang|सभी|Tout le monde|Jeder|모두|全員|所有人
@@ -207,7 +205,7 @@ Turnirda 2 raund yuting‖Turnuvada 2 tur kazan|Gana 2 rondas de torneo|Vença 2
 Tokio yoki undan yuqori shaharda yuting‖Tokyo veya daha üst şehirde kazan|Gana en Tokio o superior|Vença em Tóquio ou acima|اربح في طوكيو أو أعلى|Menang di Tokyo atau lebih tinggi|टोक्यो या उससे ऊपर जीतें|Gagnez à Tokyo ou au-dessus|Gewinne in Tokio oder höher|도쿄 이상에서 승리|東京以上で勝つ|在东京或更高城市获胜
 Omadli zarbani o'ynang‖Şanslı Vuruşu oyna|Juega el Tiro de la suerte|Jogue a Tacada da sorte|العب ضربة الحظ|Mainkan Tembakan Beruntung|लकी शॉट खेलें|Jouez le Coup chanceux|Spiele den Glücksstoß|럭키 샷 플레이|ラッキーショットを遊ぶ|玩一次幸运一击
 Klubga qo'shiling yoki yarating‖Bir kulübe katıl veya kur|Únete a un club o crea uno|Entre ou crie um clube|انضم إلى نادٍ أو أنشئ واحدًا|Gabung atau buat klub|क्लब से जुड़ें या बनाएँ|Rejoignez ou créez un club|Tritt einem Club bei oder gründe einen|클럽 가입 또는 생성|クラブに参加または作成|加入或创建俱乐部
-Gambit‖Gambit|Gambito|Gambito|غامبيت|Gambit|गैम्बिट|Gambit|Gambit|갬빗|ギャンビット|Gambit
+Gambit‖Gambit|Гамбит|Gambit|Gambito|Gambito|غامبيت|Gambit|गैम्बिट|Gambit|Gambit|갬빗|ギャンビット|Gambit
 ochko‖puan|puntos|pontos|نقاط|poin|अंक|points|Punkte|점수|ポイント|积分
 Tanga to'plamlari‖Jeton Paketleri|Paquetes de monedas|Pacotes de moedas|حزم العملات|Paket Koin|सिक्का पैक|Packs de pièces|Münzpakete|코인 패키지|コインパック|金币礼包
 Naqd pul to'plamlari‖Nakit Paketleri|Paquetes de efectivo|Pacotes de dinheiro|حزم النقد|Paket Uang Tunai|कैश पैक|Packs de cash|Cash-Pakete|캐시 패키지|キャッシュパック|现金礼包
@@ -243,7 +241,6 @@ kiy‖sopa|taco|taco|عصا|stik|क्यू|queue|Queue|큐|キュー|球杆
 Zarba effekti‖Vuruş efekti|Efecto de golpe|Efeito de tacada|تأثير الضربة|Efek pukulan|स्ट्राइक इफ़ेक्ट|Effet de frappe|Stoßeffekt|타격 이펙트|ストライクエフェクト|击球特效
 Har bir premium kiy — premium stolning jufti. Ikkalasi bo'lsa: to'plam bonusi +10%.‖Her premium sopa bir premium masayla eşleşir. İkisi de sende olursa: set bonusu +%10.|Cada taco premium combina con una mesa premium. Con ambos: bono de conjunto +10%.|Cada taco premium combina com uma mesa premium. Com os dois: bônus de conjunto +10%.|كل عصا بريميوم تناسب طاولة بريميوم. امتلك الاثنين: مكافأة المجموعة +10%.|Setiap stik premium berpasangan dengan meja premium. Punya keduanya: bonus set +10%.|हर प्रीमियम क्यू एक प्रीमियम टेबल से जुड़ा है। दोनों हों तो सेट बोनस +10%।|Chaque queue premium va avec une table premium. Les deux : bonus de set +10 %.|Jeder Premium-Queue passt zu einem Premium-Tisch. Beides: Set-Bonus +10 %.|프리미엄 큐마다 짝이 되는 프리미엄 테이블이 있습니다. 둘 다 있으면 세트 보너스 +10%.|プレミアムキューには対応するプレミアムテーブルがあります。両方持てばセットボーナス+10%。|每支高级球杆都有对应的高级球桌。两者兼备可获得套装奖励+10%。
 Kiy yoqdimi? Hozir 30% chegirma bilan oling!‖Sopa hoşuna gitti mi? Şimdi %30 indirimle al!|¿Te gustó el taco? ¡Cómpralo ya con 30% de descuento!|Gostou do taco? Compre agora com 30% de desconto!|أعجبتك العصا؟ احصل عليها الآن بخصم 30%!|Suka stiknya? Beli sekarang diskon 30%!|क्यू पसंद आया? अभी 30% छूट पर लें!|La queue vous plaît ? Prenez-la avec 30 % de réduction !|Gefällt dir der Queue? Jetzt mit 30 % Rabatt sichern!|큐가 마음에 드셨나요? 지금 30% 할인!|キューは気に入りましたか?今なら30%オフ!|喜欢这支球杆吗?现在购买享7折!
-Noyob‖Nadir|Raro|Raro|نادر|Langka|दुर्लभ|Rare|Selten|레어|レア|稀有
 Epik‖Epik|Épico|Épico|ملحمي|Epik|एपिक|Épique|Episch|에픽|エピック|史诗
 Mifik‖Efsanevi|Mítico|Mítico|أسطوري|Mitos|मिथिक|Mythique|Mythisch|미식|ミシック|神话
 qoldi‖kaldı|quedan|restam|متبقٍ|tersisa|बचे|restants|übrig|남음|残り|剩余
@@ -255,7 +252,6 @@ Haftaning stoli‖Haftanın masası|Mesa de la semana|Mesa da semana|طاولة 
 Sinab ko'rish‖Dene|Probar|Experimentar|جرّبه|Coba|आज़माएँ|Essayer|Ausprobieren|체험하기|試してみる|试用
 Stol sizniki! Endi hamma o'yinlaringizda shu stol.‖Masa senin! Artık tüm oyunlarında bu masa kullanılır.|¡La mesa es tuya! Ahora se usa en todas tus partidas.|A mesa é sua! Agora ela é usada em todas as suas partidas.|الطاولة لك! تُستخدم الآن في جميع مبارياتك.|Mejanya milikmu! Kini dipakai di semua permainanmu.|टेबल आपकी है! अब यह आपके सभी गेम में इस्तेमाल होगी।|La table est à vous ! Elle sera utilisée dans toutes vos parties.|Der Tisch gehört dir! Er wird jetzt in allen Spielen verwendet.|테이블을 획득했습니다! 이제 모든 경기에서 사용됩니다.|テーブルはあなたのもの!すべての試合で使われます。|球桌归你了!今后所有比赛都会使用它。
 4 ta bo'lak yig'ildi — stol sizniki!‖4 parça toplandı — masa senin!|4 piezas reunidas: ¡la mesa es tuya!|4 peças reunidas — a mesa é sua!|تم جمع 4 قطع — الطاولة لك!|4 keping terkumpul — mejanya milikmu!|4 टुकड़े जुट गए — टेबल आपकी!|4 pièces réunies — la table est à vous !|4 Teile gesammelt — der Tisch gehört dir!|4조각 완성 — 테이블을 획득했습니다!|4パーツ完成 — テーブルをゲット!|集齐4块碎片 — 球桌归你!
-Stol bo'lagi‖Masa parçası|Pieza de mesa|Peça de mesa|قطعة طاولة|Keping meja|टेबल का टुकड़ा|Pièce de table|Tischteil|테이블 조각|テーブルのパーツ|球桌碎片
 Sizga yoqdimi? Stolni hozir 30% chegirma bilan saqlab qoling!‖Beğendin mi? Masayı şimdi %30 indirimle sakla!|¿Te gustó? ¡Quédate la mesa ahora con 30% de descuento!|Gostou? Fique com a mesa agora com 30% de desconto!|أعجبتك؟ احتفظ بالطاولة الآن بخصم 30%!|Suka? Simpan mejanya sekarang diskon 30%!|पसंद आई? अभी 30% छूट पर टेबल अपनी बनाएँ!|Elle vous plaît ? Gardez la table avec 30 % de réduction !|Gefällt sie dir? Sichere dir den Tisch jetzt mit 30 % Rabatt!|마음에 드셨나요? 지금 30% 할인으로 테이블을 가지세요!|気に入りましたか?今なら30%オフでテーブルをゲット!|喜欢吗?现在购买球桌享7折!
 Stol bonusi‖Masa bonusu|Bono de mesa|Bônus de mesa|مكافأة الطاولة|Bonus meja|टेबल बोनस|Bonus de table|Tisch-Bonus|테이블 보너스|テーブルボーナス|球桌奖励
 PREMIUM STOL‖PREMIUM MASA|MESA PREMIUM|MESA PREMIUM|طاولة بريميوم|MEJA PREMIUM|प्रीमियम टेबल|TABLE PREMIUM|PREMIUM-TISCH|프리미엄 테이블|プレミアムテーブル|高级球桌
@@ -336,9 +332,8 @@ Oltin zarba‖Altın Vuruş|Tiro dorado|Tacada dourada|الضربة الذهبي
 Katta sovrinlar‖Büyük ödüller|Grandes premios|Grandes prêmios|جوائز كبرى|Hadiah besar|बड़े इनाम|Gros lots|Große Preise|큰 상품|大きな賞品|丰厚大奖
 urinish‖deneme|intentos|tentativas|محاولات|percobaan|प्रयास|essais|Versuche|시도|回|次机会
 Syurpriz qutilar‖Sürpriz Kutular|Cajas sorpresa|Caixas surpresa|صناديق المفاجآت|Kotak Kejutan|सरप्राइज़ बॉक्स|Coffres surprise|Überraschungskisten|서프라이즈 박스|サプライズボックス|惊喜箱
-Afsonaviy kiy bo'laklari‖Efsanevi sopa parçaları|Piezas de tacos legendarios|Peças de tacos lendários|قطع العصي الأسطورية|Keping stik legendaris|legendary क्यू के टुकड़े|Pièces de queues légendaires|Legendäre Queue-Teile|전설 큐 조각|伝説キューのパーツ|传说球杆碎片
+Afsonaviy kiy bo'laklari‖Efsanevi sopa parçaları|Piezas de tacos legendarios|Peças de tacos lendários|قطع العصي الأسطورية|Keping stik legendaris|महान क्यू के टुकड़े|Pièces de queues légendaires|Legendäre Queue-Teile|전설 큐 조각|伝説キューのパーツ|传说球杆碎片
 Reklama ko'ring‖Reklam izle|Ver un anuncio|Assistir a um anúncio|شاهد إعلانًا|Tonton iklan|विज्ञापन देखें|Regarder une pub|Werbung ansehen|광고 보기|広告を見る|观看广告
-3 ta urinish 25 olmos turadi.‖3 vuruş 25 elmasa mal olur.|3 tiros cuestan 25 gemas.|3 tacadas custam 25 gemas.|3 ضربات تكلف 25 جوهرة.|3 tembakan seharga 25 permata.|3 शॉट की कीमत 25 जेम्स है।|3 coups coûtent 25 gemmes.|3 Stöße kosten 25 Edelsteine.|샷 3회에 보석 25개가 듭니다.|3ショットはジェム25個です。|3次击球需要25颗宝石。
 Olmos olish‖Elmas al|Conseguir gemas|Obter gemas|احصل على جواهر|Dapatkan permata|जेम्स पाएँ|Obtenir des gemmes|Edelsteine holen|보석 받기|ジェムを入手|获取宝石
 Barmoq bilan qiring — 3 ta bir xil = sovrin!‖Parmağınla kazı — 3 aynısı ödül kazandırır!|Rasca con el dedo: ¡3 iguales ganan premio!|Raspe com o dedo — 3 iguais ganham prêmio!|اكشط بإصبعك — 3 متطابقة تربح!|Gosok dengan jari — 3 yang sama menang!|उंगली से स्क्रैच करें — 3 एक जैसे पर इनाम!|Grattez du doigt — 3 identiques gagnent !|Rubble mit dem Finger — 3 gleiche gewinnen!|손가락으로 긁으세요 — 같은 것 3개면 당첨!|指でこすろう — 3つ揃えば当たり!|用手指刮开 — 3个相同即中奖!
 token‖jeton|fichas|fichas|رموز|token|टोकन|jetons|Token|토큰|トークン|代币
@@ -433,7 +428,6 @@ ZODIAK‖ZODYAK|ZODIACO|ZODÍACO|الأبراج|ZODIAK|राशि|ZODIAQUE|STE
 Burjingiz kiyi + avatari‖Burcunun sopası + avatarı|El taco y el avatar de tu signo|O taco e o avatar do seu signo|عصا وصورة رمزية لبرجك|Stik + avatar zodiakmu|आपकी राशि का क्यू + अवतार|La queue et l'avatar de votre signe|Queue + Avatar deines Sternzeichens|내 별자리 큐 + 아바타|あなたの星座のキュー+アバター|你星座的球杆+头像
 Kiy‖Sopa|Taco|Taco|عصا|Stik|क्यू|Queue|Queue|큐|キュー|球杆
 Tanga‖Jeton|Monedas|Moedas|عملات|Koin|सिक्के|Pièces|Münzen|코인|コイン|金币
-Naqd pul‖Nakit|Efectivo|Dinheiro|نقد|Uang tunai|कैश|Cash|Cash|캐시|キャッシュ|现金
 VIP ochko‖VIP puanı|Puntos VIP|Pontos VIP|نقاط VIP|Poin VIP|VIP अंक|Points VIP|VIP-Punkte|VIP 포인트|VIPポイント|VIP积分
 Bu kiy sizda bor‖Bu sopa sende var|Ya tienes este taco|Você já tem este taco|تمتلك هذه العصا بالفعل|Anda sudah punya stik ini|यह क्यू आपके पास है|Vous possédez déjà cette queue|Du besitzt diesen Queue bereits|이미 보유한 큐입니다|このキューは所持済みです|你已拥有这支球杆
 Bu to'plam faqat saytimizda sotiladi‖Bu paket yalnızca web sitemizde satılır|Este paquete solo se vende en nuestro sitio web|Este pacote é vendido apenas no nosso site|هذه الحزمة تُباع في موقعنا فقط|Paket ini hanya dijual di situs web kami|यह बंडल सिर्फ़ हमारी वेबसाइट पर बिकता है|Ce pack n'est vendu que sur notre site|Dieses Paket gibt es nur auf unserer Website|이 패키지는 웹사이트에서만 판매됩니다|このバンドルは公式サイトのみで販売|此礼包仅在官网出售
@@ -479,7 +473,6 @@ Olovli seriya‖Fiery Streak|Огненная серия|Ateşli Seri|Racha ardi
 To'xtatib bo'lmas‖Unstoppable|Неудержимый|Durdurulamaz|Imparable|Imparável|لا يُقهر|Tak Terhentikan|अजेय|Inarrêtable|Unaufhaltsam|멈출 수 없는|止まらない|势不可挡
 Yo'lga chiqdi‖Off We Go|В путь|Yola Çıktı|En marcha|A caminho|انطلقت|Berangkat|सफ़र शुरू|En route|Los geht's|출발!|出発|出发
 {0}-darajaga chiqing‖Reach level {0}|Достигните {0} уровня|{0}. seviyeye ulaş|Alcanza el nivel {0}|Alcance o nível {0}|اصل إلى المستوى {0}|Capai level {0}|लेवल {0} तक पहुँचें|Atteignez le niveau {0}|Erreiche Level {0}|레벨 {0} 달성|レベル{0}に到達|达到{0}级
-Tajribali‖Experienced|Опытный|Tecrübeli|Experimentado|Experiente|ذو خبرة|Berpengalaman|अनुभवी|Expérimenté|Erfahren|숙련자|ベテラン|经验丰富
 Yarim yo'l‖Halfway There|На полпути|Yarı Yol|A medio camino|Na metade|في منتصف الطريق|Setengah Jalan|आधा रास्ता|À mi-chemin|Halbzeit|반환점|折り返し地点|走到一半
 Hayot yo'li‖Road of Life|Путь жизни|Hayat Yolu|Camino de vida|Estrada da vida|طريق الحياة|Jalan Hidup|जीवन पथ|Chemin de vie|Lebensweg|인생길|人生の道|人生之路
 Kubok sohibi‖Trophy Owner|Обладатель кубка|Kupa Sahibi|Dueño de trofeo|Dono de troféu|صاحب كأس|Pemilik Piala|ट्रॉफ़ी धारक|Détenteur de trophée|Pokalbesitzer|트로피 보유자|トロフィー保持者|奖杯拥有者
@@ -535,7 +528,7 @@ Vaqtida‖On Time|Вовремя|Zamanında|A tiempo|No tempo|في الوقت ا
 {0} kunlik seriya‖{0}-day streak|Серия: {0} дн.|{0} günlük seri|Racha de {0} días|Sequência de {0} dias|سلسلة {0} أيام|Rentetan {0} hari|{0} दिन की स्ट्रीक|Série de {0} jours|{0}-Tage-Serie|{0}일 연속|{0}日連続|连续{0}天
 Toza o'yin‖Clean Game|Чистая игра|Temiz Oyun|Partida limpia|Partida limpa|مباراة نظيفة|Permainan Bersih|साफ़ गेम|Partie propre|Saubere Partie|깔끔한 경기|クリーンゲーム|干净对局
 {0} to'p ustasi‖{0}-Ball Master|Мастер {0} шаров|{0} Top Ustası|Maestro de {0} bolas|Mestre de {0} bolas|أستاذ {0} كرات|Master {0} Bola|{0}-बॉल मास्टर|Maître {0} billes|{0}-Ball-Meister|{0}볼 마스터|{0}ボールの達人|{0}球大师
-Afsonaviy kiy oling‖Get a legendary cue|Получите легендарный кий|Efsanevi bir sopa al|Consigue un taco legendario|Ganhe um taco lendário|احصل على عصا أسطورية|Dapatkan stik legendaris|legendary क्यू पाएँ|Obtenez une queue légendaire|Erhalte einen legendären Queue|전설 큐 획득|伝説のキューを入手|获得传说球杆
+Afsonaviy kiy oling‖Get a legendary cue|Получите легендарный кий|Efsanevi bir sopa al|Consigue un taco legendario|Ganhe um taco lendário|احصل على عصا أسطورية|Dapatkan stik legendaris|महान क्यू पाएँ|Obtenez une queue légendaire|Erhalte einen legendären Queue|전설 큐 획득|伝説のキューを入手|获得传说球杆
 Akula‖Shark|Акула|Köpekbalığı|Tiburón|Tubarão|قرش|Hiu|शार्क|Requin|Hai|상어|シャーク|鲨鱼
 {0} mln tanga yuting‖Win {0}M coins|Выиграйте {0} млн монет|{0} milyon jeton kazan|Gana {0} M de monedas|Ganhe {0} mi de moedas|اربح {0} مليون عملة|Menangkan {0} juta koin|{0} मिलियन सिक्के जीतें|Gagnez {0} M de pièces|Gewinne {0} Mio. Münzen|코인 {0}백만 획득|{0}万コイン獲得|赢取{0}百万金币
 Dunyoviy‖Worldly|Мирянин|Dünyalı|Mundano|Mundano|عالمي|Mendunia|विश्वस्तरीय|Mondain|Weltgewandt|세계인|世界人|环球玩家
@@ -561,7 +554,6 @@ STOL TOZALANDI!‖TABLE CLEARED!|СТОЛ ОЧИЩЕН!|MASA TEMİZLENDİ!|¡MES
 Birinchi 8-sharga tegildi‖8 ball hit first|Первым задет 8-й шар|İlk olarak 8 numaralı topa vuruldu|Se tocó primero la bola 8|Acertou a bola 8 primeiro|لُمست الكرة 8 أولًا|Bola 8 tersentuh pertama|पहले 8 नंबर की गेंद पर लगी|Bille 8 touchée en premier|Die 8 wurde zuerst getroffen|8번 공을 먼저 맞혔습니다|8番ボールに最初に当たった|先击中了8号球
 8-shar tushdi va qoida buzildi‖8 ball potted and a foul was made|8-й шар забит с нарушением|8 numaralı top girdi ve faul yapıldı|Bola 8 embocada con falta|Bola 8 encaçapada com falta|دخلت الكرة 8 مع خطأ|Bola 8 masuk disertai pelanggaran|8 नंबर की गेंद पॉकेट हुई और फ़ाउल हुआ|Bille 8 empochée avec faute|Die 8 wurde mit Foul versenkt|8번 공이 들어갔지만 반칙|8番ボールを落としてファウル|8号球落袋且犯规
 8-shar vaqtidan oldin tushdi‖8 ball potted too early|8-й шар забит раньше времени|8 numaralı top erken girdi|Bola 8 embocada antes de tiempo|Bola 8 encaçapada cedo demais|دخلت الكرة 8 مبكرًا|Bola 8 masuk terlalu cepat|8 नंबर की गेंद समय से पहले पॉकेट हुई|Bille 8 empochée trop tôt|Die 8 wurde zu früh versenkt|8번 공이 너무 일찍 들어갔습니다|8番ボールを早く落としすぎた|8号球过早落袋
-Boshladik!‖Let's go!|Поехали!|Başlayalım!|¡Empecemos!|Vamos lá!|هيا بنا!|Ayo mulai!|चलो शुरू करें!|C'est parti !|Los geht's!|시작합시다!|いくぞ!|开始吧!
 {0} sindiradi — omad!‖{0} is breaking — good luck!|{0} разбивает — удачи!|{0} açıyor — bol şans!|{0} saca: ¡suerte!|{0} vai abrir — boa sorte!|{0} يكسر — حظًا موفقًا!|{0} melakukan break — semoga beruntung!|{0} ब्रेक कर रहा है — शुभकामनाएँ!|{0} casse — bonne chance !|{0} stößt an — viel Glück!|{0}님이 브레이크 — 행운을 빌어요!|{0}のブレイク — 幸運を!|{0}开球 — 祝好运!
 {0} sindiradi‖{0} is breaking|{0} разбивает|{0} açıyor|{0} saca|{0} vai abrir|{0} يكسر|{0} melakukan break|{0} ब्रेक कर रहा है|{0} casse|{0} stößt an|{0}님이 브레이크|{0}のブレイク|{0}开球
 {0} navbati‖{0}'s turn|Ход: {0}|Sıra {0}'de|Turno de {0}|Vez de {0}|دور {0}|Giliran {0}|{0} की बारी|Tour de {0}|{0} ist dran|{0}님의 차례|{0}の番|轮到{0}
@@ -592,7 +584,6 @@ Tayyor bo'lsa doiradan tashqariga bosing‖Tap outside the circle when ready|Н�
 ✓ Olindi‖✓ Collected|✓ Получено|✓ Alındı|✓ Recibido|✓ Recebido|✓ تم الاستلام|✓ Diterima|✓ मिल गया|✓ Récupéré|✓ Abgeholt|✓ 받음|✓ 受取済み|✓ 已领取
 Bugungi sovg'angiz tayyor — bosing!‖Your gift for today is ready — tap!|Ваш подарок на сегодня готов — нажмите!|Bugünkü hediyen hazır — dokun!|Tu regalo de hoy está listo: ¡toca!|Seu presente de hoje está pronto — toque!|هديتك لليوم جاهزة — اضغط!|Hadiah hari ini siap — ketuk!|आज का उपहार तैयार है — टैप करें!|Votre cadeau du jour est prêt — touchez !|Dein Tagesgeschenk ist bereit — tippen!|오늘의 선물이 준비됐어요 — 탭하세요!|今日のギフトの準備完了 — タップ!|今日礼物已就绪 — 点击领取!
 Keyingi sovg'a: {0} soat {1} daqiqadan keyin‖Next gift in {0} h {1} min|Следующий подарок через {0} ч {1} мин|Sonraki hediye: {0} sa {1} dk sonra|Próximo regalo en {0} h {1} min|Próximo presente em {0} h {1} min|الهدية التالية بعد {0} س {1} د|Hadiah berikutnya dalam {0} j {1} m|अगला उपहार {0} घंटे {1} मिनट बाद|Prochain cadeau dans {0} h {1} min|Nächstes Geschenk in {0} Std. {1} Min.|다음 선물까지 {0}시간 {1}분|次のギフトまで{0}時間{1}分|下次礼物还有{0}小时{1}分钟
-Tabriklaymiz!‖Congratulations!|Поздравляем!|Tebrikler!|¡Felicidades!|Parabéns!|تهانينا!|Selamat!|बधाई हो!|Félicitations !|Glückwunsch!|축하합니다!|おめでとう!|恭喜!
 G'ildirakdan yutuq:‖You won from the wheel:|Выигрыш с колеса:|Çarktan kazandığın:|Ganaste en la ruleta:|Você ganhou na roleta:|ما ربحته من العجلة:|Kamu menang dari roda:|चक्र से आपने जीता:|Gagné à la roue :|Gewinn vom Rad:|룰렛 당첨:|ルーレットの当選:|转盘奖品:
 {0} tanga‖{0} coins|{0} монет|{0} jeton|{0} monedas|{0} moedas|{0} عملة|{0} koin|{0} सिक्के|{0} pièces|{0} Münzen|코인 {0}개|{0}コイン|{0}金币
 Omadli zarba x{0}‖Lucky Shot x{0}|Счастливый удар x{0}|Şanslı Vuruş x{0}|Tiro de la suerte x{0}|Tacada da sorte x{0}|ضربة الحظ x{0}|Tembakan Beruntung x{0}|लकी शॉट x{0}|Coup chanceux x{0}|Glücksstoß x{0}|럭키 샷 x{0}|ラッキーショット x{0}|幸运一击 x{0}
@@ -606,7 +597,7 @@ Profil‖Profile|Профиль|Profil|Perfil|Perfil|الملف الشخصي|Pro
 {0}-kun‖Day {0}|День {0}|{0}. Gün|Día {0}|Dia {0}|اليوم {0}|Hari {0}|दिन {0}|Jour {0}|Tag {0}|{0}일차|{0}日目|第{0}天
 Jonli o'yinlar‖Live matches|Прямые матчи|Canlı maçlar|Partidas en vivo|Partidas ao vivo|مباريات مباشرة|Pertandingan langsung|लाइव मैच|Matchs en direct|Live-Spiele|라이브 경기|ライブ対戦|直播对局
 Barcha davlatlar‖All countries|Все страны|Tüm ülkeler|Todos los países|Todos os países|كل الدول|Semua negara|सभी देश|Tous les pays|Alle Länder|모든 국가|すべての国|所有国家
-JONLI‖LIVE|LIVE|CANLI|EN VIVO|AO VIVO|مباشر|LANGSUNG|लाइव|EN DIRECT|LIVE|라이브|ライブ|直播
+JONLI‖LIVE|ЭФИР|CANLI|EN VIVO|AO VIVO|مباشر|LANGSUNG|लाइव|EN DIRECT|LIVE|라이브|ライブ|直播
 Hozir jonli o'yin yo'q‖No live matches right now|Сейчас нет прямых матчей|Şu an canlı maç yok|Ahora no hay partidas en vivo|Nenhuma partida ao vivo agora|لا توجد مباريات مباشرة الآن|Belum ada pertandingan langsung|अभी कोई लाइव मैच नहीं|Aucun match en direct pour l'instant|Gerade keine Live-Spiele|현재 라이브 경기가 없습니다|現在ライブ対戦はありません|目前没有直播对局
 Onlayn o'ynang — sizning o'yiningizni boshqalar ko'rishi mumkin!‖Play online — others can watch your match!|Играйте онлайн — другие смогут смотреть вашу игру!|Çevrimiçi oyna — maçını başkaları izleyebilir!|Juega online: ¡otros podrán ver tu partida!|Jogue online — outros poderão assistir à sua partida!|العب أونلاين — يمكن للآخرين مشاهدة مباراتك!|Main online — orang lain bisa menonton pertandinganmu!|ऑनलाइन खेलें — दूसरे आपका मैच देख सकते हैं!|Jouez en ligne — d'autres pourront suivre votre match !|Spiele online — andere können dein Spiel ansehen!|온라인으로 플레이하면 다른 사람이 내 경기를 볼 수 있어요!|オンラインで遊ぶと、他の人があなたの試合を観戦できます!|在线对战,别人可以观看你的比赛!
 Demo o'yin‖Demo match|Демо-матч|Demo maç|Partida demo|Partida demo|مباراة تجريبية|Pertandingan demo|डेमो मैच|Match démo|Demo-Spiel|데모 경기|デモ対戦|演示对局
@@ -727,7 +718,6 @@ Juda noyob‖Very rare|Очень редкое|Çok nadir|Muy raro|Muito raro|ن
 Afsonaviy‖Legendary|Легендарное|Efsanevi|Legendario|Lendário|أسطوري|Legendaris|महान|Légendaire|Legendär|전설|伝説|传说
 bajarildi‖done|выполнено|tamamlandı|completado|concluído|مكتمل|selesai|पूर्ण|terminé|erledigt|완료|達成|完成
 Keyingisi‖Next|Далее|Sonraki|Siguiente|Próximo|التالي|Berikutnya|अगला|Suivant|Nächste|다음|次へ|下一级
-soat‖hours|ч|saat|horas|horas|ساعة|jam|घंटे|h|Std.|시간|時間|小时
 Vaqt yutug'i‖Play time reward|Награда за время|Oyun süresi ödülü|Premio por tiempo|Prêmio por tempo|مكافأة وقت اللعب|Hadiah waktu bermain|खेल समय का इनाम|Récompense de temps|Spielzeit-Belohnung|플레이 시간 보상|プレイ時間の報酬|游戏时长奖励
 Yangi foydalanuvchi‖New user|Новичок|Yeni kullanıcı|Usuario nuevo|Novo usuário|مستخدم جديد|Pengguna baru|नया उपयोगकर्ता|Nouvel utilisateur|Neuer Nutzer|신규 유저|新規ユーザー|新用户
 Havaskor‖Dabbler|Любитель|Amatör|Aficionado|Amador|هاوٍ|Pemula|शौकीन|Amateur|Hobbyspieler|아마추어|ライトプレイヤー|业余玩家
@@ -780,19 +770,18 @@ Faol‖Active|Активно|Aktif|Activo|Ativo|نشط|Aktif|सक्रिय|
 30 kun davomida:‖For 30 days:|В течение 30 дней:|30 gün boyunca:|Durante 30 días:|Por 30 dias:|لمدة 30 يومًا:|Selama 30 hari:|30 दिनों तक:|Pendant 30 jours :|30 Tage lang:|30일 동안:|30日間:|30天内:
 Har g'alabada +25% tanga‖+25% coins on every win|+25% монет за каждую победу|Her galibiyette +%25 jeton|+25% de monedas en cada victoria|+25% de moedas a cada vitória|+25% عملات في كل فوز|+25% koin tiap menang|हर जीत पर +25% सिक्के|+25 % de pièces à chaque victoire|+25 % Münzen bei jedem Sieg|승리마다 코인 +25%|勝利ごとにコイン+25%|每次获胜 +25% 金币
 Elite do'konda −20% chegirma‖−20% in the Elite shop|−20% в Элитном магазине|Elit mağazada −%20|−20% en la tienda Élite|−20% na loja Elite|خصم 20% في متجر النخبة|Diskon 20% di toko Elite|एलीट शॉप में −20%|−20 % dans la boutique Élite|−20 % im Elite-Shop|엘리트 상점 −20%|エリートショップ−20%|精英商店 −20%
-Bunch of Gems: 500 💎 sovg'a (bir marta)‖Bunch of Gems: 500 💎 gift (once)|Bunch of Gems: 500 💎 в подарок (раз)|Bunch of Gems: 500 💎 hediye (bir kez)|Bunch of Gems: 500 💎 de regalo (una vez)|Bunch of Gems: 500 💎 de presente (uma vez)|Bunch of Gems: هدية 500 💎 (مرة)|Bunch of Gems: hadiah 500 💎 (sekali)|Bunch of Gems: 500 💎 उपहार (एक बार)|Bunch of Gems : 500 💎 offerts (une fois)|Bunch of Gems: 500 💎 Geschenk (einmalig)|Bunch of Gems: 500 💎 선물(1회)|Bunch of Gems: 500💎プレゼント(1回)|Bunch of Gems:赠送500💎(一次)
+Bunch of Gems: 500 💎 sovg'a (bir marta)‖Bunch of Gems: 500 💎 gift (once)|Связка кристаллов: 500 💎 в подарок (раз)|Bir Avuç Elmas: 500 💎 hediye (bir kez)|Puñado de gemas: 500 💎 de regalo (una vez)|Punhado de gemas: 500 💎 de presente (uma vez)|حفنة ألماس: هدية 500 💎 (مرة)|Segenggam Permata: hadiah 500 💎 (sekali)|मुट्ठी भर जेम्स: 500 💎 उपहार (एक बार)|Poignée de gemmes : 500 💎 offerts (une fois)|Handvoll Edelsteine: 500 💎 Geschenk (einmalig)|젬 한 줌: 500 💎 선물(1회)|ジェムの束: 500💎プレゼント(1回)|一把宝石：赠送500💎(一次)
 Ismingiz yonida ♛ belgisi‖♛ badge next to your name|Значок ♛ рядом с именем|Adının yanında ♛ rozeti|Insignia ♛ junto a tu nombre|Emblema ♛ ao lado do nome|شارة ♛ بجانب اسمك|Lencana ♛ di samping namamu|नाम के पास ♛ बैज|Badge ♛ à côté de ton nom|♛-Abzeichen neben deinem Namen|이름 옆 ♛ 배지|名前の横に♛バッジ|名字旁显示♛徽章
 Elite bo'lish‖Go Elite|Стать элитой|Elit ol|Hazte Élite|Torne-se Elite|انضم للنخبة|Jadi Elite|एलीट बनें|Passer Élite|Elite werden|엘리트 되기|エリートになる|成为精英
 Elite bonusi‖Elite bonus|Элитный бонус|Elit bonusu|Bono Élite|Bônus Elite|مكافأة النخبة|Bonus Elite|एलीट बोनस|Bonus Élite|Elite-Bonus|엘리트 보너스|エリートボーナス|精英奖励
 Elite‖Elite|Элита|Elit|Élite|Elite|النخبة|Elite|एलीट|Élite|Elite|엘리트|エリート|精英
-kun‖days|дн.|gün|días|dias|أيام|hari|दिन|jours|Tage|일|日|天
 Stikerlar do'konda (Kiylar → Stikerlar)‖Stickers are in the shop (Cues → Stickers)|Стикеры в магазине (Кии → Стикеры)|Çıkartmalar mağazada (Istekalar → Çıkartmalar)|Las pegatinas están en la tienda (Tacos → Pegatinas)|Figurinhas estão na loja (Tacos → Figurinhas)|الملصقات في المتجر (العصي ← ملصقات)|Stiker ada di toko (Stik → Stiker)|स्टिकर शॉप में हैं (क्यू → स्टिकर)|Les autocollants sont en boutique (Queues → Autocollants)|Sticker gibt es im Shop (Queues → Sticker)|스티커는 상점에 있어요(큐 → 스티커)|ステッカーはショップにあります(キュー→ステッカー)|贴纸在商店(球杆→贴纸)
 Bunch of Gems‖Bunch of Gems|Связка кристаллов|Bir Avuç Elmas|Puñado de gemas|Punhado de gemas|حفنة ألماس|Segenggam Permata|मुट्ठी भर जेम्स|Poignée de gemmes|Handvoll Edelsteine|젬 한 줌|ジェムの束|一把宝石
 Elite sovg'a: 500 💎‖Elite gift: 500 💎|Подарок Элиты: 500 💎|Elit hediyesi: 500 💎|Regalo Élite: 500 💎|Presente Elite: 500 💎|هدية النخبة: 500 💎|Hadiah Elite: 500 💎|एलीट उपहार: 500 💎|Cadeau Élite : 500 💎|Elite-Geschenk: 500 💎|엘리트 선물: 500 💎|エリートギフト: 500💎|精英礼物:500💎
 🎁 Qutilar‖🎁 Boxes|🎁 Боксы|🎁 Kutular|🎁 Cajas|🎁 Caixas|🎁 صناديق|🎁 Kotak|🎁 बॉक्स|🎁 Boîtes|🎁 Boxen|🎁 박스|🎁 ボックス|🎁 盒子
 🎭 Stikerlar‖🎭 Stickers|🎭 Стикеры|🎭 Çıkartmalar|🎭 Pegatinas|🎭 Figurinhas|🎭 ملصقات|🎭 Stiker|🎭 स्टिकर|🎭 Autocollants|🎭 Sticker|🎭 스티커|🎭 ステッカー|🎭 贴纸
-Ochiladi‖Unlocks at|Откроется на|Açılır:|Se abre en|Abre em|يُفتح عند|Terbuka di|खुलता है|Se débloque à|Freigeschaltet bei|해금:|解放:|解锁需要
-Keyingi daraja aksiyasi‖Next-Level Loop|Next-Level Loop|Sonraki Seviye Döngüsü|Next-Level Loop|Next-Level Loop|حلقة المستوى التالي|Next-Level Loop|नेक्स्ट-लेवल लूप|Next-Level Loop|Next-Level Loop|넥스트 레벨 루프|ネクストレベルループ|进阶循环
+Ochiladi‖Unlocks at|Откроется на|Açılır|Se abre en|Abre em|يُفتح عند|Terbuka di|खुलता है|Se débloque à|Freigeschaltet bei|해금|解放|解锁需要
+Keyingi daraja aksiyasi‖Next-Level Offer|Акция следующего уровня|Sonraki seviye fırsatı|Oferta del siguiente nivel|Oferta do próximo nível|عرض المستوى التالي|Promo level berikutnya|अगले स्तर का ऑफ़र|Offre du niveau suivant|Angebot für das nächste Level|다음 레벨 특가|次のレベルのセール|下一等级优惠
 50-80% chegirmali 3 ta taklif‖3 offers with 50-80% off|3 предложения со скидкой 50-80%|%50-80 indirimli 3 teklif|3 ofertas con 50-80% de descuento|3 ofertas com 50-80% de desconto|3 عروض بخصم 50-80%|3 penawaran diskon 50-80%|50-80% छूट वाले 3 ऑफ़र|3 offres de 50 à 80 % de réduction|3 Angebote mit 50-80 % Rabatt|50-80% 할인 3개 제안|50〜80%オフの3つのオファー|3个5-8折优惠
 Reklamasiz — abadiy‖Ad-Free Forever|Без рекламы навсегда|Sonsuza Dek Reklamsız|Sin anuncios para siempre|Sem anúncios para sempre|بدون إعلانات للأبد|Bebas Iklan Selamanya|हमेशा के लिए विज्ञापन-मुक्त|Sans pub pour toujours|Für immer werbefrei|영원히 광고 없음|永久広告なし|永久无广告
 Videolar ko'rmasdan bepul mukofotlarni oling‖Get free rewards without watching videos|Получайте награды без просмотра видео|Videoları izlemeden ücretsiz ödül al|Obtén recompensas sin ver vídeos|Ganhe prêmios sem assistir a vídeos|احصل على المكافآت دون مشاهدة الفيديو|Dapatkan hadiah tanpa menonton video|वीडियो देखे बिना मुफ़्त इनाम पाएँ|Gagnez des récompenses sans regarder de vidéos|Belohnungen ohne Videos erhalten|영상 없이 무료 보상 받기|動画なしで無料報酬をゲット|无需观看视频即可领取奖励
@@ -917,180 +906,180 @@ Toshkent‖Tashkent|Ташкент|Taşkent|Taskent|Tashkent|طشقند|Tashkent
 Rio‖Rio|Рио|Rio|Río|Rio|ريو|Rio|रियो|Rio|Rio|리우|リオ|里约
 Nyu-York‖New York|Нью-Йорк|New York|Nueva York|Nova Iorque|نيويورك|New York|न्यूयॉर्क|New York|New York|뉴욕|ニューヨーク|纽约
 Moskva‖Moscow|Москва|Moskova|Moscú|Moscou|موسكو|Moskow|मॉस्को|Moscou|Moskau|모스크바|モスクワ|莫斯科
-Chinor‖Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree|Plane Tree
-Konfet‖Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy|Candy
-Moviy Osmon‖Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky|Blue Sky
-Kumush Oy‖Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon|Silver Moon
-Oltin O'rda‖Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde|Golden Horde
-Multimillioner‖Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire|Multimillionaire
-Milliarder‖Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire|Billionaire
-Imperator‖Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor|Emperor
-Ajdarho‖Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon|Dragon
-Klassik‖Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic|Classic
-Qora Marvarid‖Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl|Black Pearl
-Safir‖Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire|Sapphire
-Bo'ron‖Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm|Storm
-Chaqmoq‖Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning|Lightning
-Burgut‖Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle|Eagle
-Qoplon‖Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard|Leopard
-To'lqin‖Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave|Wave
-Marmar‖Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble|Marble
-Yo'lbars‖Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger|Tiger
-Nuqta‖Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot|Dot
-Vulqon‖Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano|Volcano
-Muz‖Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice|Ice
-Sahro‖Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert|Desert
-O'rmon‖Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest|Forest
-Okean‖Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean|Ocean
-Tun‖Night|Night|Night|Night|Night|Night|Night|Night|Night|Night|Night|Night|Night
-Tong‖Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn|Dawn
-Shafaq‖Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight|Twilight
-Kumush Tulki‖Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox|Silver Fox
-Oltin Burgut‖Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle
-Qirol‖King|King|King|King|King|King|King|King|King|King|King|King|King
-Malika‖Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen|Queen
-Samuray‖Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai|Samurai
-Pirat‖Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate|Pirate
-Sfinks‖Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx|Sphinx
-Feniks‖Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix|Phoenix
-Grifon‖Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin|Griffin
-Kometa‖Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet|Comet
-Orbita‖Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit|Orbit
-Qora Tuynuk‖Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole|Black Hole
-Chor‖Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar|Tsar
-Granat‖Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet|Garnet
-Oltin‖Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold|Gold
-Grandioz‖Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand|Grand
-Temir‖Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron|Iron
-Shamol‖Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind|Wind
-Qum‖Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand|Sand
-Yashin‖Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash|Lightning Flash
-Fazo‖Space|Space|Space|Space|Space|Space|Space|Space|Space|Space|Space|Space|Space
-Rubin‖Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby|Ruby
-Onix‖Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx|Onyx
-Nefrit‖Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade|Jade
-Korall‖Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral|Coral
-Platina‖Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum|Platinum
-Quyosh‖Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun|Sun
-Oy‖Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon|Moon
-Galaktika Pro‖Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro|Galaxy Pro
-Aksion‖Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom|Axiom
-Kristall Tig'‖Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade|Crystal Blade
-Ekskalibur‖Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur|Excalibur
-Ajdar Olovi‖Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire|Dragon Fire
-Muz Qiroli‖Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King|Ice King
-Qora Feniks‖Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix|Black Phoenix
-Oltin Sher‖Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion|Golden Lion
-Chaqmoq Xudosi‖Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God|Lightning God
-Zulmat‖Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness|Darkness
-Nur‖Light|Light|Light|Light|Light|Light|Light|Light|Light|Light|Light|Light|Light
-Sehrgar‖Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer|Sorcerer
-Imperiya‖Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire|Empire
-Vikinglar‖Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings|Vikings
-Firavn‖Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh|Pharaoh
-Poseydon‖Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon|Poseidon
-Simurg‖Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh|Simurgh
-Humo‖Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma|Huma
-Registon‖Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan|Registan
-Ulug'bek‖Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg|Ulugh Beg
-Amir Temur‖Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur|Amir Timur
-Bobur‖Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur|Babur
-Ot yurishi‖Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move|Knight's Move
-Geyger‖Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger|Geiger
-Yadro Nemesis‖Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis|Core Nemesis
-Vampir‖Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire|Vampire
-Zombi‖Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie|Zombie
-Skelet‖Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton|Skeleton
-Arvoh‖Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost|Ghost
-Jodugar‖Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch|Witch
-Bo'ri odam‖Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf|Werewolf
-Mumiya‖Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy|Mummy
-Frankenshteyn‖Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein|Frankenstein
-Qora mushuk‖Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat|Black Cat
-Qabriston‖Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard|Graveyard
-Iblis‖Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil|Devil
-Kuzgun‖Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven|Raven
-Qon oy‖Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon|Blood Moon
-Shayton ko'zi‖Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye|Devil's Eye
-Yovvoyi ruh‖Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit|Wild Spirit
-Bosh suyagi‖Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull|Skull
-Hayqiriq‖Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream|Scream
-Qorong'u o'rmon‖Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest|Dark Forest
-Zulmat malikasi‖Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness|Queen of Darkness
-Kabus‖Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare|Nightmare
-Gargoyl‖Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle|Gargoyle
-Bo'ron arvohi‖Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost|Storm Ghost
-Tungi ovchi‖Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter|Night Hunter
-Lanat‖Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse|Curse
-Kuldon‖Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn|Ash Urn
-Zahar‖Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison|Poison
-Jallod‖Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner|Executioner
-Nekromant‖Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer|Necromancer
-Ilon‖Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake|Snake
-O'rgimchak‖Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider|Spider
-Yirtqich‖Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator|Predator
-Tuman‖Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist|Mist
-Drakula‖Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula|Dracula
-Tobut‖Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin|Coffin
-G'ul‖Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul|Ghoul
-Qovoq qiroli‖Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King|Pumpkin King
-Banshi‖Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee|Banshee
-Sham ruhi‖Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit|Candle Spirit
-Qora ritsar‖Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight|Black Knight
-Kalla ovchisi‖Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter|Head Hunter
-Go'rkov qo'li‖Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand|Gravedigger's Hand
-Qonxo'r‖Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty|Bloodthirsty
-Chirigan‖Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten|Rotten
-Suyak shohi‖Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King|Bone King
-Soyalar ovchisi‖Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter|Shadow Hunter
-Sehrli qozon‖Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron|Magic Cauldron
-Jinni‖Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie|Genie
-Zahar sharbati‖Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion|Poison Potion
-Bo'ri shoh‖Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King|Wolf King
-Yarasa shoh‖Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King|Bat King
-Sehrgar shlyapasi‖Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat|Wizard's Hat
-Ajal farishtasi‖Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death|Angel of Death
-Qonli tishlar‖Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs|Bloody Fangs
-Tog' arvohi‖Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost|Mountain Ghost
-Kemadagi arvoh‖Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship|Ghost Ship
-Chuqurlik dahshati‖Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep|Terror of the Deep
-Shamchiroq ruhi‖Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit|Lantern Spirit
-Qora gulxan‖Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire|Black Bonfire
-Jallod boltasi‖Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe|Executioner's Axe
-Sirli niqob‖Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask|Mystic Mask
-Dor‖Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows|Gallows
-Yig'loqi ruh‖Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit|Weeping Spirit
-Oxirgi kabus‖Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare|Last Nightmare
-Sirli tun‖Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night|Mystic Night
-Yarim tun‖Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight|Midnight
-Qabr qo'ng'irog'i‖Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell|Grave Bell
-Yovuz ko'z‖Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye|Evil Eye
-Kabus o'rmoni‖Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest|Nightmare Forest
-Tun sayyohi‖Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler|Night Traveler
-Suyak taqa‖Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe|Bone Horseshoe
-Jodu tayoqchasi‖Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand|Magic Wand
-Qorong'u oy‖Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon|Dark Moon
-Tuman shamoli‖Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind|Mist Wind
-Xira chiroq‖Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp|Dim Lamp
-Sukunat‖Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence|Silence
-Bronza‖Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze|Bronze
-Kumush‖Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver|Silver
-Oy nuri‖Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight|Moonlight
-Qon sharob‖Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine|Blood Wine
-Qor bo'roni‖Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm|Snowstorm
-Yashil olov‖Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire|Green Fire
-Oltin burgut‖Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle|Golden Eagle
-Samoviy ajdar‖Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon|Heavenly Dragon
-Tun pari‖Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy|Night Fairy
-Shoh gambiti II‖King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II|King's Gambit II
-Yalang'och daraxt‖Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree|Bare Tree
-Sirli soat‖Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock|Mystic Clock
-Tungi gul‖Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower|Night Flower
-Oy ovchisi‖Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter|Moon Hunter
-Qora atirgul‖Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose|Black Rose
-Hayot daraxti‖Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life|Tree of Life
-Sharpa yo'li‖Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path|Phantom Path
-Tumanli ko'l‖Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake|Misty Lake
+Chinor‖Plane Tree|Платан|Çınar|Plátano|Plátano|الدلب|Pohon Plane|चिनार|Platane|Platane|플라타너스|プラタナス|梧桐
+Konfet‖Candy|Конфета|Şeker|Caramelo|Bala|حلوى|Permen|कैंडी|Bonbon|Bonbon|사탕|キャンディ|糖果
+Moviy Osmon‖Blue Sky|Голубое небо|Mavi Gökyüzü|Cielo azul|Céu azul|السماء الزرقاء|Langit Biru|नीला आसमान|Ciel bleu|Blauer Himmel|푸른 하늘|青空|蓝天
+Kumush Oy‖Silver Moon|Серебряная луна|Gümüş Ay|Luna de plata|Lua de prata|القمر الفضي|Bulan Perak|चाँदी का चाँद|Lune d'argent|Silbermond|은빛 달|銀の月|银月
+Oltin O'rda‖Golden Horde|Золотая Орда|Altın Orda|Horda de Oro|Horda Dourada|القبيلة الذهبية|Gerombolan Emas|स्वर्ण गिरोह|Horde d'Or|Goldene Horde|황금 군단|黄金の大群|金帐汗国
+Multimillioner‖Multimillionaire|Мультимиллионер|Multimilyoner|Multimillonario|Multimilionário|متعدد الملايين|Multijutawan|मल्टी-मिलियनेयर|Multimillionnaire|Multimillionär|멀티 백만장자|大富豪|千万富翁
+Milliarder‖Billionaire|Миллиардер|Milyarder|Milmillonario|Bilionário|ملياردير|Miliarder|अरबपति|Milliardaire|Milliardär|억만장자|億万長者|亿万富翁
+Imperator‖Emperor|Император|İmparator|Emperador|Imperador|الإمبراطور|Kaisar|सम्राट|Empereur|Kaiser|황제|皇帝|皇帝
+Ajdarho‖Dragon|Дракон|Ejderha|Dragón|Dragão|التنين|Naga|ड्रैगन|Dragon|Drache|드래곤|ドラゴン|龙
+Klassik‖Classic|Классика|Klasik|Clásico|Clássico|كلاسيكي|Klasik|क्लासिक|Classique|Klassisch|클래식|クラシック|经典
+Qora Marvarid‖Black Pearl|Чёрная жемчужина|Siyah İnci|Perla negra|Pérola negra|اللؤلؤة السوداء|Mutiara Hitam|काला मोती|Perle noire|Schwarze Perle|흑진주|黒真珠|黑珍珠
+Safir‖Sapphire|Сапфир|Safir|Zafiro|Safira|ياقوت أزرق|Safir|नीलम|Saphir|Saphir|사파이어|サファイア|蓝宝石
+Bo'ron‖Storm|Буря|Fırtına|Tormenta|Tempestade|العاصفة|Badai|तूफ़ान|Tempête|Sturm|폭풍|嵐|风暴
+Chaqmoq‖Lightning|Молния|Yıldırım|Rayo|Raio|البرق|Petir|बिजली|Éclair|Blitz|번개|稲妻|闪电
+Burgut‖Eagle|Орёл|Kartal|Águila|Águia|النسر|Elang|गरुड़|Aigle|Adler|독수리|ワシ|雄鹰
+Qoplon‖Leopard|Леопард|Leopar|Leopardo|Leopardo|الفهد|Macan Tutul|तेंदुआ|Léopard|Leopard|표범|ヒョウ|豹
+To'lqin‖Wave|Волна|Dalga|Ola|Onda|الموجة|Ombak|लहर|Vague|Welle|파도|波|波浪
+Marmar‖Marble|Мрамор|Mermer|Mármol|Mármore|الرخام|Marmer|संगमरमर|Marbre|Marmor|대리석|大理石|大理石
+Yo'lbars‖Tiger|Тигр|Kaplan|Tigre|Tigre|النمر|Harimau|बाघ|Tigre|Tiger|호랑이|トラ|老虎
+Nuqta‖Dot|Точка|Nokta|Punto|Ponto|نقطة|Titik|बिंदु|Point|Punkt|점|ドット|圆点
+Vulqon‖Volcano|Вулкан|Volkan|Volcán|Vulcão|البركان|Gunung Berapi|ज्वालामुखी|Volcan|Vulkan|화산|火山|火山
+Muz‖Ice|Лёд|Buz|Hielo|Gelo|الجليد|Es|बर्फ़|Glace|Eis|얼음|氷|冰
+Sahro‖Desert|Пустыня|Çöl|Desierto|Deserto|الصحراء|Gurun|रेगिस्तान|Désert|Wüste|사막|砂漠|沙漠
+O'rmon‖Forest|Лес|Orman|Bosque|Floresta|الغابة|Hutan|जंगल|Forêt|Wald|숲|森|森林
+Okean‖Ocean|Океан|Okyanus|Océano|Oceano|المحيط|Samudra|महासागर|Océan|Ozean|바다|海洋|海洋
+Tun‖Night|Ночь|Gece|Noche|Noite|الليل|Malam|रात|Nuit|Nacht|밤|夜|夜晚
+Tong‖Dawn|Рассвет|Şafak|Amanecer|Amanhecer|الفجر|Fajar|भोर|Aube|Morgendämmerung|새벽|夜明け|黎明
+Shafaq‖Twilight|Сумерки|Alacakaranlık|Crepúsculo|Crepúsculo|الشفق|Senja|गोधूलि|Crépuscule|Dämmerung|황혼|黄昏|暮光
+Kumush Tulki‖Silver Fox|Серебряная лиса|Gümüş Tilki|Zorro plateado|Raposa prateada|الثعلب الفضي|Rubah Perak|चाँदी की लोमड़ी|Renard argenté|Silberfuchs|은여우|銀ギツネ|银狐
+Oltin Burgut‖Golden Eagle|Золотой орёл|Altın Kartal|Águila dorada|Águia dourada|النسر الذهبي|Elang Emas|सुनहरा गरुड़|Aigle doré|Goldener Adler|황금 독수리|黄金のワシ|金鹰
+Qirol‖King|Король|Kral|Rey|Rei|الملك|Raja|राजा|Roi|König|왕|キング|国王
+Malika‖Queen|Королева|Kraliçe|Reina|Rainha|الملكة|Ratu|रानी|Reine|Königin|여왕|クイーン|女王
+Samuray‖Samurai|Самурай|Samuray|Samurái|Samurai|الساموراي|Samurai|समुराई|Samouraï|Samurai|사무라이|侍|武士
+Pirat‖Pirate|Пират|Korsan|Pirata|Pirata|القرصان|Bajak Laut|समुद्री डाकू|Pirate|Pirat|해적|海賊|海盗
+Sfinks‖Sphinx|Сфинкс|Sfenks|Esfinge|Esfinge|أبو الهول|Sphinx|स्फिंक्स|Sphinx|Sphinx|스핑크스|スフィンクス|狮身人面像
+Feniks‖Phoenix|Феникс|Anka Kuşu|Fénix|Fênix|طائر الفينيق|Feniks|फ़ीनिक्स|Phénix|Phönix|불사조|フェニックス|凤凰
+Grifon‖Griffin|Грифон|Grifon|Grifo|Grifo|الجريفون|Griffin|ग्रिफ़िन|Griffon|Greif|그리핀|グリフォン|狮鹫
+Kometa‖Comet|Комета|Kuyruklu Yıldız|Cometa|Cometa|المذنب|Komet|धूमकेतु|Comète|Komet|혜성|彗星|彗星
+Orbita‖Orbit|Орбита|Yörünge|Órbita|Órbita|المدار|Orbit|कक्षा|Orbite|Umlaufbahn|궤도|軌道|轨道
+Qora Tuynuk‖Black Hole|Чёрная дыра|Kara Delik|Agujero negro|Buraco negro|الثقب الأسود|Lubang Hitam|ब्लैक होल|Trou noir|Schwarzes Loch|블랙홀|ブラックホール|黑洞
+Chor‖Tsar|Царь|Çar|Zar|Czar|القيصر|Tsar|ज़ार|Tsar|Zar|차르|ツァーリ|沙皇
+Granat‖Garnet|Гранат|Garnet|Granate|Granada|العقيق الأحمر|Garnet|गार्नेट|Grenat|Granat|가넷|ガーネット|石榴石
+Oltin‖Gold|Золото|Altın|Oro|Ouro|ذهبي|Emas|सोना|Or|Gold|골드|ゴールド|黄金
+Grandioz‖Grand|Грандиозный|Muhteşem|Grandioso|Grandioso|عظيم|Agung|भव्य|Grandiose|Großartig|그랜드|グランド|宏伟
+Temir‖Iron|Железо|Demir|Hierro|Ferro|الحديد|Besi|लोहा|Fer|Eisen|철|鉄|钢铁
+Shamol‖Wind|Ветер|Rüzgâr|Viento|Vento|الريح|Angin|हवा|Vent|Wind|바람|風|风
+Qum‖Sand|Песок|Kum|Arena|Areia|الرمل|Pasir|रेत|Sable|Sand|모래|砂|沙
+Yashin‖Lightning Flash|Вспышка молнии|Şimşek Çakması|Destello de rayo|Clarão de raio|وميض البرق|Kilatan Petir|बिजली की चमक|Éclair fulgurant|Blitzschlag|번개 섬광|稲光|闪电光
+Fazo‖Space|Космос|Uzay|Espacio|Espaço|الفضاء|Antariksa|अंतरिक्ष|Espace|Weltraum|우주|宇宙|太空
+Rubin‖Ruby|Рубин|Yakut|Rubí|Rubi|ياقوت|Rubi|माणिक|Rubis|Rubin|루비|ルビー|红宝石
+Onix‖Onyx|Оникс|Oniks|Ónix|Ônix|العقيق الأسود|Oniks|गोमेद|Onyx|Onyx|오닉스|オニキス|缟玛瑙
+Nefrit‖Jade|Нефрит|Yeşim|Jade|Jade|اليشم|Giok|जेड|Jade|Jade|옥|翡翠|翡翠
+Korall‖Coral|Коралл|Mercan|Coral|Coral|المرجان|Karang|मूंगा|Corail|Koralle|산호|珊瑚|珊瑚
+Platina‖Platinum|Платина|Platin|Platino|Platina|بلاتيني|Platinum|प्लैटिनम|Platine|Platin|플래티넘|プラチナ|铂金
+Quyosh‖Sun|Солнце|Güneş|Sol|Sol|الشمس|Matahari|सूरज|Soleil|Sonne|태양|太陽|太阳
+Oy‖Moon|Луна|Ay|Luna|Lua|القمر|Bulan|चाँद|Lune|Mond|달|月|月亮
+Galaktika Pro‖Galaxy Pro|Галактика Pro|Galaksi Pro|Galaxia Pro|Galáxia Pro|المجرة برو|Galaksi Pro|गैलेक्सी प्रो|Galaxie Pro|Galaxie Pro|갤럭시 프로|ギャラクシー プロ|银河 Pro
+Aksion‖Axiom|Аксиома|Aksiyom|Axioma|Axioma|البديهية|Aksioma|अभिगृहीत|Axiome|Axiom|공리|公理|公理
+Kristall Tig'‖Crystal Blade|Хрустальный клинок|Kristal Bıçak|Hoja de cristal|Lâmina de cristal|نصل الكريستال|Pedang Kristal|क्रिस्टल ब्लेड|Lame de cristal|Kristallklinge|크리스털 검|クリスタルブレード|水晶之刃
+Ekskalibur‖Excalibur|Экскалибур|Excalibur|Excalibur|Excalibur|إكسكاليبر|Excalibur|एक्सकैलिबर|Excalibur|Excalibur|엑스칼리버|エクスカリバー|圣剑
+Ajdar Olovi‖Dragon Fire|Огонь дракона|Ejderha Ateşi|Fuego de dragón|Fogo de dragão|نار التنين|Api Naga|ड्रैगन की आग|Feu du dragon|Drachenfeuer|용의 불꽃|ドラゴンファイア|龙焰
+Muz Qiroli‖Ice King|Ледяной король|Buz Kralı|Rey de hielo|Rei do gelo|ملك الجليد|Raja Es|बर्फ़ का राजा|Roi des glaces|Eiskönig|얼음 왕|氷の王|冰霜之王
+Qora Feniks‖Black Phoenix|Чёрный феникс|Kara Anka|Fénix negro|Fênix negra|الفينيق الأسود|Feniks Hitam|काला फ़ीनिक्स|Phénix noir|Schwarzer Phönix|검은 불사조|黒いフェニックス|黑凤凰
+Oltin Sher‖Golden Lion|Золотой лев|Altın Aslan|León dorado|Leão dourado|الأسد الذهبي|Singa Emas|सुनहरा शेर|Lion d'or|Goldener Löwe|황금 사자|黄金のライオン|金狮
+Chaqmoq Xudosi‖Lightning God|Бог молний|Yıldırım Tanrısı|Dios del rayo|Deus do raio|إله البرق|Dewa Petir|बिजली का देवता|Dieu de la foudre|Blitzgott|번개의 신|雷神|雷神
+Zulmat‖Darkness|Тьма|Karanlık|Oscuridad|Escuridão|الظلام|Kegelapan|अंधकार|Ténèbres|Dunkelheit|어둠|闇|黑暗
+Nur‖Light|Свет|Işık|Luz|Luz|النور|Cahaya|प्रकाश|Lumière|Licht|빛|光|光明
+Sehrgar‖Sorcerer|Колдун|Büyücü|Hechicero|Feiticeiro|الساحر|Penyihir|जादूगर|Sorcier|Zauberer|마법사|魔術師|巫师
+Imperiya‖Empire|Империя|İmparatorluk|Imperio|Império|الإمبراطورية|Kekaisaran|साम्राज्य|Empire|Imperium|제국|帝国|帝国
+Vikinglar‖Vikings|Викинги|Vikingler|Vikingos|Vikings|الفايكنج|Viking|वाइकिंग|Vikings|Wikinger|바이킹|バイキング|维京人
+Firavn‖Pharaoh|Фараон|Firavun|Faraón|Faraó|الفرعون|Firaun|फ़िरौन|Pharaon|Pharao|파라오|ファラオ|法老
+Poseydon‖Poseidon|Посейдон|Poseidon|Poseidón|Poseidon|بوسيدون|Poseidon|पोसाइडन|Poséidon|Poseidon|포세이돈|ポセイドン|波塞冬
+Simurg‖Simurgh|Симург|Simurg|Simurgh|Simurgh|السيمرغ|Simurgh|सिमुर्ग|Simurgh|Simurgh|시무르그|スィームルグ|西穆尔格
+Humo‖Huma|Хума|Hüma|Huma|Huma|هما|Huma|हुमा|Huma|Huma|후마|フマ|胡玛
+Registon‖Registan|Регистан|Registan|Registán|Registan|الريجستان|Registan|रेजिस्तान|Registan|Registan|레기스탄|レギスタン|雷吉斯坦
+Ulug'bek‖Ulugh Beg|Улугбек|Uluğ Bey|Ulugh Beg|Ulugh Beg|أولوغ بيك|Ulugh Beg|उलुग बेग|Ouloug Beg|Ulugh Beg|울루그 벡|ウルグ・ベク|兀鲁伯
+Amir Temur‖Amir Timur|Амир Темур|Emir Timur|Amir Temur|Amir Timur|الأمير تيمور|Amir Timur|अमीर तैमूर|Amir Timour|Amir Timur|아미르 티무르|アミール・ティムール|帖木儿
+Bobur‖Babur|Бабур|Babür|Babur|Babur|بابر|Babur|बाबर|Babur|Babur|바부르|バーブル|巴布尔
+Ot yurishi‖Knight's Move|Ход конём|At Hamlesi|Salto de caballo|Movimento do cavalo|حركة الحصان|Langkah Kuda|घोड़े की चाल|Coup de cavalier|Springerzug|나이트의 수|ナイトの動き|马步
+Geyger‖Geiger|Гейгер|Geiger|Geiger|Geiger|غايغر|Geiger|गाइगर|Geiger|Geiger|가이거|ガイガー|盖革
+Yadro Nemesis‖Core Nemesis|Ядро Немезиды|Çekirdek Nemesis|Núcleo Némesis|Núcleo Nêmesis|نواة نيميسيس|Inti Nemesis|न्यूक्लियस नेमेसिस|Noyau Némésis|Nemesis-Kern|네메시스 코어|ネメシス・コア|复仇核心
+Vampir‖Vampire|Вампир|Vampir|Vampiro|Vampiro|مصاص الدماء|Vampir|पिशाच|Vampire|Vampir|뱀파이어|吸血鬼|吸血鬼
+Zombi‖Zombie|Зомби|Zombi|Zombi|Zumbi|زومبي|Zombi|ज़ॉम्बी|Zombie|Zombie|좀비|ゾンビ|僵尸
+Skelet‖Skeleton|Скелет|İskelet|Esqueleto|Esqueleto|الهيكل العظمي|Kerangka|कंकाल|Squelette|Skelett|해골 병사|スケルトン|骷髅
+Arvoh‖Ghost|Призрак|Hayalet|Fantasma|Fantasma|الشبح|Hantu|भूत|Fantôme|Geist|유령|幽霊|幽灵
+Jodugar‖Witch|Ведьма|Cadı|Bruja|Bruxa|الساحرة|Penyihir Wanita|चुड़ैल|Sorcière|Hexe|마녀|魔女|女巫
+Bo'ri odam‖Werewolf|Оборотень|Kurt Adam|Hombre lobo|Lobisomem|المستذئب|Manusia Serigala|वेयरवोल्फ़|Loup-garou|Werwolf|늑대인간|人狼|狼人
+Mumiya‖Mummy|Мумия|Mumya|Momia|Múmia|المومياء|Mumi|ममी|Momie|Mumie|미라|ミイラ|木乃伊
+Frankenshteyn‖Frankenstein|Франкенштейн|Frankenstein|Frankenstein|Frankenstein|فرانكنشتاين|Frankenstein|फ्रेंकस्टीन|Frankenstein|Frankenstein|프랑켄슈타인|フランケンシュタイン|弗兰肯斯坦
+Qora mushuk‖Black Cat|Чёрный кот|Kara Kedi|Gato negro|Gato preto|القط الأسود|Kucing Hitam|काली बिल्ली|Chat noir|Schwarze Katze|검은 고양이|黒猫|黑猫
+Qabriston‖Graveyard|Кладбище|Mezarlık|Cementerio|Cemitério|المقبرة|Kuburan|कब्रिस्तान|Cimetière|Friedhof|묘지|墓地|墓地
+Iblis‖Devil|Дьявол|Şeytan|Diablo|Diabo|الشيطان|Iblis|शैतान|Diable|Teufel|악마|悪魔|恶魔
+Kuzgun‖Raven|Ворон|Kuzgun|Cuervo|Corvo|الغراب|Gagak|कौआ|Corbeau|Rabe|까마귀|ワタリガラス|渡鸦
+Qon oy‖Blood Moon|Кровавая луна|Kan Ayı|Luna de sangre|Lua de sangue|قمر الدم|Bulan Darah|ब्लड मून|Lune de sang|Blutmond|블러드 문|ブラッドムーン|血月
+Shayton ko'zi‖Devil's Eye|Глаз дьявола|Şeytanın Gözü|Ojo del diablo|Olho do diabo|عين الشيطان|Mata Iblis|शैतान की आँख|Œil du diable|Teufelsauge|악마의 눈|悪魔の目|恶魔之眼
+Yovvoyi ruh‖Wild Spirit|Дикий дух|Vahşi Ruh|Espíritu salvaje|Espírito selvagem|الروح البرية|Roh Liar|जंगली आत्मा|Esprit sauvage|Wilder Geist|야생의 영혼|野性の魂|野性之魂
+Bosh suyagi‖Skull|Череп|Kafatası|Calavera|Caveira|الجمجمة|Tengkorak|खोपड़ी|Crâne|Totenkopf|해골|ドクロ|骷髅头
+Hayqiriq‖Scream|Крик|Çığlık|Grito|Grito|الصرخة|Jeritan|चीख|Cri|Schrei|비명|叫び|尖叫
+Qorong'u o'rmon‖Dark Forest|Тёмный лес|Karanlık Orman|Bosque oscuro|Floresta sombria|الغابة المظلمة|Hutan Gelap|अँधेरा जंगल|Forêt sombre|Dunkler Wald|어두운 숲|暗き森|黑暗森林
+Zulmat malikasi‖Queen of Darkness|Королева тьмы|Karanlığın Kraliçesi|Reina de la oscuridad|Rainha das trevas|ملكة الظلام|Ratu Kegelapan|अंधकार की रानी|Reine des ténèbres|Königin der Dunkelheit|어둠의 여왕|闇の女王|黑暗女王
+Kabus‖Nightmare|Кошмар|Kâbus|Pesadilla|Pesadelo|الكابوس|Mimpi Buruk|दुःस्वप्न|Cauchemar|Albtraum|악몽|悪夢|噩梦
+Gargoyl‖Gargoyle|Горгулья|Gargoyl|Gárgola|Gárgula|الغرغول|Gargoyle|गार्गॉयल|Gargouille|Gargoyle|가고일|ガーゴイル|石像鬼
+Bo'ron arvohi‖Storm Ghost|Призрак бури|Fırtına Hayaleti|Fantasma de la tormenta|Fantasma da tempestade|شبح العاصفة|Hantu Badai|तूफ़ान का भूत|Fantôme de la tempête|Sturmgeist|폭풍의 유령|嵐の幽霊|风暴幽灵
+Tungi ovchi‖Night Hunter|Ночной охотник|Gece Avcısı|Cazador nocturno|Caçador noturno|صياد الليل|Pemburu Malam|रात का शिकारी|Chasseur nocturne|Nachtjäger|밤의 사냥꾼|夜の狩人|暗夜猎手
+Lanat‖Curse|Проклятие|Lanet|Maldición|Maldição|اللعنة|Kutukan|श्राप|Malédiction|Fluch|저주|呪い|诅咒
+Kuldon‖Ash Urn|Урна с прахом|Kül Kabı|Urna de cenizas|Urna de cinzas|جرة الرماد|Guci Abu|राख का कलश|Urne funéraire|Aschenurne|재 항아리|灰の壺|骨灰瓮
+Zahar‖Poison|Яд|Zehir|Veneno|Veneno|السم|Racun|ज़हर|Poison|Gift|독|毒|毒药
+Jallod‖Executioner|Палач|Cellat|Verdugo|Carrasco|الجلاد|Algojo|जल्लाद|Bourreau|Henker|사형집행인|処刑人|刽子手
+Nekromant‖Necromancer|Некромант|Nekromant|Nigromante|Necromante|مستحضر الأرواح|Nekromancer|नेक्रोमैंसर|Nécromancien|Nekromant|네크로맨서|ネクロマンサー|死灵法师
+Ilon‖Snake|Змея|Yılan|Serpiente|Serpente|الأفعى|Ular|साँप|Serpent|Schlange|뱀|ヘビ|蛇
+O'rgimchak‖Spider|Паук|Örümcek|Araña|Aranha|العنكبوت|Laba-laba|मकड़ी|Araignée|Spinne|거미|クモ|蜘蛛
+Yirtqich‖Predator|Хищник|Yırtıcı|Depredador|Predador|المفترس|Predator|शिकारी|Prédateur|Raubtier|포식자|捕食者|掠食者
+Tuman‖Mist|Туман|Sis|Niebla|Névoa|الضباب|Kabut|धुंध|Brume|Nebel|안개|霧|迷雾
+Drakula‖Dracula|Дракула|Drakula|Drácula|Drácula|دراكولا|Drakula|ड्रैकुला|Dracula|Dracula|드라큘라|ドラキュラ|德古拉
+Tobut‖Coffin|Гроб|Tabut|Ataúd|Caixão|التابوت|Peti Mati|ताबूत|Cercueil|Sarg|관|棺|棺材
+G'ul‖Ghoul|Упырь|Gulyabani|Necrófago|Carniçal|الغول|Ghoul|ग्हूल|Goule|Ghul|구울|グール|食尸鬼
+Qovoq qiroli‖Pumpkin King|Король тыкв|Balkabağı Kral|Rey calabaza|Rei Abóbora|ملك القرع|Raja Labu|कद्दू का राजा|Roi citrouille|Kürbiskönig|호박 왕|カボチャの王|南瓜王
+Banshi‖Banshee|Банши|Banshee|Banshee|Banshee|البانشي|Banshee|बैंशी|Banshee|Banshee|밴시|バンシー|女妖
+Sham ruhi‖Candle Spirit|Дух свечи|Mum Ruhu|Espíritu de la vela|Espírito da vela|روح الشمعة|Roh Lilin|मोमबत्ती की आत्मा|Esprit de la bougie|Kerzengeist|촛불의 정령|ロウソクの霊|烛灵
+Qora ritsar‖Black Knight|Чёрный рыцарь|Kara Şövalye|Caballero negro|Cavaleiro negro|الفارس الأسود|Ksatria Hitam|काला योद्धा|Chevalier noir|Schwarzer Ritter|검은 기사|黒騎士|黑骑士
+Kalla ovchisi‖Head Hunter|Охотник за головами|Kelle Avcısı|Cazador de cabezas|Caçador de cabeças|صائد الرؤوس|Pemburu Kepala|सिर का शिकारी|Chasseur de têtes|Kopfjäger|헤드헌터|ヘッドハンター|猎头者
+Go'rkov qo'li‖Gravedigger's Hand|Рука могильщика|Mezarcının Eli|Mano del sepulturero|Mão do coveiro|يد حفار القبور|Tangan Penggali Kubur|कब्र खोदने वाले का हाथ|Main du fossoyeur|Hand des Totengräbers|무덤지기의 손|墓守の手|掘墓人之手
+Qonxo'r‖Bloodthirsty|Кровожадный|Kan Dökücü|Sanguinario|Sanguinário|متعطش للدماء|Haus Darah|खूनी|Sanguinaire|Blutrünstig|피에 굶주린 자|血に飢えた者|嗜血者
+Chirigan‖Rotten|Гнилой|Çürümüş|Podrido|Podre|المتعفن|Busuk|सड़ा हुआ|Pourri|Verrottet|썩은 자|腐れ者|腐烂者
+Suyak shohi‖Bone King|Король костей|Kemik Kral|Rey de huesos|Rei dos ossos|ملك العظام|Raja Tulang|हड्डियों का राजा|Roi des ossements|Knochenkönig|뼈의 왕|骨の王|白骨之王
+Soyalar ovchisi‖Shadow Hunter|Охотник за тенями|Gölge Avcısı|Cazador de sombras|Caçador de sombras|صياد الظلال|Pemburu Bayangan|छाया का शिकारी|Chasseur d'ombres|Schattenjäger|그림자 사냥꾼|影の狩人|暗影猎手
+Sehrli qozon‖Magic Cauldron|Волшебный котёл|Sihirli Kazan|Caldero mágico|Caldeirão mágico|القدر السحري|Kuali Ajaib|जादुई कड़ाही|Chaudron magique|Zauberkessel|마법의 가마솥|魔法の大釜|魔法大锅
+Jinni‖Genie|Джинн|Cin|Genio|Gênio|الجني|Jin|जिन्न|Génie|Dschinn|지니|ジーニー|精灵
+Zahar sharbati‖Poison Potion|Ядовитое зелье|Zehirli İksir|Poción venenosa|Poção venenosa|جرعة السم|Ramuan Racun|ज़हरीला काढ़ा|Potion empoisonnée|Gifttrank|독약|毒薬|毒药水
+Bo'ri shoh‖Wolf King|Король волков|Kurt Kral|Rey lobo|Rei lobo|ملك الذئاب|Raja Serigala|भेड़ियों का राजा|Roi loup|Wolfskönig|늑대 왕|狼王|狼王
+Yarasa shoh‖Bat King|Король летучих мышей|Yarasa Kral|Rey murciélago|Rei morcego|ملك الخفافيش|Raja Kelelawar|चमगादड़ों का राजा|Roi chauve-souris|Fledermauskönig|박쥐 왕|コウモリの王|蝠王
+Sehrgar shlyapasi‖Wizard's Hat|Шляпа волшебника|Büyücü Şapkası|Sombrero de mago|Chapéu de mago|قبعة الساحر|Topi Penyihir|जादूगर की टोपी|Chapeau de sorcier|Zaubererhut|마법사 모자|魔法使いの帽子|巫师帽
+Ajal farishtasi‖Angel of Death|Ангел смерти|Ölüm Meleği|Ángel de la muerte|Anjo da morte|ملاك الموت|Malaikat Maut|मौत का फ़रिश्ता|Ange de la mort|Todesengel|죽음의 천사|死の天使|死亡天使
+Qonli tishlar‖Bloody Fangs|Окровавленные клыки|Kanlı Dişler|Colmillos sangrientos|Presas sangrentas|أنياب دموية|Taring Berdarah|खूनी दाँत|Crocs sanglants|Blutige Fangzähne|피 묻은 송곳니|血まみれの牙|血染獠牙
+Tog' arvohi‖Mountain Ghost|Горный призрак|Dağ Hayaleti|Fantasma de la montaña|Fantasma da montanha|شبح الجبل|Hantu Gunung|पहाड़ का भूत|Fantôme de la montagne|Berggeist|산의 유령|山の幽霊|山鬼
+Kemadagi arvoh‖Ghost Ship|Корабль-призрак|Hayalet Gemi|Barco fantasma|Navio fantasma|السفينة الشبحية|Kapal Hantu|भूतिया जहाज़|Vaisseau fantôme|Geisterschiff|유령선|幽霊船|幽灵船
+Chuqurlik dahshati‖Terror of the Deep|Ужас глубин|Derinliklerin Dehşeti|Terror de las profundidades|Terror das profundezas|رعب الأعماق|Teror Kedalaman|गहराई का आतंक|Terreur des profondeurs|Schrecken der Tiefe|심해의 공포|深海の恐怖|深渊恐惧
+Shamchiroq ruhi‖Lantern Spirit|Дух фонаря|Fener Ruhu|Espíritu del farol|Espírito da lanterna|روح الفانوس|Roh Lentera|लालटेन की आत्मा|Esprit de la lanterne|Laternengeist|등불의 정령|ランタンの霊|灯笼之灵
+Qora gulxan‖Black Bonfire|Чёрный костёр|Kara Ateş|Hoguera negra|Fogueira negra|النار السوداء|Api Unggun Hitam|काला अलाव|Feu de joie noir|Schwarzes Lagerfeuer|검은 모닥불|黒い焚き火|黑色篝火
+Jallod boltasi‖Executioner's Axe|Топор палача|Cellat Baltası|Hacha del verdugo|Machado do carrasco|فأس الجلاد|Kapak Algojo|जल्लाद की कुल्हाड़ी|Hache du bourreau|Henkersbeil|사형집행인의 도끼|処刑人の斧|刽子手之斧
+Sirli niqob‖Mystic Mask|Таинственная маска|Gizemli Maske|Máscara mística|Máscara mística|القناع الغامض|Topeng Misterius|रहस्यमयी नकाब|Masque mystique|Mystische Maske|신비한 가면|神秘の仮面|神秘面具
+Dor‖Gallows|Виселица|Darağacı|Horca|Forca|المشنقة|Tiang Gantungan|फाँसी का फंदा|Potence|Galgen|교수대|絞首台|绞刑架
+Yig'loqi ruh‖Weeping Spirit|Плачущий дух|Ağlayan Ruh|Espíritu llorón|Espírito chorão|الروح الباكية|Roh yang Menangis|रोती आत्मा|Esprit en pleurs|Weinender Geist|우는 영혼|泣く霊|哭泣之灵
+Oxirgi kabus‖Last Nightmare|Последний кошмар|Son Kâbus|Última pesadilla|Último pesadelo|الكابوس الأخير|Mimpi Buruk Terakhir|आख़िरी दुःस्वप्न|Dernier cauchemar|Letzter Albtraum|마지막 악몽|最後の悪夢|最后的噩梦
+Sirli tun‖Mystic Night|Таинственная ночь|Gizemli Gece|Noche mística|Noite mística|الليلة الغامضة|Malam Misterius|रहस्यमयी रात|Nuit mystique|Mystische Nacht|신비한 밤|神秘の夜|神秘之夜
+Yarim tun‖Midnight|Полночь|Gece Yarısı|Medianoche|Meia-noite|منتصف الليل|Tengah Malam|आधी रात|Minuit|Mitternacht|자정|真夜中|午夜
+Qabr qo'ng'irog'i‖Grave Bell|Могильный колокол|Mezar Çanı|Campana de la tumba|Sino do túmulo|جرس القبر|Lonceng Kubur|कब्र की घंटी|Cloche funèbre|Grabglocke|무덤의 종|墓の鐘|墓钟
+Yovuz ko'z‖Evil Eye|Дурной глаз|Nazar|Mal de ojo|Mau-olhado|العين الشريرة|Mata Jahat|बुरी नज़र|Mauvais œil|Böser Blick|악마의 눈|邪眼|邪眼
+Kabus o'rmoni‖Nightmare Forest|Лес кошмаров|Kâbus Ormanı|Bosque de pesadillas|Floresta de pesadelos|غابة الكوابيس|Hutan Mimpi Buruk|दुःस्वप्नों का जंगल|Forêt des cauchemars|Albtraumwald|악몽의 숲|悪夢の森|噩梦森林
+Tun sayyohi‖Night Traveler|Ночной странник|Gece Yolcusu|Viajero nocturno|Viajante noturno|مسافر الليل|Pengembara Malam|रात का मुसाफ़िर|Voyageur nocturne|Nachtwanderer|밤의 여행자|夜の旅人|夜行旅人
+Suyak taqa‖Bone Horseshoe|Костяная подкова|Kemik Nal|Herradura de hueso|Ferradura de osso|حدوة العظم|Tapal Kuda Tulang|हड्डी की नाल|Fer à cheval en os|Knochen-Hufeisen|뼈 말굽|骨の蹄鉄|骨制马蹄铁
+Jodu tayoqchasi‖Magic Wand|Волшебная палочка|Sihirli Değnek|Varita mágica|Varinha mágica|العصا السحرية|Tongkat Sihir|जादुई छड़ी|Baguette magique|Zauberstab|마법 지팡이|魔法の杖|魔杖
+Qorong'u oy‖Dark Moon|Тёмная луна|Karanlık Ay|Luna oscura|Lua escura|القمر المظلم|Bulan Gelap|अँधेरा चाँद|Lune sombre|Dunkler Mond|어두운 달|暗い月|暗月
+Tuman shamoli‖Mist Wind|Туманный ветер|Sisli Rüzgâr|Viento de niebla|Vento de névoa|ريح الضباب|Angin Kabut|धुंध की हवा|Vent de brume|Nebelwind|안개 바람|霧の風|雾风
+Xira chiroq‖Dim Lamp|Тусклая лампа|Loş Lamba|Lámpara tenue|Lâmpada fraca|المصباح الخافت|Lampu Redup|धुंधला दीपक|Lampe blafarde|Trübes Licht|희미한 등불|薄暗いランプ|昏暗灯火
+Sukunat‖Silence|Тишина|Sessizlik|Silencio|Silêncio|الصمت|Keheningan|ख़ामोशी|Silence|Stille|고요|静寂|寂静
+Bronza‖Bronze|Бронза|Bronz|Bronce|Bronze|برونزي|Perunggu|कांस्य|Bronze|Bronze|브론즈|ブロンズ|青铜
+Kumush‖Silver|Серебро|Gümüş|Plata|Prata|فضي|Perak|चाँदी|Argent|Silber|실버|シルバー|白银
+Oy nuri‖Moonlight|Лунный свет|Ay Işığı|Luz de luna|Luz do luar|ضوء القمر|Cahaya Bulan|चाँदनी|Clair de lune|Mondlicht|달빛|月光|月光
+Qon sharob‖Blood Wine|Кровавое вино|Kanlı Şarap|Vino de sangre|Vinho de sangue|نبيذ الدم|Anggur Darah|खूनी शराब|Vin de sang|Blutwein|피의 와인|血のワイン|血酒
+Qor bo'roni‖Snowstorm|Метель|Kar Fırtınası|Ventisca|Nevasca|عاصفة ثلجية|Badai Salju|बर्फ़ीला तूफ़ान|Tempête de neige|Schneesturm|눈보라|吹雪|暴风雪
+Yashil olov‖Green Fire|Зелёное пламя|Yeşil Ateş|Fuego verde|Fogo verde|النار الخضراء|Api Hijau|हरी आग|Feu vert|Grünes Feuer|초록 불꽃|緑の炎|绿火
+Oltin burgut‖Golden Eagle|Золотой орёл|Altın Kartal|Águila dorada|Águia dourada|النسر الذهبي|Elang Emas|सुनहरा गरुड़|Aigle doré|Goldener Adler|황금 독수리|黄金のワシ|金鹰
+Samoviy ajdar‖Heavenly Dragon|Небесный дракон|Göksel Ejderha|Dragón celestial|Dragão celestial|التنين السماوي|Naga Surgawi|दिव्य ड्रैगन|Dragon céleste|Himmlischer Drache|천상의 용|天空の龍|天龙
+Tun pari‖Night Fairy|Ночная фея|Gece Perisi|Hada nocturna|Fada noturna|جنية الليل|Peri Malam|रात की परी|Fée de la nuit|Nachtfee|밤의 요정|夜の妖精|夜精灵
+Shoh gambiti II‖King's Gambit II|Королевский гамбит II|Şah Gambiti II|Gambito de rey II|Gambito do rei II|مناورة الملك II|Gambit Raja II|किंग्स गैम्बिट II|Gambit du roi II|Königsgambit II|킹스 갬빗 II|キングス・ギャンビット II|王翼弃兵 II
+Yalang'och daraxt‖Bare Tree|Голое дерево|Çıplak Ağaç|Árbol desnudo|Árvore nua|الشجرة العارية|Pohon Gundul|नंगा पेड़|Arbre nu|Kahler Baum|앙상한 나무|裸の木|枯树
+Sirli soat‖Mystic Clock|Таинственные часы|Gizemli Saat|Reloj místico|Relógio místico|الساعة الغامضة|Jam Misterius|रहस्यमयी घड़ी|Horloge mystique|Mystische Uhr|신비한 시계|神秘の時計|神秘时钟
+Tungi gul‖Night Flower|Ночной цветок|Gece Çiçeği|Flor nocturna|Flor noturna|زهرة الليل|Bunga Malam|रात का फूल|Fleur de nuit|Nachtblume|밤꽃|夜の花|夜花
+Oy ovchisi‖Moon Hunter|Охотник на луну|Ay Avcısı|Cazador de la luna|Caçador da lua|صياد القمر|Pemburu Bulan|चाँद का शिकारी|Chasseur de lune|Mondjäger|달 사냥꾼|月の狩人|逐月猎人
+Qora atirgul‖Black Rose|Чёрная роза|Kara Gül|Rosa negra|Rosa negra|الوردة السوداء|Mawar Hitam|काला गुलाब|Rose noire|Schwarze Rose|검은 장미|黒いバラ|黑玫瑰
+Hayot daraxti‖Tree of Life|Древо жизни|Hayat Ağacı|Árbol de la vida|Árvore da vida|شجرة الحياة|Pohon Kehidupan|जीवन वृक्ष|Arbre de vie|Baum des Lebens|생명의 나무|生命の樹|生命之树
+Sharpa yo'li‖Phantom Path|Путь призрака|Hayalet Yolu|Camino fantasma|Caminho fantasma|طريق الشبح|Jalan Hantu|भूत का रास्ता|Chemin fantôme|Phantompfad|유령의 길|幻の道|幻影之路
+Tumanli ko'l‖Misty Lake|Туманное озеро|Sisli Göl|Lago brumoso|Lago nebuloso|البحيرة الضبابية|Danau Berkabut|धुंध भरी झील|Lac brumeux|Nebelsee|안개 낀 호수|霧の湖|雾湖
 AYLANTIRING‖SPIN|КРУТИТЕ|ÇEVİR|GIRA|GIRE|أدر|PUTAR|घुमाएँ|TOURNEZ|DREHEN|돌리고|回して|转动
 VA‖AND|И|VE|Y|E|و|DAN|और|ET|UND|그리고|そして|并
 YUTING‖WIN|ВЫИГРАЙТЕ|KAZAN|GANA|GANHE|اربح|MENANG|जीतें|GAGNEZ|GEWINNEN|이기세요|勝とう|赢取
@@ -1122,3 +1111,344 @@ VIP stollar‖VIP tables|VIP-столы|VIP masalar|Mesas VIP|Mesas VIP|طاول
 VIP to'plam‖VIP bundle|VIP-набор|VIP paket|Paquete VIP|Pacote VIP|حزمة VIP|Paket VIP|VIP बंडल|Pack VIP|VIP-Paket|VIP 패키지|VIPセット|VIP礼包
 VIP to'plamlar bilan birga beriladi‖Given together with VIP bundles|Выдаются вместе с VIP-наборами|VIP paketlerle birlikte verilir|Se entregan con los paquetes VIP|Vêm junto com os pacotes VIP|تُمنح مع حزم VIP|Diberikan bersama paket VIP|VIP बंडल के साथ मिलते हैं|Offerts avec les packs VIP|Gibt es zusammen mit VIP-Paketen|VIP 패키지와 함께 제공|VIPセットと一緒に入手|随VIP礼包一同赠送
 VIP ramkalar‖VIP frames|VIP-рамки|VIP çerçeveler|Marcos VIP|Molduras VIP|إطارات VIP|Bingkai VIP|VIP फ़्रेम|Cadres VIP|VIP-Rahmen|VIP 프레임|VIPフレーム|VIP头像框
+Grafika‖Grafikler|Gráficos|Gráficos|الرسومات|Grafis|ग्राफ़िक्स|Graphismes|Grafik|그래픽|グラフィック|图形
+Top o'yinlar‖En iyi maçlar|Mejores partidas|Melhores partidas|أفضل المباريات|Pertandingan teratas|शीर्ष मैच|Meilleures parties|Top-Spiele|인기 경기|注目の試合|热门对局
+Barcha o'yinlar‖Tüm maçlar|Todas las partidas|Todas as partidas|كل المباريات|Semua pertandingan|सभी मैच|Toutes les parties|Alle Spiele|모든 경기|すべての試合|全部对局
+Tomoshabinlar‖İzleyiciler|Espectadores|Espectadores|المشاهدون|Penonton|दर्शक|Spectateurs|Zuschauer|관전자|観戦者|观众
+{0}ning navbati‖Sıra: {0}|Turno de {0}|Vez de {0}|دور {0}|Giliran {0}|{0} की बारी|Tour de {0}|{0} ist dran|{0}의 차례|{0}の番|轮到{0}
+Hali tomoshabin yo'q‖Henüz izleyici yok|Aún no hay espectadores|Ainda não há espectadores|لا يوجد مشاهدون بعد|Belum ada penonton|अभी कोई दर्शक नहीं|Pas encore de spectateurs|Noch keine Zuschauer|아직 관전자가 없습니다|まだ観戦者はいません|暂无观众
+Do'stlaringiz hozir o'ynamayapti‖Arkadaşların şu an oynamıyor|Ninguno de tus amigos está jugando ahora|Nenhum amigo seu está jogando agora|لا أحد من أصدقائك يلعب الآن|Tidak ada temanmu yang sedang bermain|आपका कोई दोस्त अभी नहीं खेल रहा|Aucun de vos amis ne joue en ce moment|Gerade spielt keiner deiner Freunde|지금 플레이 중인 친구가 없습니다|今プレイ中のフレンドはいません|你的好友现在都没在玩
+Tomosha rejimi‖İzleme modu|Modo espectador|Modo espectador|وضع المشاهدة|Mode menonton|दर्शक मोड|Mode spectateur|Zuschauermodus|관전 모드|観戦モード|观战模式
+Siz‖Sen|Tú|Você|أنت|Kamu|आप|Vous|Du|나|あなた|你
+Maxfiylik siyosati‖Gizlilik Politikası|Política de privacidad|Política de Privacidade|سياسة الخصوصية|Kebijakan Privasi|गोपनीयता नीति|Politique de confidentialité|Datenschutzerklärung|개인정보 처리방침|プライバシーポリシー|隐私政策
+Foydalanish shartlari‖Kullanım Koşulları|Términos del servicio|Termos de Serviço|شروط الخدمة|Ketentuan Layanan|सेवा की शर्तें|Conditions d'utilisation|Nutzungsbedingungen|서비스 약관|利用規約|服务条款
+Grafika sifati‖Grafik kalitesi|Calidad gráfica|Qualidade gráfica|جودة الرسومات|Kualitas grafis|ग्राफ़िक्स गुणवत्ता|Qualité graphique|Grafikqualität|그래픽 품질|画質|画质
+Kadr tezligi‖Kare hızı|Tasa de fotogramas|Taxa de quadros|معدل الإطارات|Kecepatan bingkai|फ़्रेम दर|Fréquence d'images|Bildrate|프레임 속도|フレームレート|帧率
+Avto‖Otomatik|Auto|Auto|تلقائي|Otomatis|ऑटो|Auto|Auto|자동|自動|自动
+Ilovani o'rnatish‖Uygulamayı yükle|Instalar la aplicación|Instalar o aplicativo|تثبيت التطبيق|Pasang aplikasi|ऐप इंस्टॉल करें|Installer l'application|App installieren|앱 설치|アプリをインストール|安装应用
+Ilovani telefon yoki kompyuteringizga o'rnating yoki do'stlaringizga ulashing.‖Uygulamayı telefonuna veya bilgisayarına yükle ya da arkadaşlarınla paylaş.|Instala la aplicación en tu teléfono u ordenador, o compártela con tus amigos.|Instale o aplicativo no celular ou no computador, ou compartilhe com amigos.|ثبّت التطبيق على هاتفك أو حاسوبك، أو شاركه مع أصدقائك.|Pasang aplikasi di ponsel atau komputermu, atau bagikan ke teman.|ऐप को अपने फ़ोन या कंप्यूटर पर इंस्टॉल करें या दोस्तों के साथ शेयर करें।|Installez l'application sur votre téléphone ou ordinateur, ou partagez-la avec vos amis.|Installiere die App auf deinem Handy oder Computer oder teile sie mit Freunden.|휴대폰이나 컴퓨터에 앱을 설치하거나 친구와 공유하세요.|スマホやパソコンにアプリをインストールするか、友達にシェアしましょう。|在手机或电脑上安装应用，或分享给好友。
+Havolani nusxalash‖Bağlantıyı kopyala|Copiar enlace|Copiar link|نسخ الرابط|Salin tautan|लिंक कॉपी करें|Copier le lien|Link kopieren|링크 복사|リンクをコピー|复制链接
+O'rnatish‖Yükle|Instalar|Instalar|تثبيت|Pasang|इंस्टॉल करें|Installer|Installieren|설치|インストール|安装
+Billiard 8 — bilyard o'yini‖Billiard 8 — bir bilardo oyunu|Billiard 8: un juego de billar|Billiard 8 — um jogo de bilhar|Billiard 8 — لعبة بلياردو|Billiard 8 — permainan biliar|Billiard 8 — बिलियर्ड्स गेम|Billiard 8 — un jeu de billard|Billiard 8 — ein Billardspiel|Billiard 8 — 당구 게임|Billiard 8 — ビリヤードゲーム|Billiard 8 — 台球游戏
+Ulanmoqda…‖Bağlanıyor…|Conectando…|Conectando…|جارٍ الاتصال…|Menghubungkan…|कनेक्ट हो रहा है…|Connexion…|Verbinde…|연결 중…|接続中…|连接中…
+Ulandi‖Bağlandı|Conectado|Conectado|تم الاتصال|Terhubung|कनेक्ट हो गया|Connecté|Verbunden|연결됨|接続しました|已连接
+Ulanmadi‖Bağlanamadı|No conectado|Não conectado|لم يتم الاتصال|Tidak terhubung|कनेक्ट नहीं हुआ|Non connecté|Nicht verbunden|연결 실패|接続できませんでした|未连接
+Raqib bilan aloqa o'rnatilmoqda‖Rakibinle bağlantı kuruluyor|Conectando con tu rival|Conectando com seu adversário|جارٍ الاتصال بخصمك|Menghubungkan ke lawanmu|आपके प्रतिद्वंद्वी से कनेक्ट हो रहा है|Connexion avec votre adversaire|Verbindung zum Gegner wird aufgebaut|상대와 연결 중|対戦相手に接続中|正在连接对手
+Endi bir-biringizni eshitasiz‖Artık birbirinizi duyabilirsiniz|Ya podéis escucharos|Agora vocês podem se ouvir|يمكنكما الآن سماع بعضكما|Sekarang kalian bisa saling mendengar|अब आप एक-दूसरे को सुन सकते हैं|Vous pouvez maintenant vous entendre|Ihr könnt euch jetzt hören|이제 서로 목소리를 들을 수 있어요|お互いの声が聞こえます|现在你们可以互相听到了
+Tarmoq to'sdi, qayta urinib ko'ring‖Ağ engelledi, tekrar dene|La red lo bloqueó, inténtalo de nuevo|A rede bloqueou, tente novamente|حجبت الشبكة الاتصال، حاول مرة أخرى|Jaringan memblokirnya, coba lagi|नेटवर्क ने रोक दिया, फिर कोशिश करें|Le réseau a bloqué la connexion, réessayez|Das Netzwerk hat es blockiert, versuche es erneut|네트워크가 차단했습니다. 다시 시도하세요|ネットワークにブロックされました。もう一度お試しください|网络阻止了连接，请重试
+TURN kerak: mobil internetda ulanish uchun TURN relay sozlanmagan‖TURN gerekli: mobil ağlar için TURN aktarıcısı ayarlanmamış|Se necesita TURN: no hay un relé TURN configurado para redes móviles|TURN necessário: nenhum relay TURN configurado para redes móveis|مطلوب TURN: لم يتم إعداد مرحّل TURN للشبكات المحمولة|TURN diperlukan: relay TURN untuk jaringan seluler belum diatur|TURN ज़रूरी है: मोबाइल नेटवर्क के लिए TURN रिले सेट नहीं है|TURN requis : aucun relais TURN n'est configuré pour les réseaux mobiles|TURN erforderlich: Für Mobilfunknetze ist kein TURN-Relay eingerichtet|TURN 필요: 모바일 네트워크용 TURN 릴레이가 설정되지 않았습니다|TURNが必要です：モバイル回線用のTURNリレーが設定されていません|需要TURN：未为移动网络配置TURN中继
+Kubogi‖Kupası|Copa|Taça|كأس|Piala|कप|Coupe|Pokal|컵|カップ|杯
+Shahar kuboklari‖Şehir kupaları|Copas de ciudades|Taças das cidades|كؤوس المدن|Piala kota|शहर कप|Coupes des villes|Städte-Pokale|도시 컵|シティカップ|城市杯
+Shahar chempionati‖Şehir şampiyonası|Campeonato de la ciudad|Campeonato da cidade|بطولة المدينة|Kejuaraan kota|शहर चैंपियनशिप|Championnat de la ville|Stadtmeisterschaft|도시 챔피언십|シティ選手権|城市锦标赛
+Har shaharning o'z chempionati. Bitta kubokni yutsangiz, keyingisi ertasi kuni ochiladi.‖Her şehrin kendi şampiyonası var. Bir kupayı kazanınca bir sonraki ertesi gün açılır.|Cada ciudad tiene su propio campeonato. Gana una copa y la siguiente se abre al día siguiente.|Cada cidade tem seu próprio campeonato. Ganhe uma taça e a próxima abre no dia seguinte.|لكل مدينة بطولتها الخاصة. اربح كأسًا واحدة وستُفتح التالية في اليوم التالي.|Setiap kota punya kejuaraannya sendiri. Menangkan satu piala dan piala berikutnya terbuka keesokan harinya.|हर शहर की अपनी चैंपियनशिप है। एक कप जीतें और अगला अगले दिन खुल जाएगा।|Chaque ville a son propre championnat. Gagnez une coupe et la suivante s'ouvre le lendemain.|Jede Stadt hat ihre eigene Meisterschaft. Gewinne einen Pokal, und der nächste wird am Folgetag freigeschaltet.|도시마다 자체 챔피언십이 있습니다. 컵 하나를 우승하면 다음 컵이 다음 날 열립니다.|各都市に専用の選手権があります。1つカップを獲得すると、翌日に次のカップが解放されます。|每个城市都有自己的锦标赛。赢得一个奖杯后，下一个将在次日开放。
+Ertaga ochiladi‖Yarın açılır|Se abre mañana|Abre amanhã|يُفتح غدًا|Dibuka besok|कल खुलेगा|Ouvre demain|Öffnet morgen|내일 열림|明日解放|明天开放
+Ochiq‖Açık|Abierto|Aberto|مفتوح|Terbuka|खुला|Ouvert|Offen|열림|開放中|开放
+Yuqori sifat va 90-120 kadr kuchli telefonni talab qiladi. Qotsa, HD yoki 60 ni tanlang.‖High quality and 90-120 fps need a strong phone. If it stutters, choose HD or 60.|Высокое качество и 90–120 кадров требуют мощного телефона. Если лагает, выберите HD или 60.|Yüksek kalite ve 90-120 FPS güçlü bir telefon gerektirir. Takılırsa HD veya 60'ı seç.|La calidad alta y 90-120 fps requieren un móvil potente. Si va a tirones, elige HD o 60.|Qualidade alta e 90-120 fps exigem um celular potente. Se travar, escolha HD ou 60.|الجودة العالية و90-120 إطارًا تتطلب هاتفًا قويًا. إذا تقطّع اللعب فاختر HD أو 60.|Kualitas tinggi dan 90-120 fps butuh ponsel yang kuat. Jika patah-patah, pilih HD atau 60.|उच्च गुणवत्ता और 90-120 FPS के लिए दमदार फ़ोन चाहिए। अटके तो HD या 60 चुनें।|La haute qualité et 90-120 i/s demandent un téléphone puissant. En cas de saccades, choisissez HD ou 60.|Hohe Qualität und 90–120 FPS brauchen ein starkes Handy. Wenn es ruckelt, wähle HD oder 60.|고화질과 90-120fps는 성능 좋은 휴대폰이 필요합니다. 끊기면 HD 또는 60을 선택하세요.|高画質と90〜120fpsには高性能なスマホが必要です。カクつく場合はHDか60を選んでください。|高画质和90-120帧需要性能强劲的手机。如果卡顿，请选择HD或60帧。
+Yutuq ochildi‖Achievement unlocked|Достижение получено|Başarı açıldı|Logro desbloqueado|Conquista desbloqueada|تم فتح إنجاز|Pencapaian terbuka|उपलब्धि अनलॉक हुई|Succès débloqué|Erfolg freigeschaltet|업적 달성|実績を解除|成就已解锁
+{0}-darajaga chiqdingiz!‖You reached level {0}!|Вы достигли уровня {0}!|{0}. seviyeye ulaştın!|¡Has llegado al nivel {0}!|Você chegou ao nível {0}!|وصلت إلى المستوى {0}!|Kamu mencapai level {0}!|आप स्तर {0} पर पहुँच गए!|Vous avez atteint le niveau {0} !|Du hast Level {0} erreicht!|레벨 {0}에 도달했습니다!|レベル{0}に到達しました！|你升到了{0}级！
+Bonus: +{0}‖Bonus: +{0}|Бонус: +{0}|Bonus: +{0}|Bonificación: +{0}|Bônus: +{0}|مكافأة: +{0}|Bonus: +{0}|बोनस: +{0}|Bonus : +{0}|Bonus: +{0}|보너스: +{0}|ボーナス：+{0}|奖励：+{0}
+1-o'yinchi‖Player 1|Игрок 1|Oyuncu 1|Jugador 1|Jogador 1|اللاعب 1|Pemain 1|खिलाड़ी 1|Joueur 1|Spieler 1|플레이어 1|プレイヤー1|玩家1
+2-o'yinchi‖Player 2|Игрок 2|Oyuncu 2|Jugador 2|Jogador 2|اللاعب 2|Pemain 2|खिलाड़ी 2|Joueur 2|Spieler 2|플레이어 2|プレイヤー2|玩家2
+O'yinchi‖Player|Игрок|Oyuncu|Jugador|Jogador|لاعب|Pemain|खिलाड़ी|Joueur|Spieler|플레이어|プレイヤー|玩家
+Tushirilgan‖Potted|Забито|Cebe giren|Embocadas|Encaçapadas|تم إدخالها|Masuk|पॉट हुईं|Empochées|Versenkt|넣은 공|入った球|已进球
+OMADLI ZARBA‖LUCKY SHOT|УДАЧНЫЙ УДАР|ŞANSLI VURUŞ|TIRO DE LA SUERTE|TACADA DA SORTE|ضربة الحظ|TEMBAKAN BERUNTUNG|लकी शॉट|COUP CHANCEUX|GLÜCKSSTOSS|럭키 샷|ラッキーショット|幸运一击
+▲ Yuqori — urilgandan keyin oldinga yuradi‖▲ Top — the ball rolls forward after the hit|▲ Верх — после удара шар катится вперёд|▲ Üst — vuruştan sonra top ileri gider|▲ Arriba: tras el golpe la bola avanza|▲ Cima — após a tacada a bola segue em frente|▲ أعلى — تتحرك الكرة للأمام بعد الضربة|▲ Atas — setelah dipukul bola melaju ke depan|▲ ऊपर — शॉट के बाद गेंद आगे बढ़ती है|▲ Haut : après le coup, la bille avance|▲ Oben — nach dem Stoß rollt die Kugel vorwärts|▲ 위 — 친 뒤 공이 앞으로 굴러갑니다|▲ 上 — 撃った後に球が前へ進む|▲ 上旋 — 击球后白球向前滚动
+▼ Past — orqaga qaytadi‖▼ Bottom — the ball rolls back|▼ Низ — шар возвращается назад|▼ Alt — top geri döner|▼ Abajo: la bola retrocede|▼ Baixo — a bola volta|▼ أسفل — تعود الكرة للخلف|▼ Bawah — bola kembali ke belakang|▼ नीचे — गेंद पीछे लौटती है|▼ Bas : la bille revient en arrière|▼ Unten — die Kugel rollt zurück|▼ 아래 — 공이 뒤로 돌아옵니다|▼ 下 — 球が後ろへ戻る|▼ 下旋 — 白球向后回旋
+Skrinshot yuboring‖Send a screenshot|Отправьте скриншот|Ekran görüntüsü gönder|Envía una captura de pantalla|Envie uma captura de tela|أرسل لقطة شاشة|Kirim tangkapan layar|स्क्रीनशॉट भेजें|Envoyez une capture d'écran|Sende einen Screenshot|스크린샷을 보내주세요|スクリーンショットを送ってください|请发送截图
+{0} stoli uchun {1} tanga kerak. Sovg'alar yoki mini o'yinlardan tanga yig'ing.‖The {0} table needs {1} coins. Collect coins from gifts or minigames.|Для стола «{0}» нужно {1} монет. Собирайте монеты в подарках и мини-играх.|{0} masası için {1} jeton gerekir. Jetonları hediyelerden veya mini oyunlardan topla.|La mesa de {0} cuesta {1} monedas. Consigue monedas con regalos o minijuegos.|A mesa de {0} custa {1} moedas. Ganhe moedas com presentes ou minijogos.|طاولة {0} تحتاج إلى {1} عملة. اجمع العملات من الهدايا أو الألعاب المصغرة.|Meja {0} butuh {1} koin. Kumpulkan koin dari hadiah atau mini game.|{0} टेबल के लिए {1} सिक्के चाहिए। उपहारों या मिनी गेम से सिक्के जुटाएँ।|La table de {0} demande {1} pièces. Gagnez des pièces avec les cadeaux ou les mini-jeux.|Für den Tisch {0} brauchst du {1} Münzen. Sammle Münzen durch Geschenke oder Minispiele.|{0} 테이블에는 코인 {1}개가 필요합니다. 선물이나 미니 게임으로 코인을 모으세요.|{0}のテーブルにはコイン{1}枚が必要です。ギフトやミニゲームでコインを集めましょう。|{0}球桌需要{1}金币。通过礼物或小游戏来收集金币。
+Qo'rqinchli ramkalar‖Horror frames|Жуткие рамки|Korku çerçeveleri|Marcos de terror|Molduras de terror|إطارات الرعب|Bingkai horor|हॉरर फ़्रेम|Cadres d'horreur|Horror-Rahmen|공포 프레임|ホラーフレーム|恐怖头像框
+Missiyalarni bajaring: har biri bitta qulfni ochadi.‖Complete the missions: each one opens one lock.|Выполняйте задания: каждое открывает один замок.|Görevleri tamamla: her biri bir kilidi açar.|Completa las misiones: cada una abre un candado.|Complete as missões: cada uma abre um cadeado.|أكمل المهام: كل مهمة تفتح قفلًا واحدًا.|Selesaikan misi: tiap misi membuka satu gembok.|मिशन पूरे करें: हर मिशन एक ताला खोलता है।|Accomplissez les missions : chacune ouvre un cadenas.|Erfülle die Missionen: Jede öffnet ein Schloss.|미션을 완료하세요. 하나당 자물쇠 하나가 열립니다.|ミッションをクリアしよう。1つにつき鍵が1つ開きます。|完成任务：每完成一个就能解开一把锁。
+Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy. Qutini ochish uchun 4 ta missiya bajariladi.‖Each box gives 1 piece of a legendary cue. 4 pieces = 1 cue. Complete 4 missions to open the box.|Каждая коробка даёт 1 часть легендарного кия. 4 части = 1 кий. Чтобы открыть коробку, выполните 4 задания.|Her kutu efsanevi bir istakanın 1 parçasını verir. 4 parça = 1 istaka. Kutuyu açmak için 4 görev tamamla.|Cada caja da 1 pieza de un taco legendario. 4 piezas = 1 taco. Completa 4 misiones para abrir la caja.|Cada caixa dá 1 peça de um taco lendário. 4 peças = 1 taco. Complete 4 missões para abrir a caixa.|يمنحك كل صندوق قطعة واحدة من عصا أسطورية. 4 قطع = عصا واحدة. أكمل 4 مهام لفتح الصندوق.|Setiap kotak memberi 1 bagian stik legendaris. 4 bagian = 1 stik. Selesaikan 4 misi untuk membuka kotak.|हर बॉक्स से एक महान क्यू का 1 टुकड़ा मिलता है। 4 टुकड़े = 1 क्यू। बॉक्स खोलने के लिए 4 मिशन पूरे करें।|Chaque boîte donne 1 morceau d'une queue légendaire. 4 morceaux = 1 queue. Accomplissez 4 missions pour ouvrir la boîte.|Jede Box enthält 1 Teil eines legendären Queues. 4 Teile = 1 Queue. Erfülle 4 Missionen, um die Box zu öffnen.|상자 하나에 전설 큐의 조각 1개가 들어 있습니다. 조각 4개 = 큐 1개. 상자를 열려면 미션 4개를 완료하세요.|各ボックスから伝説のキューのかけらが1個もらえます。かけら4個＝キュー1本。ボックスを開けるにはミッションを4つクリアしましょう。|每个盒子可获得1个传说球杆碎片。4个碎片=1根球杆。完成4个任务即可开启盒子。
+Avatar‖Avatar|Аватар|Avatar|Avatar|Avatar|الصورة الرمزية|Avatar|अवतार|Avatar|Avatar|아바타|アバター|头像
+Grandmaster kiyi‖Grandmaster cue|Кий Грандмастера|Grandmaster istakası|Taco Gran Maestro|Taco Grão-Mestre|عصا الأستاذ الأكبر|Stik Grandmaster|ग्रैंडमास्टर क्यू|Queue Grand Maître|Grandmaster-Queue|그랜드마스터 큐|グランドマスターのキュー|特级大师球杆
+Eng yuqori daraja!‖Top level!|Максимальный уровень!|En yüksek seviye!|¡Nivel máximo!|Nível máximo!|أعلى مستوى!|Level tertinggi!|सबसे ऊँचा स्तर!|Niveau maximum !|Höchstes Level!|최고 레벨!|最高レベル！|最高等级！
+Kiylar yig'ing: kolleksiya kuchi oshadi, mukofotlar ochiladi.‖Collect cues: your collection power grows and rewards unlock.|Собирайте кии: сила коллекции растёт и открываются награды.|Istaka topla: koleksiyon gücün artar, ödüller açılır.|Reúne tacos: tu poder de colección crece y se desbloquean premios.|Colecione tacos: seu poder de coleção cresce e prêmios são liberados.|اجمع العصي: تزداد قوة مجموعتك وتُفتح المكافآت.|Kumpulkan stik: kekuatan koleksimu naik dan hadiah terbuka.|क्यू जमा करें: कलेक्शन की ताकत बढ़ती है और इनाम खुलते हैं।|Collectionnez des queues : votre puissance de collection augmente et des récompenses se débloquent.|Sammle Queues: Deine Sammlungsstärke wächst und Belohnungen werden freigeschaltet.|큐를 모으세요. 컬렉션 파워가 오르고 보상이 열립니다.|キューを集めよう。コレクションパワーが上がり、報酬が解放されます。|收集球杆：收藏力量会提升并解锁奖励。
+VIP to'plamlar‖VIP bundles|VIP-наборы|VIP paketler|Paquetes VIP|Pacotes VIP|حزم VIP|Paket VIP|VIP बंडल|Packs VIP|VIP-Pakete|VIP 패키지|VIPセット|VIP礼包
+ENG YAXSHI!‖BEST VALUE!|ВЫГОДНЕЕ ВСЕГО!|EN İYİ TEKLİF!|¡MEJOR OFERTA!|MELHOR OFERTA!|أفضل عرض!|PALING HEMAT!|सबसे बढ़िया डील!|MEILLEURE OFFRE !|BESTES ANGEBOT!|최고의 혜택!|一番お得！|超值之选！
+Tugashi‖Ends in|Закончится через|Bitiş|Termina en|Termina em|ينتهي بعد|Berakhir dalam|समाप्त होगा|Fin dans|Endet in|종료까지|終了まで|结束倒计时
+Alohida hisob‖Separate account|Отдельный аккаунт|Ayrı hesap|Cuenta aparte|Conta separada|حساب منفصل|Akun terpisah|अलग खाता|Compte séparé|Separates Konto|별도 계정|別アカウント|独立账号
+Bu hisob hozirgi hisobga ulangan. Uni ajratib, alohida yangi hisob ochaymi? Hozirgi hisob o'zgarmaydi.‖This account is linked to your current one. Detach it and open a separate new account? Your current account stays unchanged.|Этот аккаунт привязан к текущему. Отвязать его и создать отдельный новый аккаунт? Текущий аккаунт не изменится.|Bu hesap şu anki hesabına bağlı. Ayırıp ayrı yeni bir hesap açalım mı? Mevcut hesabın değişmez.|Esta cuenta está vinculada a la actual. ¿Separarla y abrir una cuenta nueva aparte? Tu cuenta actual no cambia.|Esta conta está vinculada à atual. Separá-la e abrir uma nova conta à parte? Sua conta atual não muda.|هذا الحساب مرتبط بحسابك الحالي. هل تريد فصله وفتح حساب جديد منفصل؟ حسابك الحالي لن يتغير.|Akun ini terhubung ke akunmu saat ini. Pisahkan dan buat akun baru terpisah? Akunmu saat ini tidak berubah.|यह खाता आपके मौजूदा खाते से जुड़ा है। इसे अलग करके नया अलग खाता खोलें? आपका मौजूदा खाता वैसा ही रहेगा।|Ce compte est lié à votre compte actuel. Le détacher et ouvrir un nouveau compte séparé ? Votre compte actuel ne change pas.|Dieses Konto ist mit deinem aktuellen verknüpft. Trennen und ein separates neues Konto anlegen? Dein aktuelles Konto bleibt unverändert.|이 계정은 현재 계정에 연결되어 있습니다. 연결을 해제하고 별도의 새 계정을 만들까요? 현재 계정은 그대로 유지됩니다.|このアカウントは現在のアカウントに連携されています。連携を解除して、別の新しいアカウントを作成しますか？ 現在のアカウントは変わりません。|此账号已绑定到当前账号。要解除绑定并新建一个独立账号吗？当前账号不会改变。
+Ha, alohida ochish‖Yes, open separately|Да, создать отдельный|Evet, ayrı aç|Sí, abrir aparte|Sim, abrir à parte|نعم، افتح منفصلًا|Ya, buka terpisah|हाँ, अलग खोलें|Oui, ouvrir séparément|Ja, separat anlegen|네, 별도로 만들기|はい、別に作成|是，另外创建
+Yangi hisob ochildi!‖New account created!|Новый аккаунт создан!|Yeni hesap açıldı!|¡Cuenta nueva creada!|Nova conta criada!|تم إنشاء حساب جديد!|Akun baru dibuat!|नया खाता बन गया!|Nouveau compte créé !|Neues Konto angelegt!|새 계정이 만들어졌습니다!|新しいアカウントを作成しました！|新账号已创建！
+Boshqa hisob bilan kirish (alohida o'yin)‖Sign in with another account (separate game)|Войти с другим аккаунтом (отдельная игра)|Başka hesapla giriş yap (ayrı oyun)|Iniciar sesión con otra cuenta (partida aparte)|Entrar com outra conta (jogo separado)|الدخول بحساب آخر (لعبة منفصلة)|Masuk dengan akun lain (permainan terpisah)|दूसरे खाते से लॉगिन (अलग गेम)|Se connecter avec un autre compte (partie séparée)|Mit anderem Konto anmelden (separates Spiel)|다른 계정으로 로그인 (별도 게임)|別のアカウントでログイン（別データ）|使用其他账号登录（独立存档）
+Boshqa hisob bilan kirish‖Sign in with another account|Войти с другим аккаунтом|Başka hesapla giriş yap|Iniciar sesión con otra cuenta|Entrar com outra conta|الدخول بحساب آخر|Masuk dengan akun lain|दूसरे खाते से लॉगिन|Se connecter avec un autre compte|Mit anderem Konto anmelden|다른 계정으로 로그인|別のアカウントでログイン|使用其他账号登录
+Google yoki Facebook bilan alohida yangi o'yin ochiladi. Hozirgi o'yiningiz serverda saqlanadi va keyin shu hisob bilan qaytib kirsangiz tiklanadi.‖Signing in with Google or Facebook opens a separate new game. Your current game is saved on the server and restored when you sign back in with that account.|Вход через Google или Facebook откроет отдельную новую игру. Текущая игра сохранится на сервере и вернётся, когда вы снова войдёте с тем аккаунтом.|Google veya Facebook ile giriş ayrı yeni bir oyun açar. Mevcut oyunun sunucuda saklanır ve o hesapla tekrar girince geri gelir.|Iniciar sesión con Google o Facebook abre una partida nueva aparte. Tu partida actual se guarda en el servidor y se recupera al volver a entrar con esa cuenta.|Entrar com Google ou Facebook abre um jogo novo à parte. Seu jogo atual fica salvo no servidor e volta quando você entrar de novo com essa conta.|الدخول عبر Google أو Facebook يفتح لعبة جديدة منفصلة. تُحفظ لعبتك الحالية على الخادم وتعود عند الدخول مجددًا بذلك الحساب.|Masuk dengan Google atau Facebook membuka permainan baru yang terpisah. Permainanmu saat ini tersimpan di server dan kembali saat kamu masuk lagi dengan akun itu.|Google या Facebook से लॉगिन करने पर एक अलग नया गेम खुलता है। आपका मौजूदा गेम सर्वर पर सेव रहता है और उस खाते से फिर लॉगिन करने पर लौट आता है।|Se connecter avec Google ou Facebook ouvre une nouvelle partie séparée. Votre partie actuelle est sauvegardée sur le serveur et revient quand vous vous reconnectez avec ce compte.|Die Anmeldung mit Google oder Facebook öffnet ein separates neues Spiel. Dein aktuelles Spiel wird auf dem Server gespeichert und kehrt zurück, wenn du dich wieder mit diesem Konto anmeldest.|Google이나 Facebook으로 로그인하면 별도의 새 게임이 열립니다. 현재 게임은 서버에 저장되며, 그 계정으로 다시 로그인하면 복원됩니다.|GoogleまたはFacebookでログインすると、別の新しいゲームが始まります。現在のゲームはサーバーに保存され、そのアカウントで再ログインすると復元されます。|使用Google或Facebook登录会开启一个独立的新游戏。当前游戏会保存在服务器，用该账号再次登录即可恢复。
+Sharlar urilishi‖Ball clacks|Удары шаров|Top çarpışması|Choques de bolas|Batidas de bolas|اصطدام الكرات|Benturan bola|गेंदों की टक्कर|Chocs de billes|Kugelstöße|공끼리 부딪힘|球同士の衝突|球碰撞
+Kiy zarbasi‖Cue strikes|Удары кия|Istaka vuruşu|Golpes del taco|Tacadas|ضربة العصا|Pukulan stik|क्यू का प्रहार|Coups de queue|Queue-Stöße|큐 타격|キューの打撃|球杆击球
+Bort urilishi‖Cushion hits|Удары о борт|Bandaya çarpma|Golpes de banda|Batidas na tabela|ارتطام الحافة|Benturan bantalan|बोर्ड से टक्कर|Chocs de bande|Banden-Treffer|쿠션 충돌|クッション衝突|撞库声
+▶ ni bosib tinglang, so'ng 👍 (yaxshi) yoki 👎 (yomon) deb belgilang. Oxirida «Nusxalash» ni bosing va natijani menga yuboring.‖Press ▶ to listen, then mark 👍 (good) or 👎 (bad). At the end press "Copy" and send me the result.|Нажмите ▶, чтобы послушать, затем отметьте 👍 (хорошо) или 👎 (плохо). В конце нажмите «Копировать» и отправьте мне результат.|Dinlemek için ▶ tuşuna bas, sonra 👍 (iyi) veya 👎 (kötü) olarak işaretle. En sonda «Kopyala» tuşuna basıp sonucu bana gönder.|Pulsa ▶ para escuchar y marca 👍 (bien) o 👎 (mal). Al final pulsa «Copiar» y envíame el resultado.|Toque em ▶ para ouvir e marque 👍 (bom) ou 👎 (ruim). No final toque em «Copiar» e envie o resultado.|اضغط ▶ للاستماع ثم ضع علامة 👍 (جيد) أو 👎 (سيئ). في النهاية اضغط «نسخ» وأرسل لي النتيجة.|Tekan ▶ untuk mendengarkan, lalu tandai 👍 (bagus) atau 👎 (buruk). Terakhir tekan «Salin» dan kirim hasilnya kepadaku.|▶ दबाकर सुनें, फिर 👍 (अच्छा) या 👎 (बुरा) चुनें। आख़िर में «कॉपी» दबाएँ और नतीजा मुझे भेजें।|Appuyez sur ▶ pour écouter, puis marquez 👍 (bien) ou 👎 (mauvais). À la fin, appuyez sur « Copier » et envoyez-moi le résultat.|Tippe auf ▶ zum Anhören und markiere dann 👍 (gut) oder 👎 (schlecht). Tippe am Ende auf „Kopieren“ und schicke mir das Ergebnis.|▶를 눌러 들어보고 👍(좋음) 또는 👎(나쁨)로 표시하세요. 마지막에 «복사»를 누르고 결과를 보내주세요.|▶を押して聞き、👍（良い）か👎（悪い）を付けてください。最後に「コピー」を押して結果を送ってください。|点击▶试听，然后标记👍（好）或👎（差）。最后点击“复制”并把结果发给我。
+Natija shu yerda chiqadi‖The result will appear here|Здесь появится результат|Sonuç burada görünecek|El resultado aparecerá aquí|O resultado aparecerá aqui|ستظهر النتيجة هنا|Hasil akan muncul di sini|नतीजा यहाँ दिखेगा|Le résultat apparaîtra ici|Das Ergebnis erscheint hier|결과가 여기에 표시됩니다|結果はここに表示されます|结果将显示在这里
+Ovoz xatosi‖Sound error|Ошибка звука|Ses hatası|Error de sonido|Erro de som|خطأ في الصوت|Kesalahan suara|ध्वनि त्रुटि|Erreur de son|Tonfehler|소리 오류|サウンドエラー|声音错误
+Kuchli alanga va nur effekti, klub kartasi oltin nur sochadi‖Powerful flame and light effect — your club card glows gold|Мощное пламя и световой эффект: карточка клуба сияет золотом|Güçlü alev ve ışık efekti, kulüp kartı altın gibi parlar|Potente efecto de llamas y luz: la tarjeta del club brilla en dorado|Poderoso efeito de chamas e luz: o cartão do clube brilha dourado|لهب قوي وتأثير ضوئي، وبطاقة النادي تتوهج بالذهبي|Efek api dan cahaya yang kuat, kartu klub bersinar keemasan|शक्तिशाली लपटें और रोशनी का असर, क्लब कार्ड सुनहरा चमकता है|Puissants effets de flammes et de lumière, la carte du club brille en or|Kraftvoller Flammen- und Lichteffekt, die Clubkarte leuchtet golden|강렬한 불꽃과 빛 효과, 클럽 카드가 황금빛으로 빛납니다|力強い炎と光のエフェクトで、クラブカードが金色に輝きます|强烈的火焰与光效，俱乐部卡片散发金色光芒
+Jonli emblema: klubingiz ro'yxatda harakatlanib turadi‖Animated emblem: your club moves in the list|Живая эмблема: ваш клуб двигается в списке|Canlı amblem: kulübün listede hareket eder|Emblema animado: tu club se mueve en la lista|Emblema animado: seu clube se mexe na lista|شعار متحرك: ناديك يتحرك في القائمة|Lambang animasi: klubmu bergerak di daftar|एनिमेटेड प्रतीक: सूची में आपका क्लब हिलता-डुलता दिखता है|Emblème animé : votre club bouge dans la liste|Animiertes Emblem: Dein Club bewegt sich in der Liste|움직이는 엠블럼: 목록에서 클럽이 움직입니다|動くエンブレム：リストでクラブが動きます|动态徽章：你的俱乐部会在列表中动起来
+Bepul emblema‖Free emblem|Бесплатная эмблема|Ücretsiz amblem|Emblema gratis|Emblema grátis|شعار مجاني|Lambang gratis|मुफ़्त प्रतीक|Emblème gratuit|Kostenloses Emblem|무료 엠블럼|無料エンブレム|免费徽章
+Sotib olish‖Buy|Купить|Satın al|Comprar|Comprar|شراء|Beli|खरीदें|Acheter|Kaufen|구매|購入|购买
+Emblema sizniki!‖The emblem is yours!|Эмблема ваша!|Amblem senin!|¡El emblema es tuyo!|O emblema é seu!|الشعار لك!|Lambang ini milikmu!|प्रतीक अब आपका है!|L'emblème est à vous !|Das Emblem gehört dir!|엠블럼을 획득했습니다!|エンブレムを獲得しました！|徽章归你了！
+Bepul emblemalar‖Free emblems|Бесплатные эмблемы|Ücretsiz amblemler|Emblemas gratis|Emblemas grátis|شعارات مجانية|Lambang gratis|मुफ़्त प्रतीक|Emblèmes gratuits|Kostenlose Embleme|무료 엠블럼|無料エンブレム|免费徽章
+Premium · jonli emblemalar‖Premium · animated emblems|Премиум · живые эмблемы|Premium · canlı amblemler|Premium · emblemas animados|Premium · emblemas animados|بريميوم · شعارات متحركة|Premium · lambang animasi|प्रीमियम · एनिमेटेड प्रतीक|Premium · emblèmes animés|Premium · animierte Embleme|프리미엄 · 움직이는 엠블럼|プレミアム · 動くエンブレム|高级 · 动态徽章
+Jonli emblema klubingizni ro'yxatda va reytingda ajratib turadi. Bir marta sotib olasiz — hamma klublaringizda ishlatasiz.‖An animated emblem makes your club stand out in the list and the ranking. Buy it once and use it in all your clubs.|Живая эмблема выделяет ваш клуб в списке и рейтинге. Купите один раз и используйте во всех своих клубах.|Canlı amblem kulübünü listede ve sıralamada öne çıkarır. Bir kez satın al, tüm kulüplerinde kullan.|Un emblema animado destaca tu club en la lista y en la clasificación. Cómpralo una vez y úsalo en todos tus clubes.|Um emblema animado destaca seu clube na lista e no ranking. Compre uma vez e use em todos os seus clubes.|يجعل الشعار المتحرك ناديك بارزًا في القائمة والترتيب. اشتره مرة واحدة واستخدمه في كل أنديتك.|Lambang animasi membuat klubmu menonjol di daftar dan peringkat. Beli sekali, pakai di semua klubmu.|एनिमेटेड प्रतीक सूची और रैंकिंग में आपके क्लब को अलग दिखाता है। एक बार खरीदें और अपने सभी क्लबों में इस्तेमाल करें।|Un emblème animé met votre club en valeur dans la liste et le classement. Achetez-le une fois et utilisez-le dans tous vos clubs.|Ein animiertes Emblem hebt deinen Club in Liste und Rangliste hervor. Einmal kaufen und in allen deinen Clubs nutzen.|움직이는 엠블럼은 목록과 순위에서 클럽을 돋보이게 합니다. 한 번 구매하면 모든 클럽에서 사용할 수 있습니다.|動くエンブレムはリストやランキングでクラブを目立たせます。一度購入すれば、すべてのクラブで使えます。|动态徽章能让你的俱乐部在列表和排行榜中脱颖而出。购买一次，所有俱乐部通用。
+Missiyalar ›‖Missions ›|Задания ›|Görevler ›|Misiones ›|Missões ›|المهام ›|Misi ›|मिशन ›|Missions ›|Missionen ›|미션 ›|ミッション ›|任务 ›
+O'tgan mavsum mukofotlari‖Last season's rewards|Награды прошлого сезона|Geçen sezonun ödülleri|Premios de la temporada pasada|Prêmios da temporada passada|مكافآت الموسم الماضي|Hadiah musim lalu|पिछले सीज़न के इनाम|Récompenses de la saison passée|Belohnungen der letzten Saison|지난 시즌 보상|前シーズンの報酬|上赛季奖励
+Mavsum tugadi! Premium mukofotlarni olishning oxirgi imkoni!‖Season over! Last chance to claim the premium rewards!|Сезон завершён! Последний шанс забрать премиум-награды!|Sezon bitti! Premium ödülleri almak için son şans!|¡Temporada terminada! ¡Última oportunidad de reclamar los premios premium!|Temporada encerrada! Última chance de resgatar os prêmios premium!|انتهى الموسم! هذه آخر فرصة لاستلام المكافآت المميزة!|Musim berakhir! Kesempatan terakhir mengambil hadiah premium!|सीज़न ख़त्म! प्रीमियम इनाम लेने का आख़िरी मौक़ा!|Saison terminée ! Dernière chance de récupérer les récompenses premium !|Saison vorbei! Letzte Chance, die Premium-Belohnungen abzuholen!|시즌 종료! 프리미엄 보상을 받을 마지막 기회입니다!|シーズン終了！プレミアム報酬を受け取る最後のチャンス！|赛季结束！这是领取高级奖励的最后机会！
+Har bir mavsumda 400 daraja: bepul va premium mukofotlar. G'alaba, missiya va turnirlar ♞ beradi.‖400 levels each season: free and premium rewards. Wins, missions and tournaments give ♞.|400 уровней в каждом сезоне: бесплатные и премиум-награды. Победы, задания и турниры дают ♞.|Her sezon 400 seviye: ücretsiz ve premium ödüller. Galibiyetler, görevler ve turnuvalar ♞ kazandırır.|400 niveles por temporada: premios gratis y premium. Las victorias, misiones y torneos dan ♞.|400 níveis por temporada: prêmios grátis e premium. Vitórias, missões e torneios dão ♞.|400 مستوى في كل موسم: مكافآت مجانية ومميزة. الفوز والمهام والبطولات تمنحك ♞.|400 level tiap musim: hadiah gratis dan premium. Kemenangan, misi, dan turnamen memberi ♞.|हर सीज़न में 400 स्तर: मुफ़्त और प्रीमियम इनाम। जीत, मिशन और टूर्नामेंट से ♞ मिलता है।|400 niveaux par saison : récompenses gratuites et premium. Les victoires, missions et tournois rapportent des ♞.|400 Level pro Saison: kostenlose und Premium-Belohnungen. Siege, Missionen und Turniere bringen ♞.|시즌마다 400레벨: 무료 및 프리미엄 보상. 승리, 미션, 토너먼트로 ♞를 얻습니다.|シーズンごとに400レベル：無料報酬とプレミアム報酬。勝利・ミッション・トーナメントで♞を獲得できます。|每个赛季400级：免费和高级奖励。胜利、任务和锦标赛都能获得♞。
+Mavsum cuelari faqat shu passdan olinadi, do'konda sotilmaydi.‖Season cues come only from this pass and are not sold in the shop.|Сезонные кии выдаются только в этом пропуске и не продаются в магазине.|Sezon istakaları yalnızca bu geçişten gelir, mağazada satılmaz.|Los tacos de temporada solo se consiguen con este pase y no se venden en la tienda.|Os tacos de temporada só vêm deste passe e não são vendidos na loja.|عصي الموسم تأتي من هذه التذكرة فقط ولا تُباع في المتجر.|Stik musiman hanya didapat dari pass ini dan tidak dijual di toko.|सीज़न के क्यू सिर्फ़ इसी पास से मिलते हैं और दुकान में नहीं बिकते।|Les queues de saison ne s'obtiennent qu'avec ce pass et ne sont pas vendues dans la boutique.|Saison-Queues gibt es nur mit diesem Pass und nicht im Shop.|시즌 큐는 이 패스에서만 얻을 수 있으며 상점에서는 팔지 않습니다.|シーズンのキューはこのパスでのみ入手でき、ショップでは販売されません。|赛季球杆只能通过此通行证获得，商店不出售。
+Yo'q‖None|Нет|Yok|Ninguno|Nenhum|لا شيء|Tidak ada|कोई नहीं|Aucun|Keiner|없음|なし|无
+Kristall‖Crystal|Кристалл|Kristal|Cristal|Cristal|الكريستال|Kristal|क्रिस्टल|Cristal|Kristall|크리스털|クリスタル|水晶
+YAXLIT‖SOLIDS|СПЛОШНЫЕ|DÜZ TOPLAR|LISAS|LISAS|المصمتة|POLOS|सॉलिड|PLEINES|VOLLE|단색|ソリッド|全色球
+YO'L-YO'L‖STRIPES|ПОЛОСАТЫЕ|ÇİZGİLİ TOPLAR|RAYADAS|LISTRADAS|المخططة|BELANG|स्ट्राइप्स|RAYÉES|HALBE|줄무늬|ストライプ|花色球
+{0} ta shahar uzugini yig'ib, klub tuzing yoki qo'shiling — haftalik klub mukofotlari!‖Collect {0} city rings, then create or join a club — weekly club rewards!|Соберите {0} городских колец, затем создайте клуб или вступите в него — еженедельные награды клуба!|{0} şehir yüzüğü topla, sonra bir kulüp kur veya katıl — haftalık kulüp ödülleri!|Reúne {0} anillos de ciudad y luego crea o únete a un club: ¡premios semanales de club!|Junte {0} anéis de cidade e depois crie ou entre em um clube — prêmios semanais de clube!|اجمع {0} خواتم مدن ثم أنشئ نادٍ أو انضم إلى نادٍ — مكافآت أسبوعية للنادي!|Kumpulkan {0} cincin kota, lalu buat atau gabung klub — hadiah klub mingguan!|{0} शहर की अंगूठियाँ जुटाएँ, फिर क्लब बनाएँ या जुड़ें — साप्ताहिक क्लब इनाम!|Collectez {0} anneaux de ville, puis créez ou rejoignez un club : récompenses hebdomadaires de club !|Sammle {0} Städteringe, dann gründe einen Club oder tritt einem bei — wöchentliche Club-Belohnungen!|도시 반지 {0}개를 모은 뒤 클럽을 만들거나 가입하세요. 주간 클럽 보상이 있습니다!|都市リングを{0}個集めて、クラブを作成または参加しよう。週間クラブ報酬がもらえます！|集齐{0}枚城市戒指后，创建或加入俱乐部，即可获得每周俱乐部奖励！
+Tanga ×{0}‖Coins ×{0}|Монеты ×{0}|Jeton ×{0}|Monedas ×{0}|Moedas ×{0}|عملات ×{0}|Koin ×{0}|सिक्के ×{0}|Pièces ×{0}|Münzen ×{0}|코인 ×{0}|コイン ×{0}|金币 ×{0}
+Grandmaster kiy bo'laklari ×{0}‖Grandmaster cue pieces ×{0}|Части кия Грандмастера ×{0}|Grandmaster istaka parçaları ×{0}|Piezas de taco Gran Maestro ×{0}|Peças de taco Grão-Mestre ×{0}|قطع عصا الأستاذ الأكبر ×{0}|Bagian stik Grandmaster ×{0}|ग्रैंडमास्टर क्यू के टुकड़े ×{0}|Morceaux de queue Grand Maître ×{0}|Grandmaster-Queue-Teile ×{0}|그랜드마스터 큐 조각 ×{0}|グランドマスターのキューのかけら ×{0}|特级大师球杆碎片 ×{0}
+1. Nishonga oling‖1. Aim|1. Прицельтесь|1. Nişan al|1. Apunta|1. Mire|1. صوّب|1. Bidik|1. निशाना लगाएँ|1. Visez|1. Zielen|1. 조준하기|1. 狙いを定める|1. 瞄准
+Sichqonchani stol ustida bosib sudrang: kiy oq shar atrofida aylanadi. Nozik sozlash: sichqoncha g'ildiragi yoki ← → tugmalari.‖Click and drag on the table: the cue turns around the cue ball. Fine adjustment: mouse wheel or the ← → keys.|Нажмите и тяните по столу: кий поворачивается вокруг битка. Точная подстройка: колёсико мыши или клавиши ← →.|Masanın üzerinde fareyle basılı tutup sürükle: istaka beyaz topun etrafında döner. İnce ayar: fare tekerleği veya ← → tuşları.|Haz clic y arrastra sobre la mesa: el taco gira alrededor de la bola blanca. Ajuste fino: rueda del ratón o teclas ← →.|Clique e arraste sobre a mesa: o taco gira ao redor da bola branca. Ajuste fino: roda do mouse ou teclas ← →.|اضغط واسحب فوق الطاولة: تدور العصا حول الكرة البيضاء. للضبط الدقيق: عجلة الفأرة أو مفتاحا ← →.|Klik dan seret di atas meja: stik berputar mengelilingi bola putih. Penyesuaian halus: roda mouse atau tombol ← →.|टेबल पर माउस से क्लिक करके खींचें: क्यू सफ़ेद गेंद के चारों ओर घूमता है। बारीक एडजस्टमेंट: माउस व्हील या ← → कुंजियाँ।|Cliquez et faites glisser sur la table : la queue tourne autour de la bille blanche. Réglage précis : molette de la souris ou touches ← →.|Klicke und ziehe auf dem Tisch: Das Queue dreht sich um die weiße Kugel. Feineinstellung: Mausrad oder die Tasten ← →.|테이블 위에서 마우스를 누른 채 드래그하세요. 큐가 흰 공 주위를 돕니다. 미세 조정: 마우스 휠 또는 ← → 키.|テーブル上でマウスをドラッグすると、キューが白球の周りを回ります。微調整はマウスホイールまたは ← → キー。|在球桌上按住鼠标拖动：球杆会围绕白球旋转。精细调整：鼠标滚轮或 ← → 键。
+Barmog'ingiz bilan stol ustida suring: kiy oq shar atrofida aylanadi.‖Swipe on the table with your finger: the cue turns around the cue ball.|Проведите пальцем по столу: кий поворачивается вокруг битка.|Parmağınla masanın üzerinde kaydır: istaka beyaz topun etrafında döner.|Desliza el dedo sobre la mesa: el taco gira alrededor de la bola blanca.|Deslize o dedo sobre a mesa: o taco gira ao redor da bola branca.|مرّر إصبعك فوق الطاولة: تدور العصا حول الكرة البيضاء.|Geser jarimu di atas meja: stik berputar mengelilingi bola putih.|टेबल पर उँगली फिराएँ: क्यू सफ़ेद गेंद के चारों ओर घूमता है।|Faites glisser votre doigt sur la table : la queue tourne autour de la bille blanche.|Wische mit dem Finger über den Tisch: Das Queue dreht sich um die weiße Kugel.|손가락으로 테이블 위를 밀어 보세요. 큐가 흰 공 주위를 돕니다.|テーブル上で指をスライドすると、キューが白球の周りを回ります。|用手指在球桌上滑动：球杆会围绕白球旋转。
+2. Kuchni tanlab uring‖2. Choose power and shoot|2. Выберите силу и бейте|2. Gücü seç ve vur|2. Elige la fuerza y dispara|2. Escolha a força e tacada|2. اختر القوة واضرب|2. Pilih kekuatan dan pukul|2. ताकत चुनें और शॉट मारें|2. Choisissez la puissance et tirez|2. Kraft wählen und stoßen|2. 파워를 정해서 치기|2. パワーを決めて打つ|2. 选择力度并击球
+Chapdagi KUCH chizig'ini sichqoncha bilan pastga torting va qo'yib yuboring: zarba bo'ladi. Yoki SPACE tugmasini bosib turing (kuch to'lib boradi) va qo'yib yuboring.‖Drag the POWER bar on the left down with the mouse and release: that's your shot. Or hold SPACE (the power fills up) and release.|Потяните шкалу СИЛА слева вниз мышью и отпустите: это удар. Или удерживайте ПРОБЕЛ (сила нарастает) и отпустите.|Soldaki GÜÇ çubuğunu fareyle aşağı çek ve bırak: vuruş yapılır. Ya da BOŞLUK tuşunu basılı tut (güç dolar) ve bırak.|Arrastra hacia abajo con el ratón la barra de FUERZA de la izquierda y suéltala: ese es tu tiro. O mantén ESPACIO (la fuerza se llena) y suelta.|Arraste para baixo com o mouse a barra de FORÇA à esquerda e solte: essa é a tacada. Ou segure ESPAÇO (a força vai enchendo) e solte.|اسحب شريط القوة على اليسار للأسفل بالفأرة ثم أفلته: تلك هي ضربتك. أو اضغط مفتاح المسافة مطولًا (تمتلئ القوة) ثم أفلته.|Tarik bar KEKUATAN di kiri ke bawah dengan mouse lalu lepas: itulah pukulanmu. Atau tahan SPASI (kekuatan terisi) lalu lepas.|बाईं ओर के ताकत बार को माउस से नीचे खींचें और छोड़ दें: शॉट लग जाएगा। या SPACE दबाए रखें (ताकत भरती है) और छोड़ दें।|Faites glisser vers le bas la barre de PUISSANCE à gauche avec la souris puis relâchez : c'est votre coup. Ou maintenez ESPACE (la puissance monte) puis relâchez.|Ziehe den KRAFT-Balken links mit der Maus nach unten und lasse los: Das ist dein Stoß. Oder halte die LEERTASTE gedrückt (die Kraft füllt sich) und lasse los.|왼쪽의 파워 바를 마우스로 아래로 끌었다 놓으면 샷이 나갑니다. 또는 SPACE를 누르고 있다가(파워가 차오름) 놓으세요.|左のパワーバーをマウスで下にドラッグして離すとショットになります。またはスペースキーを押し続け（パワーが溜まります）、離してください。|用鼠标把左侧的力量条向下拖动后松开，即可击球。或者按住空格键（力量会逐渐充满）后松开。
+Chapdagi KUCH chizig'ini barmoq bilan pastga torting va qo'yib yuboring: zarba bo'ladi. Qanchalik pastga tortsangiz, zarba shunchalik kuchli.‖Drag the POWER bar on the left down with your finger and release: that's your shot. The further you pull, the harder the shot.|Потяните шкалу СИЛА слева вниз пальцем и отпустите: это удар. Чем ниже потянете, тем сильнее удар.|Soldaki GÜÇ çubuğunu parmağınla aşağı çek ve bırak: vuruş yapılır. Ne kadar çok çekersen vuruş o kadar güçlü olur.|Arrastra hacia abajo con el dedo la barra de FUERZA de la izquierda y suéltala: ese es tu tiro. Cuanto más abajo, más fuerte.|Arraste para baixo com o dedo a barra de FORÇA à esquerda e solte: essa é a tacada. Quanto mais para baixo, mais forte.|اسحب شريط القوة على اليسار للأسفل بإصبعك ثم أفلته: تلك هي ضربتك. كلما سحبت أكثر كانت الضربة أقوى.|Tarik bar KEKUATAN di kiri ke bawah dengan jari lalu lepas: itulah pukulanmu. Makin jauh ditarik, makin kuat pukulannya.|बाईं ओर के ताकत बार को उँगली से नीचे खींचें और छोड़ दें: शॉट लग जाएगा। जितना नीचे खींचेंगे, शॉट उतना ज़ोरदार होगा।|Faites glisser vers le bas la barre de PUISSANCE à gauche avec le doigt puis relâchez : c'est votre coup. Plus vous tirez, plus le coup est fort.|Ziehe den KRAFT-Balken links mit dem Finger nach unten und lasse los: Das ist dein Stoß. Je weiter du ziehst, desto härter der Stoß.|왼쪽의 파워 바를 손가락으로 아래로 끌었다 놓으면 샷이 나갑니다. 많이 끌수록 샷이 강해집니다.|左のパワーバーを指で下にドラッグして離すとショットになります。下に引くほど強いショットになります。|用手指把左侧的力量条向下拖动后松开，即可击球。拖得越低，击球越有力。
+3. Aylantirish (spin)‖3. Spin|3. Вращение (спин)|3. Falso (spin)|3. Efecto (spin)|3. Efeito (spin)|3. الدوران (سبين)|3. Putaran (spin)|3. स्पिन|3. Effet (spin)|3. Drall (Spin)|3. 회전(스핀)|3. 回転（スピン）|3. 旋转（加塞）
+Yuqori o'ngdagi dumaloq tugmani bosing: sharga yuqoridan, pastdan yoki yondan zarba berishni sozlaysiz. Boshlovchilarga shart emas.‖Press the round button at the top right: set whether to hit the ball high, low or on the side. Not necessary for beginners.|Нажмите круглую кнопку справа вверху: настройте удар по шару сверху, снизу или сбоку. Новичкам это не обязательно.|Sağ üstteki yuvarlak tuşa bas: topa üstten, alttan veya yandan vurmayı ayarlarsın. Yeni başlayanlar için şart değil.|Pulsa el botón redondo de arriba a la derecha: ajustas si golpeas la bola arriba, abajo o de lado. No es necesario para principiantes.|Toque no botão redondo no canto superior direito: você define se bate na bola em cima, embaixo ou de lado. Não é necessário para iniciantes.|اضغط الزر الدائري في أعلى اليمين: لتحديد ضرب الكرة من الأعلى أو الأسفل أو الجانب. غير ضروري للمبتدئين.|Tekan tombol bulat di kanan atas: atur apakah bola dipukul di atas, bawah, atau samping. Tidak wajib untuk pemula.|ऊपर दाईं ओर का गोल बटन दबाएँ: गेंद पर ऊपर, नीचे या बगल से मारना तय करें। शुरुआती खिलाड़ियों के लिए ज़रूरी नहीं।|Appuyez sur le bouton rond en haut à droite : réglez si vous frappez la bille en haut, en bas ou sur le côté. Inutile pour les débutants.|Tippe auf den runden Knopf oben rechts: Du stellst ein, ob du die Kugel oben, unten oder seitlich triffst. Für Anfänger nicht nötig.|오른쪽 위의 둥근 버튼을 누르세요. 공의 위, 아래 또는 옆을 칠지 정할 수 있습니다. 초보자는 쓰지 않아도 됩니다.|右上の丸いボタンを押すと、球の上・下・横のどこを打つか設定できます。初心者は使わなくても大丈夫です。|点击右上角的圆形按钮：设置击打球的上部、下部或侧面。新手可以不用。
+4. Aniq sozlash‖4. Fine tuning|4. Точная настройка|4. İnce ayar|4. Ajuste fino|4. Ajuste fino|4. الضبط الدقيق|4. Penyesuaian halus|4. बारीक एडजस्टमेंट|4. Réglage précis|4. Feineinstellung|4. 미세 조정|4. 微調整|4. 精细调整
+O'ngdagi ANIQ chizig'ini yuqoriga-pastga surib, nishonni juda nozik sozlang.‖Slide the FINE bar on the right up and down to adjust your aim very precisely.|Двигайте шкалу ТОЧНО справа вверх и вниз, чтобы очень тонко подстроить прицел.|Sağdaki HASSAS çubuğunu yukarı aşağı kaydırarak nişanı çok ince ayarla.|Desliza arriba y abajo la barra de PRECISIÓN de la derecha para ajustar la puntería con mucha finura.|Deslize para cima e para baixo a barra de PRECISÃO à direita para ajustar a mira com muita delicadeza.|حرّك شريط الدقة على اليمين للأعلى والأسفل لضبط التصويب بدقة عالية.|Geser bar PRESISI di kanan ke atas dan bawah untuk menyetel bidikan dengan sangat halus.|दाईं ओर के सटीक बार को ऊपर-नीचे खिसकाकर निशाने को बहुत बारीकी से सेट करें।|Faites glisser vers le haut et le bas la barre PRÉCIS à droite pour ajuster la visée très finement.|Schiebe den FEIN-Balken rechts nach oben und unten, um das Ziel ganz genau einzustellen.|오른쪽의 정밀 바를 위아래로 밀어 조준을 아주 세밀하게 맞추세요.|右の微調整バーを上下にスライドして、狙いをとても細かく調整します。|上下滑动右侧的精调条，可以非常细致地微调瞄准。
+5. Maqsad‖5. Goal|5. Цель|5. Hedef|5. Objetivo|5. Objetivo|5. الهدف|5. Tujuan|5. लक्ष्य|5. Objectif|5. Ziel|5. 목표|5. 目標|5. 目标
+O'z guruhingiz sharlarini (yaxlit 1–7 yoki yo'l-yo'l 9–15) teshiklarga tushiring, eng oxirida 8-sharni. Oq sharni tushirsangiz, bu xato (foul) bo'ladi.‖Pot your own group of balls (solids 1–7 or stripes 9–15) into the pockets, and the 8-ball last. Potting the cue ball is a foul.|Забивайте шары своей группы (сплошные 1–7 или полосатые 9–15) в лузы, а 8-й шар — последним. Если забить биток, это фол.|Kendi grubunun toplarını (düz 1–7 veya çizgili 9–15) deliklere sok, en sonda 8 numaralı topu. Beyaz topu sokarsan faul olur.|Embolsa las bolas de tu grupo (lisas 1–7 o rayadas 9–15) y la bola 8 la última. Si embolsas la blanca, es falta.|Encaçape as bolas do seu grupo (lisas 1–7 ou listradas 9–15) e a bola 8 por último. Encaçapar a branca é falta.|أدخل كرات مجموعتك (المصمتة 1–7 أو المخططة 9–15) في الجيوب، وأخيرًا الكرة 8. إدخال الكرة البيضاء يُعدّ خطأ.|Masukkan bola kelompokmu (polos 1–7 atau belang 9–15) ke lubang, dan bola 8 paling akhir. Memasukkan bola putih adalah pelanggaran.|अपने ग्रुप की गेंदें (सॉलिड 1–7 या स्ट्राइप्स 9–15) पॉकेट में डालें, और 8 नंबर की गेंद सबसे आख़िर में। सफ़ेद गेंद पॉकेट में गई तो फ़ाउल होगा।|Empochez les billes de votre groupe (pleines 1–7 ou rayées 9–15) et la bille 8 en dernier. Empocher la blanche est une faute.|Versenke die Kugeln deiner Gruppe (volle 1–7 oder halbe 9–15) in die Taschen, die 8 zuletzt. Versenkst du die weiße Kugel, ist das ein Foul.|자신의 그룹 공(단색 1–7 또는 줄무늬 9–15)을 포켓에 넣고, 마지막으로 8번 공을 넣으세요. 흰 공을 넣으면 파울입니다.|自分のグループの球（ソリッド1〜7またはストライプ9〜15）をポケットに入れ、最後に8番ボールを入れます。白球を落とすとファウルです。|把自己组别的球（全色球1–7或花色球9–15）打进袋中，最后打进8号球。白球落袋属于犯规。
+Madrid‖Madrid|Мадрид|Madrid|Madrid|Madri|مدريد|Madrid|मैड्रिड|Madrid|Madrid|마드리드|マドリード|马德里
+Buenos-Ayres‖Buenos Aires|Буэнос-Айрес|Buenos Aires|Buenos Aires|Buenos Aires|بوينس آيرس|Buenos Aires|ब्यूनस आयर्स|Buenos Aires|Buenos Aires|부에노스아이레스|ブエノスアイレス|布宜诺斯艾利斯
+Mexiko‖Mexico City|Мехико|Meksiko|Ciudad de México|Cidade do México|مكسيكو سيتي|Kota Meksiko|मेक्सिको सिटी|Mexico|Mexiko-Stadt|멕시코시티|メキシコシティ|墨西哥城
+Singapur‖Singapore|Сингапур|Singapur|Singapur|Singapura|سنغافورة|Singapura|सिंगापुर|Singapour|Singapur|싱가포르|シンガポール|新加坡
+Amsterdam‖Amsterdam|Амстердам|Amsterdam|Ámsterdam|Amsterdã|أمستردام|Amsterdam|एम्स्टर्डम|Amsterdam|Amsterdam|암스테르담|アムステルダム|阿姆斯特丹
+Kuala-Lumpur‖Kuala Lumpur|Куала-Лумпур|Kuala Lumpur|Kuala Lumpur|Kuala Lumpur|كوالالمبور|Kuala Lumpur|कुआलालंपुर|Kuala Lumpur|Kuala Lumpur|쿠알라룸푸르|クアラルンプール|吉隆坡
+Afina‖Athens|Афины|Atina|Atenas|Atenas|أثينا|Athena|एथेंस|Athènes|Athen|아테네|アテネ|雅典
+Kasablanka‖Casablanca|Касабланка|Kazablanka|Casablanca|Casablanca|الدار البيضاء|Casablanca|कैसाब्लांका|Casablanca|Casablanca|카사블랑카|カサブランカ|卡萨布兰卡
+Bronze‖Bronze|Бронза|Bronz|Bronce|Bronze|برونزي|Perunggu|कांस्य|Bronze|Bronze|브론즈|ブロンズ|青铜
+Silver‖Silver|Серебро|Gümüş|Plata|Prata|فضي|Perak|चाँदी|Argent|Silber|실버|シルバー|白银
+Gold‖Gold|Золото|Altın|Oro|Ouro|ذهبي|Emas|सोना|Or|Gold|골드|ゴールド|黄金
+Emerald‖Emerald|Изумруд|Zümrüt|Esmeralda|Esmeralda|زمردي|Zamrud|पन्ना|Émeraude|Smaragd|에메랄드|エメラルド|祖母绿
+Diamond‖Diamond|Бриллиант|Elmas|Diamante|Diamante|ماسي|Berlian|हीरा|Diamant|Diamant|다이아몬드|ダイヤモンド|钻石
+Black Diamond‖Black Diamond|Чёрный бриллиант|Kara Elmas|Diamante negro|Diamante negro|الماس الأسود|Berlian Hitam|काला हीरा|Diamant noir|Schwarzer Diamant|블랙 다이아몬드|ブラックダイヤモンド|黑钻
+Master‖Master|Мастер|Usta|Maestro|Mestre|أستاذ|Master|मास्टर|Maître|Meister|마스터|マスター|大师
+Legend‖Legend|Легенда|Efsane|Leyenda|Lenda|أسطورة|Legenda|लीजेंड|Légende|Legende|레전드|レジェンド|传奇
+Veteran‖Veteran|Ветеран|Kıdemli|Veterano|Veterano|محنّك|Veteran|अनुभवी|Vétéran|Veteran|베테랑|ベテラン|老兵
+8 Ball Pro‖8 Ball Pro|8 Ball Про|8 Ball Pro|8 Ball Pro|8 Ball Pro|محترف 8 Ball|8 Ball Pro|8 Ball प्रो|Pro du 8 Ball|8-Ball-Profi|8볼 프로|8ボール・プロ|8球职业选手
+8 Ball Usta‖8 Ball Master|Мастер 8 Ball|8 Ball Ustası|Maestro del 8 Ball|Mestre do 8 Ball|أستاذ 8 Ball|Master 8 Ball|8 Ball मास्टर|Maître du 8 Ball|8-Ball-Meister|8볼 마스터|8ボールマスター|8球大师
+8 Ball Afsona‖8 Ball Legend|Легенда 8 Ball|8 Ball Efsanesi|Leyenda del 8 Ball|Lenda do 8 Ball|أسطورة 8 Ball|Legenda 8 Ball|8 Ball लीजेंड|Légende du 8 Ball|8-Ball-Legende|8볼 레전드|8ボールレジェンド|8球传奇
+VIP‖VIP|VIP|VIP|VIP|VIP|VIP|VIP|VIP|VIP|VIP|VIP|VIP|VIP
+Neon‖Neon|Неон|Neon|Neón|Neon|نيون|Neon|नियॉन|Néon|Neon|네온|ネオン|霓虹
+ALL IN‖ALL IN|ВА-БАНК|ALL IN|ALL IN|ALL IN|كل شيء|ALL IN|ऑल इन|ALL IN|ALL IN|올인|オールイン|全押
+LOUNGE‖LOUNGE|ЛАУНЖ|LOUNGE|SALÓN|LOUNGE|الصالة|LOUNGE|लाउंज|LOUNGE|LOUNGE|라운지|ラウンジ|贵宾厅
+All In Lounge‖All In Lounge|Лаунж «Ва-банк»|All In Lounge|Salón All In|Lounge All In|صالة كل شيء|All In Lounge|ऑल इन लाउंज|Salon All In|All-In-Lounge|올인 라운지|オールイン・ラウンジ|全押贵宾厅
+Double or nothing‖Double or nothing|Удвоить или ничего|Ya hep ya hiç|Doble o nada|Dobro ou nada|ضعف أو لا شيء|Menang dua kali lipat atau kalah semua|दोगुना या कुछ नहीं|Quitte ou double|Alles oder nichts|두 배 아니면 꽝|倍か無か|翻倍或清零
+Thames Pub‖Thames Pub|Паб «Темза»|Thames Pub|Pub del Támesis|Pub do Tâmisa|حانة التايمز|Pub Thames|थेम्स पब|Pub de la Tamise|Themse-Pub|템스 펍|テムズ・パブ|泰晤士酒馆
+Harbour Bar‖Harbour Bar|Бар в гавани|Liman Bar|Bar del Puerto|Bar do Porto|بار الميناء|Bar Pelabuhan|हार्बर बार|Bar du Port|Hafenbar|하버 바|ハーバーバー|港口酒吧
+Summer Terrace‖Summer Terrace|Летняя терраса|Yaz Terası|Terraza de Verano|Terraço de Verão|شرفة الصيف|Teras Musim Panas|समर टैरेस|Terrasse d'Été|Sommerterrasse|썸머 테라스|サマーテラス|夏日露台
+Plaza Mayor‖Plaza Mayor|Пласа-Майор|Plaza Mayor|Plaza Mayor|Plaza Mayor|بلازا مايور|Plaza Mayor|प्लाज़ा मेयर|Plaza Mayor|Plaza Mayor|플라사 마요르|マヨール広場|马约尔广场
+Samurai Dojo‖Samurai Dojo|Додзё самурая|Samuray Dojo|Dojo Samurái|Dojo Samurai|دوجو الساموراي|Dojo Samurai|समुराई दोजो|Dojo du Samouraï|Samurai-Dojo|사무라이 도장|サムライ道場|武士道场
+Royal Flush‖Royal Flush|Роял-флеш|Royal Flush|Escalera Real|Royal Flush|رويال فلاش|Royal Flush|रॉयल फ्लश|Quinte Flush Royale|Royal Flush|로열 플러시|ロイヤルフラッシュ|皇家同花顺
+Tango Salon‖Tango Salon|Салон танго|Tango Salonu|Salón de Tango|Salão de Tango|صالون التانغو|Salon Tango|टैंगो सैलून|Salon de Tango|Tango-Salon|탱고 살롱|タンゴサロン|探戈沙龙
+Volcano Arena‖Volcano Arena|Арена «Вулкан»|Volkan Arena|Arena Volcán|Arena Vulcão|ساحة البركان|Arena Gunung Berapi|वोल्कैनो अरेना|Arène du Volcan|Vulkan-Arena|볼케이노 아레나|ボルケーノ・アリーナ|火山竞技场
+Maple Lounge‖Maple Lounge|Кленовый лаунж|Akçaağaç Lounge|Salón Arce|Lounge Bordo|صالة القيقب|Lounge Maple|मेपल लाउंज|Salon Érable|Ahorn-Lounge|메이플 라운지|メープルラウンジ|枫叶会所
+Fiesta Cantina‖Fiesta Cantina|Кантина «Фиеста»|Fiesta Cantina|Cantina Fiesta|Cantina Festa|كانتينا الفيستا|Kantina Fiesta|फ़िएस्टा कैंटीना|Cantina Fiesta|Fiesta-Cantina|피에스타 칸티나|フィエスタ・カンティーナ|狂欢酒馆
+Pyramid Hall‖Pyramid Hall|Зал пирамид|Piramit Salonu|Sala Pirámide|Salão Pirâmide|قاعة الأهرام|Aula Piramida|पिरामिड हॉल|Salle des Pyramides|Pyramidenhalle|피라미드 홀|ピラミッドホール|金字塔大厅
+Golden Tower‖Golden Tower|Золотая башня|Altın Kule|Torre Dorada|Torre Dourada|البرج الذهبي|Menara Emas|गोल्डन टावर|Tour d'Or|Goldener Turm|골든 타워|ゴールデンタワー|金塔
+Marina Bay‖Marina Bay|Марина-Бей|Marina Bay|Marina Bay|Marina Bay|مارينا باي|Marina Bay|मरीना बे|Marina Bay|Marina Bay|마리나 베이|マリーナベイ|滨海湾
+Pearl Club‖Pearl Club|Жемчужный клуб|İnci Kulüp|Club Perla|Clube Pérola|نادي اللؤلؤ|Klub Mutiara|पर्ल क्लब|Club Perle|Perlen-Club|펄 클럽|パールクラブ|珍珠俱乐部
+Château Royal‖Château Royal|Королевский замок|Kraliyet Şatosu|Castillo Real|Castelo Real|القصر الملكي|Kastil Kerajaan|शाही महल|Château Royal|Königsschloss|로열 샤토|ロイヤル・シャトー|皇家城堡
+Canal House‖Canal House|Дом на канале|Kanal Evi|Casa del Canal|Casa do Canal|بيت القناة|Rumah Kanal|कैनाल हाउस|Maison du Canal|Grachtenhaus|운하의 집|運河の家|运河屋
+Colosseo‖Colosseo|Колизей|Kolezyum|Coliseo|Coliseu|الكولوسيوم|Koloseum|कोलोसियम|Colisée|Kolosseum|콜로세움|コロッセオ|斗兽场
+Golden Temple‖Golden Temple|Золотой храм|Altın Tapınak|Templo Dorado|Templo Dourado|المعبد الذهبي|Kuil Emas|स्वर्ण मंदिर|Temple d'Or|Goldener Tempel|황금 사원|黄金寺院|金殿
+Twin Towers‖Twin Towers|Башни-близнецы|İkiz Kuleler|Torres Gemelas|Torres Gêmeas|البرجان التوأم|Menara Kembar|ट्विन टावर्स|Tours Jumelles|Zwillingstürme|쌍둥이 타워|ツインタワー|双子塔
+Neon Tower‖Neon Tower|Неоновая башня|Neon Kule|Torre Neón|Torre Neon|برج النيون|Menara Neon|नियॉन टावर|Tour Néon|Neonturm|네온 타워|ネオンタワー|霓虹塔
+Maharaja Palace‖Maharaja Palace|Дворец махараджи|Maharaja Sarayı|Palacio del Maharajá|Palácio do Marajá|قصر المهراجا|Istana Maharaja|महाराजा पैलेस|Palais du Maharaja|Maharadscha-Palast|마하라자 궁전|マハラジャ宮殿|大君宫
+Acropolis Hall‖Acropolis Hall|Зал Акрополя|Akropol Salonu|Sala Acrópolis|Salão Acrópole|قاعة الأكروبوليس|Aula Akropolis|एक्रोपोलिस हॉल|Salle de l'Acropole|Akropolis-Halle|아크로폴리스 홀|アクロポリス・ホール|卫城大厅
+Platz Arena‖Platz Arena|Арена на площади|Meydan Arena|Arena de la Plaza|Arena da Praça|ساحة الميدان|Arena Lapangan|प्लात्ज़ अरेना|Arène de la Place|Platz-Arena|광장 아레나|広場アリーナ|广场竞技场
+Bosphorus Palace‖Bosphorus Palace|Дворец на Босфоре|Boğaz Sarayı|Palacio del Bósforo|Palácio do Bósforo|قصر البوسفور|Istana Bosphorus|बॉस्फ़ोरस पैलेस|Palais du Bosphore|Bosporus-Palast|보스포루스 궁전|ボスポラス宮殿|博斯普鲁斯宫
+Medina Riad‖Medina Riad|Риад в медине|Medine Riad|Riad de la Medina|Riad da Medina|رياض المدينة القديمة|Riad Medina|मदीना रियाड|Riad de la Médina|Medina-Riad|메디나 리야드|メディナ・リヤド|老城庭院
+Skyline‖Skyline|Скайлайн|Skyline|Skyline|Skyline|الأفق|Skyline|स्काईलाइन|Skyline|Skyline|스카이라인|スカイライン|天际线
+Silk Road‖Silk Road|Шёлковый путь|İpek Yolu|Ruta de la Seda|Rota da Seda|طريق الحرير|Jalur Sutra|रेशम मार्ग|Route de la Soie|Seidenstraße|실크로드|シルクロード|丝绸之路
+Carnival Hall‖Carnival Hall|Карнавальный зал|Karnaval Salonu|Sala del Carnaval|Salão do Carnaval|قاعة الكرنفال|Aula Karnaval|कार्निवल हॉल|Salle du Carnaval|Karnevalshalle|카니발 홀|カーニバルホール|狂欢节大厅
+Penthouse Loft‖Penthouse Loft|Пентхаус-лофт|Penthouse Loft|Ático Loft|Cobertura Loft|بنتهاوس لوفت|Loft Penthouse|पेंटहाउस लॉफ़्ट|Loft en Penthouse|Penthouse-Loft|펜트하우스 로프트|ペントハウス・ロフト|顶层阁楼
+Red Square‖Red Square|Красная площадь|Kızıl Meydan|Plaza Roja|Praça Vermelha|الساحة الحمراء|Lapangan Merah|रेड स्क्वायर|Place Rouge|Roter Platz|붉은 광장|赤の広場|红场
+Kobra‖Cobra|Кобра|Kobra|Cobra|Cobra|الكوبرا|Kobra|कोबरा|Cobra|Kobra|코브라|コブラ|眼镜蛇
+Karbon‖Carbon|Карбон|Karbon|Carbono|Carbono|الكربون|Karbon|कार्बन|Carbone|Karbon|카본|カーボン|碳纤维
+Viking‖Viking|Викинг|Viking|Vikingo|Viking|الفايكنج|Viking|वाइकिंग|Viking|Wikinger|바이킹|バイキング|维京
+Gladiator‖Gladiator|Гладиатор|Gladyatör|Gladiador|Gladiador|المصارع|Gladiator|ग्लैडिएटर|Gladiateur|Gladiator|글래디에이터|グラディエーター|角斗士
+Ritsar‖Knight|Рыцарь|Şövalye|Caballero|Cavaleiro|الفارس|Ksatria|योद्धा|Chevalier|Ritter|기사|騎士|骑士
+Ninja‖Ninja|Ниндзя|Ninja|Ninja|Ninja|النينجا|Ninja|निंजा|Ninja|Ninja|닌자|忍者|忍者
+Pegas‖Pegasus|Пегас|Pegasus|Pegaso|Pégaso|بيغاسوس|Pegasus|पेगासस|Pégase|Pegasus|페가수스|ペガサス|天马
+Titan‖Titan|Титан|Titan|Titán|Titã|تيتان|Titan|टाइटन|Titan|Titan|타이탄|タイタン|泰坦
+Meteor‖Meteor|Метеор|Meteor|Meteoro|Meteoro|النيزك|Meteor|उल्का|Météore|Meteor|메테오|メテオ|流星
+Nebula‖Nebula|Туманность|Nebula|Nebulosa|Nebulosa|السديم|Nebula|नेबुला|Nébuleuse|Nebula|성운|星雲|星云
+Kvazar‖Quasar|Квазар|Kuasar|Cuásar|Quasar|كوازار|Kuasar|क्वासर|Quasar|Quasar|퀘이사|クエーサー|类星体
+Pulsar‖Pulsar|Пульсар|Pulsar|Púlsar|Pulsar|النجم النابض|Pulsar|पल्सर|Pulsar|Pulsar|펄서|パルサー|脉冲星
+Supernova‖Supernova|Сверхновая|Süpernova|Supernova|Supernova|سوبرنوفا|Supernova|सुपरनोवा|Supernova|Supernova|초신성|超新星|超新星
+Lazer‖Laser|Лазер|Lazer|Láser|Laser|الليزر|Laser|लेज़र|Laser|Laser|레이저|レーザー|激光
+Jade‖Jade|Нефрит|Yeşim|Jade|Jade|اليشم|Giok|जेड|Jade|Jade|옥|翡翠|翡翠
+Obsidian‖Obsidian|Обсидиан|Obsidyen|Obsidiana|Obsidiana|السج البركاني|Obsidian|ऑब्सीडियन|Obsidienne|Obsidian|흑요석|黒曜石|黑曜石
+Topaz‖Topaz|Топаз|Topaz|Topacio|Topázio|التوباز|Topas|पुखराज|Topaze|Topas|토파즈|トパーズ|黄玉
+Opal‖Opal|Опал|Opal|Ópalo|Opala|الأوبال|Opal|ओपल|Opale|Opal|오팔|オパール|蛋白石
+Kobalt‖Cobalt|Кобальт|Kobalt|Cobalto|Cobalto|الكوبالت|Kobalt|कोबाल्ट|Cobalt|Kobalt|코발트|コバルト|钴蓝
+Iridiy‖Iridium|Иридий|İridyum|Iridio|Irídio|الإيريديوم|Iridium|इरिडियम|Iridium|Iridium|이리듐|イリジウム|铱
+Xrom‖Chrome|Хром|Krom|Cromo|Cromo|الكروم|Krom|क्रोम|Chrome|Chrom|크롬|クローム|铬
+Plazma‖Plasma|Плазма|Plazma|Plasma|Plasma|البلازما|Plasma|प्लाज़्मा|Plasma|Plasma|플라스마|プラズマ|等离子
+Samurai Pro‖Samurai Pro|Самурай Pro|Samuray Pro|Samurái Pro|Samurai Pro|ساموراي برو|Samurai Pro|समुराई प्रो|Samouraï Pro|Samurai Pro|사무라이 프로|サムライ プロ|武士 Pro
+Zevs‖Zeus|Зевс|Zeus|Zeus|Zeus|زيوس|Zeus|ज़्यूस|Zeus|Zeus|제우스|ゼウス|宙斯
+Anubis‖Anubis|Анубис|Anubis|Anubis|Anúbis|أنوبيس|Anubis|अनूबिस|Anubis|Anubis|아누비스|アヌビス|阿努比斯
+Tengri‖Tengri|Тенгри|Tengri|Tengri|Tengri|تنغري|Tengri|तेंगरी|Tengri|Tengri|텡그리|テングリ|腾格里
+Afrosiyob‖Afrasiab|Афрасиаб|Afrasiyab|Afrasiab|Afrasiab|أفراسياب|Afrasiab|अफ़्रासियाब|Afrasiab|Afrasiab|아프라시압|アフラシアブ|阿弗拉西阿卜
+Tomiris‖Tomiris|Томирис|Tomris|Tomiris|Tomiris|تومريس|Tomiris|तोमिरिस|Tomyris|Tomyris|토미리스|トミュリス|托米丽司
+Spitamen‖Spitamen|Спитамен|Spitamenes|Espitámenes|Espitâmenes|سبيتامين|Spitamenes|स्पितामेन|Spitaménès|Spitamenes|스피타메네스|スピタメネス|斯皮塔梅内斯
+Alpomish‖Alpomish|Алпамыш|Alpamış|Alpomish|Alpomish|ألبوميش|Alpomish|अल्पोमिश|Alpomish|Alpomish|알포미시|アルポミシュ|阿尔波米什
+Underdog‖Underdog|Андердог|Underdog|Underdog|Azarão|الضعيف المتفوق|Underdog|अंडरडॉग|Outsider|Außenseiter|언더독|アンダードッグ|黑马
+M.V.P.‖M.V.P.|M.V.P.|M.V.P.|M.V.P.|M.V.P.|M.V.P.|M.V.P.|M.V.P.|M.V.P.|M.V.P.|M.V.P.|M.V.P.|M.V.P.
+Kaboom‖Kaboom|Бабах|Güm|¡Pum!|Bum|بوم|Duar|धमाका|Boum|Kawumm|쾅|ドカン|轰隆
+Alvasti‖Alvasti|Албасты|Albastı|Alvasti|Alvasti|ألفاستي|Alvasti|अल्वास्ती|Alvasti|Alwasti|알바스티|アルヴァスティ|阿尔瓦斯蒂
+Oy ramkasi‖Moon frame|Рамка «Луна»|Ay çerçevesi|Marco de luna|Moldura da lua|إطار القمر|Bingkai bulan|चाँद फ़्रेम|Cadre lune|Mondrahmen|달 프레임|ムーンフレーム|月亮头像框
+Sham ramkasi‖Candle frame|Рамка «Свеча»|Mum çerçevesi|Marco de vela|Moldura de vela|إطار الشمعة|Bingkai lilin|मोमबत्ती फ़्रेम|Cadre bougie|Kerzenrahmen|촛불 프레임|キャンドルフレーム|蜡烛头像框
+Kuzgun ramkasi‖Raven frame|Рамка «Ворон»|Kuzgun çerçevesi|Marco de cuervo|Moldura de corvo|إطار الغراب|Bingkai gagak|कौआ फ़्रेम|Cadre corbeau|Rabenrahmen|까마귀 프레임|レイヴンフレーム|渡鸦头像框
+Qovoq ramkasi‖Pumpkin frame|Рамка «Тыква»|Balkabağı çerçevesi|Marco de calabaza|Moldura de abóbora|إطار القرعة|Bingkai labu|कद्दू फ़्रेम|Cadre citrouille|Kürbisrahmen|호박 프레임|カボチャフレーム|南瓜头像框
+Suyak ramkasi‖Bone frame|Рамка «Кость»|Kemik çerçevesi|Marco de hueso|Moldura de osso|إطار العظم|Bingkai tulang|हड्डी फ़्रेम|Cadre os|Knochenrahmen|뼈 프레임|骨のフレーム|白骨头像框
+Qabr ramkasi‖Grave frame|Рамка «Могила»|Mezar çerçevesi|Marco de tumba|Moldura de túmulo|إطار القبر|Bingkai kuburan|कब्र फ़्रेम|Cadre tombe|Grabrahmen|무덤 프레임|墓のフレーム|坟墓头像框
+Sharpa ramkasi‖Phantom frame|Рамка «Призрак»|Hayalet çerçevesi|Marco fantasma|Moldura fantasma|إطار الشبح|Bingkai hantu|भूत फ़्रेम|Cadre fantôme|Phantomrahmen|유령 프레임|ファントムフレーム|幽灵头像框
+To'r ramkasi‖Web frame|Рамка «Паутина»|Ağ çerçevesi|Marco de telaraña|Moldura de teia|إطار الشبكة|Bingkai jaring|जाल फ़्रेम|Cadre toile|Netzrahmen|거미줄 프레임|クモの巣フレーム|蛛网头像框
+Qon atirgul‖Blood Rose|Кровавая роза|Kanlı Gül|Rosa de sangre|Rosa de sangue|وردة الدم|Mawar Darah|खूनी गुलाब|Rose de sang|Blutrose|피의 장미|血のバラ|血玫瑰
+Shox ramkasi‖Horn frame|Рамка «Рога»|Boynuz çerçevesi|Marco de cuernos|Moldura de chifres|إطار القرون|Bingkai tanduk|सींग फ़्रेम|Cadre cornes|Hörnerrahmen|뿔 프레임|角のフレーム|犄角头像框
+Chaqmoq ramkasi‖Lightning frame|Рамка «Молния»|Yıldırım çerçevesi|Marco de rayo|Moldura de raio|إطار البرق|Bingkai petir|बिजली फ़्रेम|Cadre éclair|Blitzrahmen|번개 프레임|稲妻フレーム|闪电头像框
+Yarasa to'dasi‖Bat Swarm|Стая летучих мышей|Yarasa Sürüsü|Enjambre de murciélagos|Bando de morcegos|سرب الخفافيش|Kawanan Kelelawar|चमगादड़ों का झुंड|Nuée de chauves-souris|Fledermausschwarm|박쥐 떼|コウモリの群れ|蝙蝠群
+Go'r ramkasi‖Tomb frame|Рамка «Склеп»|Gömüt çerçevesi|Marco de sepulcro|Moldura de sepulcro|إطار الضريح|Bingkai makam|मक़बरा फ़्रेम|Cadre sépulcre|Gruftrahmen|묘실 프레임|墓所フレーム|墓穴头像框
+Nur ramkasi‖Light frame|Рамка «Свет»|Işık çerçevesi|Marco de luz|Moldura de luz|إطار النور|Bingkai cahaya|प्रकाश फ़्रेम|Cadre lumière|Lichtrahmen|빛 프레임|光のフレーム|光明头像框
+Ruh ramkasi‖Spirit frame|Рамка «Дух»|Ruh çerçevesi|Marco de espíritu|Moldura de espírito|إطار الروح|Bingkai roh|आत्मा फ़्रेम|Cadre esprit|Geisterrahmen|영혼 프레임|魂のフレーム|灵魂头像框
+Qora tun‖Black Night|Чёрная ночь|Kara Gece|Noche negra|Noite negra|الليل الأسود|Malam Hitam|काली रात|Nuit noire|Schwarze Nacht|검은 밤|黒い夜|黑夜
+Tun nigohi‖Night Gaze|Ночной взгляд|Gece Bakışı|Mirada nocturna|Olhar noturno|نظرة الليل|Tatapan Malam|रात की नज़र|Regard nocturne|Nachtblick|밤의 시선|夜の眼差し|夜之凝视
+Suyak toji‖Bone Crown|Костяная корона|Kemik Taç|Corona de huesos|Coroa de ossos|تاج العظام|Mahkota Tulang|हड्डियों का ताज|Couronne d'os|Knochenkrone|뼈 왕관|骨の王冠|白骨王冠
+Zulmat to'ri‖Web of Darkness|Паутина тьмы|Karanlık Ağı|Red de oscuridad|Teia das trevas|شبكة الظلام|Jaring Kegelapan|अंधकार का जाल|Toile des ténèbres|Netz der Dunkelheit|어둠의 그물|闇の網|黑暗之网
+Jodu ko'zi‖Eye of Sorcery|Око колдовства|Büyü Gözü|Ojo de brujería|Olho de feitiçaria|عين السحر|Mata Sihir|जादू की आँख|Œil de sorcellerie|Auge der Zauberei|마법의 눈|呪術の眼|巫术之眼
+Qora alanga‖Black Flame|Чёрное пламя|Kara Alev|Llama negra|Chama negra|اللهب الأسود|Api Hitam|काली ज्वाला|Flamme noire|Schwarze Flamme|검은 불꽃|黒炎|黑焰
+Arvohlar raqsi‖Dance of Ghosts|Танец призраков|Hayaletlerin Dansı|Danza de fantasmas|Dança dos fantasmas|رقصة الأشباح|Tarian Hantu|भूतों का नृत्य|Danse des fantômes|Tanz der Geister|유령들의 춤|亡霊の舞|幽灵之舞
+Go'rkov‖Gravedigger|Могильщик|Mezarcı|Sepulturero|Coveiro|حفار القبور|Penggali Kubur|कब्र खोदने वाला|Fossoyeur|Totengräber|무덤지기|墓守|掘墓人
+Bo'ron qoni‖Storm Blood|Кровь бури|Fırtına Kanı|Sangre de tormenta|Sangue da tempestade|دم العاصفة|Darah Badai|तूफ़ान का खून|Sang de tempête|Sturmblut|폭풍의 피|嵐の血|风暴之血
+Vaqt qumi‖Sands of Time|Пески времени|Zamanın Kumları|Arenas del tiempo|Areias do tempo|رمال الزمن|Pasir Waktu|समय की रेत|Sables du temps|Sand der Zeit|시간의 모래|時の砂|时之沙
+Suyaklar bog'i‖Garden of Bones|Сад костей|Kemikler Bahçesi|Jardín de huesos|Jardim de ossos|حديقة العظام|Taman Tulang|हड्डियों का बाग़|Jardin d'ossements|Knochengarten|뼈의 정원|骨の庭|白骨花园
+Shamchiroq‖Lantern|Фонарь|Fener|Farol|Lanterna|الفانوس|Lentera|लालटेन|Lanterne|Laterne|등불|ランタン|灯笼
+Oy uvillashi‖Moon Howl|Лунный вой|Ay Uluması|Aullido de luna|Uivo da lua|عواء القمر|Lolongan Bulan|चाँद की हुआँ-हुआँ|Hurlement de lune|Mondgeheul|달의 울음|月の遠吠え|月嚎
+Captain‖Captain|Капитан|Kaptan|Capitán|Capitão|القبطان|Kapten|कैप्टन|Capitaine|Kapitän|캡틴|キャプテン|队长
+Doc‖Doc|Док|Doktor|Doc|Doc|الدكتور|Doc|डॉक|Doc|Doc|닥|ドク|博士
+Ace‖Ace|Туз|As|As|Ás|الآس|Ace|ऐस|As|Ass|에이스|エース|王牌
+Duke‖Duke|Герцог|Dük|Duque|Duque|الدوق|Adipati|ड्यूक|Duc|Herzog|공작|デューク|公爵
+Baron‖Baron|Барон|Baron|Barón|Barão|البارون|Baron|बैरन|Baron|Baron|남작|バロン|男爵
+Queen‖Queen|Королева|Kraliçe|Reina|Rainha|الملكة|Ratu|रानी|Reine|Königin|여왕|クイーン|女王
+King‖King|Король|Kral|Rey|Rei|الملك|Raja|राजा|Roi|König|왕|キング|国王
+Shadow‖Shadow|Тень|Gölge|Sombra|Sombra|الظل|Bayangan|साया|Ombre|Schatten|섀도|シャドウ|暗影
+Viper‖Viper|Гадюка|Engerek|Víbora|Víbora|الأفعى|Viper|वाइपर|Vipère|Viper|바이퍼|バイパー|毒蛇
+Blaze‖Blaze|Пламя|Alev|Llamarada|Chama|اللهب|Blaze|ब्लेज़|Flambée|Flamme|블레이즈|ブレイズ|烈焰
+Storm‖Storm|Шторм|Fırtına|Tormenta|Tempestade|العاصفة|Badai|तूफ़ान|Tempête|Sturm|스톰|ストーム|风暴
+Ghost‖Ghost|Призрак|Hayalet|Fantasma|Fantasma|الشبح|Hantu|भूत|Fantôme|Geist|고스트|ゴースト|幽灵
+Oddly‖Oddly|Оддли|Oddly|Oddly|Oddly|أودلي|Oddly|ऑडली|Oddly|Oddly|오들리|オッドリー|奥德利
+Sportchi‖Athlete|Спортсмен|Sporcu|Deportista|Atleta|الرياضي|Atlet|एथलीट|Sportif|Sportler|운동선수|アスリート|运动员
+Nozik‖Graceful|Изящный|Zarif|Delicado|Delicado|الرقيق|Anggun|नाज़ुक|Délicat|Zart|우아한 사람|優雅|优雅
+Beparvo‖Carefree|Беззаботный|Kaygısız|Despreocupado|Despreocupado|اللامبالي|Santai|बेफ़िक्र|Insouciant|Sorglos|느긋한 사람|のんき|无忧无虑
+Yapon‖Japanese|Японец|Japon|Japonés|Japonês|الياباني|Jepang|जापानी|Japonais|Japaner|일본인|日本人|日本人
+Ivy‖Ivy|Айви|Ivy|Ivy|Ivy|آيفي|Ivy|आइवी|Ivy|Ivy|아이비|アイビー|艾薇
+Luna‖Luna|Луна|Luna|Luna|Luna|لونا|Luna|लूना|Luna|Luna|루나|ルナ|露娜
+Royal‖Royal|Королевский|Kraliyet|Real|Real|الملكي|Royal|शाही|Royal|Königlich|로열|ロイヤル|皇家
+Phoenix‖Phoenix|Феникс|Anka|Fénix|Fênix|الفينيق|Feniks|फ़ीनिक्स|Phénix|Phönix|피닉스|フェニックス|凤凰
+Cosmos Girl‖Cosmos Girl|Космическая девушка|Kozmos Kızı|Chica Cósmica|Garota Cósmica|فتاة الكون|Gadis Kosmos|कॉस्मोस गर्ल|Fille du Cosmos|Kosmos-Mädchen|코스모스 걸|コスモガール|宇宙少女
+Quantica‖Quantica|Квантика|Quantica|Quantica|Quantica|كوانتيكا|Quantica|क्वांटिका|Quantica|Quantica|퀀티카|クアンティカ|昆提卡
+Onna-Bugeisha‖Onna-Bugeisha|Онна-бугэйся|Onna-Bugeisha|Onna-Bugeisha|Onna-Bugeisha|أونا بوجيشا|Onna-Bugeisha|ओन्ना-बुगेइशा|Onna-Bugeisha|Onna-Bugeisha|온나부게이샤|女武芸者|女武者
+Kunoichi‖Kunoichi|Куноичи|Kunoichi|Kunoichi|Kunoichi|كونويتشي|Kunoichi|कुनोइची|Kunoichi|Kunoichi|쿠노이치|くノ一|女忍者
+Dragon Priestess‖Dragon Priestess|Жрица драконов|Ejderha Rahibesi|Sacerdotisa del Dragón|Sacerdotisa do Dragão|كاهنة التنين|Pendeta Naga|ड्रैगन पुजारिन|Prêtresse du Dragon|Drachenpriesterin|용의 여사제|竜の巫女|龙之女祭司
+Centurion‖Centurion|Центурион|Centurion|Centurión|Centurião|القائد المئوي|Centurion|सेंचुरियन|Centurion|Zenturio|센투리온|ケントゥリオ|百夫长
+Goddess‖Goddess|Богиня|Tanrıça|Diosa|Deusa|الإلهة|Dewi|देवी|Déesse|Göttin|여신|女神|女神
+Frost Queen‖Frost Queen|Ледяная королева|Buz Kraliçesi|Reina de hielo|Rainha do gelo|ملكة الجليد|Ratu Es|बर्फ़ की रानी|Reine des glaces|Eiskönigin|얼음 여왕|氷の女王|冰霜女王
+Emperor‖Emperor|Император|İmparator|Emperador|Imperador|الإمبراطور|Kaisar|सम्राट|Empereur|Kaiser|황제|皇帝|皇帝
+Leona‖Leona|Леона|Leona|Leona|Leoa|ليونا|Leona|लियोना|Léona|Leona|레오나|レオナ|蕾欧娜
+Tigress‖Tigress|Тигрица|Dişi Kaplan|Tigresa|Tigresa|النمرة|Harimau Betina|बाघिन|Tigresse|Tigerin|암호랑이|虎女|雌虎
+Huntress‖Huntress|Охотница|Avcı Kadın|Cazadora|Caçadora|الصيادة|Pemburu Wanita|शिकारिन|Chasseresse|Jägerin|여성 사냥꾼|女狩人|女猎手
+Eagle-Eye‖Eagle-Eye|Орлиный глаз|Kartal Göz|Ojo de águila|Olho de águia|عين النسر|Mata Elang|गरुड़ दृष्टि|Œil d'aigle|Adlerauge|독수리 눈|鷹の目|鹰眼
+Bearskin‖Bearskin|Медвежья шкура|Ayı Postu|Piel de oso|Pele de urso|جلد الدب|Kulit Beruang|भालू की खाल|Peau d'ours|Bärenfell|곰 가죽|熊の毛皮|熊皮
+Reef Guard‖Reef Guard|Страж рифа|Resif Muhafızı|Guardián del arrecife|Guardião do recife|حارس الشعاب|Penjaga Karang|रीफ़ गार्ड|Gardien du récif|Riffwächter|암초 수호자|リーフガード|珊瑚礁守卫
+Venomous‖Venomous|Ядовитый|Zehirli|Venenoso|Venenoso|السام|Berbisa|ज़हरीला|Venimeux|Giftig|맹독의 자|毒蛇|剧毒者
+Ophidian‖Ophidian|Змеелюд|Yılan Adam|Ofidio|Ofídio|الأفعواني|Manusia Ular|नागवंशी|Ophidien|Schlangenwesen|뱀의 종족|蛇人|蛇人
+Dynasty‖Dynasty|Династия|Hanedan|Dinastía|Dinastia|السلالة|Dinasti|राजवंश|Dynastie|Dynastie|왕조|王朝|王朝
+Archer‖Archer|Лучник|Okçu|Arquero|Arqueiro|الرامي|Pemanah|तीरंदाज़|Archer|Bogenschütze|궁수|弓使い|弓箭手
+Mountaineer‖Mountaineer|Альпинист|Dağcı|Montañero|Alpinista|متسلق الجبال|Pendaki|पर्वतारोही|Alpiniste|Bergsteiger|등산가|登山家|登山者
+Diver‖Diver|Дайвер|Dalgıç|Buceador|Mergulhador|الغواص|Penyelam|गोताखोर|Plongeur|Taucher|다이버|ダイバー|潜水员
+Stinger‖Stinger|Жало|İğne|Aguijón|Ferrão|اللاسع|Penyengat|डंक|Dard|Stachel|스팅어|スティンガー|毒刺
+Sorcerer‖Sorcerer|Колдун|Büyücü|Hechicero|Feiticeiro|الساحر|Penyihir|जादूगर|Sorcier|Zauberer|마법사|魔術師|巫师
+Rider‖Rider|Наездник|Binici|Jinete|Cavaleiro|الفارس|Penunggang|सवार|Cavalier|Reiter|라이더|ライダー|骑手
+Matriarch‖Matriarch|Матриарх|Matriark|Matriarca|Matriarca|سيدة العشيرة|Matriark|मातृसत्ता प्रमुख|Matriarche|Matriarchin|여족장|女家長|女族长
+Star-Seeker‖Star-Seeker|Искатель звёзд|Yıldız Arayıcı|Buscador de estrellas|Caçador de estrelas|باحث النجوم|Pencari Bintang|तारा खोजी|Chercheur d'étoiles|Sternensucher|별을 찾는 자|星を探す者|寻星者
+Elysium‖Elysium|Элизиум|Elysium|Elíseo|Elísio|الفردوس|Elysium|एलीज़ियम|Élysée|Elysium|엘리시움|エリュシオン|极乐世界
+Poseidon‖Poseidon|Посейдон|Poseidon|Poseidón|Poseidon|بوسيدون|Poseidon|पोसाइडन|Poséidon|Poseidon|포세이돈|ポセイドン|波塞冬
+Star-Gazer‖Star-Gazer|Звездочёт|Yıldız Gözlemcisi|Observador de estrellas|Observador de estrelas|راصد النجوم|Pengamat Bintang|तारा-दर्शक|Observateur d'étoiles|Sterngucker|별 보는 자|星見人|观星者
+Pathfinder‖Pathfinder|Следопыт|İz Sürücü|Explorador|Desbravador|المستكشف|Perintis|पथप्रदर्शक|Éclaireur|Pfadfinder|개척자|パスファインダー|开拓者
+Matrix‖Matrix|Матрица|Matrix|Matrix|Matrix|المصفوفة|Matriks|मैट्रिक्स|Matrice|Matrix|매트릭스|マトリックス|矩阵
+Cyber God‖Cyber God|Кибербог|Siber Tanrı|Dios cibernético|Deus cibernético|إله السايبر|Dewa Siber|साइबर गॉड|Dieu cyber|Cybergott|사이버 신|サイバーゴッド|赛博之神
+Elder Wise‖Elder Wise|Мудрый старец|Bilge Yaşlı|Anciano sabio|Ancião sábio|الحكيم الأكبر|Tetua Bijak|बुद्धिमान बुज़ुर्ग|Sage ancien|Weiser Ältester|현명한 장로|賢老|智慧长老
+Ascendant‖Ascendant|Восходящий|Yükselen|Ascendente|Ascendente|الصاعد|Pendaki Takdir|उदयमान|Ascendant|Aufsteiger|상승자|昇り人|升华者
+Elysia‖Elysia|Элизия|Elysia|Elisia|Elísia|إليزيا|Elysia|एलीज़िया|Élysia|Elysia|엘리시아|エリシア|艾丽西亚
+Overlord‖Overlord|Повелитель|Hükümdar|Señor supremo|Senhor supremo|السيد الأعلى|Penguasa|अधिपति|Suzerain|Oberherr|군주|オーバーロード|霸主
+Celestial Being‖Celestial Being|Небожитель|Göksel Varlık|Ser celestial|Ser celestial|الكائن السماوي|Makhluk Surgawi|दिव्य प्राणी|Être céleste|Himmlisches Wesen|천상의 존재|天上の存在|天界生灵
+Voidwalker‖Voidwalker|Блуждающий в пустоте|Boşluk Yürüyücüsü|Caminante del vacío|Andarilho do vazio|سائر الفراغ|Penjelajah Kehampaan|शून्य-यात्री|Marcheur du vide|Leerenwanderer|공허의 방랑자|ヴォイドウォーカー|虚空行者
+8-shar toji‖8-Ball Crown|Корона 8-шара|8 Numara Topu Tacı|Corona de la bola 8|Coroa da bola 8|تاج الكرة 8|Mahkota Bola 8|8 बॉल का ताज|Couronne de la bille 8|8-Ball-Krone|8볼 왕관|8ボールの王冠|8号球王冠
+Qizil toj‖Red Crown|Красная корона|Kırmızı Taç|Corona roja|Coroa vermelha|التاج الأحمر|Mahkota Merah|लाल ताज|Couronne rouge|Rote Krone|빨간 왕관|赤い王冠|红色王冠
+Muz bo'ri‖Ice Wolf|Ледяной волк|Buz Kurdu|Lobo de hielo|Lobo de gelo|ذئب الجليد|Serigala Es|बर्फ़ का भेड़िया|Loup des glaces|Eiswolf|얼음 늑대|氷の狼|冰狼
+Sher‖Lion|Лев|Aslan|León|Leão|الأسد|Singa|शेर|Lion|Löwe|사자|ライオン|狮子
+Neon ajdar‖Neon Dragon|Неоновый дракон|Neon Ejderha|Dragón neón|Dragão neon|تنين النيون|Naga Neon|नियॉन ड्रैगन|Dragon néon|Neon-Drache|네온 드래곤|ネオンドラゴン|霓虹龙
+Qora pika‖Black Spade|Чёрная пика|Siyah Maça|Pica negra|Espadas pretas|البستوني الأسود|Sekop Hitam|काली हुकुम|Pique noir|Schwarzes Pik|검은 스페이드|黒いスペード|黑桃
+Yonca‖Clover|Клевер|Yonca|Trébol|Trevo|البرسيم|Semanggi|तिपतिया घास|Trèfle|Kleeblatt|클로버|クローバー|三叶草
+Qirol bosh suyagi‖King's Skull|Череп короля|Kralın Kafatası|Calavera del rey|Caveira do rei|جمجمة الملك|Tengkorak Raja|राजा की खोपड़ी|Crâne du roi|Königsschädel|왕의 해골|王のドクロ|国王骷髅
+Alanga qush‖Flame Bird|Огненная птица|Alev Kuşu|Ave de fuego|Ave de fogo|طائر اللهب|Burung Api|अग्नि पक्षी|Oiseau de feu|Feuervogel|불꽃 새|炎の鳥|火焰鸟
+Qor parchasi‖Snowflake|Снежинка|Kar Tanesi|Copo de nieve|Floco de neve|ندفة الثلج|Kepingan Salju|बर्फ़ का फाहा|Flocon de neige|Schneeflocke|눈송이|雪の結晶|雪花
+Kiylar kesishuvi‖Crossed Cues|Скрещённые кии|Çapraz İstakalar|Tacos cruzados|Tacos cruzados|عصوان متقاطعتان|Stik Bersilang|क्रॉस क्यू|Queues croisées|Gekreuzte Queues|교차된 큐|交差したキュー|交叉球杆
+Binafsha toj‖Purple Crown|Фиолетовая корона|Mor Taç|Corona morada|Coroa roxa|التاج البنفسجي|Mahkota Ungu|बैंगनी ताज|Couronne violette|Lila Krone|보라색 왕관|紫の王冠|紫色王冠
+Tungi ko'rshapalak‖Night Bat|Ночная летучая мышь|Gece Yarasası|Murciélago nocturno|Morcego noturno|خفاش الليل|Kelelawar Malam|रात का चमगादड़|Chauve-souris de nuit|Nachtfledermaus|밤 박쥐|夜のコウモリ|夜蝠
+Buqa‖Bull|Бык|Boğa|Toro|Touro|الثور|Banteng|बैल|Taureau|Stier|황소|雄牛|公牛
+Zumrad ilon‖Emerald Snake|Изумрудная змея|Zümrüt Yılan|Serpiente esmeralda|Serpente esmeralda|الأفعى الزمردية|Ular Zamrud|पन्ना साँप|Serpent émeraude|Smaragdschlange|에메랄드 뱀|エメラルドのヘビ|翡翠蛇
+Olov ajdar‖Fire Dragon|Огненный дракон|Ateş Ejderhası|Dragón de fuego|Dragão de fogo|تنين النار|Naga Api|अग्नि ड्रैगन|Dragon de feu|Feuerdrache|불의 용|炎のドラゴン|火龙
+Laurli toj‖Laurel Crown|Лавровая корона|Defne Tacı|Corona de laurel|Coroa de louros|تاج الغار|Mahkota Laurel|लॉरेल ताज|Couronne de lauriers|Lorbeerkrone|월계관|月桂冠|桂冠
+Uchburchak‖Triangle|Треугольник|Üçgen|Triángulo|Triângulo|المثلث|Segitiga|त्रिकोण|Triangle|Dreieck|삼각형|三角形|三角形
+Alanga‖Flame|Пламя|Alev|Llama|Chama|اللهب|Api|ज्वाला|Flamme|Flamme|불꽃|炎|火焰
+Soyali jangchi‖Shadow Warrior|Воин теней|Gölge Savaşçı|Guerrero de las sombras|Guerreiro das sombras|محارب الظل|Prajurit Bayangan|छाया योद्धा|Guerrier de l'ombre|Schattenkrieger|그림자 전사|影の戦士|暗影战士
+Gul‖Flower|Цветок|Çiçek|Flor|Flor|الزهرة|Bunga|फूल|Fleur|Blume|꽃|花|花朵
+Qirol toji‖King's Crown|Корона короля|Kralın Tacı|Corona del rey|Coroa do rei|تاج الملك|Mahkota Raja|राजा का ताज|Couronne du roi|Königskrone|왕관|王の冠|国王王冠
+Oy bo'ri‖Moon Wolf|Лунный волк|Ay Kurdu|Lobo lunar|Lobo da lua|ذئب القمر|Serigala Bulan|चाँद का भेड़िया|Loup lunaire|Mondwolf|달 늑대|月の狼|月狼
+Qizil feniks‖Red Phoenix|Красный феникс|Kırmızı Anka|Fénix rojo|Fênix vermelha|الفينيق الأحمر|Feniks Merah|लाल फ़ीनिक्स|Phénix rouge|Roter Phönix|붉은 불사조|赤いフェニックス|红凤凰
+Soqqa‖Dice|Кости|Zar|Dado|Dado|النرد|Dadu|पासा|Dé|Würfel|주사위|サイコロ|骰子
+O'zga sayyoralik‖Alien|Инопланетянин|Uzaylı|Alienígena|Alienígena|الفضائي|Alien|एलियन|Extraterrestre|Außerirdischer|외계인|宇宙人|外星人
+Oltin dubulg'a‖Golden Helmet|Золотой шлем|Altın Miğfer|Casco dorado|Elmo dourado|الخوذة الذهبية|Helm Emas|सुनहरा हेलमेट|Casque d'or|Goldhelm|황금 투구|黄金の兜|金盔
+Qizil iblis‖Red Devil|Красный дьявол|Kırmızı Şeytan|Diablo rojo|Diabo vermelho|الشيطان الأحمر|Iblis Merah|लाल शैतान|Diable rouge|Roter Teufel|붉은 악마|赤い悪魔|红魔
+Yin-yan‖Yin-Yang|Инь-Ян|Yin-Yang|Yin-Yang|Yin-Yang|يين يانغ|Yin-Yang|यिन-यांग|Yin-Yang|Yin und Yang|음양|陰陽|阴阳
+Zumrad toj‖Emerald Crown|Изумрудная корона|Zümrüt Taç|Corona esmeralda|Coroa esmeralda|التاج الزمردي|Mahkota Zamrud|पन्ना ताज|Couronne émeraude|Smaragdkrone|에메랄드 왕관|エメラルドの王冠|翡翠王冠
+Ko'k bo'ri‖Blue Wolf|Синий волк|Mavi Kurt|Lobo azul|Lobo azul|الذئب الأزرق|Serigala Biru|नीला भेड़िया|Loup bleu|Blauer Wolf|푸른 늑대|青い狼|蓝狼
+Qizil ajdar‖Red Dragon|Красный дракон|Kırmızı Ejderha|Dragón rojo|Dragão vermelho|التنين الأحمر|Naga Merah|लाल ड्रैगन|Dragon rouge|Roter Drache|붉은 용|赤いドラゴン|红龙
+Oltin yulduz‖Golden Star|Золотая звезда|Altın Yıldız|Estrella dorada|Estrela dourada|النجمة الذهبية|Bintang Emas|सुनहरा सितारा|Étoile d'or|Goldener Stern|황금 별|金の星|金星
+Binafsha gavhar‖Purple Gem|Фиолетовый самоцвет|Mor Mücevher|Gema morada|Gema roxa|الجوهرة البنفسجية|Permata Ungu|बैंगनी रत्न|Gemme violette|Lila Edelstein|보라색 보석|紫の宝石|紫宝石
+Qanotli toj‖Winged Crown|Крылатая корона|Kanatlı Taç|Corona alada|Coroa alada|التاج المجنح|Mahkota Bersayap|पंखों वाला ताज|Couronne ailée|Geflügelte Krone|날개 왕관|翼の王冠|有翼王冠
+Sher toji‖Lion Crown|Корона льва|Aslan Tacı|Corona de león|Coroa do leão|تاج الأسد|Mahkota Singa|शेर का ताज|Couronne du lion|Löwenkrone|사자 왕관|ライオンの王冠|狮子王冠
+Pika toji‖Spade Crown|Корона пик|Maça Tacı|Corona de picas|Coroa de espadas|تاج البستوني|Mahkota Sekop|हुकुम ताज|Couronne de pique|Pik-Krone|스페이드 왕관|スペードの王冠|黑桃王冠
+Ko'k qanotlar‖Blue Wings|Синие крылья|Mavi Kanatlar|Alas azules|Asas azuis|الأجنحة الزرقاء|Sayap Biru|नीले पंख|Ailes bleues|Blaue Flügel|푸른 날개|青い翼|蓝色翅膀
+Laurli 8-shar‖Laurel 8-Ball|Лавровый 8-шар|Defneli 8 Numara|8 con laurel|Bola 8 com louros|الكرة 8 مع الغار|Bola 8 Laurel|लॉरेल 8-बॉल|Bille 8 aux lauriers|Lorbeer-8-Ball|월계수 8볼|月桂冠の8ボール|桂冠8号球
+Qanotli yurak‖Winged Heart|Крылатое сердце|Kanatlı Kalp|Corazón alado|Coração alado|القلب المجنح|Hati Bersayap|पंखों वाला दिल|Cœur ailé|Geflügeltes Herz|날개 달린 하트|翼のハート|有翼之心
+Yashil ajdar‖Green Dragon|Зелёный дракон|Yeşil Ejderha|Dragón verde|Dragão verde|التنين الأخضر|Naga Hijau|हरा ड्रैगन|Dragon vert|Grüner Drache|초록 용|緑のドラゴン|绿龙
+Chempion kubogi‖Champion's Cup|Кубок чемпиона|Şampiyon Kupası|Copa del campeón|Taça do campeão|كأس البطل|Piala Juara|चैंपियन कप|Coupe du champion|Meisterpokal|챔피언 컵|チャンピオンカップ|冠军奖杯
+To'liq ekran‖Fullscreen|Во весь экран|Tam ekran|Pantalla completa|Tela cheia|ملء الشاشة|Layar penuh|फ़ुलस्क्रीन|Plein écran|Vollbild|전체 화면|全画面|全屏
+Chat‖Chat|Чат|Sohbet|Chat|Chat|الدردشة|Obrolan|चैट|Chat|Chat|채팅|チャット|聊天
+Karnay‖Speaker|Динамик|Hoparlör|Altavoz|Alto-falante|مكبر الصوت|Pengeras suara|स्पीकर|Haut-parleur|Lautsprecher|스피커|スピーカー|扬声器
+Kattalashtirish‖Zoom in|Приблизить|Yakınlaştır|Acercar|Aumentar zoom|تكبير|Perbesar|ज़ूम इन|Zoom avant|Vergrößern|확대|拡大|放大
+Kichraytirish‖Zoom out|Отдалить|Uzaklaştır|Alejar|Diminuir zoom|تصغير|Perkecil|ज़ूम आउट|Zoom arrière|Verkleinern|축소|縮小|缩小
+Pass‖Pass|Пасс|Pass|Pase|Passe|الباس|Pass|पास|Pass|Pass|패스|パス|通行证
+Qo'rqinchli kiy + VIP stol + ramka‖Horror cue + VIP table + frame|Жуткий кий + VIP-стол + рамка|Korku istakası + VIP masa + çerçeve|Taco de terror + mesa VIP + marco|Taco de terror + mesa VIP + moldura|عصا الرعب + طاولة VIP + إطار|Stik horor + meja VIP + bingkai|हॉरर क्यू + VIP टेबल + फ़्रेम|Queue d'horreur + table VIP + cadre|Horror-Queue + VIP-Tisch + Rahmen|공포 큐 + VIP 테이블 + 프레임|ホラーキュー + VIPテーブル + フレーム|恐怖球杆 + VIP球桌 + 头像框
+Qo'rqinchli VIP kiy + ramka‖Horror VIP cue + frame|Жуткий VIP-кий + рамка|Korku VIP istakası + çerçeve|Taco VIP de terror + marco|Taco VIP de terror + moldura|عصا رعب VIP + إطار|Stik VIP horor + bingkai|हॉरर VIP क्यू + फ़्रेम|Queue VIP d'horreur + cadre|Horror-VIP-Queue + Rahmen|공포 VIP 큐 + 프레임|ホラーVIPキュー + フレーム|恐怖VIP球杆 + 头像框
+Xush kelibsiz!‖Welcome!|Добро пожаловать!|Hoş geldin!|¡Bienvenido!|Bem-vindo!|أهلًا بك!|Selamat datang!|स्वागत है!|Bienvenue !|Willkommen!|환영합니다!|ようこそ！|欢迎！
+Billiard 8 ga xush kelibsiz! Har kuni bepul sovg'alar, g'ildirak va qutilar sizni kutmoqda. Yangiliklar shu yerga keladi.‖Welcome to Billiard 8! Free gifts, the wheel and boxes are waiting for you every day. News will arrive here.|Добро пожаловать в Billiard 8! Каждый день вас ждут бесплатные подарки, колесо и коробки. Новости будут приходить сюда.|Billiard 8'e hoş geldin! Her gün ücretsiz hediyeler, çark ve kutular seni bekliyor. Haberler buraya gelecek.|¡Bienvenido a Billiard 8! Cada día te esperan regalos gratis, la ruleta y cajas. Las novedades llegarán aquí.|Bem-vindo ao Billiard 8! Todos os dias presentes grátis, a roleta e caixas esperam por você. As novidades chegarão aqui.|أهلًا بك في Billiard 8! هدايا مجانية والعجلة والصناديق في انتظارك كل يوم. ستصلك الأخبار هنا.|Selamat datang di Billiard 8! Hadiah gratis, roda, dan kotak menantimu setiap hari. Kabar terbaru akan muncul di sini.|Billiard 8 में आपका स्वागत है! हर दिन मुफ़्त उपहार, पहिया और बॉक्स आपका इंतज़ार कर रहे हैं। ख़बरें यहीं आएँगी।|Bienvenue dans Billiard 8 ! Chaque jour, des cadeaux gratuits, la roue et des boîtes vous attendent. Les actualités arriveront ici.|Willkommen bei Billiard 8! Jeden Tag warten kostenlose Geschenke, das Glücksrad und Boxen auf dich. Neuigkeiten erscheinen hier.|Billiard 8에 오신 것을 환영합니다! 매일 무료 선물과 룰렛, 상자가 기다리고 있어요. 새로운 소식은 여기에 올라옵니다.|Billiard 8へようこそ！毎日、無料ギフトやルーレット、ボックスがあなたを待っています。お知らせはここに届きます。|欢迎来到Billiard 8！每天都有免费礼物、转盘和盒子等着你。最新消息会在这里发布。
+60 o'yinchi, 6 raund. G'olib kubok va katta sovrin oladi. Qatnashing!‖60 players, 6 rounds. The winner gets the trophy and a big prize. Join in!|60 игроков, 6 раундов. Победитель получает кубок и большой приз. Участвуйте!|60 oyuncu, 6 tur. Kazanan kupayı ve büyük ödülü alır. Katıl!|60 jugadores, 6 rondas. El ganador se lleva la copa y un gran premio. ¡Participa!|60 jogadores, 6 rodadas. O vencedor leva a taça e um grande prêmio. Participe!|60 لاعبًا و6 جولات. يحصل الفائز على الكأس وجائزة كبيرة. شارك الآن!|60 pemain, 6 babak. Pemenang mendapat piala dan hadiah besar. Ikuti sekarang!|60 खिलाड़ी, 6 राउंड। विजेता को कप और बड़ा इनाम मिलता है। हिस्सा लें!|60 joueurs, 6 tours. Le vainqueur remporte la coupe et un gros prix. Participez !|60 Spieler, 6 Runden. Der Sieger erhält den Pokal und einen großen Preis. Mach mit!|60명, 6라운드. 우승자는 트로피와 큰 상금을 받습니다. 지금 참가하세요!|60人・6ラウンド。優勝者にはトロフィーと大きな賞金が贈られます。ぜひ参加を！|60名玩家，共6轮。冠军将获得奖杯和丰厚奖金。快来参加吧！
+Yangi stollar‖New tables|Новые столы|Yeni masalar|Mesas nuevas|Mesas novas|طاولات جديدة|Meja baru|नए टेबल|Nouvelles tables|Neue Tische|새 테이블|新しいテーブル|全新球桌
+Barcha 30 shahar va do'kondagi stollar yangi, hashamatli ramka bilan. Har bir shaharning o'z rangi va naqshi bor!‖All 30 city tables and the tables in the shop are new, with a luxurious frame. Every city has its own colour and pattern!|Все 30 городских столов и столы в магазине обновлены и получили роскошную раму. У каждого города свой цвет и узор!|Tüm 30 şehir masası ve mağazadaki masalar yeni, gösterişli çerçeveli. Her şehrin kendine özgü rengi ve deseni var!|Las 30 mesas de ciudad y las de la tienda son nuevas, con un marco lujoso. ¡Cada ciudad tiene su propio color y diseño!|As 30 mesas das cidades e as da loja são novas, com moldura luxuosa. Cada cidade tem sua própria cor e padrão!|جميع طاولات المدن الثلاثين وطاولات المتجر جديدة بإطار فاخر. ولكل مدينة لونها ونقشها الخاص!|Semua 30 meja kota dan meja di toko kini baru, dengan bingkai mewah. Setiap kota punya warna dan motifnya sendiri!|सभी 30 शहरों के टेबल और दुकान के टेबल नए हैं, शानदार फ़्रेम के साथ। हर शहर का अपना रंग और डिज़ाइन है!|Les 30 tables de villes et celles de la boutique sont neuves, avec un cadre luxueux. Chaque ville a sa couleur et son motif !|Alle 30 Stadttische und die Tische im Shop sind neu und haben einen edlen Rahmen. Jede Stadt hat ihre eigene Farbe und ihr eigenes Muster!|30개 도시 테이블과 상점 테이블이 모두 새로워졌고 고급스러운 프레임이 달렸습니다. 도시마다 고유한 색상과 무늬가 있습니다!|30都市のテーブルとショップのテーブルがすべて新しくなり、豪華なフレーム付きになりました。都市ごとに色と模様が違います！|30个城市的球桌和商店里的球桌全部焕然一新，配有华丽的边框。每个城市都有自己的颜色和图案！
+Shaharlar‖Cities|Города|Şehirler|Ciudades|Cidades|المدن|Kota|शहर|Villes|Städte|도시|都市|城市
+{0} ta o'yinda g'alaba qozoning‖Win {0} games|Выиграйте {0} игр|{0} oyun kazan|Gana {0} partidas|Vença {0} partidas|اربح {0} مباريات|Menangkan {0} permainan|{0} गेम जीतें|Gagnez {0} parties|Gewinne {0} Spiele|{0}경기에서 승리하기|{0}試合に勝利する|赢得{0}场比赛
+Muz saltanati‖Ice Kingdom|Ледяное королевство|Buz Krallığı|Reino de Hielo|Reino de Gelo|مملكة الجليد|Kerajaan Es|बर्फ़ का साम्राज्य|Royaume de Glace|Eisreich|얼음 왕국|氷の王国|冰雪王国
+Sevgi bog'i‖Garden of Love|Сад любви|Aşk Bahçesi|Jardín del Amor|Jardim do Amor|حديقة الحب|Taman Cinta|प्रेम का बाग़|Jardin de l'Amour|Garten der Liebe|사랑의 정원|愛の庭|爱之花园
+Bahor uyg'onishi‖Spring Awakening|Пробуждение весны|Baharın Uyanışı|Despertar de la primavera|Despertar da primavera|صحوة الربيع|Kebangkitan Musim Semi|वसंत का जागरण|Éveil du printemps|Frühlingserwachen|봄의 깨어남|春の目覚め|春之苏醒
+Oltin vodiy‖Golden Valley|Золотая долина|Altın Vadi|Valle Dorado|Vale Dourado|الوادي الذهبي|Lembah Emas|सुनहरी घाटी|Vallée d'Or|Goldenes Tal|황금 계곡|黄金の谷|金色山谷
+Yutuq ochildi · +{0} 🪙‖Achievement unlocked · +{0} 🪙|Достижение получено · +{0} 🪙|Başarı açıldı · +{0} 🪙|Logro desbloqueado · +{0} 🪙|Conquista desbloqueada · +{0} 🪙|تم فتح إنجاز · +{0} 🪙|Pencapaian terbuka · +{0} 🪙|उपलब्धि अनलॉक हुई · +{0} 🪙|Succès débloqué · +{0} 🪙|Erfolg freigeschaltet · +{0} 🪙|업적 달성 · +{0} 🪙|実績を解除 · +{0} 🪙|成就已解锁 · +{0} 🪙
+Yangi medal · +{0} 🪙‖New medal · +{0} 🪙|Новая медаль · +{0} 🪙|Yeni madalya · +{0} 🪙|Nueva medalla · +{0} 🪙|Nova medalha · +{0} 🪙|ميدالية جديدة · +{0} 🪙|Medali baru · +{0} 🪙|नया पदक · +{0} 🪙|Nouvelle médaille · +{0} 🪙|Neue Medaille · +{0} 🪙|새 메달 · +{0} 🪙|新しいメダル · +{0} 🪙|新勋章 · +{0} 🪙
+Xato‖Error|Ошибка|Hata|Error|Erro|خطأ|Kesalahan|त्रुटि|Erreur|Fehler|오류|エラー|错误
