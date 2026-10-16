@@ -297,6 +297,18 @@ function readBody(req, limit = 64 * 1024) {
   });
 }
 async function jsonBody(req) { const b = await readBody(req); try { return JSON.parse(b.toString("utf8") || "{}"); } catch (e) { return {}; } }
+const STRIPE_LOCALES = new Set(["en", "ru", "tr", "es", "pt", "fr", "de", "id", "ko", "ja", "zh"]);   // game languages Stripe Checkout also has
+// optional per-language copies of an announcement ({en: {title, text, btn}, ru: {...}, ...}) so the Inbox can show it fully in the player's language
+const NEWS_LANGS = ["en", "ru", "tr", "es", "pt", "ar", "id", "hi", "fr", "de", "ko", "ja", "zh"];
+function cleanNewsI18n(src) {
+  const out = {};
+  if (src && typeof src === "object") for (const l of NEWS_LANGS) {
+    const v = src[l]; if (!v || typeof v !== "object") continue;
+    const title = String(v.title || "").slice(0, 80), text = String(v.text || "").slice(0, 600), btn = String(v.btn || "").slice(0, 24);
+    if (title || text || btn) out[l] = {title, text, btn};
+  }
+  return Object.keys(out).length ? out : undefined;
+}
 // ---------------------------------------------------------------- sign-in with Google / Facebook (tokens are always verified on the server)
 async function verifyProvider(provider, token) {
   token = String(token || "").slice(0, 4096);
@@ -378,13 +390,13 @@ const routes = {
     }
     const now = Date.now(); return {news: db.meta.news.filter(n => !n.until || n.until > now).slice(-30).reverse()};
   },
-  "GET /admin/news": () => [200, {__html: `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Billiard 8 yangiliklar</title><style>body{font:16px system-ui;background:#0b1226;color:#e8eef7;max-width:560px;margin:20px auto;padding:0 14px}input,textarea,select,button{width:100%;box-sizing:border-box;margin:6px 0;padding:12px;border-radius:10px;border:1px solid #3b4a74;background:#141d38;color:#fff;font:inherit}button{background:#1f9d4a;border:0;font-weight:700}small{opacity:.7}</style><h2>Yangi e'lon qo'yish</h2><input id=k type=password placeholder="Admin kalit (ADMIN_KEY)"><input id=t placeholder="Sarlavha"><textarea id=x rows=4 placeholder="Matn"></textarea><input id=b placeholder="Tugma nomi (masalan: Hozir)"><select id=g><option value="">Tugma yo'q</option><option value=eventsScr>Tadbirlar</option><option value=tourScr>Turnirlar</option><option value=cities>Shaharlar</option><option value=rewards>Sovg'alar</option><option value=clubsScr>Klublar</option><option value=shop>Do'kon</option><option value=mini>Mini o'yinlar</option></select><input id=u placeholder="Yoki havola (https://...)"><select id=a><option value="">Rasm: oddiy</option><option value=0>Showdown</option><option value=1>Jahon kubogi</option><option value=2>Qirib yuting</option><option value=3>Klublar</option><option value=4>Halloween</option></select><input id=d type=number placeholder="Necha kun ko'rinsin (bo'sh = doim)"><button onclick=go()>E'lon qilish</button><p id=m></p><script>async function go(){const r=await fetch('/api/news/post',{method:'POST',headers:{'x-admin-key':k.value,'content-type':'application/json'},body:JSON.stringify({title:t.value,text:x.value,btn:b.value,go:g.value,url:u.value,art:a.value===''?null:+a.value,days:+d.value||0})});m.textContent=r.ok?"Tayyor! O'yinchilarda 5 daqiqa ichida chiqadi.":"Xato: "+r.status}</script>`}],
-  async "POST /api/news/post"(req) {   // curl -X POST $SERVER/api/news/post -H "x-admin-key: $ADMIN_KEY" -d '{"title":"..","text":"..","go":"eventsScr","btn":"Go now","days":7}'
+  "GET /admin/news": () => [200, {__html: `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Billiard 8 yangiliklar</title><style>body{font:16px system-ui;background:#0b1226;color:#e8eef7;max-width:560px;margin:20px auto;padding:0 14px}input,textarea,select,button{width:100%;box-sizing:border-box;margin:6px 0;padding:12px;border-radius:10px;border:1px solid #3b4a74;background:#141d38;color:#fff;font:inherit}button{background:#1f9d4a;border:0;font-weight:700}small{opacity:.7}</style><h2>Yangi e'lon qo'yish</h2><input id=k type=password placeholder="Admin kalit (ADMIN_KEY)"><input id=t placeholder="Sarlavha"><textarea id=x rows=4 placeholder="Matn"></textarea><input id=b placeholder="Tugma nomi (masalan: Hozir)"><input id=et placeholder="English: sarlavha (ixtiyoriy, boshqa tillar uchun ham shu chiqadi)"><textarea id=ex rows=3 placeholder="English: matn (ixtiyoriy)"></textarea><input id=eb placeholder="English: tugma nomi (ixtiyoriy)"><select id=g><option value="">Tugma yo'q</option><option value=eventsScr>Tadbirlar</option><option value=tourScr>Turnirlar</option><option value=cities>Shaharlar</option><option value=rewards>Sovg'alar</option><option value=clubsScr>Klublar</option><option value=shop>Do'kon</option><option value=mini>Mini o'yinlar</option></select><input id=u placeholder="Yoki havola (https://...)"><select id=a><option value="">Rasm: oddiy</option><option value=0>Showdown</option><option value=1>Jahon kubogi</option><option value=2>Qirib yuting</option><option value=3>Klublar</option><option value=4>Halloween</option></select><input id=d type=number placeholder="Necha kun ko'rinsin (bo'sh = doim)"><button onclick=go()>E'lon qilish</button><p id=m></p><script>async function go(){const r=await fetch('/api/news/post',{method:'POST',headers:{'x-admin-key':k.value,'content-type':'application/json'},body:JSON.stringify({title:t.value,text:x.value,btn:b.value,go:g.value,url:u.value,art:a.value===''?null:+a.value,days:+d.value||0,i18n:(et.value||ex.value||eb.value)?{en:{title:et.value,text:ex.value,btn:eb.value}}:undefined})});m.textContent=r.ok?"Tayyor! O'yinchilarda 5 daqiqa ichida chiqadi.":"Xato: "+r.status}</script>`}],
+  async "POST /api/news/post"(req) {   // curl -X POST $SERVER/api/news/post -H "x-admin-key: $ADMIN_KEY" -d '{"title":"..","text":"..","go":"eventsScr","btn":"..","days":7,"i18n":{"en":{"title":"..","text":"..","btn":"Go now"}}}'
     if (!ADMIN_KEY || req.headers["x-admin-key"] !== ADMIN_KEY) return [403, {error: "forbidden"}];
     const b = await jsonBody(req), clip = (v, n) => String(v || "").slice(0, n);
     if (!clip(b.title, 80) || !clip(b.text, 600)) return [400, {error: "title_text_required"}];
     db.meta = db.meta || {}; const list = db.meta.news = db.meta.news || [];
-    const item = {id: "n" + Date.now().toString(36), title: clip(b.title, 80), text: clip(b.text, 600), btn: clip(b.btn, 24), go: /^[a-zA-Z0-9]{1,24}$/.test(b.go || "") ? b.go : "", url: /^https:\/\//.test(b.url || "") ? clip(b.url, 300) : "", art: /^[0-9]$/.test(String(b.art)) ? +b.art : null, at: Date.now(), until: b.days > 0 ? Date.now() + Math.min(365, +b.days) * 864e5 : 0};
+    const item = {id: "n" + Date.now().toString(36), title: clip(b.title, 80), text: clip(b.text, 600), btn: clip(b.btn, 24), go: /^[a-zA-Z0-9]{1,24}$/.test(b.go || "") ? b.go : "", url: /^https:\/\//.test(b.url || "") ? clip(b.url, 300) : "", art: /^[0-9]$/.test(String(b.art)) ? +b.art : null, i18n: cleanNewsI18n(b.i18n), at: Date.now(), until: b.days > 0 ? Date.now() + Math.min(365, +b.days) * 864e5 : 0};
     list.push(item); if (list.length > 60) list.splice(0, list.length - 60); markDirty(); return {ok: true, item};
   },
   async "POST /api/news/delete"(req) {
@@ -685,6 +697,7 @@ const routes = {
     if (!STRIPE_KEY) return [503, {error: "payments_not_configured"}];
     const form = new URLSearchParams({
       mode: "payment", success_url: `${APP_URL}/?paid=1`, cancel_url: `${APP_URL}/?paid=0`,
+      locale: STRIPE_LOCALES.has(b.lang) ? b.lang : "auto",   // Stripe's own page follows the language chosen in the game (it has no Arabic / Hindi / Uzbek: those stay on the browser's language)
       client_reference_id: u.id, "metadata[userId]": u.id, "metadata[sku]": b.sku,
       "line_items[0][quantity]": "1", "line_items[0][price_data][currency]": "usd",
       "line_items[0][price_data][unit_amount]": String(Math.round(sku.usd * 100)),
