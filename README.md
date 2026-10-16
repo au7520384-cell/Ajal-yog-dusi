@@ -77,3 +77,8 @@ Prices live in `SKUS` in `server/server.js` (the server is the source of truth).
 - **Shoot:** pull the power bar down and release, or hold **Space**.
 - **Spin:** tap the white ball in the top-right corner.
 
+### Card prices of in-game items (`server/prices.json`)
+Every cue / avatar / frame / table / sticker pack that is sold in the game for cash or gems can also be bought with a card. The dollar price comes from
+one rule (cash 20 per $, gems 200 per $) and is generated from the game's own catalog: after changing any price or cue tier in `index.html` run
+`node tools/build_prices.js` (needs playwright) and commit the new `server/prices.json`. The server charges exactly these amounts (the client price is never trusted).
+Cue strength follows price: cash cues sit on 8 dollar steps ($1.99 ... $74.99) and the four stat bars come from the step; coin cues come in 9 steps of 5 cues.

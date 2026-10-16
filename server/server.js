@@ -150,6 +150,16 @@ for (const [id, usd] of Object.entries(FRAME_USD)) SKUS["frame_" + id] = {items:
 // Premium cues (real-money option; also sold in-game for cash or gems)
 const CUE_USD = {pc_brz: 3.99, pc_slv: 5.99, pc_gld: 8.99, pc_rgd: 10.99, pc_plt: 12.99, pc_sap: 15.99, pc_emr: 17.99, pc_rby: 19.99, pc_ame: 21.99, pc_dia: 29.99, pc_bdi: 36.99, pc_opl: 44.99};
 for (const [id, usd] of Object.entries(CUE_USD)) SKUS["cue_" + id] = {items: {cues: [id]}, vip: Math.round(usd * 65), usd, name: "Premium cue " + id.slice(3)};
+// Card prices of everything sold in the game for cash / gems (cues, avatars, frames, tables). Generated from the game's own catalog by
+// `node tools/build_prices.js` (server/prices.json): the client's price is never trusted, Stripe is charged exactly this. It replaces the
+// hand-written CUE_USD above, so cue power / price changes made in index.html only need the script to be re-run.
+let ITEM_PRICES = {};
+try { ITEM_PRICES = JSON.parse(fs.readFileSync(path.join(__dirname, "prices.json"), "utf8")); } catch (e) { console.warn("server/prices.json missing: run `node tools/build_prices.js`"); }
+for (const [sku, usd] of Object.entries(ITEM_PRICES)) {
+  const m = sku.match(/^(cue|av|frame|tbl|stk)_(.+)$/); if (!m || !(usd >= 0.5)) continue;   // Stripe's minimum charge is $0.50
+  const [, kind, id] = m, items = kind === "cue" ? {cues: [id]} : kind === "av" ? {avs: [+id]} : kind === "frame" ? {pframes: [id]} : kind === "stk" ? {stk: [id]} : {tables: [id]};
+  SKUS[sku] = {items, vip: Math.round(usd * 65), usd, name: ({cue: "Cue ", av: "Avatar ", frame: "Frame ", tbl: "Table ", stk: "Sticker pack "})[kind] + id};
+}
 function claimEdition(u, id) {
   const cap = EDITION_CAP[id]; if (!cap) return {serial: 0};
   u.editions = u.editions || {};
