@@ -3461,6 +3461,13 @@ if (G.shot && a.n && b.n) { const oo = G.shot.oo || (G.shot.oo = new Set()); oo.
 if (!G.demo) Snd.clack(rel, x, y);
 if (rel > 9) for (let i = 0; i < Math.min(10, rel | 0); i++) G.sparks.push({x, y, vx: rnd(-3, 3), vy: rnd(-3, 3), life: rnd(8, 16)});
 }
+let dustPic = null;
+function dustPuffPic() {   // the soft round puff, painted once (was a new gradient per particle per frame: a break could mean 90 of them)
+if (dustPic) return dustPic;
+const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+gr.addColorStop(0, "rgba(205,225,255,1)"); gr.addColorStop(1, "rgba(205,225,255,0)"); g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+return dustPic = c;
+}
 function dustPuff(G, x, y, n, sz) {   // chalk / cloth dust: soft translucent puffs that drift and fade
 const d = G.dust = G.dust || []; for (let i = 0; i < n && d.length < 90; i++) d.push({x, y, vx: rnd(-0.6, 0.6), vy: rnd(-0.8, 0.2), r: (2 + Math.random() * 3) * sz, life: 40 + Math.random() * 30, l0: 70});
 }
@@ -4312,8 +4319,9 @@ function ballCmp(b, spr) {   // the sprite with the lighting on it, ready to be 
 const F = ballFx(), e = b._sp; let c = b._cmp;
 if (!c || c.k !== F.k || c.ver !== e.ver) {
 if (!c) c = b._cmp = {cv: document.createElement("canvas")};
-c.cv.width = c.cv.height = F.N; c.k = F.k; c.ver = e.ver;
-const g = c.cv.getContext("2d"), m = F.N / F.L; g.setTransform(m, 0, 0, m, F.N / 2, F.N / 2);
+const g = c.cv.getContext("2d"), m = F.N / F.L;
+if (c.cv.width !== F.N) c.cv.width = c.cv.height = F.N; else { g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, F.N, F.N); }
+c.k = F.k; c.ver = e.ver; g.setTransform(m, 0, 0, m, F.N / 2, F.N / 2);
 g.save(); g.beginPath(); g.arc(0, 0, R, 0, 7); g.clip(); g.imageSmoothingEnabled = true; g.drawImage(spr, -R - 0.5, -R - 0.5, 2 * R + 1, 2 * R + 1); g.restore();
 g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(F.ov, 0, 0);
 }
@@ -7372,15 +7380,25 @@ const t = performance.now() - b.t0; if (t > b.dur) { G.banner = null; return; }
 const k = Math.min(1, t / 260);
 const sc = t < 260 ? 0.3 + 0.9 * (1 - Math.pow(1 - k, 3)) - 0.2 * Math.sin(k * Math.PI) : 1 + (t - 260) / b.dur * 0.06;
 const a = t > b.dur - 300 ? (b.dur - t) / 300 : 1;
-ctx.save(); ctx.globalAlpha = a; ctx.translate(FX + FW / 2, FY + FH / 2 - 20); ctx.scale(sc, sc);
+// the lettering (with its glow) is painted once into a picture and then only scaled / faded: a 24 px glow on 64 px text every frame was heavy on phones
+const kk = Math.min(3, scale * dpr * 1.25), key = b.text + "|" + b.color + "|" + (b.sub || "") + "|" + kk.toFixed(2), BW = 1100, BH = 200;
+if (!b._pic || b._pic.key !== key) {
+const oc = document.createElement("canvas"); oc.width = Math.ceil(BW * kk); oc.height = Math.ceil(BH * kk);
+const saved = ctx; ctx = oc.getContext("2d"); ctx.setTransform(kk, 0, 0, kk, oc.width / 2, oc.height / 2);
+try {
 ctx.font = `64px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.lineJoin = "round";
 ctx.lineWidth = 12; ctx.strokeStyle = "rgba(0,0,0,.75)"; ctx.strokeText(b.text, 0, 0, FW - 40);
 const g = ctx.createLinearGradient(0, -30, 0, 30); g.addColorStop(0, "#fff"); g.addColorStop(1, b.color);
-ctx.fillStyle = g; ctx.shadowColor = b.color; ctx.shadowBlur = 24; ctx.fillText(b.text, 0, 0, FW - 40);
+ctx.fillStyle = g; ctx.shadowColor = b.color; ctx.shadowBlur = 24 * kk; ctx.fillText(b.text, 0, 0, FW - 40);
 if (b.sub) {
 ctx.shadowBlur = 0; ctx.font = `24px ${FONT}`; ctx.lineWidth = 6; ctx.strokeText(b.sub, 0, 52, FW - 60);
 ctx.fillStyle = "#fff"; ctx.fillText(b.sub, 0, 52, FW - 60);
 }
+} finally { ctx = saved; }
+b._pic = {cv: oc, key};
+}
+ctx.save(); ctx.globalAlpha = a; ctx.translate(FX + FW / 2, FY + FH / 2 - 20); ctx.scale(sc, sc);
+ctx.drawImage(b._pic.cv, -BW / 2, -BH / 2, BW, BH);
 ctx.restore();
 }
 function drawPill(G) {
@@ -7541,7 +7559,7 @@ if (f.z < -260) { f.z = -260; f.vz = -f.vz * 0.5; f.bn++; f.vx *= 0.85; f.vy *= 
 const k = Math.max(0.45, 1 + f.z / 700), a = Math.min(1, (170 - f.t) / 40);
 ctx.globalAlpha = 0.35 * a; ctx.fillStyle = "#000"; ctx.beginPath(); ctx.ellipse(f.x + 4, f.y + 6 - f.z * 0.18, R * k, R * k * 0.7, 0, 0, 7); ctx.fill();
 ctx.globalAlpha = a; drawBall(f.b, f.x, f.y - f.z * 0.18, k); ctx.globalAlpha = 1; } }
-if (G.dust && G.dust.length) { G.dust = G.dust.filter(d => (d.life -= FXS) > 0); for (const d of G.dust) { d.x += d.vx * FXS; d.y += d.vy * FXS; d.vx *= Math.pow(0.97, FXS); d.vy *= Math.pow(0.97, FXS); d.r += 0.12 * FXS; const k = d.life / d.l0, g = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.r); g.addColorStop(0, `rgba(205,225,255,${0.34 * k})`); g.addColorStop(1, "rgba(205,225,255,0)"); ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, 7); ctx.fill(); } ctx.fillStyle = "#fff"; }
+if (G.dust && G.dust.length) { G.dust = G.dust.filter(d => (d.life -= FXS) > 0); for (const d of G.dust) { d.x += d.vx * FXS; d.y += d.vy * FXS; d.vx *= Math.pow(0.97, FXS); d.vy *= Math.pow(0.97, FXS); d.r += 0.12 * FXS; const k = d.life / d.l0; ctx.globalAlpha = 0.34 * k; ctx.drawImage(dustPuffPic(), d.x - d.r, d.y - d.r, 2 * d.r, 2 * d.r); } ctx.globalAlpha = 1; ctx.fillStyle = "#fff"; }
 ctx.globalAlpha = 1;
 drawFx(G);
 ctx.restore();
