@@ -11032,9 +11032,15 @@ $("vcBen").onclick = () => openModal({icon: "♛", title: T("VIP imtiyozlari"), 
 }
 document.addEventListener("click", e => { if (e.target.closest("[data-vclub]")) vipClubModal(); });
 const loadScript = src => new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.async = true; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
-async function authLogin(provider, token) {
+async function authLogin(provider, token, mode, detach) {
 try {
-const r = await Net.api("/api/auth/login", {provider, token, name: profile.name, avatar: profile.avatar, country: profile.country});
+if (mode === "switch") { try { cloudAt = Math.min(cloudAt, (profile.savedAt || 1) - 1); await cloudPush(); } catch (e) {} }   // the account being left is saved to the server first
+const r = await Net.api("/api/auth/login", mode === "switch" ? {provider, token, mode, detach: !!detach, avatar: profile.avatar, country: profile.country} : {provider, token, name: profile.name, avatar: profile.avatar, country: profile.country});
+if (r.sameAcct) return openModal({icon: "↔️", title: T("Alohida hisob"), text: T("Bu hisob hozirgi hisobga ulangan. Uni ajratib, alohida yangi hisob ochaymi? Hozirgi hisob o'zgarmaydi."), buttons: [{label: T("Ha, alohida ochish"), cls: "green", fn: () => authLogin(provider, token, "switch", true)}, {label: T("Bekor qilish"), cls: "gray", fn: () => {}}]});
+if (r.created && mode === "switch") {   // a brand-new separate account: it starts with a fresh game on this phone, the previous account stays on the server
+Net.setAcct({id: r.id, token: r.token, code: r.code}); try { localStorage.removeItem("billiard8v2"); localStorage.removeItem("bilyard8v2"); } catch (e) {}
+store.set("b8guest", 1); Snd.win(); toast("✅", T("Yangi hisob ochildi!"), provider === "google" ? "Google" : "Facebook"); return setTimeout(() => location.reload(), 1200);
+}
 const done = () => { store.set("b8guest", 1); profile.prov = {...(profile.prov || {}), [provider]: 1}; save(); };
 if (r.existing) {   // this Google/Facebook account already has a game on the server
 const load = () => { Net.setAcct({id: r.id, token: r.token, code: r.code}); if (r.save) { r.save.savedAt = Math.max(r.save.savedAt || 0, r.savedAt || 0); applySave(r.save); } store.set("b8guest", 1); Snd.win(); toast("✅", T("Hisob tiklandi!"), r.code); setTimeout(() => location.reload(), 1200); };
@@ -11045,15 +11051,15 @@ if (r.id !== (Net.acct && Net.acct.id)) Net.setAcct({id: r.id, token: r.token, c
 done(); $("modal").classList.remove("on"); Snd.win(); toast("✅", T("Hisob ulandi!"), provider === "google" ? "Google" : "Facebook"); Net.sync();
 } catch (e) { toast("⚠️", e.message === "bad_token" ? T("Kirish tasdiqlanmadi") : errText(e), T("Kirish")); }
 }
-async function loginUI(first, cfg) {
+async function loginUI(first, cfg, mode) {
 if (!cfg) { try { cfg = await Net.api("/api/auth/config"); } catch (e) { cfg = {google: "", facebook: ""}; } }
 const g = !!cfg.google, f = !!cfg.facebook;
 openModal({icon: "", title: T("Do'stlar bilan o'ynang!"), text: T("Bepul sovg'alar va mukofotlarni oling!"), extra: `<div class="lgin"><div id="gBtn">${g ? "" : `<button class="btn gray" disabled>Google</button>`}</div>
 <button class="btn lgfb" id="fbBtn" ${f ? "" : "disabled"}><b>f</b> ${T("Facebook bilan kirish")}</button></div>
 <p class="muted" style="margin:8px 0 0;font-size:13px">${!g && !f ? T("Hisob bilan kirish hali sozlanmagan.") : first ? T("Mehmon sifatida o'ynasangiz, o'yin faqat shu qurilmada saqlanadi.") : T("Hisobni ulang: o'yin bulutda saqlanadi.")}</p>`,
 buttons: first ? [{label: T("Mehmon sifatida o'ynash"), cls: "orange", fn: () => store.set("b8guest", 1)}] : [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
-if (g) loadScript("https://accounts.google.com/gsi/client").then(() => { google.accounts.id.initialize({client_id: cfg.google, callback: x => authLogin("google", x.credential)}); google.accounts.id.renderButton($("gBtn"), {theme: "filled_blue", size: "large", text: "signin_with", width: 250}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Google"));
-if (f) $("fbBtn").onclick = () => loadScript("https://connect.facebook.net/en_US/sdk.js").then(() => { FB.init({appId: cfg.facebook, version: "v19.0", cookie: false, xfbml: false}); FB.login(x => { if (x.authResponse) authLogin("facebook", x.authResponse.accessToken); }, {scope: "public_profile"}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Facebook"));
+if (g) loadScript("https://accounts.google.com/gsi/client").then(() => { google.accounts.id.initialize({client_id: cfg.google, callback: x => authLogin("google", x.credential, mode)}); google.accounts.id.renderButton($("gBtn"), {theme: "filled_blue", size: "large", text: "signin_with", width: 250}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Google"));
+if (f) $("fbBtn").onclick = () => loadScript("https://connect.facebook.net/en_US/sdk.js").then(() => { FB.init({appId: cfg.facebook, version: "v19.0", cookie: false, xfbml: false}); FB.login(x => { if (x.authResponse) authLogin("facebook", x.authResponse.accessToken, mode); }, {scope: "public_profile"}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Facebook"));
 }
 function loginFirst() {   // shown once on a fresh install, but only when the server has Google/Facebook sign-in configured
 if (ON_PORTAL || !Net.base || store.get("b8guest") || (profile.prov && Object.keys(profile.prov).length)) return;
@@ -11153,6 +11159,7 @@ ${row("Do'stlar onlayn bo'lganda xabar berish", tg("notifyFr", opt("notifyFr")))
 <div class="setsec">☁️ ${T("Hisob va saqlash")}</div>
 ${row("Progress serverga saqlanadi", `<span class="muted">${Net.acct ? "ID " + esc(Net.acct.code) + (cloudAt ? " · ✅ " + new Date(cloudAt).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}) : "") : T("oflayn")}</span>`)}
 ${row("Hisobni ulash (Google / Facebook)", `<button class="btn blue" id="setLogin" style="padding:6px 14px">🔗 ${T("Ulash")}</button>`)}
+<div class="setrow"><b>${T("Boshqa hisob bilan kirish (alohida o'yin)")}</b><button class="btn orange" id="setSwitch" style="padding:6px 14px">↔ ${T("Kirish")}</button></div>
 ${row("Yangi telefonga o'tish uchun kalit", `<button class="btn orange" id="setKey" style="padding:6px 14px">🔑 ${T("Kalit olish")}</button>`)}
 ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setRecover" style="padding:6px 14px">📲 ${T("Tiklash")}</button>`)}
 <div class="setsec">${T("Boshqa")}</div>
@@ -11170,7 +11177,7 @@ Snd.click(); buildSettings();
 });
 $("setBody").querySelectorAll("[data-s]").forEach(b => b.onclick = () => { setOpt(b.dataset.s, JSON.parse(b.dataset.v)); Snd.click(); buildSettings(); });
 $("setLang").onclick = () => $("langBtn").click();
-$("setLogin").onclick = () => loginUI(false); $("setKey").onclick = recoveryKey; $("setRecover").onclick = recoverAccount;
+$("setLogin").onclick = () => loginUI(false); $("setSwitch").onclick = () => openModal({icon: "↔️", title: T("Boshqa hisob bilan kirish"), text: T("Google yoki Facebook bilan alohida yangi o'yin ochiladi. Hozirgi o'yiningiz serverda saqlanadi va keyin shu hisob bilan qaytib kirsangiz tiklanadi."), buttons: [{label: T("Davom etish"), cls: "green", fn: () => loginUI(false, null, "switch")}, {label: T("Bekor qilish"), cls: "gray", fn: () => {}}]}); $("setKey").onclick = recoveryKey; $("setRecover").onclick = recoverAccount;
 }
 let frOnline = null;
 function checkFriendsOnline() {

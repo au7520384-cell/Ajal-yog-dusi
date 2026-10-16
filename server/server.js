@@ -426,9 +426,12 @@ const routes = {
     if (!provider) return [400, {error: "bad_provider"}];
     const v = await verifyProvider(provider, b.token);
     if (!v) return [401, {error: "bad_token"}];
-    const cur = auth(req), found = Object.values(db.users).find(x => x.auth && x.auth[provider] === v.sub);
-    if (found) return {existing: found.id !== (cur && cur.id), id: found.id, token: found.token, code: found.code, save: found.save || null, savedAt: found.saveAt || 0, name: found.name};
-    if (cur) { cur.auth = {...(cur.auth || {}), [provider]: v.sub}; markDirty(); return {existing: false, linked: true, id: cur.id, token: cur.token, code: cur.code, save: null, savedAt: 0, name: cur.name}; }
+    const cur = auth(req), found = Object.values(db.users).find(x => x.auth && x.auth[provider] === v.sub), sw = b.mode === "switch";   // "switch": this Google / Facebook is its OWN account, never linked to the signed-in one
+    if (found && sw && cur && found.id === cur.id) {
+      if (!b.detach) return {sameAcct: true};   // already linked to this account: the client asks before it is detached and a separate account is made
+      delete cur.auth[provider]; markDirty();
+    } else if (found) return {existing: found.id !== (cur && cur.id), id: found.id, token: found.token, code: found.code, save: found.save || null, savedAt: found.saveAt || 0, name: found.name};
+    if (cur && !sw) { cur.auth = {...(cur.auth || {}), [provider]: v.sub}; markDirty(); return {existing: false, linked: true, id: cur.id, token: cur.token, code: cur.code, save: null, savedAt: 0, name: cur.name}; }
     const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16), token = crypto.randomBytes(24).toString("hex"), code = newCode();
     const u = {id, token, code, name: cleanName(v.name || b.name), avatar: int(b.avatar, 999), frame: 0, level: 1, xp: 0, won: 0, wins: 0, games: 0,
       friends: [], referredBy: null, referrals: [], grants: [], inbox: [], gifted: {}, created: Date.now(), lastSeen: Date.now(),
