@@ -4218,7 +4218,7 @@ vw = rotated ? innerHeight : innerWidth; vh = rotated ? innerWidth : innerHeight
 const uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : 1;
 for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) / uiz <= q.v);
 document.body.style.width = rotated ? vw + "px" : ""; document.body.style.height = rotated ? vh + "px" : "";
-let gq = "high"; try { gq = (profile.set && profile.set.gfx) || "high"; } catch (e) {}   // profile may not exist yet on the very first resize
+let gq = "mid"; try { gq = (profile.set && profile.set.gfx) || "mid"; } catch (e) {}   // profile may not exist yet on the very first resize
 dpr = Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5})[gq] || 2.5);   // Settings → Graphics: Low 1.5 / Medium 2 / High 2.5 (sharper, heavier)
 cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
 scale = Math.min(vw / W, vh / H) * zoom;
@@ -9347,7 +9347,7 @@ setPill("👁 " + T("Jonli tomosha"), 3000);
 function leaveSpectate() { Net.send({t: "unspec"}); toMenu("liveScr"); }
 Net.on("specEnd", m => { const G = game; if (G && G.net && G.net.spec && !G.over) { G.over = true; const w = m.winner === 1 ? 1 : 0; burst(); setBanner(TT("{0} YUTDI!", G.players[w].name.toUpperCase()), "#ffe27a"); setTimeout(() => { if (game === G && mode === "game") leaveSpectate(); }, 4500); } });
 const Voice = (() => {
-let pc = null, mic = null, on = false, muted = false, remoteReady = false, spkOff = false, ice = null, audioEl = null, queued = [], stat = "";
+let pc = null, mic = null, on = false, muted = false, remoteReady = false, spkOff = false, ice = null, audioEl = null, queued = [], stat = "", tries = 0, readyTick = 0;
 const btn = () => $("gVoice"), spk = () => $("gSpk");
 const online = () => { const G = game; return !!(G && G.net && !G.net.spec && !G.over && mode === "game"); };
 const shown = () => { const G = game; return online() || !!(G && !G.net && !G.over && mode === "game" && (G.type === "ai" || G.type === "tour")); };
@@ -9385,10 +9385,15 @@ pc.oniceconnectionstatechange = () => {
 const st = pc && pc.iceConnectionState;
 if (st === "checking") setStat("connecting", "Ulanmoqda…", "Raqib bilan aloqa o'rnatilmoqda");
 else if (st === "connected" || st === "completed") setStat("connected", "Ulandi", "Endi bir-biringizni eshitasiz");
-else if (st === "failed") setStat("failed", "Ulanmadi", hasTurn() ? "Tarmoq to'sdi, qayta urinib ko'ring" : "TURN kerak: mobil internetda ulanish uchun TURN relay sozlanmagan");
+else if (st === "failed") { setStat("failed", "Ulanmadi", hasTurn() ? "Tarmoq to'sdi, qayta urinib ko'ring" : "TURN kerak: mobil internetda ulanish uchun TURN relay sozlanmagan"); retry(); }
 };
 pc.onconnectionstatechange = () => { ui(); if (pc && (pc.connectionState === "failed")) toast("🎤", T("Ovozli aloqa uzildi"), ""); };
 return pc;
+}
+function retry() {   // the call did not connect: the caller (seat 0) builds a fresh connection and offers again, up to 3 times
+if (!on || !game || !game.net || game.net.seat !== 0 || tries >= 3) return;
+tries++; const old = pc; pc = null; stat = ""; try { old && old.close(); } catch (e) {}
+setTimeout(() => { if (on && !pc) negotiate().catch(() => {}); }, 1500);
 }
 async function negotiate() {
 if (!on || !remoteReady || pc || game.net.seat !== 0) return;
@@ -9396,9 +9401,9 @@ await makePC(); const o = await pc.createOffer(); await pc.setLocalDescription(o
 }
 async function onSignal(m) {
 if (!game || !game.net || game.net.spec) return;
-if (m.k === "ready") { remoteReady = true; if (!on) toast("🎤", T("Raqib mikrofonni yoqdi"), T("🎤 tugmasini bosing")); else negotiate(); ui(); }
+if (m.k === "ready") { const first = !remoteReady; remoteReady = true; if (!on) { if (first) toast("🎤", T("Raqib mikrofonni yoqdi"), T("🎤 tugmasini bosing")); } else negotiate(); ui(); }
 else if (m.k === "bye") { hang(false); }
-else if (m.k === "offer" && on) { if (!pc) await makePC(); await pc.setRemoteDescription(m.d); for (const c of queued.splice(0)) pc.addIceCandidate(c).catch(() => {}); const a = await pc.createAnswer(); await pc.setLocalDescription(a); send("answer", {type: a.type, sdp: a.sdp}); }
+else if (m.k === "offer" && on) { if (pc && ["failed", "closed", "disconnected"].includes(pc.connectionState)) { try { pc.close(); } catch (e) {} pc = null; queued = []; } if (!pc) await makePC(); await pc.setRemoteDescription(m.d); for (const c of queued.splice(0)) pc.addIceCandidate(c).catch(() => {}); const a = await pc.createAnswer(); await pc.setLocalDescription(a); send("answer", {type: a.type, sdp: a.sdp}); }
 else if (m.k === "answer" && pc) { await pc.setRemoteDescription(m.d); for (const c of queued.splice(0)) pc.addIceCandidate(c).catch(() => {}); }
 else if (m.k === "ice" && m.d) { if (pc && pc.remoteDescription) pc.addIceCandidate(m.d).catch(() => {}); else queued.push(m.d); }
 }
@@ -9406,7 +9411,7 @@ async function enable() {
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.RTCPeerConnection) return toast("🎤", T("Bu qurilmada ovozli suhbat ishlamaydi"), "");
 try { mic = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}}); }
 catch (e) { return toast("🎤", T("Mikrofonga ruxsat berilmadi"), ""); }
-on = true; muted = false; send("ready"); ui(); negotiate();
+on = true; muted = false; tries = 0; send("ready"); ui(); negotiate();
 }
 function hang(tell = true) {
 if (tell && on) send("bye");
@@ -9423,7 +9428,11 @@ else hang();
 };
 btn().oncontextmenu = e => { e.preventDefault(); hang(); };
 spk().onclick = () => { spkOff = !spkOff; if (audioEl) audioEl.muted = spkOff; ui(); };
-setInterval(() => { if (on && !online()) hang(); else ui(); }, 1000);
+setInterval(() => {
+if (on && !online()) hang(); else ui();
+if (on && online() && (!pc || pc.connectionState !== "connected") && ++readyTick % 4 === 0) send("ready");   // "ready" is sent again while not connected, so one lost message can never leave both phones waiting
+if (audioEl && audioEl.srcObject && audioEl.paused && !spkOff) audioEl.play().catch(() => {});
+}, 1000);
 return {onSignal, hang, ui};
 })();
 Net.on("rtc", m => Voice.onSignal(m));
@@ -11390,7 +11399,7 @@ if (Date.now() - lastBack < 2200) { try { history.back(); } catch (e) {} return;
 lastBack = Date.now(); guard(); toast("↩", T("Chiqish uchun yana bir marta bosing"), "");
 });
 }
-const SET_DEF = { gfx: "high", fps: "90", vib: true, sens: "normal", tapAim: true, fine: true, guideOff: false, tray: true, btnSz: "normal", vol: "mid", power: "left", cheer: "all", allowFriend: true, showOnline: true, notifyFr: true};
+const SET_DEF = { gfx: "mid", fps: "90", vib: true, sens: "normal", tapAim: true, fine: true, guideOff: false, tray: true, btnSz: "normal", vol: "mid", power: "left", cheer: "all", allowFriend: true, showOnline: true, notifyFr: true};
 const opt = k => profile.set && k in profile.set ? profile.set[k] : SET_DEF[k];
 const SENS = {slow: 0.55, normal: 1, fast: 1.6};
 function setOpt(k, v) { profile.set = {...(profile.set || {}), [k]: v}; save(); applySettings(); if (k === "gfx") resize(); if (k === "allowFriend" || k === "showOnline") Net.sync(); }
