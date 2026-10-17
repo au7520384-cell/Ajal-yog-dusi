@@ -1218,6 +1218,15 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 .vipclub{min-width:min(640px,86vw);text-align:left}.vctop{display:flex;justify-content:space-between;font-size:20px}.vcbar{display:flex;align-items:center;gap:10px;margin:6px 0}
 .vcb{position:relative;flex:1;height:30px;background:#0b1020;border:2px solid #2f5ad8;border-radius:8px;overflow:hidden}.vcb i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#2f86f0,#1b4fd0)}.vcb em{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;font-weight:800;color:#fff}
 .vcstrip{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}.vcs{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:8px;background:#1a2340;opacity:.6}.vcs.on{background:linear-gradient(#1f6fe0,#103a8a);opacity:1}.vcs.done{opacity:.9}.vcs small{font-size:11px;font-weight:800;color:#fff;text-align:center}
+#loginSplash{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;overflow:auto;padding:10px;text-align:center;color:#fff;
+background:radial-gradient(ellipse at 50% 28%,#5a1f2a 0,#2a0d16 45%,#0c0408 100%)}
+#loginSplash::before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 22%,rgba(255,200,120,.07) 0 6deg,transparent 6deg 14deg);pointer-events:none}
+#loginSplash .lsBox{position:relative;max-width:440px;width:100%;display:flex;flex-direction:column;align-items:center;gap:8px}
+#loginSplash .lsLogo{font-family:Philosopher,Georgia,serif;font-weight:900;font-style:italic;font-size:clamp(34px,9vh,60px);letter-spacing:2px;line-height:1;background:linear-gradient(#fff6c0,#e8b83a 50%,#7a4a08);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #000) drop-shadow(0 0 14px #ff9d0088)}
+#loginSplash h2{margin:2px 0 0;font-family:var(--fh);font-weight:400;font-size:clamp(20px,5vh,30px);color:#ffe27a;text-shadow:0 2px 0 #000}
+#loginSplash p{margin:0;font-size:clamp(12px,2.6vh,15px);color:#e8e2d6}#loginSplash p.muted{color:#b9b0a4;font-size:12px}
+#loginSplash .lgin{margin:4px 0}
+@media (max-height:460px){#loginSplash .lsBox{gap:4px}#loginSplash .lgin{flex-direction:row;gap:8px;margin:2px 0}#loginSplash .lgfb{min-width:0;font-size:16px}}
 .lgin{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:6px}.lgfb{background:linear-gradient(#2f6fd8,#1b4aa8);color:#fff;font-size:18px;min-width:250px}.lgfb b{font-size:22px;margin-right:6px}
 @media (max-height:460px){.vcstrip .vtb{--s:30px!important}.vcbar .vtb{--s:44px!important}.vipclub{min-width:0}.vipclub>.muted{display:none}.vctop{font-size:15px}.vcbar{margin:2px 0}.vcb{height:24px}.vcs{padding:3px 2px}.vcs small{font-size:9px}.vipclub .btn{padding:4px 12px!important;font-size:14px!important}.vipclub>div:last-child{margin-top:4px!important}}
 .giftgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;min-width:min(520px,84vw)}.gift{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:#10162a;border:2px solid #2c3a60;border-radius:12px;padding:8px 2px;filter:grayscale(1) brightness(.55)}.gift span{font-size:46px;line-height:1}.gift small{font-size:11px;color:#cfd8ee;font-weight:800}.gift.on{filter:none;border-color:#e3aa2f;background:linear-gradient(#1f2f66,#0d1636)}.gift i{position:absolute;top:3px;right:6px;font-style:normal;font-weight:900;color:#ffe27a;font-size:13px}
@@ -11442,10 +11451,31 @@ openModal({icon: "", title: T("Do'stlar bilan o'ynang!"), text: T("Bepul sovg'al
 <button class="btn lgfb" id="fbBtn" ${f ? "" : "disabled"}><b>f</b> ${T("Facebook bilan kirish")}</button></div>
 <p class="muted" style="margin:8px 0 0;font-size:13px">${!g && !f ? T("Hisob bilan kirish hali sozlanmagan.") : first ? T("Mehmon sifatida o'ynasangiz, o'yin faqat shu qurilmada saqlanadi.") : T("Hisobni ulang: o'yin bulutda saqlanadi.")}</p>`,
 buttons: first ? [{label: T("Mehmon sifatida o'ynash"), cls: "orange", fn: () => store.set("b8guest", 1)}] : [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
-if (g) loadScript("https://accounts.google.com/gsi/client").then(() => { google.accounts.id.initialize({client_id: cfg.google, callback: x => authLogin("google", x.credential, mode)}); google.accounts.id.renderButton($("gBtn"), {theme: "filled_blue", size: "large", text: "signin_with", width: 250}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Google"));
-if (f) $("fbBtn").onclick = () => loadScript("https://connect.facebook.net/en_US/sdk.js").then(() => { FB.init({appId: cfg.facebook, version: "v19.0", cookie: false, xfbml: false}); FB.login(x => { if (x.authResponse) authLogin("facebook", x.authResponse.accessToken, mode); }, {scope: "public_profile"}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Facebook"));
+wireLogin(cfg, mode);
+}
+function wireLogin(cfg, mode, onTok) {   // the Google / Facebook buttons (in the sign-in popup and on the full-screen sign-in)
+const tok = onTok || (() => {});
+if (cfg.google) loadScript("https://accounts.google.com/gsi/client").then(() => { google.accounts.id.initialize({client_id: cfg.google, callback: x => { tok(); authLogin("google", x.credential, mode); }}); google.accounts.id.renderButton($("gBtn"), {theme: "filled_blue", size: "large", text: "signin_with", width: 250}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Google"));
+if (cfg.facebook) { $("fbBtn").disabled = false; $("fbBtn").onclick = () => loadScript("https://connect.facebook.net/en_US/sdk.js").then(() => { FB.init({appId: cfg.facebook, version: "v19.0", cookie: false, xfbml: false}); FB.login(x => { if (x.authResponse) { tok(); authLogin("facebook", x.authResponse.accessToken, mode); } }, {scope: "public_profile"}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Facebook")); }
+}
+function loginSplash(n = 0) {   // full-screen sign-in BEFORE the menu on a fresh install (like the big commercial pool games); only when the server offers Google / Facebook
+if (ON_PORTAL || !Net.base || store.get("b8guest") || (profile.prov && Object.keys(profile.prov).length)) return;
+let d = $("loginSplash");
+if (!d) {
+d = document.createElement("div"); d.id = "loginSplash";
+d.innerHTML = `<div class="lsBox"><div class="lsLogo">BILLIARD 8</div><h2>${T("Do'stlar bilan o'ynang!")}</h2><p>${T("Bepul sovg'alar va mukofotlarni oling!")}</p>
+<div class="lgin"><div id="gBtn"></div><button class="btn lgfb" id="fbBtn" disabled><b>f</b> ${T("Facebook bilan kirish")}</button></div>
+<button class="btn orange" id="lsGuest">${T("Mehmon sifatida o'ynash")}</button><p class="muted">${T("Mehmon sifatida o'ynasangiz, o'yin faqat shu qurilmada saqlanadi.")}</p></div>`;
+document.body.appendChild(d);
+$("lsGuest").onclick = () => { store.set("b8guest", 1); d.remove(); };
+}
+Net.api("/api/auth/config").then(cfg => {
+if (!(cfg.google || cfg.facebook)) return d.remove();   // sign-in is not set up on the server: nothing to offer
+wireLogin(cfg, undefined, () => d.remove());
+}).catch(() => { if (n < 15 && d.isConnected) setTimeout(() => loginSplash(n + 1), 4000); });   // the server may still be waking up: the guest button works meanwhile
 }
 function loginFirst(n = 0) {   // shown once on a fresh install, but only when the server has Google/Facebook sign-in configured
+if ($("loginSplash")) return;
 if (ON_PORTAL || !Net.base || store.get("b8guest") || (profile.prov && Object.keys(profile.prov).length)) return;
 const again = () => { if (n < 15) setTimeout(() => loginFirst(n + 1), 4000); };   // another popup was open (or the server was still waking up): ask again a bit later instead of never showing the sign-in
 Net.api("/api/auth/config").then(cfg => {
@@ -11967,6 +11997,7 @@ if (/[?&]perf=1/.test(location.search)) {
 // the sound bank (synthesised hits) takes ~0.1 s here and about half a second on a phone to build: do it while the game is idle after loading instead of on the
 // player's first tap (that tap is often the one that starts a match, and the game stood still for that moment). Sound itself still wakes up on the first tap.
 setTimeout(() => { try { (window.requestIdleCallback || setTimeout)(() => { try { Snd.init(); } catch (e) {} }); } catch (e) {} }, 2500);
+try { loginSplash(); } catch (e) {}
 requestAnimationFrame(frame);
 </script>
 </body>
