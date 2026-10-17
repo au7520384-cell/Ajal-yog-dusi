@@ -1226,8 +1226,16 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 #loginSplash p{margin:0;font-size:clamp(11px,3.1cqh,17px);color:#fff;text-shadow:0 1px 6px #000,0 0 10px #000}#loginSplash p.muted{color:#e9dccb;font-size:clamp(10px,2.6cqh,13px)}
 #loginSplash .lsBtns{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px;margin:.4cqh 0}#loginSplash .lgin{margin:0;flex-direction:row;flex-wrap:nowrap;justify-content:center;gap:10px}
 @container (min-aspect-ratio: 2/1){#loginSplash .lsBtns{flex-wrap:nowrap}}   /* very wide phone screens: Google, Facebook and Guest on one line */
-#loginSplash .lgfb{min-width:0;min-height:40px;padding:0 22px;font-size:clamp(14px,3.6cqh,19px)}
-#loginSplash #lsGuest{min-height:40px;padding:0 30px;font-size:clamp(14px,3.6cqh,19px)}
+#loginSplash .lsBtn,#loginSplash .lgfb,#loginSplash #lsGuest{position:relative;height:46px;min-height:46px;min-width:0;padding:0 clamp(12px,2.4cqw,22px);flex:none;white-space:nowrap;border-radius:14px;border:2px solid #f0c25a;font:800 clamp(13px,3.5cqh,20px)/1 Nunito,system-ui,sans-serif;letter-spacing:.2px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0;text-shadow:0 1px 2px #0006;
+box-shadow:0 0 12px rgba(255,190,70,.6),inset 0 2px 0 rgba(255,255,255,.6),inset 0 -3px 0 rgba(0,0,0,.18),0 4px 0 rgba(0,0,0,.4)}
+#loginSplash .lsBtn:active,#loginSplash .lgfb:active,#loginSplash #lsGuest:active{transform:translateY(2px)}
+#loginSplash .lgfb{background:linear-gradient(#2a78ff,#0a3aa8);color:#fff;filter:none}
+#loginSplash .lgfb b{font:900 24px/1 Arial,sans-serif;padding-right:10px;margin-right:10px;border-right:1px solid #ffffff66}
+#loginSplash #lsGuest{background:linear-gradient(#ffc83e,#ee8200);color:#fff;min-width:min(210px,21cqw);filter:none}
+#loginSplash .lsGw{display:none;position:relative;flex:none;width:min(250px,26cqw);height:46px}#loginSplash .lsGw.on{display:block}
+#loginSplash .lsGw .lsBtn{position:absolute;inset:0;width:100%;background:linear-gradient(#fff,#e6e6ee);color:#2b2b33;text-shadow:none;gap:10px}
+#loginSplash .lsGw #gBtn{position:absolute;left:0;top:0;width:250px;height:46px;opacity:.012;overflow:hidden;z-index:2}   /* Google's own button sits invisibly on top of the picture-matching one, so the tap still goes to Google */
+#loginSplash .lsGw #gBtn>div{transform:scaleY(1.16);transform-origin:0 0}
 .lgin{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:6px}.lgfb{background:linear-gradient(#2f6fd8,#1b4aa8);color:#fff;font-size:18px;min-width:250px}.lgfb b{font-size:22px;margin-right:6px}
 @media (max-height:460px){.vcstrip .vtb{--s:30px!important}.vcbar .vtb{--s:44px!important}.vipclub{min-width:0}.vipclub>.muted{display:none}.vctop{font-size:15px}.vcbar{margin:2px 0}.vcb{height:24px}.vcs{padding:3px 2px}.vcs small{font-size:9px}.vipclub .btn{padding:4px 12px!important;font-size:14px!important}.vipclub>div:last-child{margin-top:4px!important}}
 .giftgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;min-width:min(520px,84vw)}.gift{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:#10162a;border:2px solid #2c3a60;border-radius:12px;padding:8px 2px;filter:grayscale(1) brightness(.55)}.gift span{font-size:46px;line-height:1}.gift small{font-size:11px;color:#cfd8ee;font-weight:800}.gift.on{filter:none;border-color:#e3aa2f;background:linear-gradient(#1f2f66,#0d1636)}.gift i{position:absolute;top:3px;right:6px;font-style:normal;font-weight:900;color:#ffe27a;font-size:13px}
@@ -11456,7 +11464,7 @@ wireLogin(cfg, mode);
 }
 function wireLogin(cfg, mode, onTok) {   // the Google / Facebook buttons (in the sign-in popup and on the full-screen sign-in)
 const tok = onTok || (() => {});
-if (cfg.google) loadScript("https://accounts.google.com/gsi/client").then(() => { google.accounts.id.initialize({client_id: cfg.google, callback: x => { tok(); authLogin("google", x.credential, mode); }}); google.accounts.id.renderButton($("gBtn"), {theme: "filled_blue", size: "large", text: "signin_with", width: 250}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Google"));
+if (cfg.google) loadScript("https://accounts.google.com/gsi/client").then(() => { google.accounts.id.initialize({client_id: cfg.google, callback: x => { tok(); authLogin("google", x.credential, mode); }}); google.accounts.id.renderButton($("gBtn"), {theme: "filled_blue", size: "large", text: "signin_with", width: 250}); const gw = $("lsGw"); if (gw) gw.classList.add("on"); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Google"));
 if (cfg.facebook) { $("fbBtn").disabled = false; $("fbBtn").onclick = () => loadScript("https://connect.facebook.net/en_US/sdk.js").then(() => { FB.init({appId: cfg.facebook, version: "v19.0", cookie: false, xfbml: false}); FB.login(x => { if (x.authResponse) { tok(); authLogin("facebook", x.authResponse.accessToken, mode); } }, {scope: "public_profile"}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Facebook")); }
 }
 function loginSplash(n = 0) {   // full-screen sign-in BEFORE the menu on a fresh install (like the big commercial pool games); only when the server offers Google / Facebook
@@ -11465,8 +11473,8 @@ let d = $("loginSplash");
 if (!d) {
 d = document.createElement("div"); d.id = "loginSplash";
 d.innerHTML = `<div class="lsStage"></div><div class="lsBox"><h2>${T("Do'stlar bilan o'ynang!")}</h2><p>${T("Bepul sovg'alar va mukofotlarni oling!")}</p>
-<div class="lsBtns"><div class="lgin"><div id="gBtn"></div><button class="btn lgfb" id="fbBtn" disabled><b>f</b> ${T("Facebook bilan kirish")}</button></div>
-<button class="btn orange" id="lsGuest">${T("Mehmon sifatida o'ynash")}</button></div><p class="muted">${T("Mehmon sifatida o'ynasangiz, o'yin faqat shu qurilmada saqlanadi.")}</p></div>`;
+<div class="lsBtns"><div class="lgin"><div class="lsGw" id="lsGw"><span class="lsBtn"><svg width="22" height="22" viewBox="0 0 48 48"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11.9c-.5 2.8-2.1 5.1-4.5 6.7v5.5h7.3c4.3-3.9 6.4-9.7 6.4-16.2z"/><path fill="#34A853" d="M24 46c6.1 0 11.2-2 14.9-5.5l-7.3-5.5c-2 1.4-4.6 2.2-7.6 2.2-5.8 0-10.8-3.9-12.5-9.2H4v5.7C7.7 41.1 15.3 46 24 46z"/><path fill="#FBBC05" d="M11.5 28c-.5-1.4-.7-2.9-.7-4.5s.3-3.1.7-4.5v-5.7H4C2.4 16.5 1.5 20.1 1.5 24s.9 7.5 2.5 10.7l7.5-5.7z"/><path fill="#EA4335" d="M24 10.8c3.3 0 6.2 1.1 8.5 3.3l6.4-6.4C35.2 4.2 30.1 2 24 2 15.3 2 7.7 6.9 4 14.3l7.5 5.7c1.7-5.3 6.7-9.2 12.5-9.2z"/></svg>Google</span><div id="gBtn"></div></div><button class="lgfb" id="fbBtn" disabled><b>f</b>${T("Facebook bilan kirish")}</button></div>
+<button class="orange" id="lsGuest">${T("Mehmon sifatida o'ynash")}</button></div><p class="muted">${T("Mehmon sifatida o'ynasangiz, o'yin faqat shu qurilmada saqlanadi.")}</p></div>`;
 d.firstChild.style.backgroundImage = `url(${IMG.ls_bg})`;
 document.body.appendChild(d);
 $("lsGuest").onclick = () => { store.set("b8guest", 1); d.remove(); };
