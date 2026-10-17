@@ -1453,3 +1453,4 @@ Yutuq ochildi · +{0} 🪙‖Achievement unlocked · +{0} 🪙|Достижен�
 Yangi medal · +{0} 🪙‖New medal · +{0} 🪙|Новая медаль · +{0} 🪙|Yeni madalya · +{0} 🪙|Nueva medalla · +{0} 🪙|Nova medalha · +{0} 🪙|ميدالية جديدة · +{0} 🪙|Medali baru · +{0} 🪙|नया पदक · +{0} 🪙|Nouvelle médaille · +{0} 🪙|Neue Medaille · +{0} 🪙|새 메달 · +{0} 🪙|新しいメダル · +{0} 🪙|新勋章 · +{0} 🪙
 Xato‖Error|Ошибка|Hata|Error|Erro|خطأ|Kesalahan|त्रुटि|Erreur|Fehler|오류|エラー|错误
 Google bilan kirish‖Sign in with Google|Войти через Google|Google ile giriş|Entrar con Google|Entrar com Google|الدخول عبر Google|Masuk dengan Google|Google से लॉगिन|Connexion avec Google|Mit Google anmelden|Google로 로그인|Googleでログイン|使用Google登录
+Avval yuting‖Win first|Сначала выиграйте|Önce kazan|Gana primero|Vença primeiro|اربح أولاً|Menangkan dulu|पहले जीतें|Gagnez d'abord|Zuerst gewinnen|먼저 우승하세요|先に優勝しよう|请先夺冠
