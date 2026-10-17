@@ -11450,7 +11450,7 @@ ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setReco
 ${row("Til", `<button class="btn blue" id="setLang" style="padding:6px 14px">🌐 ${LANGS[LANG]}</button>`)}
 <div class="setrow"><b>🎧 ${T("Ovoz sinovi")}</b><button class="btn orange" id="setLab" style="padding:6px 14px">▶ ${T("Ochish")}</button></div>
 ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:6px 14px">👤 ${esc(profile.name)}</button>`)}
-<div class="muted" style="text-align:center;margin-top:10px">Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}<span id="setBuild"></span><br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a></div>`;
+<div class="muted" style="text-align:center;margin-top:10px">Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}<span id="setBuild"></span><br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a> · <a href="/refund" target="_blank" style="color:#8fc4ff">Refund</a></div>`;
 { const lb = $("setLab"); if (lb) lb.onclick = openSoundLab; }
 { const bl = $("setBuild"), show = b => { if (bl) bl.textContent = b ? " · v " + b : ""; }; if (SRV_BUILD) show(SRV_BUILD); else Net.api("/api/health").then(r => { SRV_BUILD = (r && r.build) || ""; show(SRV_BUILD); }).catch(() => {}); }
 $("setBody").querySelectorAll("[data-t]").forEach(b => b.onclick = () => {
