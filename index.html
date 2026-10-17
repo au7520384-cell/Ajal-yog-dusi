@@ -8383,16 +8383,14 @@ const b = botPlayer(city.lvl + 1, city.lvl + 12);
 used.add(b.name); b.country = ""; players.push(b);
 }
 players[0].country = profile.country;
-const S = 2 ** tourRounds(c.n), byes = S - c.n, ids = shuffle(Array.from({length: c.n - 1}, (_, i) => i + 1));
-const slots = [];
-for (let i = 0; i < byes; i++) slots.push(ids.pop(), undefined);
-const rest = [0, ...ids]; shuffle(rest); for (let i = 0; i < rest.length; i++) slots.push(rest[i]);
-const first = [];
-for (let i = 0; i < slots.length; i += 2) first.push(slots[i]), first.push(slots[i + 1]);
+const S = 2 ** tourRounds(c.n), byes = S - c.n, M = S / 2, ids = shuffle(Array.from({length: c.n - 1}, (_, i) => i + 1));
+// the byes (empty seats) are spread evenly over the whole bracket, so both halves hold the same number of players (60 players: 30 + 30)
+const byeAt = new Set(); for (let k = 0; k < byes; k++) byeAt.add(Math.floor((k + 0.5) * M / byes));
+const rest = [0, ...ids]; shuffle(rest);
 const round = [];
-for (let i = 0; i < first.length; i += 2) {
-const a = first[i], b = first[i + 1] === undefined ? null : first[i + 1];
-round.push([a, b, b === null ? a : a === 0 || b === 0 ? undefined : (Math.random() < 0.5 ? a : b)]);
+for (let i = 0; i < M; i++) {
+if (byeAt.has(i)) { const a = rest.pop(); round.push([a, null, a]); }
+else { const a = rest.pop(), b = rest.pop(); round.push([a, b, a === 0 || b === 0 ? undefined : (Math.random() < 0.5 ? a : b)]); }
 }
 tour = {cup: c.id, players, rounds: [round], slot};
 Snd.coin(3); go("tourScr");
