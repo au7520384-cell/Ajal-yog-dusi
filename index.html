@@ -3313,7 +3313,8 @@ const q0 = [rnd(-1, 1), rnd(-1, 1), 0], d = q0[0] * p[0] + q0[1] * p[1];
 const q = norm3([q0[0] - p[0] * d, q0[1] - p[1] * d, -p[2] * d]);
 return {n, x, y, vx: 0, vy: 0, wx: 0, wy: 0, wz: 0, z: 0, vz: 0, out: false, p, q};
 }
-const iconBall = n => ({n, p: [0, 0, 1], q: [0, -1, 0]});
+const ICON_BALLS = {};   // one object per number: the ball picture is cached on the object, so a fresh object every frame meant ~28 new canvases per frame once the groups were set
+const iconBall = n => ICON_BALLS[n] || (ICON_BALLS[n] = {n, p: [0, 0, 1], q: [0, -1, 0]});
 function anyMoving(balls) { return balls.some(b => !b.out && (b.vx || b.vy || b.z !== 0)); }
 const reOf = h => 0.84 - 0.0075 * (h > 24 ? 24 : h);
 const GRAV = 0.3;
