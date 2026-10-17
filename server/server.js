@@ -175,6 +175,10 @@ for (const [sku, usd] of Object.entries(ITEM_PRICES)) {
   const [, kind, id] = m, items = kind === "cue" ? {cues: [id]} : kind === "av" ? {avs: [+id]} : kind === "frame" ? {pframes: [id]} : kind === "stk" ? {stk: [id]} : {tables: [id]};
   SKUS[sku] = {items, vip: Math.round(usd * 65), usd, name: ({cue: "Cue ", av: "Avatar ", frame: "Frame ", tbl: "Table ", stk: "Sticker pack "})[kind] + id};
 }
+// What the card is charged: nothing below $1.99 (the payment provider keeps ~5% + $0.50 of every payment), everything else moves up $0.50 so the
+// order of the prices stays. The game shows the same number (cardUsd in index.html).
+const cardUsd = u => u < 1.99 ? 1.99 : Math.round((u + 0.5) * 100) / 100;
+for (const k of Object.keys(SKUS)) if (SKUS[k].usd) SKUS[k].usd = cardUsd(SKUS[k].usd);
 function claimEdition(u, id) {
   const cap = EDITION_CAP[id]; if (!cap) return {serial: 0};
   u.editions = u.editions || {};
