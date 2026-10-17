@@ -3495,7 +3495,8 @@ gr.addColorStop(0, "rgba(205,225,255,1)"); gr.addColorStop(1, "rgba(205,225,255,
 return dustPic = c;
 }
 function dustPuff(G, x, y, n, sz) {   // chalk / cloth dust: soft translucent puffs that drift and fade
-const d = G.dust = G.dust || []; for (let i = 0; i < n && d.length < 90; i++) d.push({x, y, vx: rnd(-0.6, 0.6), vy: rnd(-0.8, 0.2), r: (2 + Math.random() * 3) * sz, life: 40 + Math.random() * 30, l0: 70});
+const d = G.dust = G.dust || [], cap = liteFx ? 24 : 90; if (liteFx) n = Math.ceil(n / 3);   // a slow phone gets fewer puffs
+for (let i = 0; i < n && d.length < cap; i++) d.push({x, y, vx: rnd(-0.6, 0.6), vy: rnd(-0.8, 0.2), r: (2 + Math.random() * 3) * sz, life: 40 + Math.random() * 30, l0: 70});
 }
 function onRail(G, b, hit) { if (hit > 16 && !G.demo) dustPuff(G, b.x, b.y, 2, 0.6); if (G.shot) { G.shot.rails++; if (b.n) (G.shot.rb || (G.shot.rb = new Set())).add(b.n); } if (!G.demo) Snd.rail(hit, b.x, b.y); }
 function segDist2(px, py, ax, ay, bx, by) {
