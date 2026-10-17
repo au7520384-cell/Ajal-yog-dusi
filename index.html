@@ -11843,6 +11843,27 @@ if (qs.has("ref") || qs.has("paid")) history.replaceState(null, "", location.pat
 setInterval(() => { if (mode === "menu") { Net.sync(); checkFriendsOnline(); } }, 60000);
 migrateGems(); applySettings(); updatePassDot(); setTimeout(checkAch, 3000); setTimeout(checkChallenges, 3500);
 setInterval(() => { if (document.hidden || !profile) return; profile.playSec = (profile.playSec | 0) + 5; if (profile.playSec % 60 === 0) { save(); checkChallenges(); } }, 5000);   // play time for the time achievements setTimeout(checkFriendsOnline, 5000);
+// ?perf=1 : a small frame-time monitor in the corner (for finding hitches on a real phone). Shows fps, the slowest frame of the last 3 s, how many frames
+// took > 25 ms, long main-thread tasks (JS / garbage collection) and the worst frame in the 2.5 s after the last shot.
+if (/[?&]perf=1/.test(location.search)) {
+  const box = document.createElement("div"); box.id = "perfBox"; box.style.cssText = "position:fixed;left:4px;top:60px;z-index:99999;background:#000c;color:#7dff9a;font:11px/14px monospace;padding:4px 6px;border-radius:6px;pointer-events:none;white-space:pre";
+  document.body.appendChild(box);
+  const hist = []; let last = performance.now(), shotT = 0, shotWorst = 0, shotAt = 0, lt = [], tick = 0;
+  try { new PerformanceObserver(l => { for (const e of l.getEntries()) lt.push([e.startTime, e.duration]); }).observe({entryTypes: ["longtask"]}); } catch (e) {}
+  const _ds = doShoot; doShoot = function () { shotT = performance.now(); shotWorst = 0; shotAt = 0; return _ds.apply(this, arguments); };
+  const loop = t => {
+    const d = t - last; last = t; hist.push([t, d]); while (hist.length && t - hist[0][0] > 3000) hist.shift();
+    if (shotT && t - shotT < 2500 && d > shotWorst) { shotWorst = d; shotAt = t - shotT; }
+    if (++tick % 15 === 0) {
+      let w = 0, slow = 0; for (const h of hist) { if (h[1] > w) w = h[1]; if (h[1] > 25) slow++; }
+      while (lt.length && t - lt[0][0] > 3000) lt.shift();
+      const ltMax = lt.reduce((m, x) => Math.max(m, x[1]), 0);
+      box.textContent = `fps ${(hist.length / 3).toFixed(0)}  worst ${w.toFixed(0)} ms  >25ms: ${slow}\nlong tasks (3s): ${lt.length}, max ${ltMax.toFixed(0)} ms\nafter shot: worst ${shotWorst.toFixed(0)} ms at +${shotAt.toFixed(0)} ms`;
+    }
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+}
 requestAnimationFrame(frame);
 </script>
 </body>
