@@ -11891,6 +11891,9 @@ if (/[?&]perf=1/.test(location.search)) {
   };
   requestAnimationFrame(loop);
 }
+// the sound bank (synthesised hits) takes ~0.1 s here and about half a second on a phone to build: do it while the game is idle after loading instead of on the
+// player's first tap (that tap is often the one that starts a match, and the game stood still for that moment). Sound itself still wakes up on the first tap.
+setTimeout(() => { try { (window.requestIdleCallback || setTimeout)(() => { try { Snd.init(); } catch (e) {} }); } catch (e) {} }, 2500);
 requestAnimationFrame(frame);
 </script>
 </body>
