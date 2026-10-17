@@ -32,7 +32,7 @@ const PAYMENTS = !!(PADDLE_KEY && PADDLE_TOKEN) || !!STRIPE_KEY;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
 const ROOT = path.join(__dirname, "..");
 const BUILD = (process.env.RENDER_GIT_COMMIT || "").slice(0, 7) || "local";   // the deployed commit (Render sets it); shown in /api/health and in the game's Settings so anyone can see which version is running
-const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js"};
+const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/icon-1024.png": "icon-1024.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js"};
 const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript"};
 
 
@@ -74,9 +74,14 @@ function legalPage(res, which) {
 <li>Refunds go back to the original payment method through our payment provider. It can take several business days to appear.</li></ul>
 <h2>How to ask</h2><p>Write to ${contact} with your player ID (Settings), the date of the purchase and what you bought.</p>
 <h2>Virtual items</h2><p>Virtual items have no real-world monetary value and cannot be exchanged for money. See the <a href="/terms">Terms of Service</a>.</p>`;
-  const body = which === "/terms" ? terms : which === "/refund" ? refund : privacy;
+  const del = `<h1>Delete your data — Billiard 8</h1><p class="u">Last updated: October 2026</p>
+<p>You can ask us to delete your Billiard 8 account and everything linked to it (player ID, profile, progress, friends, club membership, leaderboard entries and the Google / Facebook sign-in link).</p>
+<h2>How to ask</h2><ol><li>Write to ${contact} from any address.</li><li>Include your <b>player ID</b> (Settings in the game) or the name you play under, and say "delete my data".</li><li>We delete the account within 30 days and confirm by reply.</li></ol>
+<h2>Facebook / Google</h2><p>You can also remove the game from your Facebook (Settings &rarr; Business Integrations) or Google (Security &rarr; Third-party access) account at any time; after that, ask us to delete the game account using the steps above.</p>
+<h2>What we keep</h2><p>Purchase records may be kept for the time the law requires (tax and accounting); they are not linked to your profile after deletion. Paddle, our payment provider, keeps its own payment records under its own policy.</p>`;
+  const body = which === "/terms" ? terms : which === "/refund" ? refund : which === "/data-deletion" ? del : privacy;
   res.writeHead(200, {"Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=3600"});
-  res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${which === "/terms" ? "Terms of Service" : which === "/refund" ? "Refund Policy" : "Privacy Policy"} — Billiard 8</title><style>${css}</style></head><body>${body}<p class="u"><a href="/">← Billiard 8</a></p></body></html>`);
+  res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${which === "/terms" ? "Terms of Service" : which === "/refund" ? "Refund Policy" : which === "/data-deletion" ? "Delete your data" : "Privacy Policy"} — Billiard 8</title><style>${css}</style></head><body>${body}<p class="u"><a href="/">← Billiard 8</a></p></body></html>`);
 }
 
 // ---------------------------------------------------------------- catalog (server is the source of truth for prices)
@@ -835,7 +840,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/api/stripe/webhook") return stripeWebhook(req, res);
     if (req.method === "POST" && url.pathname === "/api/paddle/webhook") return paddleWebhook(req, res);
     if (req.method === "GET" && url.pathname === "/pay" && PADDLE_TOKEN) return payPage(res);
-    if (req.method === "GET" && (url.pathname === "/privacy" || url.pathname === "/terms" || url.pathname === "/refund")) return legalPage(res, url.pathname);
+    if (req.method === "GET" && (url.pathname === "/privacy" || url.pathname === "/terms" || url.pathname === "/refund" || url.pathname === "/data-deletion")) return legalPage(res, url.pathname);
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
