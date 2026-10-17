@@ -57,7 +57,14 @@ What the game does with it: logs the player in (their Y8 name, progress saved to
 
 Upload a zip with `index.html` and `icon.svg` at its root.
 
-### Real-money payments (Stripe)
+### Real-money payments (Paddle — preferred; works for sellers where Stripe is unavailable)
+Paddle is the merchant of record (takes the card payment, handles tax, pays you out). The server builds each transaction itself from the SKU price, so no products need to be created in the Paddle catalog.
+1. Paddle → Developer tools → Authentication: create an **API key** (permissions: Transactions, Customers, Addresses, Prices, Products read+write; Notifications read) and a **client-side token**.
+2. Paddle → Developer tools → Notifications: add a destination `https://your-domain/api/paddle/webhook` for the event `transaction.completed` and copy its **secret key**.
+3. Set on the server: `PADDLE_API_KEY`, `PADDLE_CLIENT_TOKEN`, `PADDLE_WEBHOOK_SECRET` (live) — or the same names ending in `_SANDBOX` for testing (sandbox is used when no live key is set, or when `PADDLE_ENV=sandbox`).
+4. Checkout opens from `/pay?_ptxn=…` (served by the game server; the domain must be approved in Paddle → Checkout settings for live payments). If Paddle is configured it is used instead of Stripe.
+
+### Real-money payments (Stripe, alternative)
 1. Create a Stripe account and get your **Secret key**.
 2. Add a webhook endpoint `https://your-domain/api/stripe/webhook` for the event `checkout.session.completed` and copy its **signing secret**.
 3. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` on the server.

@@ -22,6 +22,13 @@ const APP_URL = (process.env.APP_URL || `http://localhost:${PORT}`).replace(/\/$
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY || "";
 const ADMIN_KEY = process.env.ADMIN_KEY || "";
 const STRIPE_WHSEC = process.env.STRIPE_WEBHOOK_SECRET || "";
+// Paddle (merchant of record: takes the card payment, handles tax, pays the seller out). Sandbox keys are used only when no live key is set, or when PADDLE_ENV=sandbox.
+const PADDLE_SANDBOX = process.env.PADDLE_ENV === "sandbox" || (!process.env.PADDLE_API_KEY && !!process.env.PADDLE_API_KEY_SANDBOX);
+const PADDLE_KEY = (PADDLE_SANDBOX ? process.env.PADDLE_API_KEY_SANDBOX : process.env.PADDLE_API_KEY) || "";
+const PADDLE_WHSEC = (PADDLE_SANDBOX ? process.env.PADDLE_WEBHOOK_SECRET_SANDBOX : process.env.PADDLE_WEBHOOK_SECRET) || "";
+const PADDLE_TOKEN = (PADDLE_SANDBOX ? process.env.PADDLE_CLIENT_TOKEN_SANDBOX : process.env.PADDLE_CLIENT_TOKEN) || "";
+const PADDLE_API = PADDLE_SANDBOX ? "https://sandbox-api.paddle.com" : "https://api.paddle.com";
+const PAYMENTS = !!(PADDLE_KEY && PADDLE_TOKEN) || !!STRIPE_KEY;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
 const ROOT = path.join(__dirname, "..");
 const BUILD = (process.env.RENDER_GIT_COMMIT || "").slice(0, 7) || "local";   // the deployed commit (Render sets it); shown in /api/health and in the game's Settings so anyone can see which version is running
@@ -387,14 +394,14 @@ function geoCountry(req) {   // set by some hosts / CDNs (Cloudflare, Vercel…)
 
 // ---------------------------------------------------------------- routes
 const routes = {
-  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: !!STRIPE_KEY, build: BUILD}),
+  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
   "GET /api/ice": () => {
     const iceServers = [{urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}];
     if (process.env.TURN_URLS) iceServers.push({urls: process.env.TURN_URLS.split(",").map(x => x.trim()), username: process.env.TURN_USER || "", credential: process.env.TURN_PASS || ""});
     return {iceServers};
   },
-  "GET /api/skus": () => ({skus: SKUS, payments: !!STRIPE_KEY, referral: REFERRAL}),
+  "GET /api/skus": () => ({skus: SKUS, payments: PAYMENTS, referral: REFERRAL}),
   // game announcements shown in the in-game Inbox (public read; posting needs the ADMIN_KEY env var)
   "GET /api/news": () => {
     db.meta = db.meta || {};
@@ -712,6 +719,25 @@ const routes = {
     if (sku.once && (u.bought || {})[b.sku]) return [400, {error: "already_bought"}];
     const tid = sku.items && ((sku.items.tables || sku.items.cues || sku.items.pframes || [])[0]);
     if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return [409, {error: "sold_out"}];
+    if (PADDLE_KEY && PADDLE_TOKEN) {
+      let r, s;
+      try {
+        r = await fetch(`${PADDLE_API}/transactions`, {
+          method: "POST", headers: {Authorization: `Bearer ${PADDLE_KEY}`, "Content-Type": "application/json"},
+          body: JSON.stringify({
+            items: [{quantity: 1, price: {
+              description: `Billiard 8 - ${sku.name}`, name: sku.name.slice(0, 100), tax_mode: "account_setting",
+              unit_price: {amount: String(Math.round(sku.usd * 100)), currency_code: "USD"},
+              product: {name: `Billiard 8 - ${sku.name}`.slice(0, 200), tax_category: "standard"},
+            }}],
+            custom_data: {userId: u.id, sku: b.sku},
+          }),
+        });
+        s = await r.json();
+      } catch (e) { console.error("paddle unreachable:", e.message); return [502, {error: "paddle_error"}]; }
+      if (!r.ok || !s.data || !s.data.id) { console.error("paddle", JSON.stringify(s.error || s)); return [502, {error: "paddle_error"}]; }
+      return {url: `${APP_URL}/pay?_ptxn=${encodeURIComponent(s.data.id)}`};
+    }
     if (!STRIPE_KEY) return [503, {error: "payments_not_configured"}];
     const form = new URLSearchParams({
       mode: "payment", success_url: `${APP_URL}/?paid=1`, cancel_url: `${APP_URL}/?paid=0`,
@@ -733,6 +759,25 @@ const routes = {
   },
 };
 
+// A confirmed payment (from any provider): hand the purchase to the player once. Returns false when it could not be saved (the provider will retry).
+async function fulfill(payId, userId, skuId, amount) {
+  const u = db.users[userId], sku = SKUS[skuId];
+  if (!u || !sku || db.purchases[payId]) return true;
+  db.purchases[payId] = {user: u.id, sku: skuId, at: Date.now(), amount};
+  let items = sku.items || null, refund = 0;
+  const tid = items && ((items.tables || items.cues || items.pframes || [])[0]);
+  if (tid && EDITION_CAP[tid]) {               // the serial is handed out when the payment arrives
+    const r = claimEdition(u, tid);
+    if (r.error) { items = null; refund = TABLE_REFUND_CASH; }   // sold out between checkout and payment: cash instead
+    else items = {...items, serials: {[tid]: r.serial}};
+  }
+  grant(u, {cash: (sku.cash || 0) + refund, coins: sku.coins || 0, gems: sku.gems || 0, vip: sku.vip || 0, items, kind: "purchase", from: sku.name});
+  u.bought = {...(u.bought || {}), [skuId]: (u.bought && u.bought[skuId] || 0) + 1};
+  if (saving) await saving;
+  await flush();   // money: write it down before telling the provider we got it
+  return !dirty;
+}
+
 async function stripeWebhook(req, res) {
   const raw = await readBody(req, 512 * 1024);
   const sig = String(req.headers["stripe-signature"] || "");
@@ -743,24 +788,40 @@ async function stripeWebhook(req, res) {
   if (!ok) return send(res, 400, {error: "bad signature"});
   const ev = JSON.parse(raw.toString("utf8"));
   if (ev.type === "checkout.session.completed" && ev.data.object.payment_status === "paid") {
-    const s = ev.data.object, u = db.users[s.metadata && s.metadata.userId], sku = SKUS[s.metadata && s.metadata.sku];
-    if (u && sku && !db.purchases[s.id]) {
-      db.purchases[s.id] = {user: u.id, sku: s.metadata.sku, at: Date.now(), amount: s.amount_total};
-      let items = sku.items || null, refund = 0;
-      const tid = items && ((items.tables || items.cues || items.pframes || [])[0]);
-      if (tid && EDITION_CAP[tid]) {               // the serial is handed out when the payment arrives
-        const r = claimEdition(u, tid);
-        if (r.error) { items = null; refund = TABLE_REFUND_CASH; }   // sold out between checkout and payment: cash instead
-        else items = {...items, serials: {[tid]: r.serial}};
-      }
-      grant(u, {cash: (sku.cash || 0) + refund, coins: sku.coins || 0, gems: sku.gems || 0, vip: sku.vip || 0, items, kind: "purchase", from: sku.name});
-      const skuId = s.metadata.sku; u.bought = {...(u.bought || {}), [skuId]: (u.bought && u.bought[skuId] || 0) + 1};
-      if (saving) await saving;
-      await flush();   // money: write it down before telling Stripe we got it
-      if (dirty) return send(res, 500, {error: "save failed"});   // Stripe retries the webhook
-    }
+    const s = ev.data.object;
+    if (!await fulfill(s.id, s.metadata && s.metadata.userId, s.metadata && s.metadata.sku, s.amount_total)) return send(res, 500, {error: "save failed"});   // Stripe retries the webhook
   }
   send(res, 200, {received: true});
+}
+
+// Paddle signs "<ts>:<raw body>" with the notification secret (header "Paddle-Signature: ts=...;h1=...")
+async function paddleWebhook(req, res) {
+  const raw = await readBody(req, 512 * 1024);
+  const parts = Object.fromEntries(String(req.headers["paddle-signature"] || "").split(";").map(p => p.split("=")));
+  const expected = crypto.createHmac("sha256", PADDLE_WHSEC).update(`${parts.ts}:${raw.toString("utf8")}`).digest("hex");
+  const ok = PADDLE_WHSEC && parts.h1 && parts.h1.length === expected.length &&
+    crypto.timingSafeEqual(Buffer.from(parts.h1), Buffer.from(expected)) && Math.abs(Date.now() / 1000 - +parts.ts) < 300;
+  if (!ok) return send(res, 400, {error: "bad signature"});
+  const ev = JSON.parse(raw.toString("utf8"));
+  if (ev.event_type === "transaction.completed") {
+    const d = ev.data || {}, cd = d.custom_data || {};
+    if (!await fulfill(d.id, cd.userId, cd.sku, d.details && d.details.totals && +d.details.totals.total)) return send(res, 500, {error: "save failed"});   // Paddle retries
+  }
+  send(res, 200, {received: true});
+}
+
+// Page Paddle's checkout opens from: /pay?_ptxn=<transaction id> (Paddle.js reads _ptxn by itself)
+function payPage(res) {
+  const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Billiard 8 - Payment</title>
+<style>html,body{margin:0;height:100%;background:#0b1220;color:#cfd8e6;font:16px system-ui,sans-serif}p{text-align:center;padding-top:40vh}</style></head><body><p>Loading secure payment…</p>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+${PADDLE_SANDBOX ? 'Paddle.Environment.set("sandbox");' : ""}
+Paddle.Initialize({token: ${JSON.stringify(PADDLE_TOKEN)}, checkout: {settings: {displayMode: "overlay", theme: "dark", successUrl: ${JSON.stringify(APP_URL + "/?paid=1")}}},
+  eventCallback: function (e) { if (e.name === "checkout.closed") location.replace(${JSON.stringify(APP_URL + "/?paid=0")}); }});
+</script></body></html>`;
+  res.writeHead(200, {"Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store"});
+  res.end(html);
 }
 
 const server = http.createServer(async (req, res) => {
@@ -768,6 +829,8 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, "http://x");
     if (req.method === "OPTIONS") return send(res, 204, {});
     if (req.method === "POST" && url.pathname === "/api/stripe/webhook") return stripeWebhook(req, res);
+    if (req.method === "POST" && url.pathname === "/api/paddle/webhook") return paddleWebhook(req, res);
+    if (req.method === "GET" && url.pathname === "/pay" && PADDLE_TOKEN) return payPage(res);
     if (req.method === "GET" && (url.pathname === "/privacy" || url.pathname === "/terms" || url.pathname === "/refund")) return legalPage(res, url.pathname);
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
@@ -928,5 +991,5 @@ store.load().then(loaded => {
   if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}}, loaded);
   db.meta = db.meta || {}; db.clubs = db.clubs || {};
   rollWeek();
-  server.listen(PORT, () => console.log(`Billiard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${STRIPE_KEY ? "ON" : "off"})`));
+  server.listen(PORT, () => console.log(`Billiard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${PADDLE_KEY && PADDLE_TOKEN ? "Paddle" + (PADDLE_SANDBOX ? " sandbox" : "") : STRIPE_KEY ? "Stripe" : "off"})`));
 }).catch(e => { console.error("Could not load the database:", e.message); process.exit(1); });
