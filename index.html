@@ -8306,7 +8306,7 @@ for (let i = 0; i < ids.length; i += 2) m.push([ids[i], ids[i + 1] === undefined
 return m.map(([a, b]) => [a, b, b === null ? a : a === 0 || b === 0 ? undefined : (Math.random() < 0.5 ? a : b)]);
 }
 const DAILY_HOURS = [4, 10, 16, 22], DAILY_OPEN = 3;   // UTC start hours of the daily cups; each stays open for 3 hours
-const DAILY_CUP = {id: "daily", region: null, sub: "Kunlik turnir", who: "Hamma uchun", ac: ["#5fd0ff", "#2a5ad8"], name: "Kunlik Kubok", n: 16, fee: 1000, prize: 30000, lvl: 1, city: CITIES.findIndex(c => c.id === "lis"), skill: 0.012, icon: "📅"};
+const DAILY_CUP = {id: "daily", region: null, sub: "Kunlik turnir", who: "Hamma uchun", ac: ["#5fd0ff", "#2a5ad8"], name: "Kunlik Kubok", n: 32, fee: 1000, prize: 30000, lvl: 1, city: CITIES.findIndex(c => c.id === "lis"), skill: 0.012, icon: "📅"};
 const cupOf = id => id === "daily" ? DAILY_CUP : ALL_CUPS.find(q => q.id === id);
 function dailyList() {
 const now = Date.now(), d = new Date(now), day = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()), done = profile.dailyDone || {};
