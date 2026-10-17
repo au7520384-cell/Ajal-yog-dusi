@@ -2262,6 +2262,7 @@ const DICT = {
 "onlayn": ["online", "онлайн"], "oflayn": ["offline", "офлайн"],
 "Server bilan aloqa yo'q. Internetni tekshiring.": ["Can't reach the server. Check your internet connection.", "Нет связи с сервером. Проверьте интернет."],
 "To'lov tizimi hali ulanmagan": ["Payments are not enabled yet", "Платежи ещё не подключены"],
+"To'lov tizimi vaqtincha ishlamayapti": ["Payment system is temporarily unavailable", "Платёжная система временно недоступна"],
 "Global reyting": ["Global leaderboard", "Мировой рейтинг"], "Til": ["Language", "Язык"],
 "🎱 Kiylar": ["🎱 Cues", "🎱 Кии"], "💱 Almashtirish": ["💱 Bank", "💱 Банк"], "kutmoqda": ["waiting", "ждут"], "siz": ["you", "вы"],
 "Yuklanmoqda…": ["Loading…", "Загрузка…"], "o'yinchi": ["players", "игроков"], "Hali hech kim yo'q — birinchi bo'ling!": ["Nobody yet — be the first!", "Пока никого — будьте первым!"],
@@ -9144,7 +9145,7 @@ const r = await fetch(BASE + path, {method: body ? "POST" : "GET",
 headers: {"Content-Type": "application/json", ...(acct ? {Authorization: `Bearer ${acct.id}:${acct.token}`} : {})},
 body: body ? JSON.stringify(body) : undefined});
 const j = await r.json().catch(() => ({}));
-if (!r.ok) { const e = new Error(j.error || String(r.status)); e.status = r.status; throw e; }
+if (!r.ok) { const e = new Error(j.error || String(r.status)); e.status = r.status; e.detail = j.detail || ""; throw e; }
 return j;
 }
 function ensure() {
@@ -9204,7 +9205,7 @@ await ensure();
 const r = await api("/api/checkout", {sku, lang: LANG});
 location.href = r.url;
 } catch (e) {
-toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
+toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status === 502 ? T("To'lov tizimi vaqtincha ishlamayapti") + (e.detail ? " (" + e.detail + ")" : "") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
 } finally { if (btn) btn.disabled = false; }
 }
 function connect() {

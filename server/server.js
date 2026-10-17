@@ -734,8 +734,8 @@ const routes = {
           }),
         });
         s = await r.json();
-      } catch (e) { console.error("paddle unreachable:", e.message); return [502, {error: "paddle_error"}]; }
-      if (!r.ok || !s.data || !s.data.id) { console.error("paddle", JSON.stringify(s.error || s)); return [502, {error: "paddle_error"}]; }
+      } catch (e) { console.error("paddle unreachable:", e.message); return [502, {error: "paddle_error", detail: "unreachable"}]; }
+      if (!r.ok || !s.data || !s.data.id) { console.error("paddle", r.status, JSON.stringify(s.error || s)); return [502, {error: "paddle_error", detail: String(r.status) + " " + String((s.error && (s.error.code || s.error.detail)) || "").slice(0, 120)}]; }
       return {url: `${APP_URL}/pay?_ptxn=${encodeURIComponent(s.data.id)}`};
     }
     if (!STRIPE_KEY) return [503, {error: "payments_not_configured"}];
