@@ -2620,7 +2620,7 @@ const DICT = {
 "Reklama ko'rish": ["Watch ad", "Смотреть рекламу"],
 "Yana (bepul)": ["Again (free)", "Ещё (бесплатно)"],
 "24 soatda 1 ta bepul": ["1 free every 24 hours", "1 бесплатно каждые 24 часа"],
-"Reklama yoki $0.99 bilan yana aylantiring": ["Spin again with an ad or $0.99", "Крутите снова за рекламу или $0.99"],
+"Reklama yoki $1.99 bilan yana aylantiring": ["Spin again with an ad or $1.99", "Крутите снова за рекламу или $1.99"],
 "Bepul — 24 soatda 1 marta": ["Free — once every 24 hours", "Бесплатно — раз в 24 часа"],
 "Pullik": ["Paid", "Платно"],
 "qutilar": ["boxes", "ящиков"],
@@ -4049,7 +4049,7 @@ const ad = Y8.sdk && Y8.adsReady, pay = !ON_PORTAL;
 openModal({icon: "⏳", title: T(TRY_NAME[k]), text: `${T("Keyingi bepul urinish")}: ${fmtDur(freeLeftMs(k))}`,
 extra: `<p class="muted" style="margin:0">${T("Hozir yana o'ynash uchun reklama ko'ring yoki urinish sotib oling.")}</p>`,
 buttons: [...(ad ? [{label: `📺 ${T("Reklama ko'rish")}`, cls: "green", fn: () => y8Rewarded("try-" + k, () => { profile[TRY_KEY[k]] = (profile[TRY_KEY[k]] | 0) + 1; save(); again && again(); })}] : []),
-...(pay ? [{label: `💳 $0.99 · +1`, cls: "purple", fn: () => Net.checkout("try_" + k)}] : []),
+...(pay ? [{label: `💳 ${usdTxt(cardUsd(0.99))} · +1`, cls: "purple", fn: () => Net.checkout("try_" + k)}] : []),
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
 function startLucky(golden) {
@@ -4087,7 +4087,7 @@ setTimeout(() => openModal({
 icon, title, text: ring ? "Oltin shar nishonga tushdi!" : "Tasalli sovg'asi",
 extra: `<div class="reward">${ring && ring.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(amount)}</div>`,
 buttons: [
-goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : "3 × $1.99", cls: "orange", fn: goldenShot}
+goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : `3 × ${usdTxt(cardUsd(1.99))}`, cls: "orange", fn: goldenShot}
 : {label: hasTry("lucky") ? T("Yana (bepul)") : `⏳ ${fmtDur(freeLeftMs("lucky"))}`, cls: "orange", fn: () => startLucky()},
 {label: "Menyu", cls: "gray", fn: () => toMenu("mini")}],
 }), 900);
@@ -8313,8 +8313,10 @@ openModal({icon: "✅", title: T("Raund yutildi!"), text: `${T("Keyingi bosqich"
 // one price in three currencies: cash, gems and the real-money (card) price. Every item sold for cash shows all three (cash 20 per $, gems 200 per $, the packs' own rates).
 const usdOfCash = cash => Math.round(cash * 5 - 1) / 100;   // 40 cash = $1.99, 100 = $4.99, 400 = $19.99
 const usdTxt = u => "$" + (+u).toFixed(2);
+// card (real-money) price: nothing below $1.99 (the payment provider keeps ~5% + $0.50), everything else moves up $0.50 so the order of prices stays. Same rule as the server (cardUsd in server.js).
+const cardUsd = u => u < 1.99 ? 1.99 : Math.round((u + 0.5) * 100) / 100;
 function payRow(cash, gems, usd) {
-return `<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">${usdTxt(usd)}</button>`}</div>`;
+return `<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">${usdTxt(cardUsd(usd))}</button>`}</div>`;
 }
 function wirePay(el, o) {   // o: {cash, gems, sku, buy(cur)}
 const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = e => { e.stopPropagation(); fn(b); }; };
@@ -8374,7 +8376,7 @@ if (f.vip || (f.ps && !owned)) return;
 const el = document.createElement("div"); el.className = "avcard pfcard" + (sel ? " sel" : "");
 el.innerHTML = `<div class="frstage">${avHTML(profile.avatar, i, 70)}</div><small class="h" style="color:#ffe27a">👑 ${esc(T(f.name))}</small>${no ? `<small class="muted">№ ${fmt(no)} / ${fmt(EDITION_CAP[f.id])}</small>` : owned ? "" : edLine(f.id)}
 ${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`)
-: `<div class="tpay"><button class="btn purple" data-p="cash" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💵 ${fmt(f.v)}`}</button><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>💎 ${f.gems}</button></div>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd" ${so ? "disabled" : ""}>$${f.usd}</button>`}`}`;
+: `<div class="tpay"><button class="btn purple" data-p="cash" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💵 ${fmt(f.v)}`}</button><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>💎 ${f.gems}</button></div>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd" ${so ? "disabled" : ""}>${usdTxt(cardUsd(f.usd))}</button>`}`}`;
 const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = fn; };
 const use = () => { profile.frame = i; save(); updateNav(); Net.sync(); buildShop("frames"); };
 on("use", use);
@@ -8468,7 +8470,7 @@ continue;
 if (t.tier && !own) {
 const pr = tablePrice(t), pc = (profile.tpieces || {})[t.id] | 0;
 const el = add(t, own, sel, `<b>${t.tier === "premium" ? "👑 " : "✨ "}${T(t.name)}${pr.deal ? ' <span class="tdeal">−40%</span>' : ""}${pc ? ` <span class="tpc">${pcImg(18)} ${pc}/4</span>` : ""}</b>`, `${T(t.tier === "premium" ? "Premium hoshiya · tovlanadi" : "Eksklyuziv hoshiya")}${EDITION_CAP[t.id] ? edLine(t.id) : ""}<br><span class="tbon">🪙 +${tableBonus(t.id)}% · ♞ +${tableBonus(t.id)}% · XP +${tableBonus(t.id)}%</span>`,
-`<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(pr.cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(pr.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">$${t.usd}</button>`}</div>
+`<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(pr.cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(pr.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">${usdTxt(cardUsd(t.usd))}</button>`}</div>
 <div class="tpay"><button class="btn orange" data-p="try">▶ ${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">👁 ${T("Ko'rish")}</button></div>`, null);
 const so = soldOut(t.id);
 if (so) el.querySelectorAll(".tpay button:not([data-p=view])").forEach(b => { b.disabled = true; b.classList.add("gray"); });
@@ -8511,7 +8513,7 @@ body.insertAdjacentHTML("beforeend", `<div class="cuehead">
 .map(([k, n]) => `<button class="tab${k === cueCat ? " on" : ""}" data-cc="${k}">${T(n)}</button>`).join("")}</div>
 ${cueCat === "surprise" ? `<div class="card surbox"><div style="font-size:44px">${icoH("🎁", 56)}</div><div style="flex:1"><b>${T("Syurpriz qutisi")}</b>
 <div class="muted">${T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.")}</div></div>
-<button class="btn purple" id="surBtn">${profile.sbAct ? `🔒 ${profile.sbAct.n}/4` : profile.sboxes ? `${T("Ochish")} (${profile.sboxes})` : "$0.99 / 💵 " + SURPRISE_BOX}</button></div>` : ""}
+<button class="btn purple" id="surBtn">${profile.sbAct ? `🔒 ${profile.sbAct.n}/4` : profile.sboxes ? `${T("Ochish")} (${profile.sboxes})` : usdTxt(cardUsd(0.99)) + " / 💵 " + SURPRISE_BOX}</button></div>` : ""}
 ${cueCat === "victory" ? `<p class="muted" style="margin:0 0 10px">${T("Shaharda yoki undan yuqorida yutib, kiy bo'laklarini yig'ing. 4 bo'lak = kiy.")}</p>` : ""}`);
 body.querySelectorAll("[data-cc]").forEach(b => b.onclick = () => { cueCat = b.dataset.cc; buildShop("cues"); });
 $("cueInfo").onclick = cueInfoModal; $("cpBtn").onclick = collectionTrack; updateHomeDots();
@@ -8533,7 +8535,7 @@ el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">👑 ${esc
 ${owned ? "" : edLine(c.id)}</div>
 <div>${c.st.map((v, i) => `<div class="stat"><span>${T(STAT_NAMES[i])}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
 <div>${owned ? (sel ? `<button class="btn gray" disabled style="width:100%">✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use" style="width:100%">${T("TANLASH")}</button>`)
-: `<div class="tpay"><button class="btn purple" data-p="cash" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `<span class="cash"></span> ${fmtS(c.cash)}`}</button><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>💎 ${fmt(c.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd" ${so ? "disabled" : ""}>$${c.usd}</button>`}</div>
+: `<div class="tpay"><button class="btn purple" data-p="cash" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `<span class="cash"></span> ${fmtS(c.cash)}`}</button><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>💎 ${fmt(c.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd" ${so ? "disabled" : ""}>${usdTxt(cardUsd(c.usd))}</button>`}</div>
 <div class="tpay"><button class="btn orange" data-p="try">▶ ${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">👁 ${T("Ko'rish")}</button></div>`}
 <div class="cpts">+${cuePower(c)} ⚜</div></div>`;
 const cvw = el.querySelector(".cuecvw"); cvw._cue = c; if (io) io.observe(cvw); else cvw.appendChild(cueCanvas(c));
@@ -8647,7 +8649,7 @@ function openSurpriseBox(payWithCash) {
   if (profile.sbAct) return sbModal();
   if (!(profile.sboxes > 0) && payWithCash !== true) {
     return openModal({icon: "🎁", title: T("Syurpriz qutisi"), text: T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy. Qutini ochish uchun 4 ta missiya bajariladi."), extra: `<div style="text-align:center">${sbSVG(0)}</div>`,
-      buttons: [...(ON_PORTAL ? [] : [{label: "💳 $0.99", cls: "green", fn: () => Net.checkout("sbox_1")}, {label: "💳 5 × $3.99", cls: "green", fn: () => Net.checkout("sbox_5")}]),
+      buttons: [...(ON_PORTAL ? [] : [{label: `💳 ${usdTxt(cardUsd(0.99))}`, cls: "green", fn: () => Net.checkout("sbox_1")}, {label: `💳 5 × ${usdTxt(cardUsd(3.99))}`, cls: "green", fn: () => Net.checkout("sbox_5")}]),
         {label: `💵 ${SURPRISE_BOX}`, cls: "purple", fn: () => openSurpriseBox(true)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
   }
   if (profile.sboxes > 0) profile.sboxes--;
@@ -8901,7 +8903,7 @@ if (!wheelInit) { wheelInit = true; w.style.transition = "none"; w.style.transfo
 const free = freeReady("wheel"), ok = !!(free || profile.wheelTries);
 $("spinBtn").classList.toggle("ready", ok); $("spinBtn").classList.toggle("off", !ok);
 $("lwBtnT").textContent = ok ? T("AYLANTIRISH") : `⏳ ${fmtDur(freeLeftMs("wheel"))}`; $("lwBtnS").textContent = ok ? "(" + T("Bepul") + ")" : "";
-$("wheelNote").textContent = free ? T("24 soatda 1 ta bepul") : profile.wheelTries ? `${T("Bepul")}: ${profile.wheelTries}` : T("Reklama yoki $0.99 bilan yana aylantiring");
+$("wheelNote").textContent = free ? T("24 soatda 1 ta bepul") : profile.wheelTries ? `${T("Bepul")}: ${profile.wheelTries}` : T("Reklama yoki $1.99 bilan yana aylantiring");
 }
 $("spinBtn").onclick = () => {
 if (wheelBusy) return;
@@ -9655,7 +9657,7 @@ s.style.animationDuration = rnd(6, 14) + "s"; s.style.animationDelay = rnd(0, 10
 $("shade").appendChild(s);
 }
 const vipTier = () => vipLevel().l;
-const usd = v => "$" + v.toFixed(2);
+const usd = v => usdTxt(cardUsd(v));   // card price of a pack (same rule as the server)
 function gemShort() {   // "Not Enough Gems!" with the six gem packs, like the reference
 const packs = Object.entries(SKUS).filter(([, s]) => s.gems && !s.coins);
 openModal({icon: "", title: T("Olmos yetmaydi!"), text: ON_PORTAL ? "" : T("Pastdagi paketlardan birini tanlang"), extra: `<div class="packgrid g3" style="margin:6px 0">${packs.map(([id, s]) => packCard(id, s)).join("")}</div><div class="muted" style="text-align:center">${T("Olmosni Elite stollarda (Dubay va undan yuqori) g'alaba qozonib ham topasiz")}</div>`, buttons: [{label: T("Elite do'kon"), cls: "purple", fn: () => setTimeout(eliteShop, 60)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
@@ -9742,7 +9744,7 @@ const STK_USD = 0.5;   // a sticker pack: 10 cash = 100 gems = $0.50 (Stripe's s
 function buildStickers(body) {
 const own = profile.stk = profile.stk || [];
 body.innerHTML = `<div class="muted" style="margin-bottom:10px">${T("Stikerlar o'yin ichidagi suhbatda (🎭 tugmasi) raqibga yuboriladi.")}</div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">${STICKER_PACKS.map(p => { const has = own.includes(p.id);
-return `<div class="card stkcard" style="background:url(${IMG["sk_" + p.id]}) center/100% 100% no-repeat"><div class="stkt">${T(p.n)}</div><div class="stkgrid">${p.e.map(e => `<span class="stk3">${stkHTML(e)}</span>`).join("")}</div>${has ? `<b class="stkown">✓ ${T("Sizda bor")}</b>` : `<div class="stkb"><button class="btn purple" data-sk="${p.id},cash"><span class="cash"></span> 10</button><button class="btn blue" data-sk="${p.id},gems">💎 100</button>${ON_PORTAL ? "" : `<button class="btn green" data-sk="${p.id},usd">${usdTxt(STK_USD)}</button>`}</div>`}</div>`; }).join("")}</div>`;
+return `<div class="card stkcard" style="background:url(${IMG["sk_" + p.id]}) center/100% 100% no-repeat"><div class="stkt">${T(p.n)}</div><div class="stkgrid">${p.e.map(e => `<span class="stk3">${stkHTML(e)}</span>`).join("")}</div>${has ? `<b class="stkown">✓ ${T("Sizda bor")}</b>` : `<div class="stkb"><button class="btn purple" data-sk="${p.id},cash"><span class="cash"></span> 10</button><button class="btn blue" data-sk="${p.id},gems">💎 100</button>${ON_PORTAL ? "" : `<button class="btn green" data-sk="${p.id},usd">${usdTxt(cardUsd(STK_USD))}</button>`}</div>`}</div>`; }).join("")}</div>`;
 body.querySelectorAll("[data-sk]").forEach(b => b.onclick = () => { const [id, cur] = b.dataset.sk.split(","), pr = cur === "cash" ? 10 : 100;
 if (cur === "usd") return Net.checkout("stk_" + id, b);
 if ((cur === "cash" ? profile.cash : profile.gems || 0) < pr) return cur === "gems" ? gemShort() : toast("😕", T("Pul yetmaydi"), "");
@@ -9752,7 +9754,7 @@ const isElite = () => +(profile.eliteUntil || 0) > Date.now();
 function eliteLeft() { const d = Math.max(0, +(profile.eliteUntil || 0) - Date.now()); return `${Math.floor(d / 864e5)}${T("k")} ${Math.floor(d % 864e5 / 36e5)}${T("s")}`; }
 function goElite() {
 openModal({icon: "", title: T("Elite a'zolik"), text: isElite() ? `👑 ${T("Faol")}: ${eliteLeft()}` : "", extra: `<div class="card" style="text-align:left;line-height:1.7">👑 ${T("30 kun davomida:")}<br>✦ ${T("Har g'alabada +25% tanga")}<br>✦ ${T("Elite do'konda −20% chegirma")}<br>✦ ${T("Bunch of Gems: 500 💎 sovg'a (bir marta)")}<br>✦ ${T("Ismingiz yonida ♛ belgisi")}</div>`,
-buttons: [...(ON_PORTAL ? [] : [{label: `${T("Elite bo'lish")} · $9.99`, cls: "green", fn: () => Net.checkout("elite_30")}]), {label: `💎 2 000`, cls: "purple", fn: () => { if ((profile.gems || 0) < 2000) return gemShort(); profile.gems -= 2000; grantElite(30); }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+buttons: [...(ON_PORTAL ? [] : [{label: `${T("Elite bo'lish")} · ${usdTxt(cardUsd(9.99))}`, cls: "green", fn: () => Net.checkout("elite_30")}]), {label: `💎 2 000`, cls: "purple", fn: () => { if ((profile.gems || 0) < 2000) return gemShort(); profile.gems -= 2000; grantElite(30); }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
 function grantElite(days) { profile.eliteUntil = Math.max(Date.now(), +(profile.eliteUntil || 0)) + days * 864e5; save(); updateNav(); burst(); Snd.win(); toast("👑", T("Elite a'zolik"), `${days} ${T("kun")}`); }
 
@@ -9768,7 +9770,7 @@ const LOOPS = [
 const loopNow = () => { const w = 36 * 36e5, i = Math.floor(Date.now() / w); return {o: LOOPS[i % LOOPS.length], left: (i + 1) * w - Date.now()}; };
 function loopModal() {
 const {o, left} = loopNow(), h = Math.floor(left / 36e5), m = Math.floor(left % 36e5 / 6e4);
-openModal({icon: "", title: T("Keyingi daraja aksiyasi"), text: "", extra: `<div class="loopbox" style="background:${o.bg}"><div class="loopg">${LOOP_TIERS.map(([usd, off], i) => `<div class="loopc"><span class="rib">−${off}%</span><div style="font-size:52px">${o.id === "box" ? boxImg(["rare", "epic", "leg"][i], 70) : icoH(o.ic, 56)}</div><b>${T(o.n)}</b><div class="h" style="font-size:22px">${o.id === "coin" ? fmt(o.v[i]) : "x" + fmt(o.v[i])}</div><button class="btn green" data-loop="loop_${o.id}_${i + 1}">$${usd}</button></div>`).join("")}</div><div class="muted" style="text-align:center;margin-top:6px">⏱ ${h}${T("s")} ${m}${T("d")}</div></div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
+openModal({icon: "", title: T("Keyingi daraja aksiyasi"), text: "", extra: `<div class="loopbox" style="background:${o.bg}"><div class="loopg">${LOOP_TIERS.map(([usd, off], i) => `<div class="loopc"><span class="rib">−${off}%</span><div style="font-size:52px">${o.id === "box" ? boxImg(["rare", "epic", "leg"][i], 70) : icoH(o.ic, 56)}</div><b>${T(o.n)}</b><div class="h" style="font-size:22px">${o.id === "coin" ? fmt(o.v[i]) : "x" + fmt(o.v[i])}</div><button class="btn green" data-loop="loop_${o.id}_${i + 1}">${usdTxt(cardUsd(usd))}</button></div>`).join("")}</div><div class="muted" style="text-align:center;margin-top:6px">⏱ ${h}${T("s")} ${m}${T("d")}</div></div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
 document.querySelectorAll("#modal [data-loop]").forEach(b => b.onclick = () => Net.checkout(b.dataset.loop, b));
 }
 function packCard(id, s) {
@@ -10028,7 +10030,7 @@ const MG_ART = {spin: "mg_wheel", wheel: "mg_wheel", lucky: "mg_dart", scratch: 
 const mgImg = (k, h = 40) => MG_ART[k] ? `<img class="mgi" src="${IMG[MG_ART[k]]}" style="height:${h}px" alt="">` : "";
 function buildMini() {
 const box = $("miniBody");
-const sub = k => freeReady(k) ? T("Bepul — 24 soatda 1 marta") : (profile[TRY_KEY[k]] | 0) ? `${T("Bepul")}: ${profile[TRY_KEY[k]]}` : `⏳ ${fmtDur(freeLeftMs(k))} · 📺 / $0.99`;
+const sub = k => freeReady(k) ? T("Bepul — 24 soatda 1 marta") : (profile[TRY_KEY[k]] | 0) ? `${T("Bepul")}: ${profile[TRY_KEY[k]]}` : `⏳ ${fmtDur(freeLeftMs(k))} · 📺 / ${usdTxt(cardUsd(0.99))}`;
 const btn = k => hasTry(k) ? T("Bepul o'ynash") : T("Yana o'ynash");
 const card = (cls, act, art, title, sub, btn, btnCls, badge) => `<div class="mgc ${cls}" data-act="${act}">${badge ? `<i class="dot">${badge}</i>` : ""}
 <div class="mgart"><img src="${IMG[art]}" alt=""></div><div class="mgtx"><b>${title}</b><small>${sub}</small></div><button class="mgbtn ${btnCls}">${btn}</button></div>`;
@@ -10037,7 +10039,7 @@ ${card("mg-teal", "wheel", "mg_wheel", T("Aylantirib yuting"), sub("wheel"), btn
 ${card("mg-gold", "lucky", "mg_dart", T("Omadli zarba"), sub("lucky"), btn("lucky"), hasTry("lucky") ? "" : "paid", freeReady("lucky") ? 1 : "")}
 ${card("mg-parch", "golden", "mg_gold", T("Oltin zarba"), `${T("Katta sovrinlar")}: 💵 10 · 🪙 75k${profile.goldShots ? ` · ${T("urinish")}: ${profile.goldShots}` : ""}`, profile.goldShots ? T("O'ynash") : "💎 25 / $1.99", profile.goldShots ? "" : "paid")}
 ${card("mg-red", "scratch", "mg_scr", T("Qirib yuting"), sub("scratch"), btn("scratch"), hasTry("scratch") ? "" : "paid", freeReady("scratch") ? 1 : "")}
-${card("mg-felt", "boxes", "mg_box", T("Syurpriz qutilar"), `${T("Afsonaviy kiy bo'laklari")}${profile.sboxes ? ` · ${T("qutilar")}: ${profile.sboxes}` : ""}`, profile.sboxes ? T("Ochish") : T("Pullik") + " · $0.99", profile.sboxes ? "" : "paid")}
+${card("mg-felt", "boxes", "mg_box", T("Syurpriz qutilar"), `${T("Afsonaviy kiy bo'laklari")}${profile.sboxes ? ` · ${T("qutilar")}: ${profile.sboxes}` : ""}`, profile.sboxes ? T("Ochish") : T("Pullik") + " · " + usdTxt(cardUsd(0.99)), profile.sboxes ? "" : "paid")}
 </div>`;
 box.querySelectorAll(".mgc").forEach(el => el.onclick = () => ({lucky: () => startLucky(), scratch: scratchGame, wheel: () => hasTry("wheel") ? go("wheelScr") : noTries("wheel", () => go("wheelScr")), golden: goldenShot, boxes: openSurpriseBox})[el.dataset.act]());
 }
@@ -10045,7 +10047,7 @@ function goldenShot() {
 if (!profile.goldShots) {
 if (mode !== "menu") toMenu("mini");
 return openModal({icon: "img:pile", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 10 · 💵 5 · 🪙 75 000 · 🪙 50 000</div>`, scene: "gold",
-buttons: [...(ON_PORTAL ? [] : [{label: "💳 3 × $1.99", cls: "green", fn: () => Net.checkout("golden_3")}]),
+buttons: [...(ON_PORTAL ? [] : [{label: `💳 3 × ${usdTxt(cardUsd(1.99))}`, cls: "green", fn: () => Net.checkout("golden_3")}]),
 {label: "💎 350", cls: "purple", fn: () => { if ((profile.gems || 0) < 350) return gemShort(); profile.gems -= 350; profile.goldShots = 3; save(); updateNav(); goldenShot(); }},
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
@@ -10948,7 +10950,7 @@ function horrorOfferModal(o, t) {
     <div class="hbody"><div class="hcues" id="hCue"></div><div class="hright">
       <div class="hstat">${bars}<div class="hpw">🔓 +${cuePower(cue)} ⚜</div></div>
       <div class="hcols${o.kind === "zodiac" ? " h8" : ""}">${col("🎱", "Kiy", esc(T(cue.name)))}${col('<span class="coin" style="width:40px;height:40px"></span>', "Tanga", fmtS(t.coins))}${col('<span class="cash" style="width:50px;height:36px"></span>', "Naqd pul", fmt(t.cash))}${t.goldShots ? col("🏆", "Oltin zarba", "×" + t.goldShots) : ""}${t.avatar ? col(`<img src="${avatarURL(t.avatar)}" style="height:54px;width:54px;border-radius:50%;border:2px solid ${P.g}">`, "Avatar", esc(T(o.title))) : ""}${t.frame ? col(avHTML(profile.avatar, frameIdx(t.frame), 54), "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name))) : ""}${tbl ? col(`<img src="${tableThumb(tbl)}" style="height:40px;border-radius:5px">`, "Stol", esc(T(tbl.name))) : ""}${t.sboxes ? col("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}</div>
-      <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} $${t.usd}</button>`}${o.horror ? `<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small>` : ""}</div></div></div>
+      <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} ${usdTxt(cardUsd(t.usd))}</button>`}${o.horror ? `<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small>` : ""}</div></div></div>
     <div class="hnav"><button class="btn gray" id="hPrev">‹</button><span class="hdots" style="color:#fff;font-weight:800">${vipPage % offers.length + 1} / ${offers.length}</span><button class="btn gray" id="hNext">›</button><button class="btn blue" id="hAll">▦ ${T("Hammasi")} (${offers.length})</button></div></div>`, buttons: []});
   vipCueShow(cue, $("hCue"));
   $("hClose").onclick = () => $("modal").classList.remove("on");
@@ -10971,8 +10973,8 @@ ${o.zodiac ? `<div class="zodsel"><button class="btn gray" id="zPrev">◀</butto
 <div class="vitems">${item("🎱", "Kiy", esc(cue.name))}${t.frame ? item(`<span style="display:inline-block">${avHTML(profile.avatar, frameIdx(t.frame), 38)}</span>`, "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name))) : ""}${t.table ? item(`<img src="${tableThumb(tableById(t.table))}" style="height:34px;border-radius:4px">`, "Stol", esc(T(tableById(t.table).name))) : ""}${t.avatar ? item("🙂", "Avatar", T(t.sign[0])) : ""}${item('<span class="coin" style="width:30px;height:30px"></span>', "Tanga", fmtS(t.coins))}
 ${item('<span class="cash" style="width:38px;height:28px"></span>', "Naqd pul", fmt(t.cash))}${t.sboxes ? item(icoH("🎁", 40), "Syurpriz qutilar", "×" + t.sboxes) : ""}${t.goldShots ? item("🏆", "Oltin zarba", "×" + t.goldShots) : ""}
 ${item('<img src="' + IMG.vip + '" style="height:30px">', "VIP ochko", fmt(t.vip))}</div></div>
-      ${o.zodiac || o.tiers.length < 2 ? "" : `<div class="vtiers">${o.tiers.map((x, i) => `<button class="btn ${i === vipSel[o.id] ? "orange" : "gray"}" data-vt="${i}">$${x.usd}</button>`).join("")}</div>`}
-<div class="vbuy">${own ? `<b style="color:#8dff9a">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="vipBuy" style="font-size:22px;padding:10px 30px">$${t.usd}</button>`}</div>
+      ${o.zodiac || o.tiers.length < 2 ? "" : `<div class="vtiers">${o.tiers.map((x, i) => `<button class="btn ${i === vipSel[o.id] ? "orange" : "gray"}" data-vt="${i}">${usdTxt(cardUsd(x.usd))}</button>`).join("")}</div>`}
+<div class="vbuy">${own ? `<b style="color:#8dff9a">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="vipBuy" style="font-size:22px;padding:10px 30px">${usdTxt(cardUsd(t.usd))}</button>`}</div>
 <div class="vipnav"><button class="btn gray" id="vPrev">‹</button>${offers.map((x, i) => `<i class="${i === vipPage ? "on" : ""}"></i>`).join("")}<button class="btn gray" id="vNext">›</button></div>
 </div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
 vipCueShow(cue, $("vipCv"));
@@ -11524,7 +11526,7 @@ $("embName").textContent = `${badge + 1}. ${CLUB_BADGES[badge]}`;
 $("embDesc").innerHTML = t ? `<b class="etier t${t}">${T(t === 2 ? "Afsonaviy" : "Epik")}</b> · ${T(t === 2 ? "Kuchli alanga va nur effekti, klub kartasi oltin nur sochadi" : "Jonli emblema: klubingiz ro'yxatda harakatlanib turadi")}` : T("Bepul emblema");
 document.querySelectorAll("#modal [data-b]").forEach(b => b.classList.toggle("on", +b.dataset.b === badge));
 $("mBtns").innerHTML = "";
-if (!owned(badge) && t === 2 && !ON_PORTAL) mkBtn(`💳 $${CLUB_USD}`, "green", () => Net.checkout("emb_" + badge), true);
+if (!owned(badge) && t === 2 && !ON_PORTAL) mkBtn(`💳 ${usdTxt(cardUsd(CLUB_USD))}`, "green", () => Net.checkout("emb_" + badge), true);
 if (!owned(badge)) { const pr = CLUB_PRICE[t]; mkBtn(`💵 ${pr} · ${T("Sotib olish")}`, "purple", () => { if ((profile.cash || 0) < pr) return toast("😕", T("Pul yetmaydi"), T("Klublar")); profile.cash -= pr; own().push(badge); save(); updateNav(); Snd.win(); burst(); toast("✨", CLUB_BADGES[badge], T("Emblema sizniki!")); grids(); }, false); }
 else mkBtn(T("Yaratish"), "green", create, true);
 mkBtn(T("Yopish"), "gray", () => {}, true);
