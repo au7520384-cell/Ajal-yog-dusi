@@ -8365,7 +8365,7 @@ br += `<div class="brc fin"><div class="brtro">🏆<b><span class="coin"></span>
 for (let r = total - 2; r >= 0; r--) br += `<div class="brc r"><small>${roundName(total - r)}</small><div class="brb">${half(r, 1).map(m => mbox(m, r)).join("")}</div></div>`;
 body.innerHTML = `<div class="tourhead2"><div class="tmy"><span>${roundName(total - R)}</span><div class="match big">${cell(0)}<div class="vs">VS</div>${cell(opp)}</div><button class="btn green" id="tourNext">${T("O'YNASH")}</button></div><div class="tprize">👥 ${c.n}</div></div>
 <div class="bracket" id="bracket">${br}</div>`;
-requestAnimationFrame(() => { const m = body.querySelector(".brm.mine"), bx = $("bracket"); if (m && bx) bx.scrollTop = Math.max(0, m.offsetTop - bx.clientHeight / 2); });
+requestAnimationFrame(() => { const m = body.querySelector(".brm.mine"), bx = $("bracket"); if (m && bx) bx.scrollTop = Math.max(0, m.offsetTop - bx.clientHeight / 2); });   // a tall bracket (48 / 60 players) scrolls; it opens on your own match
 $("tourNext").onclick = () => vsScreen(CITIES[c.city], c.prize, P[opp], f => startMatch("tour", CITIES[c.city], f.opp));
 }
 function joinTour(c) {
