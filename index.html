@@ -2251,7 +2251,7 @@ const DICT = {
 "TANLASH": ["USE", "ВЫБРАТЬ"], "✓ TANLANGAN": ["✓ IN USE", "✓ ВЫБРАН"], "Premium": ["Premium", "Премиум"], "Standart": ["Standard", "Стандарт"], "Yangi kiy!": ["New cue!", "Новый кий!"],
 "KUCH": ["POWER", "СИЛА"], "ANIQ": ["FINE", "ТОЧНО"], "▼ torting": ["▼ pull", "▼ тяни"], "▲▼ bur": ["▲▼ turn", "▲▼ крути"],
 "Sizning navbatingiz": ["Your turn", "Ваш ход"], "Siz sindirasiz — omad!": ["You are breaking, good luck!", "Вы разбиваете, удачи!"],
-"QOIDA BUZILDI!": ["FOUL!", "ФОЛ!"], "VAQT TUGADI!": ["TIME'S UP!", "ВРЕМЯ ВЫШЛО!"], "G'ALABA!": ["VICTORY!", "ПОБЕДА!"], "MAG'LUBIYAT": ["DEFEAT", "ПОРАЖЕНИЕ"],
+"QOIDA BUZILDI!": ["FOUL!", "ФОЛ!"], "VAQT TUGADI!": ["TIME'S UP!", "ВРЕМЯ ВЫШЛО!"], "Raqib javob bermadi": ["Opponent is not responding", "Соперник не отвечает"], "Navbat sizda": ["It's your turn", "Ваш ход"], "G'ALABA!": ["VICTORY!", "ПОБЕДА!"], "MAG'LUBIYAT": ["DEFEAT", "ПОРАЖЕНИЕ"],
 "ZO'R!": ["NICE!", "КЛАСС!"], "AJOYIB!": ["AMAZING!", "ПОТРЯСАЮЩЕ!"], "MASHQ": ["PRACTICE", "ТРЕНИРОВКА"],
 "Yana o'ynash": ["Play again", "Ещё раз"], "Menyu": ["Menu", "Меню"], "Davom etish": ["Continue", "Продолжить"], "Pauza": ["Paused", "Пауза"],
 "Taslim bo'lish": ["Resign", "Сдаться"], "Chiqish": ["Exit", "Выход"], "Keyingi o'yin": ["Next game", "Следующая игра"], "Qayta o'ynash": ["Rematch", "Реванш"],
@@ -3144,6 +3144,7 @@ s.connect(f); f.connect(g); g.connect(master); s.start(t, Math.random() * 0.5); 
 const now = () => ac.currentTime;
 return {
 init,
+check() { if (ac && ac.state !== "running") wake(); },   // called every few seconds during a match: the sound system can be paused by the phone (call, voice chat, another app) and would stay silent until the next tap
 state: () => ac ? ac.state : "none",
 
 turn() { if (ok() && ui.turn) play(ui.turn, 0.7); },
@@ -7499,6 +7500,7 @@ if (G.net) {
 if (G.net.spec) { if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; } }
 else if (G.shotBy === 0) sendState();
 else if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; }
+if (G.pendingShot && !G.net.spec) { const ps = G.pendingShot; G.pendingShot = null; remoteShot(ps); }
 }
 }
 } else if (!G.over) {
@@ -7657,7 +7659,12 @@ if (pl.isAI && !pl.remote) {
 if (!G.aiTask && idle > 6) { if (G.aiWait) { clearTimeout(G.aiWait); G.aiWait = null; } try { aiThink(); } catch (e) { G.aiTask = null; requestShot(0.5); } G.turnStart = now; }
 } else if (!pl.remote && timed() && G.turnLimit && idle > G.turnLimit + 4) {
 input.drag = null; input.power = 0; input.charging = false; timeoutFoul();
+} else if (pl.remote && G.net && !G.net.spec && timed() && G.turnLimit) {
+// the opponent's phone runs his clock; if it froze or lost the connection and has sent nothing for a long time, take the turn instead of waiting forever
+const quiet = (now - Math.max(G.turnStart, G.net.lastRx || 0)) / 1000;
+if (quiet > G.turnLimit + 8) { G.cur = 1; timeoutFoul(); setBanner(T("Raqib javob bermadi"), "#ffe27a", "Navbat sizda"); }
 }
+if (now - (G.audioChk || 0) > 2500) { G.audioChk = now; try { Snd.check(); } catch (e) {} }
 }
 const MENU_SCREENS = ["eventsScr", "freeScr", "inbox", "withFrScr", "settingsScr", "clubsScr", "passScr", "home", "cities", "tourScr", "shop", "rewards", "leader", "mini", "wheelScr", "profileScr", "friendsScr"];
 function showScreen(id) {
@@ -9231,19 +9238,30 @@ return {applyGrant, api, ensure, sync, checkout, connect, send, setAcct, on: (t,
 get acct() { return acct; }, get online() { return online; }, get base() { return BASE; }, inbox: [], me: null, friends: []};
 })();
 Net.on("aim", m => {
-const G = game; if (G && G.net && G.net.spec) { if (G.cur === m.from && !G.moving) { G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; } } return; }
+const G = game; if (G && G.net) G.net.lastRx = performance.now();
+if (G && G.net && G.net.spec) { if (G.cur === m.from && !G.moving) { G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; } } return; }
 if (!G || !G.net || G.cur !== 1 || G.moving) return;
 G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1);
 if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; }
 });
 Net.on("shot", m => {
 const G = game; if (G && G.net && G.net.spec) { if (G.moving || G.strike) return; G.cur = m.from === 1 ? 1 : 0; G.angle = +m.a || G.angle; requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0}); return; }
-if (!G || !G.net || G.cur !== 1 || G.moving || G.strike) return;
+if (!G || !G.net || G.over) return;
+G.net.lastRx = performance.now();
+remoteShot(m);
+});
+// the opponent's shot. It is never dropped: if this phone is still busy with the previous shot it waits until the balls stop, and if the two phones disagree
+// about whose turn it is, the shooter wins (he is the one holding the cue) - otherwise the game froze for good ("it never becomes my turn").
+function remoteShot(m) {
+const G = game; if (!G || !G.net || G.over) return;
+if (G.moving || G.strike) { G.pendingShot = m; return; }
+if (G.cur !== 1) { G.cur = 1; G.turnStart = performance.now(); }
 G.angle = +m.a || G.angle;
 requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0});
-});
+}
 Net.on("state", m => {
 const G = game; if (!G || !G.net) return;
+G.net.lastRx = performance.now();
 if (G.moving || G.strike) G.pendingState = m; else applyState(m);
 });
 Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, String(m.msg || "").slice(0, 40)); });
