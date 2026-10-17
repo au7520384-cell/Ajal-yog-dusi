@@ -4210,6 +4210,12 @@ if (!list.some(l => l.cls === cls)) list.push({cls, w: q[1] === "width", v: +q[2
 const st = document.createElement("style"); st.textContent = css.join("\n"); document.head.appendChild(st);
 return list;
 })();
+let dprAuto = 1, slowAcc = 0;   // automatic resolution: when the phone cannot draw a frame in time (GPU bound) the picture gets a little softer until it is smooth
+function adaptRes(dt) {
+if (mode !== "game" || !game || document.hidden || dt > 120) { return; }
+if (dt > 25) slowAcc++; else if (slowAcc > 0) slowAcc--;
+if (slowAcc > 45 && dpr > 1.05) { slowAcc = 0; dprAuto = Math.max(0.5, dprAuto * 0.8); resize(); }
+}
 function resize() {
 const touch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
 rotated = touch && innerHeight > innerWidth;
@@ -4219,7 +4225,7 @@ const uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 12
 for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) / uiz <= q.v);
 document.body.style.width = rotated ? vw + "px" : ""; document.body.style.height = rotated ? vh + "px" : "";
 let gq = "mid"; try { gq = (profile.set && profile.set.gfx) || "mid"; } catch (e) {}   // profile may not exist yet on the very first resize
-dpr = Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5})[gq] || 2.5);   // Settings → Graphics: Low 1.5 / Medium 2 / High 2.5 (sharper, heavier)
+dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5})[gq] || 2.5) * dprAuto);   // Settings → Graphics: Low 1.5 / Medium 2 / High 2.5 (sharper, heavier)
 cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
 scale = Math.min(vw / W, vh / H) * zoom;
 document.documentElement.style.setProperty("--uiz", uiz.toFixed(3));   // big monitors: scale the menus up with the table so nothing looks tiny
@@ -7612,7 +7618,7 @@ let lastNow = 0, accum = 0, nextDraw = 0, lastDraw = 0;
 const fpsTarget = () => { let v = "90"; try { v = (profile.set && profile.set.fps) || "90"; } catch (e) {} return v === "auto" ? 1000 : (+v || 90); };
 function frame(now) {
 if (!(now > 0)) now = performance.now();
-let dt = now - lastNow; lastNow = now;
+let dt = now - lastNow; lastNow = now; adaptRes(dt);
 if (!(dt > 0) || dt > 250) dt = STEP_MS;   // first frame / returning from another tab: do not fast-forward
 accum += dt;
 let n = 0;
@@ -11378,9 +11384,14 @@ buttons: first ? [{label: T("Mehmon sifatida o'ynash"), cls: "orange", fn: () =>
 if (g) loadScript("https://accounts.google.com/gsi/client").then(() => { google.accounts.id.initialize({client_id: cfg.google, callback: x => authLogin("google", x.credential, mode)}); google.accounts.id.renderButton($("gBtn"), {theme: "filled_blue", size: "large", text: "signin_with", width: 250}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Google"));
 if (f) $("fbBtn").onclick = () => loadScript("https://connect.facebook.net/en_US/sdk.js").then(() => { FB.init({appId: cfg.facebook, version: "v19.0", cookie: false, xfbml: false}); FB.login(x => { if (x.authResponse) authLogin("facebook", x.authResponse.accessToken, mode); }, {scope: "public_profile"}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Facebook"));
 }
-function loginFirst() {   // shown once on a fresh install, but only when the server has Google/Facebook sign-in configured
+function loginFirst(n = 0) {   // shown once on a fresh install, but only when the server has Google/Facebook sign-in configured
 if (ON_PORTAL || !Net.base || store.get("b8guest") || (profile.prov && Object.keys(profile.prov).length)) return;
-Net.api("/api/auth/config").then(cfg => { if ((cfg.google || cfg.facebook) && !$("modal").classList.contains("on") && $("home").classList.contains("on")) loginUI(true, cfg); }).catch(() => {});
+const again = () => { if (n < 15) setTimeout(() => loginFirst(n + 1), 4000); };   // another popup was open (or the server was still waking up): ask again a bit later instead of never showing the sign-in
+Net.api("/api/auth/config").then(cfg => {
+if (!(cfg.google || cfg.facebook)) return;
+if ($("modal").classList.contains("on") || !$("home").classList.contains("on")) return again();
+loginUI(true, cfg);
+}).catch(again);
 }
 
 // Android Back / browser back: never leaves the game by accident. Modal -> close it, other screen -> home, in a match -> match menu, home -> press twice to exit.
@@ -11885,7 +11896,7 @@ if (/[?&]perf=1/.test(location.search)) {
       let w = 0, slow = 0; for (const h of hist) { if (h[1] > w) w = h[1]; if (h[1] > 25) slow++; }
       while (lt.length && t - lt[0][0] > 3000) lt.shift();
       const ltMax = lt.reduce((m, x) => Math.max(m, x[1]), 0);
-      box.textContent = `fps ${(hist.length / 3).toFixed(0)}  worst ${w.toFixed(0)} ms  >25ms: ${slow}\nlong tasks (3s): ${lt.length}, max ${ltMax.toFixed(0)} ms\nafter shot: worst ${shotWorst.toFixed(0)} ms at +${shotAt.toFixed(0)} ms`;
+      box.textContent = `res ${cv.width}x${cv.height} dpr ${dpr.toFixed(2)}\nfps ${(hist.length / 3).toFixed(0)}  worst ${w.toFixed(0)} ms  >25ms: ${slow}\nlong tasks (3s): ${lt.length}, max ${ltMax.toFixed(0)} ms\nafter shot: worst ${shotWorst.toFixed(0)} ms at +${shotAt.toFixed(0)} ms`;
     }
     requestAnimationFrame(loop);
   };
