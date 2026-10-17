@@ -4285,13 +4285,9 @@ else { delete mainCtx.shadowBlur; delete mainCtx.shadowColor; }
 function adaptRes(dt) {
 if (mode !== "game" || !game || document.hidden || dt > 120) { return; }
 let low = false; try { low = (profile.set && profile.set.gfx) === "low"; } catch (e) {}
-if (low && !liteFx) setLite(true);   // Settings → Graphics: Low always runs without glows
-if (dt > 25) slowAcc++; else if (slowAcc > 0) slowAcc--;
-if (slowAcc > 45) {
-slowAcc = 0;
-if (!liteFx) setLite(true);
-else if (dpr > 1.05) { dprAuto = Math.max(0.5, dprAuto * 0.8); resize(); }
-}
+if (low !== liteFx) setLite(low);   // Settings → Graphics: Low runs without glows, the other levels with them
+// No automatic drop any more: on real phones it made the picture blurry and flat without removing the stutter (the stutter is not about resolution).
+// Only the explicit Settings -> Graphics -> Low switches the glows off.
 }
 function resize() {
 const touch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
