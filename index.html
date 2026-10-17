@@ -47,7 +47,9 @@ background:
 radial-gradient(ellipse at 50% 25%,rgba(255,200,110,.22),transparent 55%),
 linear-gradient(180deg,rgba(20,14,6,.78),rgba(8,6,3,.9));
 -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
-#shade.on{opacity:1}
+#shade{visibility:hidden;transition:opacity .4s,visibility 0s .4s}
+#shade.on{opacity:1;visibility:visible;transition:opacity .4s}
+#shade:not(.on)::before,#shade:not(.on) .spark{animation-play-state:paused}   /* hidden: no spinning rays / floating sparks (a full-screen blurred layer would be recomposited on every frame during a match) */
 #shade::before{content:"";position:absolute;inset:-50%;opacity:.35;
 background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(255,220,150,.22) 0deg 5deg,transparent 5deg 13deg);
 -webkit-mask:radial-gradient(circle at 50% 50%,#000 0%,transparent 45%);mask:radial-gradient(circle at 50% 50%,#000 0%,transparent 45%);
@@ -3974,12 +3976,56 @@ for (const t of tg) { if (!segClear(G.balls, cx, cy, t.x, t.y, [0, t.n])) contin
 for (const pw of [0.3, 0.45, 0.65]) for (const [spx, spy] of AI_SPIN_SETS[T_]) { const sc = scoreSim(simShot(ang, pw, spx, spy), T_) - (spy || spx ? 0.5 : 0); if (!best || sc > best.sc) best = {angle: ang, power: pw, sc, spx, spy}; } }
 return best;
 }
-function aiThink() {
+const AIB = {t0: 0, sync: false, budget: 6};   // the bot's search runs in small slices between frames so the picture never freezes while it thinks (a phone needs ~0.5 s for the whole search)
+const aiTick = () => !AIB.sync && performance.now() - AIB.t0 > AIB.budget;
+function* bestShotSimG(cx, cy, tier) {   // same search as bestShotSim, but hands control back to the game loop whenever its time slice is used up
+const G = game, cands = [], T_ = tier === undefined ? aiTier() : tier, all = [];
+for (const t of legalTargets(G.cur)) for (const pa of POCKET_AIMS) { const e = evalShot(G.balls, cx, cy, t, pa); if (e) cands.push(e); }
+cands.sort((a, b) => b.score - a.score);
+for (const c of cands.slice(0, T_ === 2 ? 3 : 4)) for (const pw of [c.power, Math.min(1, c.power * 1.2)]) for (const [spx, spy] of AI_SPIN_SETS[T_]) {
+const pen = (spy || spx ? 0.5 : 0), sc = scoreSim(simShot(c.angle, pw, spx, spy), T_) + c.score * 1e-6 - pen;
+all.push({angle: c.angle, power: pw, score: c.score, t: c.t, sc, spx, spy, pen});
+if (aiTick()) yield;
+}
+all.sort((a, b) => b.sc - a.sc);
+if (T_ > 0) {
+const d = Math.max(0.006, isFinite(G.skill) ? G.skill : 0.01);
+for (const c of all.slice(0, 4)) { c.sc = (c.sc + scoreSim(simShot(c.angle - d, c.power, c.spx, c.spy), T_) + scoreSim(simShot(c.angle + d, c.power, c.spx, c.spy), T_)) / 3; if (aiTick()) yield; }
+all.sort((a, b) => b.sc - a.sc);
+}
+if (T_ === 2) for (const c of all.slice(0, 3)) {
+const r = simShot(c.angle, c.power, c.spx, c.spy), s0 = r.s, obj = s0.potted.filter(n => n !== 0 && n !== 8);
+if (!obj.length || s0.potted.includes(0) || s0.potted.includes(8) || s0.firstHit === null) continue;
+const saveB = G.balls, saveG = G.groups, cue = r.balls[0];
+G.balls = r.balls; if (!G.groups[G.cur]) { const g0 = groupOf(obj[0]); G.groups = G.cur === 0 ? [g0, g0 === "solid" ? "stripe" : "solid"] : [g0 === "solid" ? "stripe" : "solid", g0]; }
+let nx = null; try { nx = cue.out ? null : bestShotSim(cue.x, cue.y, 0); } finally { G.balls = saveB; G.groups = saveG; }   // never yields while the table is swapped for the imagined one
+if (nx && nx.sc > 0) c.sc += 0.4 * Math.min(nx.sc, 240);
+if (aiTick()) yield;
+}
+all.sort((a, b) => b.sc - a.sc);
+return all[0] || null;
+}
+function* safeShotSimG(cx, cy, tier) {
+const G = game, T_ = tier === undefined ? aiTier() : tier, tg = legalTargets(G.cur); let best = null;
+for (const t of tg) { if (!segClear(G.balls, cx, cy, t.x, t.y, [0, t.n])) continue; const ang = Math.atan2(t.y - cy, t.x - cx);
+for (const pw of [0.3, 0.45, 0.65]) for (const [spx, spy] of AI_SPIN_SETS[T_]) { const sc = scoreSim(simShot(ang, pw, spx, spy), T_) - (spy || spx ? 0.5 : 0); if (!best || sc > best.sc) best = {angle: ang, power: pw, sc, spx, spy}; if (aiTick()) yield; } }
+return best;
+}
+function aiThink() { AIB.sync = true; try { for (const _ of aiThinkG()); } finally { AIB.sync = false; } }   // the whole search at once (tests, tools)
+function aiStart(G) { G.aiGen = aiThinkG(); }
+function aiStep(G) {   // one time slice of the bot's thinking; called once per drawn frame
+if (!G.aiGen) return;
+if (G !== game || G.over || G.moving) { G.aiGen = null; return; }
+AIB.t0 = performance.now(); AIB.sync = false;
+try { if (G.aiGen.next().done) G.aiGen = null; } catch (e) { G.aiGen = null; G.aiTask = null; onFrameError(e); try { requestShot(0.5); } catch (_) {} }
+}
+function* aiThinkG() {
 const G = game, cue = G.balls[0]; let carry = null;
 if (G.ballInHand) {
 let best = null, pos = null;
 if (G.isBreak) pos = {x: FW * 0.25, y: FH / 2 + rnd(-60, 60)};
 else for (let i = 0; i < 120; i++) {
+if (i % 8 === 7 && aiTick()) yield;
 const x = rnd(R, FW - R), y = rnd(R, FH - R);
 if (G.balls.some(b => !b.out && b.n !== 0 && (b.x - x) ** 2 + (b.y - y) ** 2 < (2 * R + 2) ** 2)) continue;
 const s = bestShotFrom(x, y);
@@ -3992,8 +4038,8 @@ if (G.isBreak) {
 const apex = G.balls.find(b => b.n === 1 && !b.out) || G.balls.find(b => !b.out && b.n !== 0) || {x: FW * 0.72, y: FH / 2};
 plan = {angle: Math.atan2(apex.y - cue.y, apex.x - cue.x) + gauss() * 0.004, power: rnd(0.93, 1)};
 } else {
-plan = bestShotSim(cue.x, cue.y);
-if (!plan || plan.sc < 0) { const sf = safeShotSim(cue.x, cue.y); if (sf && (!plan || sf.sc > plan.sc)) plan = sf; }
+plan = yield* bestShotSimG(cue.x, cue.y);
+if (!plan || plan.sc < 0) { const sf = yield* safeShotSimG(cue.x, cue.y); if (sf && (!plan || sf.sc > plan.sc)) plan = sf; }
 if (!plan) {
 const tg = legalTargets(G.cur);
 const clear = tg.filter(t => segClear(G.balls, cue.x, cue.y, t.x, t.y, [0, t.n]));
@@ -4190,7 +4236,8 @@ cv.addEventListener("wheel", e => {
 e.preventDefault(); if (!canControl()) return;
 game.angle += Math.sign(e.deltaY) * (e.shiftKey ? 0.02 : 0.002);
 }, {passive: false});
-let ctx = cv.getContext("2d");
+let ctx = cv.getContext("2d", {alpha: false});   // the picture always covers the whole canvas, so the browser need not blend it with the page behind
+const mainCtx = ctx;
 let scale = 1, offX = 0, offY = 0, dpr = 1, zoom = 1;
 let rotated = false, vw = innerWidth, vh = innerHeight;
 const MQ = (() => {
@@ -4210,11 +4257,22 @@ if (!list.some(l => l.cls === cls)) list.push({cls, w: q[1] === "width", v: +q[2
 const st = document.createElement("style"); st.textContent = css.join("\n"); document.head.appendChild(st);
 return list;
 })();
-let dprAuto = 1, slowAcc = 0;   // automatic resolution: when the phone cannot draw a frame in time (GPU bound) the picture gets a little softer until it is smooth
+let dprAuto = 1, slowAcc = 0, liteFx = false;   // automatic quality: when the phone cannot draw a frame in time, first the blurred glows / shadows are dropped, then the picture gets a little softer
+function setLite(on) {   // "lite": the main canvas ignores shadowBlur / shadowColor (a blurred shadow is an extra off-screen pass per draw on a phone GPU); pictures cached off-screen keep their look
+if (on === liteFx) return; liteFx = on;
+if (on) for (const k of ["shadowBlur", "shadowColor"]) Object.defineProperty(mainCtx, k, {configurable: true, get() { return k === "shadowBlur" ? 0 : "rgba(0, 0, 0, 0)"; }, set() {}});
+else { delete mainCtx.shadowBlur; delete mainCtx.shadowColor; }
+}
 function adaptRes(dt) {
 if (mode !== "game" || !game || document.hidden || dt > 120) { return; }
+let low = false; try { low = (profile.set && profile.set.gfx) === "low"; } catch (e) {}
+if (low && !liteFx) setLite(true);   // Settings → Graphics: Low always runs without glows
 if (dt > 25) slowAcc++; else if (slowAcc > 0) slowAcc--;
-if (slowAcc > 45 && dpr > 1.05) { slowAcc = 0; dprAuto = Math.max(0.5, dprAuto * 0.8); resize(); }
+if (slowAcc > 45) {
+slowAcc = 0;
+if (!liteFx) setLite(true);
+else if (dpr > 1.05) { dprAuto = Math.max(0.5, dprAuto * 0.8); resize(); }
+}
 }
 function resize() {
 const touch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
@@ -7526,8 +7584,8 @@ G.turnStart += 1000 / 60;
 } else if (curP().remote) {
 /* opponent's turn — their device runs the clock */
 } else if (curP().isAI) {
-if (!G.aiTask && !G.aiWait) {
-G.aiWait = setTimeout(() => { G.aiWait = null; if (game === G && !G.over && !G.moving) try { aiThink(); } catch (e) { onFrameError(e); } }, G.demo ? 500 : rnd(700, 1300));
+if (!G.aiTask && !G.aiWait && !G.aiGen) {
+G.aiWait = setTimeout(() => { G.aiWait = null; if (game === G && !G.over && !G.moving) try { aiStart(G); } catch (e) { onFrameError(e); } }, G.demo ? 500 : rnd(700, 1300));
 }
 if (G.aiTask) aiUpdate();
 } else if (timed() && G.turnLimit && !G.spinOpen && mode === "game" && !$("modal").classList.contains("on")) {
@@ -7619,6 +7677,7 @@ const fpsTarget = () => { let v = "90"; try { v = (profile.set && profile.set.fp
 function frame(now) {
 if (!(now > 0)) now = performance.now();
 let dt = now - lastNow; lastNow = now; adaptRes(dt);
+const pj0 = PERF ? performance.now() : 0;
 if (!(dt > 0) || dt > 250) dt = STEP_MS;   // first frame / returning from another tab: do not fast-forward
 accum += dt;
 let n = 0;
@@ -7638,16 +7697,18 @@ if (b.out || b.px === undefined) continue;
 const dx = b.x - b.px, dy = b.y - b.py;
 if (dx * dx + dy * dy < 1600) { swapped.push(b, b.x, b.y); b.x = b.px + dx * al; b.y = b.py + dy * al; }
 }
-try { render(); } catch (e) { onFrameError(e); try { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; } catch (_) {} }
+try { if (game && game.aiGen) aiStep(game); render(); } catch (e) { onFrameError(e); try { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; } catch (_) {} }
 for (let i = 0; i < swapped.length; i += 3) { swapped[i].x = swapped[i + 1]; swapped[i].y = swapped[i + 2]; }
 }
+if (PERF) { const d = performance.now() - pj0; perfJ.s += d; perfJ.n++; if (d > perfJ.m) perfJ.m = d; }
 requestAnimationFrame(frame);
 }
+const PERF = /[?&]perf=1/.test(location.search), perfJ = {s: 0, n: 0, m: 0};   // ?perf=1: time the game's own code takes per frame
 function onFrameError(e) {
 if (frameErr++ < 3) console.error("frame error:", e);
 if (frameErr < 6) { try { toast("⚠️", T("Xato") + ": " + String(e && e.message || e).slice(0, 70), "Skrinshot yuboring"); } catch (_) {} }
 const G = game; if (!G) return;
-G.strike = null; G.aiTask = null; if (G.aiWait) { clearTimeout(G.aiWait); G.aiWait = null; }
+G.strike = null; G.aiTask = null; G.aiGen = null; if (G.aiWait) { clearTimeout(G.aiWait); G.aiWait = null; }
 for (const b of G.balls) if (!isFinite(b.x) || !isFinite(b.y) || !isFinite(b.vx) || !isFinite(b.vy)) { b.vx = b.vy = 0; if (!isFinite(b.x) || !isFinite(b.y)) { const sp = freeSpot(FW * 0.25, FH / 2); b.x = sp.x; b.y = sp.y; } }
 }
 function watchdog() {
@@ -7662,7 +7723,7 @@ G.movingSince = 0;
 if (introOn(G) || G.spinOpen || $("modal").classList.contains("on") || G.strike) return;
 const idle = (now - G.turnStart) / 1000, pl = curP();
 if (pl.isAI && !pl.remote) {
-if (!G.aiTask && idle > 6) { if (G.aiWait) { clearTimeout(G.aiWait); G.aiWait = null; } try { aiThink(); } catch (e) { G.aiTask = null; requestShot(0.5); } G.turnStart = now; }
+if (!G.aiTask && !G.aiGen && idle > 6) { if (G.aiWait) { clearTimeout(G.aiWait); G.aiWait = null; } try { aiStart(G); } catch (e) { G.aiTask = null; requestShot(0.5); } G.turnStart = now; }
 } else if (!pl.remote && timed() && G.turnLimit && idle > G.turnLimit + 4) {
 input.drag = null; input.power = 0; input.charging = false; timeoutFoul();
 } else if (pl.remote && G.net && !G.net.spec && timed() && G.turnLimit) {
@@ -11896,7 +11957,8 @@ if (/[?&]perf=1/.test(location.search)) {
       let w = 0, slow = 0; for (const h of hist) { if (h[1] > w) w = h[1]; if (h[1] > 25) slow++; }
       while (lt.length && t - lt[0][0] > 3000) lt.shift();
       const ltMax = lt.reduce((m, x) => Math.max(m, x[1]), 0);
-      box.textContent = `res ${cv.width}x${cv.height} dpr ${dpr.toFixed(2)}\nfps ${(hist.length / 3).toFixed(0)}  worst ${w.toFixed(0)} ms  >25ms: ${slow}\nlong tasks (3s): ${lt.length}, max ${ltMax.toFixed(0)} ms\nafter shot: worst ${shotWorst.toFixed(0)} ms at +${shotAt.toFixed(0)} ms`;
+      const jn = perfJ.n || 1, jav = perfJ.s / jn, jmx = perfJ.m; perfJ.s = perfJ.n = perfJ.m = 0;
+      box.textContent = `res ${cv.width}x${cv.height} dpr ${dpr.toFixed(2)} lite ${liteFx ? "ON" : "off"}\ngame code per frame: avg ${jav.toFixed(1)} ms  max ${jmx.toFixed(0)} ms\nfps ${(hist.length / 3).toFixed(0)}  worst ${w.toFixed(0)} ms  >25ms: ${slow}\nlong tasks (3s): ${lt.length}, max ${ltMax.toFixed(0)} ms\nafter shot: worst ${shotWorst.toFixed(0)} ms at +${shotAt.toFixed(0)} ms`;
     }
     requestAnimationFrame(loop);
   };
