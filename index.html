@@ -1910,6 +1910,8 @@ for (const k of ["coin", "coinc", "cash", "gem", "vip"]) document.documentElemen
 const ringImg = {}; // city ring pictures for the table and the HUD
 const imgEl = {}; for (const k of ["coin", "cash", "gem"]) { imgEl[k] = new Image(); imgEl[k].src = IMG[k]; }
 const ON_PORTAL = /(^|\.)y8\.com$|(^|\.)id\.net$/.test(location.hostname) || /y8\.com/.test(document.referrer) || (window.top !== window.self && !!CONFIG.y8AppId);
+// Real-money card purchases (Paddle/Stripe) are switched off everywhere: the game earns from rewarded ads and in-game currency only. Set CARD_PAY = true to bring the card buttons back.
+const CARD_PAY = false, NO_CARD = ON_PORTAL || !CARD_PAY;
 const W = 1340, H = 720;
 const FX = 188, FY = 148, FW = 1000, FH = 500, RAIL = 66, R = 16;   // ball radius (was 17): about 6 % smaller balls, pockets unchanged
 const RAILC = (RAIL + 8 + 19) / 2;
@@ -4146,7 +4148,7 @@ return false;
 const hasTry = k => freeReady(k) || (profile[TRY_KEY[k]] | 0) > 0;
 const TRY_NAME = {lucky: "Omadli zarba", wheel: "Aylantirib yuting", scratch: "Qirib yuting"};
 function noTries(k, again) {
-const ad = Y8.sdk && Y8.adsReady, pay = !ON_PORTAL;
+const ad = Y8.sdk && Y8.adsReady, pay = !NO_CARD;
 openModal({icon: "⏳", title: T(TRY_NAME[k]), text: `${T("Keyingi bepul urinish")}: ${fmtDur(freeLeftMs(k))}`,
 extra: `<p class="muted" style="margin:0">${T("Hozir yana o'ynash uchun reklama ko'ring yoki urinish sotib oling.")}</p>`,
 buttons: [...(ad ? [{label: `📺 ${T("Reklama ko'rish")}`, cls: "green", fn: () => y8Rewarded("try-" + k, () => { profile[TRY_KEY[k]] = (profile[TRY_KEY[k]] | 0) + 1; save(); again && again(); })}] : []),
@@ -8452,7 +8454,7 @@ const usdTxt = u => "$" + (+u).toFixed(2);
 // card (real-money) price: nothing below $1.99 (the payment provider keeps ~5% + $0.50), everything else moves up $0.50 so the order of prices stays. Same rule as the server (cardUsd in server.js).
 const cardUsd = u => u < 1.99 ? 1.99 : Math.round((u + 0.5) * 100) / 100;
 function payRow(cash, gems, usd) {
-return `<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">${usdTxt(cardUsd(usd))}</button>`}</div>`;
+return `<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(gems)}</button>${NO_CARD ? "" : `<button class="btn green" data-p="usd">${usdTxt(cardUsd(usd))}</button>`}</div>`;
 }
 function wirePay(el, o) {   // o: {cash, gems, sku, buy(cur)}
 const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = e => { e.stopPropagation(); fn(b); }; };
@@ -8512,7 +8514,7 @@ if (f.vip || (f.ps && !owned)) return;
 const el = document.createElement("div"); el.className = "avcard pfcard" + (sel ? " sel" : "");
 el.innerHTML = `<div class="frstage">${avHTML(profile.avatar, i, 70)}</div><small class="h" style="color:#ffe27a">👑 ${esc(T(f.name))}</small>${no ? `<small class="muted">№ ${fmt(no)} / ${fmt(EDITION_CAP[f.id])}</small>` : owned ? "" : edLine(f.id)}
 ${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`)
-: `<div class="tpay"><button class="btn purple" data-p="cash" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💵 ${fmt(f.v)}`}</button><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>💎 ${f.gems}</button></div>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd" ${so ? "disabled" : ""}>${usdTxt(cardUsd(f.usd))}</button>`}`}`;
+: `<div class="tpay"><button class="btn purple" data-p="cash" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💵 ${fmt(f.v)}`}</button><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>💎 ${f.gems}</button></div>${NO_CARD ? "" : `<button class="btn green" data-p="usd" ${so ? "disabled" : ""}>${usdTxt(cardUsd(f.usd))}</button>`}`}`;
 const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = fn; };
 const use = () => { profile.frame = i; save(); updateNav(); Net.sync(); buildShop("frames"); };
 on("use", use);
@@ -8535,7 +8537,7 @@ const hg = $("hfGrid");
 FRAMES.forEach((f, i) => {
 if (!f.shopH) return;
 const owned = profile.frames.includes(i), sel = (profile.frame | 0) === i, el = document.createElement("div"); el.className = "avcard pfcard" + (sel ? " sel" : "");
-el.innerHTML = `<div class="frstage">${avHTML(profile.avatar, i, 70)}</div><small class="h" style="color:#ff9a9a">💀 ${esc(T(f.name))}</small>${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`) : `<div class="tpay"><button class="btn purple" data-p="cash">💵 ${fmt(f.v)}</button><button class="btn blue" data-p="gems">💎 ${f.gems}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">${usdTxt(usdOfCash(f.v))}</button>`}</div>`}`;
+el.innerHTML = `<div class="frstage">${avHTML(profile.avatar, i, 70)}</div><small class="h" style="color:#ff9a9a">💀 ${esc(T(f.name))}</small>${owned ? (sel ? `<button class="btn gray" disabled>✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use">${T("TANLASH")}</button>`) : `<div class="tpay"><button class="btn purple" data-p="cash">💵 ${fmt(f.v)}</button><button class="btn blue" data-p="gems">💎 ${f.gems}</button>${NO_CARD ? "" : `<button class="btn green" data-p="usd">${usdTxt(usdOfCash(f.v))}</button>`}</div>`}`;
 const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = fn; };
 on("usd", () => Net.checkout("frame_" + f.id, el.querySelector('[data-p="usd"]')));
 on("use", () => { profile.frame = i; save(); updateNav(); Net.sync(); buildShop("frames"); });
@@ -8606,7 +8608,7 @@ continue;
 if (t.tier && !own) {
 const pr = tablePrice(t), pc = (profile.tpieces || {})[t.id] | 0;
 const el = add(t, own, sel, `<b>${t.tier === "premium" ? "👑 " : "✨ "}${T(t.name)}${pr.deal ? ' <span class="tdeal">−40%</span>' : ""}${pc ? ` <span class="tpc">${pcImg(18)} ${pc}/4</span>` : ""}</b>`, `${T(t.tier === "premium" ? "Premium hoshiya · tovlanadi" : "Eksklyuziv hoshiya")}${EDITION_CAP[t.id] ? edLine(t.id) : ""}<br><span class="tbon">🪙 +${tableBonus(t.id)}% · ♞ +${tableBonus(t.id)}% · XP +${tableBonus(t.id)}%</span>`,
-`<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(pr.cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(pr.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd">${usdTxt(cardUsd(t.usd))}</button>`}</div>
+`<div class="tpay"><button class="btn purple" data-p="cash"><span class="cash"></span> ${fmtS(pr.cash)}</button><button class="btn blue" data-p="gems">💎 ${fmt(pr.gems)}</button>${NO_CARD ? "" : `<button class="btn green" data-p="usd">${usdTxt(cardUsd(t.usd))}</button>`}</div>
 <div class="tpay"><button class="btn orange" data-p="try">▶ ${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">👁 ${T("Ko'rish")}</button></div>`, null);
 const so = soldOut(t.id);
 if (so) el.querySelectorAll(".tpay button:not([data-p=view])").forEach(b => { b.disabled = true; b.classList.add("gray"); });
@@ -8671,7 +8673,7 @@ el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">👑 ${esc
 ${owned ? "" : edLine(c.id)}</div>
 <div>${c.st.map((v, i) => `<div class="stat"><span>${T(STAT_NAMES[i])}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
 <div>${owned ? (sel ? `<button class="btn gray" disabled style="width:100%">✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use" style="width:100%">${T("TANLASH")}</button>`)
-: `<div class="tpay"><button class="btn purple" data-p="cash" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `<span class="cash"></span> ${fmtS(c.cash)}`}</button><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>💎 ${fmt(c.gems)}</button>${ON_PORTAL ? "" : `<button class="btn green" data-p="usd" ${so ? "disabled" : ""}>${usdTxt(cardUsd(c.usd))}</button>`}</div>
+: `<div class="tpay"><button class="btn purple" data-p="cash" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `<span class="cash"></span> ${fmtS(c.cash)}`}</button><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>💎 ${fmt(c.gems)}</button>${NO_CARD ? "" : `<button class="btn green" data-p="usd" ${so ? "disabled" : ""}>${usdTxt(cardUsd(c.usd))}</button>`}</div>
 <div class="tpay"><button class="btn orange" data-p="try">▶ ${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">👁 ${T("Ko'rish")}</button></div>`}
 <div class="cpts">+${cuePower(c)} ⚜</div></div>`;
 const cvw = el.querySelector(".cuecvw"); cvw._cue = c; if (io) io.observe(cvw); else cvw.appendChild(cueCanvas(c));
@@ -8785,7 +8787,7 @@ function openSurpriseBox(payWithCash) {
   if (profile.sbAct) return sbModal();
   if (!(profile.sboxes > 0) && payWithCash !== true) {
     return openModal({icon: "🎁", title: T("Syurpriz qutisi"), text: T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy. Qutini ochish uchun 4 ta missiya bajariladi."), extra: `<div style="text-align:center">${sbSVG(0)}</div>`,
-      buttons: [...(ON_PORTAL ? [] : [{label: `💳 ${usdTxt(cardUsd(0.99))}`, cls: "green", fn: () => Net.checkout("sbox_1")}, {label: `💳 5 × ${usdTxt(cardUsd(3.99))}`, cls: "green", fn: () => Net.checkout("sbox_5")}]),
+      buttons: [...(NO_CARD ? [] : [{label: `💳 ${usdTxt(cardUsd(0.99))}`, cls: "green", fn: () => Net.checkout("sbox_1")}, {label: `💳 5 × ${usdTxt(cardUsd(3.99))}`, cls: "green", fn: () => Net.checkout("sbox_5")}]),
         {label: `💵 ${SURPRISE_BOX}`, cls: "purple", fn: () => openSurpriseBox(true)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
   }
   if (profile.sboxes > 0) profile.sboxes--;
@@ -9816,7 +9818,7 @@ const vipTier = () => vipLevel().l;
 const usd = v => usdTxt(cardUsd(v));   // card price of a pack (same rule as the server)
 function gemShort() {   // "Not Enough Gems!" with the six gem packs, like the reference
 const packs = Object.entries(SKUS).filter(([, s]) => s.gems && !s.coins);
-openModal({icon: "", title: T("Olmos yetmaydi!"), text: ON_PORTAL ? "" : T("Pastdagi paketlardan birini tanlang"), extra: `<div class="packgrid g3" style="margin:6px 0">${packs.map(([id, s]) => packCard(id, s)).join("")}</div><div class="muted" style="text-align:center">${T("Olmosni Elite stollarda (Dubay va undan yuqori) g'alaba qozonib ham topasiz")}</div>`, buttons: [{label: T("Elite do'kon"), cls: "purple", fn: () => setTimeout(eliteShop, 60)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+openModal({icon: "", title: T("Olmos yetmaydi!"), text: NO_CARD ? "" : T("Pastdagi paketlardan birini tanlang"), extra: `<div class="packgrid g3" style="margin:6px 0">${packs.map(([id, s]) => packCard(id, s)).join("")}</div><div class="muted" style="text-align:center">${T("Olmosni Elite stollarda (Dubay va undan yuqori) g'alaba qozonib ham topasiz")}</div>`, buttons: [{label: T("Elite do'kon"), cls: "purple", fn: () => setTimeout(eliteShop, 60)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 document.querySelectorAll("#modal [data-sku]").forEach(b => b.onclick = () => Net.checkout(b.dataset.sku, b));
 }
 const ELITE_ITEMS = [
@@ -9900,7 +9902,7 @@ const STK_USD = 0.5;   // a sticker pack: 10 cash = 100 gems = $0.50 (Stripe's s
 function buildStickers(body) {
 const own = profile.stk = profile.stk || [];
 body.innerHTML = `<div class="muted" style="margin-bottom:10px">${T("Stikerlar o'yin ichidagi suhbatda (🎭 tugmasi) raqibga yuboriladi.")}</div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">${STICKER_PACKS.map(p => { const has = own.includes(p.id);
-return `<div class="card stkcard" style="background:url(${IMG["sk_" + p.id]}) center/100% 100% no-repeat"><div class="stkt">${T(p.n)}</div><div class="stkgrid">${p.e.map(e => `<span class="stk3">${stkHTML(e)}</span>`).join("")}</div>${has ? `<b class="stkown">✓ ${T("Sizda bor")}</b>` : `<div class="stkb"><button class="btn purple" data-sk="${p.id},cash"><span class="cash"></span> 10</button><button class="btn blue" data-sk="${p.id},gems">💎 100</button>${ON_PORTAL ? "" : `<button class="btn green" data-sk="${p.id},usd">${usdTxt(cardUsd(STK_USD))}</button>`}</div>`}</div>`; }).join("")}</div>`;
+return `<div class="card stkcard" style="background:url(${IMG["sk_" + p.id]}) center/100% 100% no-repeat"><div class="stkt">${T(p.n)}</div><div class="stkgrid">${p.e.map(e => `<span class="stk3">${stkHTML(e)}</span>`).join("")}</div>${has ? `<b class="stkown">✓ ${T("Sizda bor")}</b>` : `<div class="stkb"><button class="btn purple" data-sk="${p.id},cash"><span class="cash"></span> 10</button><button class="btn blue" data-sk="${p.id},gems">💎 100</button>${NO_CARD ? "" : `<button class="btn green" data-sk="${p.id},usd">${usdTxt(cardUsd(STK_USD))}</button>`}</div>`}</div>`; }).join("")}</div>`;
 body.querySelectorAll("[data-sk]").forEach(b => b.onclick = () => { const [id, cur] = b.dataset.sk.split(","), pr = cur === "cash" ? 10 : 100;
 if (cur === "usd") return Net.checkout("stk_" + id, b);
 if ((cur === "cash" ? profile.cash : profile.gems || 0) < pr) return cur === "gems" ? gemShort() : toast("😕", T("Pul yetmaydi"), "");
@@ -9910,7 +9912,7 @@ const isElite = () => +(profile.eliteUntil || 0) > Date.now();
 function eliteLeft() { const d = Math.max(0, +(profile.eliteUntil || 0) - Date.now()); return `${Math.floor(d / 864e5)}${T("k")} ${Math.floor(d % 864e5 / 36e5)}${T("s")}`; }
 function goElite() {
 openModal({icon: "", title: T("Elite a'zolik"), text: isElite() ? `👑 ${T("Faol")}: ${eliteLeft()}` : "", extra: `<div class="card" style="text-align:left;line-height:1.7">👑 ${T("30 kun davomida:")}<br>✦ ${T("Har g'alabada +25% tanga")}<br>✦ ${T("Elite do'konda −20% chegirma")}<br>✦ ${T("Bunch of Gems: 500 💎 sovg'a (bir marta)")}<br>✦ ${T("Ismingiz yonida ♛ belgisi")}</div>`,
-buttons: [...(ON_PORTAL ? [] : [{label: `${T("Elite bo'lish")} · ${usdTxt(cardUsd(9.99))}`, cls: "green", fn: () => Net.checkout("elite_30")}]), {label: `💎 2 000`, cls: "purple", fn: () => { if ((profile.gems || 0) < 2000) return gemShort(); profile.gems -= 2000; grantElite(30); }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+buttons: [...(NO_CARD ? [] : [{label: `${T("Elite bo'lish")} · ${usdTxt(cardUsd(9.99))}`, cls: "green", fn: () => Net.checkout("elite_30")}]), {label: `💎 2 000`, cls: "purple", fn: () => { if ((profile.gems || 0) < 2000) return gemShort(); profile.gems -= 2000; grantElite(30); }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
 function grantElite(days) { profile.eliteUntil = Math.max(Date.now(), +(profile.eliteUntil || 0)) + days * 864e5; save(); updateNav(); burst(); Snd.win(); toast("👑", T("Elite a'zolik"), `${days} ${T("kun")}`); }
 
@@ -9947,7 +9949,7 @@ ${[[120, 10], [600, 55]].map(([gems, cash]) => `
 <button class="btn purple" data-x="gems,${gems},cash,${cash}" style="width:100%">${T("ALMASHTIRISH")}</button></div>`).join("")}</div>`;
 if (sec === "money") {
 const coins = Object.entries(SKUS).filter(([id, s]) => s.coins && !s.gems && /^coins_/.test(id)), cash = Object.entries(SKUS).filter(([id, s]) => s.cash && !s.coins && /^cash_/.test(id));
-body.innerHTML = ON_PORTAL ? exch : `<div class="packs">
+body.innerHTML = NO_CARD ? exch : `<div class="packs">
 <div class="packcol"><div class="packhead"><span class="coin" style="width:40px;height:40px"></span><h3>${T("Tanga to'plamlari")}</h3>
 <span class="vipb" data-vclub="1" style="cursor:pointer"><b>x${vipTier()}</b><img src="${IMG.vip}" alt="VIP"></span></div><div class="packgrid">${coins.map(([id, s]) => packCard(id, s)).join("")}</div></div>
 <div class="packcol"><div class="packhead"><span class="cash" style="width:52px;height:38px"></span><h3>${T("Naqd pul to'plamlari")}</h3></div>
@@ -9958,16 +9960,16 @@ const st = SKUS.starter, left = Math.max(0, (profile.starterSeen || (profile.sta
 const gems = Object.entries(SKUS).filter(([, s]) => s.gems && !s.coins);
 body.innerHTML = `<div class="vipstrip">${VO().map(o => { const t = o.tiers[o.zodiac ? vipSel.zodiac : Math.min(1, o.tiers.length - 1)];
 return `<div class="vipcard" data-vo="${o.id}" style="background:${o.bg};--acc:${o.accent}"><span class="vipbadge">♛ VIP</span><b>${T(o.title)}</b><small>${T(o.sub)}</small><div class="vcv" data-cue="${t.cue}"></div><span class="btn green">${o.zodiac ? "$24.99" : "$" + o.tiers[0].usd + (o.tiers.length > 1 ? "+" : "")}</span></div>`; }).join("")}</div>
-<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;background:linear-gradient(135deg,#3a1a7a,#10062a)" id="loopBtn"><div style="font-size:40px">${loopNow().o.id === "box" ? boxImg("epic", 50) : icoH(loopNow().o.ic, 46)}</div><div style="flex:1"><b style="font-size:20px;color:#ffe27a">${T("Keyingi daraja aksiyasi")}</b><div class="muted">${T("50-80% chegirmali 3 ta taklif")} · ⏱ ${Math.floor(loopNow().left / 36e5)}${T("s")}</div></div><span class="btn green">${T("Ochish")} ›</span></div>${ON_PORTAL || profile.adfree ? "" : `<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(135deg,#4a1a6a,#1a062a)"><div style="font-size:40px">🚫</div><div style="flex:1"><b style="font-size:20px">${T("Reklamasiz — abadiy")}</b><div class="muted">${T("Videolar ko'rmasdan bepul mukofotlarni oling")}</div></div><button class="btn green" data-sku="adfree">$4.99</button></div>`}
+<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;background:linear-gradient(135deg,#3a1a7a,#10062a)" id="loopBtn"><div style="font-size:40px">${loopNow().o.id === "box" ? boxImg("epic", 50) : icoH(loopNow().o.ic, 46)}</div><div style="flex:1"><b style="font-size:20px;color:#ffe27a">${T("Keyingi daraja aksiyasi")}</b><div class="muted">${T("50-80% chegirmali 3 ta taklif")} · ⏱ ${Math.floor(loopNow().left / 36e5)}${T("s")}</div></div><span class="btn green">${T("Ochish")} ›</span></div>${NO_CARD || profile.adfree ? "" : `<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(135deg,#4a1a6a,#1a062a)"><div style="font-size:40px">🚫</div><div style="flex:1"><b style="font-size:20px">${T("Reklamasiz — abadiy")}</b><div class="muted">${T("Videolar ko'rmasdan bepul mukofotlarni oling")}</div></div><button class="btn green" data-sku="adfree">$4.99</button></div>`}
 <div class="offers">
 <div class="ltbanner"><div class="lttitle"><span>${T("CHEKLANGAN")}</span><span>${T("TAKLIFLAR!")}</span></div><img src="${IMG.chest}" alt="">
 <button class="btn green" data-sec2="money" style="font-size:22px;padding:10px 26px">${T("Xarid qilish")} ›</button></div>
 <div class="offcol">
-${!ON_PORTAL && !bought.starter && left > 0 ? `<div class="starter"><span class="rib">-70%</span><div class="h" style="font-size:24px;color:#ffe27a">${icoH("🎁", 20)} ${T("Boshlang'ich to'plam")}</div>
+${!NO_CARD && !bought.starter && left > 0 ? `<div class="starter"><span class="rib">-70%</span><div class="h" style="font-size:24px;color:#ffe27a">${icoH("🎁", 20)} ${T("Boshlang'ich to'plam")}</div>
 <div class="stitems"><span><span class="cash" style="width:36px;height:26px"></span><b>${st.cash}</b></span><span><span class="coin" style="width:30px;height:30px"></span><b>${fmtS(st.coins)}</b></span><span><span class="gem" style="width:30px;height:30px"></span><b>${st.gems}</b></span></div>
 <div class="muted">⏱ <span id="stLeft"></span> · ${T("faqat bir marta")}</div>
 <button class="btn green" data-sku="starter" style="font-size:20px"><s style="opacity:.6;font-size:14px">$9.99</s> ${usd(st.usd)}</button></div>` : ""}
-${ON_PORTAL ? "" : `<div class="packhead"><span class="gem" style="width:38px;height:38px"></span><h3>${T("Olmos to'plamlari")}</h3></div>
+${NO_CARD ? "" : `<div class="packhead"><span class="gem" style="width:38px;height:38px"></span><h3>${T("Olmos to'plamlari")}</h3></div>
 <div class="packgrid g3">${gems.map(([id, s]) => packCard(id, s)).join("")}</div>`}
 <div class="card" style="display:flex;align-items:center;gap:12px;margin-top:10px;cursor:pointer" id="eliteBtn"><span class="gem" style="width:44px;height:44px"></span>
 <div style="flex:1"><b>${T("Olmos nima uchun?")}</b><div class="muted">${T("Premium pass, syurpriz qutilar va naqd pulga almashtirish uchun.")}</div></div><span class="btn purple">${T("Elite do'kon")} ›</span></div>
@@ -10166,7 +10168,7 @@ const wl = weekEnds() - Date.now(); if ($("hLoop")) { $("hLoop").onclick = loopM
 $("hLimEnds").textContent = `⏱ ${Math.floor(wl / 864e5)}${T("k")} ${Math.floor(wl % 864e5 / 36e5)}${T("s")} ${Math.floor(wl % 36e5 / 6e4)}${T("d")}`;
 $("hTourSub").textContent = `16–64 ${T("o'yinchi")}`;
 if (!vipShownSession) setTimeout(loginFirst, 1200);
-if (!vipShownSession && !ON_PORTAL) { vipShownSession = true; const tryVip = n => setTimeout(() => { if (!$("home").classList.contains("on")) return; if ($("modal").classList.contains("on") && n < 6) return tryVip(n + 1); if ($("modal").classList.contains("on")) return; profile.vipPop = today(); save(); vipPage = new Date().getDate() % VO().length; vipOffers(); }, n ? 2500 : 1800); tryVip(0); }   // the VIP offer window opens on every app launch
+if (!vipShownSession && !NO_CARD) { vipShownSession = true; const tryVip = n => setTimeout(() => { if (!$("home").classList.contains("on")) return; if ($("modal").classList.contains("on") && n < 6) return tryVip(n + 1); if ($("modal").classList.contains("on")) return; profile.vipPop = today(); save(); vipPage = new Date().getDate() % VO().length; vipOffers(); }, n ? 2500 : 1800); tryVip(0); }   // the VIP offer window opens on every app launch
 clearInterval(homeTimer);
 homeTimer = setInterval(() => {
 if (!$("home").classList.contains("on")) return clearInterval(homeTimer);
@@ -10203,7 +10205,7 @@ function goldenShot() {
 if (!profile.goldShots) {
 if (mode !== "menu") toMenu("mini");
 return openModal({icon: "img:pile", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 10 · 💵 5 · 🪙 75 000 · 🪙 50 000</div>`, scene: "gold",
-buttons: [...(ON_PORTAL ? [] : [{label: `💳 3 × ${usdTxt(cardUsd(1.99))}`, cls: "green", fn: () => Net.checkout("golden_3")}]),
+buttons: [...(NO_CARD ? [] : [{label: `💳 3 × ${usdTxt(cardUsd(1.99))}`, cls: "green", fn: () => Net.checkout("golden_3")}]),
 {label: "💎 350", cls: "purple", fn: () => { if ((profile.gems || 0) < 350) return gemShort(); profile.gems -= 350; profile.goldShots = 3; save(); updateNav(); goldenShot(); }},
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
@@ -11106,7 +11108,7 @@ function horrorOfferModal(o, t) {
     <div class="hbody"><div class="hcues" id="hCue"></div><div class="hright">
       <div class="hstat">${bars}<div class="hpw">🔓 +${cuePower(cue)} ⚜</div></div>
       <div class="hcols${o.kind === "zodiac" ? " h8" : ""}">${col("🎱", "Kiy", esc(T(cue.name)))}${col('<span class="coin" style="width:40px;height:40px"></span>', "Tanga", fmtS(t.coins))}${col('<span class="cash" style="width:50px;height:36px"></span>', "Naqd pul", fmt(t.cash))}${t.goldShots ? col("🏆", "Oltin zarba", "×" + t.goldShots) : ""}${t.avatar ? col(`<img src="${avatarURL(t.avatar)}" style="height:54px;width:54px;border-radius:50%;border:2px solid ${P.g}">`, "Avatar", esc(T(o.title))) : ""}${t.frame ? col(avHTML(profile.avatar, frameIdx(t.frame), 54), "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name))) : ""}${tbl ? col(`<img src="${tableThumb(tbl)}" style="height:40px;border-radius:5px">`, "Stol", esc(T(tbl.name))) : ""}${t.sboxes ? col("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}</div>
-      <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} ${usdTxt(cardUsd(t.usd))}</button>`}${o.horror ? `<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small>` : ""}</div></div></div>
+      <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : NO_CARD ? `<small>${T("Tez orada")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} ${usdTxt(cardUsd(t.usd))}</button>`}${o.horror ? `<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small>` : ""}</div></div></div>
     <div class="hnav"><button class="btn gray" id="hPrev">‹</button><span class="hdots" style="color:#fff;font-weight:800">${vipPage % offers.length + 1} / ${offers.length}</span><button class="btn gray" id="hNext">›</button><button class="btn blue" id="hAll">▦ ${T("Hammasi")} (${offers.length})</button></div></div>`, buttons: []});
   vipCueShow(cue, $("hCue"));
   $("hClose").onclick = () => $("modal").classList.remove("on");
@@ -11130,7 +11132,7 @@ ${o.zodiac ? `<div class="zodsel"><button class="btn gray" id="zPrev">◀</butto
 ${item('<span class="cash" style="width:38px;height:28px"></span>', "Naqd pul", fmt(t.cash))}${t.sboxes ? item(icoH("🎁", 40), "Syurpriz qutilar", "×" + t.sboxes) : ""}${t.goldShots ? item("🏆", "Oltin zarba", "×" + t.goldShots) : ""}
 ${item('<img src="' + IMG.vip + '" style="height:30px">', "VIP ochko", fmt(t.vip))}</div></div>
       ${o.zodiac || o.tiers.length < 2 ? "" : `<div class="vtiers">${o.tiers.map((x, i) => `<button class="btn ${i === vipSel[o.id] ? "orange" : "gray"}" data-vt="${i}">${usdTxt(cardUsd(x.usd))}</button>`).join("")}</div>`}
-<div class="vbuy">${own ? `<b style="color:#8dff9a">✓ ${T("Bu kiy sizda bor")}</b>` : ON_PORTAL ? `<small>${T("Bu to'plam faqat saytimizda sotiladi")}</small>` : `<button class="btn green" id="vipBuy" style="font-size:22px;padding:10px 30px">${usdTxt(cardUsd(t.usd))}</button>`}</div>
+<div class="vbuy">${own ? `<b style="color:#8dff9a">✓ ${T("Bu kiy sizda bor")}</b>` : NO_CARD ? `<small>${T("Tez orada")}</small>` : `<button class="btn green" id="vipBuy" style="font-size:22px;padding:10px 30px">${usdTxt(cardUsd(t.usd))}</button>`}</div>
 <div class="vipnav"><button class="btn gray" id="vPrev">‹</button>${offers.map((x, i) => `<i class="${i === vipPage ? "on" : ""}"></i>`).join("")}<button class="btn gray" id="vNext">›</button></div>
 </div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
 vipCueShow(cue, $("vipCv"));
@@ -11713,7 +11715,7 @@ $("embName").textContent = `${badge + 1}. ${CLUB_BADGES[badge]}`;
 $("embDesc").innerHTML = t ? `<b class="etier t${t}">${T(t === 2 ? "Afsonaviy" : "Epik")}</b> · ${T(t === 2 ? "Kuchli alanga va nur effekti, klub kartasi oltin nur sochadi" : "Jonli emblema: klubingiz ro'yxatda harakatlanib turadi")}` : T("Bepul emblema");
 document.querySelectorAll("#modal [data-b]").forEach(b => b.classList.toggle("on", +b.dataset.b === badge));
 $("mBtns").innerHTML = "";
-if (!owned(badge) && t === 2 && !ON_PORTAL) mkBtn(`💳 ${usdTxt(cardUsd(CLUB_USD))}`, "green", () => Net.checkout("emb_" + badge), true);
+if (!owned(badge) && t === 2 && !NO_CARD) mkBtn(`💳 ${usdTxt(cardUsd(CLUB_USD))}`, "green", () => Net.checkout("emb_" + badge), true);
 if (!owned(badge)) { const pr = CLUB_PRICE[t]; mkBtn(`💵 ${pr} · ${T("Sotib olish")}`, "purple", () => { if ((profile.cash || 0) < pr) return toast("😕", T("Pul yetmaydi"), T("Klublar")); profile.cash -= pr; own().push(badge); save(); updateNav(); Snd.win(); burst(); toast("✨", CLUB_BADGES[badge], T("Emblema sizniki!")); grids(); }, false); }
 else mkBtn(T("Yaratish"), "green", create, true);
 mkBtn(T("Yopish"), "gray", () => {}, true);
