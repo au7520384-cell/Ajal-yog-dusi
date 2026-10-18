@@ -351,14 +351,16 @@ clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,
 .match .l{color:#6b7694;text-decoration:line-through}
 .match .me{background:#3b2f0866}
 .match .bye{color:#6b7694;font-style:italic}
-.tourhead2{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}.tmy{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}.tmy>span{font-family:var(--fh);color:var(--gold);font-size:18px}.tmy .match.big{margin:0;max-width:none}.tmy .match.big>div{font-size:13px;padding:3px 8px;min-height:0}.tmy .match.big .vs{flex:0 0 34px}.tmy .btn{font-size:16px;padding:4px 18px}.tmy>span{font-size:15px!important}.tourhead2{margin-bottom:3px}
+.tourhead2{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}.tmy{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}.tmy>span{font-family:var(--fh);color:var(--gold);font-size:18px}.tmy .match.big{margin:0;max-width:none}.tmy .match.big>div{font-size:13px;padding:3px 8px;min-height:0;white-space:nowrap}.tmy .match.big .vs{flex:0 0 34px}.tmy .btn{font-size:16px;padding:4px 18px}.tmy>span{font-size:15px!important}.tourhead2{margin-bottom:3px}
+@keyframes brRun{to{background-position:0 0,300% 0}}@keyframes brPulse{50%{box-shadow:0 0 14px #ffcf3dcc,inset 0 0 8px #ffcf3d55}}@keyframes brLine{to{background-position:-200% 0}}
+.bracket{border:2px solid transparent;border-radius:14px;background:linear-gradient(#0a1022b8,#0a1022b8) padding-box,linear-gradient(90deg,#6b4308,#ffe27a,#b8861f,#fff3b8,#6b4308) border-box;background-size:auto,300% 100%;animation:brRun 5s linear infinite;box-shadow:0 0 16px #ffb30040,inset 0 0 22px #ffb3001c;padding:6px 6px 8px!important}
 .bracket{display:flex;align-items:stretch;gap:4px;margin:0 auto;overflow:auto;max-height:calc(100vh - 128px);padding:2px 2px 6px;-webkit-overflow-scrolling:touch}
-.brc{display:flex;flex-direction:column;flex:1 1 0;min-width:0}.brc small{text-align:center;color:#8d9bc0;font-size:9px;margin-bottom:1px;white-space:nowrap}.brb{display:flex;flex-direction:column;justify-content:space-around;flex:1;gap:2px}
-.brm{background:#0f1628;border:1px solid #34436a;border-radius:6px;overflow:hidden;position:relative}.brm.mine{border-color:var(--gold);box-shadow:0 0 8px #ffcf3d88}
+.brc{display:flex;flex-direction:column;flex:1 1 0;min-width:0}.brc small{text-align:center;color:#d9b562;text-shadow:0 1px 0 #000;font-size:9px;margin-bottom:1px;white-space:nowrap}.brb{display:flex;flex-direction:column;justify-content:space-around;flex:1;gap:2px}
+.brm{background:linear-gradient(#162040,#0d1430);border:1px solid #6a5522;border-radius:6px;overflow:hidden;position:relative}.brm.mine{border-color:#ffe27a;box-shadow:0 0 10px #ffcf3d99;animation:brPulse 1.6s ease-in-out infinite}
 .brm>div{display:flex;gap:4px;align-items:center;padding:0 4px;font-size:9.5px;line-height:11px;min-height:12px;overflow:hidden}.brm>div img.flag{display:none}.brm>div span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brm>div+div{border-top:1px solid #26314f}
 .brm .w{color:#8dff9a;font-weight:800}.brm .l{color:#6b7694}.brm .me{background:#3b2f0866;color:#ffe27a}.brm .bre{color:#46517a;justify-content:center}
-.brc.l .brm::after,.brc.r .brm::before{content:"";position:absolute;top:50%;width:5px;border-top:1px solid #34436a}.brc.l .brm::after{right:-6px}.brc.r .brm::before{left:-6px}
-.brc.fin{flex:1.3;min-width:0}.brtro{text-align:center;line-height:1}.brtro img{display:block;margin:0 auto 2px;height:84px;max-width:100%;object-fit:contain;filter:drop-shadow(0 2px 4px #000a)}.brtro b{display:block;font-size:12px;color:var(--gold);font-family:var(--fh)}.brc.fin .brb{justify-content:center;flex:0 0 auto;margin-top:2px}
+.brc.l .brm::after,.brc.r .brm::before{content:"";position:absolute;top:50%;width:5px;height:2px;margin-top:-1px;background:linear-gradient(90deg,#6b4308,#ffe27a,#6b4308) 0 0/200% 100%;animation:brLine 1.4s linear infinite}.brc.r .brm::before{animation-direction:reverse}.brc.l .brm::after{right:-6px}.brc.r .brm::before{left:-6px}
+.brc.fin{flex:1.3;min-width:0}.brc.fin .brm{border-color:#ffe27a;background:linear-gradient(#3a2a08,#1a1204);box-shadow:0 0 14px #ffcf3d99;animation:brPulse 2s ease-in-out infinite}.brtro img{animation:brPulse 2.4s ease-in-out infinite;border-radius:50%}.brtro{text-align:center;line-height:1}.brtro img{display:block;margin:0 auto 2px;height:84px;max-width:100%;object-fit:contain;filter:drop-shadow(0 2px 4px #000a)}.brtro b{display:block;font-size:12px;color:var(--gold);font-family:var(--fh)}.brc.fin .brb{justify-content:center;flex:0 0 auto;margin-top:2px}
 .match.big{display:flex;align-items:stretch;max-width:560px;margin:0 auto}
 .match.big>div{flex:1;font-size:17px;justify-content:center;padding:12px}
 .match.big .vs{flex:0 0 50px;font-family:var(--fh);color:var(--gold);border:0}
@@ -8365,9 +8367,10 @@ br += `<div class="brc fin"><div class="brtro">${cupImg(c) ? `<img src="${cupImg
 for (let r = total - 2; r >= 0; r--) br += `<div class="brc r"><small>${roundName(total - r)}</small><div class="brb">${half(r, 1).map(m => mbox(m, r)).join("")}</div></div>`;
 body.innerHTML = `<div class="tourhead2"><div class="tmy"><span>${roundName(total - R)}</span><div class="match big">${cell(0)}<div class="vs">VS</div>${cell(opp)}</div><button class="btn green" id="tourNext">${T("O'YNASH")}</button></div><div class="tprize">👥 ${c.n}</div></div>
 <div class="bracket" id="bracket">${br}</div>`;
-requestAnimationFrame(() => { const bx = $("bracket"); if (!bx) return;   // the whole cup fits the screen: a tall bracket (48 / 60 players) is shrunk to the free height
-bx.style.maxHeight = "none"; bx.style.zoom = ""; const room = innerHeight - bx.getBoundingClientRect().top - 6, need = bx.scrollHeight;
-if (need > room && room > 60) bx.style.zoom = Math.max(0.3, room / need * 0.94).toFixed(3); });
+const fitBr = () => { const bx = $("bracket"); if (!bx) return;   // the whole cup fits the screen: a tall bracket (48 / 64 players) is shrunk to the free height
+bx.style.maxHeight = "none"; bx.style.zoom = ""; const room = innerHeight - bx.getBoundingClientRect().top - 22, need = bx.scrollHeight;
+if (need > room && room > 60) bx.style.zoom = Math.max(0.3, room / need * 0.97).toFixed(3); };
+requestAnimationFrame(fitBr); setTimeout(fitBr, 350); const ci = body.querySelector(".brtro img"); if (ci) ci.onload = fitBr;
 $("tourNext").onclick = () => vsScreen(CITIES[c.city], c.prize, P[opp], f => startMatch("tour", CITIES[c.city], f.opp));
 }
 function joinTour(c) {
