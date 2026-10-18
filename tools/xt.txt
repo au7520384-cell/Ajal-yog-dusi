@@ -1454,3 +1454,7 @@ Yangi medal · +{0} 🪙‖New medal · +{0} 🪙|Новая медаль · +{0
 Xato‖Error|Ошибка|Hata|Error|Erro|خطأ|Kesalahan|त्रुटि|Erreur|Fehler|오류|エラー|错误
 Google bilan kirish‖Sign in with Google|Войти через Google|Google ile giriş|Entrar con Google|Entrar com Google|الدخول عبر Google|Masuk dengan Google|Google से लॉगिन|Connexion avec Google|Mit Google anmelden|Google로 로그인|Googleでログイン|使用Google登录
 Avval yuting‖Win first|Сначала выиграйте|Önce kazan|Gana primero|Vença primeiro|اربح أولاً|Menangkan dulu|पहले जीतें|Gagnez d'abord|Zuerst gewinnen|먼저 우승하세요|先に優勝しよう|请先夺冠
+Ertalabki Kubok‖Morning Cup|Утренний кубок|Sabah Kupası|Copa de la mañana|Taça da manhã|كأس الصباح|Piala Pagi|सुबह का कप|Coupe du matin|Morgenpokal|아침 컵|朝のカップ|早晨杯
+Tushki Kubok‖Noon Cup|Дневной кубок|Öğle Kupası|Copa del mediodía|Taça do meio-dia|كأس الظهيرة|Piala Siang|दोपहर का कप|Coupe de midi|Mittagspokal|정오 컵|昼のカップ|正午杯
+Kechki Kubok‖Evening Cup|Вечерний кубок|Akşam Kupası|Copa de la tarde|Taça da tarde|كأس المساء|Piala Sore|शाम का कप|Coupe du soir|Abendpokal|저녁 컵|夕方のカップ|傍晚杯
+Tungi Kubok‖Night Cup|Ночной кубок|Gece Kupası|Copa de la noche|Taça da noite|كأس الليل|Piala Malam|रात का कप|Coupe de nuit|Nachtpokal|야간 컵|夜のカップ|夜间杯
