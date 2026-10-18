@@ -1458,3 +1458,4 @@ Ertalabki Kubok‖Morning Cup|Утренний кубок|Sabah Kupası|Copa de 
 Tushki Kubok‖Noon Cup|Дневной кубок|Öğle Kupası|Copa del mediodía|Taça do meio-dia|كأس الظهيرة|Piala Siang|दोपहर का कप|Coupe de midi|Mittagspokal|정오 컵|昼のカップ|正午杯
 Kechki Kubok‖Evening Cup|Вечерний кубок|Akşam Kupası|Copa de la tarde|Taça da tarde|كأس المساء|Piala Sore|शाम का कप|Coupe du soir|Abendpokal|저녁 컵|夕方のカップ|傍晚杯
 Tungi Kubok‖Night Cup|Ночной кубок|Gece Kupası|Copa de la noche|Taça da noite|كأس الليل|Piala Malam|रात का कप|Coupe de nuit|Nachtpokal|야간 컵|夜のカップ|夜间杯
+Reklama hozir mavjud emas‖Ads are not available right now|Реклама сейчас недоступна|Reklam şu an mevcut değil|Los anuncios no están disponibles ahora|Os anúncios não estão disponíveis agora|الإعلانات غير متاحة الآن|Iklan belum tersedia saat ini|अभी विज्ञापन उपलब्ध नहीं हैं|Les publicités ne sont pas disponibles pour le moment|Werbung ist gerade nicht verfügbar|지금은 광고를 볼 수 없습니다|現在広告は利用できません|目前无法观看广告
