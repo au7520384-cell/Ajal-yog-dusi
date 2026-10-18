@@ -126,7 +126,7 @@ const SKUS = {
   try_wheel:   {items: {wheelTries: 1},   vip: 60,  usd: 0.99, name: "Spin & Win +1"},
   try_scratch: {items: {scratchTries: 1}, vip: 60,  usd: 0.99, name: "Scratch & Win +1"},
   golden_3:    {items: {goldShots: 3},    vip: 130, usd: 1.99, name: "Golden Shot x3"},
-  sbox_1:      {items: {sboxes: 1},       vip: 60,  usd: 0.99, name: "Surprise Box"},
+  sbox_1:      {items: {sboxes: 1},       vip: 130, usd: 1.99, name: "Surprise Box"},
   sbox_5:      {items: {sboxes: 5},       vip: 260, usd: 3.99, name: "Surprise Box x5"},
   // VIP bundles: exclusive cues that are never sold in the cue shop
   sport_1:     {coins: 27000,  cash: 15,   vip: 332,  items: {cues: ["vip_under"], sboxes: 2},    usd: 3.99,  name: "Sports Madness: Underdog"},
@@ -183,7 +183,9 @@ for (const [sku, usd] of Object.entries(ITEM_PRICES)) {
 // What the card is charged: nothing below $1.99 (the payment provider keeps ~5% + $0.50 of every payment), everything else moves up $0.50 so the
 // order of the prices stays. The game shows the same number (cardUsd in index.html).
 const cardUsd = u => u < 1.99 ? 1.99 : Math.round((u + 0.5) * 100) / 100;
-for (const k of Object.keys(SKUS)) if (SKUS[k].usd) SKUS[k].usd = cardUsd(SKUS[k].usd);
+// These are charged exactly as listed (extra try $0.99, Golden Shot x3 and a Surprise Box $1.99) — the game shows the same numbers.
+const FLAT_USD = new Set(["try_lucky", "try_wheel", "try_scratch", "golden_3", "sbox_1"]);
+for (const k of Object.keys(SKUS)) if (SKUS[k].usd && !FLAT_USD.has(k)) SKUS[k].usd = cardUsd(SKUS[k].usd);
 function claimEdition(u, id) {
   const cap = EDITION_CAP[id]; if (!cap) return {serial: 0};
   u.editions = u.editions || {};

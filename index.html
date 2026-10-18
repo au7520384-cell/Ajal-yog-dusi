@@ -4223,12 +4223,23 @@ return false;
 }
 const hasTry = k => freeReady(k) || (profile[TRY_KEY[k]] | 0) > 0;
 const TRY_NAME = {lucky: "Omadli zarba", wheel: "Aylantirib yuting", scratch: "Qirib yuting"};
+// "watch N rewarded ads, then it unlocks": the progress is kept in profile.adSteps[key]; each finished ad moves it one step and re-opens `reopen`
+const adSteps = key => (profile.adSteps || {})[key] | 0;
+function adStep(key, need, done, reopen) {
+y8Rewarded("unlock-" + key, () => {
+profile.adSteps = profile.adSteps || {};
+const n = adSteps(key) + 1;
+if (n >= need) { profile.adSteps[key] = 0; save(); done(); }
+else { profile.adSteps[key] = n; save(); toast("📺", n + " / " + need, T("Reklama ko'rish")); reopen && reopen(); }
+});
+}
+const TRY_ADS = 5, GOLD_ADS = 10, BOX_ADS = 10, GOLD_GEMS = 350, BOX_GEMS = 350, TRY_USD = 0.99, GOLD_USD = 1.99, BOX_USD = 1.99;   // the three ways to open a paid game: ads, gems, real money
 function noTries(k, again) {
 const ad = Y8.sdk && Y8.adsReady, pay = !NO_CARD;
 openModal({icon: "⏳", title: T(TRY_NAME[k]), text: `${T("Keyingi bepul urinish")}: ${fmtDur(freeLeftMs(k))}`,
 extra: `<p class="muted" style="margin:0">${T("Hozir yana o'ynash uchun reklama ko'ring yoki urinish sotib oling.")}</p>`,
-buttons: [...(ad ? [{label: `📺 ${T("Reklama ko'rish")}`, cls: "green", fn: () => y8Rewarded("try-" + k, () => { profile[TRY_KEY[k]] = (profile[TRY_KEY[k]] | 0) + 1; save(); again && again(); })}] : []),
-...(pay ? [{label: `💳 ${usdTxt(cardUsd(0.99))} · +1`, cls: "purple", fn: () => Net.checkout("try_" + k)}] : []),
+buttons: [...(ad ? [{label: `📺 ${T("Reklama ko'rish")} ${adSteps("try_" + k)}/${TRY_ADS}`, cls: "green", fn: () => adStep("try_" + k, TRY_ADS, () => { profile[TRY_KEY[k]] = (profile[TRY_KEY[k]] | 0) + 1; save(); toast("🎉", "+1", T(TRY_NAME[k])); again && again(); }, () => noTries(k, again))}] : []),
+...(pay ? [{label: `💳 ${usdTxt(TRY_USD)} · +1`, cls: "purple", fn: () => Net.checkout("try_" + k)}] : []),
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
 function startLucky(golden) {
@@ -8863,7 +8874,9 @@ function openSurpriseBox(payWithCash) {
   if (profile.sbAct) return sbModal();
   if (!(profile.sboxes > 0) && payWithCash !== true) {
     return openModal({icon: "🎁", title: T("Syurpriz qutisi"), text: T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy. Qutini ochish uchun 4 ta missiya bajariladi."), extra: `<div style="text-align:center">${sbSVG(0)}</div>`,
-      buttons: [...(NO_CARD ? [] : [{label: `💳 ${usdTxt(cardUsd(0.99))}`, cls: "green", fn: () => Net.checkout("sbox_1")}, {label: `💳 5 × ${usdTxt(cardUsd(3.99))}`, cls: "green", fn: () => Net.checkout("sbox_5")}]),
+      buttons: [...(NO_CARD ? [] : [{label: `💳 ${usdTxt(BOX_USD)}`, cls: "green", fn: () => Net.checkout("sbox_1")}, {label: `💳 5 × ${usdTxt(cardUsd(3.99))}`, cls: "green", fn: () => Net.checkout("sbox_5")}]),
+        {label: `💎 ${BOX_GEMS}`, cls: "purple", fn: () => { if ((profile.gems || 0) < BOX_GEMS) return gemShort(); profile.gems -= BOX_GEMS; profile.sboxes = (profile.sboxes | 0) + 1; save(); updateNav(); openSurpriseBox(); }},
+        ...(Y8.sdk && Y8.adsReady ? [{label: `📺 ${adSteps("box")}/${BOX_ADS}`, cls: "green", fn: () => adStep("box", BOX_ADS, () => { profile.sboxes = (profile.sboxes | 0) + 1; save(); updateNav(); openSurpriseBox(); }, () => openSurpriseBox())}] : []),
         {label: `💵 ${SURPRISE_BOX}`, cls: "purple", fn: () => openSurpriseBox(true)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
   }
   if (profile.sboxes > 0) profile.sboxes--;
@@ -9334,7 +9347,7 @@ const d = today();
 if (name === "bank-cash") { if (profile.adCashDay !== d) { profile.adCashDay = d; profile.adCash = 0; } if (profile.adCash >= CASH_AD_DAILY) return toast("💵", T("Bugungi reklamalar tugadi"), T("Ertaga qayting")); }
 if (profile.adfree) { if (name === "bank-cash") profile.adCash = (profile.adCash | 0) + 1; give(); save(); updateNav(); Snd.coin(6); return; }
 if (profile.adDay !== d) { profile.adDay = d; profile.adCount = 0; }
-if (profile.adCount >= 10) return toast("📺", T("Bugungi reklamalar tugadi"), T("Ertaga qayting"));
+if (profile.adCount >= 10 && !/^(unlock|try)-/.test(name)) return toast("📺", T("Bugungi reklamalar tugadi"), T("Ertaga qayting"));   // unlock chains (5/10 ads per game) are exempt from the daily 10-ad cap
 y8Ad("reward", name).then(ok => {
 if (!ok) return toast("📺", T("Reklama oxirigacha ko'rilmadi"), "");
 profile.adCount++; if (name === "bank-cash") profile.adCash = (profile.adCash | 0) + 1; give(); save(); updateNav(); Snd.coin(6);
@@ -10264,16 +10277,16 @@ const MG_ART = {spin: "mg_wheel", wheel: "mg_wheel", lucky: "mg_dart", scratch: 
 const mgImg = (k, h = 40) => MG_ART[k] ? `<img class="mgi" src="${IMG[MG_ART[k]]}" style="height:${h}px" alt="">` : "";
 function buildMini() {
 const box = $("miniBody");
-const sub = k => freeReady(k) ? T("Bepul — 24 soatda 1 marta") : (profile[TRY_KEY[k]] | 0) ? `${T("Bepul")}: ${profile[TRY_KEY[k]]}` : `⏳ ${fmtDur(freeLeftMs(k))} · 📺 / ${usdTxt(cardUsd(0.99))}`;
+const sub = k => freeReady(k) ? T("Bepul — 24 soatda 1 marta") : (profile[TRY_KEY[k]] | 0) ? `${T("Bepul")}: ${profile[TRY_KEY[k]]}` : `⏳ ${fmtDur(freeLeftMs(k))} · 📺 ${TRY_ADS}${NO_CARD ? "" : " / " + usdTxt(TRY_USD)}`;
 const btn = k => hasTry(k) ? T("Bepul o'ynash") : T("Yana o'ynash");
 const card = (cls, act, art, title, sub, btn, btnCls, badge) => `<div class="mgc ${cls}" data-act="${act}">${badge ? `<i class="dot">${badge}</i>` : ""}
 <div class="mgart"><img src="${IMG[art]}" alt=""></div><div class="mgtx"><b>${title}</b><small>${sub}</small></div><button class="mgbtn ${btnCls}">${btn}</button></div>`;
 box.innerHTML = `<div class="mggrid">
 ${card("mg-teal", "wheel", "mg_wheel", T("Aylantirib yuting"), sub("wheel"), btn("wheel"), hasTry("wheel") ? "" : "paid", freeReady("wheel") ? 1 : "")}
 ${card("mg-gold", "lucky", "mg_dart", T("Omadli zarba"), sub("lucky"), btn("lucky"), hasTry("lucky") ? "" : "paid", freeReady("lucky") ? 1 : "")}
-${card("mg-parch", "golden", "mg_gold", T("Oltin zarba"), `${T("Katta sovrinlar")}: 💵 10 · 🪙 75k${profile.goldShots ? ` · ${T("urinish")}: ${profile.goldShots}` : ""}`, profile.goldShots ? T("O'ynash") : "💎 25 / $1.99", profile.goldShots ? "" : "paid")}
+${card("mg-parch", "golden", "mg_gold", T("Oltin zarba"), `${T("Katta sovrinlar")}: 💵 10 · 🪙 75k${profile.goldShots ? ` · ${T("urinish")}: ${profile.goldShots}` : ""}`, profile.goldShots ? T("O'ynash") : `💎 ${GOLD_GEMS} / 📺 ${GOLD_ADS}${NO_CARD ? "" : " / " + usdTxt(GOLD_USD)}`, profile.goldShots ? "" : "paid")}
 ${card("mg-red", "scratch", "mg_scr", T("Qirib yuting"), sub("scratch"), btn("scratch"), hasTry("scratch") ? "" : "paid", freeReady("scratch") ? 1 : "")}
-${card("mg-felt", "boxes", "mg_box", T("Syurpriz qutilar"), `${T("Afsonaviy kiy bo'laklari")}${profile.sboxes ? ` · ${T("qutilar")}: ${profile.sboxes}` : ""}`, profile.sboxes ? T("Ochish") : T("Pullik") + " · " + usdTxt(cardUsd(0.99)), profile.sboxes ? "" : "paid")}
+${card("mg-felt", "boxes", "mg_box", T("Syurpriz qutilar"), `${T("Afsonaviy kiy bo'laklari")}${profile.sboxes ? ` · ${T("qutilar")}: ${profile.sboxes}` : ""}`, profile.sboxes ? T("Ochish") : `💎 ${BOX_GEMS} / 📺 ${BOX_ADS}${NO_CARD ? "" : " / " + usdTxt(BOX_USD)}`, profile.sboxes ? "" : "paid")}
 </div>`;
 box.querySelectorAll(".mgc").forEach(el => el.onclick = () => ({lucky: () => startLucky(), scratch: scratchGame, wheel: () => hasTry("wheel") ? go("wheelScr") : noTries("wheel", () => go("wheelScr")), golden: goldenShot, boxes: openSurpriseBox})[el.dataset.act]());
 }
@@ -10281,8 +10294,9 @@ function goldenShot() {
 if (!profile.goldShots) {
 if (mode !== "menu") toMenu("mini");
 return openModal({icon: "img:pile", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 10 · 💵 5 · 🪙 75 000 · 🪙 50 000</div>`, scene: "gold",
-buttons: [...(NO_CARD ? [] : [{label: `💳 3 × ${usdTxt(cardUsd(1.99))}`, cls: "green", fn: () => Net.checkout("golden_3")}]),
-{label: "💎 350", cls: "purple", fn: () => { if ((profile.gems || 0) < 350) return gemShort(); profile.gems -= 350; profile.goldShots = 3; save(); updateNav(); goldenShot(); }},
+buttons: [...(NO_CARD ? [] : [{label: `💳 3 × ${usdTxt(GOLD_USD)}`, cls: "green", fn: () => Net.checkout("golden_3")}]),
+{label: `💎 ${GOLD_GEMS}`, cls: "purple", fn: () => { if ((profile.gems || 0) < GOLD_GEMS) return gemShort(); profile.gems -= GOLD_GEMS; profile.goldShots = 3; save(); updateNav(); goldenShot(); }},
+...(Y8.sdk && Y8.adsReady ? [{label: `📺 ${adSteps("gold")}/${GOLD_ADS}`, cls: "green", fn: () => adStep("gold", GOLD_ADS, () => { profile.goldShots = 3; save(); updateNav(); goldenShot(); }, goldenShot)}] : []),
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
 profile.goldShots--; save(); startLucky(true);
