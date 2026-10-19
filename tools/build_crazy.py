@@ -92,7 +92,7 @@ os.makedirs(out, exist_ok=True)
 z = os.path.join(out, "bilyard8-crazy.zip")
 with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
     zf.writestr("index.html", src)
-    for f in ["icon.svg", "favicon-48.png", "icon-192.png", "icon-512.png"]:
+    for f in []:   # index.html only: the portal rejects uploads with other file types
         p = os.path.join(root, f)
         if os.path.exists(p): zf.write(p, f)
 open(os.path.join(out, "crazy_index.html"), "w", encoding="utf-8").write(src)
