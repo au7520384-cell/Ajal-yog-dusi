@@ -478,14 +478,15 @@ const routes = {
     if (found && sw && cur && found.id === cur.id) {
       if (!b.detach) return {sameAcct: true};   // already linked to this account: the client asks before it is detached and a separate account is made
       delete cur.auth[provider]; markDirty();
-    } else if (found) return {existing: found.id !== (cur && cur.id), id: found.id, token: found.token, code: found.code, save: found.save || null, savedAt: found.saveAt || 0, name: found.name};
-    if (cur && !sw) { cur.auth = {...(cur.auth || {}), [provider]: v.sub}; markDirty(); return {existing: false, linked: true, id: cur.id, token: cur.token, code: cur.code, save: null, savedAt: 0, name: cur.name}; }
+    } else if (found) return {existing: found.id !== (cur && cur.id), id: found.id, token: found.token, code: found.code, save: found.save || null, savedAt: found.saveAt || 0, name: found.name, provName: cleanName(v.name)};
+    if (cur && !sw) { cur.auth = {...(cur.auth || {}), [provider]: v.sub}; if (v.name && /^(O'yinchi\d{4}|Player|Siz)$/.test(cur.name || "")) cur.name = cleanName(v.name);   // a game-given default name becomes the real one
+      markDirty(); return {existing: false, linked: true, id: cur.id, token: cur.token, code: cur.code, save: null, savedAt: 0, name: cur.name, provName: cleanName(v.name)}; }
     const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16), token = crypto.randomBytes(24).toString("hex"), code = newCode();
     const u = {id, token, code, name: cleanName(v.name || b.name), avatar: int(b.avatar, 999), frame: 0, level: 1, xp: 0, won: 0, wins: 0, games: 0,
       friends: [], referredBy: null, referrals: [], grants: [], inbox: [], gifted: {}, created: Date.now(), lastSeen: Date.now(),
       country: geoCountry(req) || cleanCountry(b.country), league: 0, week: curWeek(), weekWon: 0, auth: {[provider]: v.sub}};
     db.users[id] = u; db.codes[code] = id; markDirty();
-    return {existing: false, created: true, id, token, code, save: null, savedAt: 0, name: u.name};
+    return {existing: false, created: true, id, token, code, save: null, savedAt: 0, name: u.name, provName: u.name};
   },
   async "POST /api/register"(req) {
     if (limited(req, "reg", 10)) return [429, {error: "slow down"}];
