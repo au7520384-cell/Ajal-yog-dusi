@@ -108,7 +108,7 @@ def _squeeze(raw):
         return raw
 def _file(m):
     mt, raw = m.group(1), base64.b64decode(m.group(2))
-    if mt == "webp": raw = _squeeze(raw)
+    if mt == "webp" and os.environ.get("SQUEEZE"): raw = _squeeze(raw)   # off by default: it left blocky patches on table felt
     if os.environ.get("SINGLE"):
         return "data:image/%s;base64,%s" % (mt, base64.b64encode(raw).decode())
     name = "img/" + hashlib.sha1(raw).hexdigest()[:14] + "." + _ext(mt)
