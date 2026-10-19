@@ -84,7 +84,7 @@ sub('"☁️", T("Saqlangan o\'yin yuklandi"), "Y8")', '"☁️", T("Saqlangan o
 # lobby invite through the CrazyGames invite link / button
 sub('else { const link = location.origin + location.pathname + "?join=" + code;', 'else if (CRAZY_BUILD) crazyInvite(code);\nelse { const link = location.origin + location.pathname + "?join=" + code;')
 sub('const fail = msg => { if (done) return; done = true;', 'const fail = msg => { if (done) return; done = true; if (CRAZY_BUILD) crazyInviteHide();')
-sub('if (done) return; done = true; clearTimeout(timer);\nconst o = m.opp', 'if (done) return; done = true; clearTimeout(timer); if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
+sub('if (done) return; done = true; clearTimeout(timer); lobbyRematch = code;\nconst o = m.opp', 'if (done) return; done = true; clearTimeout(timer); lobbyRematch = code; if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
 sub("if (!code || code.length < 4) return;", "if (!code || code.length < 3) return;")
 # chat stays (typed + phrases + voice) but every typed line goes through a swear filter, in and out; SDK disableChat hides all of it
 FILTER_JS = r'''
