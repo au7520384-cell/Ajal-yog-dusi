@@ -55,6 +55,7 @@ const rid = String(sdk.game.getInviteParam("roomId") || sdk.game.getInviteParam(
 if (rid.length >= 3) setTimeout(() => lobbyJoin(rid), 3000);
 else if (sdk.game.isInstantMultiplayer) setTimeout(() => lobbyCreate(), 3000);   // party leader: straight into a fresh lobby, no menus
 } catch (e) {}
+window.addEventListener("pagehide", () => { try { sdk.game.leftRoom(); } catch (e) {} });
 try {
 sdk.game.addJoinRoomListener(q => { const id = String((q && (q.roomId || q.roomName)) || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8); if (id.length >= 3) lobbyJoin(id); });
 } catch (e) {}
@@ -72,9 +73,14 @@ const g = window.CrazyGames.SDK.game;
 const link = g.inviteLink({roomId: code});
 try { navigator.clipboard.writeText(link); } catch (e) {}
 g.showInviteButton({roomId: code});
+crazyRoom(code, true);
 toast("🔑", `${T("Kod")}: ${code}`, T("Havola nusxalandi — do'stingizga yuboring!"));
 } catch (e) {}
 }
+function crazyRoom(code, joinable) {
+try { window.CrazyGames.SDK.game.updateRoom({roomId: code, isJoinable: !!joinable, inviteParams: {roomId: code}}); } catch (e) {}
+}
+function crazyLeave() { try { window.CrazyGames.SDK.game.leftRoom(); } catch (e) {} }
 function crazyInviteHide() { try { window.CrazyGames.SDK.game.hideInviteButton(); } catch (e) {} }
 '''
 sub("function y8LoadCloud() {", CRAZY_JS + "function y8LoadCloud() {")
@@ -86,6 +92,9 @@ sub('else { const link = location.origin + location.pathname + "?join=" + code;'
 sub('const fail = msg => { if (done) return; done = true;', 'const fail = msg => { if (done) return; done = true; if (CRAZY_BUILD) crazyInviteHide();')
 sub('if (done) return; done = true; clearTimeout(timer); lobbyRematch = code;\nconst o = m.opp', 'if (done) return; done = true; clearTimeout(timer); lobbyRematch = code; if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
 sub("if (!code || code.length < 4) return;", "if (!code || code.length < 3) return;")
+sub('function lobbyWait(c, code, join) {\n', 'function lobbyWait(c, code, join) {\nif (CRAZY_BUILD) crazyRoom(code, !join);\n')
+sub('lobbyRematch = code; if (CRAZY_BUILD) crazyInviteHide();', 'lobbyRematch = code; if (CRAZY_BUILD) { crazyInviteHide(); crazyRoom(code, false); }')
+sub('if (done) return; done = true; if (CRAZY_BUILD) crazyInviteHide();', 'if (done) return; done = true; if (CRAZY_BUILD) { crazyInviteHide(); crazyLeave(); }')
 # chat stays (typed + phrases + voice) but every typed line goes through a swear filter, in and out; SDK disableChat hides all of it
 FILTER_JS = r'''
 const BAD_RE = /(f+u+c+k+|sh[i1]+t|b[i1]tch|a+ssh[o0]le|d[i1]ck|c[u]nt|n[i1]gg|wh[o0]re|sl[u]t|bastard|х[уy]+[йяеёию]|п[и1]зд|бл[яa]+[дт]|[еe]б[аaуyлн]|[еe]бать|сук[аи]|муд[аа]к|гандон|п[и1]д[оа]р|\bsik\b|\bsikay|qo.?t[oa]q|jalab|onangni|ammangni|nomussiz|\bkot\b|\bharom[iy]\b)/gi;
