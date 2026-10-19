@@ -53,6 +53,7 @@ try { sdk.game.loadingStop(); } catch (e) {}
 try {
 const rid = String(sdk.game.getInviteParam("roomId") || sdk.game.getInviteParam("roomName") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
 if (rid.length >= 3) setTimeout(() => lobbyJoin(rid), 3000);
+else if (sdk.game.isInstantMultiplayer) setTimeout(() => lobbyCreate(), 3000);   // party leader: straight into a fresh lobby, no menus
 } catch (e) {}
 try {
 sdk.game.addJoinRoomListener(q => { const id = String((q && (q.roomId || q.roomName)) || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8); if (id.length >= 3) lobbyJoin(id); });
