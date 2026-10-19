@@ -874,6 +874,9 @@ const wss = new WebSocketServer({server, path: "/ws", maxPayload: 32 * 1024});
 const clients = new Map();          // userId -> ws
 const queues = new Map();           // cityId -> [ws]
 const rooms = new Map();            // roomId -> room
+// swear filter for typed chat (English / Russian / Uzbek); bad words become ****
+const BAD_RE = /(f+u+c+k+|sh[i1]+t|b[i1]tch|a+ssh[o0]le|d[i1]ck|cunt|n[i1]gg|wh[o0]re|slut|bastard|х[уy]+[йяеёию]|п[и1]зд|бл[яa]+[дт]|[еe]б[аaуyлн]|[еe]бать|сук[аи]|муд[аа]к|гандон|п[и1]д[оа]р|\bsik\b|\bsikay|qo.?t[oa]q|jalab|onangni|ammangni|nomussiz|\bkot\b|\bharom[iy]\b)/gi;
+const cleanChat = s => String(s || "").replace(BAD_RE, m => "*".repeat(m.length));
 const RELAY = new Set(["aim", "shot", "state", "chat", "place", "spin", "rtc"]);
 const specList = room => [...room.specs].slice(0, 40).map(s => { const d = db.users[s.uid] || {}; return {name: String(d.name || "Player").slice(0, 16), avatar: d.avatar | 0, frame: d.frame | 0, country: d.country || "", level: d.level | 0}; });
 const specCount = room => { const msg = {t: "specs", n: room.specs.size, list: specList(room)}; for (const p of room.p) wsSend(p, msg); for (const sp of room.specs) wsSend(sp, msg); };   // everyone in the room sees how many people are watching
@@ -939,7 +942,7 @@ wss.on("connection", (ws, req) => {
       if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
     } else if (m.t === "schat" && ws.spec && !ws.spec.over) {   // a spectator writes to the players and the other spectators
       if (!bucket(ws, "schat", 4, 4000)) return;
-      const msg = String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 60); if (!msg) return;
+      const msg = cleanChat(String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 60)); if (!msg) return;
       const room = ws.spec, out = {t: "schat", name: String(u.name || "Player").slice(0, 16), country: u.country || "", avatar: u.avatar | 0, frame: u.frame | 0, msg};
       (room.slog = room.slog || []).push({...out, t: undefined, at: Date.now()}); if (room.slog.length > 30) room.slog.shift();
       for (const p of room.p) wsSend(p, out); for (const sp of room.specs) wsSend(sp, out);
@@ -966,7 +969,7 @@ wss.on("connection", (ws, req) => {
       const room = ws.room, other = room.p[1 - ws.seat];
       if (m.t === "chat") {
         if (!bucket(ws, "chat", 6, 1500)) return;
-        m.msg = String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 40); if (!m.msg) return;
+        m.msg = cleanChat(String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 40)); if (!m.msg) return;
       } else if (m.t === "rtc") {
         if (!bucket(ws, "rtc", 60, 500)) return;
         m = {t: "rtc", k: String(m.k || "").slice(0, 12), d: m.d && typeof m.d === "object" ? m.d : null};

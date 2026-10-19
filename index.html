@@ -10665,7 +10665,7 @@ profile.coins -= c.fee; save(); updateNav();
 vsScreen(c, c.prize, () => new Promise(resolve => {
 let done = false;
 const fail = msg => { if (done) return; done = true; Net.send({t: "cancel"}); profile.coins += c.fee; save(); updateNav(); toast("😕", msg, T("Lobbi")); resolve(null); };
-const timer = setTimeout(() => fail(T("Do'stingiz kelmadi")), join ? 8000 : 120000);
+const timer = setTimeout(() => fail(T("Do'stingiz kelmadi")), join ? 10000 : 60000);
 Net.ensure().then(() => Net.connect()).then(() => {
 Net.on("nocode", () => { clearTimeout(timer); fail(T("Bunday lobbi topilmadi")); });
 Net.on("match", m => {
