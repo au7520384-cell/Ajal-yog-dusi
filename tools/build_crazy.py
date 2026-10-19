@@ -117,7 +117,7 @@ def _squeeze(raw):
         im = im.convert("RGBA"); a = np.asarray(im)
         # smooth pictures (felt, soft shadows) show stair-step blotches when squeezed: keep them as they are
         lum = a[:, :, :3].mean(axis=2); h, w = lum.shape; h -= h % 16; w -= w % 16
-        if h and w and (lum[:h, :w].reshape(h // 16, 16, w // 16, 16).std(axis=(1, 3)) < 4).mean() >= float(os.environ.get("SQ_FLAT", "0.12")): return raw
+        if h and w and (lum[:h, :w].reshape(h // 16, 16, w // 16, 16).std(axis=(1, 3)) < 4).mean() >= float(os.environ.get("SQ_FLAT", "0.5")): return raw
         for q in (60, 70, 80, 90):
             b = io.BytesIO(); im.save(b, "WEBP", quality=q, method=4); nb = b.getvalue()
             if len(nb) >= len(raw) * 0.9: return raw
