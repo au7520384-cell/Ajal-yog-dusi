@@ -4005,7 +4005,7 @@ save(); Net.sync();
 setTimeout(() => {
 const offer = (G.trial && trialOffer(G)) || (G.trialCue && cueTrialOffer(G));
 (offer ? resultModal : resultScreen)(humanWon, why, G.players[winner], humanWon ? G.city.prize : 0, offer || [
-{label: T("Yana o'ynash"), cls: "green", fn: () => playCity(G.city)},
+...(G.net && lobbyRematch ? [{label: T("Qayta o'ynash"), cls: "green", fn: () => lobbyWait(G.city, lobbyRematch, false)}] : [{label: T("Yana o'ynash"), cls: "green", fn: () => playCity(G.city)}]),
 {label: T("Menyu"), cls: "gray", fn: () => toMenu()},
 ]);
 if (offer && G.trialCue) { $("mText").textContent = T("Kiy yoqdimi? Hozir 30% chegirma bilan oling!"); $("mExtra").insertAdjacentHTML("beforeend", `<canvas class="tpcv cuepv" width="620" height="200"></canvas>`); previewCue(cueDef(G.trialCue), document.querySelector("#modal .cuepv")); }
@@ -8296,7 +8296,7 @@ const o = m.opp || {};
 resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
 level: o.level | 0 || 1, club: String(o.club || "").slice(0, 20), cb: Array.isArray(o.cb) ? [o.cb[0] | 0, o.cb[1] | 0] : null, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0}});
 });
-Net.send({t: "queue", city: c.id, cue: profile.cue, tbl: profile.tableSkin || ""});
+lobbyRematch = ""; Net.send({t: "queue", city: c.id, cue: profile.cue, tbl: profile.tableSkin || ""});
 }).catch(() => { clearTimeout(timer); bot(); });
 });
 }
@@ -10658,6 +10658,7 @@ $("wfFriends").innerHTML = r.friends.length ? r.friends.map(f => `<div class="lb
 box.querySelectorAll("[data-chal]").forEach(b => b.onclick = () => lobbyCreate(b.dataset.chal));
 }).catch(() => { $("wfFriends").textContent = "📡 " + T("Server bilan aloqa yo'q. Internetni tekshiring."); });
 }
+let lobbyRematch = "";   // code of the friend lobby the current online match came from: both players can press Rematch and meet in the same lobby again
 function lobbyWait(c, code, join) {
 if (profile.coins < c.fee) return toast("😕", T("Tanga yetmaydi"), c.name);
 profile.coins -= c.fee; save(); updateNav();
@@ -10668,7 +10669,7 @@ const timer = setTimeout(() => fail(T("Do'stingiz kelmadi")), join ? 8000 : 1200
 Net.ensure().then(() => Net.connect()).then(() => {
 Net.on("nocode", () => { clearTimeout(timer); fail(T("Bunday lobbi topilmadi")); });
 Net.on("match", m => {
-if (done) return; done = true; clearTimeout(timer);
+if (done) return; done = true; clearTimeout(timer); lobbyRematch = code;
 const o = m.opp || {};
 resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
 level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0}});
