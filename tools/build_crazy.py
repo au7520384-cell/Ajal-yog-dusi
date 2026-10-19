@@ -91,13 +91,30 @@ sub('<button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 1
 sub('$("y8Lb").onclick =', 'if ($("y8Lb")) $("y8Lb").onclick =')
 sub('<div id="hLegal"><a href="/terms" target="_blank">Terms of Service</a> · <a href="/privacy" target="_blank">Privacy Policy</a> · <a href="/refund" target="_blank">Refund Policy</a></div>', '<div id="hLegal"></div>')
 
+# light build: every embedded picture becomes a real file in img/ (no base64 growth, and a picture is only downloaded when the game actually shows it)
+import re, hashlib, base64
+IMGS = {}
+def _ext(mt): return {"webp": "webp", "png": "png", "jpeg": "jpg", "jpg": "jpg", "gif": "gif", "svg+xml": "svg"}[mt]
+def _file(m):
+    mt, b64 = m.group(1), m.group(2)
+    raw = base64.b64decode(b64)
+    name = "img/" + hashlib.sha1(raw).hexdigest()[:14] + "." + _ext(mt)
+    IMGS[name] = raw
+    return name
+src = re.sub(r"data:image/(webp|png|jpeg|jpg|gif);base64,([A-Za-z0-9+/=]+)", _file, src)
+
 out = sys.argv[1] if len(sys.argv) > 1 else root
 os.makedirs(out, exist_ok=True)
 z = os.path.join(out, "bilyard8-crazy.zip")
 with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
     zf.writestr("index.html", src)
+    for n, raw in IMGS.items(): zf.writestr(n, raw)
     for f in []:   # index.html only: the portal rejects uploads with other file types
         p = os.path.join(root, f)
         if os.path.exists(p): zf.write(p, f)
 open(os.path.join(out, "crazy_index.html"), "w", encoding="utf-8").write(src)
+os.makedirs(os.path.join(out, "crazy_site", "img"), exist_ok=True)
+open(os.path.join(out, "crazy_site", "index.html"), "w", encoding="utf-8").write(src)
+for n, raw in IMGS.items(): open(os.path.join(out, "crazy_site", n), "wb").write(raw)
+print(len(IMGS), "images,", sum(map(len, IMGS.values())), "bytes; index.html", len(src.encode()))
 print(z, os.path.getsize(z))
