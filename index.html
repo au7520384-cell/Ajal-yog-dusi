@@ -3120,7 +3120,7 @@ el.onclick = close; setTimeout(close, 4200);
 function unlock(id) {
 if (profile.ach[id]) return;
 profile.ach[id] = today(); profile.coins += 200; save();
-const a = ACHS[id]; toast(a.icon, a.name, "Yutuq ochildi · +200 tanga", {kind: "ach", img: IMG["achb_" + id]});
+const a = ACHS[id]; toast(a.icon, a.name, "Yutuq ochildi · +200 tanga", {kind: "ach", html: acxToast(id) || undefined, img: IMG["achb_" + id]});
 Snd.coin(4);
 if (typeof y8Achievement === "function") y8Achievement(id);
 }
@@ -11257,8 +11257,8 @@ const fresh = ACH2.filter(a => !profile.ach2[a.id] && a.check(profile));
 if (!fresh.length) return;
 fresh.forEach((a, k) => { profile.ach2[a.id] = Date.now() + k; });
 profile.coins += 500 * fresh.length; save(); updateNav(); Snd.coin(4);
-if (fresh.length <= 2) fresh.forEach(a => toast(a.icon, T(a.name), `${T("Yutuq ochildi")} · +500 🪙`, {kind: "ach", html: achArt(a, true, 46)}));
-else toast("🏅", `${fresh.length} ${T("ta yangi yutuq")}`, `+${fmt(500 * fresh.length)} 🪙`, {kind: "ach", html: achArt(fresh[fresh.length - 1], true, 46)});
+if (fresh.length <= 2) fresh.forEach(a => toast(a.icon, T(a.name), `${T("Yutuq ochildi")} · +500 🪙`, {kind: "ach", html: acxToast(a.id) || achArt(a, true, 46)}));
+else toast("🏅", `${fresh.length} ${T("ta yangi yutuq")}`, `+${fmt(500 * fresh.length)} 🪙`, {kind: "ach", html: acxToast(fresh[fresh.length - 1].id) || achArt(fresh[fresh.length - 1], true, 46)});
 }
 const cityTro = c => ((profile.cityTro || {})[c.id] | 0);
 const ringOf = c => !!(profile.rings || {})[c.id];
@@ -11343,8 +11343,8 @@ const TIME_TIERS = [["Yangi foydalanuvchi", 0], ["Havaskor", 3], ["O'yinsevar", 
 const playHours = () => (profile.playSec | 0) / 3600;
 function checkChallenges() {
 const got = profile.ch = profile.ch || {}; let coins = 0, shown = 0;
-for (const L of CH_LINES) { const v = L.val(profile); L.tiers.forEach((t, k) => { const key = L.id + k; if (!got[key] && v >= t) { got[key] = Date.now(); coins += CH_REW[k]; if (shown++ < 2) toast(L.icon, T(L.name), `${T(CH_RAR[k])} · +${fmt(CH_REW[k])} 🪙`, {kind: "ach"}); } }); }
-const h = playHours(); TIME_TIERS.forEach(([n, th], k) => { const key = "t" + k; if (k && !got[key] && h >= th) { got[key] = Date.now(); coins += TIME_REW[k]; if (shown++ < 2) toast("⏱️", T(n), `${T("Vaqt yutug'i")} · +${fmt(TIME_REW[k])} 🪙`, {kind: "ach"}); } });
+for (const L of CH_LINES) { const v = L.val(profile); L.tiers.forEach((t, k) => { const key = L.id + k; if (!got[key] && v >= t) { got[key] = Date.now(); coins += CH_REW[k]; if (shown++ < 2) toast(L.icon, T(L.name), `${T(CH_RAR[k])} · +${fmt(CH_REW[k])} 🪙`, {kind: "ach", html: chBadge(L.id, 100, k, 54, true)}); } }); }
+const h = playHours(); TIME_TIERS.forEach(([n, th], k) => { const key = "t" + k; if (k && !got[key] && h >= th) { got[key] = Date.now(); coins += TIME_REW[k]; if (shown++ < 2) toast("⏱️", T(n), `${T("Vaqt yutug'i")} · +${fmt(TIME_REW[k])} 🪙`, {kind: "ach", html: chBadge("time", 100, Math.min(3, k), 54, true)}); } });
 if (coins) { addCoins(coins); save(); updateNav(); Snd.coin(4); }
 }
 const CH_ICON = {
@@ -11449,6 +11449,11 @@ ${achShape(shape, 0.82, {fill: `url(#${u}i)`, stroke: metal[0], sw: 1.5})}
 ${plate ? `<g transform="translate(60 112)"><rect x="-26" y="-11" width="52" height="22" rx="9" fill="#10162e" stroke="${metal[1]}" stroke-width="2"/><text y="5.5" font-size="15" font-weight="900" text-anchor="middle" fill="${metal[0]}" font-family="Arial">${plate}</text></g>` : ""}</svg>`;
 }
 const achVal = {w: p => p.wins | 0, p: p => p.potted | 0, s: p => p.bestStreak | 0, l: p => p.level | 0, t: p => p.tours | 0, c: p => p.cues.length};
+function acxToast(id) {   // the badge cut from the same scene card the Achievements window shows, so a new achievement looks identical in the popup
+const key = id.replace("city_", "cy_"), u = IMG["acx_" + key]; if (!u) return "";
+const city = key.startsWith("cy_"), w = 54, hh = city ? 54 : 39, off = city ? 0.02 : 0.09;
+return `<span style="display:block;width:${w}px;height:${hh}px;background:url(${u}) no-repeat ${-Math.round(off * hh)}px 50%/auto 100%;-webkit-mask-image:radial-gradient(ellipse at center,#000 60%,transparent 72%);mask-image:radial-gradient(ellipse at center,#000 60%,transparent 72%)"></span>`;
+}
 function achArt(a, got, size) {
 if (IMG["achb_" + a.id]) return `<img class="abm${got ? "" : " off"}" src="${IMG["achb_" + a.id]}" style="width:${size * 1.3}px;height:${size * 1.3}px" alt="">`;
 const m = /^([wpslt]|c)(\d+)$/.exec(a.id);
