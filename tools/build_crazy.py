@@ -45,7 +45,7 @@ cloudSaveHook = y8QueueSave;
 y8LoadCloud();
 updateY8Ui();
 try {
-const apply = s => { if (s && typeof s.muteAudio === "boolean") Snd.setMuted(s.muteAudio || !!profile.muted); };
+const apply = s => { if (!s) return; if (typeof s.muteAudio === "boolean") Snd.setMuted(s.muteAudio || !!profile.muted); document.body.classList.toggle("nochat", !!s.disableChat); };
 apply(sdk.game.settings); sdk.game.addSettingsChangeListener(apply);
 } catch (e) {}
 try { sdk.game.loadingStop(); } catch (e) {}
@@ -86,6 +86,10 @@ sub('else { const link = location.origin + location.pathname + "?join=" + code;'
 sub('const fail = msg => { if (done) return; done = true;', 'const fail = msg => { if (done) return; done = true; if (CRAZY_BUILD) crazyInviteHide();')
 sub('if (done) return; done = true; clearTimeout(timer);\nconst o = m.opp', 'if (done) return; done = true; clearTimeout(timer); if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
 sub("if (!code || code.length < 4) return;", "if (!code || code.length < 3) return;")
+# chat: only the fixed phrase / emoji / sticker lists (nothing a player types), voice chat off, SDK disableChat hides it all
+sub('${tab === "p" ? `<div class="ctype"><input id="chatIn"', '${!CRAZY_BUILD && tab === "p" ? `<div class="ctype"><input id="chatIn"')
+sub('if (tab === "p") {\nconst go = ()', 'if (tab === "p" && $("chatIn")) {\nconst go = ()')
+sub('<head>', '<head>\n<style>#gVoice{display:none!important}.nochat #gChat,.nochat #chatPanel,.nochat #cheerBar{display:none!important}</style>')
 # hide Y8-only UI
 sub("${Y8.sdk ? `<div class=\"card\"", "${!CRAZY_BUILD && Y8.sdk ? `<div class=\"card\"")
 sub('<button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 14px;font-size:16px">🏆 Y8</button>', '')
