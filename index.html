@@ -1989,7 +1989,7 @@ const ringImg = {}; // city ring pictures for the table and the HUD
 const imgEl = {}; for (const k of ["coin", "cash", "gem"]) { imgEl[k] = new Image(); imgEl[k].src = IMG[k]; }
 const ON_PORTAL = /(^|\.)y8\.com$|(^|\.)id\.net$/.test(location.hostname) || /y8\.com/.test(document.referrer) || (window.top !== window.self && !!CONFIG.y8AppId);
 // Real-money card purchases (Paddle/Stripe). CARD_PAY = false hides every card button; CARD_ON_PORTAL = false hides them only on Y8/portal pages.
-const CARD_PAY = true, CARD_ON_PORTAL = true, NO_CARD = !CARD_PAY || (ON_PORTAL && !CARD_ON_PORTAL);
+const CARD_PAY = true, CARD_ON_PORTAL = false, NO_CARD = !CARD_PAY || (ON_PORTAL && !CARD_ON_PORTAL);
 const W = 1340, H = 720;
 const FX = 188, FY = 148, FW = 1000, FH = 500, RAIL = 66, R = 16;   // ball radius (was 17): about 6 % smaller balls, pockets unchanged
 const RAILC = (RAIL + 8 + 19) / 2;
@@ -4280,7 +4280,7 @@ setTimeout(() => openModal({
 icon, title, text: ring ? "Oltin shar nishonga tushdi!" : "Tasalli sovg'asi",
 extra: `<div class="reward">${ring && ring.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(amount)}</div>`,
 buttons: [
-goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : `3 × ${usdTxt(cardUsd(1.99))}`, cls: "orange", fn: goldenShot}
+goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : NO_CARD ? `💎 ${GOLD_GEMS}` : `3 × ${usdTxt(cardUsd(1.99))}`, cls: "orange", fn: goldenShot}
 : {label: hasTry("lucky") ? T("Yana (bepul)") : `⏳ ${fmtDur(freeLeftMs("lucky"))}`, cls: "orange", fn: () => startLucky()},
 {label: "Menyu", cls: "gray", fn: () => toMenu("mini")}],
 }), 900);
@@ -8552,6 +8552,7 @@ on("cash", () => o.buy("cash")); on("gems", () => o.buy("gems")); on("usd", b =>
 }
 function buildShop(tab) {
 if (tab === "bank") tab = "money";
+if (NO_CARD) { if (tab === "offers") tab = "free"; document.querySelectorAll('.shopnav [data-tab="offers"]').forEach(b => { b.style.display = "none"; }); }   // the card-priced offers page does not exist on Y8
 const sec = ["cues", "avatars", "frames", "tables", "boxes", "stickers"].includes(tab) ? "cues" : tab;
 document.querySelectorAll("#cueTabs .tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
 document.querySelectorAll(".shopnav button").forEach(t => t.classList.toggle("on", t.dataset.tab === sec));
@@ -8741,7 +8742,7 @@ body.insertAdjacentHTML("beforeend", `<div class="cuehead">
 .map(([k, n]) => `<button class="tab${k === cueCat ? " on" : ""}" data-cc="${k}">${T(n)}</button>`).join("")}</div>
 ${cueCat === "surprise" ? `<div class="card surbox"><div style="font-size:44px">${icoH("🎁", 56)}</div><div style="flex:1"><b>${T("Syurpriz qutisi")}</b>
 <div class="muted">${T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy.")}</div></div>
-<button class="btn purple" id="surBtn">${profile.sbAct ? `🔒 ${profile.sbAct.n}/4` : profile.sboxes ? `${T("Ochish")} (${profile.sboxes})` : usdTxt(cardUsd(0.99)) + " / 💵 " + SURPRISE_BOX}</button></div>` : ""}
+<button class="btn purple" id="surBtn">${profile.sbAct ? `🔒 ${profile.sbAct.n}/4` : profile.sboxes ? `${T("Ochish")} (${profile.sboxes})` : (NO_CARD ? "" : usdTxt(cardUsd(0.99)) + " / ") + "💵 " + SURPRISE_BOX}</button></div>` : ""}
 ${cueCat === "victory" ? `<p class="muted" style="margin:0 0 10px">${T("Shaharda yoki undan yuqorida yutib, kiy bo'laklarini yig'ing. 4 bo'lak = kiy.")}</p>` : ""}`);
 body.querySelectorAll("[data-cc]").forEach(b => b.onclick = () => { cueCat = b.dataset.cc; buildShop("cues"); });
 $("cueInfo").onclick = cueInfoModal; $("cpBtn").onclick = collectionTrack; updateHomeDots();
@@ -9432,6 +9433,7 @@ return null;
 }
 }
 async function checkout(sku, btn) {
+if (NO_CARD) return;   // Y8 forbids third-party payments: the real-money shop is not available on portal pages
 try {
 if (btn) btn.disabled = true;
 await ensure();
@@ -10020,6 +10022,7 @@ const LOOPS = [
 ];
 const loopNow = () => { const w = 36 * 36e5, i = Math.floor(Date.now() / w); return {o: LOOPS[i % LOOPS.length], left: (i + 1) * w - Date.now()}; };
 function loopModal() {
+if (NO_CARD) return;   // these offers are card-priced, so they do not exist on Y8
 const {o, left} = loopNow(), h = Math.floor(left / 36e5), m = Math.floor(left % 36e5 / 6e4);
 openModal({icon: "", title: T("Keyingi daraja aksiyasi"), text: "", extra: `<div class="loopbox" style="background:${o.bg}"><div class="loopg">${LOOP_TIERS.map(([usd, off], i) => `<div class="loopc"><span class="rib">−${off}%</span><div style="font-size:52px">${o.id === "box" ? boxImg(["rare", "epic", "leg"][i], 70) : icoH(o.ic, 56)}</div><b>${T(o.n)}</b><div class="h" style="font-size:22px">${o.id === "coin" ? fmt(o.v[i]) : "x" + fmt(o.v[i])}</div><button class="btn green" data-loop="loop_${o.id}_${i + 1}">${usdTxt(cardUsd(usd))}</button></div>`).join("")}</div><div class="muted" style="text-align:center;margin-top:6px">⏱ ${h}${T("s")} ${m}${T("d")}</div></div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
 document.querySelectorAll("#modal [data-loop]").forEach(b => b.onclick = () => Net.checkout(b.dataset.loop, b));
