@@ -51,8 +51,11 @@ apply(sdk.game.settings); sdk.game.addSettingsChangeListener(apply);
 try { sdk.game.loadingStop(); } catch (e) {}
 // invite link: a friend who opens it lands straight in the lobby (IsInstantMultiplayer)
 try {
-const rid = String(sdk.game.getInviteParam("roomId") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
-if (rid.length >= 4) setTimeout(() => lobbyJoin(rid), 3000);
+const rid = String(sdk.game.getInviteParam("roomId") || sdk.game.getInviteParam("roomName") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+if (rid.length >= 3) setTimeout(() => lobbyJoin(rid), 3000);
+} catch (e) {}
+try {
+sdk.game.addJoinRoomListener(q => { const id = String((q && (q.roomId || q.roomName)) || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8); if (id.length >= 3) lobbyJoin(id); });
 } catch (e) {}
 setInterval(() => {
 try { if (mode === "game" && !playing) { playing = true; sdk.game.gameplayStart(); } else if (mode !== "game" && playing) { playing = false; sdk.game.gameplayStop(); } } catch (e) {}
@@ -81,6 +84,7 @@ sub('"☁️", T("Saqlangan o\'yin yuklandi"), "Y8")', '"☁️", T("Saqlangan o
 sub('else { const link = location.origin + location.pathname + "?join=" + code;', 'else if (CRAZY_BUILD) crazyInvite(code);\nelse { const link = location.origin + location.pathname + "?join=" + code;')
 sub('const fail = msg => { if (done) return; done = true;', 'const fail = msg => { if (done) return; done = true; if (CRAZY_BUILD) crazyInviteHide();')
 sub('if (done) return; done = true; clearTimeout(timer);\nconst o = m.opp', 'if (done) return; done = true; clearTimeout(timer); if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
+sub("if (!code || code.length < 4) return;", "if (!code || code.length < 3) return;")
 # hide Y8-only UI
 sub("${Y8.sdk ? `<div class=\"card\"", "${!CRAZY_BUILD && Y8.sdk ? `<div class=\"card\"")
 sub('<button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 14px;font-size:16px">🏆 Y8</button>', '')
