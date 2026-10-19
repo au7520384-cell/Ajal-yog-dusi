@@ -95,13 +95,26 @@ sub('<div id="hLegal"><a href="/terms" target="_blank">Terms of Service</a> · <
 import re, hashlib, base64
 IMGS = {}
 def _ext(mt): return {"webp": "webp", "png": "png", "jpeg": "jpg", "jpg": "jpg", "gif": "gif", "svg+xml": "svg"}[mt]
+WEBP_Q = 70   # lossless-looking at game size (checked side by side); only kept when it is at least 10% smaller
+def _squeeze(raw):
+    try:
+        import io
+        from PIL import Image
+        im = Image.open(io.BytesIO(raw)); im.load()
+        if getattr(im, "is_animated", False): return raw
+        b = io.BytesIO(); im.save(b, "WEBP", quality=WEBP_Q, method=4)
+        return b.getvalue() if len(b.getvalue()) < len(raw) * 0.9 else raw
+    except Exception:
+        return raw
 def _file(m):
-    mt, b64 = m.group(1), m.group(2)
-    raw = base64.b64decode(b64)
+    mt, raw = m.group(1), base64.b64decode(m.group(2))
+    if mt == "webp": raw = _squeeze(raw)
+    if os.environ.get("SINGLE"):
+        return "data:image/%s;base64,%s" % (mt, base64.b64encode(raw).decode())
     name = "img/" + hashlib.sha1(raw).hexdigest()[:14] + "." + _ext(mt)
     IMGS[name] = raw
     return name
-if not os.environ.get("SINGLE"): src = re.sub(r"data:image/(webp|png|jpeg|jpg|gif);base64,([A-Za-z0-9+/=]+)", _file, src)
+src = re.sub(r"data:image/(webp|png|jpeg|jpg|gif);base64,([A-Za-z0-9+/=]+)", _file, src)
 
 out = sys.argv[1] if len(sys.argv) > 1 else root
 os.makedirs(out, exist_ok=True)
