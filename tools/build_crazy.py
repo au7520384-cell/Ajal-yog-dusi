@@ -95,15 +95,31 @@ sub('<div id="hLegal"><a href="/terms" target="_blank">Terms of Service</a> · <
 import re, hashlib, base64
 IMGS = {}
 def _ext(mt): return {"webp": "webp", "png": "png", "jpeg": "jpg", "jpg": "jpg", "gif": "gif", "svg+xml": "svg"}[mt]
-WEBP_Q = 70   # lossless-looking at game size (checked side by side); only kept when it is at least 10% smaller
+SQ_P = float(os.environ.get("SQ_P", "30")); SQ_B = float(os.environ.get("SQ_B", "6"))   # per-picture safety check (PSNR dB / worst 16x16 block error)
+def _ok(a, b):
+    import numpy as np
+    e = np.abs(a.astype(np.int16) - b.astype(np.int16)).astype(np.float32)
+    mse = (e ** 2).mean()
+    if mse == 0: return True
+    psnr = 10 * np.log10(65025 / mse)
+    h, w = e.shape[:2]; h -= h % 16; w -= w % 16
+    if h == 0 or w == 0: return psnr >= SQ_P
+    bl = e[:h, :w].mean(axis=2).reshape(h // 16, 16, w // 16, 16).mean(axis=(1, 3))
+    return psnr >= SQ_P and np.percentile(bl, 99.5) <= SQ_B
 def _squeeze(raw):
+    # lowest webp quality whose result still passes the check against the original; smooth pictures (table felt) fail it and stay untouched
     try:
         import io
+        import numpy as np
         from PIL import Image
         im = Image.open(io.BytesIO(raw)); im.load()
         if getattr(im, "is_animated", False): return raw
-        b = io.BytesIO(); im.save(b, "WEBP", quality=WEBP_Q, method=4)
-        return b.getvalue() if len(b.getvalue()) < len(raw) * 0.9 else raw
+        im = im.convert("RGBA"); a = np.asarray(im)
+        for q in (60, 70, 80, 90):
+            b = io.BytesIO(); im.save(b, "WEBP", quality=q, method=4); nb = b.getvalue()
+            if len(nb) >= len(raw) * 0.9: return raw
+            if _ok(a, np.asarray(Image.open(io.BytesIO(nb)).convert("RGBA"))): return nb
+        return raw
     except Exception:
         return raw
 def _file(m):
