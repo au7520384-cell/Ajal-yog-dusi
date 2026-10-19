@@ -1459,3 +1459,5 @@ Tushki Kubok‖Noon Cup|Дневной кубок|Öğle Kupası|Copa del mediod
 Kechki Kubok‖Evening Cup|Вечерний кубок|Akşam Kupası|Copa de la tarde|Taça da tarde|كأس المساء|Piala Sore|शाम का कप|Coupe du soir|Abendpokal|저녁 컵|夕方のカップ|傍晚杯
 Tungi Kubok‖Night Cup|Ночной кубок|Gece Kupası|Copa de la noche|Taça da noite|كأس الليل|Piala Malam|रात का कप|Coupe de nuit|Nachtpokal|야간 컵|夜のカップ|夜间杯
 Reklama hozir mavjud emas‖Ads are not available right now|Реклама сейчас недоступна|Reklam şu an mevcut değil|Los anuncios no están disponibles ahora|Os anúncios não estão disponíveis agora|الإعلانات غير متاحة الآن|Iklan belum tersedia saat ini|अभी विज्ञापन उपलब्ध नहीं हैं|Les publicités ne sont pas disponibles pour le moment|Werbung ist gerade nicht verfügbar|지금은 광고를 볼 수 없습니다|現在広告は利用できません|目前无法观看广告
+Bugun tugating‖Finish today|Закончите сегодня|Bugün bitir|Termínalo hoy|Termine hoje|أكمله اليوم|Selesaikan hari ini|आज पूरा करें|Terminez aujourd'hui|Heute abschließen|오늘 안에 완료|今日中に完了|今天内完成
+7 kun ichida‖Within 7 days|В течение 7 дней|7 gün içinde|En 7 días|Em 7 dias|خلال 7 أيام|Dalam 7 hari|7 दिनों में|En 7 jours|Innerhalb von 7 Tagen|7일 이내|7日以内|7天内
