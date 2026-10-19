@@ -49,6 +49,11 @@ const apply = s => { if (s && typeof s.muteAudio === "boolean") Snd.setMuted(s.m
 apply(sdk.game.settings); sdk.game.addSettingsChangeListener(apply);
 } catch (e) {}
 try { sdk.game.loadingStop(); } catch (e) {}
+// invite link: a friend who opens it lands straight in the lobby (IsInstantMultiplayer)
+try {
+const rid = String(sdk.game.getInviteParam("roomId") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+if (rid.length >= 4) setTimeout(() => lobbyJoin(rid), 3000);
+} catch (e) {}
 setInterval(() => {
 try { if (mode === "game" && !playing) { playing = true; sdk.game.gameplayStart(); } else if (mode !== "game" && playing) { playing = false; sdk.game.gameplayStop(); } } catch (e) {}
 }, 1000);
@@ -56,10 +61,26 @@ try { if (mode === "game" && !playing) { playing = true; sdk.game.gameplayStart(
 if (CG()) run(); else window.addEventListener("load", run, {once: true});
 }
 '''
+CRAZY_JS += r'''
+function crazyInvite(code) {
+try {
+const g = window.CrazyGames.SDK.game;
+const link = g.inviteLink({roomId: code});
+try { navigator.clipboard.writeText(link); } catch (e) {}
+g.showInviteButton({roomId: code});
+toast("🔑", `${T("Kod")}: ${code}`, T("Havola nusxalandi — do'stingizga yuboring!"));
+} catch (e) {}
+}
+function crazyInviteHide() { try { window.CrazyGames.SDK.game.hideInviteButton(); } catch (e) {} }
+'''
 sub("function y8LoadCloud() {", CRAZY_JS + "function y8LoadCloud() {")
 # keep the player's own name; no Y8 nickname
 sub('String(Y8.user.nickname || "O\'yinchi"', 'String((!CRAZY_BUILD && Y8.user.nickname) || "O\'yinchi"')
 sub('"☁️", T("Saqlangan o\'yin yuklandi"), "Y8")', '"☁️", T("Saqlangan o\'yin yuklandi"), CRAZY_BUILD ? "" : "Y8")')
+# lobby invite through the CrazyGames invite link / button
+sub('else { const link = location.origin + location.pathname + "?join=" + code;', 'else if (CRAZY_BUILD) crazyInvite(code);\nelse { const link = location.origin + location.pathname + "?join=" + code;')
+sub('const fail = msg => { if (done) return; done = true;', 'const fail = msg => { if (done) return; done = true; if (CRAZY_BUILD) crazyInviteHide();')
+sub('if (done) return; done = true; clearTimeout(timer);\nconst o = m.opp', 'if (done) return; done = true; clearTimeout(timer); if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
 # hide Y8-only UI
 sub("${Y8.sdk ? `<div class=\"card\"", "${!CRAZY_BUILD && Y8.sdk ? `<div class=\"card\"")
 sub('<button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 14px;font-size:16px">🏆 Y8</button>', '')
