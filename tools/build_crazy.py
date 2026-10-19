@@ -101,7 +101,7 @@ def _file(m):
     name = "img/" + hashlib.sha1(raw).hexdigest()[:14] + "." + _ext(mt)
     IMGS[name] = raw
     return name
-src = re.sub(r"data:image/(webp|png|jpeg|jpg|gif);base64,([A-Za-z0-9+/=]+)", _file, src)
+if not os.environ.get("SINGLE"): src = re.sub(r"data:image/(webp|png|jpeg|jpg|gif);base64,([A-Za-z0-9+/=]+)", _file, src)
 
 out = sys.argv[1] if len(sys.argv) > 1 else root
 os.makedirs(out, exist_ok=True)
