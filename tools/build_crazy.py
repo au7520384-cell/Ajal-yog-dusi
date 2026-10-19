@@ -86,10 +86,14 @@ sub('else { const link = location.origin + location.pathname + "?join=" + code;'
 sub('const fail = msg => { if (done) return; done = true;', 'const fail = msg => { if (done) return; done = true; if (CRAZY_BUILD) crazyInviteHide();')
 sub('if (done) return; done = true; clearTimeout(timer);\nconst o = m.opp', 'if (done) return; done = true; clearTimeout(timer); if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
 sub("if (!code || code.length < 4) return;", "if (!code || code.length < 3) return;")
-# chat: only the fixed phrase / emoji / sticker lists (nothing a player types), voice chat off, SDK disableChat hides it all
-sub('${tab === "p" ? `<div class="ctype"><input id="chatIn"', '${!CRAZY_BUILD && tab === "p" ? `<div class="ctype"><input id="chatIn"')
-sub('if (tab === "p") {\nconst go = ()', 'if (tab === "p" && $("chatIn")) {\nconst go = ()')
-sub('<head>', '<head>\n<style>#gVoice{display:none!important}.nochat #gChat,.nochat #chatPanel,.nochat #cheerBar{display:none!important}</style>')
+# chat stays (typed + phrases + voice) but every typed line goes through a swear filter, in and out; SDK disableChat hides all of it
+FILTER_JS = r'''
+const BAD_RE = /(f+u+c+k+|sh[i1]+t|b[i1]tch|a+ssh[o0]le|d[i1]ck|c[u]nt|n[i1]gg|wh[o0]re|sl[u]t|bastard|х[уy]+[йяеёию]|п[и1]зд|бл[яa]+[дт]|[еe]б[аaуyлн]|[еe]бать|сук[аи]|муд[аа]к|гандон|п[и1]д[оа]р|\bsik\b|\bsikay|qo.?t[oa]q|jalab|onangni|ammangni|nomussiz|\bkot\b|\bharom[iy]\b)/gi;
+const cleanChat = s => String(s || "").replace(BAD_RE, m => "*".repeat(m.length));
+'''
+sub("function sendChat(msg) {", FILTER_JS + "function sendChat(msg) {\nif (CRAZY_BUILD) msg = cleanChat(msg);")
+sub('Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, String(m.msg || "").slice(0, 40)); });', 'Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, (CRAZY_BUILD ? cleanChat : String)(String(m.msg || "").slice(0, 40))); });')
+sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,.nochat #cheerBar{display:none!important}</style>')
 # hide Y8-only UI
 sub("${Y8.sdk ? `<div class=\"card\"", "${!CRAZY_BUILD && Y8.sdk ? `<div class=\"card\"")
 sub('<button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 14px;font-size:16px">🏆 Y8</button>', '')
