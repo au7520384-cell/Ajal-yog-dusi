@@ -888,34 +888,117 @@ function bucket(ws, key, max, perMs) {   // small token bucket per socket
 }
 
 function wsSend(ws, obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
-const lobbies = new Map();   // friend lobbies: code -> {host, guest, city}; the host presses Start once the friend is in
+// ---------------------------------------------------------------- friend lobbies + knockout tournaments (2-8 players)
+const lobbies = new Map();   // code -> {code, host, city, fee, players: [ws], max: 8, state: "open" | "running", T}
 const pubProfile = p => { const {code, ...r} = p || {}; return r; };
+const pubP = (ws, L) => ({...pubProfile(ws.profile), uid: ws.uid, host: !!L && L.host === ws});
+function lobbyState(L) { return {t: "lobbystate", code: L.code, city: L.city, fee: L.fee, max: L.max, state: L.state, host: L.host.uid, players: L.players.map(p => pubP(p, L))}; }
+function lobbyBroadcast(L) { const m = lobbyState(L); for (const p of L.players) wsSend(p, m); }
 function leaveLobby(ws) {
   const code = ws.lobby; if (!code) return; ws.lobby = null;
   const L = lobbies.get(code); if (!L) return;
-  if (L.host === ws) { lobbies.delete(code); if (L.guest) { L.guest.lobby = null; wsSend(L.guest, {t: "lobbyclosed"}); } }
-  else if (L.guest === ws) { L.guest = null; wsSend(L.host, {t: "lobbyleft"}); }
+  const i = L.players.indexOf(ws); if (i >= 0) L.players.splice(i, 1);
+  if (L.T) L.T.gone.add(ws.uid);                                   // left during a tournament: he forfeits his next match
+  L.players = L.players.filter(p => p.readyState === 1);
+  if (!L.players.length) { lobbies.delete(code); return; }
+  if (L.host === ws) L.host = L.players[0];                        // the host left: the next player takes over
+  lobbyBroadcast(L);
 }
 function leaveQueue(ws) { leaveLobby(ws); for (const q of queues.values()) { const i = q.indexOf(ws); if (i >= 0) q.splice(i, 1); } }
-function startRoom(a, b, city) {   // a sits in seat 0, b in seat 1
+function startRoom(a, b, city, T, match) {   // a sits in seat 0, b in seat 1
   const first = crypto.randomInt(2);
-  const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null};
+  const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null, tour: T || null, tourMatch: match || null};
   rooms.set(room.id, room);
   room.p.forEach((s, seat) => { s.room = room; s.seat = seat; });
-  room.p.forEach((s, seat) => wsSend(s, {t: "match", room: room.id, seat, first, seed: room.seed, city, opp: room.p[1 - seat].profile}));
+  room.p.forEach((s, seat) => wsSend(s, {t: "match", room: room.id, seat, first, seed: room.seed, city, opp: room.p[1 - seat].profile, tour: T ? {round: T.round, rounds: T.rounds} : undefined}));
+  return room;
 }
+const FEE_OF = city => Math.max(1, Math.floor((CITY_PRIZE[city] || 100) / 2));   // a table's entry fee (its prize is twice the fee)
+function tourPrizes(n, pool) {   // fixed when the tournament starts: place -> coins (1st, 2nd, semi-final losers share "3"); 2 players: winner takes it all
+  if (n <= 2) return {1: pool, 2: 0, 3: 0};
+  const sf = n === 3 ? 1 : 2, W = 55 + 25 + 10 * sf;
+  return {1: Math.floor(pool * 55 / W), 2: Math.floor(pool * 25 / W), 3: Math.floor(pool * 10 / W)};
+}
+function startTournament(L, ps) {
+  L.state = "running";
+  const n = ps.length; let size = 2; while (size < n) size *= 2;
+  const order = [...ps]; for (let i = order.length - 1; i > 0; i--) { const j = crypto.randomInt(i + 1); [order[i], order[j]] = [order[j], order[i]]; }
+  const slots = new Array(size).fill(null);                        // byes land on different players: the first half takes the even slots, the rest the odd ones
+  order.forEach((p, k) => { slots[k < size / 2 ? 2 * k : 2 * (k - size / 2) + 1] = p; });
+  const pool = Math.floor(L.fee * n * 0.9);
+  L.T = {code: L.code, city: L.city, fee: L.fee, n, size, rounds: Math.log2(size), round: 0, entries: slots, matches: [], gone: new Set(), pool, prizes: tourPrizes(n, pool), results: {}, startedAt: Date.now(), players: order};
+  const info = {t: "tourstart", n, fee: L.fee, pool, rounds: L.T.rounds, prizes: L.T.prizes, city: L.city};
+  for (const p of order) wsSend(p, info);
+  lobbyBroadcast(L);
+  runRound(L);
+}
+const tourPlayer = (p, T) => p ? {uid: p.uid, name: (p.profile || {}).name, avatar: (p.profile || {}).avatar, frame: (p.profile || {}).frame || 0, level: (p.profile || {}).level} : null;
+function tourBroadcast(L) {
+  const T = L.T; if (!T) return;
+  const m = {t: "tourstate", round: T.round, rounds: T.rounds, n: T.n, matches: T.matches.map(x => ({a: tourPlayer(x.a), b: tourPlayer(x.b), w: x.w ? x.w.uid : null, live: !!x.room && !x.done})), results: T.results};
+  for (const p of T.players) wsSend(p, m);
+}
+function eliminate(L, ws, round) {
+  const T = L.T; if (!ws || T.results[ws.uid]) return;
+  const place = round === T.rounds - 1 ? 2 : round === T.rounds - 2 ? 3 : 5;
+  const prize = T.prizes[place] || 0;
+  T.results[ws.uid] = {place, prize};
+  wsSend(ws, {t: "tourresult", place, prize, n: T.n});
+  const u = db.users[ws.uid]; if (u && prize) { u.won += prize; addWeekly(u, prize); markDirty(); }
+}
+function runRound(L) {
+  const T = L.T, alive = p => p && p.readyState === 1 && !T.gone.has(p.uid);
+  T.matches = [];
+  for (let i = 0; i < T.entries.length; i += 2) {
+    const a = T.entries[i], b = T.entries[i + 1], m = {a, b, w: null, room: null, done: false};
+    T.matches.push(m);
+    if (a && b && alive(a) && alive(b)) { m.room = startRoom(a, b, T.city, T, m); continue; }
+    const w = alive(a) ? a : alive(b) ? b : null;                 // a bye, or the opponent has left: the other one walks through
+    m.w = w; m.done = true;
+    for (const x of [a, b]) if (x && x !== w) eliminate(L, x, T.round);
+  }
+  tourBroadcast(L); roundDone(L);
+}
+function roundDone(L) {
+  const T = L.T; if (!T || T.matches.some(m => !m.done)) return;
+  const winners = T.matches.map(m => m.w).filter(Boolean);
+  if (winners.length <= 1 || T.round >= T.rounds - 1) return finishTournament(L, winners[0] || null);
+  T.entries = winners; T.round++; runRound(L);
+}
+function tourMatchEnd(room, winnerSeat) {
+  const T = room.tour, m = room.tourMatch, L = T && lobbies.get(T.code); if (!L || L.T !== T || !m || m.done) return;
+  m.w = room.p[winnerSeat]; m.done = true;
+  eliminate(L, room.p[1 - winnerSeat], T.round);
+  tourBroadcast(L); roundDone(L);
+}
+function finishTournament(L, champ) {
+  const T = L.T; L.T = null; L.state = "open";
+  if (champ) {
+    const prize = T.prizes[1] || 0; T.results[champ.uid] = {place: 1, prize};
+    wsSend(champ, {t: "tourresult", place: 1, prize, n: T.n});
+    const u = db.users[champ.uid]; if (u) { u.tours = (u.tours | 0) + 1; if (prize) { u.won += prize; addWeekly(u, prize); } markDirty(); }
+  }
+  const standings = T.players.map(p => ({uid: p.uid, name: (p.profile || {}).name, ...(T.results[p.uid] || {place: 5, prize: 0})})).sort((x, y) => x.place - y.place);
+  for (const p of T.players) wsSend(p, {t: "tourdone", standings});
+  for (const p of L.players) p.room = p.room || null;
+  lobbyBroadcast(L);                                               // everybody stays in the lobby: play again with the same friends
+}
+setInterval(() => {   // a tournament match nobody finishes does not block the bracket forever
+  for (const room of [...rooms.values()]) if (room.tour && !room.over && Date.now() - room.startedAt > 45 * 60000) finish(room, crypto.randomInt(2), "timeout");
+}, 60000);
 function finish(room, winnerSeat, reason) {
   if (room.over) return;
   room.over = true;
   const [a, b] = room.p, w = room.p[winnerSeat], l = room.p[1 - winnerSeat];
   const wu = w && db.users[w.uid], lu = l && db.users[l.uid];
-  if (wu) { wu.wins++; wu.games++; wu.won += CITY_PRIZE[room.city] || 0; addWeekly(wu, CITY_PRIZE[room.city] || 0); }
+  if (wu) { wu.wins++; wu.games++; if (!room.tour) { wu.won += CITY_PRIZE[room.city] || 0; addWeekly(wu, CITY_PRIZE[room.city] || 0); } }
   if (lu) lu.games++;
   markDirty();
   for (const s of [a, b]) { wsSend(s, {t: "end", winner: winnerSeat, reason}); if (s) s.room = null; }
   for (const sp of room.specs) { wsSend(sp, {t: "specEnd", winner: winnerSeat, reason}); sp.spec = null; }
   room.specs.clear();
   rooms.delete(room.id);
+  if (room.tour) tourMatchEnd(room, winnerSeat);
 }
 
 wss.on("connection", (ws, req) => {
@@ -934,16 +1017,17 @@ wss.on("connection", (ws, req) => {
       const code = m.code ? String(m.code).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8) : "";
       ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), tbl: String(m.tbl || "").slice(0, 8), tblNo: (u.editions || {})[String(m.tbl || "")] || 0, code: u.code, club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "", cb: u.club && db.clubs[u.club] ? [db.clubs[u.club].badge | 0, db.clubs[u.club].color | 0] : null};
       if (code && m.lobby) {
-        const L = lobbies.get(code);
-        if (!L || L.host.readyState !== 1) {
+        let L = lobbies.get(code);
+        if (L && !L.players.some(p => p.readyState === 1)) { lobbies.delete(code); L = null; }
+        if (!L) {
           if (m.join) return wsSend(ws, {t: "nocode"});
-          lobbies.set(code, {host: ws, guest: null, city}); ws.lobby = code;
-          return wsSend(ws, {t: "queued", city, waiting: 1});
+          L = {code, host: ws, city, fee: FEE_OF(city), players: [ws], max: 8, state: "open", T: null}; lobbies.set(code, L); ws.lobby = code;
+          return lobbyBroadcast(L);
         }
-        if (L.host === ws || L.guest) return wsSend(ws, {t: "nocode"});
-        L.guest = ws; ws.lobby = code;
-        wsSend(L.host, {t: "lobbyin", opp: pubProfile(ws.profile)});
-        return wsSend(ws, {t: "lobbywait", opp: pubProfile(L.host.profile)});
+        if (L.players.includes(ws)) return lobbyBroadcast(L);
+        if (L.state !== "open") return wsSend(ws, {t: "lobbybusy"});
+        if (L.players.length >= L.max) return wsSend(ws, {t: "lobbyfull"});
+        L.players.push(ws); ws.lobby = code; return lobbyBroadcast(L);
       }
       const qk = code ? "code:" + code : city;
       const q = queues.get(qk) || []; queues.set(qk, q);
@@ -951,11 +1035,12 @@ wss.on("connection", (ws, req) => {
       if (!opp) { if (code && m.join) return wsSend(ws, {t: "nocode"}); q.push(ws); return wsSend(ws, {t: "queued", city, waiting: q.length}); }
       q.splice(q.indexOf(opp), 1);
       startRoom(opp, ws, city);
-    } else if (m.t === "start") {   // the lobby host starts the game once the friend is in
+    } else if (m.t === "start") {   // the lobby host starts the tournament (2-8 players)
       const L = ws.lobby && lobbies.get(ws.lobby);
-      if (!L || L.host !== ws || !L.guest || L.guest.readyState !== 1 || ws.room || L.guest.room) return;
-      lobbies.delete(ws.lobby); ws.lobby = null; L.guest.lobby = null;
-      startRoom(ws, L.guest, L.city);
+      if (!L || L.host !== ws || L.state !== "open") return;
+      const ps = L.players.filter(p => p.readyState === 1 && !p.room);
+      if (ps.length < 2) return wsSend(ws, {t: "lobbyerr", why: "min"});
+      startTournament(L, ps);
     } else if (m.t === "cancel") {
       leaveQueue(ws);
     } else if (m.t === "spectate") {
