@@ -888,7 +888,22 @@ function bucket(ws, key, max, perMs) {   // small token bucket per socket
 }
 
 function wsSend(ws, obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
-function leaveQueue(ws) { for (const q of queues.values()) { const i = q.indexOf(ws); if (i >= 0) q.splice(i, 1); } }
+const lobbies = new Map();   // friend lobbies: code -> {host, guest, city}; the host presses Start once the friend is in
+const pubProfile = p => { const {code, ...r} = p || {}; return r; };
+function leaveLobby(ws) {
+  const code = ws.lobby; if (!code) return; ws.lobby = null;
+  const L = lobbies.get(code); if (!L) return;
+  if (L.host === ws) { lobbies.delete(code); if (L.guest) { L.guest.lobby = null; wsSend(L.guest, {t: "lobbyclosed"}); } }
+  else if (L.guest === ws) { L.guest = null; wsSend(L.host, {t: "lobbyleft"}); }
+}
+function leaveQueue(ws) { leaveLobby(ws); for (const q of queues.values()) { const i = q.indexOf(ws); if (i >= 0) q.splice(i, 1); } }
+function startRoom(a, b, city) {   // a sits in seat 0, b in seat 1
+  const first = crypto.randomInt(2);
+  const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null};
+  rooms.set(room.id, room);
+  room.p.forEach((s, seat) => { s.room = room; s.seat = seat; });
+  room.p.forEach((s, seat) => wsSend(s, {t: "match", room: room.id, seat, first, seed: room.seed, city, opp: room.p[1 - seat].profile}));
+}
 function finish(room, winnerSeat, reason) {
   if (room.over) return;
   room.over = true;
@@ -918,16 +933,29 @@ wss.on("connection", (ws, req) => {
       const city = String(m.city || "lon").slice(0, 8);
       const code = m.code ? String(m.code).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8) : "";
       ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), tbl: String(m.tbl || "").slice(0, 8), tblNo: (u.editions || {})[String(m.tbl || "")] || 0, code: u.code, club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "", cb: u.club && db.clubs[u.club] ? [db.clubs[u.club].badge | 0, db.clubs[u.club].color | 0] : null};
+      if (code && m.lobby) {
+        const L = lobbies.get(code);
+        if (!L || L.host.readyState !== 1) {
+          if (m.join) return wsSend(ws, {t: "nocode"});
+          lobbies.set(code, {host: ws, guest: null, city}); ws.lobby = code;
+          return wsSend(ws, {t: "queued", city, waiting: 1});
+        }
+        if (L.host === ws || L.guest) return wsSend(ws, {t: "nocode"});
+        L.guest = ws; ws.lobby = code;
+        wsSend(L.host, {t: "lobbyin", opp: pubProfile(ws.profile)});
+        return wsSend(ws, {t: "lobbywait", opp: pubProfile(L.host.profile)});
+      }
       const qk = code ? "code:" + code : city;
       const q = queues.get(qk) || []; queues.set(qk, q);
       const opp = q.find(o => o.uid !== ws.uid && o.readyState === 1);
       if (!opp) { if (code && m.join) return wsSend(ws, {t: "nocode"}); q.push(ws); return wsSend(ws, {t: "queued", city, waiting: q.length}); }
       q.splice(q.indexOf(opp), 1);
-      const first = crypto.randomInt(2);
-      const room = {id: crypto.randomUUID(), city, p: [opp, ws], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null};
-      rooms.set(room.id, room);
-      room.p.forEach((s, seat) => { s.room = room; s.seat = seat; });
-      room.p.forEach((s, seat) => wsSend(s, {t: "match", room: room.id, seat, first, seed: room.seed, city, opp: room.p[1 - seat].profile}));
+      startRoom(opp, ws, city);
+    } else if (m.t === "start") {   // the lobby host starts the game once the friend is in
+      const L = ws.lobby && lobbies.get(ws.lobby);
+      if (!L || L.host !== ws || !L.guest || L.guest.readyState !== 1 || ws.room || L.guest.room) return;
+      lobbies.delete(ws.lobby); ws.lobby = null; L.guest.lobby = null;
+      startRoom(ws, L.guest, L.city);
     } else if (m.t === "cancel") {
       leaveQueue(ws);
     } else if (m.t === "spectate") {
