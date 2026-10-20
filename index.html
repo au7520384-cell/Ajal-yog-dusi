@@ -10773,6 +10773,10 @@ if ($("lbScr").classList.contains("on")) lbRender();
 function lbMatch(m) {   // a bracket match: the opponent is known, play it
 if (!LB) return;
 if (mode === "game" || $("res").classList.contains("on")) { LB.queued = m; return; }   // wait until the player has seen the previous result
+lbPlay(m);
+}
+function lbPlay(m) {
+if (!LB) return;
 LB.queued = null;
 const o = m.opp || {}, c = lbCityOf(LB.city), city = {...c, prize: 0, fee: 0};
 const opp = {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
@@ -10781,7 +10785,7 @@ lbChip(false);
 vsScreen(city, LB.fee * 2, () => Promise.resolve({net: m, opp}), f => { startMatch("ai", city, f.opp, f.net); if (game) game.tourLobby = true; });
 }
 function lbAfterMatch() {   // the "Continue" of a bracket match's result screen
-const q = LB && LB.queued; if (q) { LB.queued = null; return lbMatch(q); }
+const q = LB && LB.queued; if (q) return lbPlay(q);
 lbShow();
 }
 function lbResult(m) {
