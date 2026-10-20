@@ -89,12 +89,11 @@ sub('String(Y8.user.nickname || "O\'yinchi"', 'String((!CRAZY_BUILD && Y8.user.n
 sub('"☁️", T("Saqlangan o\'yin yuklandi"), "Y8")', '"☁️", T("Saqlangan o\'yin yuklandi"), CRAZY_BUILD ? "" : "Y8")')
 # lobby invite through the CrazyGames invite link / button
 sub('else { const link = location.origin + location.pathname + "?join=" + code;', 'else if (CRAZY_BUILD) crazyInvite(code);\nelse { const link = location.origin + location.pathname + "?join=" + code;')
-sub('const fail = msg => { if (done) return; done = true;', 'const fail = msg => { if (done) return; done = true; if (CRAZY_BUILD) crazyInviteHide();')
-sub('if (done) return; done = true; clearTimeout(timer); lobbyRematch = code;\nconst o = m.opp', 'if (done) return; done = true; clearTimeout(timer); lobbyRematch = code; if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
+sub('clearTimeout(timer); lobbyCodeClose(); lobbyRematch = code;\nconst o = m.opp', 'clearTimeout(timer); lobbyCodeClose(); lobbyRematch = code; if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
 sub("if (!code || code.length < 4) return;", "if (!code || code.length < 3) return;")
 sub('function lobbyWait(c, code, join) {\n', 'function lobbyWait(c, code, join) {\nif (CRAZY_BUILD) crazyRoom(code, !join);\n')
 sub('lobbyRematch = code; if (CRAZY_BUILD) crazyInviteHide();', 'lobbyRematch = code; if (CRAZY_BUILD) { crazyInviteHide(); crazyRoom(code, false); }')
-sub('if (done) return; done = true; if (CRAZY_BUILD) crazyInviteHide();', 'if (done) return; done = true; if (CRAZY_BUILD) { crazyInviteHide(); crazyLeave(); }')
+sub('done = true; lobbyCodeClose();', 'done = true; lobbyCodeClose(); if (CRAZY_BUILD) { crazyInviteHide(); crazyLeave(); }')
 # chat stays (typed + phrases + voice) but every typed line goes through a swear filter, in and out; SDK disableChat hides all of it
 FILTER_JS = r'''
 const BAD_RE = /(f+u+c+k+|sh[i1]+t|b[i1]tch|a+ssh[o0]le|d[i1]ck|c[u]nt|n[i1]gg|wh[o0]re|sl[u]t|bastard|х[уy]+[йяеёию]|п[и1]зд|бл[яa]+[дт]|[еe]б[аaуyлн]|[еe]бать|сук[аи]|муд[аа]к|гандон|п[и1]д[оа]р|\bsik\b|\bsikay|qo.?t[oa]q|jalab|onangni|ammangni|nomussiz|\bkot\b|\bharom[iy]\b)/gi;
