@@ -10663,24 +10663,40 @@ const u = String(t || "").toUpperCase().replace(/K[O0]D|CODE|[^A-Z0-9\s]/g, " ")
 const w = u.split(/\s+/).filter(x => x.length >= 4);
 return (w.filter(x => x.length === 6).pop() || w[0] || "").slice(0, 8);
 };
-let lobbyShown = false;
-function lobbyBox(L) {   // the lobby window: big code, the friend once he is in, Start (host only), Copy, Cancel
+let lobbyShown = false, lobbyLink = "";
+const lobbyDefaultLink = code => (/^https?:/.test(location.protocol) && !ON_PORTAL ? location.origin + location.pathname : (Net.base || CONFIG.server) + "/") + "?join=" + code;
+function lobbyChip(L) {   // while the lobby window is hidden a small tag stays on screen: tap it to bring the lobby back
+let el = $("lobbyChip");
+if (!el) { el = document.createElement("div"); el.id = "lobbyChip"; el.style.cssText = "position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:9000;background:linear-gradient(#2a3d7a,#16214a);border:2px solid #ffd45a;border-radius:20px;padding:8px 18px;color:#ffe27a;font:800 18px/1.2 inherit;letter-spacing:3px;cursor:pointer;box-shadow:0 4px 18px #000a"; document.body.appendChild(el); }
+el.textContent = `🔑 ${L.code}${L.opp ? "  ·  👤 " + pname(L.opp.name) : ""}`; el.onclick = () => lobbyBox(L);
+}
+function lobbyMin(L) { lobbyShown = false; try { $("modal").classList.remove("on"); } catch (e) {} lobbyChip(L); }
+function lobbyBox(L) {   // the lobby window: code + link, the friend once he is in, Start (host only), invite friends, Copy, Cancel; X hides it behind the tag
 lobbyShown = true;
-const host = L.role === "host", opp = L.opp ? `<div style="text-align:center;margin:4px 0 8px;font-size:22px">👤 <b>${esc(pname(L.opp.name))}</b></div>` : "";
+const chip = $("lobbyChip"); if (chip) chip.remove();
+const host = L.role === "host", link = lobbyLink && lobbyLink.includes(L.code) ? lobbyLink : lobbyDefaultLink(L.code);
+const opp = L.opp ? `<div style="text-align:center;margin:4px 0 8px;font-size:22px">👤 <b>${esc(pname(L.opp.name))}</b></div>` : "";
+const flist = host && L.showF ? `<div id="lbFr" style="max-height:130px;overflow:auto;margin-top:6px">${L.friends ? (L.friends.length ? L.friends.map(f => `<div style="display:flex;align-items:center;gap:8px;margin:3px 0">${f.online ? '<span style="color:#3fe052">●</span>' : "○"}<b style="flex:1;text-align:left">${esc(f.name)}</b><button class="btn ${L.invited[f.id] ? "gray" : "green"}" data-inv="${f.id}" ${f.online && !L.invited[f.id] ? "" : "disabled"} style="padding:4px 12px;font-size:15px">${L.invited[f.id] ? "✓" : T("Chaqirish")}</button></div>`).join("") : `<span class="muted">—</span>`) : T("Yuklanmoqda…")}</div>` : "";
 const btn = [];
 if (host && L.opp) btn.push({label: T("Boshlash"), cls: "green", fn: () => { lobbyShown = false; L.onStart(); }});
-if (host) btn.push({label: T("Nusxalash"), cls: L.opp ? "blue" : "green", fn: () => { try { navigator.clipboard.writeText(L.code); } catch (e) {} lobbyBox(L); }});
+if (host) {
+btn.push({label: T("Havolani nusxalash"), cls: L.opp ? "blue" : "green", fn: () => { try { navigator.clipboard.writeText(link); } catch (e) {} toast("🔑", T("Havola nusxalandi — do'stingizga yuboring!"), L.code); lobbyBox(L); }});
+if (navigator.share) btn.push({label: T("Ulashish"), cls: "blue", fn: () => { navigator.share({title: "Billiard 8", text: `${L.code}`, url: link}).catch(() => {}); lobbyBox(L); }});
+btn.push({label: T("Do'stni chaqirish"), cls: "blue", fn: () => { L.showF = !L.showF; if (L.showF && !L.friends) Net.api("/api/friends").then(r => { L.friends = (r.friends || []).sort((x, y) => (y.online | 0) - (x.online | 0)).slice(0, 12); if (lobbyShown) lobbyBox(L); }).catch(() => { L.friends = []; if (lobbyShown) lobbyBox(L); }); lobbyBox(L); }});
+}
 btn.push({label: T("Bekor qilish"), cls: "red", fn: () => { lobbyShown = false; L.onCancel(); }});
 openModal({icon: "🔑", title: T("Lobbi"), text: host ? (L.opp ? T("Do'stingiz keldi — o'yinni boshlang") : T("Kodni do'stingizga yuboring")) : (L.opp ? T("Do'stingiz o'yinni boshlashini kuting") : T("Lobbiga ulanmoqda…")),
-extra: `<div style="font-size:44px;font-weight:900;letter-spacing:7px;color:#ffe27a;text-align:center;margin:6px 0">${L.code}</div>${opp}`, buttons: btn});
+extra: `<div style="font-size:44px;font-weight:900;letter-spacing:7px;color:#ffe27a;text-align:center;margin:6px 0">${L.code}</div>${opp}${flist}`, buttons: btn});
+const x = document.querySelector("#modal .mx"); if (x) x.onclick = () => lobbyMin(L);
+document.querySelectorAll("#mExtra [data-inv]").forEach(b => b.onclick = () => { L.invited[b.dataset.inv] = true; Net.api("/api/challenge", {to: b.dataset.inv, code: L.code, city: L.city}).catch(() => {}); lobbyBox(L); });
 }
-function lobbyCodeClose() { if (lobbyShown) { lobbyShown = false; try { $("modal").classList.remove("on"); } catch (e) {} } }
+function lobbyCodeClose() { const ch = $("lobbyChip"); if (ch) ch.remove(); if (lobbyShown) { lobbyShown = false; try { $("modal").classList.remove("on"); } catch (e) {} } }
 let lobbyRematch = "";   // code of the friend lobby the current online match came from: both players can press Rematch and meet in the same lobby again
 function lobbyWait(c, code, join) {
 if (profile.coins < c.fee) return toast("😕", T("Tanga yetmaydi"), c.name);
 profile.coins -= c.fee; save(); updateNav();
 let cancelWait = null;
-const L = {code, role: join ? "guest" : "host", opp: null, onStart: () => Net.send({t: "start"}), onCancel: () => cancelWait && cancelWait(T("Bekor qilish"))};
+const L = {code, city: c.id, invited: {}, friends: null, showF: false, role: join ? "guest" : "host", opp: null, onStart: () => Net.send({t: "start"}), onCancel: () => cancelWait && cancelWait(T("Bekor qilish"))};
 const find = () => new Promise(resolve => {
 let done = false;
 const fail = msg => { if (done) return; done = true; lobbyCodeClose(); Net.send({t: "cancel"}); profile.coins += c.fee; save(); updateNav(); toast("😕", msg, T("Lobbi")); resolve(null); };
@@ -10710,7 +10726,7 @@ p.then(f => { lobbyCodeClose(); if (!f) return toMenu("withFrScr"); vsScreen(c, 
 function lobbyCreate(friendId) {
 const c = lobbyCity(), code = Array.from({length: 6}, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.random() * 32 | 0]).join("");
 if (friendId && typeof friendId === "string") Net.api("/api/challenge", {to: friendId, code, city: c.id}).catch(() => {});
-else { const link = location.origin + location.pathname + "?join=" + code; try { navigator.clipboard.writeText(link); } catch (e) {} toast("🔑", `${T("Kod")}: ${code}`, T("Havola nusxalandi — do'stingizga yuboring!")); }
+else { lobbyLink = lobbyDefaultLink(code); try { navigator.clipboard.writeText(lobbyLink); } catch (e) {} }
 lobbyWait(c, code, false);
 }
 function lobbyJoin(code, cityId) {
