@@ -70,11 +70,10 @@ CRAZY_JS += r'''
 function crazyInvite(code) {
 try {
 const g = window.CrazyGames.SDK.game;
-const link = g.inviteLink({roomId: code});
+const link = g.inviteLink({roomId: code}); lobbyLink = link;
 try { navigator.clipboard.writeText(link); } catch (e) {}
 g.showInviteButton({roomId: code});
 crazyRoom(code, true);
-toast("🔑", `${T("Kod")}: ${code}`, T("Havola nusxalandi — do'stingizga yuboring!"));
 } catch (e) {}
 }
 function crazyRoom(code, joinable) {
