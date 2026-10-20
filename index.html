@@ -10658,23 +10658,34 @@ $("wfFriends").innerHTML = r.friends.length ? r.friends.map(f => `<div class="lb
 box.querySelectorAll("[data-chal]").forEach(b => b.onclick = () => lobbyCreate(b.dataset.chal));
 }).catch(() => { $("wfFriends").textContent = "📡 " + T("Server bilan aloqa yo'q. Internetni tekshiring."); });
 }
+let lobbyShown = false;
+function lobbyCodeBox(code, onCancel) {   // the host sees the big code (and can copy it) while waiting for the friend
+lobbyShown = true;
+openModal({icon: "🔑", title: T("Lobbi"), text: T("Havola nusxalandi — do'stingizga yuboring!"),
+extra: `<div style="font-size:44px;font-weight:900;letter-spacing:7px;color:#ffe27a;text-align:center;margin:6px 0">${code}</div>`,
+buttons: [{label: T("Yopish"), cls: "green", fn: () => { lobbyShown = false; }},
+{label: T("Nusxalash"), cls: "blue", fn: () => { try { navigator.clipboard.writeText(code); } catch (e) {} lobbyCodeBox(code, onCancel); }},
+{label: T("Bekor qilish"), cls: "red", fn: () => { lobbyShown = false; onCancel(); }}]});
+}
+function lobbyCodeClose() { if (lobbyShown) { lobbyShown = false; try { $("modal").classList.remove("on"); } catch (e) {} } }
 let lobbyRematch = "";   // code of the friend lobby the current online match came from: both players can press Rematch and meet in the same lobby again
 function lobbyWait(c, code, join) {
 if (profile.coins < c.fee) return toast("😕", T("Tanga yetmaydi"), c.name);
 profile.coins -= c.fee; save(); updateNav();
 vsScreen(c, c.prize, () => new Promise(resolve => {
 let done = false;
-const fail = msg => { if (done) return; done = true; Net.send({t: "cancel"}); profile.coins += c.fee; save(); updateNav(); toast("😕", msg, T("Lobbi")); resolve(null); };
+const fail = msg => { if (done) return; done = true; lobbyCodeClose(); Net.send({t: "cancel"}); profile.coins += c.fee; save(); updateNav(); toast("😕", msg, T("Lobbi")); resolve(null); };
 const timer = setTimeout(() => fail(T("Do'stingiz kelmadi")), join ? 10000 : 60000);
 Net.ensure().then(() => Net.connect()).then(() => {
 Net.on("nocode", () => { clearTimeout(timer); fail(T("Bunday lobbi topilmadi")); });
 Net.on("match", m => {
-if (done) return; done = true; clearTimeout(timer); lobbyRematch = code;
+if (done) return; done = true; clearTimeout(timer); lobbyCodeClose(); lobbyRematch = code;
 const o = m.opp || {};
 resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
 level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0}});
 });
 Net.send({t: "queue", city: c.id, code, join: !!join, cue: profile.cue, tbl: profile.tableSkin || ""});
+if (!join) setTimeout(() => { if (!done) lobbyCodeBox(code, () => fail(T("Bekor qilish"))); }, 2200);
 }).catch(() => { clearTimeout(timer); fail(T("Server bilan aloqa yo'q. Internetni tekshiring.")); });
 }), f => f ? startMatch("ai", c, f.opp, f.net) : toMenu("withFrScr"));
 if (!join) setTimeout(() => { const el = $("vsBn"); if (el) el.innerHTML = `${T("Kod")}: <b style="color:#ffe27a;font-size:1.3em">${code}</b>`; }, 300);
