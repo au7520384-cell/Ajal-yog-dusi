@@ -944,7 +944,7 @@ function eliminate(L, ws, round) {
   const prize = T.prizes[place] || 0;
   T.results[ws.uid] = {place, prize};
   wsSend(ws, {t: "tourresult", place, prize, n: T.n});
-  const u = db.users[ws.uid]; if (u && prize) { u.won += prize; addWeekly(u, prize); markDirty(); }
+  const u = db.users[ws.uid]; if (u && prize && ws.readyState === 1) { u.won += prize; addWeekly(u, prize); markDirty(); }
 }
 function runRound(L) {
   const T = L.T, alive = p => p && p.readyState === 1 && !T.gone.has(p.uid);
@@ -976,7 +976,7 @@ function finishTournament(L, champ) {
   if (champ) {
     const prize = T.prizes[1] || 0; T.results[champ.uid] = {place: 1, prize};
     wsSend(champ, {t: "tourresult", place: 1, prize, n: T.n});
-    const u = db.users[champ.uid]; if (u) { u.tours = (u.tours | 0) + 1; if (prize) { u.won += prize; addWeekly(u, prize); } markDirty(); }
+    const u = db.users[champ.uid]; if (u && champ.readyState === 1) { u.tours = (u.tours | 0) + 1; if (prize) { u.won += prize; addWeekly(u, prize); } markDirty(); }
   }
   const standings = T.players.map(p => ({uid: p.uid, name: (p.profile || {}).name, ...(T.results[p.uid] || {place: 5, prize: 0})})).sort((x, y) => x.place - y.place);
   for (const p of T.players) wsSend(p, {t: "tourdone", standings});

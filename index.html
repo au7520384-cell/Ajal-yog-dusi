@@ -843,7 +843,7 @@ background:linear-gradient(#5a8a4a,#2e5a26);box-shadow:inset 0 2px 0 #fff4,0 3px
 #lbBody{width:min(98%,1100px);overflow:auto;max-height:calc(100% - 70px)}
 .lbtbls{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px}
 .lbt{flex:0 0 190px;border-radius:16px;padding:10px;text-align:center;cursor:pointer;border:2px solid #fff4;box-shadow:0 4px 14px #0008;position:relative}
-.lbt.lock{filter:grayscale(.8) brightness(.6);cursor:default}.lbt .lbtk{position:absolute;inset:auto 0 8px;font-weight:800;color:#fff}
+.lbt.lock{filter:grayscale(.8) brightness(.6);cursor:default}.lbt .lbtk{position:absolute;top:6px;right:8px;font-weight:800;color:#fff;font-size:15px}
 .lbnm{display:flex;flex-direction:column;align-items:center;line-height:1.1;margin:4px 0 6px}.lbnm small{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#cfe3ff;font-weight:700}.lbnm b{font-family:var(--fh);font-size:24px;color:#fff;text-shadow:0 2px 6px #000}
 .lbtp,.lbtf{background:#000a;border-radius:10px;padding:5px 6px;margin-top:6px;font-weight:700;font-size:14px}.lbtp{color:#ffe27a}
 .lbnote{text-align:center;margin:6px 0;font-weight:700}.lbauto{display:flex;gap:8px;justify-content:center;align-items:center;font-weight:700;padding:6px}
@@ -857,6 +857,12 @@ background:linear-gradient(#5a8a4a,#2e5a26);box-shadow:inset 0 2px 0 #fff4,0 3px
 .lbstart{text-align:center}.lbstart small{display:block;margin-top:4px;color:#9fb3e8}
 .lbmatches{display:flex;flex-direction:column;gap:6px}.lbm{display:flex;align-items:center;justify-content:center;gap:10px;background:#1a2442;border-radius:10px;padding:8px}.lbm span{flex:1;text-align:center;font-weight:700}.lbm span.w{color:#7dff8a}.lbm em{font-style:normal;color:#9fb3e8}.lbm.live{border:1px solid #ffd45a}
 .lbprz{text-align:center;font-weight:700;color:#ffe27a}
+.mh520 #lbBody{padding:6px 8px;max-height:calc(100% - 52px)}.mh520 .lbt{flex-basis:148px;padding:6px}.mh520 .lbnm{margin:0 0 3px}.mh520 .lbnm b{font-size:17px}.mh520 .lbnm small{font-size:9px}
+.mh520 .lbtp,.mh520 .lbtf{font-size:12px;padding:3px 4px;margin-top:4px}.mh520 .lbnote{font-size:12px;margin:2px}.mh520 .lbauto{font-size:12px;padding:2px}
+.mh520 .lbinfo{display:grid;grid-template-columns:1fr 1fr;flex:0 0 210px;align-content:start;align-items:start;grid-auto-rows:min-content}.mh520 .lbinfo>.lbnm,.mh520 .lbinfo>.lbcode{grid-column:1/-1}.mh520 .lbinfo>.lbtf,.mh520 .lbinfo>.lbtp{font-size:11px;padding:3px 2px}
+.mh520 .lbwrap{gap:8px;flex-wrap:nowrap}.mh520 .lbtp,.mh520 .lbinfo .lbtf{margin-top:0}.mh520 .lbinfo{gap:4px}.mh520 .lbcode{padding:3px}.mh520 .lbcode small{font-size:10px}.mh520 .lbcode b{font-size:18px;letter-spacing:3px}.mh520 .lbcode small{display:none}.mh520 .lbinfo .btn{padding:4px 2px;font-size:12px;white-space:nowrap}
+.mh520 .lbright{flex:1 1 280px;gap:4px}.mh520 .lbslots{gap:5px}.mh520 .lbslot{min-height:50px;font-size:10px;gap:0}.mh520 .lbslot .avx{transform:scale(.9)}.mh520 .lbslot i{font-size:9px}
+.mh520 .lbstat,.mh520 .lbwait{font-size:12px}.mh520 .lbme{font-size:16px}.mh520 .lbm{padding:4px;font-size:12px}.mh520 .lbprz{font-size:12px}.mh520 .lbstart .btn{padding:6px 22px}
 .wfgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;width:100%}
 .wfgrid .mgc{grid-column:span 3}
 .wf-teal{background:linear-gradient(135deg,#1e6a7a,#0c3d4a);border-color:#8fb0bc;box-shadow:inset 0 2px 0 #fff5,inset 0 0 40px #0006,0 8px 16px #000a}
@@ -10822,7 +10828,7 @@ return;
 const c = lbCityOf(LB.city), host = LB.role === "host", T_ = LB.tour, run = LB.state === "running", me = lbMe();
 title.textContent = run ? T("Turnir") : T("Lobbi");
 const slots = Array.from({length: LB.max}, (_, i) => { const p = LB.players[i];
-return p ? `<div class="lbslot on">${avHTML(normAv(p.avatar | 0), p.frame | 0, 52)}<b>${esc(pname(p.name))}</b>${p.host ? `<i>${T("Xost")}</i>` : ""}</div>` : `<div class="lbslot"></div>`; }).join("");
+return p ? `<div class="lbslot on">${avHTML(normAv(p.avatar | 0), p.frame | 0, document.documentElement.classList.contains("mh520") ? 30 : 52)}<b>${esc(pname(p.name))}</b>${p.host ? `<i>${T("Xost")}</i>` : ""}</div>` : `<div class="lbslot"></div>`; }).join("");
 let right;
 if (run && T_) {
 const res = LB.results, mm = (T_.matches || []).map(x => { const an = x.a ? esc(pname(x.a.name)) : "—", bn = x.b ? esc(pname(x.b.name)) : T("Bay");
