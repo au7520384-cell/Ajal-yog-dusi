@@ -87,7 +87,7 @@ sub("function y8LoadCloud() {", CRAZY_JS + "function y8LoadCloud() {")
 sub('String(Y8.user.nickname || "O\'yinchi"', 'String((!CRAZY_BUILD && Y8.user.nickname) || "O\'yinchi"')
 sub('"☁️", T("Saqlangan o\'yin yuklandi"), "Y8")', '"☁️", T("Saqlangan o\'yin yuklandi"), CRAZY_BUILD ? "" : "Y8")')
 # lobby invite through the CrazyGames invite link / button
-sub('else { const link = location.origin + location.pathname + "?join=" + code;', 'else if (CRAZY_BUILD) crazyInvite(code);\nelse { const link = location.origin + location.pathname + "?join=" + code;')
+sub('else { lobbyLink = lobbyDefaultLink(code);', 'else if (CRAZY_BUILD) crazyInvite(code);\nelse { lobbyLink = lobbyDefaultLink(code);')
 sub('clearTimeout(timer); lobbyCodeClose(); lobbyRematch = code;\nconst o = m.opp', 'clearTimeout(timer); lobbyCodeClose(); lobbyRematch = code; if (CRAZY_BUILD) crazyInviteHide();\nconst o = m.opp')
 sub("if (!code || code.length < 4) return;", "if (!code || code.length < 3) return;")
 sub('function lobbyWait(c, code, join) {\n', 'function lobbyWait(c, code, join) {\nif (CRAZY_BUILD) crazyRoom(code, !join);\n')
