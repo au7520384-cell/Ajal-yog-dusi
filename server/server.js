@@ -30,6 +30,7 @@ const PADDLE_TOKEN = (PADDLE_SANDBOX ? process.env.PADDLE_CLIENT_TOKEN_SANDBOX :
 const PADDLE_API = PADDLE_SANDBOX ? "https://sandbox-api.paddle.com" : "https://api.paddle.com";
 const PAYMENTS = !!(PADDLE_KEY && PADDLE_TOKEN) || !!STRIPE_KEY;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
+const AD_KEY = process.env.ADSGRAM_REWARD_KEY || "", adCred = new Map();   // Adsgram server-to-server reward ping: Telegram id -> {n, t} credits the player may claim once each (the page cannot fake a watched ad)
 const TG_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "", TG_APP_LINK = process.env.TELEGRAM_APP_LINK || "";   // Telegram Mini App: the bot token verifies the players, the public app link (https://t.me/<bot>/<app>) is used for lobby invites
 const ROOT = path.join(__dirname, "..");
 const BUILD = (process.env.RENDER_GIT_COMMIT || "").slice(0, 7) || "local";   // the deployed commit (Render sets it); shown in /api/health and in the game's Settings so anyone can see which version is running
@@ -484,8 +485,23 @@ const routes = {
     return {total: clients.size, playing: rooms.size * 2, byCity};
   },
 
-  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || ""}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
+  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
   // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
+  // Adsgram calls this when a player finished a rewarded video: GET /api/adsgram/reward?key=<ADSGRAM_REWARD_KEY>&userid=<Telegram id>
+  "GET /api/adsgram/reward"(req) {
+    if (limited(req, "adsgram", 600)) return [429, {error: "slow down"}];
+    const q = new URL(req.url, "http://x").searchParams, key = String(q.get("key") || ""), tg = String(q.get("userid") || q.get("userId") || "").slice(0, 20);
+    if (!AD_KEY || key.length !== AD_KEY.length || !crypto.timingSafeEqual(Buffer.from(key), Buffer.from(AD_KEY))) return [403, {error: "forbidden"}];
+    const acct = Object.values(db.users).find(x => x.auth && x.auth.telegram === tg);
+    if (!acct) return [404, {error: "no user"}];
+    const c = adCred.get(acct.id) || {n: 0, t: 0}; c.n = Math.min(5, c.n + 1); c.t = Date.now(); adCred.set(acct.id, c);
+    return {ok: true};
+  },
+  "POST /api/ad/claim"(req, u) {   // the page asks for the reward after the video: one credit is used per claim
+    const c = adCred.get(u.id);
+    if (!c || c.n < 1 || Date.now() - c.t > 10 * 60e3) return {ok: false};
+    c.n--; return {ok: true};
+  },
   async "POST /api/auth/login"(req) {
     if (limited(req, "authlogin", 20)) return [429, {error: "slow down"}];
     const b = await jsonBody(req), provider = b.provider === "facebook" ? "facebook" : b.provider === "google" ? "google" : b.provider === "telegram" ? "telegram" : "";
@@ -865,7 +881,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /api/adsgram/reward"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
