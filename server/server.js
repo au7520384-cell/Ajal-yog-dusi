@@ -891,15 +891,31 @@ function wsSend(ws, obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify
 // ---------------------------------------------------------------- friend lobbies + knockout tournaments (2-8 players)
 const lobbies = new Map();   // code -> {code, host, city, fee, players: [ws], max: 8, state: "open" | "running", T}
 const pubProfile = p => { const {code, ...r} = p || {}; return r; };
-const pubP = (ws, L) => ({...pubProfile(ws.profile), uid: ws.uid, host: !!L && L.host === ws});
+const pubP = (ws, L) => ({...pubProfile(ws.profile), uid: ws.uid, host: !!L && L.host === ws, away: ws.readyState !== 1});
+const LOBBY_GRACE = 3 * 60e3;   // a phone that goes to the background (share sheet, another app) drops its socket: its seat and the lobby wait this long for it to come back
+const seatKept = (p, now) => p.readyState === 1 || (p.away && (now || Date.now()) - p.away < LOBBY_GRACE);
+function sweepLobby(code) {   // drop the players who stayed away too long; an empty lobby goes away
+  const L = lobbies.get(code); if (!L) return;
+  clearTimeout(L.gc); L.gc = null;
+  L.players = L.players.filter(p => seatKept(p));
+  if (!L.players.length) { lobbies.delete(code); return; }
+  if (!L.players.includes(L.host)) L.host = L.players.find(p => p.readyState === 1) || L.players[0];
+  lobbyBroadcast(L);
+  if (L.players.some(p => p.readyState !== 1)) L.gc = setTimeout(() => sweepLobby(code), 30e3);
+}
 function lobbyState(L) { return {t: "lobbystate", code: L.code, city: L.city, fee: L.fee, max: L.max, state: L.state, host: L.host.uid, players: L.players.map(p => pubP(p, L))}; }
 function lobbyBroadcast(L) { const m = lobbyState(L); for (const p of L.players) wsSend(p, m); }
-function leaveLobby(ws) {
+function leaveLobby(ws, dropped) {   // dropped: the socket just died (not a deliberate leave): while the lobby is open the seat is kept for a while
   const code = ws.lobby; if (!code) return; ws.lobby = null;
   const L = lobbies.get(code); if (!L) return;
+  if (dropped && !L.T && L.state === "open" && L.players.includes(ws)) {
+    ws.away = Date.now(); lobbyBroadcast(L);
+    if (!L.gc) L.gc = setTimeout(() => sweepLobby(code), LOBBY_GRACE + 1000);
+    return;
+  }
   const i = L.players.indexOf(ws); if (i >= 0) L.players.splice(i, 1);
   if (L.T) L.T.gone.add(ws.uid);                                   // left during a tournament: he forfeits his next match
-  L.players = L.players.filter(p => p.readyState === 1);
+  L.players = L.players.filter(p => seatKept(p));
   if (!L.players.length) { lobbies.delete(code); return; }
   if (L.host === ws) L.host = L.players[0];                        // the host left: the next player takes over
   lobbyBroadcast(L);
@@ -1018,13 +1034,16 @@ wss.on("connection", (ws, req) => {
       ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), tbl: String(m.tbl || "").slice(0, 8), tblNo: (u.editions || {})[String(m.tbl || "")] || 0, code: u.code, club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "", cb: u.club && db.clubs[u.club] ? [db.clubs[u.club].badge | 0, db.clubs[u.club].color | 0] : null};
       if (code && m.lobby) {
         let L = lobbies.get(code);
-        if (L && !L.players.some(p => p.readyState === 1)) { lobbies.delete(code); L = null; }
+        if (L && !L.players.some(p => seatKept(p))) { lobbies.delete(code); L = null; }
         if (!L) {
-          if (m.join) return wsSend(ws, {t: "nocode"});
+          if (m.join || m.rejoin) return wsSend(ws, {t: "nocode"});
           L = {code, host: ws, city, fee: FEE_OF(city), players: [ws], max: 8, state: "open", T: null}; lobbies.set(code, L); ws.lobby = code;
           return lobbyBroadcast(L);
         }
         if (L.players.includes(ws)) return lobbyBroadcast(L);
+        const seat = L.state === "open" ? L.players.findIndex(p => p.uid === ws.uid) : -1;   // the same player comes back (new socket): he gets his seat back
+        if (seat >= 0) { const old = L.players[seat]; L.players[seat] = ws; if (L.host === old) L.host = ws; old.lobby = null; old.away = 0; ws.lobby = code; return lobbyBroadcast(L); }
+        if (m.rejoin) return wsSend(ws, {t: "nocode"});
         if (L.state !== "open") return wsSend(ws, {t: "lobbybusy"});
         if (L.players.length >= L.max) return wsSend(ws, {t: "lobbyfull"});
         L.players.push(ws); ws.lobby = code; return lobbyBroadcast(L);
@@ -1103,6 +1122,7 @@ wss.on("connection", (ws, req) => {
     }
   });
   ws.on("close", () => {
+    leaveLobby(ws, true);
     leaveQueue(ws);
     if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
     if (clients.get(u.id) === ws) clients.delete(u.id);

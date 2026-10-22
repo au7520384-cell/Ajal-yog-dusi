@@ -858,6 +858,7 @@ background:linear-gradient(#5a8a4a,#2e5a26);box-shadow:inset 0 2px 0 #fff4,0 3px
 .lbbt{display:flex;gap:8px}.lbbt .btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 8px;font-size:15px;line-height:1.1;border-radius:14px;min-width:0}.lbbt .btn svg{flex:none}.lbbt .btn span{min-width:0}
 .lbslots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .lbslot{position:relative;min-height:104px;border:2px dashed #3b5a9a;border-radius:18px;background:#0b1636a8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:13px;padding:4px}.lbslot:not(.on){cursor:pointer}.lbplus{display:grid;place-items:center;width:44px;height:44px;border:2px solid #34508f;border-radius:50%;color:#3b5fa8;font-size:30px;font-weight:300;line-height:1}.lbslot:not(.on):hover .lbplus{border-color:#7ea4f0;color:#9bbcff}
+.lbslot.away{opacity:.45}
 .lbslot.on{border-style:solid;border-color:#6f93e8;background:linear-gradient(#1e3470,#142552);box-shadow:inset 0 0 14px #5b86e855}.lbslot b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lbslot i{font-style:normal;color:#ffe27a;font-size:11px;font-weight:800}.lbslot.host i{color:#a6f07a}.lbcrown{position:absolute;top:-14px;left:50%;transform:translateX(-50%);line-height:0;filter:drop-shadow(0 2px 3px #000a)}
 .lbstat,.lbwait,.lbme{text-align:center;font-weight:700}.lbme{color:#ffe27a;font-size:20px}.lbwait{color:#9fb3e8}
 .lbstart{text-align:center}.lbstart small{display:block;margin-top:4px;color:#9fb3e8}.lbstart .btn{min-width:min(60%,230px);font-size:24px;border:3px solid #e6c260;border-radius:18px;box-shadow:inset 0 2px 0 #fff6,0 4px 0 #0007,0 0 12px #e6c26055}
@@ -9544,7 +9545,7 @@ sock.onmessage = ev => { let m; try { m = JSON.parse(ev.data); } catch (e) { ret
 const send = m => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); };
 const setAcct = a => { acct = a; store.set("b8acct", a); if (ws) try { ws.close(); } catch (e) {} };
 return {applyGrant, api, ensure, sync, checkout, connect, send, setAcct, on: (t, f) => { handlers[t] = f; },
-get acct() { return acct; }, get online() { return online; }, get base() { return BASE; }, inbox: [], me: null, friends: []};
+get acct() { return acct; }, get online() { return online; }, get open() { return !!(ws && ws.readyState === 1); }, get base() { return BASE; }, inbox: [], me: null, friends: []};
 })();
 Net.on("aim", m => {
 const G = game; if (G && G.net) G.net.lastRx = performance.now();
@@ -10828,9 +10829,15 @@ if (LB !== mine) return;
 lbBind();
 Net.send({t: "queue", city: c.id, code, join: !!join, lobby: true, cue: profile.cue, tbl: profile.tableSkin || ""});
 }).catch(() => { if (LB === mine) lbFail(T("Server bilan aloqa yo'q. Internetni tekshiring.")); });
-setTimeout(() => { if (LB === mine && mine.pending) lbFail(T("Bunday lobbi topilmadi")); }, 12000);
+setTimeout(() => { if (LB === mine && mine.pending) lbFail(T("Bunday lobbi topilmadi")); }, 30000);   // a sleeping free server needs up to ~50 s to wake: the "no such lobby" answer itself comes at once
 lbShow();
 }
+function lbResume() {   // the phone went to the background (share sheet, another app) and the socket died: take the seat back
+const mine = LB; if (!mine || mine.pending || mine.resuming || mine.state !== "open" || Net.open) return;
+mine.resuming = true;
+Net.ensure().then(() => Net.connect()).then(() => { if (LB !== mine) return; lbBind(); Net.send({t: "queue", city: mine.city, code: mine.code, join: false, rejoin: true, lobby: true, cue: profile.cue, tbl: profile.tableSkin || ""}); }).catch(() => {}).then(() => { mine.resuming = false; });
+}
+setInterval(() => { if (LB && !document.hidden) lbResume(); }, 3000);
 function lbBind() {
 Net.on("lobbystate", m => lbState(m));
 Net.on("nocode", () => LB && lbFail(T("Bunday lobbi topilmadi")));
@@ -10937,7 +10944,7 @@ return;
 const c = lbCityOf(LB.city), host = LB.role === "host", T_ = LB.tour, run = LB.state === "running", me = lbMe();
 title.textContent = run ? T("Turnir") : T("Lobbi");
 const slots = Array.from({length: LB.max}, (_, i) => { const p = LB.players[i];
-return p ? `<div class="lbslot on${p.host ? " host" : ""}">${p.host ? `<span class="lbcrown">${SVG_CROWN}</span>` : ""}${avHTML(normAv(p.avatar | 0), p.frame | 0, document.documentElement.classList.contains("mh520") ? 30 : 52)}<b>${esc(pname(p.name))}</b>${p.host ? `<i>${T("Xost")}</i>` : ""}</div>` : `<div class="lbslot"><span class="lbplus">+</span></div>`; }).join("");
+return p ? `<div class="lbslot on${p.host ? " host" : ""}${p.away ? " away" : ""}">${p.host ? `<span class="lbcrown">${SVG_CROWN}</span>` : ""}${avHTML(normAv(p.avatar | 0), p.frame | 0, document.documentElement.classList.contains("mh520") ? 30 : 52)}<b>${esc(pname(p.name))}</b>${p.host ? `<i>${T("Xost")}</i>` : ""}</div>` : `<div class="lbslot"><span class="lbplus">+</span></div>`; }).join("");
 let right;
 if (run && T_) {
 const res = LB.results, mm = (T_.matches || []).map(x => { const an = x.a ? esc(pname(x.a.name)) : "—", bn = x.b ? esc(pname(x.b.name)) : T("Bay");
@@ -12451,7 +12458,9 @@ if (!r) return;
 const ref = (qs.get("ref") || "").toUpperCase();
 if (ref && !r.referredBy && ref !== Net.acct.code) Net.api("/api/referral", {code: ref}).then(() => Net.sync()).catch(() => {});
 if (qs.get("paid") === "1") { toast("💳", T("Xarid uchun rahmat!"), T("Do'kon")); setTimeout(() => Net.sync(), 3000); }
-if (qs.has("ref") || qs.has("paid")) history.replaceState(null, "", location.pathname);
+const jn = parseLobbyCode(qs.get("join") || "");   // a shared lobby link: ?join=CODE
+if (jn.length >= 3) setTimeout(() => lobbyJoin(jn), 700);
+if (qs.has("ref") || qs.has("paid") || qs.has("join")) history.replaceState(null, "", location.pathname);
 })();
 setInterval(() => { if (mode === "menu") { Net.sync(); checkFriendsOnline(); } }, 60000);
 migrateGems(); applySettings(); updatePassDot(); setTimeout(checkAch, 3000); setTimeout(checkChallenges, 3500);
