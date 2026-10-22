@@ -484,7 +484,7 @@ const routes = {
     return {total: clients.size, playing: rooms.size * 2, byCity};
   },
 
-  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK}; },
+  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || ""}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
   // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
   async "POST /api/auth/login"(req) {
     if (limited(req, "authlogin", 20)) return [429, {error: "slow down"}];
