@@ -101,6 +101,8 @@ const cleanChat = s => String(s || "").replace(BAD_RE, m => "*".repeat(m.length)
 sub("function sendChat(msg) {", FILTER_JS + "function sendChat(msg) {\nif (CRAZY_BUILD) msg = cleanChat(msg);")
 sub('Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, String(m.msg || "").slice(0, 40)); });', 'Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, (CRAZY_BUILD ? cleanChat : String)(String(m.msg || "").slice(0, 40))); });')
 sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,.nochat #cheerBar{display:none!important}</style>')
+# default language: the device language (English stays English); the country-based guess is for the standalone game only
+sub('const cl = CC_LANG[profile.country || detectCountry()];', 'const cl = CRAZY_BUILD ? "" : CC_LANG[profile.country || detectCountry()];')
 # hide Y8-only UI
 sub("${Y8.sdk ? `<div class=\"card\"", "${!CRAZY_BUILD && Y8.sdk ? `<div class=\"card\"")
 sub('<button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 14px;font-size:16px">🏆 Y8</button>', '')
