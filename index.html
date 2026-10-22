@@ -9342,7 +9342,7 @@ ${stat("G'alaba seriyasi", `${profile.wstreak | 0} (${T("eng yaxshi")} ${profile
 <div class="pbox" id="pGifts" style="cursor:pointer"><small>${T("Olqish sovg'alari")} · ${Object.keys(cheerData().got).length}/13</small><div class="giftmini">${CHEER_GIFTS.slice(0, 6).map(([e], i) => `<span class="${cheerData().got[i] ? "on" : ""}">${e}</span>`).join("")}</div></div>
 <div class="pbox" id="pCue"><small>${T("Tanlangan kiy")}: <b>${esc(cueName(cue))}</b></small><div id="pCueCv"></div></div>
 </div>
-${Y8.sdk ? `<div class="card" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><b>Y8</b><span class="muted" style="flex:1">${Y8.user ? `✅ ${esc(Y8.user.nickname || "")}` : T("Y8 bilan kiring — o'yiningiz bulutda saqlanadi")}</span>
+${Y8.sdk && !TG_LAUNCH ? `<div class="card" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><b>Y8</b><span class="muted" style="flex:1">${Y8.user ? `✅ ${esc(Y8.user.nickname || "")}` : T("Y8 bilan kiring — o'yiningiz bulutda saqlanadi")}</span>
 ${Y8.user ? `<button class="btn blue" id="y8Ach">🏅</button>` : `<button class="btn green" id="y8Login">${T("Kirish")}</button>`}</div>` : ""}
 </div></div>`;
 $("pCueCv").appendChild(cueCanvas(cue));
@@ -9450,6 +9450,7 @@ profile.adCount++; if (name === "bank-cash") profile.adCash = (profile.adCash | 
 function updateY8Ui() {
 const show = !!(Y8.sdk && Y8.adsReady);
 for (const el of document.querySelectorAll(".y8ad")) el.style.display = show ? "" : "none";
+if (TG_LAUNCH && $("y8Lb")) $("y8Lb").style.display = "none";   // the Y8 leaderboard button does not exist inside Telegram
 if (mode === "menu") {
 const on = document.querySelector(".screen.on");
 if (on && on.id === "profileScr") buildProfile();
@@ -11914,6 +11915,24 @@ $("vcBen").onclick = () => openModal({icon: "♛", title: T("VIP imtiyozlari"), 
 }
 document.addEventListener("click", e => { if (e.target.closest("[data-vclub]")) vipClubModal(); });
 const loadScript = src => new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.async = true; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+function tgAdsInit(cfg) {   // Adsgram (the ad network of Telegram Mini Apps) answers the same ad hooks the Y8 build uses: rewarded video + a short break between matches
+if (!TG_LAUNCH || !cfg || !cfg.adsgram) return;
+loadScript("https://sad.adsgram.ai/js/sad.min.js").then(() => {
+const A = window.Adsgram; if (!A) return;
+const mk = id => { try { return A.init({blockId: String(id)}); } catch (e) { return null; } };
+const rw = mk(cfg.adsgram), it = cfg.adsgramInt ? mk(cfg.adsgramInt) : null;
+Y8.sdk = {showAd(o) {
+const ctl = o.type === "reward" ? rw : it;
+return new Promise(resolve => {
+const end = () => { try { if (o.adBreakDone) o.adBreakDone(); } catch (e) {} resolve(); };
+if (!ctl) return end();
+try { if (o.beforeAd) o.beforeAd(); } catch (e) {}
+ctl.show().then(r => { if (r && r.done) { if (o.adViewed) o.adViewed(); } else if (o.adDismissed) o.adDismissed(); }).catch(() => { if (o.adDismissed) o.adDismissed(); }).then(end);
+});
+}};
+Y8.adsReady = true; try { updateY8Ui(); } catch (e) {}
+}).catch(() => {});
+}
 function tgBoot() {   // Telegram Mini App: full screen, dark chrome, silent sign-in with the Telegram account, lobby invites (?startapp=CODE)
 if (!TG_LAUNCH) return;
 loadScript("https://telegram.org/js/telegram-web-app.js").then(() => {
@@ -11922,7 +11941,7 @@ try { W.ready(); W.expand(); } catch (e) {}
 try { W.setHeaderColor("#0a1230"); W.setBackgroundColor("#0a1230"); } catch (e) {}
 try { W.disableVerticalSwipes(); } catch (e) {}
 store.set("b8guest", 1);
-Net.api("/api/auth/config").then(c => { TG_LINK = c.tgLink || ""; }).catch(() => {});
+Net.api("/api/auth/config").then(c => { TG_LINK = c.tgLink || ""; tgAdsInit(c); }).catch(() => {});
 if (W.initData && !(profile.prov && profile.prov.telegram)) Net.ensure().then(() => authLogin("telegram", W.initData)).catch(() => {});
 const sp = parseLobbyCode(String((W.initDataUnsafe && W.initDataUnsafe.start_param) || ""));
 if (sp.length >= 3) setTimeout(() => lobbyJoin(sp), 1200);
