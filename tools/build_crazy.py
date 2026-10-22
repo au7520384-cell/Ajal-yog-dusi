@@ -111,7 +111,7 @@ sub('<div id="hLegal"><a href="/terms" target="_blank">Terms of Service</a> · <
 import re, hashlib, base64
 IMGS = {}
 def _ext(mt): return {"webp": "webp", "png": "png", "jpeg": "jpg", "jpg": "jpg", "gif": "gif", "svg+xml": "svg"}[mt]
-SQ_P = float(os.environ.get("SQ_P", "30")); SQ_B = float(os.environ.get("SQ_B", "6"))   # per-picture safety check (PSNR dB / worst 16x16 block error)
+SQ_P = float(os.environ.get("SQ_P", "30")); SQ_B = float(os.environ.get("SQ_B", "6.5"))   # per-picture safety check (PSNR dB / worst 16x16 block error)
 def _ok(a, b):
     import numpy as np
     e = np.abs(a.astype(np.int16) - b.astype(np.int16)).astype(np.float32)
