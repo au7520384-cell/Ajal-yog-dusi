@@ -12055,7 +12055,7 @@ el.querySelector("#instShare").onclick = () => { if (navigator.share) navigator.
 const g = el.querySelector("#instGo"); if (g) g.onclick = async () => { deferredInstall.prompt(); try { await deferredInstall.userChoice; } catch (e) {} deferredInstall = null; g.remove(); };
 }
 { const _buildSettings = buildSettings; buildSettings = function () { _buildSettings.apply(this, arguments); addInstallCard(); }; }
-let SRV_BUILD = "", SRV_TURN = -1;   // the server's deployed commit (and whether it has a voice-chat TURN relay), shown at the bottom of Settings
+let SRV_BUILD = "", SRV_TURN = -1, SRV_TG = -1;   // the server's deployed commit (and whether it has a voice-chat TURN relay), shown at the bottom of Settings
 function buildSettings() {
 const tg = (k, on) => `<button class="tgl${on ? " on" : ""}" data-t="${k}"></button>`;
 const seg = (k, opts) => `<div class="seg">${opts.map(([v, n]) => `<button class="${opt(k) === v ? "on" : ""}" data-s="${k}" data-v="${JSON.stringify(v).replace(/"/g, "&quot;")}">${T(n)}</button>`).join("")}</div>`;
@@ -12095,7 +12095,7 @@ ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:
 <div class="muted" style="text-align:center;margin-top:10px">Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}<span id="setBuild"></span><br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a> · <a href="/refund" target="_blank" style="color:#8fc4ff">Refund</a></div>`;
 { const lb = $("setLab"); if (lb) lb.onclick = openSoundLab; }
 { const tb = $("setBuild"); if (tb) { tb.style.cssText = "cursor:pointer;text-decoration:underline dotted"; tb.onclick = runTurnTest; } }
-{ const bl = $("setBuild"), show = b => { if (bl) bl.textContent = b ? " · v " + b + (SRV_TURN === 1 ? " · TURN ✓" : SRV_TURN === 0 ? " · TURN ✗" : "") : ""; }; if (SRV_BUILD) show(SRV_BUILD); else Net.api("/api/health").then(r => { SRV_BUILD = (r && r.build) || ""; SRV_TURN = r && typeof r.turn === "boolean" ? (r.turn ? 1 : 0) : -1; show(SRV_BUILD); }).catch(() => {}); }   // TURN ✗ = the voice-chat relay is not configured on the server (mobile networks may not connect)
+{ const bl = $("setBuild"), show = b => { if (bl) bl.textContent = b ? " · v " + b + (SRV_TURN === 1 ? " · TURN ✓" : SRV_TURN === 0 ? " · TURN ✗" : "") + (TG_LAUNCH ? (SRV_TG === 1 ? " · TG ✓" : SRV_TG === 0 ? " · TG ✗" : "") : "") : ""; }; if (SRV_BUILD) show(SRV_BUILD); else Net.api("/api/health").then(r => { SRV_BUILD = (r && r.build) || ""; SRV_TURN = r && typeof r.turn === "boolean" ? (r.turn ? 1 : 0) : -1; SRV_TG = r && typeof r.tg === "boolean" ? (r.tg ? 1 : 0) : -1; show(SRV_BUILD); }).catch(() => {}); }   // TURN ✗ = the voice-chat relay is not configured on the server (mobile networks may not connect)
 $("setBody").querySelectorAll("[data-t]").forEach(b => b.onclick = () => {
 const k = b.dataset.t;
 if (k === "sound") toggleMute(); else setOpt(k, !opt(k));
@@ -12467,6 +12467,7 @@ if (LANG !== "uz") { try { xtApply(new TextDecoder().decode(xtInflate(xtBin(), X
 loadXT();   // Uzbek start: the table is unpacked in the background so a later language change is instant
 toMenu();
 if (profile.lastClaim !== today()) setTimeout(() => toast("🎁", T("Kunlik sovg'a tayyor!"), T("Sovg'alar yo'li")), 1200);
+tgBoot();   // Telegram Mini App set-up does not wait for the first server sync (a sleeping server could make that fail)
 (async () => {
 const qs = new URLSearchParams(location.search);
 await cloudPull();
@@ -12475,7 +12476,6 @@ if (!r) return;
 const ref = (qs.get("ref") || "").toUpperCase();
 if (ref && !r.referredBy && ref !== Net.acct.code) Net.api("/api/referral", {code: ref}).then(() => Net.sync()).catch(() => {});
 if (qs.get("paid") === "1") { toast("💳", T("Xarid uchun rahmat!"), T("Do'kon")); setTimeout(() => Net.sync(), 3000); }
-tgBoot();
 const jn = parseLobbyCode(qs.get("join") || "");   // a shared lobby link: ?join=CODE
 if (jn.length >= 3) setTimeout(() => lobbyJoin(jn), 700);
 if (qs.has("ref") || qs.has("paid") || qs.has("join")) history.replaceState(null, "", location.pathname);
