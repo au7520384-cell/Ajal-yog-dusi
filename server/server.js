@@ -33,6 +33,13 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process
 const TG_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "", TG_APP_LINK = process.env.TELEGRAM_APP_LINK || "";   // Telegram Mini App: the bot token verifies the players, the public app link (https://t.me/<bot>/<app>) is used for lobby invites
 const ROOT = path.join(__dirname, "..");
 const BUILD = (process.env.RENDER_GIT_COMMIT || "").slice(0, 7) || "local";   // the deployed commit (Render sets it); shown in /api/health and in the game's Settings so anyone can see which version is running
+const zlib = require("zlib"), GZ = new Map();   // path -> {etag, buf}: the compressed copy of a static file (made in the background the first time, served from memory afterwards)
+function gzipFor(p, etag) {
+  const c = GZ.get(p);
+  if (c && c.etag === etag) return c.buf || null;
+  if (!c || c.etag !== etag) { GZ.set(p, {etag, buf: null}); fs.readFile(p, (e, data) => { if (e) return GZ.delete(p); zlib.gzip(data, {level: 6}, (e2, buf) => { if (!e2 && GZ.get(p) && GZ.get(p).etag === etag) GZ.set(p, {etag, buf}); }); }); }
+  return null;   // not ready yet: this request gets the plain file
+}
 const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/icon-1024.png": "icon-1024.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js"};
 const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript"};
 
@@ -869,7 +876,13 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && file) {
       const p = path.join(ROOT, file);
       if (fs.existsSync(p)) {
-        res.writeHead(200, {"Content-Type": MIME[path.extname(p)] || "application/octet-stream", "Cache-Control": "no-cache"});
+        // the 35 MB game page: a version tag (repeat visits cost a 304, not 35 MB) and gzip when the browser accepts it (saves bandwidth on a free host)
+        const st = fs.statSync(p), etag = `W/"${st.size.toString(36)}-${Math.round(st.mtimeMs).toString(36)}"`, type = MIME[path.extname(p)] || "application/octet-stream";
+        const head = {"Content-Type": type, "Cache-Control": "no-cache", ETag: etag, Vary: "Accept-Encoding"};
+        if (req.headers["if-none-match"] === etag) { res.writeHead(304, head); return res.end(); }
+        const gz = /\bgzip\b/.test(String(req.headers["accept-encoding"] || "")) && st.size > 2000 ? gzipFor(p, etag) : null;
+        if (gz) { res.writeHead(200, {...head, "Content-Encoding": "gzip", "Content-Length": gz.length}); return res.end(gz); }
+        res.writeHead(200, {...head, "Content-Length": st.size});
         return fs.createReadStream(p).pipe(res);
       }
     }
