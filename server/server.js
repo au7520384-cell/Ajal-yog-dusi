@@ -30,6 +30,7 @@ const PADDLE_TOKEN = (PADDLE_SANDBOX ? process.env.PADDLE_CLIENT_TOKEN_SANDBOX :
 const PADDLE_API = PADDLE_SANDBOX ? "https://sandbox-api.paddle.com" : "https://api.paddle.com";
 const PAYMENTS = !!(PADDLE_KEY && PADDLE_TOKEN) || !!STRIPE_KEY;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
+const TG_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "", TG_APP_LINK = process.env.TELEGRAM_APP_LINK || "";   // Telegram Mini App: the bot token verifies the players, the public app link (https://t.me/<bot>/<app>) is used for lobby invites
 const ROOT = path.join(__dirname, "..");
 const BUILD = (process.env.RENDER_GIT_COMMIT || "").slice(0, 7) || "local";   // the deployed commit (Render sets it); shown in /api/health and in the game's Settings so anyone can see which version is running
 const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/icon-1024.png": "icon-1024.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js"};
@@ -356,6 +357,16 @@ async function verifyProvider(provider, token) {
       if (!r.ok || j.aud !== GOOGLE_CLIENT_ID || !/^(https:\/\/)?accounts\.google\.com$/.test(j.iss || "") || (+j.exp || 0) * 1000 < Date.now() || !j.sub) return null;
       return {sub: String(j.sub), name: j.given_name || j.name || ""};
     }
+    if (provider === "telegram") {   // Mini App: token = Telegram.WebApp.initData, signed by the bot token (https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app)
+      if (!TG_BOT_TOKEN) return null;
+      const sp = new URLSearchParams(token), hash = sp.get("hash") || ""; sp.delete("hash");
+      const check = [...sp.entries()].map(([k, v]) => k + "=" + v).sort().join("\n");
+      const secret = crypto.createHmac("sha256", "WebAppData").update(TG_BOT_TOKEN).digest(), want = crypto.createHmac("sha256", secret).update(check).digest("hex");
+      if (hash.length !== want.length || !crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(want))) return null;
+      if (Date.now() / 1000 - (+sp.get("auth_date") || 0) > 86400) return null;   // a day-old launch is stale
+      const u = JSON.parse(sp.get("user") || "{}"); if (!u.id) return null;
+      return {sub: String(u.id), name: u.first_name || u.username || ""};
+    }
     if (provider === "facebook") {
       if (!FB_APP_ID || !FB_APP_SECRET) return null;
       const d = await (await fetch(`https://graph.facebook.com/debug_token?input_token=${encodeURIComponent(token)}&access_token=${FB_APP_ID}|${FB_APP_SECRET}`)).json();
@@ -405,7 +416,7 @@ function geoCountry(req) {   // set by some hosts / CDNs (Cloudflare, Vercel…)
 
 // ---------------------------------------------------------------- routes
 const routes = {
-  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, turn: !!process.env.TURN_URLS}),
+  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
   "GET /api/ice": () => {
     const iceServers = [{urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}];
@@ -466,11 +477,11 @@ const routes = {
     return {total: clients.size, playing: rooms.size * 2, byCity};
   },
 
-  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID}; },
+  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK}; },
   // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
   async "POST /api/auth/login"(req) {
     if (limited(req, "authlogin", 20)) return [429, {error: "slow down"}];
-    const b = await jsonBody(req), provider = b.provider === "facebook" ? "facebook" : b.provider === "google" ? "google" : "";
+    const b = await jsonBody(req), provider = b.provider === "facebook" ? "facebook" : b.provider === "google" ? "google" : b.provider === "telegram" ? "telegram" : "";
     if (!provider) return [400, {error: "bad_provider"}];
     const v = await verifyProvider(provider, b.token);
     if (!v) return [401, {error: "bad_token"}];
