@@ -11921,7 +11921,6 @@ const W = window.Telegram && window.Telegram.WebApp; if (!W) return; TG = W;
 try { W.ready(); W.expand(); } catch (e) {}
 try { W.setHeaderColor("#0a1230"); W.setBackgroundColor("#0a1230"); } catch (e) {}
 try { W.disableVerticalSwipes(); } catch (e) {}
-try { if (W.requestFullscreen && !W.isFullscreen) W.requestFullscreen(); } catch (e) {}
 store.set("b8guest", 1);
 Net.api("/api/auth/config").then(c => { TG_LINK = c.tgLink || ""; }).catch(() => {});
 if (W.initData && !(profile.prov && profile.prov.telegram)) Net.ensure().then(() => authLogin("telegram", W.initData)).catch(() => {});
