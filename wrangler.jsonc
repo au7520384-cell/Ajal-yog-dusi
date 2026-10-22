@@ -1,7 +1,7 @@
 {
   // Cloudflare Workers Builds: after every push Cloudflare runs  python3 tools/build_web.py web_site  and publishes the folder as static files
-  // (the light build: pictures as separate files). The name must match the Worker that serves the Telegram Mini App.
-  "name": "frosty-hill-615a",
+  // (the light build: pictures as separate files). The Worker created from this repository must be named like this.
+  "name": "billiard8",
   "compatibility_date": "2025-01-01",
   "assets": { "directory": "./web_site" }
 }
