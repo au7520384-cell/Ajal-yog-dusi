@@ -89,3 +89,9 @@ Every cue / avatar / frame / table / sticker pack that is sold in the game for c
 one rule (cash 20 per $, gems 200 per $) and is generated from the game's own catalog: after changing any price or cue tier in `index.html` run
 `node tools/build_prices.js` (needs playwright) and commit the new `server/prices.json`. The server charges exactly these amounts (the client price is never trusted).
 Cue strength follows price: cash cues sit on 8 dollar steps ($1.99 ... $74.99) and the four stat bars come from the step; coin cues come in 9 steps of 5 cues.
+
+## Hosting layout (current)
+- **Game server (API, WebSocket, lobbies, accounts):** Render (`server/`, `render.yaml`), `https://billiard8.onrender.com`. Environment: `DATABASE_URL`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_APP_LINK`, `TURN_*`, Stripe keys.
+- **Game page (static, light build):** Cloudflare Workers static assets (`wrangler.jsonc`). Cloudflare runs `python3 tools/build_web.py web_site` after every push to the production branch; the page is ~8 MB and the pictures are separate files. The Render server only answers API calls, so its free bandwidth lasts.
+- **Telegram Mini App:** `@Billiard8PoolBot`, web app URL = the Cloudflare address; players sign in silently with their Telegram account.
+- **CrazyGames / Y8:** `python3 tools/build_crazy.py` (single file) and the Y8 zip (see above).
