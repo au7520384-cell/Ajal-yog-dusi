@@ -11927,7 +11927,12 @@ return new Promise(resolve => {
 const end = () => { try { if (o.adBreakDone) o.adBreakDone(); } catch (e) {} resolve(); };
 if (!ctl) return end();
 try { if (o.beforeAd) o.beforeAd(); } catch (e) {}
-ctl.show().then(r => { if (r && r.done) { if (o.adViewed) o.adViewed(); } else if (o.adDismissed) o.adDismissed(); }).catch(() => { if (o.adDismissed) o.adDismissed(); }).then(end);
+const claim = async () => {   // with a server-verified reward the server must have been told by Adsgram that this video was watched (retry a few seconds: its ping can arrive a moment later)
+if (!cfg.adsgramVerify || o.type !== "reward") return true;
+for (let i = 0; i < 8; i++) { try { const r = await Net.api("/api/ad/claim", {}); if (r && r.ok) return true; } catch (e) {} await new Promise(r => setTimeout(r, 900)); }
+return false;
+};
+ctl.show().then(async r => { if (r && r.done && await claim()) { if (o.adViewed) o.adViewed(); } else if (o.adDismissed) o.adDismissed(); }).catch(() => { if (o.adDismissed) o.adDismissed(); }).then(end);
 });
 }};
 Y8.adsReady = true; try { updateY8Ui(); } catch (e) {}
