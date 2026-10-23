@@ -32,6 +32,9 @@ const PAYMENTS = !!(PADDLE_KEY && PADDLE_TOKEN) || !!STRIPE_KEY;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
 const AD_KEY = process.env.ADSGRAM_REWARD_KEY || "", adCred = new Map();   // Adsgram server-to-server reward ping: Telegram id -> {n, t} credits the player may claim once each (the page cannot fake a watched ad)
 const TG_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "", TG_APP_LINK = process.env.TELEGRAM_APP_LINK || "";   // Telegram Mini App: the bot token verifies the players, the public app link (https://t.me/<bot>/<app>) is used for lobby invites
+const STARS_PER_USD = +process.env.STARS_PER_USD || 55;   // Telegram Stars: what 1 USD of the game's card price costs in Stars (the same number goes to the page, so both show and charge the same)
+const TG_HOOK_SECRET = crypto.createHash("sha256").update("b8hook:" + TG_BOT_TOKEN).digest("hex").slice(0, 40);   // Telegram sends it back in X-Telegram-Bot-Api-Secret-Token: only Telegram can post to /api/tg/webhook
+const starsFor = sku => Math.max(1, Math.round(sku.usd * STARS_PER_USD));
 const ROOT = path.join(__dirname, "..");
 const BUILD = (process.env.RENDER_GIT_COMMIT || "").slice(0, 7) || "local";   // the deployed commit (Render sets it); shown in /api/health and in the game's Settings so anyone can see which version is running
 const zlib = require("zlib"), GZ = new Map();   // path -> {etag, buf}: the compressed copy of a static file (made in the background the first time, served from memory afterwards)
@@ -424,7 +427,7 @@ function geoCountry(req) {   // set by some hosts / CDNs (Cloudflare, Vercel…)
 
 // ---------------------------------------------------------------- routes
 const routes = {
-  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN}),
+  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
   "GET /api/ice": () => {
     const iceServers = [{urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}];
@@ -485,7 +488,7 @@ const routes = {
     return {total: clients.size, playing: rooms.size * 2, byCity};
   },
 
-  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
+  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY, starsPerUsd: STARS_PER_USD}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
   // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
   // Adsgram calls this when a player finished a rewarded video: GET /api/adsgram/reward?key=<ADSGRAM_REWARD_KEY>&userid=<Telegram id>
   "GET /api/adsgram/reward"(req) {
@@ -759,6 +762,19 @@ const routes = {
     return {lastWeek: lw, me: u.lastWeek || null, prizes: WEEK_PRIZES, countryPrizes: COUNTRY_PRIZES, countryTop: ((s.lastWeek && s.lastWeek.countries) || {})[u.country || ""] || []};
   },
 
+  // Telegram Stars: the page asks for an invoice link, opens it with Telegram.WebApp.openInvoice, Telegram calls the webhook (pre_checkout_query, then successful_payment) and the purchase is handed over through fulfill() like any other payment.
+  async "POST /api/stars/invoice"(req, u) {
+    if (!TG_BOT_TOKEN) return [503, {error: "payments_not_configured"}];
+    const b = await jsonBody(req), sku = SKUS[b.sku];
+    if (!sku || !sku.usd) return [400, {error: "bad_sku"}];
+    const bad = starsRefuse(u, b.sku); if (bad) return [bad === "sold_out" ? 409 : 400, {error: bad}];
+    const stars = starsFor(sku); if (stars > 10000) return [400, {error: "too_expensive"}];
+    try {
+      const link = await tgApi("createInvoiceLink", {title: `Billiard 8 — ${sku.name}`.slice(0, 32), description: `Billiard 8 — ${sku.name}`.slice(0, 255), payload: `${u.id}:${b.sku}`, currency: "XTR", prices: [{label: sku.name.slice(0, 32), amount: stars}]});
+      return {link, stars};
+    } catch (e) { console.error("stars invoice:", e.message); return [502, {error: "stars_error"}]; }
+  },
+
   async "POST /api/checkout"(req, u) {
     const b = await jsonBody(req), sku = SKUS[b.sku];
     if (!sku) return [400, {error: "bad_sku"}];
@@ -805,6 +821,41 @@ const routes = {
   },
 };
 
+async function tgApi(method, body) {
+  const r = await fetch(`${process.env.TG_API_BASE || "https://api.telegram.org"}/bot${TG_BOT_TOKEN}/${method}`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body || {})});
+  const j = await r.json().catch(() => ({}));
+  if (!j.ok) throw new Error(`${method}: ${j.description || r.status}`);
+  return j.result;
+}
+function starsRefuse(u, skuId) {   // the same checks as the card checkout; returns an error code or ""
+  const sku = SKUS[skuId]; if (!u || !sku) return "bad_sku";
+  if (sku.once && (u.bought || {})[skuId]) return "already_bought";
+  const tid = sku.items && ((sku.items.tables || sku.items.cues || sku.items.pframes || [])[0]);
+  if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return "sold_out";
+  return "";
+}
+async function tgWebhook(req, res) {
+  if (!TG_BOT_TOKEN || String(req.headers["x-telegram-bot-api-secret-token"] || "") !== TG_HOOK_SECRET) return send(res, 403, {error: "forbidden"});
+  let up; try { up = JSON.parse((await readBody(req, 256 * 1024)).toString("utf8") || "{}"); } catch (e) { return send(res, 400, {error: "bad_json"}); }
+  const parse = p => { const i = String(p || "").indexOf(":"); return i < 0 ? [null, null] : [String(p).slice(0, i), String(p).slice(i + 1)]; };
+  try {
+    const q = up.pre_checkout_query;
+    if (q) {   // Telegram waits ~10 s for this answer: say yes only to a payload / amount this server issued
+      const [uid, skuId] = parse(q.invoice_payload), u = db.users[uid], sku = SKUS[skuId];
+      const why = !u || !sku ? "bad_sku" : q.currency !== "XTR" || q.total_amount !== starsFor(sku) ? "bad_amount" : starsRefuse(u, skuId);
+      await tgApi("answerPreCheckoutQuery", why ? {pre_checkout_query_id: q.id, ok: false, error_message: why === "sold_out" ? "Sold out" : "This item is no longer available"} : {pre_checkout_query_id: q.id, ok: true});
+    }
+    const sp = up.message && up.message.successful_payment;
+    if (sp && sp.currency === "XTR") {
+      const [uid, skuId] = parse(sp.invoice_payload), sku = SKUS[skuId];
+      if (db.users[uid] && sku && sp.total_amount === starsFor(sku)) {
+        if (!await fulfill("tg_" + sp.telegram_payment_charge_id, uid, skuId, sp.total_amount)) return send(res, 500, {error: "save failed"});   // Telegram retries
+        console.log(`stars: ${uid} bought ${skuId} for ${sp.total_amount} XTR`);
+      } else console.error("stars: payment does not match", sp.invoice_payload, sp.total_amount);
+    }
+  } catch (e) { console.error("tg webhook:", e.message); }
+  send(res, 200, {ok: true});
+}
 // A confirmed payment (from any provider): hand the purchase to the player once. Returns false when it could not be saved (the provider will retry).
 async function fulfill(payId, userId, skuId, amount) {
   const u = db.users[userId], sku = SKUS[skuId];
@@ -874,6 +925,7 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, "http://x");
     if (req.method === "OPTIONS") return send(res, 204, {});
+    if (req.method === "POST" && url.pathname === "/api/tg/webhook") return tgWebhook(req, res);
     if (req.method === "POST" && url.pathname === "/api/stripe/webhook") return stripeWebhook(req, res);
     if (req.method === "POST" && url.pathname === "/api/paddle/webhook") return paddleWebhook(req, res);
     if (req.method === "GET" && url.pathname === "/pay" && PADDLE_TOKEN) return payPage(res);
@@ -1179,5 +1231,10 @@ store.load().then(loaded => {
   if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}}, loaded);
   db.meta = db.meta || {}; db.clubs = db.clubs || {};
   rollWeek();
+  if (TG_BOT_TOKEN) {   // tell Telegram where to send the payment updates (every start: it is idempotent)
+    const base = (process.env.RENDER_EXTERNAL_URL || APP_URL).replace(/\/$/, "");
+    if (/^https:/.test(base)) tgApi("setWebhook", {url: base + "/api/tg/webhook", secret_token: TG_HOOK_SECRET, allowed_updates: ["pre_checkout_query", "message"], drop_pending_updates: false})
+      .then(() => console.log("Telegram webhook set:", base + "/api/tg/webhook")).catch(e => console.error("Telegram setWebhook failed:", e.message));
+  }
   server.listen(PORT, () => console.log(`Billiard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${PADDLE_KEY && PADDLE_TOKEN ? "Paddle" + (PADDLE_SANDBOX ? " sandbox" : "") : STRIPE_KEY ? "Stripe" : "off"})`));
 }).catch(e => { console.error("Could not load the database:", e.message); process.exit(1); });
