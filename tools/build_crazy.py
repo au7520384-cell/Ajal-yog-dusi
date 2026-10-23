@@ -104,16 +104,19 @@ sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,
 # default language: the device language (English stays English); the country-based guess is for the standalone game only
 sub('const cl = CC_LANG[profile.country || detectCountry()];', 'const cl = CRAZY_BUILD ? "" : CC_LANG[profile.country || detectCountry()];')
 # hide Y8-only UI
-sub("${Y8.sdk ? `<div class=\"card\"", "${!CRAZY_BUILD && Y8.sdk ? `<div class=\"card\"")
+sub("${Y8.sdk && !TG_LAUNCH ? `<div class=\"card\"", "${!CRAZY_BUILD && Y8.sdk && !TG_LAUNCH ? `<div class=\"card\"")
 sub('<button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 14px;font-size:16px">🏆 Y8</button>', '')
 sub('$("y8Lb").onclick =', 'if ($("y8Lb")) $("y8Lb").onclick =')
 sub('<div id="hLegal"><a href="/terms" target="_blank">Terms of Service</a> · <a href="/privacy" target="_blank">Privacy Policy</a> · <a href="/refund" target="_blank">Refund Policy</a></div>', '<div id="hLegal"></div>')
+
+# first open: straight onto the table (practice) with the skippable pulsing-marks tutorial, no menus in the way (CrazyGames quality guideline: onboarding in gameplay)
+sub("try { loginSplash(); } catch (e) {}\nrequestAnimationFrame(frame);", "try { loginSplash(); } catch (e) {}\nif (!profile.tutDone && !(profile.games | 0)) setTimeout(() => { try { if (mode !== \"game\" && !$(\"modal\").classList.contains(\"on\")) startMatch(\"practice\", CITIES[0]); } catch (e) {} }, 1500);\nrequestAnimationFrame(frame);")
 
 # light build: every embedded picture becomes a real file in img/ (no base64 growth, and a picture is only downloaded when the game actually shows it)
 import re, hashlib, base64
 IMGS = {}
 def _ext(mt): return {"webp": "webp", "png": "png", "jpeg": "jpg", "jpg": "jpg", "gif": "gif", "svg+xml": "svg"}[mt]
-SQ_P = float(os.environ.get("SQ_P", "30")); SQ_B = float(os.environ.get("SQ_B", "6.5"))   # per-picture safety check (PSNR dB / worst 16x16 block error)
+SQ_P = float(os.environ.get("SQ_P", "36")); SQ_B = float(os.environ.get("SQ_B", "4"))   # per-picture safety check (PSNR dB / worst 16x16 block error)
 def _ok(a, b):
     import numpy as np
     e = np.abs(a.astype(np.int16) - b.astype(np.int16)).astype(np.float32)

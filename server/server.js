@@ -1,6 +1,6 @@
 "use strict";
 /*
- * Billiard 8 — backend
+ * Royal Billiard 8 — backend
  *  - guest accounts (id + secret token), profile sync
  *  - unique player ID / invite code, referral bonuses, friends, daily gifts
  *  - global leaderboard
@@ -53,8 +53,8 @@ const CONTACT_EMAIL = process.env.CONTACT_EMAIL || "";
 function legalPage(res, which) {
   const contact = CONTACT_EMAIL ? `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>` : "the developer through the game (Settings)";
   const css = `body{font:16px/1.55 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:18px;color:#1b2236;background:#fff}h1{font-size:26px}h2{font-size:19px;margin-top:26px}a{color:#1553b3}.u{color:#555;font-size:14px}`;
-  const privacy = `<h1>Privacy Policy — Billiard 8</h1><p class="u">Last updated: October 2026</p>
-<p>Billiard 8 ("the game") is an online pool game. This page explains what information the game uses and why. By playing you agree to it.</p>
+  const privacy = `<h1>Privacy Policy — Royal Billiard 8</h1><p class="u">Last updated: October 2026</p>
+<p>Royal Billiard 8 ("the game") is an online pool game. This page explains what information the game uses and why. By playing you agree to it.</p>
 <h2>What we collect</h2><ul>
 <li><b>Account:</b> a random player ID and secret token created on your device. If you sign in with Google or Facebook, we receive the provider's user ID and your first name. We never receive your Google/Facebook password.</li>
 <li><b>Profile and progress:</b> the name and avatar you choose, country, level, coins, items, friends, club, match results and leaderboard scores.</li>
@@ -70,30 +70,30 @@ function legalPage(res, which) {
 <h2>Changes</h2><p>We may update this page; the date above shows the latest version.</p>
 <h2>Contact</h2><p>${contact}</p>
 <hr><p class="u"><b>Maxfiylik siyosati (qisqacha, o'zbekcha):</b> o'yin sizning ismingiz, avatar, davlat, daraja va o'yin natijalaringizni saqlaydi; Google/Facebook orqali kirsangiz faqat foydalanuvchi ID va ismingizni oladi (parolni emas). Karta ma'lumotlari bizda saqlanmaydi (Stripe orqali). Ovozli chat yozib olinmaydi. Ma'lumotlarni o'chirish uchun biz bilan bog'laning. Ma'lumotlaringiz sotilmaydi.</p>`;
-  const terms = `<h1>Terms of Service — Billiard 8</h1><p class="u">Last updated: October 2026</p>
-<p>By playing Billiard 8 you agree to these terms.</p>
+  const terms = `<h1>Terms of Service — Royal Billiard 8</h1><p class="u">Last updated: October 2026</p>
+<p>By playing Royal Billiard 8 you agree to these terms.</p>
 <h2>Fair play</h2><p>Do not cheat, use bots or exploits, harass other players or post offensive names, avatars or messages. We may mute, suspend or delete accounts that break these rules.</p>
 <h2>Virtual items</h2><p>Coins, cash, gems, cues, tables, gifts and other items are virtual, have no real-world monetary value and cannot be exchanged for money. Refunds are described in the <a href="/refund">Refund Policy</a>. Winnings and rewards in the game are virtual items only; nothing in the game can be cashed out.</p>
 <h2>Your account</h2><p>You are responsible for keeping your account key safe. We may change or remove features, prices and rewards.</p>
 <h2>No warranty</h2><p>The game is provided "as is" without warranties. To the extent allowed by law we are not liable for losses caused by using the game or by downtime.</p>
 <h2>Privacy and contact</h2><p>See the <a href="/privacy">Privacy Policy</a> and the <a href="/refund">Refund Policy</a>. Contact: ${contact}.</p>
 <hr><p class="u"><b>Shartlar (qisqacha):</b> aldamang, boshqalarni haqorat qilmang. O'yindagi tanga va buyumlar haqiqiy pul qiymatiga ega emas. O'yin "borligicha" taqdim etiladi.</p>`;
-  const refund = `<h1>Refund Policy — Billiard 8</h1><p class="u">Last updated: October 2026</p>
-<p>Billiard 8 sells digital items (coins, cash, gems, cues, avatars, frames, tables and similar). They are delivered to your account immediately after payment.</p>
+  const refund = `<h1>Refund Policy — Royal Billiard 8</h1><p class="u">Last updated: October 2026</p>
+<p>Royal Billiard 8 sells digital items (coins, cash, gems, cues, avatars, frames, tables and similar). They are delivered to your account immediately after payment.</p>
 <h2>Refunds</h2><ul>
 <li>If you were charged but the item did not arrive, or you were charged twice, contact us and we will deliver the item or refund the payment.</li>
 <li>You may ask for a refund within 14 days of the purchase if the purchased item has not been used or spent. Items that have already been used or spent are not refundable, except where the law of your country says otherwise.</li>
 <li>Refunds go back to the original payment method through our payment provider. It can take several business days to appear.</li></ul>
 <h2>How to ask</h2><p>Write to ${contact} with your player ID (Settings), the date of the purchase and what you bought.</p>
 <h2>Virtual items</h2><p>Virtual items have no real-world monetary value and cannot be exchanged for money. See the <a href="/terms">Terms of Service</a>.</p>`;
-  const del = `<h1>Delete your data — Billiard 8</h1><p class="u">Last updated: October 2026</p>
-<p>You can ask us to delete your Billiard 8 account and everything linked to it (player ID, profile, progress, friends, club membership, leaderboard entries and the Google / Facebook sign-in link).</p>
+  const del = `<h1>Delete your data — Royal Billiard 8</h1><p class="u">Last updated: October 2026</p>
+<p>You can ask us to delete your Royal Billiard 8 account and everything linked to it (player ID, profile, progress, friends, club membership, leaderboard entries and the Google / Facebook sign-in link).</p>
 <h2>How to ask</h2><ol><li>Write to ${contact} from any address.</li><li>Include your <b>player ID</b> (Settings in the game) or the name you play under, and say "delete my data".</li><li>We delete the account within 30 days and confirm by reply.</li></ol>
 <h2>Facebook / Google</h2><p>You can also remove the game from your Facebook (Settings &rarr; Business Integrations) or Google (Security &rarr; Third-party access) account at any time; after that, ask us to delete the game account using the steps above.</p>
 <h2>What we keep</h2><p>Purchase records may be kept for the time the law requires (tax and accounting); they are not linked to your profile after deletion. Paddle, our payment provider, keeps its own payment records under its own policy.</p>`;
   const body = which === "/terms" ? terms : which === "/refund" ? refund : which === "/data-deletion" ? del : privacy;
   res.writeHead(200, {"Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=3600"});
-  res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${which === "/terms" ? "Terms of Service" : which === "/refund" ? "Refund Policy" : which === "/data-deletion" ? "Delete your data" : "Privacy Policy"} — Billiard 8</title><style>${css}</style></head><body>${body}<p class="u"><a href="/">← Billiard 8</a></p></body></html>`);
+  res.end(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${which === "/terms" ? "Terms of Service" : which === "/refund" ? "Refund Policy" : which === "/data-deletion" ? "Delete your data" : "Privacy Policy"} — Royal Billiard 8</title><style>${css}</style></head><body>${body}<p class="u"><a href="/">← Royal Billiard 8</a></p></body></html>`);
 }
 
 // ---------------------------------------------------------------- catalog (server is the source of truth for prices)
@@ -443,12 +443,12 @@ const routes = {
       db.meta.news = [
         {id: "w3", title: "Yangi stollar", text: "Barcha 30 shahar va do'kondagi stollar yangi, hashamatli ramka bilan. Har bir shaharning o'z rangi va naqshi bor!", btn: "Shaharlar", go: "cities", art: null, at: t - 3e3, until: 0},
         {id: "w2", title: "Jahon Kubogi", text: "60 o'yinchi, 6 raund. G'olib kubok va katta sovrin oladi. Qatnashing!", btn: "Turnirlar", go: "tourScr", art: 1, at: t - 2e3, until: 0},
-        {id: "w1", title: "Xush kelibsiz!", text: "Billiard 8 ga xush kelibsiz! Har kuni bepul sovg'alar, g'ildirak va qutilar sizni kutmoqda. Yangiliklar shu yerga keladi.", btn: "Sovg'alar", go: "rewards", art: 0, at: t - 1e3, until: 0}];
+        {id: "w1", title: "Xush kelibsiz!", text: "Royal Billiard 8 ga xush kelibsiz! Har kuni bepul sovg'alar, g'ildirak va qutilar sizni kutmoqda. Yangiliklar shu yerga keladi.", btn: "Sovg'alar", go: "rewards", art: 0, at: t - 1e3, until: 0}];
       markDirty();
     }
     const now = Date.now(); return {news: db.meta.news.filter(n => !n.until || n.until > now).slice(-30).reverse()};
   },
-  "GET /admin/news": () => [200, {__html: `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Billiard 8 yangiliklar</title><style>body{font:16px system-ui;background:#0b1226;color:#e8eef7;max-width:560px;margin:20px auto;padding:0 14px}input,textarea,select,button{width:100%;box-sizing:border-box;margin:6px 0;padding:12px;border-radius:10px;border:1px solid #3b4a74;background:#141d38;color:#fff;font:inherit}button{background:#1f9d4a;border:0;font-weight:700}small{opacity:.7}</style><h2>Yangi e'lon qo'yish</h2><input id=k type=password placeholder="Admin kalit (ADMIN_KEY)"><input id=t placeholder="Sarlavha"><textarea id=x rows=4 placeholder="Matn"></textarea><input id=b placeholder="Tugma nomi (masalan: Hozir)"><input id=et placeholder="English: sarlavha (ixtiyoriy, boshqa tillar uchun ham shu chiqadi)"><textarea id=ex rows=3 placeholder="English: matn (ixtiyoriy)"></textarea><input id=eb placeholder="English: tugma nomi (ixtiyoriy)"><select id=g><option value="">Tugma yo'q</option><option value=eventsScr>Tadbirlar</option><option value=tourScr>Turnirlar</option><option value=cities>Shaharlar</option><option value=rewards>Sovg'alar</option><option value=clubsScr>Klublar</option><option value=shop>Do'kon</option><option value=mini>Mini o'yinlar</option></select><input id=u placeholder="Yoki havola (https://...)"><select id=a><option value="">Rasm: oddiy</option><option value=0>Showdown</option><option value=1>Jahon kubogi</option><option value=2>Qirib yuting</option><option value=3>Klublar</option><option value=4>Halloween</option></select><input id=d type=number placeholder="Necha kun ko'rinsin (bo'sh = doim)"><button onclick=go()>E'lon qilish</button><p id=m></p><script>async function go(){const r=await fetch('/api/news/post',{method:'POST',headers:{'x-admin-key':k.value,'content-type':'application/json'},body:JSON.stringify({title:t.value,text:x.value,btn:b.value,go:g.value,url:u.value,art:a.value===''?null:+a.value,days:+d.value||0,i18n:(et.value||ex.value||eb.value)?{en:{title:et.value,text:ex.value,btn:eb.value}}:undefined})});m.textContent=r.ok?"Tayyor! O'yinchilarda 5 daqiqa ichida chiqadi.":"Xato: "+r.status}</script>`}],
+  "GET /admin/news": () => [200, {__html: `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Royal Billiard 8 yangiliklar</title><style>body{font:16px system-ui;background:#0b1226;color:#e8eef7;max-width:560px;margin:20px auto;padding:0 14px}input,textarea,select,button{width:100%;box-sizing:border-box;margin:6px 0;padding:12px;border-radius:10px;border:1px solid #3b4a74;background:#141d38;color:#fff;font:inherit}button{background:#1f9d4a;border:0;font-weight:700}small{opacity:.7}</style><h2>Yangi e'lon qo'yish</h2><input id=k type=password placeholder="Admin kalit (ADMIN_KEY)"><input id=t placeholder="Sarlavha"><textarea id=x rows=4 placeholder="Matn"></textarea><input id=b placeholder="Tugma nomi (masalan: Hozir)"><input id=et placeholder="English: sarlavha (ixtiyoriy, boshqa tillar uchun ham shu chiqadi)"><textarea id=ex rows=3 placeholder="English: matn (ixtiyoriy)"></textarea><input id=eb placeholder="English: tugma nomi (ixtiyoriy)"><select id=g><option value="">Tugma yo'q</option><option value=eventsScr>Tadbirlar</option><option value=tourScr>Turnirlar</option><option value=cities>Shaharlar</option><option value=rewards>Sovg'alar</option><option value=clubsScr>Klublar</option><option value=shop>Do'kon</option><option value=mini>Mini o'yinlar</option></select><input id=u placeholder="Yoki havola (https://...)"><select id=a><option value="">Rasm: oddiy</option><option value=0>Showdown</option><option value=1>Jahon kubogi</option><option value=2>Qirib yuting</option><option value=3>Klublar</option><option value=4>Halloween</option></select><input id=d type=number placeholder="Necha kun ko'rinsin (bo'sh = doim)"><button onclick=go()>E'lon qilish</button><p id=m></p><script>async function go(){const r=await fetch('/api/news/post',{method:'POST',headers:{'x-admin-key':k.value,'content-type':'application/json'},body:JSON.stringify({title:t.value,text:x.value,btn:b.value,go:g.value,url:u.value,art:a.value===''?null:+a.value,days:+d.value||0,i18n:(et.value||ex.value||eb.value)?{en:{title:et.value,text:ex.value,btn:eb.value}}:undefined})});m.textContent=r.ok?"Tayyor! O'yinchilarda 5 daqiqa ichida chiqadi.":"Xato: "+r.status}</script>`}],
   async "POST /api/news/post"(req) {   // curl -X POST $SERVER/api/news/post -H "x-admin-key: $ADMIN_KEY" -d '{"title":"..","text":"..","go":"eventsScr","btn":"..","days":7,"i18n":{"en":{"title":"..","text":"..","btn":"Go now"}}}'
     if (!ADMIN_KEY || req.headers["x-admin-key"] !== ADMIN_KEY) return [403, {error: "forbidden"}];
     const b = await jsonBody(req), clip = (v, n) => String(v || "").slice(0, n);
@@ -770,7 +770,7 @@ const routes = {
     const bad = starsRefuse(u, b.sku); if (bad) return [bad === "sold_out" ? 409 : 400, {error: bad}];
     const stars = starsFor(sku); if (stars > 10000) return [400, {error: "too_expensive"}];
     try {
-      const link = await tgApi("createInvoiceLink", {title: `Billiard 8 — ${sku.name}`.slice(0, 32), description: `Billiard 8 — ${sku.name}`.slice(0, 255), payload: `${u.id}:${b.sku}`, currency: "XTR", prices: [{label: sku.name.slice(0, 32), amount: stars}]});
+      const link = await tgApi("createInvoiceLink", {title: `Royal Billiard 8 — ${sku.name}`.slice(0, 32), description: `Royal Billiard 8 — ${sku.name}`.slice(0, 255), payload: `${u.id}:${b.sku}`, currency: "XTR", prices: [{label: sku.name.slice(0, 32), amount: stars}]});
       return {link, stars};
     } catch (e) { console.error("stars invoice:", e.message); return [502, {error: "stars_error"}]; }
   },
@@ -788,9 +788,9 @@ const routes = {
           method: "POST", headers: {Authorization: `Bearer ${PADDLE_KEY}`, "Content-Type": "application/json"},
           body: JSON.stringify({
             items: [{quantity: 1, price: {
-              description: `Billiard 8 - ${sku.name}`, name: sku.name.slice(0, 100), tax_mode: "account_setting",
+              description: `Royal Billiard 8 - ${sku.name}`, name: sku.name.slice(0, 100), tax_mode: "account_setting",
               unit_price: {amount: String(Math.round(sku.usd * 100)), currency_code: "USD"},
-              product: {name: `Billiard 8 - ${sku.name}`.slice(0, 200), tax_category: "standard"},
+              product: {name: `Royal Billiard 8 - ${sku.name}`.slice(0, 200), tax_category: "standard"},
             }}],
             custom_data: {userId: u.id, sku: b.sku},
           }),
@@ -807,7 +807,7 @@ const routes = {
       client_reference_id: u.id, "metadata[userId]": u.id, "metadata[sku]": b.sku,
       "line_items[0][quantity]": "1", "line_items[0][price_data][currency]": "usd",
       "line_items[0][price_data][unit_amount]": String(Math.round(sku.usd * 100)),
-      "line_items[0][price_data][product_data][name]": `Billiard 8 — ${sku.name}`,
+      "line_items[0][price_data][product_data][name]": `Royal Billiard 8 — ${sku.name}`,
     });
     let r, s;
     try {
@@ -909,7 +909,7 @@ async function paddleWebhook(req, res) {
 
 // Page Paddle's checkout opens from: /pay?_ptxn=<transaction id> (Paddle.js reads _ptxn by itself)
 function payPage(res) {
-  const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Billiard 8 - Payment</title>
+  const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Royal Billiard 8 - Payment</title>
 <style>html,body{margin:0;height:100%;background:#0b1220;color:#cfd8e6;font:16px system-ui,sans-serif}p{text-align:center;padding-top:40vh}</style></head><body><p>Loading secure payment…</p>
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script>
@@ -1236,5 +1236,5 @@ store.load().then(loaded => {
     if (/^https:/.test(base)) tgApi("setWebhook", {url: base + "/api/tg/webhook", secret_token: TG_HOOK_SECRET, allowed_updates: ["pre_checkout_query", "message"], drop_pending_updates: false})
       .then(() => console.log("Telegram webhook set:", base + "/api/tg/webhook")).catch(e => console.error("Telegram setWebhook failed:", e.message));
   }
-  server.listen(PORT, () => console.log(`Billiard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${PADDLE_KEY && PADDLE_TOKEN ? "Paddle" + (PADDLE_SANDBOX ? " sandbox" : "") : STRIPE_KEY ? "Stripe" : "off"})`));
+  server.listen(PORT, () => console.log(`Royal Billiard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${PADDLE_KEY && PADDLE_TOKEN ? "Paddle" + (PADDLE_SANDBOX ? " sandbox" : "") : STRIPE_KEY ? "Stripe" : "off"})`));
 }).catch(e => { console.error("Could not load the database:", e.message); process.exit(1); });
