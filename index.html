@@ -4481,6 +4481,27 @@ function setZoom(z) { zoom = Math.max(0.6, Math.min(1.5, Math.round(z * 100) / 1
 addEventListener("resize", () => { resize(); setTimeout(fitNav, 60); });
 addEventListener("orientationchange", () => setTimeout(resize, 250));
 resize();
+// A phone held upright shows the page turned 90° (html.rot). The browser does not turn a finger swipe with it, so a list, a modal body or a shelf could not be dragged by hand; here the swipe is turned back and applied to the nearest scrollable box (with a little fling).
+(() => {
+let tgt = null, lx = 0, ly = 0, lt = 0, vx = 0, vy = 0, bv = null, bh = null, raf = 0;
+const can = (e, horiz) => { const cs = getComputedStyle(e), o = horiz ? cs.overflowX : cs.overflowY; return (o === "auto" || o === "scroll") && (horiz ? e.scrollWidth > e.clientWidth + 1 : e.scrollHeight > e.clientHeight + 1); };
+const near = (e, horiz) => { for (; e && e !== document.body && e !== document.documentElement; e = e.parentElement) if (can(e, horiz)) return e; return null; };
+const move = (dx, dy) => { let used = false;   // screen -> the turned page: a swipe along the screen's x moves the list's y, along the screen's y moves its x
+if (bv && dx) { const s = bv.scrollTop; bv.scrollTop = s + dx; if (bv.scrollTop !== s) used = true; }
+if (bh && dy) { const s = bh.scrollLeft; bh.scrollLeft = s - dy; if (bh.scrollLeft !== s) used = true; }
+return used; };
+const fling = () => { if (Math.abs(vx) < 0.03 && Math.abs(vy) < 0.03) return; move(vx * 16, vy * 16); vx *= 0.94; vy *= 0.94; raf = requestAnimationFrame(fling); };
+addEventListener("touchstart", ev => { cancelAnimationFrame(raf); tgt = null; if (!rotated || ev.touches.length !== 1) return;
+const t = ev.target; if (!t || !t.closest || t.closest("canvas,input[type=range]")) return;
+bv = near(t, false); bh = near(t, true); if (!bv && !bh) return;
+tgt = t; lx = ev.touches[0].clientX; ly = ev.touches[0].clientY; lt = ev.timeStamp; vx = vy = 0; }, {capture: true, passive: true});
+addEventListener("touchmove", ev => { if (!tgt || ev.touches.length !== 1) return;
+const f = ev.touches[0], dx = f.clientX - lx, dy = f.clientY - ly, dt = Math.max(1, ev.timeStamp - lt); lx = f.clientX; ly = f.clientY; lt = ev.timeStamp;
+vx = vx * 0.6 + (dx / dt) * 0.4; vy = vy * 0.6 + (dy / dt) * 0.4;
+if (move(dx, dy) && ev.cancelable) ev.preventDefault(); }, {capture: true, passive: false});
+addEventListener("touchend", () => { if (tgt) { tgt = null; raf = requestAnimationFrame(fling); } }, {capture: true, passive: true});
+addEventListener("touchcancel", () => { tgt = null; }, {capture: true, passive: true});
+})();
 let fsTried = false;
 function goFullscreen(force) {
 if (!force && !matchMedia("(pointer: coarse)").matches) return;   // phones and tablets go fullscreen on the first tap; on a computer the game just fits its window (the ⛶ button still toggles fullscreen)
