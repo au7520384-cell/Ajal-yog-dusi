@@ -103,6 +103,8 @@ sub('Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, Str
 sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,.nochat #cheerBar{display:none!important}</style>')
 # default language: the device language (English stays English); the country-based guess is for the standalone game only
 sub('const cl = CC_LANG[profile.country || detectCountry()];', 'const cl = CRAZY_BUILD ? "" : CC_LANG[profile.country || detectCountry()];')
+# language: English first (CrazyGames requires English; reviewers must not meet another language by chance). The other languages stay one tap away in Settings.
+sub("function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\n", "function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\nif (CRAZY_BUILD) return \"en\";\n")
 # hide Y8-only UI
 sub("${Y8.sdk && !TG_LAUNCH ? `<div class=\"card\"", "${!CRAZY_BUILD && Y8.sdk && !TG_LAUNCH ? `<div class=\"card\"")
 sub('<button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 14px;font-size:16px">🏆 Y8</button>', '')
