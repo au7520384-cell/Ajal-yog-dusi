@@ -4490,17 +4490,19 @@ const move = (dx, dy) => { let used = false;   // screen -> the turned page: a s
 if (bv && dx) { const s = bv.scrollTop; bv.scrollTop = s + dx; if (bv.scrollTop !== s) used = true; }
 if (bh && dy) { const s = bh.scrollLeft; bh.scrollLeft = s - dy; if (bh.scrollLeft !== s) used = true; }
 return used; };
-const fling = () => { if (Math.abs(vx) < 0.03 && Math.abs(vy) < 0.03) return; move(vx * 16, vy * 16); vx *= 0.94; vy *= 0.94; raf = requestAnimationFrame(fling); };
+const snapBack = () => { for (const e of [bv, bh]) if (e) e.style.scrollSnapType = ""; };
+const fling = () => { if (Math.abs(vx) < 0.03 && Math.abs(vy) < 0.03) return snapBack(); move(vx * 16, vy * 16); vx *= 0.94; vy *= 0.94; raf = requestAnimationFrame(fling); };
 addEventListener("touchstart", ev => { cancelAnimationFrame(raf); tgt = null; if (!rotated || ev.touches.length !== 1) return;
 const t = ev.target; if (!t || !t.closest || t.closest("canvas,input[type=range]")) return;
 bv = near(t, false); bh = near(t, true); if (!bv && !bh) return;
+for (const e of [bv, bh]) if (e) e.style.scrollSnapType = "none";   // a mandatory snap (the city carousel) would pull every small step back
 tgt = t; lx = ev.touches[0].clientX; ly = ev.touches[0].clientY; lt = ev.timeStamp; vx = vy = 0; }, {capture: true, passive: true});
 addEventListener("touchmove", ev => { if (!tgt || ev.touches.length !== 1) return;
 const f = ev.touches[0], dx = f.clientX - lx, dy = f.clientY - ly, dt = Math.max(1, ev.timeStamp - lt); lx = f.clientX; ly = f.clientY; lt = ev.timeStamp;
 vx = vx * 0.6 + (dx / dt) * 0.4; vy = vy * 0.6 + (dy / dt) * 0.4;
 if (move(dx, dy) && ev.cancelable) ev.preventDefault(); }, {capture: true, passive: false});
 addEventListener("touchend", () => { if (tgt) { tgt = null; raf = requestAnimationFrame(fling); } }, {capture: true, passive: true});
-addEventListener("touchcancel", () => { tgt = null; }, {capture: true, passive: true});
+addEventListener("touchcancel", () => { tgt = null; snapBack(); }, {capture: true, passive: true});
 })();
 let fsTried = false;
 function goFullscreen(force) {
