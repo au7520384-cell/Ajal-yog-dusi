@@ -2034,8 +2034,8 @@ const imgEl = {}; for (const k of ["coin", "cash", "gem"]) { imgEl[k] = new Imag
 const ON_PORTAL = /(^|\.)y8\.com$|(^|\.)id\.net$/.test(location.hostname) || /y8\.com/.test(document.referrer) || (window.top !== window.self && !!CONFIG.y8AppId);
 // Real-money card purchases (Paddle/Stripe). CARD_PAY = false hides every card button; CARD_ON_PORTAL = false hides them only on Y8/portal pages.
 const TG_LAUNCH = /[#&?]tgWebApp(Data|Version|Platform)=/.test(location.hash + location.search);   // opened as a Telegram Mini App (Telegram passes its launch data in the URL)
-let TG = null, TG_LINK = "";   // Telegram.WebApp once its script is loaded; TG_LINK = https://t.me/<bot>/<app> from the server (lobby invites)
-const CARD_PAY = true, CARD_ON_PORTAL = false, NO_CARD = !CARD_PAY || (ON_PORTAL && !CARD_ON_PORTAL) || TG_LAUNCH;   // no card payments inside Telegram (digital goods there go through Telegram Stars)
+let TG = null, TG_LINK = "", STARS_K = 55;   // STARS_K: Stars per 1 USD of the card price (the server sends its own number)   // Telegram.WebApp once its script is loaded; TG_LINK = https://t.me/<bot>/<app> from the server (lobby invites)
+const CARD_PAY = true, CARD_ON_PORTAL = false, NO_CARD = !CARD_PAY || (ON_PORTAL && !CARD_ON_PORTAL) ;   // inside Telegram the same prices are charged in Telegram Stars (usdTxt shows them, checkout opens the Stars invoice)
 const W = 1340, H = 720;
 const FX = 188, FY = 148, FW = 1000, FH = 500, RAIL = 66, R = 16;   // ball radius (was 17): about 6 % smaller balls, pockets unchanged
 const RAILC = (RAIL + 8 + 19) / 2;
@@ -4290,7 +4290,7 @@ const ad = Y8.sdk && Y8.adsReady, pay = !NO_CARD;
 openModal({icon: "⏳", title: T(TRY_NAME[k]), text: `${T("Keyingi bepul urinish")}: ${fmtDur(freeLeftMs(k))}`,
 extra: `<p class="muted" style="margin:0">${T("Hozir yana o'ynash uchun reklama ko'ring yoki urinish sotib oling.")}</p>`,
 buttons: [{label: `📺 ${T("Reklama ko'rish")} ${adSteps("try_" + k)}/${TRY_ADS}`, cls: "green", fn: () => adStep("try_" + k, TRY_ADS, () => { profile[TRY_KEY[k]] = (profile[TRY_KEY[k]] | 0) + 1; save(); toast("🎉", "+1", T(TRY_NAME[k])); again && again(); }, () => noTries(k, again))},
-...(pay ? [{label: `💳 ${usdTxt(TRY_USD)} · +1`, cls: "purple", fn: () => Net.checkout("try_" + k)}] : []),
+...(pay ? [{label: `${PAYI}${usdTxt(TRY_USD)} · +1`, cls: "purple", fn: () => Net.checkout("try_" + k)}] : []),
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
 function startLucky(golden) {
@@ -8627,7 +8627,8 @@ openModal({icon: "✅", title: T("Raund yutildi!"), text: `${T("Keyingi bosqich"
 }
 // one price in three currencies: cash, gems and the real-money (card) price. Every item sold for cash shows all three (cash 20 per $, gems 200 per $, the packs' own rates).
 const usdOfCash = cash => Math.round(cash * 5 - 1) / 100;   // 40 cash = $1.99, 100 = $4.99, 400 = $19.99
-const usdTxt = u => "$" + (+u).toFixed(2);
+const usdTxt = u => TG_LAUNCH ? "⭐ " + Math.max(1, Math.round(u * STARS_K)) : "$" + (+u).toFixed(2);   // in Telegram the price is Stars
+const PAYI = TG_LAUNCH ? "" : "💳 ";
 // card (real-money) price: nothing below $1.99 (the payment provider keeps ~5% + $0.50), everything else moves up $0.50 so the order of prices stays. Same rule as the server (cardUsd in server.js).
 const cardUsd = u => u < 1.99 ? 1.99 : Math.round((u + 0.5) * 100) / 100;
 // On Y8 (NO_CARD) the real-money price is replaced by ads. The item's card price sets how many:
@@ -9004,7 +9005,7 @@ function openSurpriseBox(payWithCash) {
   if (profile.sbAct) return sbModal();
   if (!(profile.sboxes > 0) && payWithCash !== true) {
     return openModal({icon: "🎁", title: T("Syurpriz qutisi"), text: T("Har bir quti afsonaviy kiyning 1 bo'lagini beradi. 4 bo'lak = kiy. Qutini ochish uchun 4 ta missiya bajariladi."), extra: `<div style="text-align:center">${sbSVG(0)}</div>`,
-      buttons: [...(NO_CARD ? [] : [{label: `💳 ${usdTxt(BOX_USD)}`, cls: "green", fn: () => Net.checkout("sbox_1")}, {label: `💳 5 × ${usdTxt(cardUsd(3.99))}`, cls: "green", fn: () => Net.checkout("sbox_5")}]),
+      buttons: [...(NO_CARD ? [] : [{label: `${PAYI}${usdTxt(BOX_USD)}`, cls: "green", fn: () => Net.checkout("sbox_1")}, {label: `${PAYI}5 × ${usdTxt(cardUsd(3.99))}`, cls: "green", fn: () => Net.checkout("sbox_5")}]),
         {label: `💎 ${BOX_GEMS}`, cls: "purple", fn: () => { if ((profile.gems || 0) < BOX_GEMS) return gemShort(); profile.gems -= BOX_GEMS; profile.sboxes = (profile.sboxes | 0) + 1; save(); updateNav(); openSurpriseBox(); }},
         {label: `📺 ${adSteps("box")}/${BOX_ADS}`, cls: "green", fn: () => adStep("box", BOX_ADS, () => { profile.sboxes = (profile.sboxes | 0) + 1; save(); updateNav(); openSurpriseBox(); }, () => openSurpriseBox())},
         {label: `💵 ${SURPRISE_BOX}`, cls: "purple", fn: () => openSurpriseBox(true)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
@@ -9561,6 +9562,7 @@ return null;
 }
 async function checkout(sku, btn) {
 if (NO_CARD) return adCheckout(sku);   // Y8 forbids third-party payments: there the "price" is a number of ads instead
+if (TG_LAUNCH) return starsCheckout(sku, btn);
 try {
 if (btn) btn.disabled = true;
 await ensure();
@@ -9568,6 +9570,20 @@ const r = await api("/api/checkout", {sku, lang: LANG});
 location.href = r.url;
 } catch (e) {
 toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status === 502 ? T("To'lov tizimi vaqtincha ishlamayapti") + (e.detail ? " (" + e.detail + ")" : "") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
+} finally { if (btn) btn.disabled = false; }
+}
+async function starsCheckout(sku, btn) {   // Telegram Stars: the server makes the invoice link, Telegram shows its own pay sheet; the purchase arrives through the next syncs once the server has the payment
+if (!TG || !TG.openInvoice) { toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti"), T("Do'kon")); return; }
+try {
+if (btn) btn.disabled = true;
+await ensure();
+const r = await api("/api/stars/invoice", {sku});
+TG.openInvoice(r.link, st => {
+if (st === "paid") { toast("⭐", T("Xarid uchun rahmat!"), T("Do'kon")); let n = 0; const poll = () => { sync(); if (++n < 8) setTimeout(poll, 2000); }; setTimeout(poll, 800); }
+else if (st === "failed") toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti"), T("Do'kon"));
+});
+} catch (e) {
+toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status === 409 ? T("Sotilib bo'ldi!") : e.status === 502 ? T("To'lov tizimi vaqtincha ishlamayapti") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
 } finally { if (btn) btn.disabled = false; }
 }
 function connect() {
@@ -10516,7 +10532,7 @@ function goldenShot() {
 if (!profile.goldShots) {
 if (mode !== "menu") toMenu("mini");
 return openModal({icon: "img:pile", title: T("Oltin zarba"), text: T("Katta sovrinlar uchun pullik o'yin: 3 ta zarba."), extra: `<div class="reward">💵 10 · 💵 5 · 🪙 75 000 · 🪙 50 000</div>`, scene: "gold",
-buttons: [...(NO_CARD ? [] : [{label: `💳 3 × ${usdTxt(GOLD_USD)}`, cls: "green", fn: () => Net.checkout("golden_3")}]),
+buttons: [...(NO_CARD ? [] : [{label: `${PAYI}3 × ${usdTxt(GOLD_USD)}`, cls: "green", fn: () => Net.checkout("golden_3")}]),
 {label: `💎 ${GOLD_GEMS}`, cls: "purple", fn: () => { if ((profile.gems || 0) < GOLD_GEMS) return gemShort(); profile.gems -= GOLD_GEMS; profile.goldShots = 3; save(); updateNav(); goldenShot(); }},
 {label: `📺 ${adSteps("gold")}/${GOLD_ADS}`, cls: "green", fn: () => adStep("gold", GOLD_ADS, () => { profile.goldShots = 3; save(); updateNav(); goldenShot(); }, goldenShot)},
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
@@ -11985,7 +12001,7 @@ try { W.disableVerticalSwipes(); } catch (e) {}
 { const fb = $("gFs"); if (fb && W.requestFullscreen) fb.style.display = ""; const sync = () => { if (fb) fb.textContent = W.isFullscreen ? "🗗" : "⛶"; setTimeout(resize, 60); setTimeout(resize, 400); };
 for (const ev of ["fullscreenChanged", "safeAreaChanged", "contentSafeAreaChanged"]) try { W.onEvent(ev, sync); } catch (e) {} }
 store.set("b8guest", 1);
-Net.api("/api/auth/config").then(c => { TG_LINK = c.tgLink || ""; tgAdsInit(c); }).catch(() => {});
+Net.api("/api/auth/config").then(c => { TG_LINK = c.tgLink || ""; if (c.starsPerUsd > 0) STARS_K = c.starsPerUsd; tgAdsInit(c); }).catch(() => {});
 if (W.initData && !(profile.prov && profile.prov.telegram)) Net.ensure().then(() => authLogin("telegram", W.initData)).catch(() => {});
 const sp = parseLobbyCode(String((W.initDataUnsafe && W.initDataUnsafe.start_param) || ""));
 if (sp.length >= 3) setTimeout(() => lobbyJoin(sp), 1200);
@@ -12229,7 +12245,7 @@ $("embName").textContent = `${badge + 1}. ${CLUB_BADGES[badge]}`;
 $("embDesc").innerHTML = t ? `<b class="etier t${t}">${T(t === 2 ? "Afsonaviy" : "Epik")}</b> · ${T(t === 2 ? "Kuchli alanga va nur effekti, klub kartasi oltin nur sochadi" : "Jonli emblema: klubingiz ro'yxatda harakatlanib turadi")}` : T("Bepul emblema");
 document.querySelectorAll("#modal [data-b]").forEach(b => b.classList.toggle("on", +b.dataset.b === badge));
 $("mBtns").innerHTML = "";
-if (!owned(badge) && t === 2 && !NO_CARD) mkBtn(`💳 ${usdTxt(cardUsd(CLUB_USD))}`, "green", () => Net.checkout("emb_" + badge), true);
+if (!owned(badge) && t === 2 && !NO_CARD) mkBtn(`${PAYI}${usdTxt(cardUsd(CLUB_USD))}`, "green", () => Net.checkout("emb_" + badge), true);
 if (!owned(badge)) { const pr = CLUB_PRICE[t]; mkBtn(`💵 ${pr} · ${T("Sotib olish")}`, "purple", () => { if ((profile.cash || 0) < pr) return toast("😕", T("Pul yetmaydi"), T("Klublar")); profile.cash -= pr; own().push(badge); save(); updateNav(); Snd.win(); burst(); toast("✨", CLUB_BADGES[badge], T("Emblema sizniki!")); grids(); }, false); }
 else mkBtn(T("Yaratish"), "green", create, true);
 mkBtn(T("Yopish"), "gray", () => {}, true);
