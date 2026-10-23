@@ -1,4 +1,4 @@
-# 🎱 Billiard 8 — Masters League
+# 🎱 Royal Billiard 8 — Masters League
 
 An 8-ball pool game for phones and computers. The game is `index.html`; the online part (real opponents, friends, invite bonuses, global leaderboard, real-money purchases) is the small Node.js server in `server/`.
 
