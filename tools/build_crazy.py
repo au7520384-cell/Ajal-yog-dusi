@@ -103,6 +103,14 @@ sub('Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, Str
 sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,.nochat #cheerBar{display:none!important}</style>')
 # default language: the device language (English stays English); the country-based guess is for the standalone game only
 sub('const cl = CC_LANG[profile.country || detectCountry()];', 'const cl = CRAZY_BUILD ? "" : CC_LANG[profile.country || detectCountry()];')
+# the portal brings its own full-screen button and shows no outside pages: no own full-screen buttons / auto full screen, no legal links in Settings
+sub("function goFullscreen(force) {\n", "function goFullscreen(force) {\nif (CRAZY_BUILD) return;\n")
+sub('<button class="iconbtn" id="fsBtn" title="To\'liq ekran">⛶</button>', '')
+sub('<button class="gbtn gray" id="gFs" title="To\'liq ekran">⛶</button>', '')
+sub('$("fsBtn").onclick = toggleFullscreen;', 'if ($("fsBtn")) $("fsBtn").onclick = toggleFullscreen;')
+sub('{ const fb = $("gFs"); const can = ', '{ const fb = $("gFs"); if (!fb) { /* CrazyGames: no own full-screen button */ } else { const can = ')
+sub('document.addEventListener("webkitfullscreenchange", sync); }', 'document.addEventListener("webkitfullscreenchange", sync); } }')
+sub('<br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a> · <a href="/refund" target="_blank" style="color:#8fc4ff">Refund</a></div>`;', '</div>`;')
 # language: English first (CrazyGames requires English; reviewers must not meet another language by chance). The other languages stay one tap away in Settings.
 sub("function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\n", "function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\nif (CRAZY_BUILD) return \"en\";\n")
 # hide Y8-only UI
