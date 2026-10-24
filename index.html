@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<style>#boot{position:fixed;inset:0;z-index:2147483000;background:#06122e center/contain no-repeat;transition:opacity .5s ease;pointer-events:none}#boot.off{opacity:0}</style>
+<style>#boot{position:fixed;inset:0;z-index:2147483000;background:#06122e center 12%/cover no-repeat;transition:opacity .5s ease;pointer-events:none}#boot.off{opacity:0}
+@media (min-aspect-ratio:23/10){#boot{background-position:center;background-size:contain}}
+/* a phone held upright: the page is turned later by the script, so the logo is turned the same way from the start (it then fills the screen) */
+@media (orientation:portrait) and (pointer:coarse){html:not(.rot) #boot{inset:auto;top:0;left:100vw;width:100vh;height:100vw;transform-origin:0 0;transform:rotate(90deg)}}</style>
 <meta name="theme-color" content="#0b1220">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -10499,7 +10502,8 @@ const p = passState(), tier = Math.floor(p.pts / PASS_STEP), left = seasonEnds()
 $("hPassTier").textContent = tier; $("hPassLeft").textContent = `${Math.floor(left / 864e5)}${T("k")} ${Math.floor(left % 864e5 / 36e5)}${T("s")}`;
 $("hRwLeft").textContent = profile.lastClaim !== today() ? T("OLISH!") : "⏱ " + hms(nextMidnight());
 updateHomeDots();
-const wl = weekEnds() - Date.now(); if ($("hLoop")) { $("hLoop").onclick = loopModal; const lo = loopNow(); $("hLoopT").textContent = `${Math.floor(lo.left / 36e5)}${T("s")} ${Math.floor(lo.left % 36e5 / 6e4)}${T("d")}`; }
+const wl = weekEnds() - Date.now(); if ($("hLoop") && NO_CARD) { $("hLoop").style.display = "none"; if ($("hLoopT")) $("hLoopT").style.display = "none"; }   // the offer is card-priced: no card on portals, so no dead banner
+else if ($("hLoop")) { $("hLoop").onclick = loopModal; const lo = loopNow(); $("hLoopT").textContent = `${Math.floor(lo.left / 36e5)}${T("s")} ${Math.floor(lo.left % 36e5 / 6e4)}${T("d")}`; }
 $("hLimEnds").textContent = `⏱ ${Math.floor(wl / 864e5)}${T("k")} ${Math.floor(wl % 864e5 / 36e5)}${T("s")} ${Math.floor(wl % 36e5 / 6e4)}${T("d")}`;
 $("hTourSub").textContent = `16–64 ${T("o'yinchi")}`;
 if (!vipShownSession) setTimeout(loginFirst, 1200);
