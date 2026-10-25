@@ -3,6 +3,7 @@
  * Royal Billiard 8 — backend
  *  - guest accounts (id + secret token), profile sync
  *  - unique player ID / invite code, referral bonuses, friends (requests with accept / decline), direct messages between friends, daily gifts
+ *  - Telegram bot messages (friend requests, chat, play invitations) for Mini App players who are away from the game (see tgPush)
  *  - global leaderboard
  *  - online 1v1 matchmaking over WebSocket (shots are relayed between the two players)
  *  - real-money purchases through Stripe Checkout (enabled when STRIPE_SECRET_KEY is set)
@@ -377,7 +378,7 @@ async function verifyProvider(provider, token) {
       if (hash.length !== want.length || !crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(want))) return null;
       if (Date.now() / 1000 - (+sp.get("auth_date") || 0) > 86400) return null;   // a day-old launch is stale
       const u = JSON.parse(sp.get("user") || "{}"); if (!u.id) return null;
-      return {sub: String(u.id), name: u.first_name || u.username || ""};
+      return {sub: String(u.id), name: u.first_name || u.username || "", wp: !!u.allows_write_to_pm, lang: String(u.language_code || "")};
     }
     if (provider === "facebook") {
       if (!FB_APP_ID || !FB_APP_SECRET) return null;
@@ -443,6 +444,7 @@ function makeFriends(a, b) {
 function tellAccepted(to, who) {   // the player who asked hears (once, on the next sync / poll) that the request was accepted
   to.frAcc = (to.frAcc || []).filter(x => x.id !== who.id).concat({id: who.id, name: who.name, at: Date.now()}).slice(-20); markDirty();
   wsSend(clients.get(to.id), {t: "frok", from: who.name, fromId: who.id});
+  tgPush(to, "fracc", {name: who.name}, {start: "fr", key: "fracc:" + who.id, gap: 864e5});
 }
 function friendRequest(u, f) {   // u asks f to be friends
   if (!f) return [404, {error: "code_not_found"}];
@@ -465,6 +467,7 @@ function friendRequest(u, f) {   // u asks f to be friends
   u.frOut = (u.frOut || []).filter(id => id !== f.id).concat(f.id).slice(-FR_OUT_MAX);
   markDirty();
   wsSend(clients.get(f.id), {t: "frreq", from: u.name, fromId: u.id});
+  tgPush(f, "frreq", {name: u.name}, {start: "fr", key: "frreq:" + u.id, gap: 864e5});
   return {ok: true, pending: true, friend: publicUser(f)};
 }
 function dmUnread(u, f) {   // messages from f that u has not seen yet
@@ -494,6 +497,88 @@ function pruneDms() {   // threads nobody has written in for two months go away
   for (const [k, arr] of Object.entries(db.dms || {})) if (!arr.length || now - arr[arr.length - 1].at > DM_TTL) { delete db.dms[k]; markDirty(); }
 }
 setInterval(pruneDms, 6 * 3600e3);
+
+// ---------------------------------------------------------------- messages from the Telegram bot (friend requests, answers, chat messages, play invitations)
+// A player who signed in through the Mini App has their Telegram id in auth.telegram (it is also their chat id with the bot). The bot may write to them once they
+// allowed it (Telegram's own pop-up in the app, or /start in the bot chat). A message goes out only while the player is away from the game (the page keeps lastSeen
+// fresh), at most PUSH_DAY a day, one per sender per few minutes, and never after the player turned them off (Settings, or /stop in the bot chat).
+// The bot never relays what a player typed (chat text stays in the game); it only names the sender. PUSH_IDLE_MS / PUSH_DAY can be overridden by environment variables (only the tests do).
+const PUSH_IDLE_MS = +process.env.PUSH_IDLE_MS || 90e3, PUSH_DAY = +process.env.PUSH_DAY || 15, PUSH_BLOCK_MS = 3 * 864e5;
+const PUSH_LANGS = {   // kind -> [message, button]; {n} = the sender's name
+  uz: {frreq: ["👥 <b>{n}</b> sizni do'stlikka taklif qildi!", "Ko'rish"], fracc: ["✅ <b>{n}</b> do'stlik taklifingizni qabul qildi!", "Do'stlar"], dm: ["💬 <b>{n}</b> sizga xabar yubordi!", "Javob yozish"], play: ["⚔️ <b>{n}</b> sizni o'yinga chaqirdi!", "Qo'shilish"],
+    start: ["🎱 <b>Royal Billiard 8</b> ga xush kelibsiz!\nDo'stlik so'rovlari, xabarlar va o'yin takliflari haqida shu yerda xabar beraman. O'chirish: /stop", "O'ynash"], stop: ["🔕 Bildirishnomalar o'chirildi. Qayta yoqish uchun /start ni yuboring.", ""]},
+  en: {frreq: ["👥 <b>{n}</b> sent you a friend request!", "View"], fracc: ["✅ <b>{n}</b> accepted your friend request!", "Friends"], dm: ["💬 <b>{n}</b> sent you a message!", "Reply"], play: ["⚔️ <b>{n}</b> invited you to play!", "Join"],
+    start: ["🎱 Welcome to <b>Royal Billiard 8</b>!\nI'll let you know here about friend requests, messages and game invitations. Turn off: /stop", "Play"], stop: ["🔕 Notifications are off. Send /start to turn them back on.", ""]},
+  ru: {frreq: ["👥 <b>{n}</b> хочет подружиться с вами!", "Открыть"], fracc: ["✅ <b>{n}</b> принял(а) ваш запрос в друзья!", "Друзья"], dm: ["💬 <b>{n}</b> прислал(а) вам сообщение!", "Ответить"], play: ["⚔️ <b>{n}</b> зовёт вас сыграть!", "Присоединиться"],
+    start: ["🎱 Добро пожаловать в <b>Royal Billiard 8</b>!\nЯ буду сообщать здесь о запросах в друзья, сообщениях и приглашениях в игру. Отключить: /stop", "Играть"], stop: ["🔕 Уведомления отключены. Чтобы включить снова, отправьте /start.", ""]},
+  tr: {frreq: ["👥 <b>{n}</b> sana arkadaşlık isteği gönderdi!", "Görüntüle"], fracc: ["✅ <b>{n}</b> arkadaşlık isteğini kabul etti!", "Arkadaşlar"], dm: ["💬 <b>{n}</b> sana mesaj gönderdi!", "Yanıtla"], play: ["⚔️ <b>{n}</b> seni oyuna davet etti!", "Katıl"],
+    start: ["🎱 <b>Royal Billiard 8</b>'e hoş geldin!\nArkadaşlık istekleri, mesajlar ve oyun davetleri için burada haber vereceğim. Kapatmak için: /stop", "Oyna"], stop: ["🔕 Bildirimler kapatıldı. Tekrar açmak için /start gönder.", ""]},
+  es: {frreq: ["👥 ¡<b>{n}</b> te envió una solicitud de amistad!", "Ver"], fracc: ["✅ ¡<b>{n}</b> aceptó tu solicitud de amistad!", "Amigos"], dm: ["💬 ¡<b>{n}</b> te envió un mensaje!", "Responder"], play: ["⚔️ ¡<b>{n}</b> te invitó a jugar!", "Unirse"],
+    start: ["🎱 ¡Bienvenido a <b>Royal Billiard 8</b>!\nTe avisaré aquí de solicitudes de amistad, mensajes e invitaciones a jugar. Desactivar: /stop", "Jugar"], stop: ["🔕 Notificaciones desactivadas. Envía /start para volver a activarlas.", ""]},
+  pt: {frreq: ["👥 <b>{n}</b> enviou um pedido de amizade!", "Ver"], fracc: ["✅ <b>{n}</b> aceitou seu pedido de amizade!", "Amigos"], dm: ["💬 <b>{n}</b> enviou uma mensagem para você!", "Responder"], play: ["⚔️ <b>{n}</b> convidou você para jogar!", "Entrar"],
+    start: ["🎱 Bem-vindo ao <b>Royal Billiard 8</b>!\nAviso você aqui sobre pedidos de amizade, mensagens e convites para jogar. Desativar: /stop", "Jogar"], stop: ["🔕 Notificações desativadas. Envie /start para ativá-las novamente.", ""]},
+  fr: {frreq: ["👥 <b>{n}</b> t'a envoyé une demande d'ami !", "Voir"], fracc: ["✅ <b>{n}</b> a accepté ta demande d'ami !", "Amis"], dm: ["💬 <b>{n}</b> t'a envoyé un message !", "Répondre"], play: ["⚔️ <b>{n}</b> t'invite à jouer !", "Rejoindre"],
+    start: ["🎱 Bienvenue dans <b>Royal Billiard 8</b> !\nJe te préviens ici des demandes d'ami, messages et invitations à jouer. Désactiver : /stop", "Jouer"], stop: ["🔕 Notifications désactivées. Envoie /start pour les réactiver.", ""]},
+  de: {frreq: ["👥 <b>{n}</b> hat dir eine Freundschaftsanfrage geschickt!", "Ansehen"], fracc: ["✅ <b>{n}</b> hat deine Freundschaftsanfrage angenommen!", "Freunde"], dm: ["💬 <b>{n}</b> hat dir eine Nachricht geschickt!", "Antworten"], play: ["⚔️ <b>{n}</b> lädt dich zum Spielen ein!", "Beitreten"],
+    start: ["🎱 Willkommen bei <b>Royal Billiard 8</b>!\nHier sage ich dir Bescheid bei Freundschaftsanfragen, Nachrichten und Spieleinladungen. Ausschalten: /stop", "Spielen"], stop: ["🔕 Benachrichtigungen ausgeschaltet. Sende /start, um sie wieder einzuschalten.", ""]},
+  id: {frreq: ["👥 <b>{n}</b> mengirim permintaan pertemanan!", "Lihat"], fracc: ["✅ <b>{n}</b> menerima permintaan pertemananmu!", "Teman"], dm: ["💬 <b>{n}</b> mengirim pesan untukmu!", "Balas"], play: ["⚔️ <b>{n}</b> mengajakmu bermain!", "Gabung"],
+    start: ["🎱 Selamat datang di <b>Royal Billiard 8</b>!\nAku akan memberi tahu di sini tentang permintaan pertemanan, pesan, dan ajakan bermain. Matikan: /stop", "Main"], stop: ["🔕 Notifikasi dimatikan. Kirim /start untuk menyalakannya lagi.", ""]},
+  ar: {frreq: ["👥 أرسل لك <b>{n}</b> طلب صداقة!", "عرض"], fracc: ["✅ قبل <b>{n}</b> طلب صداقتك!", "الأصدقاء"], dm: ["💬 أرسل لك <b>{n}</b> رسالة!", "رد"], play: ["⚔️ دعاك <b>{n}</b> للعب!", "انضمام"],
+    start: ["🎱 أهلاً بك في <b>Royal Billiard 8</b>!\nسأخبرك هنا بطلبات الصداقة والرسائل ودعوات اللعب. للإيقاف: /stop", "العب"], stop: ["🔕 تم إيقاف الإشعارات. أرسل /start لتشغيلها مجددًا.", ""]},
+  hi: {frreq: ["👥 <b>{n}</b> ने आपको दोस्ती का अनुरोध भेजा!", "देखें"], fracc: ["✅ <b>{n}</b> ने आपका दोस्ती का अनुरोध स्वीकार किया!", "दोस्त"], dm: ["💬 <b>{n}</b> ने आपको संदेश भेजा!", "जवाब दें"], play: ["⚔️ <b>{n}</b> ने आपको खेलने बुलाया!", "जुड़ें"],
+    start: ["🎱 <b>Royal Billiard 8</b> में आपका स्वागत है!\nदोस्ती के अनुरोध, संदेश और खेल के निमंत्रण की जानकारी मैं यहीं दूँगा। बंद करने के लिए: /stop", "खेलें"], stop: ["🔕 सूचनाएँ बंद हो गईं। फिर चालू करने के लिए /start भेजें।", ""]},
+  ko: {frreq: ["👥 <b>{n}</b>님이 친구 요청을 보냈어요!", "보기"], fracc: ["✅ <b>{n}</b>님이 친구 요청을 수락했어요!", "친구"], dm: ["💬 <b>{n}</b>님이 메시지를 보냈어요!", "답장"], play: ["⚔️ <b>{n}</b>님이 게임에 초대했어요!", "참여"],
+    start: ["🎱 <b>Royal Billiard 8</b>에 오신 것을 환영합니다!\n친구 요청, 메시지, 게임 초대를 여기서 알려드릴게요. 끄기: /stop", "플레이"], stop: ["🔕 알림이 꺼졌어요. 다시 켜려면 /start 를 보내세요.", ""]},
+  ja: {frreq: ["👥 <b>{n}</b>さんからフレンドリクエストが届きました!", "見る"], fracc: ["✅ <b>{n}</b>さんがフレンドリクエストを承認しました!", "フレンド"], dm: ["💬 <b>{n}</b>さんからメッセージが届きました!", "返信"], play: ["⚔️ <b>{n}</b>さんが対戦に招待しました!", "参加"],
+    start: ["🎱 <b>Royal Billiard 8</b> へようこそ!\nフレンドリクエスト、メッセージ、対戦の招待をここでお知らせします。オフにする: /stop", "プレイ"], stop: ["🔕 通知をオフにしました。もう一度オンにするには /start を送ってください。", ""]},
+  zh: {frreq: ["👥 <b>{n}</b> 向你发送了好友请求!", "查看"], fracc: ["✅ <b>{n}</b> 通过了你的好友请求!", "好友"], dm: ["💬 <b>{n}</b> 给你发来了一条消息!", "回复"], play: ["⚔️ <b>{n}</b> 邀请你来一局!", "加入"],
+    start: ["🎱 欢迎来到 <b>Royal Billiard 8</b>!\n好友请求、消息和游戏邀请我会在这里通知你。关闭通知:/stop", "开始游戏"], stop: ["🔕 通知已关闭。发送 /start 可重新开启。", ""]},
+};
+const PUSH_ALIAS = {uk: "ru", be: "ru", kk: "ru", ky: "ru", tg: "ru", az: "tr"};   // Telegram language codes close to one of ours
+function pushLang(u, hint) {   // the language the player plays in (the page tells us), else their Telegram language, else English
+  for (const c of [u && u.lang, u && u.tg && u.tg.lang, hint]) { const l = String(c || "").slice(0, 2).toLowerCase(); if (PUSH_LANGS[l]) return l; if (PUSH_ALIAS[l]) return PUSH_ALIAS[l]; }
+  return "en";
+}
+const pushGap = new Map(), pushDay = new Map();   // "player|key" -> time of the last message; player -> {day, count}
+setInterval(() => { const cut = Date.now() - 864e5, d = today(); for (const [k, t] of pushGap) if (t < cut) pushGap.delete(k); for (const [k, v] of pushDay) if (v.d !== d) pushDay.delete(k); }, 3600e3);
+const hesc = s => String(s).replace(/[&<>]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
+const userByTg = id => Object.values(db.users).find(x => x.auth && x.auth.telegram === String(id));
+function tgPush(to, kind, vars, o = {}) {   // o: {start: what the button opens (default: the Friends screen), key + gap: one message per key per gap ms, force: skip the "away" and gap checks}
+  if (!TG_BOT_TOKEN || !to || !to.auth || !to.auth.telegram) return false;
+  if ((to.prefs && to.prefs.notifyTg === false) || (to.tg && to.tg.off)) return false;
+  const now = Date.now(), gk = to.id + "|" + (o.key || kind);
+  if (to.tg && to.tg.no && now - to.tg.no < PUSH_BLOCK_MS) return false;   // Telegram refused the bot lately (blocked, or never allowed)
+  if (!o.force) {
+    if (clients.has(to.id) || now - (to.lastSeen || 0) < PUSH_IDLE_MS) return false;   // in the game right now: the game shows its own pop-ups
+    if (o.gap && now - (pushGap.get(gk) || 0) < o.gap) return false;
+  }
+  const d = today(); let c = pushDay.get(to.id); if (!c || c.d !== d) pushDay.set(to.id, c = {d, n: 0});
+  if (c.n >= PUSH_DAY) return false;
+  c.n++; pushGap.set(gk, now);
+  const [tpl, btn] = PUSH_LANGS[pushLang(to)][kind];
+  const nm = hesc(String(vars.name || "").replace(/[@#$\/\\.:+<>&]/g, " ").replace(/\s+/g, " ").trim().slice(0, 24) || "?");   // nothing a player typed may turn into a link, a mention, a command or a phone number in the bot's message (and chat text itself is never sent)
+  const body = {chat_id: to.auth.telegram, text: tpl.replace("{n}", () => nm), parse_mode: "HTML", disable_web_page_preview: true};
+  if (btn && /^https:\/\/t\.me\//.test(TG_APP_LINK)) {
+    const sp = o.start === undefined ? "fr" : o.start;
+    body.reply_markup = {inline_keyboard: [[{text: btn, url: TG_APP_LINK + (sp ? (TG_APP_LINK.includes("?") ? "&" : "?") + "startapp=" + sp : "")}]]};
+  }
+  tgApi("sendMessage", body).catch(e => {
+    if (/blocked|can't initiate|chat not found|deactivated|forbidden/i.test(e.message)) { to.tg = {...(to.tg || {}), no: Date.now()}; markDirty(); }
+    else console.error("tg push:", e.message);
+  });
+  return true;
+}
+async function botCommand(cmd, m) {   // /start and /stop typed in the bot chat
+  const u = userByTg(m.from.id), L = PUSH_LANGS[pushLang(u, m.from.language_code)];
+  if (cmd === "/stop") {
+    if (u) { u.tg = {...(u.tg || {}), off: true}; markDirty(); }
+    return tgApi("sendMessage", {chat_id: m.chat.id, text: L.stop[0]});
+  }
+  if (u) { u.tg = {...(u.tg || {}), off: false, wp: true, no: 0}; markDirty(); }   // the player talked to the bot, so it may write back; they want the messages
+  const body = {chat_id: m.chat.id, text: L.start[0], parse_mode: "HTML"};
+  if (/^https:\/\/t\.me\//.test(TG_APP_LINK)) body.reply_markup = {inline_keyboard: [[{text: L.start[1], url: TG_APP_LINK}]]};
+  return tgApi("sendMessage", body);
+}
 
 // ---------------------------------------------------------------- routes
 const routes = {
@@ -581,18 +666,19 @@ const routes = {
     if (!provider) return [400, {error: "bad_provider"}];
     const v = await verifyProvider(provider, b.token);
     if (!v) return [401, {error: "bad_token"}];
+    const noteTg = a => { if (provider === "telegram" && a) { a.tg = {...(a.tg || {}), wp: !!v.wp || !!(a.tg && a.tg.wp), lang: v.lang || (a.tg && a.tg.lang) || "", ...(v.wp ? {no: 0} : {})}; markDirty(); } };   // allows_write_to_pm: the bot may message this player
     const cur = auth(req), found = Object.values(db.users).find(x => x.auth && x.auth[provider] === v.sub), sw = b.mode === "switch";   // "switch": this Google / Facebook is its OWN account, never linked to the signed-in one
     if (found && sw && cur && found.id === cur.id) {
       if (!b.detach) return {sameAcct: true};   // already linked to this account: the client asks before it is detached and a separate account is made
       delete cur.auth[provider]; markDirty();
-    } else if (found) return {existing: found.id !== (cur && cur.id), id: found.id, token: found.token, code: found.code, save: found.save || null, savedAt: found.saveAt || 0, name: found.name, provName: cleanName(v.name)};
+    } else if (found) { noteTg(found); return {existing: found.id !== (cur && cur.id), id: found.id, token: found.token, code: found.code, save: found.save || null, savedAt: found.saveAt || 0, name: found.name, provName: cleanName(v.name)}; }
     if (cur && !sw) { cur.auth = {...(cur.auth || {}), [provider]: v.sub}; if (v.name && /^(O'yinchi\d{4}|Player|Siz)$/.test(cur.name || "")) cur.name = cleanName(v.name);   // a game-given default name becomes the real one
-      markDirty(); return {existing: false, linked: true, id: cur.id, token: cur.token, code: cur.code, save: null, savedAt: 0, name: cur.name, provName: cleanName(v.name)}; }
+      noteTg(cur); markDirty(); return {existing: false, linked: true, id: cur.id, token: cur.token, code: cur.code, save: null, savedAt: 0, name: cur.name, provName: cleanName(v.name)}; }
     const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16), token = crypto.randomBytes(24).toString("hex"), code = newCode();
     const u = {id, token, code, name: cleanName(v.name || b.name), avatar: int(b.avatar, 999), frame: 0, level: 1, xp: 0, won: 0, wins: 0, games: 0,
       friends: [], referredBy: null, referrals: [], grants: [], inbox: [], gifted: {}, created: Date.now(), lastSeen: Date.now(),
       country: geoCountry(req) || cleanCountry(b.country), league: 0, week: curWeek(), weekWon: 0, auth: {[provider]: v.sub}};
-    db.users[id] = u; db.codes[code] = id; markDirty();
+    db.users[id] = u; db.codes[code] = id; noteTg(u); markDirty();
     return {existing: false, created: true, id, token, code, save: null, savedAt: 0, name: u.name, provName: u.name};
   },
   async "POST /api/register"(req) {
@@ -620,11 +706,12 @@ const routes = {
     if (b.tbl !== undefined) u.tbl = /^[a-z]_[a-z]{3}$/.test(String(b.tbl)) ? String(b.tbl) : "";   // equipped exclusive table (badge)
     // Showdown event points (weekly): the device reports this week's total, the server keeps the highest value
     if (b.sd && b.sd.week === curWeek()) { if (u.sdWeek !== curWeek()) { u.sdWeek = curWeek(); u.sdPts = 0; } u.sdPts = Math.max(u.sdPts || 0, int(b.sd.pts, 1e7)); lbCache.clear(); }
-    if (b.prefs && typeof b.prefs === "object") u.prefs = {allowFriend: b.prefs.allowFriend !== false, showOnline: b.prefs.showOnline !== false};
+    if (/^[a-z]{2}$/.test(String(b.lang || ""))) u.lang = String(b.lang);   // the language of the bot's messages
+    if (b.prefs && typeof b.prefs === "object") u.prefs = {allowFriend: b.prefs.allowFriend !== false, showOnline: b.prefs.showOnline !== false, notifyTg: b.prefs.notifyTg !== false};
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
-    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}, notify: notifyInfo(u)};
+    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}, notify: notifyInfo(u), tgOff: !!(u.tg && u.tg.off)};
   },
 
   async "POST /api/referral"(req, u) {
@@ -643,6 +730,13 @@ const routes = {
   },
 
   // a friend code only asks: the other player has to accept (see friendRequest)
+  // the player allowed the bot to message them (Telegram's pop-up, or the Settings switch turned on): messages are on again, and the bot says hello so they know it works
+  async "POST /api/tg/allow"(req, u) {
+    if (!u.auth || !u.auth.telegram) return [400, {error: "no_telegram"}];
+    u.tg = {...(u.tg || {}), wp: true, no: 0, off: false}; markDirty();
+    tgPush(u, "start", {}, {force: true, start: ""});
+    return {ok: true};
+  },
   async "POST /api/friends/add"(req, u) {
     const b = await jsonBody(req), fid = db.codes[String(b.code || "").toUpperCase().trim()];
     return friendRequest(u, fid && db.users[fid]);
@@ -713,6 +807,7 @@ const routes = {
     u.dmSeen = u.dmSeen || {}; u.dmSeen[f.id] = now;   // writing to a friend means the thread has been read up to here
     markDirty();
     wsSend(clients.get(f.id), {t: "dm", from: u.id, name: u.name, text});
+    tgPush(f, "dm", {name: u.name}, {start: "m_" + u.id, key: "dm:" + u.id, gap: 5 * 60e3});
     return {ok: true, msg: {me: true, t: text, at: now}};
   },
   // ---------------- cloud save: the whole game progress, so a player keeps it on a new phone or browser
@@ -801,6 +896,7 @@ const routes = {
     f.inbox = (f.inbox || []).filter(m => !(m.kind === "challenge" && m.fromId === u.id)).slice(-50);
     f.inbox.push({kind: "challenge", fromId: u.id, from: u.name, avatar: u.avatar, code, city, at: Date.now()});
     wsSend(clients.get(f.id), {t: "challenge", from: u.name, code, city});
+    if (isFriend(u, f)) tgPush(f, "play", {name: u.name}, {start: code, key: "play:" + u.id, gap: 10 * 60e3});
     markDirty();
     return {ok: true};
   },
@@ -985,6 +1081,16 @@ async function tgWebhook(req, res) {
         if (!await fulfill("tg_" + sp.telegram_payment_charge_id, uid, skuId, sp.total_amount)) return send(res, 500, {error: "save failed"});   // Telegram retries
         console.log(`stars: ${uid} bought ${skuId} for ${sp.total_amount} XTR`);
       } else console.error("stars: payment does not match", sp.invoice_payload, sp.total_amount);
+    }
+    const m = up.message;
+    if (m && typeof m.text === "string" && m.from && m.chat && m.chat.type === "private") {
+      const cmd = m.text.trim().split(/[\s@]/)[0].toLowerCase();
+      if (cmd === "/start" || cmd === "/stop") await botCommand(cmd, m);
+    }
+    const mc = up.my_chat_member;   // the player blocked or unblocked the bot
+    if (mc && mc.chat && mc.chat.type === "private" && mc.from && mc.new_chat_member) {
+      const u = userByTg(mc.from.id), st = mc.new_chat_member.status;
+      if (u) { u.tg = {...(u.tg || {})}; if (st === "kicked" || st === "left") u.tg.no = Date.now() + 365 * 864e5; else if (st === "member") { u.tg.no = 0; u.tg.wp = true; } markDirty(); }
     }
   } catch (e) { console.error("tg webhook:", e.message); }
   send(res, 200, {ok: true});
@@ -1366,7 +1472,7 @@ store.load().then(loaded => {
   rollWeek();
   if (TG_BOT_TOKEN) {   // tell Telegram where to send the payment updates (every start: it is idempotent)
     const base = (process.env.RENDER_EXTERNAL_URL || APP_URL).replace(/\/$/, "");
-    if (/^https:/.test(base)) tgApi("setWebhook", {url: base + "/api/tg/webhook", secret_token: TG_HOOK_SECRET, allowed_updates: ["pre_checkout_query", "message"], drop_pending_updates: false})
+    if (/^https:/.test(base)) tgApi("setWebhook", {url: base + "/api/tg/webhook", secret_token: TG_HOOK_SECRET, allowed_updates: ["pre_checkout_query", "message", "my_chat_member"], drop_pending_updates: false})
       .then(() => console.log("Telegram webhook set:", base + "/api/tg/webhook")).catch(e => console.error("Telegram setWebhook failed:", e.message));
   }
   server.listen(PORT, () => console.log(`Royal Billiard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${PADDLE_KEY && PADDLE_TOKEN ? "Paddle" + (PADDLE_SANDBOX ? " sandbox" : "") : STRIPE_KEY ? "Stripe" : "off"})`));
