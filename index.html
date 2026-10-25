@@ -972,6 +972,7 @@ background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),color-mix(in srg
 .fdmDel{background:none;border:0;color:#ff9a9a;font:inherit;font-size:12px;text-decoration:underline;cursor:pointer;padding:2px 4px;opacity:.8}
 .fdmQ button{flex:none;border:1px solid #3b4a74;background:#1a2340;color:#fff;border-radius:16px;padding:5px 12px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}.fdmQ button:active{background:#2a3a66}
 .fdmIn{display:flex;gap:8px;margin-top:8px}.fdmIn input{flex:1;min-width:0}
+.nochat .fdmIn,.nochat .fdmQ,.nochat .frow button[data-dm]{display:none!important}
 @media (max-width:700px){ .clubrow{grid-template-columns:48px 1fr 70px 90px} .clubrow .cscore{display:none} }
 /* season pass */
 .passtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
@@ -11202,8 +11203,8 @@ return {code, web, tg};
 function shareInvite() {   // true: a share window opened; false: the text was only copied
 const {code, web, tg} = inviteLinks(), text = `${T("Men bilan Royal Billiard 8 o'ynang! Kodim")}: ${code}`, url = tg || web;
 if (TG && TG.openTelegramLink) { try { TG.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text)); return true; } catch (e) {} }
-if (navigator.share) { navigator.share({title: "Royal Billiard 8", text, url}).catch(() => {}); return true; }
-try { navigator.clipboard.writeText(`${text} ${url}`); toast("📋", T("Nusxalandi!"), T("Ulashish")); } catch (e) {}
+if (navigator.share) { navigator.share(url ? {title: "Royal Billiard 8", text, url} : {title: "Royal Billiard 8", text}).catch(() => {}); return true; }
+try { navigator.clipboard.writeText(url ? `${text} ${url}` : text); toast("📋", T("Nusxalandi!"), T("Ulashish")); } catch (e) {}
 return false;
 }
 function friendInviteRun() {   // someone opened the Mini App from a friend's invite link (startapp=f_CODE): they become friends at once (a new player) or a friend request goes out

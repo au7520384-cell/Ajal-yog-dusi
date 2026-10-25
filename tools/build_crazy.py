@@ -92,6 +92,8 @@ sub("function y8LoadCloud() {", CRAZY_JS + "function y8LoadCloud() {")
 # keep the player's own name; no Y8 nickname
 sub('String(Y8.user.nickname || "O\'yinchi"', 'String((!CRAZY_BUILD && Y8.user.nickname) || "O\'yinchi"')
 sub('"☁️", T("Saqlangan o\'yin yuklandi"), "Y8")', '"☁️", T("Saqlangan o\'yin yuklandi"), CRAZY_BUILD ? "" : "Y8")')
+# invite: the portal allows no link to another site (the page on Render), so the friend-code share carries the code only
+sub('const web = (/^https?:/.test(location.protocol)', 'const web = CRAZY_BUILD ? "" : (/^https?:/.test(location.protocol)')
 # lobby invite through the CrazyGames invite link / button
 # chat stays (typed + phrases + voice) but every typed line goes through a swear filter, in and out; SDK disableChat hides all of it
 FILTER_JS = r'''
