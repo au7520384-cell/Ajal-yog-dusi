@@ -2,7 +2,7 @@
 /*
  * Royal Billiard 8 — backend
  *  - guest accounts (id + secret token), profile sync
- *  - unique player ID / invite code, referral bonuses, friends, daily gifts
+ *  - unique player ID / invite code, referral bonuses, friends (requests with accept / decline), direct messages between friends, daily gifts
  *  - global leaderboard
  *  - online 1v1 matchmaking over WebSocket (shots are relayed between the two players)
  *  - real-money purchases through Stripe Checkout (enabled when STRIPE_SECRET_KEY is set)
@@ -217,7 +217,7 @@ const CITY_PRIZE = {mad: 2000, bue: 50000, mex: 320000, sin: 1400000, ams: 60000
 
 // ---------------------------------------------------------------- storage
 const store = createStore({databaseUrl: process.env.DATABASE_URL, dataDir: DATA_DIR});
-let db = {users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}};
+let db = {users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}};
 let dirty = false, saving = null;
 const markDirty = () => { dirty = true; };
 function flush() {
@@ -247,11 +247,12 @@ function newCode() {
     if (!db.codes[c]) return c;
   }
 }
+const ONLINE_MS = 150e3;   // a player counts as online while the game page keeps talking to the server (the menu syncs every minute) or a socket is open
 function publicUser(u) {
   return {id: u.id, code: u.code, name: u.name, avatar: u.avatar, frame: u.frame || 0, level: u.level, won: u.won, wins: u.wins, games: u.games,
     country: u.country || "", league: u.league || 0, tbl: u.tbl || "", tblNo: u.tbl && u.editions ? u.editions[u.tbl] || 0 : 0, weekWon: u.week === curWeek() ? u.weekWon || 0 : 0,
     club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "", cb: u.club && db.clubs[u.club] ? [db.clubs[u.club].badge | 0, db.clubs[u.club].color | 0] : null,
-    online: clients.has(u.id) && !(u.prefs && u.prefs.showOnline === false), lastSeen: u.lastSeen};
+    online: (clients.has(u.id) || Date.now() - (u.lastSeen || 0) < ONLINE_MS) && !(u.prefs && u.prefs.showOnline === false), lastSeen: u.lastSeen};
 }
 const cleanCountry = c => /^[A-Za-z]{2}$/.test(String(c || "")) ? String(c).toUpperCase() : "";
 
@@ -425,6 +426,75 @@ function geoCountry(req) {   // set by some hosts / CDNs (Cloudflare, Vercel…)
   return cleanCountry(req.headers["cf-ipcountry"] || req.headers["x-vercel-ip-country"] || req.headers["x-country-code"]);
 }
 
+// ---------------------------------------------------------------- friend requests + direct messages between friends
+// A friendship needs the other player's yes: a request waits in the other player's frIn (and in the sender's frOut) until it is accepted
+// (both become friends, the sender is told once) or refused (nothing is said; the same player cannot ask again for a week).
+const FRIENDS_MAX = 500, FR_IN_MAX = 100, FR_OUT_MAX = 60, FR_PER_DAY = 40, FR_COOLDOWN = 7 * 864e5, DM_KEEP = 80, DM_LEN = 200, DM_TTL = 60 * 864e5;
+const dmKey = (a, b) => a < b ? a + "_" + b : b + "_" + a;
+const isFriend = (a, b) => a.friends.includes(b.id) && b.friends.includes(a.id);
+function dropReq(a, b) {   // forget any request between the two players (both ways)
+  for (const [x, y] of [[a, b], [b, a]]) { x.frIn = (x.frIn || []).filter(r => r.id !== y.id); x.frOut = (x.frOut || []).filter(id => id !== y.id); }
+}
+function makeFriends(a, b) {
+  if (!a.friends.includes(b.id)) a.friends.push(b.id);
+  if (!b.friends.includes(a.id)) b.friends.push(a.id);
+  dropReq(a, b); markDirty();
+}
+function tellAccepted(to, who) {   // the player who asked hears (once, on the next sync / poll) that the request was accepted
+  to.frAcc = (to.frAcc || []).filter(x => x.id !== who.id).concat({id: who.id, name: who.name, at: Date.now()}).slice(-20); markDirty();
+  wsSend(clients.get(to.id), {t: "frok", from: who.name, fromId: who.id});
+}
+function friendRequest(u, f) {   // u asks f to be friends
+  if (!f) return [404, {error: "code_not_found"}];
+  if (f.id === u.id) return [400, {error: "own_code"}];
+  if (isFriend(u, f)) return {ok: true, already: true, friend: publicUser(f)};
+  if (f.prefs && f.prefs.allowFriend === false) return [403, {error: "friends_closed"}];
+  if (u.friends.length >= FRIENDS_MAX) return [400, {error: "friends_full"}];
+  if ((u.frIn || []).some(r => r.id === f.id)) {   // they have already asked me: asking back is a yes
+    if (f.friends.length >= FRIENDS_MAX) return [400, {error: "friends_full"}];
+    makeFriends(u, f); tellAccepted(f, u);
+    return {ok: true, accepted: true, friend: publicUser(f)};
+  }
+  if ((f.frIn || []).some(r => r.id === u.id)) return {ok: true, pending: true, again: true, friend: publicUser(f)};
+  const rej = f.frRej && f.frRej[u.id];
+  if (rej && Date.now() - rej < FR_COOLDOWN) return {ok: true, pending: true, friend: publicUser(f)};   // they refused lately: nothing reaches them, nothing is said
+  const d = today(); if (!u.frDay || u.frDay.d !== d) u.frDay = {d, n: 0};
+  if (u.frDay.n >= FR_PER_DAY) return [429, {error: "too_many_requests"}];
+  u.frDay.n++;
+  f.frIn = (f.frIn || []).concat({id: u.id, at: Date.now()}).slice(-FR_IN_MAX);
+  u.frOut = (u.frOut || []).filter(id => id !== f.id).concat(f.id).slice(-FR_OUT_MAX);
+  markDirty();
+  wsSend(clients.get(f.id), {t: "frreq", from: u.name, fromId: u.id});
+  return {ok: true, pending: true, friend: publicUser(f)};
+}
+function dmUnread(u, f) {   // messages from f that u has not seen yet
+  const arr = db.dms[dmKey(u.id, f.id)]; if (!arr || !arr.length) return 0;
+  const seen = (u.dmSeen || {})[f.id] || 0; let n = 0;
+  for (let i = arr.length - 1; i >= 0 && arr[i].at > seen; i--) if (arr[i].f === f.id) n++;
+  return n;
+}
+function notifyInfo(u) {   // what the page polls for: requests waiting, accepted requests (consumed), unread messages, fresh play invitations
+  const acc = u.frAcc || []; if (acc.length) { u.frAcc = []; markDirty(); }
+  const dmBy = {}, dmFrom = []; let dm = 0;
+  for (const id of u.friends) {
+    const f = db.users[id]; if (!f) continue;
+    const n = dmUnread(u, f); if (!n) continue;
+    const arr = db.dms[dmKey(u.id, id)] || []; dmBy[id] = n; dm += n; dmFrom.push({id, name: f.name, n, at: arr.length ? arr[arr.length - 1].at : 0});
+  }
+  dmFrom.sort((a, b) => b.at - a.at);
+  const now = Date.now();
+  return {
+    frIn: (u.frIn || []).slice(-20).map(r => { const x = db.users[r.id]; return x ? {id: x.id, name: x.name, avatar: x.avatar, frame: x.frame || 0, level: x.level, country: x.country || "", at: r.at} : null; }).filter(Boolean),
+    frAcc: acc, dm, dmBy, dmFrom: dmFrom.slice(0, 10),
+    ch: (u.inbox || []).filter(m => m.kind === "challenge" && now - (m.at || 0) < 10 * 60e3).map(m => ({from: m.from, code: m.code, city: m.city, at: m.at})),
+  };
+}
+function pruneDms() {   // threads nobody has written in for two months go away
+  const now = Date.now();
+  for (const [k, arr] of Object.entries(db.dms || {})) if (!arr.length || now - arr[arr.length - 1].at > DM_TTL) { delete db.dms[k]; markDirty(); }
+}
+setInterval(pruneDms, 6 * 3600e3);
+
 // ---------------------------------------------------------------- routes
 const routes = {
   "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN}),
@@ -554,7 +624,7 @@ const routes = {
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
-    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}};
+    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}, notify: notifyInfo(u)};
   },
 
   async "POST /api/referral"(req, u) {
@@ -568,23 +638,82 @@ const routes = {
     u.referredBy = inviterId; inv.referrals.push(u.id);
     grant(u, {...REFERRAL.invitee, kind: "referral", from: inv.name});
     grant(inv, {...REFERRAL.inviter, kind: "invited", from: u.name});
-    if (!u.friends.includes(inv.id)) u.friends.push(inv.id);
-    if (!inv.friends.includes(u.id)) inv.friends.push(u.id);
-    markDirty();
+    makeFriends(u, inv);
     return {ok: true, reward: REFERRAL.invitee};
   },
 
+  // a friend code only asks: the other player has to accept (see friendRequest)
   async "POST /api/friends/add"(req, u) {
     const b = await jsonBody(req), fid = db.codes[String(b.code || "").toUpperCase().trim()];
-    if (!fid) return [404, {error: "code_not_found"}];
-    if (fid === u.id) return [400, {error: "own_code"}];
-    const f = db.users[fid];
-    if (f.prefs && f.prefs.allowFriend === false && !f.friends.includes(u.id)) return [403, {error: "friends_closed"}];
-    if (u.friends.length >= 500) return [400, {error: "too_many"}];
-    if (!u.friends.includes(fid)) u.friends.push(fid);
-    if (!f.friends.includes(u.id)) f.friends.push(u.id);
+    return friendRequest(u, fid && db.users[fid]);
+  },
+  async "POST /api/friends/request"(req, u) {
+    const b = await jsonBody(req), fid = b.id ? String(b.id) : db.codes[String(b.code || "").toUpperCase().trim()];
+    return friendRequest(u, fid && db.users[fid]);
+  },
+  // the link in a share message (t.me/<bot>/<app>?startapp=f_CODE): a new player gets the invite bonus (and the two are friends at once), anybody else sends a friend request
+  async "POST /api/friends/invite"(req, u) {
+    const b = await jsonBody(req), code = String(b.code || "").toUpperCase().trim(), fid = db.codes[code], f = fid && db.users[fid];
+    if (!f) return [404, {error: "code_not_found"}];
+    if (f.id === u.id) return [400, {error: "own_code"}];
+    if (isFriend(u, f)) return {ok: true, mode: "friends", friend: publicUser(f)};
+    if (!u.referredBy && Date.now() - u.created <= 7 * 864e5 && !(u.referrals || []).includes(f.id)) {
+      u.referredBy = f.id; f.referrals.push(u.id);
+      grant(u, {...REFERRAL.invitee, kind: "referral", from: f.name});
+      grant(f, {...REFERRAL.inviter, kind: "invited", from: u.name});
+      makeFriends(u, f);
+      return {ok: true, mode: "referral", reward: REFERRAL.invitee, friend: publicUser(f)};
+    }
+    const r = friendRequest(u, f);
+    return Array.isArray(r) ? r : {...r, mode: r.accepted ? "friends" : "request"};
+  },
+  async "POST /api/friends/respond"(req, u) {
+    const b = await jsonBody(req), id = String(b.id || ""), f = db.users[id];
+    if (!(u.frIn || []).some(r => r.id === id) || !f) { u.frIn = (u.frIn || []).filter(r => r.id !== id); markDirty(); return [404, {error: "no_request"}]; }
+    if (b.accept) {
+      if (u.friends.length >= FRIENDS_MAX || f.friends.length >= FRIENDS_MAX) return [400, {error: "friends_full"}];
+      makeFriends(u, f); tellAccepted(f, u);
+      return {ok: true, accepted: true, friend: publicUser(f)};
+    }
+    dropReq(u, f);
+    u.frRej = u.frRej || {}; u.frRej[id] = Date.now();
+    for (const [k, t] of Object.entries(u.frRej)) if (Date.now() - t > FR_COOLDOWN) delete u.frRej[k];
     markDirty();
-    return {ok: true, friend: publicUser(f)};
+    return {ok: true, rejected: true};
+  },
+  async "POST /api/friends/remove"(req, u) {
+    const f = db.users[String((await jsonBody(req)).id || "")];
+    if (!f) return [404, {error: "not_found"}];
+    u.friends = u.friends.filter(x => x !== f.id); f.friends = f.friends.filter(x => x !== u.id);
+    dropReq(u, f); delete db.dms[dmKey(u.id, f.id)]; markDirty();
+    return {ok: true};
+  },
+  "GET /api/notify"(req, u) { return notifyInfo(u); },
+  // ---------------- direct messages between friends (kept 80 per pair, 60 days; the same swear filter as the game chat)
+  "GET /api/dm"(req, u) {
+    const q = new URL(req.url, "http://x").searchParams, f = db.users[q.get("with") || ""];
+    if (!f || !isFriend(u, f)) return [403, {error: "not_friends"}];
+    const arr = db.dms[dmKey(u.id, f.id)] || [], last = arr.length ? arr[arr.length - 1].at : 0;
+    u.dmSeen = u.dmSeen || {};
+    if ((u.dmSeen[f.id] || 0) < last) { u.dmSeen[f.id] = last; markDirty(); }
+    return {friend: publicUser(f), msgs: arr.slice(-60).map(m => ({me: m.f === u.id, t: m.t, at: m.at}))};
+  },
+  async "POST /api/dm/send"(req, u) {
+    const b = await jsonBody(req), f = db.users[String(b.to || "")];
+    if (!f || !isFriend(u, f)) return [403, {error: "not_friends"}];
+    const text = cleanChat(String(b.text || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, DM_LEN));
+    if (!text) return [400, {error: "empty"}];
+    const now = Date.now();
+    if (now - (u.lastDm || 0) < 700) return [429, {error: "slow"}];
+    if (!u.dmWin || now - u.dmWin.t > 60e3) u.dmWin = {t: now, n: 0};
+    if (++u.dmWin.n > 25) return [429, {error: "slow"}];
+    u.lastDm = now;
+    const key = dmKey(u.id, f.id), arr = db.dms[key] = db.dms[key] || [];
+    arr.push({f: u.id, t: text, at: now}); if (arr.length > DM_KEEP) arr.splice(0, arr.length - DM_KEEP);
+    u.dmSeen = u.dmSeen || {}; u.dmSeen[f.id] = now;   // writing to a friend means the thread has been read up to here
+    markDirty();
+    wsSend(clients.get(f.id), {t: "dm", from: u.id, name: u.name, text});
+    return {ok: true, msg: {me: true, t: text, at: now}};
   },
   // ---------------- cloud save: the whole game progress, so a player keeps it on a new phone or browser
   async "POST /api/save"(req, u) {
@@ -617,14 +746,18 @@ const routes = {
   },
   "GET /api/friends/suggested"(req, u) {
     const now = Date.now();
-    const list = Object.values(db.users).filter(x => x.id !== u.id && !u.friends.includes(x.id) && !(x.prefs && x.prefs.allowFriend === false))
+    const list = Object.values(db.users).filter(x => x.id !== u.id && !u.friends.includes(x.id) && !(x.prefs && x.prefs.allowFriend === false) && !(x.frRej && x.frRej[u.id] && now - x.frRej[u.id] < FR_COOLDOWN))
       .sort((a, b) => (clients.has(b.id) - clients.has(a.id)) || (b.lastSeen || 0) - (a.lastSeen || 0) || ((b.country === u.country) - (a.country === u.country)))
-      .slice(0, 20).map(x => ({...publicUser(x), ago: x.lastSeen ? now - x.lastSeen : null}));
+      .slice(0, 20).map(x => ({...publicUser(x), ago: x.lastSeen ? now - x.lastSeen : null, sent: (u.frOut || []).includes(x.id), inc: (u.frIn || []).some(r => r.id === x.id)}));
     return {players: list};
   },
   "GET /api/friends"(req, u) {
     const d = today();
-    return {friends: u.friends.map(id => db.users[id]).filter(Boolean).map(f => ({...publicUser(f), canGift: (u.gifted || {})[f.id] !== d}))};
+    return {
+      friends: u.friends.map(id => db.users[id]).filter(Boolean).map(f => ({...publicUser(f), canGift: (u.gifted || {})[f.id] !== d, unread: dmUnread(u, f)})),
+      incoming: (u.frIn || []).map(r => { const x = db.users[r.id]; return x ? {...publicUser(x), at: r.at} : null; }).filter(Boolean),
+      outgoing: (u.frOut || []).map(id => db.users[id]).filter(Boolean).map(publicUser),
+    };
   },
   async "POST /api/gift"(req, u) {
     const b = await jsonBody(req), d = today(), ids = [].concat(b.to || []).slice(0, 100);
@@ -1228,8 +1361,8 @@ setInterval(() => {
 }, 30000);
 
 store.load().then(loaded => {
-  if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}}, loaded);
-  db.meta = db.meta || {}; db.clubs = db.clubs || {};
+  if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}}, loaded);
+  db.meta = db.meta || {}; db.clubs = db.clubs || {}; db.dms = db.dms || {};
   rollWeek();
   if (TG_BOT_TOKEN) {   // tell Telegram where to send the payment updates (every start: it is idempotent)
     const base = (process.env.RENDER_EXTERNAL_URL || APP_URL).replace(/\/$/, "");
