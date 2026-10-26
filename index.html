@@ -4001,11 +4001,11 @@ else setBanner(`${G.players[p].name.toUpperCase()}: ${T(nm)}`);
 const own = G.groups[p];
 const ownPotted = own ? obj.filter(n => groupOf(n) === own).length : obj.length;
 if (!foul && ownPotted && p === 1) G.oppHadPot = true;
-if (!foul && isHuman(p) && (G.type === "ai" || G.type === "tour")) {
+if (!foul && isHuman(p) && (G.type === "ai" || G.type === "tour") && !G.trial && !G.trialCue) {
 if (ownPotted >= 2) unlock("double");
 if (G.isBreak && obj.length) unlock("breakpot");
 }
-if (!foul && isHuman(p) && !G.players[p].remote && G.type !== "watch" && !G.demo && obj.length) {
+if (!foul && isHuman(p) && !G.players[p].remote && G.type !== "watch" && !G.demo && !G.trial && !G.trialCue && obj.length) {
 const st = profile.st = profile.st || {};
 for (const n of obj) { if (n === 8) continue; if (s.oo && s.oo.has(n) && n !== s.firstHit) st.combo = (st.combo | 0) + 1; if (s.rb && s.rb.has(n)) st.bank = (st.bank | 0) + 1; }
 if (G.isBreak) st.brk = (st.brk | 0) + 1;
@@ -4049,7 +4049,15 @@ if (G.players[1 - winner].isAI) bubble(1 - winner, pick(["Yaxshi o'yin! 🤝", "
 if (G.players[winner].isAI) bubble(winner, pick(["GG 😎", "Yaxshi o'yin! 🤝"]));
 setBanner(G.type === "pvp" || G.type === "watch" ? TT("{0} YUTDI!", G.players[winner].name.toUpperCase()) : humanWon ? T("G'ALABA!") : T("MAG'LUBIYAT"), humanWon ? "#ffe27a" : "#ff6b5e");
 if (G.type === "pvp") { profile.pvpGames = (profile.pvpGames | 0) + 1; save(); }
-if (G.type === "ai") {
+if (G.type === "ai" && (G.trial || G.trialCue)) {   // trying a table or a cue gives nothing: no coins, XP, wins, trophies, boxes, points or missions - only the offer to keep it
+G.pot = 0; G.rw = null;
+setTimeout(() => {
+const offer = (G.trial && trialOffer(G)) || (G.trialCue && cueTrialOffer(G));
+(offer ? resultModal : resultScreen)(humanWon, why, G.players[winner], 0, offer || [{label: T("Menyu"), cls: "gray", fn: () => toMenu()}]);
+if (offer && G.trialCue) { $("mText").textContent = T("Kiy yoqdimi? Hozir 30% chegirma bilan oling!"); $("mExtra").insertAdjacentHTML("beforeend", `<canvas class="tpcv cuepv" width="620" height="200"></canvas>`); previewCue(cueDef(G.trialCue), document.querySelector("#modal .cuepv")); }
+else if (offer) { $("mText").textContent = `${T("Sizga yoqdimi? Stolni hozir 30% chegirma bilan saqlab qoling!")}`; $("mExtra").insertAdjacentHTML("beforeend", `<canvas class="tpcv" width="620" height="340"></canvas>`); previewTable(tableById(G.trial), document.querySelector("#modal .tpcv")); }
+}, 1600);
+} else if (G.type === "ai") {
 profile.games++; if (G.net) profile.onlineGames = (profile.onlineGames | 0) + 1;
 if (humanWon) {
 const tb = tableBonus(profile.tableSkin) + setBonus(), xp = 40 + Math.round(Math.log10(Math.max(10, G.city.prize)) * 15);
