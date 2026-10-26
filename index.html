@@ -12346,7 +12346,7 @@ ov.querySelector("#slCp").onclick = () => { const t = items.map(([id]) => id + "
 let deferredInstall = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredInstall = e; });
 function addInstallCard() {
-const body = $("setBody"); if (!body || body.querySelector(".instcard")) return;
+const body = $("setBody"); if (!body || body.querySelector(".instcard") || ON_PORTAL) return;   // not on portals (CrazyGames, Y8): the page address there is theirs, and sharing it is not allowed
 const url = location.origin + location.pathname;
 const el = document.createElement("div"); el.className = "setrow instcard"; el.style.cssText = "flex-wrap:wrap";
 el.innerHTML = `<b>📲 ${T("Ilovani o'rnatish")}</b><div class="muted" style="width:100%;margin:4px 0 8px">${T("Ilovani telefon yoki kompyuteringizga o'rnating yoki do'stlaringizga ulashing.")}</div><code style="word-break:break-all;width:100%;font-size:13px">${esc(url)}</code><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn gray" id="instCopy">${T("Havolani nusxalash")}</button><button class="btn orange" id="instShare">${T("Ulashish")}</button>${deferredInstall ? `<button class="btn green" id="instGo">${T("O'rnatish")}</button>` : ""}</div>`;
