@@ -161,7 +161,7 @@ def _squeeze(raw):
 def _file(m):
     mt, raw = m.group(1), base64.b64decode(m.group(2))
     if mt == "webp" and os.environ.get("SQUEEZE"): raw = _squeeze(raw)   # off by default: it left blocky patches on table felt
-    if os.environ.get("SINGLE"):
+    if os.environ.get("SINGLE") or len(raw) < int(os.environ.get("INLINE_UNDER", "0")):   # INLINE_UNDER=6000: small pictures stay inside index.html (CrazyGames allows at most 1500 files)
         return "data:image/%s;base64,%s" % (mt, base64.b64encode(raw).decode())
     name = "img/" + hashlib.sha1(raw).hexdigest()[:14] + "." + _ext(mt)
     IMGS[name] = raw
