@@ -102,7 +102,7 @@ const cleanChat = s => String(s || "").replace(BAD_RE, m => "*".repeat(m.length)
 '''
 sub("function sendChat(msg) {", FILTER_JS + "function sendChat(msg) {\nif (CRAZY_BUILD) msg = cleanChat(msg);")
 sub('Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, String(m.msg || "").slice(0, 40)); });', 'Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, (CRAZY_BUILD ? cleanChat : String)(String(m.msg || "").slice(0, 40))); });')
-sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,.nochat #cheerBar{display:none!important}</style>')
+sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,.nochat #cheerBar{display:none!important}\n/* the portal has its own sign-in: no Google / Facebook / account switching / recovery-key rows in Settings */\n.setrow:has(#setLogin),.setrow:has(#setSwitch),.setrow:has(#setKey),.setrow:has(#setRecover){display:none!important}</style>')
 # default language: the device language (English stays English); the country-based guess is for the standalone game only
 sub('const cl = CC_LANG[profile.country || detectCountry()];', 'const cl = CRAZY_BUILD ? "" : CC_LANG[profile.country || detectCountry()];')
 # the portal brings its own full-screen button and shows no outside pages: no own full-screen buttons / auto full screen, no legal links in Settings
