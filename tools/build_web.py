@@ -21,14 +21,27 @@ def _file(m):
     IMGS[name] = raw
     return name
 src = re.sub(r"data:image/(webp|png|jpeg|jpg|gif);base64,([A-Za-z0-9+/=]+)", _file, src)
+# the table-rail / cue-art tables hold bare base64 WebP strings ("UklGR..."): files as well (the page turns a path or base64 into a source with W64())
+def _bare(m):
+    raw = base64.b64decode(m.group(1)); name = "img/" + hashlib.sha1(raw).hexdigest()[:14] + ".webp"
+    IMGS[name] = raw
+    return '"' + name + '"'
+src = re.sub(r'"(UklGR[A-Za-z0-9+/=]{300,})"', _bare, src)
+# sounds and the little video: files too (decoded / played only when needed; fetch() and <video> take a path as well as a data: address)
+AUD = {}
+def _media(m):
+    raw = base64.b64decode(m.group(2)); name = "a/" + hashlib.sha1(raw).hexdigest()[:14] + "." + ("wav" if m.group(1) == "audio/wav" else "mp4")
+    AUD[name] = raw
+    return name
+src = re.sub(r"data:(audio/wav|video/mp4);base64,([A-Za-z0-9+/=]+)", _media, src)
 if os.path.isdir(out): shutil.rmtree(out)
-os.makedirs(os.path.join(out, "img"))
+os.makedirs(os.path.join(out, "img")); os.makedirs(os.path.join(out, "a"))
 open(os.path.join(out, "index.html"), "w", encoding="utf-8").write(src)
-for n, raw in IMGS.items(): open(os.path.join(out, n), "wb").write(raw)
+for n, raw in list(IMGS.items()) + list(AUD.items()): open(os.path.join(out, n), "wb").write(raw)
 for f in ["sw.js", "manifest.webmanifest", "icon.svg", "favicon-48.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png"]:
     shutil.copy(os.path.join(root, f), os.path.join(out, f))
 # Cloudflare Pages / Netlify header rules: the hashed pictures never change
-open(os.path.join(out, "_headers"), "w").write("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n/index.html\n  Cache-Control: no-cache\n/\n  Cache-Control: no-cache\n")
+open(os.path.join(out, "_headers"), "w").write("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n/a/*\n  Cache-Control: public, max-age=31536000, immutable\n/index.html\n  Cache-Control: no-cache\n/\n  Cache-Control: no-cache\n")
 size = os.path.getsize(os.path.join(out, "index.html"))
 assert size < 25 * 1024 * 1024, "index.html is over the 25 MiB per-file limit of Cloudflare Pages"
 z = out.rstrip("/") + ".zip"
@@ -36,4 +49,4 @@ with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
     for dp, dn, fn in os.walk(out):
         for f in fn:
             p = os.path.join(dp, f); zf.write(p, os.path.relpath(p, out))
-print(len(IMGS), "pictures,", sum(map(len, IMGS.values())), "bytes; index.html", size, "bytes ->", out, "and", z, os.path.getsize(z))
+print(len(IMGS), "pictures,", sum(map(len, IMGS.values())), "bytes,", len(AUD), "sounds / videos,", sum(map(len, AUD.values())), "bytes; index.html", size, "bytes ->", out, "and", z, os.path.getsize(z))
