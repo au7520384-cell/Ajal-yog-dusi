@@ -77,7 +77,7 @@ function crazyInvite(code) {
 try {
 const g = window.CrazyGames.SDK.game;
 const link = g.inviteLink({roomId: code}); lobbyLink = link;
-try { navigator.clipboard.writeText(link); } catch (e) {}
+try { navigator.clipboard.writeText(link).catch(() => {}); } catch (e) {}
 g.showInviteButton({roomId: code});
 crazyRoom(code, true);
 } catch (e) {}
