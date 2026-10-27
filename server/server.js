@@ -32,7 +32,7 @@ const PADDLE_API = PADDLE_SANDBOX ? "https://sandbox-api.paddle.com" : "https://
 const PAYMENTS = !!(PADDLE_KEY && PADDLE_TOKEN) || !!STRIPE_KEY;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
 const AD_KEY = process.env.ADSGRAM_REWARD_KEY || "", adCred = new Map();   // Adsgram server-to-server reward ping: Telegram id -> {n, t} credits the player may claim once each (the page cannot fake a watched ad)
-const TG_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "", TG_APP_LINK = process.env.TELEGRAM_APP_LINK || "";   // Telegram Mini App: the bot token verifies the players, the public app link (https://t.me/<bot>/<app>) is used for lobby invites
+const TG_BOT_TOKEN = (process.env.TELEGRAM_BOT_TOKEN || "").trim(), TG_APP_LINK = process.env.TELEGRAM_APP_LINK || "";   // Telegram Mini App: the bot token verifies the players, the public app link (https://t.me/<bot>/<app>) is used for lobby invites
 const STARS_PER_USD = +process.env.STARS_PER_USD || 55;   // Telegram Stars: what 1 USD of the game's card price costs in Stars (the same number goes to the page, so both show and charge the same)
 const TG_HOOK_SECRET = crypto.createHash("sha256").update("b8hook:" + TG_BOT_TOKEN).digest("hex").slice(0, 40);   // Telegram sends it back in X-Telegram-Bot-Api-Secret-Token: only Telegram can post to /api/tg/webhook
 const starsFor = sku => Math.max(1, Math.round(sku.usd * STARS_PER_USD));
@@ -585,7 +585,7 @@ async function botCommand(cmd, m) {   // /start and /stop typed in the bot chat
 
 // ---------------------------------------------------------------- routes
 const routes = {
-  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN}),
+  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
   "GET /api/ice": () => {
     const iceServers = [{urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}];
@@ -1065,6 +1065,11 @@ const routes = {
   },
 };
 
+const TG_ME = {user: "", err: ""};   // what Telegram says about the bot token (shown in /api/health): an old / wrong token makes every invoice, message and sign-in check fail with "Unauthorized"
+async function tgCheck() {
+  if (!TG_BOT_TOKEN) return;
+  try { const me = await tgApi("getMe"); TG_ME.user = me && me.username || ""; TG_ME.err = ""; } catch (e) { TG_ME.user = ""; TG_ME.err = String(e.message).slice(0, 80); console.error("Telegram bot token check failed:", e.message); }
+}
 async function tgApi(method, body) {
   const r = await fetch(`${process.env.TG_API_BASE || "https://api.telegram.org"}/bot${TG_BOT_TOKEN}/${method}`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body || {})});
   const j = await r.json().catch(() => ({}));
@@ -1486,6 +1491,7 @@ store.load().then(loaded => {
   if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}}, loaded);
   db.meta = db.meta || {}; db.clubs = db.clubs || {}; db.dms = db.dms || {};
   rollWeek();
+  if (TG_BOT_TOKEN) { tgCheck(); setInterval(tgCheck, 10 * 60e3).unref(); }
   if (TG_BOT_TOKEN) {   // tell Telegram where to send the payment updates (every start: it is idempotent)
     const base = (process.env.RENDER_EXTERNAL_URL || APP_URL).replace(/\/$/, "");
     if (/^https:/.test(base)) tgApi("setWebhook", {url: base + "/api/tg/webhook", secret_token: TG_HOOK_SECRET, allowed_updates: ["pre_checkout_query", "message", "my_chat_member"], drop_pending_updates: false})
