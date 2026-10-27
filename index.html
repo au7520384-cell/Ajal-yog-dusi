@@ -688,6 +688,7 @@ background:linear-gradient(#1c2438,#0a0e18);border:3px solid;color:#fff;font-fam
 .hbt b{font-size:19px;text-shadow:0 2px 0 #000a;white-space:nowrap}
 .hbt .dot{top:-10px;right:-10px;min-width:30px;height:30px;font-size:16px}
 /* live labels drawn over the (text-free) painted home scene, so every language is covered */
+.payMode{margin-left:auto;display:flex;gap:6px}.pmb{border:2px solid #3b4a74;background:#161e33;color:#cfe0ff;border-radius:12px;padding:5px 12px;font:inherit;font-size:14px;cursor:pointer}.pmb.on{background:linear-gradient(#ffe27a,#c98a00);border-color:#7a4a00;color:#3a1a00;font-weight:800}
 .pchg{display:flex;flex-direction:column;gap:6px;text-align:left}.pchh{font-size:13px;color:#9fb0d8;text-transform:uppercase;letter-spacing:.6px}.pchd{border-top:1px solid #2c3b66;padding-top:10px;margin-top:6px}.pchr{display:flex;flex-wrap:wrap;gap:8px}.pchr .btn{flex:1 1 150px}
 .p2p{display:flex;flex-direction:column;gap:6px;text-align:left}.p2pw{background:#4a3410;border:2px solid #d9a52f;border-radius:10px;padding:8px 10px;font-size:15px;line-height:1.25;color:#ffe6a8}
 .p2pl{font-size:12px;color:#9fb0d8;text-transform:uppercase;letter-spacing:.6px;margin-top:4px}.p2pr{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#0b1220;border:1px solid #2c3b66;border-radius:10px;padding:6px 8px 6px 10px}
@@ -1824,7 +1825,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 </div>
 <!-- ============ SHOP ============ -->
 <div class="screen" id="shop">
-<div class="head"><button class="back" data-go="home">‹</button><h2>Do'kon</h2></div>
+<div class="head"><button class="back" data-go="home">‹</button><h2>Do'kon</h2><div class="payMode" id="payMode" style="display:none"></div></div>
 <div class="panel">
 <div class="tabs" id="cueTabs"><button class="tab on" data-tab="cues">🎱 Kiylar</button><button class="tab" data-tab="avatars">🙂 Avatarlar</button><button class="tab" data-tab="frames">🖼 Ramkalar</button><button class="tab" data-tab="tables">🎱 Stollar</button><button class="tab" data-tab="boxes">🎁 Qutilar</button><button class="tab" data-tab="stickers">🎭 Stikerlar</button></div>
 <div id="shopBody"></div>
@@ -8698,7 +8699,24 @@ openModal({icon: "✅", title: T("Raund yutildi!"), text: `${T("Keyingi bosqich"
 }
 // one price in three currencies: cash, gems and the real-money (card) price. Every item sold for cash shows all three (cash 20 per $, gems 200 per $, the packs' own rates).
 const usdOfCash = cash => Math.round(cash * 5 - 1) / 100;   // 40 cash = $1.99, 100 = $4.99, 400 = $19.99
-const usdTxt = u => TG_LAUNCH ? "⭐ " + Math.max(1, Math.round(u * STARS_K)) : "$" + (+u).toFixed(2);   // in Telegram the price is Stars
+// Telegram: Stars is the default way to pay; when card ways are set up on the server (Telegram Payments card, card transfer, ATM / receipt) the shop gets a switch "Stars | Card" and every price shows in the chosen way
+let PAY_CARD = false; try { PAY_CARD = localStorage.getItem("b8paycard") === "1"; } catch (e) {}
+function p2pModes() {   // which card-to-card ways this player is offered: Uzbekistan (or no country) sees the local cards, every other country the foreign (Visa) card, by receipt
+const cc = String(profile.country || "").toUpperCase(), m = TG_P2P && TG_P2P[!cc || cc === "UZ" ? "uz" : "world"];
+return m && (m.auto || m.atm) ? m : null;
+}
+function cardWays() { const pm = p2pModes(); return TG_LAUNCH && (TG_PAY || pm) ? {pm, world: !!(pm && TG_P2P && TG_P2P.world === pm)} : null; }
+const cardMode = () => PAY_CARD && !!cardWays();
+function cardPriceTxt(u) { const w = cardWays(); return w && w.world ? "$" + (+u).toFixed(2) : String(Math.round(u * ((TG_P2P && TG_P2P.k) || (TG_PAY && TG_PAY.k) || 12700) / 100) * 100).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " " + T("so'm"); }
+function renderPayMode() {   // the "Stars | Card" switch in the shop's header
+const el = $("payMode"); if (!el) return; const w = cardWays(); el.style.display = w ? "" : "none"; if (!w) return;
+el.innerHTML = `<button class="pmb${PAY_CARD ? "" : " on"}" data-pm="stars">⭐ Stars</button><button class="pmb${PAY_CARD ? " on" : ""}" data-pm="card">💳 ${T("Karta bilan")}</button>`;
+el.querySelectorAll("button").forEach(b => b.onclick = () => {
+PAY_CARD = b.dataset.pm === "card"; try { localStorage.setItem("b8paycard", PAY_CARD ? "1" : "0"); } catch (e) {}
+renderPayMode(); const t = $("cueTabs").style.display !== "none" && document.querySelector("#cueTabs .tab.on") || document.querySelector(".shopnav button.on"); try { buildShop(t ? t.dataset.tab : "cues"); } catch (e) {}
+});
+}
+const usdTxt = u => TG_LAUNCH ? (cardMode() ? cardPriceTxt(u) : "⭐ " + Math.max(1, Math.round(u * STARS_K))) : "$" + (+u).toFixed(2);
 const PAYI = TG_LAUNCH ? "" : "💳 ";
 // card (real-money) price: nothing below $1.99 (the payment provider keeps ~5% + $0.50), everything else moves up $0.50 so the order of prices stays. Same rule as the server (cardUsd in server.js).
 const cardUsd = u => u < 1.99 ? 1.99 : Math.round((u + 0.5) * 100) / 100;
@@ -8749,6 +8767,7 @@ const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.
 on("cash", () => o.buy("cash")); on("gems", () => o.buy("gems")); on("usd", b => Net.checkout(o.sku, b));
 }
 function buildShop(tab) {
+renderPayMode();
 if (tab === "bank") tab = "money";
 if (NO_CARD) { if (tab === "offers") tab = "free"; document.querySelectorAll('.shopnav [data-tab="offers"]').forEach(b => { b.style.display = "none"; }); }   // the card-priced offers page does not exist on Y8
 const sec = ["cues", "avatars", "frames", "tables", "boxes", "stickers"].includes(tab) ? "cues" : tab;
@@ -9651,7 +9670,7 @@ return null;
 }
 async function checkout(sku, btn) {
 if (NO_CARD) return adCheckout(sku);   // Y8 forbids third-party payments: there the "price" is a number of ads instead
-if (TG_LAUNCH) return TG_PAY || p2pModes() ? payChoice(sku, btn) : starsCheckout(sku, btn);
+if (TG_LAUNCH) return cardMode() ? cardChoice(sku, btn) : starsCheckout(sku, btn);
 try {
 if (btn) btn.disabled = true;
 await ensure();
@@ -9675,18 +9694,15 @@ else if (st === "failed") toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapt
 toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status === 409 ? T("Sotilib bo'ldi!") : e.status === 502 ? T("To'lov tizimi vaqtincha ishlamayapti") + (e.detail ? " (" + e.detail + ")" : "") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
 } finally { if (btn) btn.disabled = false; }
 }
-function p2pModes() {   // which card-to-card ways this player is offered: Uzbekistan (or no country) sees the local cards, every other country the foreign (Visa) card, by receipt
-const cc = String(profile.country || "").toUpperCase(), m = TG_P2P && TG_P2P[!cc || cc === "UZ" ? "uz" : "world"];
-return m && (m.auto || m.atm) ? m : null;
-}
-function payChoice(sku, btn) {   // more than Stars is set up: Stars in one group, the card ways in another
-const pm = p2pModes(), world = !!(pm && TG_P2P && TG_P2P.world === pm), cards = [];
-if (TG_PAY) cards.push(["pcT", "💳 Telegram Payments", "blue", () => tgPayCheckout(sku, btn)]);
-if (pm && pm.auto) cards.push(["pcA", "💸 " + T("Kartaga o'tkazma"), "orange", () => p2pCheckout(sku, "auto")]);
-if (pm && pm.atm) cards.push(["pcB", world ? "🧾 " + T("Chek orqali") : "🏧 " + T("Bankamat orqali"), "blue", () => p2pCheckout(sku, "atm")]);
-openModal({icon: "💳", title: T("To'lov usuli"), text: "", extra: `<div class="pchg"><div class="pchh">⭐ Telegram Stars</div><div class="pchr"><button class="btn green" id="pcS">⭐ ${T("Stars bilan")}</button></div>${cards.length ? `<div class="pchh pchd">💳 ${T("Karta bilan")}</div><div class="pchr">${cards.map(c => `<button class="btn ${c[2]}" id="${c[0]}">${esc(c[1])}</button>`).join("")}</div>` : ""}</div>`, buttons: [{label: T("Bekor qilish"), cls: "gray", fn: () => {}}]});
-const go = f => () => { $("modal").classList.remove("on"); f(); };
-$("pcS").onclick = go(() => starsCheckout(sku, btn)); for (const c of cards) $(c[0]).onclick = go(c[3]);
+function cardChoice(sku, btn) {   // card mode: the card ways only (Stars has its own mode, see the switch in the shop)
+const w = cardWays(), pm = w && w.pm, world = !!(w && w.world), ways = [];
+if (TG_PAY) ways.push(["pcT", "💳 Telegram Payments", "blue", () => tgPayCheckout(sku, btn)]);
+if (pm && pm.auto) ways.push(["pcA", "💸 " + T("Kartaga o'tkazma"), "orange", () => p2pCheckout(sku, "auto")]);
+if (pm && pm.atm) ways.push(["pcB", world ? "🧾 " + T("Chek orqali") : "🏧 " + T("Bankamat orqali"), "blue", () => p2pCheckout(sku, "atm")]);
+if (!ways.length) return starsCheckout(sku, btn);
+if (ways.length === 1) return ways[0][3]();
+openModal({icon: "💳", title: T("To'lov usuli"), text: "", extra: `<div class="pchg"><div class="pchh">💳 ${T("Karta bilan")}</div><div class="pchr">${ways.map(c => `<button class="btn ${c[2]}" id="${c[0]}">${esc(c[1])}</button>`).join("")}</div></div>`, buttons: [{label: T("Bekor qilish"), cls: "gray", fn: () => {}}]});
+for (const c of ways) $(c[0]).onclick = () => { $("modal").classList.remove("on"); c[3](); };
 }
 async function p2pCheckout(sku, mode) {   // card-to-card: the player sends the exact amount to the shop's card. "auto": the bank SMS on the owner's phone confirms it; "atm": paid at an ATM / in the bank app, the receipt photo goes to the admin
 try {
@@ -12323,7 +12339,7 @@ try { W.disableVerticalSwipes(); } catch (e) {}
 { const fb = $("gFs"); if (fb && W.requestFullscreen) fb.style.display = ""; const sync = () => { if (fb) fb.textContent = W.isFullscreen ? "🗗" : "⛶"; setTimeout(resize, 60); setTimeout(resize, 400); };
 for (const ev of ["fullscreenChanged", "safeAreaChanged", "contentSafeAreaChanged"]) try { W.onEvent(ev, sync); } catch (e) {} }
 store.set("b8guest", 1);
-Net.api("/api/auth/config").then(c => { TG_LINK = c.tgLink || ""; if (c.starsPerUsd > 0) STARS_K = c.starsPerUsd; if (c.tgPay) TG_PAY = {cur: c.payCur, k: c.payPerUsd}; if (c.p2p) TG_P2P = c.p2p; tgAdsInit(c); }).catch(() => {});
+Net.api("/api/auth/config").then(c => { TG_LINK = c.tgLink || ""; if (c.starsPerUsd > 0) STARS_K = c.starsPerUsd; if (c.tgPay) TG_PAY = {cur: c.payCur, k: c.payPerUsd}; if (c.p2p) { TG_P2P = c.p2p; TG_P2P.k = c.payPerUsd; } tgAdsInit(c); }).catch(() => {});
 if (W.initData && !(profile.prov && profile.prov.telegram)) Net.ensure().then(() => authLogin("telegram", W.initData)).catch(() => {});
 const spRaw = String((W.initDataUnsafe && W.initDataUnsafe.start_param) || ""), fm = /^f_([A-Za-z0-9]{4,10})$/.exec(spRaw);
 if (fm) {   // a friend's invite link (startapp=f_CODE): once the Telegram sign-in is done, a new player becomes their friend at once, anybody else sends a friend request
