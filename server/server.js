@@ -1004,7 +1004,7 @@ const routes = {
     try {
       const link = await tgApi("createInvoiceLink", {title: `Royal Billiard 8 — ${sku.name}`.slice(0, 32), description: `Royal Billiard 8 — ${sku.name}`.slice(0, 255), payload: `${u.id}:${b.sku}`, currency: "XTR", prices: [{label: sku.name.slice(0, 32), amount: stars}]});
       return {link, stars};
-    } catch (e) { console.error("stars invoice:", e.message); return [502, {error: "stars_error"}]; }
+    } catch (e) { console.error("stars invoice:", e.message); return [502, {error: "stars_error", detail: String(e.message).slice(0, 120)}]; }   // Telegram's own reason goes to the page (shown in the toast) so a failing invoice can be diagnosed from a phone
   },
 
   // Telegram Payments with a card provider: same shape as the Stars invoice, paid in TG_PAY_CUR through the provider token
@@ -1016,7 +1016,7 @@ const routes = {
     try {
       const link = await tgApi("createInvoiceLink", {title: `Royal Billiard 8 — ${sku.name}`.slice(0, 32), description: `Royal Billiard 8 — ${sku.name}`.slice(0, 255), payload: `${u.id}:${b.sku}`, provider_token: TG_PAY_TOKEN, currency: TG_PAY_CUR, prices: [{label: sku.name.slice(0, 32), amount: payFor(sku)}]});
       return {link, amount: payFor(sku) / 100, currency: TG_PAY_CUR};
-    } catch (e) { console.error("tgpay invoice:", e.message); return [502, {error: "pay_error"}]; }
+    } catch (e) { console.error("tgpay invoice:", e.message); return [502, {error: "pay_error", detail: String(e.message).slice(0, 120)}]; }
   },
 
   async "POST /api/checkout"(req, u) {
