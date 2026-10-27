@@ -36,6 +36,9 @@ const TG_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "", TG_APP_LINK = process
 const STARS_PER_USD = +process.env.STARS_PER_USD || 55;   // Telegram Stars: what 1 USD of the game's card price costs in Stars (the same number goes to the page, so both show and charge the same)
 const TG_HOOK_SECRET = crypto.createHash("sha256").update("b8hook:" + TG_BOT_TOKEN).digest("hex").slice(0, 40);   // Telegram sends it back in X-Telegram-Bot-Api-Secret-Token: only Telegram can post to /api/tg/webhook
 const starsFor = sku => Math.max(1, Math.round(sku.usd * STARS_PER_USD));
+// Telegram Payments with a card provider (GlobalPay, ...): OFF until TG_PAY_TOKEN (the provider token BotFather shows under Payments) is set in Render. Meant for the provider's TEST token first (no real money).
+const TG_PAY_TOKEN = process.env.TG_PAY_TOKEN || "", TG_PAY_CUR = (process.env.TG_PAY_CURRENCY || "UZS").toUpperCase(), PAY_PER_USD = +process.env.TG_PAY_PER_USD || 12700;
+const payFor = sku => Math.round(sku.usd * PAY_PER_USD / 100) * 100 * 100;   // Telegram wants the smallest unit (tiyin for UZS): the price rounded to whole 100 so'm, times 100
 const ROOT = path.join(__dirname, "..");
 const BUILD = (process.env.RENDER_GIT_COMMIT || "").slice(0, 7) || "local";   // the deployed commit (Render sets it); shown in /api/health and in the game's Settings so anyone can see which version is running
 const zlib = require("zlib"), GZ = new Map();   // path -> {etag, buf}: the compressed copy of a static file (made in the background the first time, served from memory afterwards)
@@ -643,7 +646,7 @@ const routes = {
     return {total: clients.size, playing: rooms.size * 2, byCity};
   },
 
-  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY, starsPerUsd: STARS_PER_USD}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
+  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY, starsPerUsd: STARS_PER_USD, tgPay: !!TG_PAY_TOKEN && !!TG_BOT_TOKEN, payCur: TG_PAY_CUR, payPerUsd: PAY_PER_USD}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
   // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
   // Adsgram calls this when a player finished a rewarded video: GET /api/adsgram/reward?key=<ADSGRAM_REWARD_KEY>&userid=<Telegram id>
   "GET /api/adsgram/reward"(req) {
@@ -1004,6 +1007,18 @@ const routes = {
     } catch (e) { console.error("stars invoice:", e.message); return [502, {error: "stars_error"}]; }
   },
 
+  // Telegram Payments with a card provider: same shape as the Stars invoice, paid in TG_PAY_CUR through the provider token
+  async "POST /api/tgpay/invoice"(req, u) {
+    if (!TG_BOT_TOKEN || !TG_PAY_TOKEN) return [503, {error: "payments_not_configured"}];
+    const b = await jsonBody(req), sku = SKUS[b.sku];
+    if (!sku || !sku.usd) return [400, {error: "bad_sku"}];
+    const bad = starsRefuse(u, b.sku); if (bad) return [bad === "sold_out" ? 409 : 400, {error: bad}];
+    try {
+      const link = await tgApi("createInvoiceLink", {title: `Royal Billiard 8 — ${sku.name}`.slice(0, 32), description: `Royal Billiard 8 — ${sku.name}`.slice(0, 255), payload: `${u.id}:${b.sku}`, provider_token: TG_PAY_TOKEN, currency: TG_PAY_CUR, prices: [{label: sku.name.slice(0, 32), amount: payFor(sku)}]});
+      return {link, amount: payFor(sku) / 100, currency: TG_PAY_CUR};
+    } catch (e) { console.error("tgpay invoice:", e.message); return [502, {error: "pay_error"}]; }
+  },
+
   async "POST /api/checkout"(req, u) {
     const b = await jsonBody(req), sku = SKUS[b.sku];
     if (!sku) return [400, {error: "bad_sku"}];
@@ -1071,16 +1086,17 @@ async function tgWebhook(req, res) {
     const q = up.pre_checkout_query;
     if (q) {   // Telegram waits ~10 s for this answer: say yes only to a payload / amount this server issued
       const [uid, skuId] = parse(q.invoice_payload), u = db.users[uid], sku = SKUS[skuId];
-      const why = !u || !sku ? "bad_sku" : q.currency !== "XTR" || q.total_amount !== starsFor(sku) ? "bad_amount" : starsRefuse(u, skuId);
+      const want = !sku ? -1 : q.currency === "XTR" ? starsFor(sku) : TG_PAY_TOKEN && q.currency === TG_PAY_CUR ? payFor(sku) : -1;
+      const why = !u || !sku ? "bad_sku" : q.total_amount !== want ? "bad_amount" : starsRefuse(u, skuId);
       await tgApi("answerPreCheckoutQuery", why ? {pre_checkout_query_id: q.id, ok: false, error_message: why === "sold_out" ? "Sold out" : "This item is no longer available"} : {pre_checkout_query_id: q.id, ok: true});
     }
     const sp = up.message && up.message.successful_payment;
-    if (sp && sp.currency === "XTR") {
+    if (sp && (sp.currency === "XTR" || TG_PAY_TOKEN && sp.currency === TG_PAY_CUR)) {
       const [uid, skuId] = parse(sp.invoice_payload), sku = SKUS[skuId];
-      if (db.users[uid] && sku && sp.total_amount === starsFor(sku)) {
+      if (db.users[uid] && sku && sp.total_amount === (sp.currency === "XTR" ? starsFor(sku) : payFor(sku))) {
         if (!await fulfill("tg_" + sp.telegram_payment_charge_id, uid, skuId, sp.total_amount)) return send(res, 500, {error: "save failed"});   // Telegram retries
-        console.log(`stars: ${uid} bought ${skuId} for ${sp.total_amount} XTR`);
-      } else console.error("stars: payment does not match", sp.invoice_payload, sp.total_amount);
+        console.log(`telegram payment: ${uid} bought ${skuId} for ${sp.total_amount} ${sp.currency}`);
+      } else console.error("telegram payment does not match", sp.invoice_payload, sp.total_amount, sp.currency);
     }
     const m = up.message;
     if (m && typeof m.text === "string" && m.from && m.chat && m.chat.type === "private") {

@@ -73,6 +73,10 @@ Prices live in `SKUS` in `server/server.js` (the server is the source of truth).
 
 > ⚠️ **App stores:** if you publish to Google Play or the App Store, their rules require their own in-app billing for digital goods (Google Play Billing / Apple IAP), not Stripe. Stripe is fine for the web version.
 
+### Telegram payments (inside the Mini App)
+- **Stars** (default, always on when `TELEGRAM_BOT_TOKEN` is set): `POST /api/stars/invoice`; `STARS_PER_USD` (default 55) sets the price.
+- **Card provider through Telegram Payments** (GlobalPay, ...): off until `TG_PAY_TOKEN` is set in Render. It is the provider token BotFather shows under *Payments* - **use the provider's TEST token first** (no real money). Then the buy button in Telegram asks "Stars or card" and `POST /api/tgpay/invoice` makes the invoice. `TG_PAY_CURRENCY` (default `UZS`) and `TG_PAY_PER_USD` (default 12700; the card price is rounded to whole 100 so'm) set the price. Telegram's own rules say digital goods in bots / Mini Apps are sold with Stars: check them before putting a live token in.
+
 ## Before a large launch
 - The server keeps all players in memory and saves changed rows to Postgres every 2 s — fine for tens of thousands of players on one instance.
 - Coins earned in matches are currently counted by the player's device. For a competitive economy, make the server the authority for match results and balances.
