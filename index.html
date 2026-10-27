@@ -9656,34 +9656,34 @@ toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status 
 } finally { if (btn) btn.disabled = false; }
 }
 async function starsCheckout(sku, btn) {   // Telegram Stars: the server makes the invoice link, Telegram shows its own pay sheet; the purchase arrives through the next syncs once the server has the payment
-if (!TG || !TG.openInvoice) { toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti"), T("Do'kon")); return; }
+if (!TG || !TG.openInvoice) { toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti") + (TG ? " (no openInvoice)" : " (no Telegram)"), T("Do'kon")); return; }
 try {
 if (btn) btn.disabled = true;
 await ensure();
 const r = await api("/api/stars/invoice", {sku});
 TG.openInvoice(r.link, st => {
 if (st === "paid") { toast("⭐", T("Xarid uchun rahmat!"), T("Do'kon")); let n = 0; const poll = () => { sync(); if (++n < 8) setTimeout(poll, 2000); }; setTimeout(poll, 800); }
-else if (st === "failed") toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti"), T("Do'kon"));
+else if (st === "failed") toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti") + " (failed)", T("Do'kon"));
 });
 } catch (e) {
-toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status === 409 ? T("Sotilib bo'ldi!") : e.status === 502 ? T("To'lov tizimi vaqtincha ishlamayapti") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
+toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status === 409 ? T("Sotilib bo'ldi!") : e.status === 502 ? T("To'lov tizimi vaqtincha ishlamayapti") + (e.detail ? " (" + e.detail + ")" : "") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
 } finally { if (btn) btn.disabled = false; }
 }
 function payChoice(sku, btn) {   // a card provider is connected to Telegram Payments: the player picks how to pay
 openModal({icon: "💳", title: T("To'lov usuli"), text: "", buttons: [{label: "⭐ " + T("Stars bilan"), cls: "green", fn: () => starsCheckout(sku, btn)}, {label: "💳 " + T("Karta bilan"), cls: "blue", fn: () => tgPayCheckout(sku, btn)}, {label: T("Bekor qilish"), cls: "gray", fn: () => {}}]});
 }
 async function tgPayCheckout(sku, btn) {   // Telegram Payments, card provider: the server makes the invoice link, Telegram shows its own pay sheet
-if (!TG || !TG.openInvoice) { toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti"), T("Do'kon")); return; }
+if (!TG || !TG.openInvoice) { toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti") + (TG ? " (no openInvoice)" : " (no Telegram)"), T("Do'kon")); return; }
 try {
 if (btn) btn.disabled = true;
 await ensure();
 const r = await api("/api/tgpay/invoice", {sku});
 TG.openInvoice(r.link, st => {
 if (st === "paid") { toast("💳", T("Xarid uchun rahmat!"), T("Do'kon")); let n = 0; const poll = () => { sync(); if (++n < 8) setTimeout(poll, 2000); }; setTimeout(poll, 800); }
-else if (st === "failed") toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti"), T("Do'kon"));
+else if (st === "failed") toast("⚠️", T("To'lov tizimi vaqtincha ishlamayapti") + " (failed)", T("Do'kon"));
 });
 } catch (e) {
-toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status === 409 ? T("Sotilib bo'ldi!") : e.status === 502 ? T("To'lov tizimi vaqtincha ishlamayapti") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
+toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status === 409 ? T("Sotilib bo'ldi!") : e.status === 502 ? T("To'lov tizimi vaqtincha ishlamayapti") + (e.detail ? " (" + e.detail + ")" : "") : T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon"));
 } finally { if (btn) btn.disabled = false; }
 }
 function connect() {
