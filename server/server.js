@@ -39,10 +39,13 @@ const starsFor = sku => Math.max(1, Math.round(sku.usd * STARS_PER_USD));
 // Telegram Payments with a card provider (GlobalPay, ...): OFF until TG_PAY_TOKEN (the provider token BotFather shows under Payments) is set in Render. Meant for the provider's TEST token first (no real money).
 const TG_PAY_TOKEN = process.env.TG_PAY_TOKEN || "", TG_PAY_CUR = (process.env.TG_PAY_CURRENCY || "UZS").toUpperCase(), PAY_PER_USD = +process.env.TG_PAY_PER_USD || 12700;
 const payFor = sku => Math.round(sku.usd * PAY_PER_USD / 100) * 100 * 100;   // Telegram wants the smallest unit (tiyin for UZS): the price rounded to whole 100 so'm, times 100
-// Card-to-card payments (no payment provider): the player sends the exact amount to P2P_CARD. "auto": the owner's phone forwards the bank SMS to POST /api/p2p/notify (needs P2P_NOTIFY_KEY) and the order is matched by its unique amount;
+// Card-to-card payments (no payment provider): the player sends the exact amount to P2P_CARD (one card or several). "auto": the owner's phone forwards the bank SMS to POST /api/p2p/notify (needs P2P_NOTIFY_KEY) and the order is matched by its unique amount;
 // "atm": the player pays at an ATM / in the bank app and sends the receipt photo, it goes to ADMIN_TG_ID (a Telegram user id) with Confirm / Reject buttons. Both are OFF until P2P_CARD (and the key / admin id) are set in Render.
-const P2P_CARD = (process.env.P2P_CARD || "").replace(/[^\d ]/g, "").trim(), P2P_HOLDER = (process.env.P2P_HOLDER || "").slice(0, 40), P2P_KEY = process.env.P2P_NOTIFY_KEY || "", ADMIN_TG = String(process.env.ADMIN_TG_ID || "").replace(/\D/g, "");
-const P2P_AUTO = !!(P2P_CARD && P2P_KEY), P2P_ATM = !!(P2P_CARD && TG_BOT_TOKEN && ADMIN_TG);
+const P2P_HOLDER = (process.env.P2P_HOLDER || "").slice(0, 40), P2P_KEY = process.env.P2P_NOTIFY_KEY || "", ADMIN_TG = String(process.env.ADMIN_TG_ID || "").replace(/\D/g, "");
+const cardKind = n => { const d = n.replace(/\s/g, ""); return /^8600/.test(d) ? "Uzcard" : /^9860/.test(d) ? "Humo" : /^4/.test(d) ? "Visa" : /^(5[1-5]|2[2-7])/.test(d) ? "Mastercard" : ""; };
+// P2P_CARD: one card, or several separated by comma / semicolon / new line ("9860 1606 4515 2044, 8600 1111 2222 3333"); "number|holder" gives a card its own holder name (else P2P_HOLDER)
+const P2P_CARDS = (process.env.P2P_CARD || "").split(/[,;\n]/).map(x => { const [n, h] = x.split("|"); const number = String(n || "").replace(/[^\d ]/g, "").replace(/\s+/g, " ").trim(); return {number, holder: String(h || P2P_HOLDER).trim().slice(0, 40), label: cardKind(number)}; }).filter(c => c.number.replace(/\s/g, "").length >= 13 && c.number.replace(/\s/g, "").length <= 19).slice(0, 4);
+const P2P_AUTO = !!(P2P_CARDS.length && P2P_KEY), P2P_ATM = !!(P2P_CARDS.length && TG_BOT_TOKEN && ADMIN_TG);
 const p2pBase = sku => Math.max(1000, Math.round(sku.usd * PAY_PER_USD / 100) * 100);   // so'm, rounded to whole 100
 const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
 const ROOT = path.join(__dirname, "..");
@@ -1154,7 +1157,7 @@ function starsRefuse(u, skuId) {   // the same checks as the card checkout; retu
   if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return "sold_out";
   return "";
 }
-function p2pView(o) { return {id: o.id, amount: o.amt, base: o.base, card: P2P_CARD, holder: P2P_HOLDER, mode: o.mode, exp: o.exp}; }
+function p2pView(o) { return {id: o.id, amount: o.amt, base: o.base, cards: P2P_CARDS, card: P2P_CARDS[0].number, holder: P2P_CARDS[0].holder, mode: o.mode, exp: o.exp}; }
 function p2pSweep(now = Date.now()) {
   for (const [id, o] of Object.entries(db.p2p || {})) {
     if (o.st === "pending" && o.exp < now) { o.st = "exp"; markDirty(); }
