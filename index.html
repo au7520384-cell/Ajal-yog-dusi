@@ -235,6 +235,7 @@ transform:translateX(-120%);animation:luxsh 2.8s linear infinite;will-change:tra
 .tblhead{grid-column:1/-1;font-family:var(--fh);font-size:22px;color:#ffe27a;margin:8px 0 -2px;text-shadow:0 2px 0 #0008}
 .tblhead small{font-family:Nunito,sans-serif;font-size:12px;color:#cfd8ee;font-weight:700;margin-left:6px}
 .tpay{display:grid;grid-template-columns:repeat(auto-fit,minmax(56px,1fr));gap:4px}.tpay .btn{padding:5px 3px;font-size:clamp(10.5px,1.7vw,13px);white-space:nowrap;min-width:0;overflow:hidden}
+.nsh{text-shadow:none!important}
 .tpay [data-card-sku]{grid-column:1/-1}
 .tpay .btn .cash{width:22px;height:16px}.tpay .btn .coin,.tpay .btn .gem{width:16px;height:16px}
 .tblcard.lux.el{border-color:#8fe8ff;background:linear-gradient(#1e3a5e,#10172e)}
@@ -12884,6 +12885,25 @@ loadXT();   // Uzbek start: the table is unpacked in the background so a later l
 toMenu();
 if (profile.lastClaim !== today()) setTimeout(() => toast("🎁", T("Kunlik sovg'a tayyor!"), T("Sovg'alar yo'li")), 1200);
 tgBoot();   // Telegram Mini App set-up does not wait for the first server sync (a sleeping server could make that fail)
+// The dark text-shadow of buttons and labels also draws a black shadow behind colour emoji (the ⭐ of every Stars price, 💳, 📺 ...): in everything the page builds later every emoji is wrapped in a span without a shadow. (Text that is already in the HTML is left alone: the language switch keeps pointers to it.)
+{
+  const EMO = "\\p{Extended_Pictographic}(?:\\uFE0F|\\p{Emoji_Modifier})?(?:\\u200D\\p{Extended_Pictographic}(?:\\uFE0F|\\p{Emoji_Modifier})?)*", NS1 = new RegExp(EMO, "u"), NSG = new RegExp(EMO, "gu"), SKIPT = /^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE|NOSCRIPT)$/;
+  const wrap = n => {
+    const txt = n.nodeValue, frag = document.createDocumentFragment(); let last = 0;
+    txt.replace(NSG, (m, i) => { if (i > last) frag.appendChild(document.createTextNode(txt.slice(last, i))); const sp = document.createElement("span"); sp.className = "nsh"; sp.textContent = m; frag.appendChild(sp); last = i + m.length; return m; });
+    if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+    n.parentNode.replaceChild(frag, n);
+  };
+  const ok = n => { const p = n.parentNode; return p && p.nodeType === 1 && !SKIPT.test(p.tagName) && !p.closest(".nsh, .emo") && NS1.test(n.nodeValue); };   // (.emo: the colour-emoji fallback of old Windows has its own wrapper)
+  const scan = root => {
+    if (root.nodeType === 3) { if (ok(root)) wrap(root); return; }
+    if (root.nodeType !== 1 || !NS1.test(root.textContent || "")) return;
+    const list = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let n = w.nextNode(); n; n = w.nextNode()) if (ok(n)) list.push(n);
+    for (const n of list) wrap(n);
+  };
+  try { new MutationObserver(ms => { for (const m of ms) m.addedNodes.forEach(scan); }).observe(document.body, {childList: true, subtree: true}); } catch (e) {}
+}
 (async () => {
 const qs = new URLSearchParams(location.search);
 await cloudPull();
