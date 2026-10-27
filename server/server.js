@@ -1078,7 +1078,7 @@ const routes = {
   async "POST /api/p2p/notify"(req) {   // the owner's phone forwards the bank SMS here:  POST /api/p2p/notify?key=...  {"text": "<the SMS>"}  (or the key in the x-notify-key header)
     if (!P2P_KEY || !P2P_CARDS.length) return [503, {error: "not_configured"}];
     if (limited(req, "p2pn", 120)) return [429, {error: "slow_down"}];
-    const raw = (await readBody(req, 64 * 1024)).toString("utf8"); let b = {}; try { b = JSON.parse(raw || "{}"); } catch (e) { b = {text: raw}; }
+    const raw = (await readBody(req, 64 * 1024)).toString("utf8"); let b = {}; try { b = JSON.parse(raw || "{}"); } catch (e) { b = {text: raw}; } if (!b || typeof b !== "object") b = {text: raw};   // a plain-text body (the SMS itself, even if it is only digits) works too
     const key = req.headers["x-notify-key"] || new URL(req.url, "http://x").searchParams.get("key") || b.key || "";
     if (!safeEq(key, P2P_KEY)) return [403, {error: "forbidden"}];
     const strs = []; (function walk(v, d) { if (typeof v === "string") strs.push(v); else if (v && typeof v === "object" && d < 5) for (const k of Object.keys(v)) if (k !== "key") walk(v[k], d + 1); })(b, 0);   // the SMS text wherever the forwarder app puts it: {"text"}, {"message"}, {"payload": {"message"}}, {"data": {"content"}} ...
