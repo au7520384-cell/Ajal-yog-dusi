@@ -10497,7 +10497,7 @@ const w = Math.max(...parts.map(p => _fc.measureText(p).width + (parseFloat(cs.l
 if (w > max) el.style.fontSize = Math.max(minSz, Math.floor(sz * max / w * 10) / 10) + "px";
 }
 function fitLabels() {
-document.querySelectorAll("#home .hl").forEach(el => { const max = el.clientWidth - 12; for (const c of el.children) fitNode(c, max, 9); });
+document.querySelectorAll("#home .hl").forEach(el => { const max = el.clientWidth - 30; for (const c of el.children) fitNode(c, max, 9); });   // the card art is narrower than its button: a long line (German "Mit einem Freund") must not touch the card's edges
 document.querySelectorAll("#home .hlim, #home .hrank, #home .hbt b, .nb-cues .cb-t").forEach(el => { const box = el.matches(".hbt b") ? el.parentElement : el.clientWidth > 20 ? el : el.parentElement; fitNode(el, box.clientWidth - 10, 10, !!el.closest(".hbt-rw")); });
 document.querySelectorAll(".bslot.empty b").forEach(el => fitNode(el, el.parentElement.clientWidth - 14, 9, true));
 }
