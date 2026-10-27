@@ -43,9 +43,13 @@ const payFor = sku => Math.round(sku.usd * PAY_PER_USD / 100) * 100 * 100;   // 
 // "atm": the player pays at an ATM / in the bank app and sends the receipt photo, it goes to ADMIN_TG_ID (a Telegram user id) with Confirm / Reject buttons. Both are OFF until P2P_CARD (and the key / admin id) are set in Render.
 const P2P_HOLDER = (process.env.P2P_HOLDER || "").slice(0, 40), P2P_KEY = process.env.P2P_NOTIFY_KEY || "", ADMIN_TG = String(process.env.ADMIN_TG_ID || "").replace(/\D/g, "");
 const cardKind = n => { const d = n.replace(/\s/g, ""); return /^8600/.test(d) ? "Uzcard" : /^9860/.test(d) ? "Humo" : /^4/.test(d) ? "Visa" : /^(5[1-5]|2[2-7])/.test(d) ? "Mastercard" : ""; };
-// P2P_CARD: one card, or several separated by comma / semicolon / new line ("9860 1606 4515 2044, 8600 1111 2222 3333"); "number|holder" gives a card its own holder name (else P2P_HOLDER)
-const P2P_CARDS = (process.env.P2P_CARD || "").split(/[,;\n]/).map(x => { const [n, h] = x.split("|"); const number = String(n || "").replace(/[^\d ]/g, "").replace(/\s+/g, " ").trim(); return {number, holder: String(h || P2P_HOLDER).trim().slice(0, 40), label: cardKind(number)}; }).filter(c => c.number.replace(/\s/g, "").length >= 13 && c.number.replace(/\s/g, "").length <= 19).slice(0, 4);
-const P2P_AUTO = !!(P2P_CARDS.length && P2P_KEY), P2P_ATM = !!(P2P_CARDS.length && TG_BOT_TOKEN && ADMIN_TG);
+// P2P_CARD: one card, or several separated by comma / semicolon / new line ("9860 1606 4515 2044, 4111 1111 1111 1111"); "number|holder" gives a card its own holder name (else P2P_HOLDER); "number|holder|uz", "|world" or "|all" says who sees it:
+// by default Uzbekistan players (and players with no country) see Humo / Uzcard, players of every other country see Visa / Mastercard. A "world" card works with the receipt (ATM) flow only: money from abroad never arrives as one exact so'm amount.
+const P2P_CARDS = (process.env.P2P_CARD || "").split(/[,;\n]/).map(x => { const [n, h, au] = x.split("|"); const number = String(n || "").replace(/[^\d ]/g, "").replace(/\s+/g, " ").trim(), label = cardKind(number), a = String(au || "").trim().toLowerCase(); return {number, holder: String(h || P2P_HOLDER).trim().slice(0, 40), label, aud: /^(uz|world|all)$/.test(a) ? a : label === "Visa" || label === "Mastercard" ? "world" : "uz"}; }).filter(c => c.number.replace(/\s/g, "").length >= 13 && c.number.replace(/\s/g, "").length <= 19).slice(0, 4);
+const P2P_ADMIN = !!(TG_BOT_TOKEN && ADMIN_TG);
+const p2pUz = u => { const c = String(u && u.country || "").toUpperCase(); return !c || c === "UZ"; };   // Uzbekistan, or a country we do not know
+const p2pCards = (uz, mode) => P2P_CARDS.filter(c => c.aud === "all" || c.aud === (uz ? "uz" : "world")).filter(c => mode === "atm" || c.aud !== "world");
+const p2pModes = uz => ({auto: !!(P2P_KEY && p2pCards(uz, "auto").length), atm: !!(P2P_ADMIN && p2pCards(uz, "atm").length)});
 const p2pBase = sku => Math.max(1000, Math.round(sku.usd * PAY_PER_USD / 100) * 100);   // so'm, rounded to whole 100
 const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
 const ROOT = path.join(__dirname, "..");
@@ -656,7 +660,7 @@ const routes = {
     return {total: clients.size, playing: rooms.size * 2, byCity};
   },
 
-  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY, starsPerUsd: STARS_PER_USD, tgPay: !!TG_PAY_TOKEN && !!TG_BOT_TOKEN, payCur: TG_PAY_CUR, payPerUsd: PAY_PER_USD, p2p: P2P_AUTO || P2P_ATM ? {auto: P2P_AUTO, atm: P2P_ATM} : null}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
+  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY, starsPerUsd: STARS_PER_USD, tgPay: !!TG_PAY_TOKEN && !!TG_BOT_TOKEN, payCur: TG_PAY_CUR, payPerUsd: PAY_PER_USD, p2p: (m => m[0].auto || m[0].atm || m[1].auto || m[1].atm ? {uz: m[0], world: m[1]} : null)([p2pModes(true), p2pModes(false)])}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
   // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
   // Adsgram calls this when a player finished a rewarded video: GET /api/adsgram/reward?key=<ADSGRAM_REWARD_KEY>&userid=<Telegram id>
   "GET /api/adsgram/reward"(req) {
@@ -1031,8 +1035,8 @@ const routes = {
 
   // ---- card-to-card payments (see P2P_* above)
   async "POST /api/p2p/order"(req, u) {
-    const b = await jsonBody(req), sku = SKUS[b.sku], mode = b.mode === "atm" ? "atm" : "auto";
-    if (!(mode === "auto" ? P2P_AUTO : P2P_ATM)) return [503, {error: "not_configured"}];
+    const b = await jsonBody(req), sku = SKUS[b.sku], mode = b.mode === "atm" ? "atm" : "auto", uz = p2pUz(u);
+    if (!p2pModes(uz)[mode]) return [503, {error: "not_configured"}];
     if (!sku || !sku.usd) return [400, {error: "bad_sku"}];
     const bad = starsRefuse(u, b.sku); if (bad) return [bad === "sold_out" ? 409 : 400, {error: bad}];
     if (limited(req, "p2p", 20)) return [429, {error: "slow_down"}];
@@ -1046,7 +1050,7 @@ const routes = {
       for (let i = 0; i < 80 && !found; i++) { const a = base + 1 + crypto.randomInt(0, span); if (a % 10 && !used.has(a)) { amt = a; found = true; } }
       if (!found) return [503, {error: "busy"}];
     }
-    const o = {id: crypto.randomBytes(4).toString("hex"), u: u.id, sku: b.sku, amt, base, mode, at: now, exp: now + (mode === "auto" ? 30 * 60e3 : 3 * 864e5), st: "pending", rc: 0};
+    const o = {id: crypto.randomBytes(4).toString("hex"), u: u.id, sku: b.sku, amt, base, mode, f: uz ? 0 : 1, at: now, exp: now + (mode === "auto" ? 30 * 60e3 : 3 * 864e5), st: "pending", rc: 0};
     db.p2p[o.id] = o; markDirty();
     return p2pView(o);
   },
@@ -1056,7 +1060,7 @@ const routes = {
     p2pSweep(); return {st: o.st};
   },
   async "POST /api/p2p/receipt"(req, u) {   // the ATM receipt photo goes to the admin's Telegram chat with Confirm / Reject buttons
-    if (!P2P_ATM) return [503, {error: "not_configured"}];
+    if (!P2P_ADMIN || !P2P_CARDS.length) return [503, {error: "not_configured"}];
     if (limited(req, "p2prc", 10)) return [429, {error: "slow_down"}];
     let b; try { b = JSON.parse((await readBody(req, 4 * 1024 * 1024)).toString("utf8") || "{}"); } catch (e) { return [400, {error: "bad_body"}]; }
     const o = db.p2p[String(b.id || "")];
@@ -1067,12 +1071,12 @@ const routes = {
     if (!m) return [400, {error: "bad_image"}];
     const buf = Buffer.from(m[2], "base64"); if (buf.length < 800 || buf.length > 3e6) return [400, {error: "bad_image"}];
     try {
-      await tgPhoto(ADMIN_TG, buf, m[1], `🧾 Chek #${o.id}\n👤 ${String(u.name || "").slice(0, 30)} (${u.id.slice(0, 6)})\n🛒 ${SKUS[o.sku].name}\n💵 ${o.amt} so'm`, {inline_keyboard: [[{text: "✅ Tasdiqlash", callback_data: "p2p:ok:" + o.id}, {text: "❌ Rad etish", callback_data: "p2p:no:" + o.id}]]});
+      await tgPhoto(ADMIN_TG, buf, m[1], `🧾 Chek #${o.id}\n👤 ${String(u.name || "").slice(0, 30)} (${u.id.slice(0, 6)})\n🛒 ${SKUS[o.sku].name}\n💵 ${o.f ? "$" + SKUS[o.sku].usd + " (" + o.amt + " so'm)" : o.amt + " so'm"}${o.f ? "\n🌍 " + String(u.country || "?") : ""}`, {inline_keyboard: [[{text: "✅ Tasdiqlash", callback_data: "p2p:ok:" + o.id}, {text: "❌ Rad etish", callback_data: "p2p:no:" + o.id}]]});
     } catch (e) { console.error("p2p receipt:", e.message); return [502, {error: "receipt_error", detail: String(e.message).slice(0, 120)}]; }
     o.rc++; markDirty(); return {ok: true};
   },
   async "POST /api/p2p/notify"(req) {   // the owner's phone forwards the bank SMS here:  POST /api/p2p/notify?key=...  {"text": "<the SMS>"}  (or the key in the x-notify-key header)
-    if (!P2P_AUTO) return [503, {error: "not_configured"}];
+    if (!P2P_KEY || !P2P_CARDS.length) return [503, {error: "not_configured"}];
     if (limited(req, "p2pn", 120)) return [429, {error: "slow_down"}];
     const raw = (await readBody(req, 64 * 1024)).toString("utf8"); let b = {}; try { b = JSON.parse(raw || "{}"); } catch (e) { b = {text: raw}; }
     const key = req.headers["x-notify-key"] || new URL(req.url, "http://x").searchParams.get("key") || b.key || "";
@@ -1157,7 +1161,10 @@ function starsRefuse(u, skuId) {   // the same checks as the card checkout; retu
   if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return "sold_out";
   return "";
 }
-function p2pView(o) { return {id: o.id, amount: o.amt, base: o.base, cards: P2P_CARDS, card: P2P_CARDS[0].number, holder: P2P_CARDS[0].holder, mode: o.mode, exp: o.exp}; }
+function p2pView(o) {
+  const cards = p2pCards(!o.f, o.mode);
+  return {id: o.id, amount: o.amt, base: o.base, foreign: !!o.f, usd: o.f ? SKUS[o.sku].usd : undefined, cards, card: (cards[0] || {}).number, holder: (cards[0] || {}).holder, mode: o.mode, exp: o.exp};
+}
 function p2pSweep(now = Date.now()) {
   for (const [id, o] of Object.entries(db.p2p || {})) {
     if (o.st === "pending" && o.exp < now) { o.st = "exp"; markDirty(); }
