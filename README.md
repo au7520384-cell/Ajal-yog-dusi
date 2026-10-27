@@ -77,6 +77,14 @@ Prices live in `SKUS` in `server/server.js` (the server is the source of truth).
 - **Stars** (default, always on when `TELEGRAM_BOT_TOKEN` is set): `POST /api/stars/invoice`; `STARS_PER_USD` (default 55) sets the price.
 - **Card provider through Telegram Payments** (GlobalPay, ...): off until `TG_PAY_TOKEN` is set in Render. It is the provider token BotFather shows under *Payments* - **use the provider's TEST token first** (no real money). Then the buy button in Telegram asks "Stars or card" and `POST /api/tgpay/invoice` makes the invoice. `TG_PAY_CURRENCY` (default `UZS`) and `TG_PAY_PER_USD` (default 12700; the card price is rounded to whole 100 so'm) set the price. Telegram's own rules say digital goods in bots / Mini Apps are sold with Stars: check them before putting a live token in.
 
+### Card-to-card payments (a transfer to the shop's own card, no payment provider)
+In Telegram the buy button also offers "Card transfer" and / or "Via ATM" when these are set in Render (both OFF otherwise):
+- `P2P_CARD` - the card number players pay to; `P2P_HOLDER` - the name shown under it (optional). `TG_PAY_PER_USD` (default 12700) - so'm per 1 USD of the card price.
+- **Card transfer (automatic)** - needs `P2P_NOTIFY_KEY` (a long random secret). The player gets a unique, not round amount (price + 1..99 so'm) and must send exactly that. The shop phone forwards every bank SMS to `POST https://<server>/api/p2p/notify?key=<P2P_NOTIFY_KEY>` (JSON `{"text": "<the SMS>"}` or the SMS as a plain body; any "SMS forwarder" app can do it). An order is paid when its exact amount appears in an SMS. The order lasts 30 minutes.
+- **Via ATM (receipt)** - needs `ADMIN_TG_ID` (your Telegram user id: send `/id` to the bot) and that you pressed Start in the bot. The player sends a photo of the receipt, the bot sends it to you with Confirm / Reject buttons. The order lasts 3 days.
+- By hand: list the open orders with `curl $SERVER/api/p2p/pending -H "x-admin-key: $ADMIN_KEY"`, then `curl -X POST $SERVER/api/p2p/confirm -H "x-admin-key: $ADMIN_KEY" -d '{"id":"<order id>","ok":true}'`.
+- Limits: 3 open orders per player; every payment is counted once (a repeated SMS or button press pays nothing more). Refunds are manual. Check the bank's rules about receiving shop payments on a card, and Telegram's rules for digital goods, before using it.
+
 ## Before a large launch
 - The server keeps all players in memory and saves changed rows to Postgres every 2 s — fine for tens of thousands of players on one instance.
 - Coins earned in matches are currently counted by the player's device. For a competitive economy, make the server the authority for match results and balances.
