@@ -1081,7 +1081,8 @@ const routes = {
     const raw = (await readBody(req, 64 * 1024)).toString("utf8"); let b = {}; try { b = JSON.parse(raw || "{}"); } catch (e) { b = {text: raw}; }
     const key = req.headers["x-notify-key"] || new URL(req.url, "http://x").searchParams.get("key") || b.key || "";
     if (!safeEq(key, P2P_KEY)) return [403, {error: "forbidden"}];
-    const nums = new Set(p2pAmounts([b.text, b.message, b.body, b.sms, b.content].filter(x => typeof x === "string").join(" ")));
+    const strs = []; (function walk(v, d) { if (typeof v === "string") strs.push(v); else if (v && typeof v === "object" && d < 5) for (const k of Object.keys(v)) if (k !== "key") walk(v[k], d + 1); })(b, 0);   // the SMS text wherever the forwarder app puts it: {"text"}, {"message"}, {"payload": {"message"}}, {"data": {"content"}} ...
+    const nums = new Set(p2pAmounts(strs.join(" ")));
     if (b.amount != null && isFinite(+b.amount)) nums.add(Math.round(+b.amount));
     p2pSweep(); const paid = [];
     for (const o of Object.values(db.p2p)) if (o.st === "pending" && o.mode === "auto" && nums.has(o.amt)) { if (await p2pDecide(o.id, true, "sms") === "paid") paid.push(o.id); }
