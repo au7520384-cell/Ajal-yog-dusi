@@ -1537,3 +1537,6 @@ Ha, yoqish‖Yes, turn on|Да, включить|Evet, aç|Sí, activar|Sim, ati
 Hozir emas‖Not now|Не сейчас|Şimdi değil|Ahora no|Agora não|ليس الآن|Nanti saja|अभी नहीं|Pas maintenant|Jetzt nicht|나중에|今はしない|暂不
 Bildirishnomalar yoqildi‖Notifications are on|Уведомления включены|Bildirimler açıldı|Notificaciones activadas|Notificações ativadas|تم تشغيل الإشعارات|Notifikasi diaktifkan|सूचनाएँ चालू हैं|Notifications activées|Benachrichtigungen eingeschaltet|알림이 켜졌어요|通知をオンにしました|通知已开启
 Ruxsat berilmadi‖Permission was not given|Разрешение не получено|İzin verilmedi|No se dio permiso|Permissão não concedida|لم يتم منح الإذن|Izin tidak diberikan|अनुमति नहीं दी गई|Autorisation refusée|Berechtigung nicht erteilt|권한이 허용되지 않았어요|許可されませんでした|未授予权限
+To'lov usuli‖Payment method|Способ оплаты|Ödeme yöntemi|Método de pago|Forma de pagamento|طريقة الدفع|Metode pembayaran|भुगतान का तरीका|Mode de paiement|Zahlungsart|결제 수단|支払い方法|支付方式
+Stars bilan‖With Stars|Звёздами Stars|Stars ile|Con Stars|Com Stars|بنجوم Stars|Dengan Stars|Stars से|Avec Stars|Mit Stars|Stars로|Starsで|用 Stars
+Karta bilan‖By card|Картой|Kartla|Con tarjeta|Com cartão|بالبطاقة|Dengan kartu|कार्ड से|Par carte|Mit Karte|카드로|カードで|银行卡
