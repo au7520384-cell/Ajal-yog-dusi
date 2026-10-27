@@ -39,6 +39,12 @@ const starsFor = sku => Math.max(1, Math.round(sku.usd * STARS_PER_USD));
 // Telegram Payments with a card provider (GlobalPay, ...): OFF until TG_PAY_TOKEN (the provider token BotFather shows under Payments) is set in Render. Meant for the provider's TEST token first (no real money).
 const TG_PAY_TOKEN = process.env.TG_PAY_TOKEN || "", TG_PAY_CUR = (process.env.TG_PAY_CURRENCY || "UZS").toUpperCase(), PAY_PER_USD = +process.env.TG_PAY_PER_USD || 12700;
 const payFor = sku => Math.round(sku.usd * PAY_PER_USD / 100) * 100 * 100;   // Telegram wants the smallest unit (tiyin for UZS): the price rounded to whole 100 so'm, times 100
+// Card-to-card payments (no payment provider): the player sends the exact amount to P2P_CARD. "auto": the owner's phone forwards the bank SMS to POST /api/p2p/notify (needs P2P_NOTIFY_KEY) and the order is matched by its unique amount;
+// "atm": the player pays at an ATM / in the bank app and sends the receipt photo, it goes to ADMIN_TG_ID (a Telegram user id) with Confirm / Reject buttons. Both are OFF until P2P_CARD (and the key / admin id) are set in Render.
+const P2P_CARD = (process.env.P2P_CARD || "").replace(/[^\d ]/g, "").trim(), P2P_HOLDER = (process.env.P2P_HOLDER || "").slice(0, 40), P2P_KEY = process.env.P2P_NOTIFY_KEY || "", ADMIN_TG = String(process.env.ADMIN_TG_ID || "").replace(/\D/g, "");
+const P2P_AUTO = !!(P2P_CARD && P2P_KEY), P2P_ATM = !!(P2P_CARD && TG_BOT_TOKEN && ADMIN_TG);
+const p2pBase = sku => Math.max(1000, Math.round(sku.usd * PAY_PER_USD / 100) * 100);   // so'm, rounded to whole 100
+const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
 const ROOT = path.join(__dirname, "..");
 const BUILD = (process.env.RENDER_GIT_COMMIT || "").slice(0, 7) || "local";   // the deployed commit (Render sets it); shown in /api/health and in the game's Settings so anyone can see which version is running
 const zlib = require("zlib"), GZ = new Map();   // path -> {etag, buf}: the compressed copy of a static file (made in the background the first time, served from memory afterwards)
@@ -221,7 +227,7 @@ const CITY_PRIZE = {mad: 2000, bue: 50000, mex: 320000, sin: 1400000, ams: 60000
 
 // ---------------------------------------------------------------- storage
 const store = createStore({databaseUrl: process.env.DATABASE_URL, dataDir: DATA_DIR});
-let db = {users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}};
+let db = {users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}};
 let dirty = false, saving = null;
 const markDirty = () => { dirty = true; };
 function flush() {
@@ -571,7 +577,8 @@ function tgPush(to, kind, vars, o = {}) {   // o: {start: what the button opens 
   });
   return true;
 }
-async function botCommand(cmd, m) {   // /start and /stop typed in the bot chat
+async function botCommand(cmd, m) {   // /start, /stop and /id typed in the bot chat
+  if (cmd === "/id") return tgApi("sendMessage", {chat_id: m.chat.id, text: "Telegram ID: " + m.from.id});   // the number for ADMIN_TG_ID
   const u = userByTg(m.from.id), L = PUSH_LANGS[pushLang(u, m.from.language_code)];
   if (cmd === "/stop") {
     if (u) { u.tg = {...(u.tg || {}), off: true}; markDirty(); }
@@ -646,7 +653,7 @@ const routes = {
     return {total: clients.size, playing: rooms.size * 2, byCity};
   },
 
-  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY, starsPerUsd: STARS_PER_USD, tgPay: !!TG_PAY_TOKEN && !!TG_BOT_TOKEN, payCur: TG_PAY_CUR, payPerUsd: PAY_PER_USD}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
+  "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY, starsPerUsd: STARS_PER_USD, tgPay: !!TG_PAY_TOKEN && !!TG_BOT_TOKEN, payCur: TG_PAY_CUR, payPerUsd: PAY_PER_USD, p2p: P2P_AUTO || P2P_ATM ? {auto: P2P_AUTO, atm: P2P_ATM} : null}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
   // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
   // Adsgram calls this when a player finished a rewarded video: GET /api/adsgram/reward?key=<ADSGRAM_REWARD_KEY>&userid=<Telegram id>
   "GET /api/adsgram/reward"(req) {
@@ -1019,6 +1026,70 @@ const routes = {
     } catch (e) { console.error("tgpay invoice:", e.message); return [502, {error: "pay_error", detail: String(e.message).slice(0, 120)}]; }
   },
 
+  // ---- card-to-card payments (see P2P_* above)
+  async "POST /api/p2p/order"(req, u) {
+    const b = await jsonBody(req), sku = SKUS[b.sku], mode = b.mode === "atm" ? "atm" : "auto";
+    if (!(mode === "auto" ? P2P_AUTO : P2P_ATM)) return [503, {error: "not_configured"}];
+    if (!sku || !sku.usd) return [400, {error: "bad_sku"}];
+    const bad = starsRefuse(u, b.sku); if (bad) return [bad === "sold_out" ? 409 : 400, {error: bad}];
+    if (limited(req, "p2p", 20)) return [429, {error: "slow_down"}];
+    const now = Date.now(); p2pSweep(now);
+    const mine = Object.values(db.p2p).filter(o => o.u === u.id && o.st === "pending");
+    const same = mine.find(o => o.sku === b.sku && o.mode === mode); if (same) return p2pView(same);   // the same item again: the same amount, not a second order
+    if (mine.length >= 3) return [429, {error: "too_many_open"}];
+    const base = p2pBase(sku); let amt = base;
+    if (mode === "auto") {   // a unique, not round amount: it is how the incoming transfer is recognised
+      const used = new Set(Object.values(db.p2p).filter(o => o.st === "pending" && o.mode === "auto").map(o => o.amt)), span = used.size < 40 ? 99 : 999; let found = false;
+      for (let i = 0; i < 80 && !found; i++) { const a = base + 1 + crypto.randomInt(0, span); if (a % 10 && !used.has(a)) { amt = a; found = true; } }
+      if (!found) return [503, {error: "busy"}];
+    }
+    const o = {id: crypto.randomBytes(4).toString("hex"), u: u.id, sku: b.sku, amt, base, mode, at: now, exp: now + (mode === "auto" ? 30 * 60e3 : 3 * 864e5), st: "pending", rc: 0};
+    db.p2p[o.id] = o; markDirty();
+    return p2pView(o);
+  },
+  async "POST /api/p2p/status"(req, u) {
+    const b = await jsonBody(req), o = db.p2p[String(b.id || "")];
+    if (!o || o.u !== u.id) return [404, {error: "not_found"}];
+    p2pSweep(); return {st: o.st};
+  },
+  async "POST /api/p2p/receipt"(req, u) {   // the ATM receipt photo goes to the admin's Telegram chat with Confirm / Reject buttons
+    if (!P2P_ATM) return [503, {error: "not_configured"}];
+    if (limited(req, "p2prc", 10)) return [429, {error: "slow_down"}];
+    let b; try { b = JSON.parse((await readBody(req, 4 * 1024 * 1024)).toString("utf8") || "{}"); } catch (e) { return [400, {error: "bad_body"}]; }
+    const o = db.p2p[String(b.id || "")];
+    if (!o || o.u !== u.id || o.mode !== "atm") return [404, {error: "not_found"}];
+    if (o.st !== "pending") return [409, {error: o.st}];
+    if (o.rc >= 3) return [429, {error: "too_many_receipts"}];
+    const m = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/.exec(String(b.image || ""));
+    if (!m) return [400, {error: "bad_image"}];
+    const buf = Buffer.from(m[2], "base64"); if (buf.length < 800 || buf.length > 3e6) return [400, {error: "bad_image"}];
+    try {
+      await tgPhoto(ADMIN_TG, buf, m[1], `🧾 Chek #${o.id}\n👤 ${String(u.name || "").slice(0, 30)} (${u.id.slice(0, 6)})\n🛒 ${SKUS[o.sku].name}\n💵 ${o.amt} so'm`, {inline_keyboard: [[{text: "✅ Tasdiqlash", callback_data: "p2p:ok:" + o.id}, {text: "❌ Rad etish", callback_data: "p2p:no:" + o.id}]]});
+    } catch (e) { console.error("p2p receipt:", e.message); return [502, {error: "receipt_error", detail: String(e.message).slice(0, 120)}]; }
+    o.rc++; markDirty(); return {ok: true};
+  },
+  async "POST /api/p2p/notify"(req) {   // the owner's phone forwards the bank SMS here:  POST /api/p2p/notify?key=...  {"text": "<the SMS>"}  (or the key in the x-notify-key header)
+    if (!P2P_AUTO) return [503, {error: "not_configured"}];
+    if (limited(req, "p2pn", 120)) return [429, {error: "slow_down"}];
+    const raw = (await readBody(req, 64 * 1024)).toString("utf8"); let b = {}; try { b = JSON.parse(raw || "{}"); } catch (e) { b = {text: raw}; }
+    const key = req.headers["x-notify-key"] || new URL(req.url, "http://x").searchParams.get("key") || b.key || "";
+    if (!safeEq(key, P2P_KEY)) return [403, {error: "forbidden"}];
+    const nums = new Set(p2pAmounts([b.text, b.message, b.body, b.sms, b.content].filter(x => typeof x === "string").join(" ")));
+    if (b.amount != null && isFinite(+b.amount)) nums.add(Math.round(+b.amount));
+    p2pSweep(); const paid = [];
+    for (const o of Object.values(db.p2p)) if (o.st === "pending" && o.mode === "auto" && nums.has(o.amt)) { if (await p2pDecide(o.id, true, "sms") === "paid") paid.push(o.id); }
+    return {ok: true, matched: paid.length};
+  },
+  "GET /api/p2p/pending"(req) {   // open orders for the admin (to confirm one by hand):  curl $SERVER/api/p2p/pending -H "x-admin-key: $ADMIN_KEY"
+    if (!ADMIN_KEY || !safeEq(req.headers["x-admin-key"] || "", ADMIN_KEY)) return [403, {error: "forbidden"}];
+    p2pSweep();
+    return {orders: Object.values(db.p2p).filter(o => o.st === "pending").sort((a, b) => b.at - a.at).map(o => ({id: o.id, mode: o.mode, amount: o.amt, sku: o.sku, player: (db.users[o.u] || {}).name || "", minutesAgo: Math.round((Date.now() - o.at) / 60000), receipts: o.rc}))};
+  },
+  async "POST /api/p2p/confirm"(req) {   // the same as the Confirm / Reject buttons, by hand:  curl -X POST $SERVER/api/p2p/confirm -H "x-admin-key: $ADMIN_KEY" -d '{"id":"abcd1234","ok":true}'
+    if (!ADMIN_KEY || !safeEq(req.headers["x-admin-key"] || "", ADMIN_KEY)) return [403, {error: "forbidden"}];
+    const b = await jsonBody(req); return {st: await p2pDecide(String(b.id || ""), b.ok !== false, "admin")};
+  },
+
   async "POST /api/checkout"(req, u) {
     const b = await jsonBody(req), sku = SKUS[b.sku];
     if (!sku) return [400, {error: "bad_sku"}];
@@ -1083,6 +1154,37 @@ function starsRefuse(u, skuId) {   // the same checks as the card checkout; retu
   if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return "sold_out";
   return "";
 }
+function p2pView(o) { return {id: o.id, amount: o.amt, base: o.base, card: P2P_CARD, holder: P2P_HOLDER, mode: o.mode, exp: o.exp}; }
+function p2pSweep(now = Date.now()) {
+  for (const [id, o] of Object.entries(db.p2p || {})) {
+    if (o.st === "pending" && o.exp < now) { o.st = "exp"; markDirty(); }
+    else if (o.st !== "pending" && now - o.at > 14 * 864e5) { delete db.p2p[id]; markDirty(); }
+  }
+}
+function p2pAmounts(text) {   // every amount in an SMS: "+12 803.00 UZS", "12,803 so'm", "12803" ...
+  const out = [];
+  for (const t of String(text || "").match(/\d[\d \u00a0,.]*\d|\d/g) || []) {
+    const m = /^(\d+(?:[.,]\d{3})*)(?:[.,](\d{1,2}))?$/.exec(t.replace(/[ \u00a0]/g, "")); if (m) out.push(+m[1].replace(/[.,]/g, ""));
+  }
+  return out;
+}
+async function p2pDecide(id, yes, by) {   // "paid" | "no" | "exp" | "none" | "error": the state after the decision
+  const o = db.p2p[id]; if (!o) return "none";
+  if (o.st !== "pending") return o.st;
+  o.by = by;
+  if (!yes) { o.st = "no"; markDirty(); return "no"; }
+  o.st = "paid"; o.paid = Date.now(); markDirty();
+  if (!await fulfill("p2p_" + o.id, o.u, o.sku, o.amt)) { o.st = "pending"; return "error"; }
+  console.log(`p2p: ${o.u} bought ${o.sku} for ${o.amt} so'm (${o.mode}, ${by})`);
+  return "paid";
+}
+async function tgPhoto(chatId, buf, mime, caption, markup) {   // sendPhoto with a file (multipart)
+  const fd = new FormData(); fd.append("chat_id", String(chatId)); fd.append("caption", caption); fd.append("reply_markup", JSON.stringify(markup));
+  fd.append("photo", new Blob([buf], {type: "image/" + mime}), "receipt." + (mime === "jpeg" ? "jpg" : mime));
+  const r = await fetch(`${process.env.TG_API_BASE || "https://api.telegram.org"}/bot${TG_BOT_TOKEN}/sendPhoto`, {method: "POST", body: fd});
+  const j = await r.json().catch(() => ({})); if (!j.ok) throw new Error(`sendPhoto: ${j.description || r.status}`);
+  return j.result;
+}
 async function tgWebhook(req, res) {
   if (!TG_BOT_TOKEN || String(req.headers["x-telegram-bot-api-secret-token"] || "") !== TG_HOOK_SECRET) return send(res, 403, {error: "forbidden"});
   let up; try { up = JSON.parse((await readBody(req, 256 * 1024)).toString("utf8") || "{}"); } catch (e) { return send(res, 400, {error: "bad_json"}); }
@@ -1103,10 +1205,21 @@ async function tgWebhook(req, res) {
         console.log(`telegram payment: ${uid} bought ${skuId} for ${sp.total_amount} ${sp.currency}`);
       } else console.error("telegram payment does not match", sp.invoice_payload, sp.total_amount, sp.currency);
     }
+    const cq = up.callback_query;   // the admin's Confirm / Reject under a receipt photo
+    if (cq && typeof cq.data === "string" && /^p2p:(ok|no):[0-9a-f]+$/.test(cq.data)) {
+      const [, act, oid] = cq.data.split(":");
+      if (!ADMIN_TG || String(cq.from && cq.from.id) !== ADMIN_TG) await tgApi("answerCallbackQuery", {callback_query_id: cq.id, text: "No access"});
+      else {
+        const r = await p2pDecide(oid, act === "ok", "admin");
+        const txt = act === "ok" ? (r === "paid" ? "✅ Tasdiqlandi" : r === "no" ? "Allaqachon rad etilgan" : r === "exp" ? "Muddati tugagan" : r === "none" ? "Topilmadi" : "Xato, qayta bosing") : (r === "no" ? "❌ Rad etildi" : r === "paid" ? "Allaqachon tasdiqlangan" : r === "none" ? "Topilmadi" : "Muddati tugagan");
+        await tgApi("answerCallbackQuery", {callback_query_id: cq.id, text: txt});
+        if (r !== "error" && cq.message) await tgApi("editMessageReplyMarkup", {chat_id: cq.message.chat.id, message_id: cq.message.message_id, reply_markup: {inline_keyboard: [[{text: txt, callback_data: "p2p:done"}]]}}).catch(() => {});
+      }
+    }
     const m = up.message;
     if (m && typeof m.text === "string" && m.from && m.chat && m.chat.type === "private") {
       const cmd = m.text.trim().split(/[\s@]/)[0].toLowerCase();
-      if (cmd === "/start" || cmd === "/stop") await botCommand(cmd, m);
+      if (cmd === "/start" || cmd === "/stop" || cmd === "/id") await botCommand(cmd, m);
     }
     const mc = up.my_chat_member;   // the player blocked or unblocked the bot
     if (mc && mc.chat && mc.chat.type === "private" && mc.from && mc.new_chat_member) {
@@ -1193,7 +1306,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /api/adsgram/reward"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /api/adsgram/reward", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
@@ -1488,13 +1601,14 @@ setInterval(() => {
 }, 30000);
 
 store.load().then(loaded => {
-  if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}}, loaded);
-  db.meta = db.meta || {}; db.clubs = db.clubs || {}; db.dms = db.dms || {};
+  if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}}, loaded);
+  db.meta = db.meta || {}; db.clubs = db.clubs || {}; db.dms = db.dms || {}; db.p2p = db.p2p || {};
+  setInterval(() => p2pSweep(), 5 * 60e3).unref();
   rollWeek();
   if (TG_BOT_TOKEN) { tgCheck(); setInterval(tgCheck, 10 * 60e3).unref(); }
   if (TG_BOT_TOKEN) {   // tell Telegram where to send the payment updates (every start: it is idempotent)
     const base = (process.env.RENDER_EXTERNAL_URL || APP_URL).replace(/\/$/, "");
-    if (/^https:/.test(base)) tgApi("setWebhook", {url: base + "/api/tg/webhook", secret_token: TG_HOOK_SECRET, allowed_updates: ["pre_checkout_query", "message", "my_chat_member"], drop_pending_updates: false})
+    if (/^https:/.test(base)) tgApi("setWebhook", {url: base + "/api/tg/webhook", secret_token: TG_HOOK_SECRET, allowed_updates: ["pre_checkout_query", "message", "my_chat_member", "callback_query"], drop_pending_updates: false})
       .then(() => console.log("Telegram webhook set:", base + "/api/tg/webhook")).catch(e => console.error("Telegram setWebhook failed:", e.message));
   }
   server.listen(PORT, () => console.log(`Royal Billiard 8 server on :${PORT} (storage ${store.kind}, ${Object.keys(db.users).length} players, payments ${PADDLE_KEY && PADDLE_TOKEN ? "Paddle" + (PADDLE_SANDBOX ? " sandbox" : "") : STRIPE_KEY ? "Stripe" : "off"})`));
