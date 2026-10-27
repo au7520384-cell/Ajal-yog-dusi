@@ -688,6 +688,7 @@ background:linear-gradient(#1c2438,#0a0e18);border:3px solid;color:#fff;font-fam
 .hbt b{font-size:19px;text-shadow:0 2px 0 #000a;white-space:nowrap}
 .hbt .dot{top:-10px;right:-10px;min-width:30px;height:30px;font-size:16px}
 /* live labels drawn over the (text-free) painted home scene, so every language is covered */
+.pchg{display:flex;flex-direction:column;gap:6px;text-align:left}.pchh{font-size:13px;color:#9fb0d8;text-transform:uppercase;letter-spacing:.6px}.pchd{border-top:1px solid #2c3b66;padding-top:10px;margin-top:6px}.pchr{display:flex;flex-wrap:wrap;gap:8px}.pchr .btn{flex:1 1 150px}
 .p2p{display:flex;flex-direction:column;gap:6px;text-align:left}.p2pw{background:#4a3410;border:2px solid #d9a52f;border-radius:10px;padding:8px 10px;font-size:15px;line-height:1.25;color:#ffe6a8}
 .p2pl{font-size:12px;color:#9fb0d8;text-transform:uppercase;letter-spacing:.6px;margin-top:4px}.p2pr{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#0b1220;border:1px solid #2c3b66;border-radius:10px;padding:6px 8px 6px 10px}
 .p2pr b{font-size:21px;letter-spacing:.4px;color:#fff;word-break:break-word}.p2pr .btn{padding:6px 12px;font-size:14px;flex:none}.p2ph{font-size:13px;color:#9fb0d8;margin:-1px 0 0 10px}.p2pwait{display:flex;align-items:center;gap:8px;color:#bcd0ff;font-size:14px;margin-top:6px;min-height:20px}
@@ -9678,14 +9679,14 @@ function p2pModes() {   // which card-to-card ways this player is offered: Uzbek
 const cc = String(profile.country || "").toUpperCase(), m = TG_P2P && TG_P2P[!cc || cc === "UZ" ? "uz" : "world"];
 return m && (m.auto || m.atm) ? m : null;
 }
-function payChoice(sku, btn) {   // more than Stars is set up: the player picks how to pay
-const bs = [{label: "⭐ " + T("Stars bilan"), cls: "green", fn: () => starsCheckout(sku, btn)}];
-if (TG_PAY) bs.push({label: "💳 " + T("Karta bilan"), cls: "blue", fn: () => tgPayCheckout(sku, btn)});
-const pm = p2pModes(), world = !!(pm && TG_P2P && TG_P2P.world === pm);
-if (pm && pm.auto) bs.push({label: "💸 " + T("Kartaga o'tkazma"), cls: "orange", fn: () => p2pCheckout(sku, "auto")});
-if (pm && pm.atm) bs.push({label: world ? "🧾 " + T("Chek orqali") : "🏧 " + T("Bankamat orqali"), cls: "blue", fn: () => p2pCheckout(sku, "atm")});
-bs.push({label: T("Bekor qilish"), cls: "gray", fn: () => {}});
-openModal({icon: "💳", title: T("To'lov usuli"), text: "", buttons: bs});
+function payChoice(sku, btn) {   // more than Stars is set up: Stars in one group, the card ways in another
+const pm = p2pModes(), world = !!(pm && TG_P2P && TG_P2P.world === pm), cards = [];
+if (TG_PAY) cards.push(["pcT", "💳 Telegram Payments", "blue", () => tgPayCheckout(sku, btn)]);
+if (pm && pm.auto) cards.push(["pcA", "💸 " + T("Kartaga o'tkazma"), "orange", () => p2pCheckout(sku, "auto")]);
+if (pm && pm.atm) cards.push(["pcB", world ? "🧾 " + T("Chek orqali") : "🏧 " + T("Bankamat orqali"), "blue", () => p2pCheckout(sku, "atm")]);
+openModal({icon: "💳", title: T("To'lov usuli"), text: "", extra: `<div class="pchg"><div class="pchh">⭐ Telegram Stars</div><div class="pchr"><button class="btn green" id="pcS">⭐ ${T("Stars bilan")}</button></div>${cards.length ? `<div class="pchh pchd">💳 ${T("Karta bilan")}</div><div class="pchr">${cards.map(c => `<button class="btn ${c[2]}" id="${c[0]}">${esc(c[1])}</button>`).join("")}</div>` : ""}</div>`, buttons: [{label: T("Bekor qilish"), cls: "gray", fn: () => {}}]});
+const go = f => () => { $("modal").classList.remove("on"); f(); };
+$("pcS").onclick = go(() => starsCheckout(sku, btn)); for (const c of cards) $(c[0]).onclick = go(c[3]);
 }
 async function p2pCheckout(sku, mode) {   // card-to-card: the player sends the exact amount to the shop's card. "auto": the bank SMS on the owner's phone confirms it; "atm": paid at an ATM / in the bank app, the receipt photo goes to the admin
 try {
