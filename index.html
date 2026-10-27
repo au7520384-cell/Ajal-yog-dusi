@@ -690,9 +690,9 @@ background:linear-gradient(#1c2438,#0a0e18);border:3px solid;color:#fff;font-fam
 /* live labels drawn over the (text-free) painted home scene, so every language is covered */
 .p2p{display:flex;flex-direction:column;gap:6px;text-align:left}.p2pw{background:#4a3410;border:2px solid #d9a52f;border-radius:10px;padding:8px 10px;font-size:15px;line-height:1.25;color:#ffe6a8}
 .p2pl{font-size:12px;color:#9fb0d8;text-transform:uppercase;letter-spacing:.6px;margin-top:4px}.p2pr{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#0b1220;border:1px solid #2c3b66;border-radius:10px;padding:6px 8px 6px 10px}
-.p2pr b{font-size:21px;letter-spacing:.4px;color:#fff;word-break:break-word}.p2pr .btn{padding:6px 12px;font-size:14px;flex:none}.p2pwait{display:flex;align-items:center;gap:8px;color:#bcd0ff;font-size:14px;margin-top:6px;min-height:20px}
+.p2pr b{font-size:21px;letter-spacing:.4px;color:#fff;word-break:break-word}.p2pr .btn{padding:6px 12px;font-size:14px;flex:none}.p2ph{font-size:13px;color:#9fb0d8;margin:-1px 0 0 10px}.p2pwait{display:flex;align-items:center;gap:8px;color:#bcd0ff;font-size:14px;margin-top:6px;min-height:20px}
 .p2pspin{width:16px;height:16px;border:3px solid #ffffff33;border-top-color:#ffd24d;border-radius:50%;animation:p2pspin 1s linear infinite;display:inline-block;flex:none}@keyframes p2pspin{to{transform:rotate(360deg)}}
-@media (max-height:560px){.p2p{gap:2px}.p2pw{font-size:13px;padding:4px 8px}.p2pl{font-size:11px;margin-top:1px}.p2pr{padding:2px 6px 2px 8px}.p2pr b{font-size:17px}.p2pr .btn{padding:3px 10px;font-size:13px}.p2pwait{font-size:13px;margin-top:2px;min-height:16px}.p2p #p2pRc{margin-top:4px!important;padding:6px 10px}}
+@media (max-height:560px){.p2ph{font-size:12px;margin-top:0}.p2p{gap:2px}.p2pw{font-size:13px;padding:4px 8px}.p2pl{font-size:11px;margin-top:1px}.p2pr{padding:2px 6px 2px 8px}.p2pr b{font-size:17px}.p2pr .btn{padding:3px 10px;font-size:13px}.p2pwait{font-size:13px;margin-top:2px;min-height:16px}.p2p #p2pRc{margin-top:4px!important;padding:6px 10px}}
 .hl{position:absolute;left:0;right:0;top:102px;display:flex;flex-direction:column;align-items:center;font-family:var(--fh);color:#fff;pointer-events:none;line-height:1;
 text-shadow:0 3px 0 #0006,0 0 3px #000c,0 0 12px #0008}
 .hl b{font-weight:400;font-size:54px;letter-spacing:.5px}.hl i{font-style:normal;font-size:35px;margin-top:3px}
@@ -9685,15 +9685,14 @@ openModal({icon: "💳", title: T("To'lov usuli"), text: "", buttons: bs});
 async function p2pCheckout(sku, mode) {   // card-to-card: the player sends the exact amount to the shop's card. "auto": the bank SMS on the owner's phone confirms it; "atm": paid at an ATM / in the bank app, the receipt photo goes to the admin
 try {
 await ensure();
-const r = await api("/api/p2p/order", {sku, mode}), sp = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "), atm = r.mode === "atm";
+const r = await api("/api/p2p/order", {sku, mode}), cards = r.cards && r.cards.length ? r.cards : [{number: r.card, holder: r.holder, label: ""}], sp = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " "), atm = r.mode === "atm";
 const copy = txt => { const ok = () => toast("📋", T("Nusxa olindi"), T("Do'kon")); const fb = () => { const t = document.createElement("textarea"); t.value = txt; t.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(t); t.select(); try { document.execCommand("copy"); ok(); } catch (e) {} t.remove(); }; try { navigator.clipboard.writeText(txt).then(ok, fb); } catch (e) { fb(); } };
 const warn = atm ? T("Bankamat orqali to'lov qilib, chekni rasmini yuboring. Admin tasdiqlagach xarid qo'shiladi.") : TT("Kartaga aynan {0} so'm yuboring. Agar 1 so'm kam yoki ko'p yuborsangiz ham to'lov o'tmaydi!", sp(r.amount));
 openModal({icon: "", title: T(atm ? "Bankamat orqali" : "Kartaga o'tkazma"), text: "", extra: `<div class="p2p"><div class="p2pw">⚠️ ${esc(warn)}</div>
 <div class="p2pl">${T("Summa")}</div><div class="p2pr"><b>${sp(r.amount)} ${T("so'm")}</b><button class="btn orange" id="p2pCA">${T("Nusxa")}</button></div>
-<div class="p2pl">${T("Karta raqami")}</div><div class="p2pr"><b>${esc(r.card)}</b><button class="btn orange" id="p2pCC">${T("Nusxa")}</button></div>
-${r.holder ? `<div class="p2pl">${T("Karta egasi")}</div><div class="p2pr"><b>${esc(r.holder)}</b></div>` : ""}
+${cards.map((c, i) => `<div class="p2pl">${T("Karta raqami")}${c.label ? " · " + esc(c.label) : ""}</div><div class="p2pr"><b>${esc(c.number)}</b><button class="btn orange" id="p2pCC${i}">${T("Nusxa")}</button></div>${c.holder ? `<div class="p2ph">${esc(c.holder)}</div>` : ""}`).join("")}
 ${atm ? `<button class="btn green" id="p2pRc" style="margin-top:8px">🧾 ${T("Chek rasmini yuboring")}</button><input type="file" accept="image/*" id="p2pFile" hidden><div class="p2pwait" id="p2pWait"></div>` : `<div class="p2pwait" id="p2pWait"><i class="p2pspin"></i>${T("To'lov kutilmoqda — avtomatik tasdiqlanadi")}</div>`}</div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
-$("p2pCA").onclick = () => copy(String(r.amount)); $("p2pCC").onclick = () => copy(r.card.replace(/\s/g, ""));
+$("p2pCA").onclick = () => copy(String(r.amount)); cards.forEach((c, i) => { $("p2pCC" + i).onclick = () => copy(c.number.replace(/\s/g, "")); });
 if (atm) {
 $("p2pRc").onclick = () => $("p2pFile").click();
 $("p2pFile").onchange = async e => {
