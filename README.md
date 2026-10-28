@@ -107,3 +107,7 @@ Cue strength follows price: cash cues sit on 8 dollar steps ($1.99 ... $74.99) a
 - **Game page (static, light build):** Cloudflare Workers static assets (`wrangler.jsonc`). Cloudflare runs `python3 tools/build_web.py web_site` after every push to the production branch; the page is ~2 MB, the pictures (including the table-rail and cue art) and sounds are separate files under `img/` and `a/` that never change (cached for a year). The game loads the table / cue art in the background after the menu is up (`bgStart()` in `index.html`; a match gets its own table and cue first), and inside Telegram the page calls `ready()` as soon as Telegram's script is there and pings `/api/health` so a sleeping Render server wakes up while the page loads. The Render server only answers API calls, so its free bandwidth lasts.
 - **Telegram Mini App:** `@Billiard8PoolBot`, web app URL = the Cloudflare address; players sign in silently with their Telegram account.
 - **CrazyGames / Y8:** `python3 tools/build_crazy.py` (single file) and the Y8 zip (see above).
+
+## Ad-link counter
+
+Give every paid ad its own link: `https://t.me/Billiard8PoolBot/Play?startapp=c_NAME` (letters, digits, `_`, `-`, up to 24). The server counts opens and new players per NAME. Read it by typing `/src` to the bot (only `ADMIN_TG_ID` gets an answer) or at `/api/src/stats?key=ADMIN_KEY`.

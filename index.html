@@ -12470,6 +12470,8 @@ const spRaw = String((W.initDataUnsafe && W.initDataUnsafe.start_param) || ""), 
 if (fm) {   // a friend's invite link (startapp=f_CODE): once the Telegram sign-in is done, a new player becomes their friend at once, anybody else sends a friend request
 store.set("b8finv", fm[1].toUpperCase()); let tries = 0;
 const wait = setInterval(() => { if (++tries > 24) return clearInterval(wait); if (Net.acct && profile.prov && profile.prov.telegram) { clearInterval(wait); friendInviteRun(); } }, 1500);
+} else if (/^c_[A-Za-z0-9_-]{1,24}$/.test(spRaw)) {   // an ad link (startapp=c_NAME): once signed in, the server counts it (new players per ad)
+let tries = 0; const wait = setInterval(() => { if (++tries > 24) return clearInterval(wait); if (Net.acct && profile.prov && profile.prov.telegram) { clearInterval(wait); Net.api("/api/src", {src: spRaw.slice(2)}).catch(() => {}); } }, 1500);
 } else if (spRaw === "fr" || /^m_[A-Za-z0-9]{8,32}$/.test(spRaw)) {   // a tap on one of the bot's messages: the Friends screen, or the chat with that friend
 setTimeout(() => { go("friendsScr"); if (spRaw !== "fr") setTimeout(() => openDm(spRaw.slice(2)), 800); }, 1600);
 } else { const sp = parseLobbyCode(spRaw); if (sp.length >= 3) setTimeout(() => lobbyJoin(sp), 1200); }
