@@ -540,6 +540,21 @@ input.name{width:100%;padding:10px 12px;border-radius:10px;border:2px solid #3b4
 /* Phone held upright and the browser can't lock orientation (e.g. iPhone Safari):
 turn the whole game 90° so it always plays in landscape, filling the screen. */
 html.rot body{position:fixed;top:0;left:0;transform-origin:0 0;transform:rotate(90deg) translateY(-100%)}
+/* the in-game keyboard (see igk in the script): used while the page is turned, it turns with the page and sits on its bottom edge */
+#igk{position:fixed;left:0;top:0;display:none;flex-direction:column;gap:4px;box-sizing:border-box;padding:4px 6px 5px;transform-origin:0 0;z-index:2147483000;background:linear-gradient(#0e1c48,#060d26);border-top:2px solid #c9951e;box-shadow:0 -8px 20px #000a;user-select:none;-webkit-user-select:none;touch-action:manipulation;font-family:inherit;font-weight:700}
+#igk.on{display:flex}
+#igk .r{display:flex;gap:4px;flex:1 1 0;min-height:0}
+#igk button{flex:1 1 0;min-width:0;padding:0;border:1px solid #4c63a8;border-radius:7px;background:linear-gradient(#2e4388,#1a2a5e);color:#fff;font:inherit;font-size:var(--igkf,17px);line-height:1;box-shadow:0 2px 0 #070d24;-webkit-tap-highlight-color:transparent;touch-action:manipulation;overflow:hidden}
+#igk button:active,#igk button.dn{background:linear-gradient(#5a76e0,#2f49a6);transform:translateY(1px)}
+#igk button.sp{background:linear-gradient(#1b2b60,#101c46);color:#cfe0ff}
+#igk button.sh1,#igk button.sh2{background:linear-gradient(#ffd75a,#c98a12);color:#2a1700;border-color:#ffe08a}
+#igk button.sh2{box-shadow:0 2px 0 #070d24,0 0 0 2px #ffe08a}
+#igk button.go{background:linear-gradient(#41d35d,#1f9a3a);border-color:#8bf09c;color:#04210c}
+#igk button.spc{background:linear-gradient(#2e4388,#1a2a5e)}
+#igk button.spc:after{content:"";display:block;width:34%;height:4px;margin:0 auto;border-radius:2px;background:#8fa6e8}
+html.igk #modal .fdmQ,html.igk #modal .fdmDelRow{display:none}
+html.igk #modal .panel:has(#fdmBox) #mBtns{display:none}
+html.igk #modal .fdmBox{height:clamp(44px,calc(var(--pvh) - 165px),150px)!important}
 @media (max-width:1000px){ .nb{min-width:50px;padding:3px 6px;font-size:10px} .nb span{font-size:17px} .money{gap:4px} .mchip{min-width:0} #nav{gap:5px} .iconbtn{width:36px;height:36px} }
 @media (max-width:900px){ .pinfo b{max-width:74px;font-size:13px!important} .xpbar{width:78px} .xprow .tro{display:none} .pchip{padding:3px 6px 3px 3px} .mchip{font-size:13px;gap:4px;padding:4px 5px} }
 @media (max-width:700px){ .navbtns{gap:4px} .nb{min-width:34px!important;padding:4px 3px!important} .nb span{font-size:19px!important} #nav{gap:4px} .mchip .plus{display:none} .iconbtn{width:30px!important;height:30px!important} }
@@ -4477,7 +4492,8 @@ game.angle += Math.sign(e.deltaY) * (e.shiftKey ? 0.02 : 0.002);
 let ctx = cv.getContext("2d", {alpha: false});   // the picture always covers the whole canvas, so the browser need not blend it with the page behind
 const mainCtx = ctx;
 let scale = 1, offX = 0, offY = 0, dpr = 1, zoom = 1;
-let rotated = false, vw = innerWidth, vh = innerHeight, insL = 0, insT = 0;   // ins*: Telegram full screen leaves the phone's status bar / Telegram's own buttons out of the page (left / top of the page's own, possibly turned, frame)
+let kbH = 0;   // the in-game keyboard (igk) takes this many px off the bottom of the turned page while a text box is being edited
+let rotated = false, vw = innerWidth, vh = innerHeight, insL = 0, insT = 0, insB = 0;   // ins*: Telegram full screen leaves the phone's status bar / Telegram's own buttons out of the page (left / top of the page's own, possibly turned, frame)
 const MQ = (() => {
 const list = [], css = [];
 for (const sh of document.styleSheets) {
@@ -4520,7 +4536,9 @@ function resize() {
 const touch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
 rotated = touch && innerHeight > innerWidth;
 document.documentElement.classList.toggle("rot", rotated);
-const I = tgInsets(); insL = I.l; insT = I.t;
+if (!rotated && kbH) igkHide(false);   // the phone was turned: the page is upright again and the phone's own keyboard fits
+const I = tgInsets(); insB = I.b; if (rotated && kbH) I.b += kbH;   // the in-game keyboard owns the bottom strip of the turned page (= the screen's left edge)
+insL = I.l; insT = I.t;
 vw = (rotated ? innerHeight : innerWidth) - I.l - I.r; vh = (rotated ? innerWidth : innerHeight) - I.t - I.b;
 const uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : 1;
 for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) / uiz <= q.v);
@@ -4532,14 +4550,128 @@ let gq = "mid"; try { gq = (profile.set && profile.set.gfx) || "mid"; } catch (e
 dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5})[gq] || 2.5) * dprAuto);   // Settings → Graphics: Low 1.5 / Medium 2 / High 2.5 (sharper, heavier)
 cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
 scale = Math.min(vw / W, vh / H) * zoom;
-document.documentElement.style.setProperty("--uiz", uiz.toFixed(3));
+document.documentElement.style.setProperty("--uiz", uiz.toFixed(3)); document.documentElement.style.setProperty("--pvh", vh + "px");   // --pvh: the turned page's own height (CSS vh would be the wrong axis)
 document.documentElement.style.setProperty("--bks", (rotated ? 1 : Math.max(1, Math.min(2.2, vh / uiz / 430))).toFixed(3));   // the tournament bracket is drawn in tiny px for phones; on a monitor it grows with the screen height   // big monitors: scale the menus up with the table so nothing looks tiny
 offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
+if (kbH) igkPlace();
 }
 function setZoom(z) { zoom = Math.max(0.6, Math.min(1.5, Math.round(z * 100) / 100)); if (typeof profile === "object" && profile) { profile.zoom = zoom; try { save(); } catch (e) {} } resize(); }
 addEventListener("resize", () => { resize(); setTimeout(fitNav, 60); });
 addEventListener("orientationchange", () => setTimeout(resize, 250));
 resize();
+// ---- the in-game keyboard (igk). A phone held upright shows the page turned 90° (html.rot) but the phone's own keyboard stays upright: it would rise at the SIDE of the turned page, its keys lying on their back. While the page is turned a text box gets this keyboard instead: it sits on the page's bottom edge and turns with the page. Its ⌨ key hands the box over to the phone's own keyboard (paste, other scripts ...).
+const IGK_ROWS = {
+lat: ["q w e r t y u i o p", "a s d f g h j k l", "@sh z x c v b n m @bs", "@hide @num @lang @emo @sp ' . @os @ok"],
+cyr: ["й ц у к е н г ш щ з х ъ", "ф ы в а п р о л д ж э", "@sh я ч с м и т ь б ю ё @bs", "@hide @num @lang @emo @sp , . @os @ok"],
+num: ["1 2 3 4 5 6 7 8 9 0", "- / : ; ( ) $ & @ \"", ". , ? ! ' _ + = # @bs", "@hide @abc @emo @sp @os @ok"],
+emo: ["😀 😂 😍 😎 😅 😭 😡 🤔 👍 👎", "👏 🙏 💪 🔥 ❤️ 💔 🎉 🏆 🎱 💰", "😉 😊 😘 🤝 😴 🤯 😱 🥳 🙌 ✌️ @bs", "@hide @abc @sp @ok"],
+};
+const IGK_W = {"@sh": 1.5, "@bs": 1.5, "@num": 1.4, "@abc": 1.4, "@lang": 1.4, "@ok": 1.8, "@sp": 4};
+const IGK_L = {"@sh": "⇧", "@bs": "⌫", "@num": "123", "@abc": "ABC", "@emo": "😀", "@hide": "⌄", "@os": "⌨", "@ok": "⏎", "@sp": ""};
+let igkH0 = 0, igkEl = null, igkCur = null, igkOs = null, igkLay = "lat", igkAlpha = "lat", igkSh = 0, igkShAt = 0, igkHideT = 0, igkWatchT = 0, igkRep = 0, igkRepT = 0;
+const igkAttr = s => String(s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const igkText = t => !!t && t.nodeType === 1 && (t.tagName === "TEXTAREA" || (t.tagName === "INPUT" && /^(text|search|tel|url|password)?$/i.test(t.getAttribute("type") || ""))) && !t.readOnly && !t.disabled && !(igkEl && igkEl.contains(t));
+function igkBuild() {
+const up = igkSh > 0;
+igkEl.innerHTML = IGK_ROWS[igkLay].map(r => `<div class="r">${r.split(" ").map(k => {
+const st = `style="flex-grow:${IGK_W[k] || 1}"`;
+if (k[0] !== "@") { const c = igkAttr(up ? k.toUpperCase() : k); return `<button type="button" data-c="${c}" ${st}>${c}</button>`; }
+return `<button type="button" data-s="${k.slice(1)}" class="sp${k === "@sh" && igkSh ? " sh" + igkSh : ""}${k === "@sp" ? " spc" : ""}${k === "@ok" ? " go" : ""}" ${st}>${k === "@lang" ? (igkAlpha === "lat" ? "РУ" : "UZ") : IGK_L[k]}</button>`;
+}).join("")}</div>`).join("");
+}
+function igkPut(txt) {
+const e = igkCur; if (!e) return false;
+let s = e.selectionStart, n = e.selectionEnd; if (s == null) s = n = e.value.length;
+if (e.maxLength > 0 && e.value.length - (n - s) + txt.length > e.maxLength) return false;
+e.setRangeText(txt, s, n, "end"); igkCaret(e); e.dispatchEvent(new Event("input", {bubbles: true}));
+return true;
+}
+function igkBack() {
+const e = igkCur; if (!e) return;
+let s = e.selectionStart, n = e.selectionEnd; if (s == null) s = n = e.value.length;
+if (s === n) {
+if (!s) return;
+const v = e.value; let k = 1;
+if (s >= 2 && ((/[\uDC00-\uDFFF]/.test(v[s - 1]) && /[\uD800-\uDBFF]/.test(v[s - 2])) || v[s - 1] === "️")) k = 2;   // an emoji is deleted whole
+s -= k;
+}
+e.setRangeText("", s, n, "end"); igkCaret(e); e.dispatchEvent(new Event("input", {bubbles: true}));
+}
+function igkCaret(e) { if (e.selectionStart === e.value.length) e.scrollLeft = e.scrollWidth; }   // typing at the end of a long line keeps the end in view (a script-made edit does not scroll the box by itself)
+function igkEnter() {   // the box's own Enter handler sends / searches; a chat box that was emptied by it keeps the keyboard for the next message, anything else is done
+const e = igkCur; if (!e) return;
+for (const t of ["keydown", "keypress", "keyup"]) e.dispatchEvent(new KeyboardEvent(t, {key: "Enter", code: "Enter", keyCode: 13, which: 13, bubbles: true, cancelable: true}));
+setTimeout(() => { if (igkCur === e && (!e.isConnected || e.value)) igkHide(true); }, 80);
+}
+function igkPress(b) {
+const c = b.dataset.c, s = b.dataset.s;
+if (c != null) { if (igkPut(c) && igkSh === 1) { igkSh = 0; igkBuild(); } return; }
+switch (s) {
+case "bs": igkBack(); clearTimeout(igkRepT); clearInterval(igkRep); igkRepT = setTimeout(() => { igkRep = setInterval(igkBack, 55); }, 380); break;
+case "sp": igkPut(" "); break;
+case "ok": igkEnter(); break;
+case "sh": { const now = performance.now(); igkSh = igkSh === 2 ? 0 : igkSh === 1 ? (now - igkShAt < 450 ? 2 : 0) : 1; igkShAt = now; igkBuild(); break; }   // tap: one capital; a quick second tap: caps lock
+case "num": igkLay = "num"; igkBuild(); break;
+case "abc": igkLay = igkAlpha; igkBuild(); break;
+case "emo": igkLay = "emo"; igkBuild(); break;
+case "lang": igkAlpha = igkAlpha === "lat" ? "cyr" : "lat"; igkLay = igkAlpha; store.set("b8kb", igkAlpha); igkBuild(); break;
+case "hide": igkHide(true); break;
+case "os": igkToOs(); break;
+}
+}
+function igkPlace() {   // the keyboard fills the page's bottom strip: the page's own frame turned like the body (page top = screen right)
+if (!igkEl) return;
+igkEl.style.width = vw + "px"; igkEl.style.height = kbH + "px"; igkEl.style.transform = `translate(${kbH + insB}px, ${insL}px) rotate(90deg)`;
+}
+function igkInit() {
+igkEl = document.createElement("div"); igkEl.id = "igk"; document.documentElement.appendChild(igkEl);
+igkEl.addEventListener("pointerdown", e => { const b = e.target.closest && e.target.closest("button"); if (!b) return; e.preventDefault(); b.classList.add("dn"); igkPress(b); });
+igkEl.addEventListener("mousedown", e => e.preventDefault());   // a key never takes the focus off the text box
+igkEl.addEventListener("touchstart", e => { if (e.cancelable) e.preventDefault(); }, {passive: false});
+const up = () => { clearTimeout(igkRepT); clearInterval(igkRep); igkEl.querySelectorAll(".dn").forEach(x => x.classList.remove("dn")); };
+for (const ev of ["pointerup", "pointercancel"]) addEventListener(ev, up, true);
+}
+function igkShow(el) {
+clearTimeout(igkHideT);
+if (igkOs === el) return;   // handed over to the phone's own keyboard
+if (!igkEl) igkInit();
+igkCur = el; el.inputMode = "none";
+igkAlpha = store.get("b8kb", LANG === "ru" ? "cyr" : "lat"); igkLay = igkAlpha;
+igkSh = /uppercase/.test(getComputedStyle(el).textTransform) ? 2 : (el.value ? 0 : 1);   // codes are typed in capitals, a message starts with one
+igkBuild();
+if (!kbH) {
+igkH0 = innerHeight;
+const rh = Math.max(30, Math.min(38, Math.round(vh * 0.088)));
+kbH = Math.min(Math.round(vh * 0.55), rh * 4 + 22);
+igkEl.style.setProperty("--igkf", Math.round(rh * 0.5) + "px");
+igkEl.classList.add("on"); document.documentElement.classList.add("igk");
+resize();
+clearInterval(igkWatchT); igkWatchT = setInterval(igkWatch, 250);
+}
+const into = () => { try { if (igkCur === el) el.scrollIntoView({block: "nearest", inline: "nearest"}); } catch (e) {} };
+requestAnimationFrame(into); setTimeout(into, 320);
+}
+function igkHide(blur) {
+clearTimeout(igkHideT); clearInterval(igkWatchT); clearTimeout(igkRepT); clearInterval(igkRep);
+const e = igkCur; igkCur = null;
+if (igkEl) igkEl.classList.remove("on");
+document.documentElement.classList.remove("igk");
+if (kbH) { kbH = 0; resize(); }
+if (blur && e && e.isConnected) { try { e.blur(); } catch (er) {} }
+}
+function igkWatch() { const e = igkCur; if (!e || !rotated || !e.isConnected || !e.getClientRects().length) igkHide(false); }   // the box is gone (the pop-up closed) or the phone was turned
+function igkToOs() {
+const e = igkCur; if (!e) return;
+igkOs = e; igkHide(false); e.inputMode = "text"; e.blur();
+setTimeout(() => { try { e.focus(); } catch (er) {} }, 60);
+}
+addEventListener("resize", () => { if (igkCur && kbH && igkH0 && innerHeight < igkH0 - 100) { const e = igkCur; igkOs = e; igkHide(false); e.inputMode = "text"; } });   // the phone's own keyboard came up anyway (its inputmode was not honoured): leave the box to it instead of showing two keyboards
+document.addEventListener("pointerdown", e => { if (rotated && igkText(e.target) && igkOs !== e.target) e.target.inputMode = "none"; }, true);   // before the tap focuses the box, so the phone's keyboard stays down
+document.addEventListener("focusin", e => { if (rotated && igkText(e.target)) igkShow(e.target); }, true);
+document.addEventListener("focusout", e => {
+if (e.target === igkCur) { clearTimeout(igkHideT); igkHideT = setTimeout(() => { if (igkCur && document.activeElement !== igkCur) igkHide(false); }, 220); }   // a little later, so the tap that moved the focus lands before the page changes size
+if (e.target === igkOs) setTimeout(() => { if (document.activeElement !== igkOs) igkOs = null; }, 300);
+}, true);
 // A phone held upright shows the page turned 90° (html.rot). The browser does not turn a finger swipe with it, so a list, a modal body or a shelf could not be dragged by hand; here the swipe is turned back and applied to the nearest scrollable box (with a little fling).
 (() => {
 let tgt = null, lx = 0, ly = 0, lt = 0, vx = 0, vy = 0, bv = null, bh = null, raf = 0;
@@ -11301,7 +11433,7 @@ openModal({icon: "", title: friend.name ? pname(friend.name) : T("Do'stlar"), te
 extra: `<div class="chatbox fdmBox" id="fdmBox"><div class="chatmsg sys">${T("Yuklanmoqda…")}</div></div>
 <div class="fdmQ">${DM_QUICK.map((q, i) => `<button type="button" data-q="${i}">${esc(T(q))}</button>`).join("")}</div>
 <div class="fdmIn"><input class="name" id="fdmIn" maxlength="200" autocomplete="off" placeholder="${T("Xabar yozing…")}"><button class="btn green" id="fdmSend" style="padding:8px 16px">➤</button></div>
-<div style="text-align:right;margin-top:4px"><button type="button" class="fdmDel" id="fdmDel">${T("Do'stlikdan chiqarish")}</button></div>`,
+<div class="fdmDelRow" style="text-align:right;margin-top:4px"><button type="button" class="fdmDel" id="fdmDel">${T("Do'stlikdan chiqarish")}</button></div>`,
 buttons: [{label: T("O'ynash"), cls: "green", fn: () => { stop(); lobbyCreate(null, [fid]); }}, {label: T("Yopish"), cls: "gray", fn: stop}]});
 $("fdmDel").onclick = () => {
 stop(); $("modal").classList.remove("on");
