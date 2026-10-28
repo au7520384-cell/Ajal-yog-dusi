@@ -666,7 +666,7 @@ const routes = {
   "GET /api/adsgram/reward"(req) {
     if (limited(req, "adsgram", 600)) return [429, {error: "slow down"}];
     const q = new URL(req.url, "http://x").searchParams, key = String(q.get("key") || ""), tg = String(q.get("userid") || q.get("userId") || "").slice(0, 20);
-    if (!AD_KEY || key.length !== AD_KEY.length || !crypto.timingSafeEqual(Buffer.from(key), Buffer.from(AD_KEY))) { console.log(`adsgram reward: refused, the key in the Reward URL does not match ADSGRAM_REWARD_KEY${AD_KEY ? "" : " (not set)"} (userid="${tg}")`); return [403, {error: "forbidden"}]; }
+    if (!AD_KEY || key.length !== AD_KEY.length || !crypto.timingSafeEqual(Buffer.from(key), Buffer.from(AD_KEY))) { console.log(`adsgram reward: refused, the key in the Reward URL does not match ADSGRAM_REWARD_KEY${AD_KEY ? "" : " (not set)"} (userid="${tg}"; the URL key has ${key.length} characters, ADSGRAM_REWARD_KEY has ${AD_KEY.length}${AD_KEY && key.toLowerCase() === AD_KEY.toLowerCase() ? "; they differ only by upper / lower case" : ""}${/\s/.test(key) ? "; the URL key contains a space (a + in the URL?)" : ""})`); return [403, {error: "forbidden"}]; }
     const acct = Object.values(db.users).find(x => x.auth && x.auth.telegram === tg);
     if (!acct) { console.log(`adsgram reward: no account is linked to the Telegram id "${tg}" (an empty id means the Reward URL lacks &userid=[userId])`); return [404, {error: "no user"}]; }
     const c = adCred.get(acct.id) || {n: 0, t: 0}; c.n = Math.min(5, c.n + 1); c.t = Date.now(); adCred.set(acct.id, c);
