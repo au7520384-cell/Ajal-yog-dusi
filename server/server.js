@@ -589,7 +589,13 @@ function tgPush(to, kind, vars, o = {}) {   // o: {start: what the button opens 
   });
   return true;
 }
+function srcStats() { return Object.entries((db.meta || {}).src || {}).map(([n, r]) => ({src: n, newPlayers: r.fresh, opens: r.opens, last: new Date(r.last).toISOString()})).sort((a, b) => b.newPlayers - a.newPlayers); }
 async function botCommand(cmd, m) {   // /start, /stop and /id typed in the bot chat
+  if (cmd === "/src") {   // the owner only: new players per ad link
+    if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
+    const rows = srcStats();
+    return tgApi("sendMessage", {chat_id: m.chat.id, text: rows.length ? "📊 Reklama havolalari:\n" + rows.map(r => `${r.src}: ${r.newPlayers} yangi o'yinchi, ${r.opens} kirish`).join("\n") : "Hali hech kim reklama havolasi orqali kirmagan."});
+  }
   if (cmd === "/id") return tgApi("sendMessage", {chat_id: m.chat.id, text: "Telegram ID: " + m.from.id});   // the number for ADMIN_TG_ID
   const u = userByTg(m.from.id), L = PUSH_LANGS[pushLang(u, m.from.language_code)];
   if (cmd === "/stop") {
@@ -668,6 +674,20 @@ const routes = {
   "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY, starsPerUsd: STARS_PER_USD, tgPay: !!TG_PAY_TOKEN && !!TG_BOT_TOKEN, payCur: TG_PAY_CUR, payPerUsd: PAY_PER_USD, p2p: (m => m[0].auto || m[0].atm || m[1].auto || m[1].atm ? {uz: m[0], world: m[1]} : null)([p2pModes(true), p2pModes(false)])}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
   // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
   // Adsgram calls this when a player finished a rewarded video: GET /api/adsgram/reward?key=<ADSGRAM_REWARD_KEY>&userid=<Telegram id>
+  "POST /api/src"(req, u) {   // the page reports the ad link it was opened from (startapp=c_NAME): opens, and new players (account made in the last 6 h, counted once)
+    return jsonBody(req).then(b => {
+      const n = String(b.src || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 24); if (!n) return [400, {error: "bad_src"}];
+      db.meta = db.meta || {}; const all = db.meta.src = db.meta.src || {}, r = all[n] = all[n] || {opens: 0, fresh: 0, first: Date.now()};
+      r.opens++; r.last = Date.now();
+      if (!u.src && Date.now() - u.created < 6 * 3600e3) { u.src = n; r.fresh++; }
+      markDirty(); return {ok: true};
+    });
+  },
+  "GET /api/src/stats"(req) {   // /api/src/stats?key=ADMIN_KEY (or the x-admin-key header)
+    const k = req.headers["x-admin-key"] || new URL(req.url, "http://x").searchParams.get("key") || "";
+    if (!ADMIN_KEY || !safeEq(String(k), ADMIN_KEY)) return [403, {error: "forbidden"}];
+    return {sources: srcStats()};
+  },
   "GET /api/adsgram/reward"(req) {
     if (limited(req, "adsgram", 600)) return [429, {error: "slow down"}];
     const q = new URL(req.url, "http://x").searchParams, key = String(q.get("key") || ""), tg = String(q.get("userid") || q.get("userId") || "").slice(0, 20);
@@ -1236,7 +1256,7 @@ async function tgWebhook(req, res) {
     const m = up.message;
     if (m && typeof m.text === "string" && m.from && m.chat && m.chat.type === "private") {
       const cmd = m.text.trim().split(/[\s@]/)[0].toLowerCase();
-      if (cmd === "/start" || cmd === "/stop" || cmd === "/id") await botCommand(cmd, m);
+      if (cmd === "/start" || cmd === "/stop" || cmd === "/id" || cmd === "/src") await botCommand(cmd, m);
     }
     const mc = up.my_chat_member;   // the player blocked or unblocked the bot
     if (mc && mc.chat && mc.chat.type === "private" && mc.from && mc.new_chat_member) {
@@ -1323,7 +1343,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /api/adsgram/reward", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /api/adsgram/reward", "GET /api/src/stats", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
