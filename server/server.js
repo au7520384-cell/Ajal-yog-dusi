@@ -31,7 +31,7 @@ const PADDLE_TOKEN = (PADDLE_SANDBOX ? process.env.PADDLE_CLIENT_TOKEN_SANDBOX :
 const PADDLE_API = PADDLE_SANDBOX ? "https://sandbox-api.paddle.com" : "https://api.paddle.com";
 const PAYMENTS = !!(PADDLE_KEY && PADDLE_TOKEN) || !!STRIPE_KEY;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
-const AD_KEY = process.env.ADSGRAM_REWARD_KEY || "", adCred = new Map();   // Adsgram server-to-server reward ping: Telegram id -> {n, t} credits the player may claim once each (the page cannot fake a watched ad)
+const AD_KEY = (process.env.ADSGRAM_REWARD_KEY || "").trim(), adCred = new Map();   // Adsgram server-to-server reward ping: Telegram id -> {n, t} credits the player may claim once each (the page cannot fake a watched ad)
 const TG_BOT_TOKEN = (process.env.TELEGRAM_BOT_TOKEN || "").trim(), TG_APP_LINK = process.env.TELEGRAM_APP_LINK || "";   // Telegram Mini App: the bot token verifies the players, the public app link (https://t.me/<bot>/<app>) is used for lobby invites
 const STARS_PER_USD = +process.env.STARS_PER_USD || 55;   // Telegram Stars: what 1 USD of the game's card price costs in Stars (the same number goes to the page, so both show and charge the same)
 const TG_HOOK_SECRET = crypto.createHash("sha256").update("b8hook:" + TG_BOT_TOKEN).digest("hex").slice(0, 40);   // Telegram sends it back in X-Telegram-Bot-Api-Secret-Token: only Telegram can post to /api/tg/webhook
@@ -41,7 +41,7 @@ const TG_PAY_TOKEN = process.env.TG_PAY_TOKEN || "", TG_PAY_CUR = (process.env.T
 const payFor = sku => Math.round(sku.usd * PAY_PER_USD / 100) * 100 * 100;   // Telegram wants the smallest unit (tiyin for UZS): the price rounded to whole 100 so'm, times 100
 // Card-to-card payments (no payment provider): the player sends the exact amount to P2P_CARD (one card or several). "auto": the owner's phone forwards the bank SMS to POST /api/p2p/notify (needs P2P_NOTIFY_KEY) and the order is matched by its unique amount;
 // "atm": the player pays at an ATM / in the bank app and sends the receipt photo, it goes to ADMIN_TG_ID (a Telegram user id) with Confirm / Reject buttons. Both are OFF until P2P_CARD (and the key / admin id) are set in Render.
-const P2P_HOLDER = (process.env.P2P_HOLDER || "").slice(0, 40), P2P_KEY = process.env.P2P_NOTIFY_KEY || "", ADMIN_TG = String(process.env.ADMIN_TG_ID || "").replace(/\D/g, "");
+const P2P_HOLDER = (process.env.P2P_HOLDER || "").slice(0, 40), P2P_KEY = (process.env.P2P_NOTIFY_KEY || "").trim(), ADMIN_TG = String(process.env.ADMIN_TG_ID || "").replace(/\D/g, "");
 const cardKind = n => { const d = n.replace(/\s/g, ""); return /^8600/.test(d) ? "Uzcard" : /^9860/.test(d) ? "Humo" : /^4/.test(d) ? "Visa" : /^(5[1-5]|2[2-7])/.test(d) ? "Mastercard" : ""; };
 // P2P_CARD: one card, or several separated by comma / semicolon / new line ("9860 1606 4515 2044, 4111 1111 1111 1111"); "number|holder" gives a card its own holder name (else P2P_HOLDER); "number|holder|uz", "|world" or "|all" says who sees it:
 // by default Uzbekistan players (and players with no country) see Humo / Uzcard, players of every other country see Visa / Mastercard. A "world" card works with the receipt (ATM) flow only: money from abroad never arrives as one exact so'm amount.
