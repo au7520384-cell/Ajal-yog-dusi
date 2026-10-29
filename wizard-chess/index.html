@@ -983,6 +983,13 @@ const matIvory=new THREE.MeshStandardMaterial({color:0xefe4cc,roughness:.36,meta
 const matObsidian=new THREE.MeshStandardMaterial({color:0x121014,roughness:.17,metalness:.35,envMapIntensity:1.25});
 const matGold=new THREE.MeshStandardMaterial({color:0xe7af48,roughness:.24,metalness:1,envMapIntensity:1.6});
 const matIron=new THREE.MeshStandardMaterial({color:0x1b1714,roughness:.55,metalness:.75,envMapIntensity:.6});
+const matSteel=new THREE.MeshStandardMaterial({color:0xeef2f8,roughness:.24,metalness:.85,envMapIntensity:2.4,emissive:0x1a1c22});
+const matOrbW=new THREE.MeshStandardMaterial({color:0xfff2cf,emissive:0xffc35a,emissiveIntensity:1.3,roughness:.25});
+const matOrbB=new THREE.MeshStandardMaterial({color:0x2a1a46,emissive:0x9b5cff,emissiveIntensity:1.3,roughness:.25});
+// double-sided twins for the open faces of cut halves; tiny copies hidden inside the plinth compile them before the first cut
+const dsMats=new Map();
+for(const m of [matIvory,matObsidian,matGold,matSteel]){ const d=m.clone(); d.side=THREE.DoubleSide; d.userData.base=m; dsMats.set(m,d); const w=new THREE.Mesh(new THREE.BoxGeometry(.05,.05,.05),d); w.position.set(0,-1.6,0); scene.add(w); }
+const dsMat=m=>dsMats.get(m)||m;
 
 // ---------------------------------------------------------------- hall
 const groundY=(x,z)=>{ const ax=Math.abs(x), az=Math.abs(z);
@@ -1207,81 +1214,115 @@ const candleLight=new THREE.PointLight(0xffb36b,lowPower?0:28,0,2); candleLight.
 const flash=new THREE.PointLight(0xffd29a,0,0,2); flash.position.set(0,1,0); scene.add(flash);
 let flashLevel=0;
 
-// ---------------------------------------------------------------- pieces
+// ---------------------------------------------------------------- pieces (enchanted statues, each with its own weapon)
 const LSEG=lowPower?28:40;
 const V2=p=>new THREE.Vector2(p[0],p[1]);
 const lathe=(pts,seg=LSEG)=>new THREE.LatheGeometry(pts.map(V2),seg);
 const baseProfile=s=>[[0,0],[.40*s,0],[.425*s,.012],[.432*s,.05],[.425*s,.085],[.40*s,.1],[.37*s,.11],[.37*s,.135],[.386*s,.15],[.37*s,.165],[.33*s,.18]];
 const ring=(r,y,tube=.02)=>[new THREE.TorusGeometry(r,tube,8,48),M4(0,y,0,Math.PI/2)];
-function knightShape(pts){ const sh=new THREE.Shape(); sh.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) sh.lineTo(pts[i][0],pts[i][1]); sh.closePath(); return sh; }
-const PIECE_GEO={};
+function polyShape(pts){ const sh=new THREE.Shape(); sh.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++) sh.lineTo(pts[i][0],pts[i][1]); sh.closePath(); return sh; }
+const ell=(x,y,z,sx,sy,sz,seg=16)=>[new THREE.SphereGeometry(1,seg,Math.round(seg*.75)),M4(x,y,z,0,0,0,sx,sy,sz)];
+function taperRod(a,b,r0,r1,seg=10){
+  const A=new THREE.Vector3(a[0],a[1],a[2]), Bv=new THREE.Vector3(b[0],b[1],b[2]), d=Bv.clone().sub(A), len=d.length();
+  return [new THREE.CylinderGeometry(r1,r0,len,seg),new THREE.Matrix4().compose(A.clone().add(Bv).multiplyScalar(.5),new THREE.Quaternion().setFromUnitVectors(YUP,d.normalize()),new THREE.Vector3(1,1,1))];
+}
+// an arm or sleeve hanging from its shoulder pivot down to the hand at (0,-len,0)
+function limb(len,r0,r1,hand=.034){ return mergeGeos([taperRod([0,0,0],[0,-len,0],r0,r1,10),[new THREE.SphereGeometry(r0*1.08,10,8)],[new THREE.SphereGeometry(hand,10,8),M4(0,-len-hand*.4,0)]]); }
+// sword with its grip at the origin and the blade along +y
+function swordGeo(len,w){
+  const blade=new THREE.ExtrudeGeometry(polyShape([[-w,0],[w,0],[w*.72,len*.84],[0,len],[-w*.72,len*.84]]),{depth:.008,bevelEnabled:true,bevelThickness:.004,bevelSize:.004,bevelSegments:1,curveSegments:1});
+  blade.translate(0,.05,-.004);
+  return mergeGeos([[blade],[new THREE.BoxGeometry(w*7.5,.024,.034),M4(0,.04,0)],[new THREE.CylinderGeometry(.016,.018,.1,8),M4(0,-.015,0)],[new THREE.SphereGeometry(.027,10,8),M4(0,-.07,0)]]);
+}
+const HORSE_HEAD=[[-.2,0],[-.245,.1],[-.255,.25],[-.23,.42],[-.17,.57],[-.1,.69],[-.05,.77],[-.035,.87],[.02,.8],[.08,.775],[.17,.7],[.27,.59],[.34,.49],[.355,.43],[.33,.385],[.26,.365],[.18,.38],[.11,.36],[.07,.29],[.1,.19],[.16,.09],[.19,0]];
+const PIECE_DEF={};
 (function buildPieces(){
-  // pawn: helmeted soldier
+  const X=new THREE.Vector3(1,0,0), ONE=new THREE.Vector3(1,1,1);
+  // pawn: foot soldier with a sword in the right hand and a shield on the left arm
   {
-    const s=.82;
-    const body=lathe([...baseProfile(s),[.25,.2],[.19,.27],[.155,.35],[.135,.44],[.145,.49],[.195,.515],[.2,.54],[.165,.56],[.115,.575],[.1,.585],[0,.585]]);
-    const bodyG=mergeGeos([[body],[new THREE.SphereGeometry(.13,24,16),M4(0,.68,0)]]);
-    const top=mergeGeos([[new THREE.SphereGeometry(.146,24,10,0,Math.PI*2,0,Math.PI*.47),M4(0,.69,0)],[new THREE.ConeGeometry(.035,.13,12),M4(0,.88,0)],[new THREE.TorusGeometry(.146,.016,6,32),M4(0,.703,0,Math.PI/2)]]);
-    const rest=mergeGeos([ring(.386*s,.15*s,.018),ring(.2,.527,.02)]);
-    PIECE_GEO[P]={body:bodyG,gold:mergeGeos([[top.clone()],[rest]]),top,h:.95};
+    const s=.82, hand=new THREE.Vector3(-.2,.37,-.135);
+    const qS=new THREE.Quaternion().setFromAxisAngle(YUP,.35).multiply(new THREE.Quaternion().setFromAxisAngle(X,Math.PI/2));
+    const qR=new THREE.Quaternion().setFromAxisAngle(YUP,.35);
+    const boss=hand.clone().add(new THREE.Vector3(0,-.03,0).applyQuaternion(qS));
+    const body=mergeGeos([[lathe([...baseProfile(s),[.25,.2],[.19,.27],[.15,.36],[.138,.45],[.15,.5],[.165,.52],[.12,.56],[.1,.585],[0,.585]])],
+      [new THREE.SphereGeometry(.12,22,16),M4(0,.67,0)],
+      [limb(.19,.042,.036),new THREE.Matrix4().compose(new THREE.Vector3(-.165,.52,0),new THREE.Quaternion().setFromEuler(new THREE.Euler(.62,0,-.15)),ONE)],
+      [new THREE.CylinderGeometry(.15,.15,.024,24),new THREE.Matrix4().compose(hand,qS,ONE)]]);
+    const top=mergeGeos([[new THREE.SphereGeometry(.136,22,10,0,Math.PI*2,0,Math.PI*.47),M4(0,.685,0)],[new THREE.ConeGeometry(.032,.12,10),M4(0,.865,0)],[new THREE.TorusGeometry(.136,.014,6,30),M4(0,.698,0,Math.PI/2)]]);
+    const rest=mergeGeos([ring(.386*s,.15*s,.018),ring(.15,.47,.016),[new THREE.TorusGeometry(.15,.014,6,28),new THREE.Matrix4().compose(hand,qR,ONE)],[new THREE.SphereGeometry(.04,12,8),M4(boss.x,boss.y,boss.z)]]);
+    PIECE_DEF[P]={body,top,rest,h:.92,strike:'pawn',reach:.6,
+      arm:{pivot:[.165,.52,0],rest:[.35,0,.12],geo:limb(.2,.042,.036),at:[0,-.215,0],wrest:[-.9,0,0],wgeo:swordGeo(.4,.022),wmat:'steel',tipY:.45}};
   }
-  // rook: castle tower
+  // rook: castle tower with a gate; it attacks by ramming
   {
     const parts=[[lathe([...baseProfile(1),[.31,.22],[.275,.32],[.255,.55],[.262,.66],[.3,.7],[.33,.74],[.336,.78],[.336,.9],[.27,.9],[.27,.83],[0,.83]])]];
     for(let i=0;i<6;i++){ const a=i/6*Math.PI*2; parts.push([new THREE.BoxGeometry(.15,.14,.1),M4(Math.sin(a)*.3,.965,Math.cos(a)*.3,0,a,0)]); }
-    const bodyG=mergeGeos(parts);
-    const topParts=[ring(.334,.74,.024)];
-    for(let i=0;i<6;i++){ const a=i/6*Math.PI*2; topParts.push([new THREE.BoxGeometry(.16,.025,.11),M4(Math.sin(a)*.3,1.045,Math.cos(a)*.3,0,a,0)]); }
-    const top=mergeGeos(topParts);
-    const rest=[ring(.386,.15),ring(.265,.42,.016)];
-    for(let i=0;i<4;i++){ const a=i/4*Math.PI*2+Math.PI/4; rest.push([new THREE.BoxGeometry(.035,.13,.03),M4(Math.sin(a)*.262,.56,Math.cos(a)*.262,0,a,0)]); }
-    PIECE_GEO[R]={body:bodyG,gold:mergeGeos([[top.clone()],[mergeGeos(rest)]]),top,h:1.06};
+    const body=mergeGeos(parts);
+    const tp=[ring(.334,.74,.024)];
+    for(let i=0;i<6;i++){ const a=i/6*Math.PI*2; tp.push([new THREE.BoxGeometry(.16,.025,.11),M4(Math.sin(a)*.3,1.045,Math.cos(a)*.3,0,a,0)]); }
+    const top=mergeGeos(tp);
+    const rp=[ring(.386,.15),ring(.265,.42,.016),[new THREE.TorusGeometry(.085,.016,6,16,Math.PI),M4(0,.3,-.268)],
+      [new THREE.BoxGeometry(.028,.1,.03),M4(-.085,.25,-.268)],[new THREE.BoxGeometry(.028,.1,.03),M4(.085,.25,-.268)],[new THREE.BoxGeometry(.02,.15,.025),M4(0,.27,-.272)]];
+    for(let i=0;i<4;i++){ const a=i/4*Math.PI*2+Math.PI/4; rp.push([new THREE.BoxGeometry(.035,.13,.03),M4(Math.sin(a)*.262,.56,Math.cos(a)*.262,0,a,0)]); }
+    PIECE_DEF[R]={body,top,rest:mergeGeos(rp),h:1.06,strike:'rook',reach:1.25};
   }
-  // knight: horse head
+  // knight: a horse with an armoured rider; horse and rider rear up together around the hind hooves
   {
-    const head=new THREE.ExtrudeGeometry(knightShape([[-.2,0],[-.245,.1],[-.255,.25],[-.23,.42],[-.17,.57],[-.1,.69],[-.05,.77],[-.035,.87],[.02,.8],[.08,.775],[.17,.7],[.27,.59],[.34,.49],[.355,.43],[.33,.385],[.26,.365],[.18,.38],[.11,.36],[.07,.29],[.1,.19],[.16,.09],[.19,0]]),
-      {depth:.24,bevelEnabled:true,bevelThickness:.05,bevelSize:.04,bevelSegments:3,curveSegments:4});
+    const base=mergeGeos([[lathe([...baseProfile(1),[.3,.2],[0,.2]])]]);
+    const baseGold=mergeGeos([ring(.386,.15)]);
+    const head=new THREE.ExtrudeGeometry(polyShape(HORSE_HEAD),{depth:.24,bevelEnabled:true,bevelThickness:.05,bevelSize:.04,bevelSegments:2,curveSegments:2});
     head.translate(0,0,-.12);
-    { // taper: rounded back ridge, slimmer ears and muzzle, so the head reads as a horse from every side
-      const ps=head.attributes.position, sm=(a,b,v)=>{ const k=clamp((v-a)/(b-a),0,1); return k*k*(3-2*k); };
-      for(let i=0;i<ps.count;i++){ const x=ps.getX(i), y=ps.getY(i); const f=(1-.48*sm(-.08,-.28,x))*(1-.38*sm(.6,.88,y))*(1-.22*sm(.18,.36,x)); ps.setZ(i,ps.getZ(i)*f); }
-      head.computeVertexNormals();
-    }
-    const base=lathe([...baseProfile(1),[.3,.2],[.25,.255],[.21,.3],[.19,.42],[.15,.5],[0,.5]]);
-    const bodyG=mergeGeos([[base],[head,M4(0,.235,0,0,Math.PI/2,0)]]);
-    const mane=new THREE.ExtrudeGeometry(knightShape([[-.265,.06],[-.29,.25],[-.265,.43],[-.205,.585],[-.135,.705],[-.075,.79],[-.04,.745],[-.09,.665],[-.155,.55],[-.2,.41],[-.22,.25],[-.215,.08]]),
-      {depth:.09,bevelEnabled:true,bevelThickness:.012,bevelSize:.012,bevelSegments:1,curveSegments:2});
-    mane.translate(0,0,-.045);
-    const top=mergeGeos([[mane,M4(0,.235,0,0,Math.PI/2,0)],[new THREE.SphereGeometry(.036,12,10),M4(-.165,.235+.63,-.17)],[new THREE.SphereGeometry(.036,12,10),M4(.165,.235+.63,-.17)]]);
-    const rest=mergeGeos([ring(.386,.15),[new THREE.TorusGeometry(.17,.017,6,28),M4(0,.235+.44,-.27,0,0,0,1,.6,1)]]);
-    PIECE_GEO[N]={body:bodyG,gold:mergeGeos([[top.clone()],[rest]]),top,h:1.12};
+    { const ps=head.attributes.position, sm=(a,b,v)=>{ const k=clamp((v-a)/(b-a),0,1); return k*k*(3-2*k); };
+      for(let i=0;i<ps.count;i++){ const x=ps.getX(i), y=ps.getY(i); ps.setZ(i,ps.getZ(i)*(1-.48*sm(-.08,-.28,x))*(1-.38*sm(.6,.88,y))*(1-.22*sm(.18,.36,x))); }
+      head.computeVertexNormals(); }
+    const legs=[[[.075,.43,-.19],[.08,.205,-.23]],[[-.075,.43,-.19],[-.08,.205,-.23]],[[.075,.43,.24],[.08,.205,.27]],[[-.075,.43,.24],[-.08,.205,.27]]];
+    const up=[ell(0,.5,.03,.145,.155,.3),ell(0,.53,-.17,.13,.15,.14),ell(0,.53,.22,.135,.15,.14),
+      taperRod([0,.56,-.2],[0,.8,-.31],.1,.07),
+      [head,new THREE.Matrix4().compose(new THREE.Vector3(0,.66,-.33),new THREE.Quaternion().setFromAxisAngle(YUP,Math.PI/2),new THREE.Vector3(.4,.4,.55))],
+      taperRod([0,.57,.33],[0,.33,.46],.04,.022),
+      ell(0,.79,.08,.07,.12,.065,12),[new THREE.SphereGeometry(.052,14,10),M4(0,.965,.08)],
+      taperRod([.07,.7,.1],[.14,.52,.01],.034,.026),taperRod([-.07,.7,.1],[-.14,.52,.01],.034,.026),
+      taperRod([-.07,.88,.07],[-.04,.76,-.12],.026,.022)];
+    for(const [a,b] of legs) up.push(taperRod(a,b,.034,.026));
+    const top=mergeGeos([[new THREE.SphereGeometry(.06,14,8,0,Math.PI*2,0,Math.PI*.5),M4(0,.975,.08)],[new THREE.ConeGeometry(.024,.14,8),M4(0,1.08,.1,-.35,0,0)]]);
+    const gp=[[new THREE.BoxGeometry(.25,.04,.24),M4(0,.66,.08)],[new THREE.TorusGeometry(.075,.012,6,20),M4(0,.84,-.4,0,0,0,1.15,.75,1)],[new THREE.TorusGeometry(.072,.012,6,20),M4(0,.72,.08,Math.PI/2)]];
+    for(const [,b] of legs) gp.push([new THREE.CylinderGeometry(.04,.044,.035,10),M4(b[0],.215,b[2])]);
+    for(let i=0;i<5;i++){ const k=i/4; gp.push([new THREE.BoxGeometry(.03,.06,.07),M4(0,lerp(.62,.83,k)+.06,lerp(-.19,-.3,k)+.045,-.6,0,0)]); }
+    PIECE_DEF[N]={base,baseGold,body:mergeGeos(up),top,rest:mergeGeos(gp),h:1.1,upperPivot:[0,.2,.27],strike:'knight',reach:.72,
+      arm:{pivot:[.08,.89,.08],rest:[1.2,0,.2],geo:limb(.15,.028,.025,.028),at:[0,-.16,0],wrest:[-1.5,0,0],wgeo:swordGeo(.32,.017),wmat:'steel',tipY:.37}};
   }
-  // bishop: mitre
+  // bishop: mitred wizard with a staff that fires a bolt
   {
-    const body=lathe([...baseProfile(.96),[.285,.21],[.205,.3],[.16,.45],[.135,.62],[.14,.66],[.235,.69],[.24,.72],[.15,.745],[.15,.76],[.175,.8],[.205,.88],[.212,.96],[.19,1.05],[.14,1.13],[.07,1.18],[0,1.195]]);
+    const body=mergeGeos([[lathe([...baseProfile(.96),[.285,.21],[.205,.3],[.16,.45],[.135,.62],[.14,.66],[.235,.69],[.24,.72],[.15,.745],[.15,.76],[.175,.8],[.205,.88],[.212,.96],[.19,1.05],[.14,1.13],[.07,1.18],[0,1.195]])]]);
     const top=mergeGeos([[new THREE.SphereGeometry(.05,16,12),M4(0,1.235,0)],[new THREE.CylinderGeometry(.222,.222,.03,40,1,true),M4(0,.97,0,0,0,.42)],[new THREE.CylinderGeometry(.212,.212,.03,40,1,true),M4(0,.93,0)]]);
     const rest=mergeGeos([ring(.37,.144,.018),ring(.24,.705,.02)]);
-    PIECE_GEO[B]={body:mergeGeos([[body]]),gold:mergeGeos([[top.clone()],[rest]]),top,h:1.29};
+    const staff=mergeGeos([[new THREE.CylinderGeometry(.017,.017,1.06,8),M4(0,.27,0)],[new THREE.TorusGeometry(.085,.012,6,20,Math.PI*1.4),M4(0,.88,0,0,0,-.2)],[new THREE.ConeGeometry(.026,.06,8),M4(0,.795,0,Math.PI,0,0)]]);
+    PIECE_DEF[B]={body,top,rest,h:1.29,strike:'bishop',reach:1.7,
+      arm:{pivot:[.15,.69,0],rest:[.3,0,.22],geo:limb(.24,.045,.07,.034),at:[0,-.25,0],wrest:[-.3,0,-.22],wgeo:staff,wmat:'gold',orb:mergeGeos([[new THREE.SphereGeometry(.062,16,12),M4(0,.87,0)]]),orbY:.87}};
   }
-  // queen: crowned
+  // queen: crowned, with a slender sword for her whirlwind cut
   {
-    const body=lathe([...baseProfile(1.02),[.32,.21],[.22,.32],[.17,.5],[.145,.72],[.15,.78],[.25,.81],[.255,.845],[.16,.87],[.16,.89],[.19,.98],[.25,1.1],[.27,1.15],[.25,1.17],[.19,1.18],[.15,1.22],[.1,1.27],[.04,1.3],[0,1.305]]);
+    const body=mergeGeos([[lathe([...baseProfile(1.02),[.32,.21],[.22,.32],[.17,.5],[.145,.72],[.15,.78],[.25,.81],[.255,.845],[.16,.87],[.16,.89],[.19,.98],[.25,1.1],[.27,1.15],[.25,1.17],[.19,1.18],[.15,1.22],[.1,1.27],[.04,1.3],[0,1.305]])]]);
     const tp=[ring(.268,1.155,.024),[new THREE.SphereGeometry(.068,18,14),M4(0,1.37,0)],[new THREE.ConeGeometry(.022,.08,10),M4(0,1.46,0)]];
     for(let i=0;i<9;i++){ const a=i/9*Math.PI*2; tp.push([new THREE.ConeGeometry(.033,.11,8),M4(Math.sin(a)*.25,1.22,Math.cos(a)*.25)]); tp.push([new THREE.SphereGeometry(.028,10,8),M4(Math.sin(a)*.25,1.285,Math.cos(a)*.25)]); }
-    const top=mergeGeos(tp);
-    const rest=mergeGeos([ring(.39,.153,.02),ring(.25,.83,.022)]);
-    PIECE_GEO[Q]={body:mergeGeos([[body]]),gold:mergeGeos([[top.clone()],[rest]]),top,h:1.45};
+    PIECE_DEF[Q]={body,top:mergeGeos(tp),rest:mergeGeos([ring(.39,.153,.02),ring(.25,.83,.022)]),h:1.45,strike:'queen',reach:.62,
+      arm:{pivot:[.165,.78,0],rest:[.25,0,.2],geo:limb(.26,.045,.07,.034),at:[0,-.27,0],wrest:[-.25,0,-.2],wgeo:swordGeo(.48,.024),wmat:'steel',tipY:.53}};
   }
-  // king: crown and cross
+  // king: crown and cross, both hands on a great sword planted point-down
   {
-    const body=lathe([...baseProfile(1.05),[.33,.21],[.23,.34],[.18,.55],[.155,.85],[.16,.9],[.27,.93],[.275,.97],[.17,1],[.17,1.02],[.2,1.12],[.26,1.26],[.27,1.31],[.21,1.33],[.16,1.36],[.1,1.4],[0,1.41]]);
+    const body=mergeGeos([[lathe([...baseProfile(1.05),[.33,.21],[.23,.34],[.18,.55],[.155,.85],[.16,.9],[.27,.93],[.275,.97],[.17,1],[.17,1.02],[.2,1.12],[.26,1.26],[.27,1.31],[.21,1.33],[.16,1.36],[.1,1.4],[0,1.41]])]]);
     const tp=[[new THREE.CylinderGeometry(.278,.268,.1,40,1,true),M4(0,1.285,0)],[new THREE.BoxGeometry(.075,.28,.075),M4(0,1.56,0)],[new THREE.BoxGeometry(.21,.07,.075),M4(0,1.6,0)],[new THREE.SphereGeometry(.05,14,10),M4(0,1.43,0)]];
     for(let i=0;i<6;i++){ const a=i/6*Math.PI*2; tp.push([new THREE.ConeGeometry(.03,.1,8),M4(Math.sin(a)*.262,1.385,Math.cos(a)*.262)]); }
-    const top=mergeGeos(tp);
-    const rest=mergeGeos([ring(.405,.158,.021),ring(.272,.95,.022)]);
-    PIECE_GEO[K]={body:mergeGeos([[body]]),gold:mergeGeos([[top.clone()],[rest]]),top,h:1.7};
+    const arms=mergeGeos([taperRod([.18,0,0],[.035,-.25,-.21],.05,.068),taperRod([-.18,0,0],[-.035,-.25,-.21],.05,.068),[new THREE.SphereGeometry(.052,10,8),M4(.18,0,0)],[new THREE.SphereGeometry(.052,10,8),M4(-.18,0,0)],[new THREE.SphereGeometry(.042,10,8),M4(.03,-.27,-.22)],[new THREE.SphereGeometry(.042,10,8),M4(-.03,-.27,-.22)]]);
+    PIECE_DEF[K]={body,top:mergeGeos(tp),rest:mergeGeos([ring(.405,.158,.021),ring(.272,.95,.022)]),h:1.7,strike:'king',reach:.62,splitTop:true,
+      arm:{pivot:[0,.95,0],rest:[0,0,0],geo:arms,at:[0,-.28,-.22],wrest:[Math.PI,0,0],wgeo:swordGeo(.44,.032),wmat:'steel',tipY:.49}};
   }
-  for(const k in PIECE_GEO){ const g=PIECE_GEO[k].top; g.computeBoundingBox(); const c=new THREE.Vector3(); g.boundingBox.getCenter(c); PIECE_GEO[k].topCenter=c; const tc=g.clone(); tc.translate(-c.x,-c.y,-c.z); PIECE_GEO[k].chunk=tc; }
+  for(const k in PIECE_DEF){
+    const d=PIECE_DEF[k];
+    d.top.computeBoundingBox(); d.topCenter=new THREE.Vector3(); d.top.boundingBox.getCenter(d.topCenter);
+    d.chunk=d.top.clone(); d.chunk.translate(-d.topCenter.x,-d.topCenter.y,-d.topCenter.z);
+    if(!d.splitTop) d.gold=mergeGeos([[d.top.clone()],[d.rest.clone()]]);
+  }
 })();
 
 class Piece{
@@ -1293,12 +1334,40 @@ class Piece{
     this.root.position.copy(sqPos(sq));
     scene.add(this.root);
   }
+  baseYaw(){ return this.color>0?0:Math.PI; }
   build(){
     while(this.face.children.length) this.face.remove(this.face.children[0]);
-    const def=PIECE_GEO[this.type];
-    const body=new THREE.Mesh(def.body,this.color>0?matIvory:matObsidian), gold=new THREE.Mesh(def.gold,matGold);
-    for(const m of [body,gold]){ m.castShadow=true; m.receiveShadow=true; m.userData.piece=this; this.face.add(m); }
-    this.face.rotation.y=this.color>0?0:Math.PI;
+    this.upper=this.arm=this.weapon=this.orbMat=this.kingTop=null;
+    const def=PIECE_DEF[this.type], bodyMat=this.color>0?matIvory:matObsidian;
+    const add=(parent,geo,mat,shadow,weapon)=>{ const m=new THREE.Mesh(geo,mat); m.castShadow=!!shadow; m.receiveShadow=true; m.userData.piece=this; if(weapon) m.userData.weapon=true; parent.add(m); return m; };
+    let holder=this.face;
+    if(def.base){ add(this.face,def.base,bodyMat,true); add(this.face,def.baseGold,matGold); }
+    if(def.upperPivot){
+      const pv=new THREE.Group(), off=new THREE.Group();
+      pv.position.fromArray(def.upperPivot); off.position.set(-def.upperPivot[0],-def.upperPivot[1],-def.upperPivot[2]);
+      pv.add(off); this.face.add(pv); this.upper=pv; holder=off;
+    }
+    this.holder=holder;
+    add(holder,def.body,bodyMat,true);
+    if(def.splitTop){ this.kingTop=add(holder,def.top,matGold); add(holder,def.rest,matGold); } else add(holder,def.gold,matGold);
+    const a=def.arm;
+    if(a){
+      const pv=new THREE.Group(); pv.position.fromArray(a.pivot); pv.rotation.fromArray(a.rest); holder.add(pv); this.arm=pv;
+      add(pv,a.geo,bodyMat,true);
+      const w=new THREE.Group(); w.position.fromArray(a.at); w.rotation.fromArray(a.wrest); pv.add(w); this.weapon=w;
+      add(w,a.wgeo,a.wmat==='gold'?matGold:matSteel,false,true);
+      if(a.orb){ this.orbMat=(this.color>0?matOrbW:matOrbB).clone(); add(w,a.orb,this.orbMat,false,true); }
+    }
+    this.face.rotation.set(0,this.baseYaw(),0);
+  }
+  resetPose(){
+    this.pose.quaternion.identity(); this.pose.scale.setScalar(1);
+    this.face.rotation.set(0,this.baseYaw(),0);
+    if(this.upper) this.upper.rotation.set(0,0,0);
+    const a=PIECE_DEF[this.type].arm;
+    if(a&&this.arm){ this.arm.rotation.fromArray(a.rest); this.weapon.rotation.fromArray(a.wrest); this.weapon.visible=true; }
+    if(this.orbMat) this.orbMat.emissiveIntensity=1.3;
+    if(this.kingTop) this.kingTop.visible=true;
   }
   dispose(){ this.alive=false; scene.remove(this.root); }
 }
@@ -1325,79 +1394,198 @@ const capRings=[...Array(16)].map(()=>flat(1.15,ringTex,0xff4a32));
 const lastA=flat(.98,softSq,0xffc65a,.55), lastB=flat(.98,softSq,0xffc65a,.55);
 const checkGlow=flat(1.7,checkTex,0xff2a12);
 
-// ---------------------------------------------------------------- shards
+// ---------------------------------------------------------------- debris: shards, flying weapons, cut halves, knocked pieces
 const shardGeos=[...Array(7)].map((_,i)=>{
   const Rr=rng(100+i), geo=new THREE.IcosahedronGeometry(1,0), pos=geo.attributes.position, jit=new Map();
   for(let k=0;k<pos.count;k++){ const key=`${pos.getX(k).toFixed(3)},${pos.getY(k).toFixed(3)},${pos.getZ(k).toFixed(3)}`; let j=jit.get(key); if(!j){ j=[.55+Rr()*.9,.55+Rr()*.9,.55+Rr()*.9]; jit.set(key,j); } pos.setXYZ(k,pos.getX(k)*j[0],pos.getY(k)*j[1],pos.getZ(k)*j[2]); }
   geo.scale(1,.45+Rr()*.6,.6+Rr()*.5); geo.computeVertexNormals(); return geo;
 });
-const shards=[], shardPool=[];
-function addShard(geo,mat,x,y,z,scale,vx,vy,vz,radius,life,quat){
-  let s=shardPool.pop();
-  if(!s){ s={mesh:new THREE.Mesh(geo,mat),v:new THREE.Vector3(),w:new THREE.Vector3()}; }
-  s.mesh.geometry=geo; s.mesh.material=mat; s.mesh.castShadow=scale>.5; s.mesh.position.set(x,y,z); s.mesh.scale.setScalar(scale);
-  if(quat) s.mesh.quaternion.copy(quat); else s.mesh.rotation.set(R0()*6,R0()*6,R0()*6);
-  s.scale=scale; s.r=radius; s.v.set(vx,vy,vz); s.w.set((R0()-.5)*16,(R0()-.5)*16,(R0()-.5)*16); s.life=life; s.age=0; s.rest=false;
-  scene.add(s.mesh); shards.push(s);
+const debris=[], shardPool=[];
+const _dp=new THREE.Vector3(), _wp=new THREE.Vector3(), _wq=new THREE.Quaternion();
+function addDebris(obj,vx,vy,vz,radius,life,o={}){
+  const d={obj,v:new THREE.Vector3(vx,vy,vz),w:o.w||new THREE.Vector3((R0()-.5)*16,(R0()-.5)*16,(R0()-.5)*16),r:radius,life,age:0,rest:!!o.rest,scale:obj.scale.x,
+    pooled:!!o.pooled,dispose:!!o.dispose,crumbleAt:o.crumbleAt===undefined?null:o.crumbleAt,crumbleOnGround:!!o.crumbleOnGround,minAge:o.minAge||0,onCrumble:o.onCrumble||null,hit:false};
+  if(!obj.parent) scene.add(obj);
+  debris.push(d); return d;
 }
-const _pv=new THREE.Vector3();
-function updateShards(dt){
-  for(let i=shards.length-1;i>=0;i--){
-    const s=shards[i], m=s.mesh; s.age+=dt;
-    if(!s.rest){
-      s.v.y-=15*dt;
-      _pv.copy(m.position);
-      m.position.addScaledVector(s.v,dt);
-      m.rotation.x+=s.w.x*dt; m.rotation.y+=s.w.y*dt; m.rotation.z+=s.w.z*dt;
+function addShard(geo,mat,x,y,z,scale,vx,vy,vz,radius,life,quat){
+  const mesh=shardPool.pop()||new THREE.Mesh(geo,mat);
+  mesh.geometry=geo; mesh.material=mat; mesh.castShadow=scale>.5; mesh.position.set(x,y,z); mesh.scale.setScalar(scale);
+  if(quat) mesh.quaternion.copy(quat); else mesh.rotation.set(R0()*6,R0()*6,R0()*6);
+  return addDebris(mesh,vx,vy,vz,radius,life,{pooled:true});
+}
+function removeDebris(i){
+  const d=debris[i]; debris.splice(i,1);
+  if(d.obj.parent) d.obj.parent.remove(d.obj);
+  if(d.pooled) shardPool.push(d.obj);
+  else if(d.dispose) d.obj.traverse(o=>{ if(o.isMesh) o.geometry.dispose(); });
+}
+function clearDebris(){ while(debris.length) removeDebris(debris.length-1); }
+function updateDebris(dt){
+  for(let i=debris.length-1;i>=0;i--){
+    const d=debris[i], m=d.obj; d.age+=dt;
+    if(!d.rest){
+      d.v.y-=15*dt; _dp.copy(m.position); m.position.addScaledVector(d.v,dt);
+      m.rotation.x+=d.w.x*dt; m.rotation.y+=d.w.y*dt; m.rotation.z+=d.w.z*dt;
       const lim=HALL-.4;
-      if(Math.abs(m.position.x)>lim){ m.position.x=Math.sign(m.position.x)*lim; s.v.x*=-.4; }
-      if(Math.abs(m.position.z)>lim){ m.position.z=Math.sign(m.position.z)*lim; s.v.z*=-.4; }
+      if(Math.abs(m.position.x)>lim){ m.position.x=Math.sign(m.position.x)*lim; d.v.x*=-.4; }
+      if(Math.abs(m.position.z)>lim){ m.position.z=Math.sign(m.position.z)*lim; d.v.z*=-.4; }
       const gy=groundY(m.position.x,m.position.z);
-      if(gy-(m.position.y-s.r)>.3&&gy>groundY(_pv.x,_pv.z)){ m.position.x=_pv.x; m.position.z=_pv.z; s.v.x*=-.35; s.v.z*=-.35; }
+      if(gy-(m.position.y-d.r)>.3&&gy>groundY(_dp.x,_dp.z)){ m.position.x=_dp.x; m.position.z=_dp.z; d.v.x*=-.35; d.v.z*=-.35; }
       const gy2=groundY(m.position.x,m.position.z);
-      if(m.position.y-s.r<gy2){
-        m.position.y=gy2+s.r;
-        if(s.v.y<0) s.v.y=-s.v.y*.3;
-        s.v.x*=.6; s.v.z*=.6; s.w.multiplyScalar(.55);
-        if(Math.abs(s.v.y)<.7&&s.v.x*s.v.x+s.v.z*s.v.z<.3){ s.rest=true; }
+      if(m.position.y-d.r<gy2){
+        m.position.y=gy2+d.r; d.hit=true;
+        if(d.v.y<0) d.v.y=-d.v.y*.3;
+        d.v.x*=.6; d.v.z*=.6; d.w.multiplyScalar(.55);
+        if(Math.abs(d.v.y)<.7&&d.v.x*d.v.x+d.v.z*d.v.z<.3) d.rest=true;
       }
     }
-    const left=s.life-s.age;
-    if(left<1.2){ m.scale.setScalar(s.scale*Math.max(0,left/1.2)); }
-    if(left<=0){ scene.remove(m); shards.splice(i,1); shardPool.push(s); }
+    if(d.onCrumble&&d.age>=d.minAge&&((d.crumbleAt!==null&&d.age>=d.crumbleAt)||(d.crumbleOnGround&&d.hit))){ const fn=d.onCrumble; d.onCrumble=null; fn(d); removeDebris(i); continue; }
+    const left=d.life-d.age;
+    if(left<1.2) m.scale.setScalar(d.scale*Math.max(0,left/1.2));
+    if(left<=0) removeDebris(i);
   }
-}
-const _q=new THREE.Quaternion();
-function shatter(pc,dir){
-  const p=pc.root.position.clone(), def=PIECE_GEO[pc.type], h=def.h;
-  const bodyMat=pc.color>0?matIvory:matObsidian;
-  const n=Math.round((lowPower?.7:1)*({1:42,2:54,3:56,4:58,5:70,6:78})[pc.type]);
-  for(let i=0;i<n;i++){
-    const a=R0()*Math.PI*2, rad=Math.sqrt(R0())*.3, y=p.y+.05+R0()*h*.92;
-    const gold=R0()<.2, sc=(.045+R0()*.1)*(gold?.8:1);
-    const out=2+R0()*3.2;
-    addShard(shardGeos[i%shardGeos.length],gold?matGold:bodyMat,p.x+Math.cos(a)*rad,y,p.z+Math.sin(a)*rad,sc,
-      Math.cos(a)*out+dir.x*(2.5+R0()*3),1.5+R0()*5+(y-p.y)*1.4,Math.sin(a)*out+dir.z*(2.5+R0()*3),sc*.8,4.2+R0()*2.2);
-  }
-  // the crown / helmet / mane flies off in one piece
-  const tc=def.topCenter.clone(); if(pc.color<0) tc.applyAxisAngle(YUP,Math.PI);
-  _q.setFromAxisAngle(YUP,pc.color>0?0:Math.PI);
-  addShard(def.chunk,matGold,p.x+tc.x,p.y+tc.y,p.z+tc.z,1,dir.x*3.4+(R0()-.5)*1.5,5.5+R0()*2.5,dir.z*3.4+(R0()-.5)*1.5,.16,6.5,_q);
-  // dust, sparks, flash
-  for(let i=0;i<(lowPower?12:20);i++){ const a=R0()*Math.PI*2, sp=.5+R0()*1.6;
-    smoke.emit(p.x+Math.cos(a)*.2,p.y+.15+R0()*h*.6,p.z+Math.sin(a)*.2,Math.cos(a)*sp,.25+R0()*.8,Math.sin(a)*sp,1.3+R0()*1.1,.55,1.7,[.62,.55,.47],[.36,.32,.28],.5,1.6,-.15,.3); }
-  for(let i=0;i<(lowPower?40:70);i++){ const a=R0()*Math.PI*2, e=R0()*Math.PI*.5, sp=3+R0()*5;
-    fx.emit(p.x,p.y+h*.5,p.z,Math.cos(a)*Math.cos(e)*sp+dir.x*2,Math.sin(e)*sp+1,Math.sin(a)*Math.cos(e)*sp+dir.z*2,.35+R0()*.6,.16,.02,[1,.95,.75],[1,.38,.08],1,1.2,9); }
-  for(let i=0;i<24;i++){ const a=i/24*Math.PI*2; fx.emit(p.x,p.y+.06,p.z,Math.cos(a)*4.2,.15,Math.sin(a)*4.2,.45,.42,.12,[1,.85,.5],[1,.4,.1],.8,3.5,0); }
-  flash.position.set(p.x,p.y+.9,p.z); flashLevel=1;
-  shake(reduceMotion?0:.24);
-  sfx.smash();
-  try{ navigator.vibrate&&navigator.vibrate(40); }catch(e){}
-  pc.dispose(); pieces=pieces.filter(x=>x!==pc);
 }
 function magicBurst(p,color=[1,.82,.4],n=40,up=1){
   for(let i=0;i<n;i++){ const a=R0()*Math.PI*2, r=.15+R0()*.35;
     fx.emit(p.x+Math.cos(a)*r,p.y+.05+R0()*.3,p.z+Math.sin(a)*r,Math.cos(a)*.6,(1+R0()*2.2)*up,Math.sin(a)*.6,.7+R0()*.7,.2,.03,color,[1,.5,.15],1,.8,-.3,2); }
+}
+function dustRing(p,n,speed,size=.5){
+  for(let i=0;i<n;i++){ const a=i/n*Math.PI*2+R0()*.2, sp=speed*(.7+R0()*.6);
+    smoke.emit(p.x+Math.cos(a)*.25,.08,p.z+Math.sin(a)*.25,Math.cos(a)*sp,.2+R0()*.3,Math.sin(a)*sp,1.1+R0()*.6,size,size*2.6,[.62,.56,.48],[.38,.34,.3],.5,2.4,0); }
+}
+function retire(pc){ pc.dispose(); pieces=pieces.filter(x=>x!==pc); }
+// the crown (helmet, plume...) and the weapon leave the piece and tumble away
+function flyParts(pc,dir,withTop){
+  pc.root.updateMatrixWorld(true);
+  const def=PIECE_DEF[pc.type];
+  if(withTop&&(!pc.kingTop||pc.kingTop.visible)){
+    const p=pc.holder.localToWorld(def.topCenter.clone()); pc.holder.getWorldQuaternion(_wq);
+    addShard(def.chunk,matGold,p.x,p.y,p.z,1,dir.x*3.2+(R0()-.5)*1.4,4.5+R0()*2.5,dir.z*3.2+(R0()-.5)*1.4,.14,6.5,_wq);
+  }
+  if(pc.weapon&&pc.weapon.visible) for(const o of pc.weapon.children){
+    if(!o.isMesh) continue;
+    o.getWorldPosition(_wp); o.getWorldQuaternion(_wq);
+    addShard(o.geometry,o.material,_wp.x,_wp.y,_wp.z,1,dir.x*2.4+(R0()-.5)*2,3.2+R0()*2.2,dir.z*2.4+(R0()-.5)*2,.07,6.5,_wq);
+  }
+}
+// o: {hScale, radial, up, count, spark:[r,g,b], shake, quiet}
+function shatter(pc,dir,o={}){
+  const p=pc.root.position.clone(), def=PIECE_DEF[pc.type], h=def.h*(o.hScale||1);
+  const bodyMat=pc.color>0?matIvory:matObsidian;
+  flyParts(pc,dir,true);
+  const n=Math.round((lowPower?.7:1)*({1:42,2:54,3:56,4:58,5:70,6:78})[pc.type]*(o.count||1)), rad=o.radial||1, upB=o.up===undefined?1:o.up;
+  for(let i=0;i<n;i++){
+    const a=R0()*Math.PI*2, rr2=Math.sqrt(R0())*.3, y=p.y+.05+R0()*h*.92, gold=R0()<.2, sc=(.045+R0()*.1)*(gold?.8:1), out=(2+R0()*3.2)*rad;
+    addShard(shardGeos[i%shardGeos.length],gold?matGold:bodyMat,p.x+Math.cos(a)*rr2,y,p.z+Math.sin(a)*rr2,sc,
+      Math.cos(a)*out+dir.x*(2.5+R0()*3),(1.5+R0()*5+(y-p.y)*1.4)*upB,Math.sin(a)*out+dir.z*(2.5+R0()*3),sc*.8,4.2+R0()*2.2);
+  }
+  for(let i=0;i<(lowPower?12:20);i++){ const a=R0()*Math.PI*2, sp=.5+R0()*1.6;
+    smoke.emit(p.x+Math.cos(a)*.2,p.y+.15+R0()*h*.6,p.z+Math.sin(a)*.2,Math.cos(a)*sp,.25+R0()*.8,Math.sin(a)*sp,1.3+R0()*1.1,.55,1.7,[.62,.55,.47],[.36,.32,.28],.5,1.6,-.15,.3); }
+  const sp0=o.spark||[1,.95,.75];
+  for(let i=0;i<(lowPower?40:70);i++){ const a=R0()*Math.PI*2, e=R0()*Math.PI*.5, sp=3+R0()*5;
+    fx.emit(p.x,p.y+h*.5,p.z,Math.cos(a)*Math.cos(e)*sp+dir.x*2,Math.sin(e)*sp+1,Math.sin(a)*Math.cos(e)*sp+dir.z*2,.35+R0()*.6,.16,.02,sp0,[1,.38,.08],1,1.2,9); }
+  for(let i=0;i<24;i++){ const a=i/24*Math.PI*2; fx.emit(p.x,Math.max(.06,p.y+.06),p.z,Math.cos(a)*4.2,.15,Math.sin(a)*4.2,.45,.42,.12,[1,.85,.5],[1,.4,.1],.8,3.5,0); }
+  flash.position.set(p.x,p.y+.9,p.z); flashLevel=1;
+  shake(reduceMotion?0:(o.shake===undefined?.24:o.shake));
+  if(!o.quiet) sfx.smash();
+  try{ navigator.vibrate&&navigator.vibrate(40); }catch(e){}
+  retire(pc);
+}
+// split a piece into two rigid halves along a world plane (normal n through point c)
+const _t1=new THREE.Vector3(), _t2=new THREE.Vector3(), _t3=new THREE.Vector3(), _tc=new THREE.Vector3(), _tn=new THREE.Vector3(), _nm=new THREE.Matrix3();
+function splitPiece(pc,n,c){
+  pc.root.updateMatrixWorld(true);
+  const buckets=[[],[]];
+  pc.root.traverse(o=>{
+    if(!o.isMesh||o.userData.weapon||!o.visible) return;
+    const P=o.geometry.attributes.position.array, NN=o.geometry.attributes.normal.array, M=o.matrixWorld;
+    _nm.getNormalMatrix(M);
+    const outs=[{p:[],n:[]},{p:[],n:[]}];
+    for(let i=0;i<P.length;i+=9){
+      _t1.set(P[i],P[i+1],P[i+2]).applyMatrix4(M); _t2.set(P[i+3],P[i+4],P[i+5]).applyMatrix4(M); _t3.set(P[i+6],P[i+7],P[i+8]).applyMatrix4(M);
+      _tc.copy(_t1).add(_t2).add(_t3).multiplyScalar(1/3).sub(c);
+      const t=outs[_tc.dot(n)>=0?0:1];
+      t.p.push(_t1.x,_t1.y,_t1.z,_t2.x,_t2.y,_t2.z,_t3.x,_t3.y,_t3.z);
+      for(let k=0;k<3;k++){ _tn.set(NN[i+k*3],NN[i+k*3+1],NN[i+k*3+2]).applyMatrix3(_nm).normalize(); t.n.push(_tn.x,_tn.y,_tn.z); }
+    }
+    for(let s=0;s<2;s++) if(outs[s].p.length) buckets[s].push({p:outs[s].p,n:outs[s].n,mat:dsMat(o.material)});
+  });
+  return buckets.map(parts=>{
+    if(!parts.length) return null;
+    let cx=0,cy=0,cz=0,cnt=0;
+    for(const pt of parts) for(let i=0;i<pt.p.length;i+=3){ cx+=pt.p[i]; cy+=pt.p[i+1]; cz+=pt.p[i+2]; cnt++; }
+    cx/=cnt; cy/=cnt; cz/=cnt;
+    const grp=new THREE.Group(); grp.position.set(cx,cy,cz);
+    let minY=0;
+    for(const pt of parts){
+      const arr=new Float32Array(pt.p);
+      for(let i=0;i<arr.length;i+=3){ arr[i]-=cx; arr[i+1]-=cy; arr[i+2]-=cz; if(arr[i+1]<minY) minY=arr[i+1]; }
+      const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.BufferAttribute(arr,3)); geo.setAttribute('normal',new THREE.BufferAttribute(new Float32Array(pt.n),3)); geo.computeBoundingSphere();
+      const m=new THREE.Mesh(geo,pt.mat); m.castShadow=true; grp.add(m);
+    }
+    grp.userData.r=clamp(-minY*.85,.08,.4);
+    scene.add(grp);
+    return grp;
+  });
+}
+function crumbleHalf(d){
+  const g=d.obj, p=g.position, mat=g.userData.mat||matIvory;
+  for(let i=0;i<(lowPower?16:26);i++){ const gold=R0()<.18, sc=.04+R0()*.09;
+    addShard(shardGeos[i%7],gold?matGold:mat,p.x+(R0()-.5)*.35,p.y+(R0()-.5)*.4,p.z+(R0()-.5)*.35,sc,(R0()-.5)*2.6,1+R0()*2.6,(R0()-.5)*2.6,sc*.8,3.5+R0()*2); }
+  for(let i=0;i<8;i++){ const a=R0()*Math.PI*2; smoke.emit(p.x,Math.max(.1,p.y),p.z,Math.cos(a)*.9,.4,Math.sin(a)*.9,1.2,.45,1.3,[.62,.56,.48],[.38,.34,.3],.45,1.8,-.1); }
+  sfx.crumble();
+}
+// kind: 'h' horizontal cut (queen), 'v' vertical split (king), 'd' diagonal slash (pawn)
+function deathCut(pc,dir,kind){
+  const def=PIECE_DEF[pc.type], b=pc.root.position, side=new THREE.Vector3(dir.z,0,-dir.x);
+  const n=kind==='h'?new THREE.Vector3(0,1,0):kind==='v'?side.clone():new THREE.Vector3(0,.8,0).addScaledVector(side,.6).normalize();
+  const c=new THREE.Vector3(b.x,b.y+def.h*(kind==='h'?.56:.48),b.z);
+  const bodyMat=pc.color>0?matIvory:matObsidian;
+  flyParts(pc,dir,false);
+  const [A,Bh]=splitPiece(pc,n,c);
+  retire(pc);
+  const u=new THREE.Vector3().crossVectors(n,Math.abs(n.y)<.9?YUP:new THREE.Vector3(1,0,0)).normalize(), v=new THREE.Vector3().crossVectors(n,u);
+  for(let i=0;i<(lowPower?34:54);i++){ const th=R0()*Math.PI*2, r=.16+R0()*.18, ox=u.x*Math.cos(th)*r+v.x*Math.sin(th)*r, oy=u.y*Math.cos(th)*r+v.y*Math.sin(th)*r, oz=u.z*Math.cos(th)*r+v.z*Math.sin(th)*r, sp=(2+R0()*3)/r;
+    fx.emit(c.x+ox,c.y+oy,c.z+oz,ox*sp,oy*sp+1,oz*sp,.35+R0()*.4,.14,.02,[1,.97,.85],[1,.5,.12],1,1.2,7); }
+  flash.position.copy(c); flashLevel=Math.max(flashLevel,.8);
+  shake(reduceMotion?0:.2);
+  try{ navigator.vibrate&&navigator.vibrate(30); }catch(e){}
+  for(const H of [A,Bh]) if(H) H.userData.mat=bodyMat;
+  const keep={w:new THREE.Vector3(),rest:true,crumbleAt:.62,onCrumble:crumbleHalf,dispose:true};
+  if(kind==='h'){
+    if(A) addDebris(A,dir.x*1.5,1.1,dir.z*1.5,A.userData.r,8,{w:side.clone().multiplyScalar(4.5),crumbleAt:.95,crumbleOnGround:true,minAge:.35,onCrumble:crumbleHalf,dispose:true});
+    if(Bh) addDebris(Bh,0,0,0,Bh.userData.r,8,keep);
+  } else if(kind==='v'){
+    if(A) addDebris(A,n.x*1.3,.6,n.z*1.3,A.userData.r,8,{w:dir.clone().multiplyScalar(-3.5),crumbleAt:.85,crumbleOnGround:true,minAge:.4,onCrumble:crumbleHalf,dispose:true});
+    if(Bh) addDebris(Bh,-n.x*1.3,.6,-n.z*1.3,Bh.userData.r,8,{w:dir.clone().multiplyScalar(3.5),crumbleAt:.85,crumbleOnGround:true,minAge:.4,onCrumble:crumbleHalf,dispose:true});
+  } else {
+    const slide=new THREE.Vector3(0,-1,0).projectOnPlane(n).normalize();
+    if(A) addDebris(A,slide.x*1.8+dir.x*.7,slide.y*1.8+.4,slide.z*1.8+dir.z*.7,A.userData.r,8,{w:dir.clone().multiplyScalar(2.5),crumbleAt:.9,crumbleOnGround:true,minAge:.35,onCrumble:crumbleHalf,dispose:true});
+    if(Bh) addDebris(Bh,0,0,0,Bh.userData.r,8,keep);
+  }
+}
+// knight stomp: the victim is squashed flat, then bursts outward
+function deathCrush(pc,dir){
+  const p=pc.root.position.clone();
+  tween(.09,k=>{ pc.pose.scale.set(1+.45*k,1-.72*k,1+.45*k); }).then(()=>{
+    dustRing(p,lowPower?18:30,3.2,.5);
+    shatter(pc,dir,{radial:1.8,up:.45,hScale:.4,shake:.32,count:1.15});
+  });
+}
+// bishop bolt: the victim is blown into the air and explodes there
+function deathBlast(pc,dir,col){
+  const p0=pc.root.position.clone(), ax=leanAxis(dir);
+  magicBurst(p0,col,lowPower?24:40,1.6);
+  tween(.34,k=>{ pc.root.position.set(p0.x+dir.x*1.2*k,p0.y+2.1*Math.sin(k*Math.PI*.55),p0.z+dir.z*1.2*k); pc.pose.quaternion.setFromAxisAngle(ax,-k*3); })
+    .then(()=>{ for(let i=0;i<40;i++){ const a=R0()*Math.PI*2, e=(R0()-.3)*Math.PI, sp=2+R0()*4, q=pc.root.position; fx.emit(q.x,q.y+.5,q.z,Math.cos(a)*Math.cos(e)*sp,Math.sin(e)*sp,Math.sin(a)*Math.cos(e)*sp,.6+R0()*.5,.3,.04,col,[1,1,1],1,1,2); }
+      shatter(pc,dir,{spark:col,up:.7}); });
+}
+// rook ram: the victim is launched across the board and smashes where it lands
+function deathKnock(pc,dir){
+  const ax=leanAxis(dir);
+  pc.alive=false; pieces=pieces.filter(x=>x!==pc);
+  addDebris(pc.root,dir.x*7.5,3.6,dir.z*7.5,.3,8,{w:ax.multiplyScalar(10),crumbleAt:.75,crumbleOnGround:true,minAge:.15,onCrumble:()=>shatter(pc,dir,{radial:1.3})});
 }
 
 // ---------------------------------------------------------------- tweens
@@ -1619,51 +1807,122 @@ function setLast(from,to){ const a=sqPos(from), b=sqPos(to); lastA.position.set(
 function hideLast(){ lastA.visible=lastB.visible=false; }
 const _ax=new THREE.Vector3();
 function leanAxis(dir){ return new THREE.Vector3(dir.z,0,-dir.x).normalize(); }
-async function animSlide(pc,to,opts={}){
-  const a=pc.root.position.clone(), b=sqPos(to), flat=new THREE.Vector3(b.x-a.x,0,b.z-a.z), dist=flat.length();
-  if(dist<.001){ pc.root.position.copy(b); return; }
-  const dir=flat.clone().normalize(), axis=leanAxis(dir), jump=opts.jump||pc.type===N;
-  const dur=jump?.78:clamp(.36+dist*.075,.45,1.05), steps=Math.max(1,Math.round(dist*1.3));
-  sfx.slide(dur,jump);
+const yawFor=d=>Math.atan2(-d.x,-d.z);
+function turnTo(pc,yaw,dur=.2){
+  const y0=pc.face.rotation.y, d=((yaw-y0)%(Math.PI*2)+Math.PI*3)%(Math.PI*2)-Math.PI;
+  if(Math.abs(d)<.01) return Promise.resolve();
+  return tween(dur,k=>{ pc.face.rotation.y=y0+d*easeInOut(k); });
+}
+const GLIDE={[B]:1,[Q]:1};   // robed pieces glide, soldiers and towers march, knights leap
+async function moveTo(pc,b,o={}){
+  const a=pc.root.position.clone(), flat=new THREE.Vector3(b.x-a.x,0,b.z-a.z), dist=flat.length();
+  if(dist<.001){ pc.root.position.set(b.x,0,b.z); return; }
+  const dir=flat.normalize(), axis=leanAxis(dir), jump=o.jump;
+  const dur=o.dur||(jump?.78:clamp(.36+dist*.075,.45,1.05)), steps=Math.max(1,Math.round(dist*1.3));
+  if(!o.silent) sfx.slide(dur,jump);
   await tween(dur,k=>{
     const e=easeInOut(k);
     pc.root.position.x=lerp(a.x,b.x,e); pc.root.position.z=lerp(a.z,b.z,e);
-    if(jump){ pc.root.position.y=lerp(a.y,0,e)+Math.sin(k*Math.PI)*(opts.high||1.15); pc.pose.quaternion.setFromAxisAngle(axis,-.38*Math.sin(k*Math.PI*2)); }
+    if(jump){ pc.root.position.y=lerp(a.y,0,e)+Math.sin(k*Math.PI)*(o.high||1.15); pc.pose.quaternion.setFromAxisAngle(axis,-.38*Math.sin(k*Math.PI*2)); if(pc.upper) pc.upper.rotation.x=.4*Math.sin(k*Math.PI); }
+    else if(o.glide){ pc.root.position.y=lerp(a.y,0,e)+Math.sin(k*Math.PI)*.05; pc.pose.quaternion.setFromAxisAngle(axis,Math.sin(k*Math.PI)*.08); }
     else { pc.root.position.y=lerp(a.y,0,e)+Math.abs(Math.sin(k*Math.PI*steps))*.07; pc.pose.quaternion.setFromAxisAngle(axis,Math.sin(k*Math.PI)*.13+Math.sin(k*Math.PI*steps*2)*.025); }
   });
-  pc.root.position.copy(b); pc.pose.quaternion.identity();
+  pc.root.position.set(b.x,0,b.z); pc.pose.quaternion.identity(); if(pc.upper) pc.upper.rotation.x=0;
+}
+async function animSlide(pc,to,o={}){
+  const b=sqPos(to), a=pc.root.position, d=new THREE.Vector3(b.x-a.x,0,b.z-a.z);
+  if(d.lengthSq()>1e-6) turnTo(pc,yawFor(d.normalize()),.18);
+  const jump=o.jump||pc.type===N;
+  await moveTo(pc,b,{jump,high:o.high,glide:!jump&&GLIDE[pc.type]});
   sfx.thud(jump?1:.7);
   if(jump) for(let i=0;i<8;i++){ const an=R0()*Math.PI*2; smoke.emit(b.x+Math.cos(an)*.3,.08,b.z+Math.sin(an)*.3,Math.cos(an)*.8,.2,Math.sin(an)*.8,.9,.35,.9,[.6,.53,.45],[.4,.35,.3],.35,2,0); }
+  await turnTo(pc,pc.baseYaw(),.22);
 }
-async function animCapture(att,vic,to){
-  const a=att.root.position.clone(), vp=vic.root.position.clone(), b=sqPos(to);
-  const flat=new THREE.Vector3(vp.x-a.x,0,vp.z-a.z), len=flat.length(), dir=flat.clone().normalize(), axis=leanAxis(dir);
-  const stop=vp.clone().addScaledVector(dir,-.6); stop.y=0;
-  const jump=att.type===N;
-  if(len>.75){
-    const d1=jump?.72:clamp(.32+len*.07,.4,.95), steps=Math.max(1,Math.round(len*1.3));
-    sfx.slide(d1,jump);
-    await tween(d1,k=>{ const e=easeInOut(k);
-      att.root.position.x=lerp(a.x,stop.x,e); att.root.position.z=lerp(a.z,stop.z,e);
-      att.root.position.y=lerp(a.y,0,e)+(jump?Math.sin(k*Math.PI)*1.05:Math.abs(Math.sin(k*Math.PI*steps))*.06);
-      att.pose.quaternion.setFromAxisAngle(axis,jump?-.38*Math.sin(k*Math.PI*2):Math.sin(k*Math.PI)*.12); });
+
+// each piece has its own way of taking: (attacker, victim, direction, lean axis, victim tremble, target square)
+const _tip=new THREE.Vector3(), _bolt=new THREE.Vector3();
+const STRIKES={
+  // pawn: sword raised over the shoulder, a diagonal slash
+  async pawn(att,vic,dir,axis,tremble){
+    const arm=att.arm, r0=arm.rotation.clone(), base=att.root.position.clone();
+    sfx.whoosh(.32,false);
+    await tween(.3,k=>{ const e=easeOut(k); arm.rotation.set(lerp(r0.x,2.9,e),0,lerp(r0.z,-.55,e)); att.pose.quaternion.setFromAxisAngle(axis,-.16*e); tremble(k); });
+    await tween(.1,k=>{ const e=easeIn(k); arm.rotation.set(lerp(2.9,.35,e),0,lerp(-.55,.9,e)); att.pose.quaternion.setFromAxisAngle(axis,-.16+.38*e); att.root.position.copy(base).addScaledVector(dir,.22*e); });
+    sfx.shing(); deathCut(vic,dir,'d');
+    await tween(.3,k=>{ const e=easeOut(k); arm.rotation.set(lerp(.35,r0.x,e),0,lerp(.9,r0.z,e)); att.pose.quaternion.setFromAxisAngle(axis,.22*(1-e)); });
+  },
+  // knight: the horse rears up and crushes the victim with its front hooves
+  async knight(att,vic,dir,axis,tremble){
+    const u=att.upper, arm=att.arm, r0=arm.rotation.x, base=att.root.position.clone();
+    sfx.neigh();
+    await tween(.42,k=>{ const e=easeOut(k); u.rotation.x=.72*e; arm.rotation.x=lerp(r0,2.7,e); tremble(k); });
+    await wait(.06);
+    await tween(.13,k=>{ const e=easeIn(k); u.rotation.x=lerp(.72,-.14,e); arm.rotation.x=lerp(2.7,.5,e); att.root.position.copy(base).addScaledVector(dir,.32*e); });
+    sfx.stomp(); deathCrush(vic,dir);
+    await tween(.32,k=>{ const e=easeOut(k); u.rotation.x=lerp(-.14,0,e); arm.rotation.x=lerp(.5,r0,e); });
+  },
+  // bishop: the staff glows, a bolt of light flies and blasts the victim into the air
+  async bishop(att,vic,dir,axis){
+    const arm=att.arm, r0=arm.rotation.clone(), orb=att.orbMat, col=att.color>0?[1,.88,.55]:[.74,.5,1], oy=PIECE_DEF[B].arm.orbY;
+    sfx.charge2();
+    await tween(.5,k=>{ const e=easeOut(k); arm.rotation.x=lerp(r0.x,1.45,e); arm.rotation.z=lerp(r0.z,.05,e); if(orb) orb.emissiveIntensity=1.3+7*e;
+      att.weapon.localToWorld(_tip.set(0,oy,0)); const a=R0()*Math.PI*2, r=.35+R0()*.2; fx.emit(_tip.x+Math.cos(a)*r,_tip.y+(R0()-.5)*.3,_tip.z+Math.sin(a)*r,-Math.cos(a)*r*3,0,-Math.sin(a)*r*3,.3,.16,.05,col,[1,1,1],1,0,0); });
+    const from=att.weapon.localToWorld(new THREE.Vector3(0,oy,0)), to=vic.root.position.clone().setY(PIECE_DEF[vic.type].h*.5);
+    sfx.zap();
+    await tween(.18,k=>{ _bolt.lerpVectors(from,to,k);
+      for(let i=0;i<4;i++) fx.emit(_bolt.x+(R0()-.5)*.06,_bolt.y+(R0()-.5)*.06,_bolt.z+(R0()-.5)*.06,(R0()-.5)*.6,(R0()-.5)*.6,(R0()-.5)*.6,.35,.34,.04,[1,1,1],col,1,1,0);
+      flash.position.copy(_bolt); flashLevel=Math.max(flashLevel,.45); });
+    deathBlast(vic,dir,col);
+    await tween(.35,k=>{ const e=easeOut(k); arm.rotation.x=lerp(1.45,r0.x,e); arm.rotation.z=lerp(.05,r0.z,e); if(orb) orb.emissiveIntensity=lerp(8.3,1.3,e); });
+  },
+  // rook: backs up, then charges like a battering ram and launches the victim
+  async rook(att,vic,dir,axis,tremble,to){
+    const a=att.root.position.clone(), b=sqPos(to), vp=vic.root.position.clone();
+    sfx.rumble();
+    await tween(.3,k=>{ const e=easeOut(k); att.root.position.copy(a).addScaledVector(dir,-.3*e); att.pose.quaternion.setFromAxisAngle(axis,-.15*e); tremble(k); });
+    const s=att.root.position.clone(), contact=vp.clone().addScaledVector(dir,-.62).setY(0);
+    await tween(Math.max(.11,s.distanceTo(contact)*.085),k=>{ const e=easeIn(k); att.root.position.lerpVectors(s,contact,e); att.pose.quaternion.setFromAxisAngle(axis,lerp(-.15,.22,e)); });
+    sfx.smash(); shake(reduceMotion?0:.34); deathKnock(vic,dir);
+    const c=att.root.position.clone();
+    await tween(.3,k=>{ const e=easeOut(k); att.root.position.lerpVectors(c,b,e); att.pose.quaternion.setFromAxisAngle(axis,.22*(1-e)); });
+  },
+  // queen: sword out, two whirling turns, the victim is cut clean in half
+  async queen(att,vic,dir,axis){
+    const arm=att.arm, w=att.weapon, r0=arm.rotation.clone(), w0=w.rotation.clone(), y0=att.face.rotation.y, tipY=PIECE_DEF[Q].arm.tipY;
+    sfx.swirl();
+    await tween(.22,k=>{ const e=easeOut(k); arm.rotation.set(lerp(r0.x,0,e),0,lerp(r0.z,1.5,e)); w.rotation.set(lerp(w0.x,0,e),0,lerp(w0.z,-Math.PI,e)); });
+    let hit=false;
+    await tween(.58,k=>{ const e=easeInOut(k); att.face.rotation.y=y0-e*Math.PI*4;
+      w.localToWorld(_tip.set(0,tipY,0)); fx.emit(_tip.x,_tip.y,_tip.z,0,.2,0,.4,.22,.03,[1,.92,.6],[1,.5,.15],1,1,0);
+      if(!hit&&k>.62){ hit=true; sfx.shing(); deathCut(vic,dir,'h'); } });
+    att.face.rotation.y=y0;
+    await tween(.25,k=>{ const e=easeOut(k); arm.rotation.set(lerp(0,r0.x,e),0,lerp(1.5,r0.z,e)); w.rotation.set(lerp(0,w0.x,e),0,lerp(-Math.PI,w0.z,e)); });
+  },
+  // king: the great sword goes up over his head and comes down, splitting the victim in two
+  async king(att,vic,dir,axis,tremble){
+    const g=att.arm, base=att.root.position.clone();
+    sfx.heave();
+    await tween(.45,k=>{ const e=easeOut(k); g.rotation.x=2.75*e; att.pose.quaternion.setFromAxisAngle(axis,-.12*e); tremble(k); });
+    await wait(.06);
+    sfx.whoosh(.16,true);
+    await tween(.12,k=>{ const e=easeIn(k); g.rotation.x=lerp(2.75,-.4,e); att.pose.quaternion.setFromAxisAngle(axis,-.12+.3*e); att.root.position.copy(base).addScaledVector(dir,.2*e); });
+    sfx.clang(.55); sfx.smash(); deathCut(vic,dir,'v'); shake(reduceMotion?0:.3);
+    await tween(.35,k=>{ const e=easeOut(k); g.rotation.x=lerp(-.4,0,e); att.pose.quaternion.setFromAxisAngle(axis,.18*(1-e)); });
   }
-  const base=att.root.position.clone(), vb=vic.root.position.clone();
+};
+async function animCapture(att,vic,to){
+  const def=PIECE_DEF[att.type], vp=vic.root.position.clone(), a=att.root.position.clone();
+  const flat=new THREE.Vector3(vp.x-a.x,0,vp.z-a.z), len=flat.length(), dir=flat.clone().normalize(), axis=leanAxis(dir);
+  turnTo(att,yawFor(dir),.22); turnTo(vic,yawFor(dir.clone().negate()),.35);
+  if(len>def.reach+.05) await moveTo(att,vp.clone().addScaledVector(dir,-def.reach).setY(0),{jump:att.type===N,high:.95,glide:!!GLIDE[att.type]});
   if(!reduceMotion) cam.punch={p:vp.clone().setY(.4),t:0};
-  sfx.charge();
-  await tween(.34,k=>{ const e=easeOut(k);
-    att.pose.quaternion.setFromAxisAngle(axis,-.34*e); att.root.position.y=base.y+.2*e;
-    const tr=.035*k; vic.root.position.set(vb.x+(R0()-.5)*tr,vb.y,vb.z+(R0()-.5)*tr);
-    vic.pose.quaternion.setFromAxisAngle(axis,-.06*Math.sin(k*40)*k); });
-  await tween(.1,k=>{ const e=easeIn(k);
-    att.pose.quaternion.setFromAxisAngle(axis,-.34+.95*e);
-    att.root.position.set(base.x+dir.x*.32*e,base.y+.2*(1-e),base.z+dir.z*.32*e); });
-  shatter(vic,dir);
-  await tween(.2,k=>{ att.pose.quaternion.setFromAxisAngle(axis,.61*(1-easeOut(k))); });
-  const cur=att.root.position.clone();
-  await tween(.36,k=>{ const e=easeInOut(k); att.root.position.set(lerp(cur.x,b.x,e),Math.sin(k*Math.PI)*.05,lerp(cur.z,b.z,e)); });
-  att.root.position.copy(b); att.pose.quaternion.identity();
+  const vb=vic.root.position.clone(), tremble=k=>{ const s=.035*k; vic.root.position.set(vb.x+(R0()-.5)*s,vb.y,vb.z+(R0()-.5)*s); };
+  await STRIKES[def.strike](att,vic,dir,axis,tremble,to);
+  const b=sqPos(to);
+  if(att.root.position.distanceTo(b)>.02) await moveTo(att,b,{glide:true,dur:.38,silent:true});
   sfx.thud(.6);
+  await turnTo(att,att.baseYaw(),.25);
+  att.resetPose(); att.root.position.copy(b);
 }
 async function animPromote(pc,type){
   const p=pc.root.position.clone();
@@ -1678,10 +1937,32 @@ async function animTopple(pc){
   if(!pc) return;
   const dir=new THREE.Vector3(R0()-.5,0,R0()-.5).normalize(), axis=leanAxis(dir), pivot=dir.clone().multiplyScalar(.4), base=pc.root.position.clone();
   const q=new THREE.Quaternion(), tmp=new THREE.Vector3();
-  await wait(.35);
   await tween(1.05,k=>{ const e=easeIn(k); q.setFromAxisAngle(axis,e*Math.PI/2*.97); pc.pose.quaternion.copy(q); tmp.copy(pivot).applyQuaternion(q); pc.root.position.copy(base).add(pivot).sub(tmp); });
   sfx.thud(1.3); shake(reduceMotion?0:.12);
   for(let i=0;i<14;i++){ const a=R0()*Math.PI*2; smoke.emit(pc.root.position.x+Math.cos(a)*.5,.1,pc.root.position.z+Math.sin(a)*.5,Math.cos(a)*.9,.25,Math.sin(a)*.9,1.4,.4,1.2,[.6,.55,.48],[.4,.36,.3],.45,1.8,0); }
+}
+// checkmate, as in the film: the beaten king lets his sword fall, throws down his crown and falls
+async function kingSurrenders(kp){
+  if(!kp) return;
+  await wait(.45);
+  if(!kp.alive) return;
+  if(kp.weapon&&kp.weapon.visible){
+    kp.root.updateMatrixWorld(true);
+    for(const o of kp.weapon.children){ if(!o.isMesh) continue; o.getWorldPosition(_wp); o.getWorldQuaternion(_wq); addShard(o.geometry,o.material,_wp.x,_wp.y,_wp.z,1,(R0()-.5)*.5,.4,(R0()-.5)*.5,.05,600,_wq); }
+    kp.weapon.visible=false;
+    setTimeout(()=>sfx.clang(.9),380);
+    const a0=kp.arm.rotation.x; tween(.45,k=>{ kp.arm.rotation.x=lerp(a0,.15,easeOut(k)); });
+  }
+  await wait(.8);
+  if(!kp.alive) return;
+  if(kp.kingTop&&kp.kingTop.visible){
+    const def=PIECE_DEF[K]; kp.root.updateMatrixWorld(true);
+    const p=kp.holder.localToWorld(def.topCenter.clone()); kp.holder.getWorldQuaternion(_wq);
+    addShard(def.chunk,matGold,p.x,p.y,p.z,1,(R0()-.5)*.6,2.6,(kp.color>0?-1:1)*1.8,.14,600,_wq);
+    kp.kingTop.visible=false; sfx.magic();
+  }
+  await wait(.7);
+  if(kp.alive) await animTopple(kp);
 }
 
 async function playMove(m){
@@ -1721,7 +2002,7 @@ function onGameOver(st){
   if(st.type==='mate'){
     const kp=pieceAt.get(game.s.kings[game.s.side>0?0:1]);
     if(kp){ const p=kp.root.position; checkGlow.position.set(p.x,.015,p.z); checkGlow.visible=true; }
-    banner(t('mate'),'red'); sfx.mate(); animTopple(kp);
+    banner(t('mate'),'red'); sfx.mate(); kingSurrenders(kp);
     setTimeout(()=>{ for(const b of braziers) for(let i=0;i<60;i++){ const a=R0()*Math.PI*2, sp=1+R0()*2.5; fx.emit(b.x,b.y+.6,b.z,Math.cos(a)*sp*.5,5+R0()*5,Math.sin(a)*sp*.5,1.6+R0(),.2,.04,[1,.9,.55],[1,.45,.12],1,.4,6,1); } sfx.magic(); },900);
   } else { banner(st.type==='stalemate'?t('stalemate'):t('draw')); sfx.magic(); }
   setTimeout(()=>{ if(gameOver===st) showResult(st); },st.type==='mate'?2600:1900);
@@ -1801,12 +2082,12 @@ async function syncPieces(){
     if(jobs.length) sfx.magic();
     await Promise.all(jobs);
     pieces=pieces.filter(pc=>pc.alive);
-    for(const pc of pieces){ pc.pose.quaternion.identity(); pc.pose.scale.setScalar(1); pc.root.position.copy(sqPos(pc.sq)); }
+    for(const pc of pieces){ pc.resetPose(); pc.root.rotation.set(0,0,0); pc.root.position.copy(sqPos(pc.sq)); }
   } finally { busy--; }
 }
 function undo(){
   if(busy||introRunning||!game.hist.length) return;
-  cancelAI(); $('result').hidden=true; clearSelectionInstant();
+  cancelAI(); $('result').hidden=true; clearSelectionInstant(); clearDebris();
   let n=1;
   if(settings.mode==='ai'){ n=game.s.side===settings.human?2:1; if(gameOver&&gameOver.type==='mate'&&game.s.side!==settings.human) n=1; }
   n=Math.min(n,game.hist.length);
@@ -1818,7 +2099,7 @@ function undo(){
 }
 function newGame(){
   if(busy||introRunning) return;
-  cancelAI(); $('result').hidden=true; clearSelectionInstant();
+  cancelAI(); $('result').hidden=true; clearSelectionInstant(); clearDebris();
   resetGame(); hideLast(); checkGlow.visible=false; saveLocal(); updateHUD();
   syncPieces().then(()=>maybeAI());
 }
@@ -1881,6 +2162,53 @@ const sfx=(()=>{
       for(let i=0;i<22;i++){ const ts=t0+.04+Math.pow(Math.random(),1.5)*1.2, d=ctx.createBufferSource(); d.buffer=noise; d.start(ts,Math.random()*1.5);
         const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1500+Math.random()*4500; bp.Q.value=3;
         const g=ctx.createGain(); env(g,ts,.003,Math.max(.004,.28*(1-(ts-t0)/1.4)),.04+Math.random()*.06); d.connect(bp); bp.connect(g); out(g,.4); d.stop(ts+.14); }
+    },
+    whoosh(dur=.26,heavy=false){
+      if(!ctx) return; const t0=ctx.currentTime, s=noiseSrc(t0), bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=heavy?.9:1.6;
+      bp.frequency.setValueAtTime(heavy?220:500,t0); bp.frequency.exponentialRampToValueAtTime(heavy?1200:2800,t0+dur*.6); bp.frequency.exponentialRampToValueAtTime(heavy?320:800,t0+dur);
+      const g=ctx.createGain(); g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(heavy?.55:.32,t0+dur*.55); g.gain.exponentialRampToValueAtTime(.0001,t0+dur+.02);
+      s.connect(bp); bp.connect(g); out(g,.3); s.stop(t0+dur+.08);
+    },
+    shing(){
+      chime([1760,2637,3520,4699,5274],.55,.04,'sine',.003); if(!ctx) return;
+      const t0=ctx.currentTime, s=noiseSrc(t0), hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=3500; const g=ctx.createGain(); env(g,t0,.002,.18,.12); s.connect(hp); hp.connect(g); out(g,.4); s.stop(t0+.2);
+    },
+    neigh(){
+      if(!ctx) return; const t0=ctx.currentTime, o=ctx.createOscillator(); o.type='sawtooth'; const f=o.frequency;
+      f.setValueAtTime(300,t0); f.exponentialRampToValueAtTime(820,t0+.16); f.exponentialRampToValueAtTime(600,t0+.5); f.exponentialRampToValueAtTime(320,t0+.85);
+      const vib=ctx.createOscillator(); vib.frequency.value=12; const vg=ctx.createGain(); vg.gain.value=40; vib.connect(vg); vg.connect(f);
+      const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1150; bp.Q.value=1.3;
+      const pk=ctx.createBiquadFilter(); pk.type='peaking'; pk.frequency.value=2600; pk.gain.value=9; pk.Q.value=2;
+      const g=ctx.createGain(); g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(.15,t0+.05); g.gain.setValueAtTime(.15,t0+.55); g.gain.exponentialRampToValueAtTime(.0001,t0+.9);
+      o.connect(bp); bp.connect(pk); pk.connect(g); out(g,.45); o.start(t0); vib.start(t0); o.stop(t0+.95); vib.stop(t0+.95);
+    },
+    stomp(){ this.thud(1.5); setTimeout(()=>this.thud(1.2),75); this.smash(); },
+    charge2(){
+      if(!ctx) return; const t0=ctx.currentTime;
+      for(const [a,b,v] of [[180,1300,.07],[270,1950,.04]]){ const o=ctx.createOscillator(); o.frequency.setValueAtTime(a,t0); o.frequency.exponentialRampToValueAtTime(b,t0+.5); const g=ctx.createGain(); g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(v,t0+.4); g.gain.exponentialRampToValueAtTime(.0001,t0+.58); o.connect(g); out(g,.8); o.start(t0); o.stop(t0+.6); }
+      chime([1046.5,1318.5,1568],.6,.03,'sine',.12);
+    },
+    zap(){
+      if(!ctx) return; const t0=ctx.currentTime, o=ctx.createOscillator(); o.type='square'; o.frequency.setValueAtTime(2200,t0); o.frequency.exponentialRampToValueAtTime(140,t0+.25);
+      const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=3000; const g=ctx.createGain(); env(g,t0,.004,.09,.26); o.connect(lp); lp.connect(g); out(g,.6); o.start(t0); o.stop(t0+.3);
+      const s=noiseSrc(t0), bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=3200; bp.Q.value=.8; const ng=ctx.createGain(); env(ng,t0,.003,.2,.18); s.connect(bp); bp.connect(ng); out(ng,.5); s.stop(t0+.25);
+    },
+    rumble(){
+      if(!ctx) return; const t0=ctx.currentTime, s=noiseSrc(t0), lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=170;
+      const g=ctx.createGain(); g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(.7,t0+.42); g.gain.exponentialRampToValueAtTime(.0001,t0+.75); s.connect(lp); lp.connect(g); out(g,.3); s.stop(t0+.8);
+    },
+    swirl(){ this.whoosh(.28,false); setTimeout(()=>this.whoosh(.26,false),240); setTimeout(()=>this.whoosh(.24,false),470); },
+    heave(){
+      if(!ctx) return; const t0=ctx.currentTime, o=ctx.createOscillator(); o.type='sawtooth'; o.frequency.setValueAtTime(70,t0); o.frequency.exponentialRampToValueAtTime(105,t0+.4);
+      const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=380; const g=ctx.createGain(); env(g,t0,.2,.1,.25); o.connect(lp); lp.connect(g); out(g,.4); o.start(t0); o.stop(t0+.5);
+    },
+    clang(v=1){
+      chime([523,1443,2824,4670],1.4,.06*v,'sine',.002); if(!ctx) return;
+      const t0=ctx.currentTime, s=noiseSrc(t0), hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=2500; const g=ctx.createGain(); env(g,t0,.001,.2*v,.06); s.connect(hp); hp.connect(g); out(g,.5); s.stop(t0+.1);
+    },
+    crumble(){
+      if(!ctx) return; const t0=ctx.currentTime;
+      for(let i=0;i<10;i++){ const ts=t0+Math.random()*.45, d=ctx.createBufferSource(); d.buffer=noise; d.start(ts,Math.random()*1.5); const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=900+Math.random()*3000; bp.Q.value=2.5; const g=ctx.createGain(); env(g,ts,.003,.1+Math.random()*.08,.05+Math.random()*.06); d.connect(bp); bp.connect(g); out(g,.3); d.stop(ts+.15); }
     },
     select(){ chime([1318.5,1975.5],.45,.05); },
     magic(){ chime([523.25,659.25,783.99,1046.5,1318.5],1.5,.07); },
@@ -1965,7 +2293,9 @@ if(window.ResizeObserver) new ResizeObserver(resize).observe(canvas);
 let last=performance.now(), time=0, perfT=0, perfN=0, perfChecks=0;
 function frame(now){
   requestAnimationFrame(frame);
-  const dt=Math.min(window.__wcMaxDt||.05,Math.max(0,(now-last)/1000)); last=now; time+=dt;
+  let dt=Math.min(window.__wcMaxDt||.05,Math.max(0,(now-last)/1000)); last=now;
+  if(window.__wcFreeze){ dt=window.__wcStep||0; window.__wcStep=0; }
+  time+=dt;
   updateTweens(dt);
   updateCamera(dt);
   // fire
@@ -1989,7 +2319,7 @@ function frame(now){
   for(const r of capRings) if(r.visible){ r.rotation.z-=dt*.9; r.material.opacity=.7+.3*Math.sin(time*6); }
   if(checkGlow.visible) checkGlow.material.opacity=.55+.45*Math.sin(time*6);
   updateAmbient(dt,time);
-  updateShards(dt);
+  updateDebris(dt);
   fx.update(dt,time); smoke.update(dt,time);
   renderer.render(scene,camera);
   // adaptive resolution for slower phones during the first seconds
@@ -2034,7 +2364,7 @@ function start(data){
   requestAnimationFrame(t0=>{ last=t0; frame(t0); });
   intro();
 }
-if(window.__wcTest) window.__wc={game,E,camera,setCam,playMove,onTap,pick:(x,y)=>{ const r=pickAt(x,y); return {piece:r.piece?[r.piece.type,r.piece.color,r.piece.sq]:null,n:r.list.length,sq:r.sq}; },sqScreen(sq,y=0){ const v=sqPos(sq).setY(y).project(camera), rc=canvas.getBoundingClientRect(); return [rc.left+(v.x+1)/2*rc.width,rc.top+(1-v.y)/2*rc.height]; },state:()=>({busy,aiPending,introRunning,gameOver,uci:game.uci.slice(),pieces:pieces.length,shards:shards.length})};
+if(window.__wcTest) window.__wc={game,E,camera,cam,setCam,playMove,onTap,look(x,y,z,r,th,ph){ cam.anim=null; cam.auto=false; cam.target.set(x,y,z); cam.r=r; cam.theta=th; cam.phi=ph; },pick:(x,y)=>{ const r=pickAt(x,y); return {piece:r.piece?[r.piece.type,r.piece.color,r.piece.sq]:null,n:r.list.length,sq:r.sq}; },sqScreen(sq,y=0){ const v=sqPos(sq).setY(y).project(camera), rc=canvas.getBoundingClientRect(); return [rc.left+(v.x+1)/2*rc.width,rc.top+(1-v.y)/2*rc.height]; },state:()=>({busy,aiPending,introRunning,gameOver,uci:game.uci.slice(),pieces:pieces.length,shards:debris.length})};
 const hot=window.claude&&window.claude.hot;
 try{ if(hot&&typeof hot.snapshot==='function') hot.snapshot(snapshot); }catch(e){}
 if(hot&&typeof hot.ready==='function') hot.ready(start); else start((hot&&hot.data)||{});
