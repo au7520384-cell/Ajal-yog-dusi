@@ -11488,6 +11488,19 @@ profile.tgAsk = Date.now(); save();
 openModal({icon: "🔔", title: T("Telegram'da bildirishnoma"), text: T("Do'stlik so'rovlari, xabarlar va o'yin takliflari haqida Telegram'da xabar olasizmi?"),
 buttons: [{label: T("Ha, yoqish"), cls: "green", fn: () => tgNotifySet(true)}, {label: T("Hozir emas"), cls: "gray", fn: () => {}}]});
 }
+function tgAutoAllow() {   // first launch inside Telegram: Telegram's own pop-up asks to let the bot message the player. Allowing it "starts" the bot for them: its chat appears with a welcome message and a Play button, and it may write later. A refusal stays quiet (the Friends screen asks again after a while).
+if (!TG_LAUNCH || !TG || !TG.requestWriteAccess || !Net.acct || tgAllowed() || profile.tgAuto || (profile.games | 0) > 0) return;
+if (TG.isVersionAtLeast && !TG.isVersionAtLeast("6.9")) return;
+profile.tgAuto = Date.now(); save();
+try { TG.requestWriteAccess(ok => { if (!ok) return; profile.tgOk = 1; save(); Net.api("/api/tg/allow", {ok: true}).catch(() => {}); }); } catch (e) {}
+}
+function tgAutoWait() {   // waits until the player sees the menu (signed in, no pop-up, no lobby), then asks once
+let tries = 0; const t = setInterval(() => {
+if (++tries > 45) return clearInterval(t);
+if (!(Net.acct && profile.prov && profile.prov.telegram && mode === "menu" && !$("modal").classList.contains("on") && !LB)) return;
+clearInterval(t); setTimeout(tgAutoAllow, 1200);
+}, 1000);
+}
 Net.on("frreq", () => pollNotify(true));
 Net.on("frok", () => pollNotify(true));
 Net.on("dm", m => { if (dmOpenId && dmOpenId === m.from && dmPullNow) dmPullNow(); else pollNotify(true); });
@@ -12475,6 +12488,7 @@ let tries = 0; const wait = setInterval(() => { if (++tries > 24) return clearIn
 } else if (spRaw === "fr" || /^m_[A-Za-z0-9]{8,32}$/.test(spRaw)) {   // a tap on one of the bot's messages: the Friends screen, or the chat with that friend
 setTimeout(() => { go("friendsScr"); if (spRaw !== "fr") setTimeout(() => openDm(spRaw.slice(2)), 800); }, 1600);
 } else { const sp = parseLobbyCode(spRaw); if (sp.length >= 3) setTimeout(() => lobbyJoin(sp), 1200); }
+tgAutoWait();
 }).catch(() => {});
 }
 async function authLogin(provider, token, mode, detach) {
