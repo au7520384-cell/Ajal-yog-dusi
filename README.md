@@ -110,4 +110,4 @@ Cue strength follows price: cash cues sit on 8 dollar steps ($1.99 ... $74.99) a
 
 ## Ad-link counter
 
-Give every paid ad its own link: `https://t.me/Billiard8PoolBot/Play?startapp=c_NAME` (letters, digits, `_`, `-`, up to 24). The server counts opens and new players per NAME. Read it by typing `/src` to the bot (only `ADMIN_TG_ID` gets an answer) or at `/api/src/stats?key=ADMIN_KEY`.
+Give every paid ad its own link: `https://t.me/Billiard8PoolBot/Play?startapp=c_NAME` (letters, digits, `_`, `-`, up to 24). The server counts opens and new players per NAME. An ad can also send people to the bot first: `https://t.me/Billiard8PoolBot?start=c_NAME`. The bot counts each Telegram id once ("bot Start"), and the Play button in its welcome message opens the game with the same `startapp=c_NAME`, so the game counts the open and the new player as usual. Read it by typing `/src` to the bot (only `ADMIN_TG_ID` gets an answer) or at `/api/src/stats?key=ADMIN_KEY`.
