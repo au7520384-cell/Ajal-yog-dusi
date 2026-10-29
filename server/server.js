@@ -589,12 +589,19 @@ function tgPush(to, kind, vars, o = {}) {   // o: {start: what the button opens 
   });
   return true;
 }
-function srcStats() { return Object.entries((db.meta || {}).src || {}).map(([n, r]) => ({src: n, newPlayers: r.fresh, opens: r.opens, last: new Date(r.last).toISOString()})).sort((a, b) => b.newPlayers - a.newPlayers); }
-async function botCommand(cmd, m) {   // /start, /stop and /id typed in the bot chat
+const SRC_RE = /^c_[A-Za-z0-9_-]{1,24}$/;
+function srcStart(name, tgId) {   // the ad link led to the bot (t.me/<bot>?start=c_NAME): count each Telegram id once per source
+  db.meta = db.meta || {}; const all = db.meta.src = db.meta.src || {}, r = all[name] = all[name] || {opens: 0, fresh: 0, first: Date.now()}, id = String(tgId);
+  r.st = r.st || {}; r.last = Date.now();
+  if (!r.st[id] && Object.keys(r.st).length < 5000) { r.st[id] = 1; r.starts = (r.starts | 0) + 1; }
+  markDirty();
+}
+function srcStats() { return Object.entries((db.meta || {}).src || {}).map(([n, r]) => ({src: n, botStarts: r.starts | 0, newPlayers: r.fresh, opens: r.opens, last: new Date(r.last).toISOString()})).sort((a, b) => b.newPlayers - a.newPlayers || b.botStarts - a.botStarts); }
+async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the bot chat
   if (cmd === "/src") {   // the owner only: new players per ad link
     if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
     const rows = srcStats();
-    return tgApi("sendMessage", {chat_id: m.chat.id, text: rows.length ? "📊 Reklama havolalari:\n" + rows.map(r => `${r.src}: ${r.newPlayers} yangi o'yinchi, ${r.opens} kirish`).join("\n") : "Hali hech kim reklama havolasi orqali kirmagan."});
+    return tgApi("sendMessage", {chat_id: m.chat.id, text: rows.length ? "📊 Reklama havolalari:\n" + rows.map(r => `${r.src}: ${r.botStarts} bot Start, ${r.newPlayers} yangi o'yinchi, ${r.opens} kirish`).join("\n") : "Hali hech kim reklama havolasi orqali kirmagan."});
   }
   if (cmd === "/id") return tgApi("sendMessage", {chat_id: m.chat.id, text: "Telegram ID: " + m.from.id});   // the number for ADMIN_TG_ID
   const u = userByTg(m.from.id), L = PUSH_LANGS[pushLang(u, m.from.language_code)];
@@ -603,8 +610,10 @@ async function botCommand(cmd, m) {   // /start, /stop and /id typed in the bot 
     return tgApi("sendMessage", {chat_id: m.chat.id, text: L.stop[0]});
   }
   if (u) { u.tg = {...(u.tg || {}), off: false, wp: true, no: 0}; markDirty(); }   // the player talked to the bot, so it may write back; they want the messages
+  const src = SRC_RE.test(arg || "") ? arg : "";   // t.me/<bot>?start=c_NAME (an ad that sends people to the bot first): counted here, and the Play button carries the same name into the game
+  if (src) srcStart(src.slice(2), m.from.id);
   const body = {chat_id: m.chat.id, text: L.start[0], parse_mode: "HTML"};
-  if (/^https:\/\/t\.me\//.test(TG_APP_LINK)) body.reply_markup = {inline_keyboard: [[{text: L.start[1], url: TG_APP_LINK}]]};
+  if (/^https:\/\/t\.me\//.test(TG_APP_LINK)) body.reply_markup = {inline_keyboard: [[{text: L.start[1], url: TG_APP_LINK + (src ? (TG_APP_LINK.includes("?") ? "&" : "?") + "startapp=" + src : "")}]]};
   return tgApi("sendMessage", body);
 }
 
@@ -1255,8 +1264,8 @@ async function tgWebhook(req, res) {
     }
     const m = up.message;
     if (m && typeof m.text === "string" && m.from && m.chat && m.chat.type === "private") {
-      const cmd = m.text.trim().split(/[\s@]/)[0].toLowerCase();
-      if (cmd === "/start" || cmd === "/stop" || cmd === "/id" || cmd === "/src") await botCommand(cmd, m);
+      const cmd = m.text.trim().split(/[\s@]/)[0].toLowerCase(), arg = m.text.trim().split(/\s+/)[1] || "";
+      if (cmd === "/start" || cmd === "/stop" || cmd === "/id" || cmd === "/src") await botCommand(cmd, m, arg);
     }
     const mc = up.my_chat_member;   // the player blocked or unblocked the bot
     if (mc && mc.chat && mc.chat.type === "private" && mc.from && mc.new_chat_member) {
