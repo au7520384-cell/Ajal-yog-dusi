@@ -8623,7 +8623,7 @@ el.style.borderColor = fr.c ? fr.c[1] : "#3a4668";
 el.style.boxShadow = fr.glow ? `0 0 24px ${fr.glow}` : "";
 el.innerHTML = `<img src="${avatarURL(pl.avatar)}" alt="" style="width:100%;height:100%;border-radius:12px"><div class="star">${pl.level}</div>`;
 }
-const toLocal = (x, y) => rotated ? [y, innerWidth - x] : [x, y];   // screen point -> the (possibly rotated) body's own frame, where position:fixed lives
+const toLocal = (x, y) => { if (!rotated) return [x, y]; const b = document.body.getBoundingClientRect(); return [y - b.top, b.right - x]; };   // screen point -> the (possibly rotated) body's own frame, where position:fixed lives. The turned body's box on the screen is read as it is, so Telegram's full-screen safe areas (the body then sits away from the screen corner) are counted too.
 function cityLogoHTML(city) {   // "DOWNTOWN / LONDON / PUB": the venue's logo shown above the VS and result screens
 const w = T(String(city.sub || "")).toUpperCase().split(/\s+/).filter(Boolean), last = w.length ? w.pop() : "", first = w.join(" ");
 const esc = t => String(t).replace(/[<>&]/g, "");
@@ -10393,7 +10393,7 @@ toMenu(G.type === "lucky" ? "mini" : G.type === "tour" ? "tourScr" : "home");
 function toggleMute() { profile.muted = !profile.muted; save(); Snd.setMuted(profile.muted); updateNav(); }
 document.addEventListener("pointerdown", e => {   // press feedback: a golden ring blooms where the finger lands
 if (!e.target.closest || !e.target.closest("button,.rw.now,.pchip2,.mchip,.card,.mgc,[data-go]") || mode !== "menu") return;
-try { const r = document.createElement("i"); r.className = "tapfx"; r.style.left = e.clientX + "px"; r.style.top = e.clientY + "px"; document.body.appendChild(r); setTimeout(() => r.remove(), 520); } catch (er) {}
+try { const r = document.createElement("i"), [lx, ly] = toLocal(e.clientX, e.clientY); r.className = "tapfx"; r.style.left = lx + "px"; r.style.top = ly + "px"; document.body.appendChild(r); setTimeout(() => r.remove(), 520); } catch (er) {}   // position:fixed lives in the turned body's own frame (toLocal), else the ring bloomed far from the finger and looked like another button was pressed
 }, {passive: true});
 document.addEventListener("click", e => {
 if (e.target.closest("button,.rw.now,.pchip2,.mchip")) Snd.click();
