@@ -600,11 +600,53 @@ function srcStart(name, tgId) {   // the ad link led to the bot (t.me/<bot>?star
   markDirty();
 }
 function srcStats() { return Object.entries((db.meta || {}).src || {}).map(([n, r]) => ({src: n, botStarts: r.starts | 0, newPlayers: r.fresh, opens: r.opens, last: new Date(r.last).toISOString()})).sort((a, b) => b.newPlayers - a.newPlayers || b.botStarts - a.botStarts); }
+// ---------------------------------------------------------------- the game's public channel: a post a day from channel_posts.json
+// Opt-in: CHANNEL_AUTOPOST=1 on the server, and the bot must be an administrator of the channel with the right to post messages. The bot's own token does the posting; nothing else is needed.
+const CHAN_ID = "@" + TG_CHANNEL.split("/").pop(), CHAN_ON = /^(1|true|yes)$/i.test(process.env.CHANNEL_AUTOPOST || "");
+let CHAN_POSTS = []; try { CHAN_POSTS = JSON.parse(fs.readFileSync(path.join(__dirname, "channel_posts.json"), "utf8")); } catch (e) { console.error("channel_posts.json:", e.message); }
+const chanState = () => { db.meta = db.meta || {}; return db.meta.chan = db.meta.chan || {i: 0, next: 0, last: 0, err: "", errAt: 0}; };
+async function chanPhoto(chat, file, caption) {   // sendPhoto with the picture uploaded from disk (multipart); tgPhoto below is the receipt one
+  const fd = new FormData(); fd.append("chat_id", chat); fd.append("caption", caption); fd.append("parse_mode", "HTML");
+  fd.append("photo", new Blob([fs.readFileSync(file)], {type: "image/jpeg"}), path.basename(file));
+  const r = await fetch(`${process.env.TG_API_BASE || "https://api.telegram.org"}/bot${TG_BOT_TOKEN}/sendPhoto`, {method: "POST", body: fd});
+  const j = await r.json().catch(() => ({})); if (!j.ok) throw new Error(`sendPhoto: ${j.description || r.status}`); return j.result;
+}
+async function chanSend(p) {
+  const link = /^https:\/\/t\.me\//.test(TG_APP_LINK) ? TG_APP_LINK + (TG_APP_LINK.includes("?") ? "&" : "?") + "startapp=c_channel" : "";   // the Play link counts as the "channel" source in /src
+  if (p.poll) return tgApi("sendPoll", {chat_id: CHAN_ID, question: `${p.poll.uz} / ${p.poll.en}`.slice(0, 300), options: p.poll.options.slice(0, 10).map(o => String(o).slice(0, 100)), is_anonymous: true});
+  const t = p.text || p; let body = `${hesc(t.uz)}\n\n${hesc(t.en)}${link ? `\n\n▶ <a href="${link}">Play</a>` : ""}`;
+  if (p.img) { if (body.length > 1024) body = `${hesc(t.uz)}\n\n${hesc(t.en)}`.slice(0, 1000); return chanPhoto(CHAN_ID, path.join(__dirname, "channel", path.basename(p.img)), body); }
+  return tgApi("sendMessage", {chat_id: CHAN_ID, text: body, parse_mode: "HTML", disable_web_page_preview: true});
+}
+let chanBusy = false;
+async function chanNext() {   // posts the next one: "ok", "done", "busy" or the error text (the same post is tried again later)
+  const c = chanState(); if (chanBusy) return "busy"; if (c.i >= CHAN_POSTS.length) return "done";
+  chanBusy = true;
+  try { await chanSend(CHAN_POSTS[c.i]); c.i++; c.last = Date.now(); c.next = c.last + (+process.env.CHAN_GAP_MS || (22 + Math.random() * 8) * 3600e3); c.err = ""; markDirty(); return "ok"; }
+  catch (e) {
+    c.err = String(e.message || e).slice(0, 200); const now = Date.now(); markDirty();
+    if (now - (+c.errAt || 0) > 6 * 3600e3) { c.errAt = now; if (ADMIN_TG) tgApi("sendMessage", {chat_id: ADMIN_TG, text: "📢 Kanalga post yuborilmadi: " + c.err + "\nBotni kanalga administrator qiling (Post messages huquqi bilan)."}).catch(() => {}); }
+    return c.err;
+  } finally { chanBusy = false; }
+}
+function chanTick() {
+  if (!CHAN_ON || !TG_BOT_TOKEN || !CHAN_POSTS.length) return;
+  const c = chanState(); if (c.i >= CHAN_POSTS.length || Date.now() < c.next) return;
+  const h = new Date(Date.now() + 5 * 3600e3).getUTCHours(); if (!process.env.CHAN_ANYTIME && (h < 9 || h >= 21)) return;   // only in the Tashkent daytime (09-21)
+  chanNext().catch(e => console.error("chan:", e.message));
+}
+setInterval(chanTick, +process.env.CHAN_TICK_MS || 15 * 60e3); setTimeout(chanTick, +process.env.CHAN_FIRST_MS || 20e3);
 async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the bot chat
   if (cmd === "/src") {   // the owner only: new players per ad link
     if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
     const rows = srcStats();
     return tgApi("sendMessage", {chat_id: m.chat.id, text: rows.length ? "📊 Reklama havolalari:\n" + rows.map(r => `${r.src}: ${r.botStarts} bot Start, ${r.newPlayers} yangi o'yinchi, ${r.opens} kirish`).join("\n") : "Hali hech kim reklama havolasi orqali kirmagan."});
+  }
+  if (cmd === "/chan") {   // the owner only: the channel's post queue; "/chan now" posts the next one at once
+    if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
+    let note = ""; if (arg === "now") { const r = await chanNext(); note = r === "ok" ? "✅ Post yuborildi.\n" : r === "done" ? "Hamma postlar yuborilgan.\n" : "❌ " + r + "\n"; }
+    const c = chanState(), left = CHAN_POSTS.length - c.i;
+    return tgApi("sendMessage", {chat_id: m.chat.id, text: `${note}📢 ${CHAN_ID}: ${c.i}/${CHAN_POSTS.length} post yuborilgan${CHAN_ON ? "" : " (avtomatik joylash O'CHIQ: CHANNEL_AUTOPOST=1 qo'ying)"}.${left ? "\nKeyingisi: " + (c.next > Date.now() ? new Date(c.next).toISOString().slice(0, 16).replace("T", " ") + " UTC dan keyin" : "navbatda") : ""}${c.err ? "\nOxirgi xato: " + c.err : ""}`});
   }
   if (cmd === "/id") return tgApi("sendMessage", {chat_id: m.chat.id, text: "Telegram ID: " + m.from.id});   // the number for ADMIN_TG_ID
   const u = userByTg(m.from.id), lc = pushLang(u, m.from.language_code), L = PUSH_LANGS[lc];
@@ -1268,7 +1310,7 @@ async function tgWebhook(req, res) {
     const m = up.message;
     if (m && typeof m.text === "string" && m.from && m.chat && m.chat.type === "private") {
       const cmd = m.text.trim().split(/[\s@]/)[0].toLowerCase(), arg = m.text.trim().split(/\s+/)[1] || "";
-      if (cmd === "/start" || cmd === "/stop" || cmd === "/id" || cmd === "/src") await botCommand(cmd, m, arg);
+      if (cmd === "/start" || cmd === "/stop" || cmd === "/id" || cmd === "/src" || cmd === "/chan") await botCommand(cmd, m, arg);
     }
     const mc = up.my_chat_member;   // the player blocked or unblocked the bot
     if (mc && mc.chat && mc.chat.type === "private" && mc.from && mc.new_chat_member) {
