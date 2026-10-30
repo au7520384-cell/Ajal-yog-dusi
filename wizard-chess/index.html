@@ -658,13 +658,13 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,lowPower?1.6:2));
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.32;
+renderer.toneMappingExposure=1.12;
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 const maxAniso=Math.min(8,renderer.capabilities.getMaxAnisotropy());
 
 const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x07060a);
-scene.fog=new THREE.FogExp2(0x140d08,0.016);
+scene.background=new THREE.Color(0x3a2e22);
+scene.fog=new THREE.FogExp2(0xd9c6a4,0.011);
 const camera=new THREE.PerspectiveCamera(45,1,0.1,220);
 
 const FLOOR_Y=-2.6, HALL=17, WALL_H=17, CEIL_Y=FLOOR_Y+WALL_H;
@@ -746,16 +746,16 @@ function drawStar(g,x,y,r){
 
 function texFlagstones(){
   const S=1024, c=mkCanvas(S,S), g=c.getContext('2d'), R=rng(11), n=4, cell=S/n;
-  g.fillStyle='#1a140f'; g.fillRect(0,0,S,S);
+  g.fillStyle='#8a7458'; g.fillRect(0,0,S,S);
   for(let y=0;y<n;y++) for(let x=0;x<n;x++){
     const pad=4+R()*3, x0=x*cell+pad, y0=y*cell+pad, w=cell-2*pad, h=cell-2*pad, k=.78+R()*.32, hu=R();
-    const b=hu<.33?[122,101,80]:hu<.66?[106,93,80]:[130,106,83];
+    const b=hu<.33?[214,192,160]:hu<.66?[200,182,158]:[222,198,164];
     g.fillStyle=`rgb(${b[0]*k|0},${b[1]*k|0},${b[2]*k|0})`; rr(g,x0,y0,w,h,10); g.fill();
     const gr=g.createLinearGradient(x0,y0,x0+w,y0+h); gr.addColorStop(0,'rgba(255,238,205,.09)'); gr.addColorStop(1,'rgba(0,0,0,.2)');
     g.fillStyle=gr; rr(g,x0,y0,w,h,10); g.fill();
-    speckle(g,R,x0,y0,w,h,700,'20,14,10','255,235,205');
+    speckle(g,R,x0,y0,w,h,700,'90,70,50','255,245,225');
     for(let i=0;i<4;i++){ const px=x0+R()*w, py=y0+R()*h, rad=20+R()*70; const gg=g.createRadialGradient(px,py,0,px,py,rad);
-      gg.addColorStop(0,`rgba(38,26,16,${.1+R()*.14})`); gg.addColorStop(1,'rgba(38,26,16,0)'); g.fillStyle=gg; g.fillRect(px-rad,py-rad,rad*2,rad*2); }
+      gg.addColorStop(0,`rgba(120,95,70,${.08+R()*.1})`); gg.addColorStop(1,'rgba(120,95,70,0)'); g.fillStyle=gg; g.fillRect(px-rad,py-rad,rad*2,rad*2); }
     if(R()<.4){ g.strokeStyle='rgba(18,12,8,.6)'; g.lineWidth=1.3; g.beginPath(); let px=x0+R()*w, py=y0+R()*h; g.moveTo(px,py);
       for(let i=0;i<10;i++){ px=clamp(px+(R()-.5)*44,x0,x0+w); py=clamp(py+(R()-.5)*44,y0,y0+h); g.lineTo(px,py); } g.stroke(); }
   }
@@ -763,10 +763,10 @@ function texFlagstones(){
 }
 function texBricks(seed,rep){
   const S=1024, c=mkCanvas(S,S), g=c.getContext('2d'), R=rng(seed), rows=8, bw=S/4, bh=S/rows;
-  g.fillStyle='#3a2a1d'; g.fillRect(0,0,S,S);
+  g.fillStyle='#a08866'; g.fillRect(0,0,S,S);
   for(let r=0;r<rows;r++){
     const off=(r%2)*bw/2, cols=[];
-    for(let i=0;i<4;i++){ const k=.74+R()*.36, hu=R(); const b=hu<.4?[178,138,95]:hu<.8?[160,122,84]:[192,151,104]; cols.push(`rgb(${b[0]*k|0},${b[1]*k|0},${b[2]*k|0})`); }
+    for(let i=0;i<4;i++){ const k=.74+R()*.36, hu=R(); const b=hu<.4?[228,202,160]:hu<.8?[214,188,148]:[236,212,172]; cols.push(`rgb(${b[0]*k|0},${b[1]*k|0},${b[2]*k|0})`); }
     for(let i=-1;i<5;i++){
       const x0=i*bw+off+3, y0=r*bh+3, w=bw-6, h=bh-6;
       g.fillStyle=cols[(i+4)%4]; rr(g,x0,y0,w,h,5); g.fill();
@@ -774,29 +774,29 @@ function texBricks(seed,rep){
       g.fillStyle=gr; rr(g,x0,y0,w,h,5); g.fill();
     }
   }
-  speckle(g,R,0,0,S,S,9000,'25,16,10','255,232,196');
+  speckle(g,R,0,0,S,S,9000,'110,85,60','255,246,226');
   return toTex(c,{repeat:rep});
 }
 function texArcade(){
   const W=1024, H=384, c=mkCanvas(W,H), g=c.getContext('2d'), R=rng(21);
-  g.fillStyle='#8f6f4f'; g.fillRect(0,0,W,H);
-  speckle(g,R,0,0,W,H,5000,'30,20,12','255,230,190');
+  g.fillStyle='#d9bd94'; g.fillRect(0,0,W,H);
+  speckle(g,R,0,0,W,H,5000,'120,95,65','255,246,226');
   for(let k=0;k<2;k++){
     const cx=(k+.5)*W/2, aw=330, top=70, r=aw/2;
     // recess
     g.beginPath(); g.moveTo(cx-r,H); g.lineTo(cx-r,top+r); g.arc(cx,top+r,r,Math.PI,0); g.lineTo(cx+r,H); g.closePath();
-    const gr=g.createLinearGradient(0,top,0,H); gr.addColorStop(0,'#120c08'); gr.addColorStop(1,'#2f2116'); g.fillStyle=gr; g.fill();
+    const gr=g.createLinearGradient(0,top,0,H); gr.addColorStop(0,'#5a4632'); gr.addColorStop(1,'#8a7050'); g.fillStyle=gr; g.fill();
     // inner shadow
-    g.save(); g.clip(); g.strokeStyle='rgba(0,0,0,.6)'; g.lineWidth=40; g.stroke(); g.restore();
+    g.save(); g.clip(); g.strokeStyle='rgba(40,28,16,.45)'; g.lineWidth=40; g.stroke(); g.restore();
     // moulding
-    g.lineWidth=18; g.strokeStyle='#c7a47a';
+    g.lineWidth=18; g.strokeStyle='#f1dcb6';
     g.beginPath(); g.moveTo(cx-r-9,H); g.lineTo(cx-r-9,top+r); g.arc(cx,top+r,r+9,Math.PI,0); g.lineTo(cx+r+9,H); g.stroke();
     g.lineWidth=4; g.strokeStyle='rgba(40,26,14,.8)';
     g.beginPath(); g.moveTo(cx-r-19,H); g.lineTo(cx-r-19,top+r); g.arc(cx,top+r,r+19,Math.PI,0); g.lineTo(cx+r+19,H); g.stroke();
     // keystone
     g.fillStyle='#d4b285'; g.beginPath(); g.moveTo(cx-20,top-24); g.lineTo(cx+20,top-24); g.lineTo(cx+13,top+10); g.lineTo(cx-13,top+10); g.closePath(); g.fill();
   }
-  g.fillStyle='rgba(0,0,0,.25)'; g.fillRect(0,0,W,10); g.fillStyle='#b8946a'; g.fillRect(0,10,W,8);
+  g.fillStyle='rgba(90,70,45,.3)'; g.fillRect(0,0,W,10); g.fillStyle='#ecd5ae'; g.fillRect(0,10,W,8);
   return toTex(c,{repeat:[8,1]});
 }
 function lancetPath(g,x,y,w,h){
@@ -849,15 +849,11 @@ function texRose(){
 }
 function texSky(){
   const S=1024, c=mkCanvas(S,S), g=c.getContext('2d'), R=rng(77);
-  const gr=g.createRadialGradient(S/2,S/2,0,S/2,S/2,S*.72); gr.addColorStop(0,'#1a2550'); gr.addColorStop(.6,'#0c1230'); gr.addColorStop(1,'#05060f');
+  const gr=g.createRadialGradient(S/2,S/2,0,S/2,S/2,S*.72); gr.addColorStop(0,'#bcdaf6'); gr.addColorStop(.6,'#8fbbe8'); gr.addColorStop(1,'#6a9bd6');
   g.fillStyle=gr; g.fillRect(0,0,S,S);
-  for(let i=0;i<26;i++){ const x=R()*S, y=R()*S, r=60+R()*200; const cg=g.createRadialGradient(x,y,0,x,y,r);
-    const col=R()<.5?'120,90,190':'70,110,190'; cg.addColorStop(0,`rgba(${col},${.08+R()*.1})`); cg.addColorStop(1,`rgba(${col},0)`); g.fillStyle=cg; g.fillRect(x-r,y-r,r*2,r*2); }
-  for(let i=0;i<1800;i++){ const x=R()*S, y=R()*S, s=R(); g.fillStyle=`rgba(255,${235+R()*20|0},${215+R()*40|0},${.25+s*.75})`;
-    const z=s>.985?2.6:s>.9?1.6:1; g.fillRect(x,y,z,z);
-    if(s>.992){ g.save(); g.globalAlpha=.6; g.strokeStyle='#fff'; g.lineWidth=.8; g.beginPath(); g.moveTo(x-6,y+1); g.lineTo(x+8,y+1); g.moveTo(x+1,y-6); g.lineTo(x+1,y+8); g.stroke(); g.restore(); } }
-  for(let i=0;i<14;i++){ const x=R()*S, y=R()*S, r=80+R()*160; const cg=g.createRadialGradient(x,y,0,x,y,r);
-    cg.addColorStop(0,'rgba(150,160,190,.12)'); cg.addColorStop(1,'rgba(150,160,190,0)'); g.fillStyle=cg; g.fillRect(x-r,y-r,r*2,r*2); }
+  for(let i=0;i<60;i++){ const x=R()*S, y=R()*S, n=4+R()*6|0;
+    for(let k=0;k<n;k++){ const px=x+(R()-.5)*160, py=y+(R()-.5)*60, r=30+R()*70; const cg=g.createRadialGradient(px,py,0,px,py,r);
+      cg.addColorStop(0,`rgba(255,255,255,${.35+R()*.3})`); cg.addColorStop(.6,'rgba(255,255,255,.12)'); cg.addColorStop(1,'rgba(255,255,255,0)'); g.fillStyle=cg; g.fillRect(px-r,py-r,r*2,r*2); } }
   return toTex(c);
 }
 function texGlow(size,stops){
@@ -944,11 +940,11 @@ function texChecker(S){
 (function buildEnv(){
   const W=1024, H=512, c=mkCanvas(W,H), g=c.getContext('2d');
   const gr=g.createLinearGradient(0,0,0,H);
-  gr.addColorStop(0,'#0b0b14'); gr.addColorStop(.38,'#23190f'); gr.addColorStop(.5,'#4a3220'); gr.addColorStop(.62,'#22170e'); gr.addColorStop(1,'#0d0907');
+  gr.addColorStop(0,'#a9c8ec'); gr.addColorStop(.38,'#e2cfae'); gr.addColorStop(.5,'#d8bf96'); gr.addColorStop(.62,'#a88c6a'); gr.addColorStop(1,'#5e4a36');
   g.fillStyle=gr; g.fillRect(0,0,W,H);
   for(const fx of [.125,.375,.625,.875]){ const x=fx*W, y=H*.53; const rg=g.createRadialGradient(x,y,0,x,y,95);
-    rg.addColorStop(0,'rgba(255,214,150,1)'); rg.addColorStop(.25,'rgba(255,140,50,.85)'); rg.addColorStop(1,'rgba(255,90,20,0)'); g.fillStyle=rg; g.fillRect(x-95,y-95,190,190); }
-  g.fillStyle='rgba(170,195,255,.55)';
+    rg.addColorStop(0,'rgba(255,224,170,.9)'); rg.addColorStop(.3,'rgba(255,170,80,.4)'); rg.addColorStop(1,'rgba(255,140,60,0)'); g.fillStyle=rg; g.fillRect(x-95,y-95,190,190); }
+  g.fillStyle='rgba(255,252,240,.9)';
   for(let i=0;i<16;i++){ g.fillRect(i/16*W+22,H*.27,16,H*.15); }
   const tg=g.createRadialGradient(W/2,0,0,W/2,0,H*.5); tg.addColorStop(0,'rgba(255,236,200,.9)'); tg.addColorStop(1,'rgba(255,236,200,0)'); g.fillStyle=tg; g.fillRect(0,0,W,H*.5);
   const tex=toTex(c); tex.mapping=THREE.EquirectangularReflectionMapping;
@@ -979,7 +975,7 @@ function rod(ax,ay,az,bx,by,bz,r,seg=6){
 }
 
 // ---------------------------------------------------------------- materials
-const matIvory=new THREE.MeshStandardMaterial({color:0xefe4cc,roughness:.36,metalness:0,envMapIntensity:.85});
+const matIvory=new THREE.MeshStandardMaterial({color:0xeadcc0,roughness:.4,metalness:0,envMapIntensity:.7});
 const matObsidian=new THREE.MeshStandardMaterial({color:0x121014,roughness:.17,metalness:.35,envMapIntensity:1.25});
 const matGold=new THREE.MeshStandardMaterial({color:0xffe08a,roughness:.32,metalness:.92,envMapIntensity:1.05,emissive:0x2e2206});
 const matIron=new THREE.MeshStandardMaterial({color:0x1b1714,roughness:.55,metalness:.75,envMapIntensity:.6});
@@ -1022,7 +1018,7 @@ const windowSlots=[-12,-4,4,12];
   }
   // columns
   const stoneTex=texBricks(8,[1,3]);
-  const colMat=new THREE.MeshStandardMaterial({map:stoneTex,color:0xd2b48c,roughness:.85,envMapIntensity:.35});
+  const colMat=new THREE.MeshStandardMaterial({map:stoneTex,color:0xfff0dc,roughness:.8,envMapIntensity:.4});
   const spots=[];
   for(let k=0;k<4;k++){ const a=k*Math.PI/2, nx=Math.sin(a), nz=Math.cos(a);
     for(const u of (k%2===0?[-16,-8,8,16]:[-8,0,8])) spots.push([-nx*(HALL-.75)+Math.cos(a)*u,-nz*(HALL-.75)-Math.sin(a)*u]); }
@@ -1032,10 +1028,10 @@ const windowSlots=[-12,-4,4,12];
   spots.forEach(([x,z],i)=>{ shaft.setMatrixAt(i,M4(x,FLOOR_Y+WALL_H/2,z,0,Math.PI/8,0)); base.setMatrixAt(i,M4(x,FLOOR_Y+.4,z,0,Math.PI/8,0)); cap.setMatrixAt(i,M4(x,CEIL_Y-.38,z,0,Math.PI/8,0)); });
   for(const im of [shaft,base,cap]){ im.castShadow=false; im.receiveShadow=true; im.frustumCulled=false; scene.add(im); }
   // enchanted ceiling
-  const sky=new THREE.Mesh(new THREE.PlaneGeometry(HALL*2,HALL*2),new THREE.MeshBasicMaterial({map:texSky(),color:0x9aa6c8,fog:false}));
+  const sky=new THREE.Mesh(new THREE.PlaneGeometry(HALL*2,HALL*2),new THREE.MeshBasicMaterial({map:texSky(),color:0xffffff,fog:false}));
   sky.rotation.x=Math.PI/2; sky.position.y=CEIL_Y; scene.add(sky);
   // light shafts from the east windows
-  const shaftMat=new THREE.MeshBasicMaterial({map:texShaft(),color:0xb9cdff,transparent:true,opacity:.085,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide,fog:false,toneMapped:false});
+  const shaftMat=new THREE.MeshBasicMaterial({map:texShaft(),color:0xfff0cc,transparent:true,opacity:.16,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide,fog:false,toneMapped:false});
   const sg=new THREE.PlaneGeometry(2.6,17);
   for(const u of windowSlots){
     const start=new THREE.Vector3(HALL-.1,FLOOR_Y+8.1,u), dir=new THREE.Vector3(-1,-.62,.18).normalize();
@@ -1125,7 +1121,7 @@ const smokeTex=texGlow(64,[[0,'rgba(255,255,255,.55)'],[.5,'rgba(255,255,255,.25
 const fx=new FX(lowPower?2200:3600,true,glowTex,8);
 const smoke=new FX(lowPower?500:900,false,smokeTex,7);
 
-// ambient points (candle flames, dust) with their own fixed buffers
+// ambient points (dust motes) with their own fixed buffers
 class Ambient{
   constructor(n,tex,order){
     this.n=n; this.pos=new Float32Array(n*3); this.col=new Float32Array(n*3); this.alp=new Float32Array(n); this.siz=new Float32Array(n);
@@ -1165,52 +1161,29 @@ const braziers=[];
   }
 })();
 
-// ---------------------------------------------------------------- floating candles + dust motes
-const NC=lowPower?36:64;
-const candles=[];
-const candleMesh=new THREE.InstancedMesh(new THREE.CylinderGeometry(.065,.07,.46,8),new THREE.MeshStandardMaterial({color:0xf1e6cc,emissive:0x5a3a14,emissiveIntensity:.6,roughness:.6}),NC);
-const flames=new Ambient(NC*2,glowTex,9);
-(function(){
-  const R=rng(55);
-  for(let i=0;i<NC;i++){
-    let x,z; do{ x=(R()*2-1)*14; z=(R()*2-1)*14; }while(Math.abs(x)<3&&Math.abs(z)<3);
-    candles.push({x,z,y:10.6+R()*3,ph:R()*Math.PI*2,sp:.5+R()*.6});
-  }
-  candleMesh.frustumCulled=false; scene.add(candleMesh);
-})();
+// ---------------------------------------------------------------- dust motes drifting in the sunbeams
 const ND=lowPower?140:260;
 const dust=new Ambient(ND,glowTex,9), dustData=[];
 (function(){ const R=rng(66); for(let i=0;i<ND;i++) dustData.push({x:(R()*2-1)*13,y:FLOOR_Y+1+R()*11,z:(R()*2-1)*13,ph:R()*10,sp:.1+R()*.25}); })();
 const _m4=new THREE.Matrix4();
 function updateAmbient(dt,time){
-  for(let i=0;i<NC;i++){
-    const c=candles[i], y=c.y+Math.sin(time*c.sp+c.ph)*.18, x=c.x+Math.sin(time*.3+c.ph)*.05;
-    const dc=Math.hypot(x-camera.position.x,y-camera.position.y,c.z-camera.position.z), vis=clamp((dc-2.5)/2.5,0,1);
-    _m4.makeScale(vis,vis,vis).setPosition(x,y,c.z); candleMesh.setMatrixAt(i,_m4);
-    const fl=.75+.25*Math.sin(time*17+c.ph*5)*Math.sin(time*9.3+c.ph);
-    const j=i*2, j3=j*3;
-    flames.pos[j3]=x; flames.pos[j3+1]=y+.3; flames.pos[j3+2]=c.z; flames.col[j3]=1; flames.col[j3+1]=.82; flames.col[j3+2]=.5; flames.alp[j]=.95*fl*vis; flames.siz[j]=.17;
-    flames.pos[j3+3]=x; flames.pos[j3+4]=y+.32; flames.pos[j3+5]=c.z; flames.col[j3+3]=1; flames.col[j3+4]=.55; flames.col[j3+5]=.2; flames.alp[j+1]=.35*fl*vis; flames.siz[j+1]=.75;
-  }
-  candleMesh.instanceMatrix.needsUpdate=true; flames.dirty();
   for(let i=0;i<ND;i++){
     const d=dustData[i], i3=i*3;
     d.y+=dt*d.sp*.25; if(d.y>CEIL_Y-1) d.y=FLOOR_Y+1;
     dust.pos[i3]=d.x+Math.sin(time*d.sp+d.ph)*.6; dust.pos[i3+1]=d.y; dust.pos[i3+2]=d.z+Math.cos(time*d.sp*.8+d.ph)*.6;
-    dust.col[i3]=1; dust.col[i3+1]=.86; dust.col[i3+2]=.62; dust.alp[i]=.12+.22*Math.max(0,Math.sin(time*1.3+d.ph*3)); dust.siz[i]=.07;
+    dust.col[i3]=1; dust.col[i3+1]=.95; dust.col[i3+2]=.8; dust.alp[i]=.1+.25*Math.max(0,Math.sin(time*1.3+d.ph*3)); dust.siz[i]=.07;
   }
   dust.dirty();
 }
 
 // ---------------------------------------------------------------- lights
-scene.add(new THREE.HemisphereLight(0x9fb0d0,0x3a2616,.72));
-const keyLight=new THREE.SpotLight(0xffe4bd,620,0,.52,.6,2);
-keyLight.position.set(2.5,17,5.5); keyLight.target.position.set(0,0,0);
+scene.add(new THREE.HemisphereLight(0xe6eefa,0x7a5c40,1.1));
+const keyLight=new THREE.DirectionalLight(0xfff0d4,2.6);
+keyLight.position.set(10,15,5); keyLight.target.position.set(0,0,0);
 keyLight.castShadow=true; keyLight.shadow.mapSize.set(lowPower?1024:2048,lowPower?1024:2048);
-keyLight.shadow.camera.near=8; keyLight.shadow.camera.far=32; keyLight.shadow.bias=-.00025; keyLight.shadow.normalBias=.025;
+Object.assign(keyLight.shadow.camera,{left:-8,right:8,top:8,bottom:-8,near:2,far:40}); keyLight.shadow.camera.updateProjectionMatrix(); keyLight.shadow.bias=-.0003; keyLight.shadow.normalBias=.03;
 scene.add(keyLight,keyLight.target);
-const winLight=new THREE.DirectionalLight(0xa9c1ff,.75); winLight.position.set(12,9,-6); scene.add(winLight);
-const candleLight=new THREE.PointLight(0xffb36b,lowPower?0:28,0,2); candleLight.position.set(0,8.5,0); if(!lowPower) scene.add(candleLight);
+const winLight=new THREE.DirectionalLight(0xcfe0ff,.7); winLight.position.set(-10,8,-8); scene.add(winLight);
 const flash=new THREE.PointLight(0xffd29a,0,0,2); flash.position.set(0,1,0); scene.add(flash);
 let flashLevel=0;
 
@@ -2370,7 +2343,6 @@ function frame(now){
     if(R0()<dt*3) smoke.emit(b.x,b.y+1.4,b.z,(R0()-.5)*.2,.9+R0()*.5,(R0()-.5)*.2,2.6,.5,1.8,[.16,.13,.11],[.1,.09,.08],.22,.3,0,.5);
   }
   if(R0()<dt*6) sfx.crackle();
-  if(!lowPower) candleLight.intensity=26+3*Math.sin(time*5.1)*Math.sin(time*3.7);
   if(flashLevel>0){ flash.intensity=90*flashLevel*flashLevel; flashLevel=Math.max(0,flashLevel-dt*2.6); } else flash.intensity=0;
   // selection idle
   if(selected&&!busy){ const ty=.24+Math.sin(time*3.2)*.05; selected.root.position.y+=(ty-selected.root.position.y)*Math.min(1,dt*12); if(R0()<dt*14){ const p=selected.root.position, a=R0()*Math.PI*2; fx.emit(p.x+Math.cos(a)*.42,.05,p.z+Math.sin(a)*.42,0,.6+R0()*.6,0,.9,.12,.02,[1,.85,.45],[1,.55,.2],1,.2,0); } }
