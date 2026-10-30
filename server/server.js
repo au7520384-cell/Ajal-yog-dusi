@@ -614,6 +614,7 @@ async function chanPhoto(chat, file, caption) {   // sendPhoto with the picture 
 async function chanSend(p) {
   const link = /^https:\/\/t\.me\//.test(TG_APP_LINK) ? TG_APP_LINK + (TG_APP_LINK.includes("?") ? "&" : "?") + "startapp=c_channel" : "";   // the Play link counts as the "channel" source in /src
   if (p.poll) return tgApi("sendPoll", {chat_id: CHAN_ID, question: `${p.poll.uz} / ${p.poll.en}`.slice(0, 300), options: p.poll.options.slice(0, 10).map(o => String(o).slice(0, 100)), is_anonymous: true});
+  if (p.quiz) { const q = p.quiz; return tgApi("sendPoll", {chat_id: CHAN_ID, question: `${q.uz} / ${q.en}`.slice(0, 300), options: q.options.slice(0, 10).map(o => String(o).slice(0, 100)), type: "quiz", correct_option_id: q.correct | 0, explanation: `${q.explanation.uz} / ${q.explanation.en}`.slice(0, 200), is_anonymous: true}); }   // a quiz poll: the right answer and a short explanation show after the vote
   const t = p.text || p; let body = `${hesc(t.uz)}\n\n${hesc(t.en)}${link ? `\n\n▶ <a href="${link}">Play</a>` : ""}`;
   if (p.img) { if (body.length > 1024) body = `${hesc(t.uz)}\n\n${hesc(t.en)}`.slice(0, 1000); return chanPhoto(CHAN_ID, path.join(__dirname, "channel", path.basename(p.img)), body); }
   return tgApi("sendMessage", {chat_id: CHAN_ID, text: body, parse_mode: "HTML", disable_web_page_preview: true});
