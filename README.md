@@ -115,3 +115,14 @@ Give every paid ad its own link: `https://t.me/Billiard8PoolBot/Play?startapp=c_
 ## Channel posts
 
 The game's public channel is `https://t.me/Royalbilliard8` (button in Settings and under the bot's welcome message; `TELEGRAM_CHANNEL_LINK` overrides the address). The server can keep it alive with one post a day from `server/channel_posts.json` (Uzbek + English text, a picture from `server/channel/`, a poll, quiz polls with the right answer and an explanation, and plain text posts). It is off until you switch it on: make the bot an **administrator of the channel with the right to post messages** (channel > Administrators > Add), then set `CHANNEL_AUTOPOST=1` on the server. Posts go out between 09:00 and 21:00 Tashkent time, 22-30 hours apart, in the order of the file; the position is kept in the database, so a restart never repeats a post. Each post ends with the plain game link (`▶ https://t.me/Billiard8PoolBot/Play`), like a post typed by hand. The owner (`ADMIN_TG_ID`) can send `/chan` to the bot to see how many posts went out, and `/chan now` to send the next one at once; if the bot is not an administrator yet, it says so once every 6 hours. Test knobs: `CHAN_ANYTIME=1`, `CHAN_GAP_MS`, `CHAN_TICK_MS`, `CHAN_FIRST_MS`.
+
+### Posts made from real game data
+
+With the same switch (`CHANNEL_AUTOPOST=1`) the server also posts from what really happens in the game, ahead of the next ready-made post (and at least 3 hours after the previous post, inside the same 09:00-21:00 Tashkent window; a post older than 3 days is dropped):
+
+- **Weekly results.** When a week closes (Monday 00:00 UTC) the top three of the world ranking are announced, with how many players competed. Fewer than three ranked players: nothing is posted. No prize amounts are ever mentioned.
+- **Player-count milestones.** When the number of players who have played at least one game passes 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000 or 100000. The first run only records the current count, so nothing old is announced.
+
+**Names need consent.** A player's name (and level) appears only if they switched on *Settings > Show my name in the channel* (`prefs.chanName`, off by default, stored on the server; a client that does not send it counts as "no"). Everyone else is "a player" / "bir o'yinchi". The post tells readers how to opt in. `CHAN_NAMES=0` on the server turns names off completely.
+
+`/chan` shows how many data posts are waiting, and `/chan now` sends those first.

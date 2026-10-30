@@ -179,5 +179,421 @@
    "uz": "🙏 Kanalga obuna bo'lganingiz uchun rahmat!\nO'yin sizga yoqdimi? Savol yoki taklifingiz bo'lsa, shu yerda yozing. Hammasini o'qiymiz.",
    "en": "🙏 Thank you for subscribing!\nDo you like the game? If you have a question or an idea, write it here. We read everything."
   }
+ },
+ {
+  "text": {
+   "uz": "💡 Maslahat: xayoliy shar\nSharni cho'ntakka yo'naltirish uchun uning orqasida xayoliy shar tasavvur qiling: oq shar shu xayoliy sharning o'rniga kelsa, nishon shar cho'ntak tomon ketadi.",
+   "en": "💡 Tip: the ghost ball\nTo send a ball into a pocket, picture a 'ghost ball' right behind it: when the cue ball arrives at that spot, the object ball heads for the pocket."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: standart pul stolining uzunligi eniga nisbatan necha barobar?",
+   "en": "Quiz: how many times longer than its width is a standard pool table?",
+   "options": [
+    "1,5",
+    "2",
+    "3",
+    "4"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Uzunligi eniga nisbatan ikki barobar (2:1).",
+    "en": "The length is twice the width (2:1)."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "🎯 Mashq qiling\nO'yinda «Mashq» rejimi bor: istalgancha urishingiz va yangi zarbalarni sinab ko'rishingiz mumkin. Qiyin zarbani avval shu yerda o'rganing.",
+   "en": "🎯 Practice makes perfect\nThere is a Practice mode in the game: shoot as much as you like and try out new shots. Learn a hard shot there first."
+  }
+ },
+ {
+  "poll": {
+   "uz": "Qaysi stol sizga ko'proq yoqadi?",
+   "en": "Which table do you like most?",
+   "options": [
+    "London",
+    "Madrid",
+    "Tokio",
+    "Las-Vegas",
+    "Buenos-Ayres"
+   ]
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: pul stolida nechta cho'ntak bor?",
+   "en": "Quiz: how many pockets does a pool table have?",
+   "options": [
+    "4",
+    "6",
+    "8",
+    "10"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "6 ta: to'rtta burchakda va ikkitasi uzun tomonlar o'rtasida.",
+    "en": "6: four in the corners and two in the middle of the long sides."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "📐 Bortdan zarba\nSharni bortga (devorga) urganda u taxminan kirgan burchagi bilan qaytadi. Bortdan o'tadigan zarbani oldindan shu burchak bilan rejalashtiring.",
+   "en": "📐 Bank shots\nA ball bounces off the cushion at about the same angle it came in. Plan a bank shot ahead of time with that angle in mind."
+  }
+ },
+ {
+  "text": {
+   "uz": "🌍 O'yin 14 tilda\nO'zbekcha, English, Русский, Türkçe, Español, Português, Français, Deutsch, Bahasa Indonesia, العربية, हिन्दी, 한국어, 日本語 va 中文. Tilni Sozlamalar bo'limida o'zgartiring.",
+   "en": "🌍 14 languages\nO'zbekcha, English, Русский, Türkçe, Español, Português, Français, Deutsch, Bahasa Indonesia, العربية, हिन्दी, 한국어, 日本語 and 中文. Change the language in Settings."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: boshlang'ich zarbada 15 shar qanday shaklda teriladi?",
+   "en": "Quiz: in what shape are the 15 balls racked for the break?",
+   "options": [
+    "To'rtburchak / Square",
+    "Uchburchak / Triangle",
+    "Doira / Circle",
+    "Bir qator / A line"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Uchburchak shaklida; 8-shar uchburchakning o'rtasida turadi.",
+    "en": "In a triangle, with the 8-ball in the middle of it."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "🏆 Kunlik reja\n1) Kunlik sovg'ani oling.\n2) Omad g'ildiragini aylantiring.\n3) Omadli zarbani urib ko'ring.\n4) Kunlik kubok turnirlaridan biriga qatnashing.\nHammasi bepul boshlanadi!",
+   "en": "🏆 Your daily routine\n1) Collect the daily gift.\n2) Spin the lucky wheel.\n3) Try the Lucky Shot.\n4) Join one of the daily cup tournaments.\nIt all starts for free!"
+  }
+ },
+ {
+  "poll": {
+   "uz": "Odatda qachon o'ynaysiz?",
+   "en": "When do you usually play?",
+   "options": [
+    "Ertalab / Morning",
+    "Kunduzi / Daytime",
+    "Kechqurun / Evening",
+    "Tunda / At night"
+   ]
+  }
+ },
+ {
+  "text": {
+   "uz": "📱 Telefonni qanday ushlash kerak?\nTelefon tik tursa ham o'yin stolni o'zi buradi, qo'lingizni burishingiz shart emas. Qulay tutib o'ynang.",
+   "en": "📱 How to hold your phone\nEven when the phone is upright the game turns the table for you, so there is no need to rotate it. Just hold it comfortably."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: oq shar cho'ntakka tushib ketsa nima deyiladi?",
+   "en": "Quiz: what is it called when the cue ball falls into a pocket?",
+   "options": [
+    "Scratch",
+    "Rack",
+    "Bridge",
+    "Break"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Scratch: oq sharning cho'ntakka tushishi. Bu qoida buzilishi hisoblanadi.",
+    "en": "A scratch: the cue ball is pocketed. It counts as a foul."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "🛡 Himoyaviy o'yin\nHar doim qiyin zarbani urish shart emas. Ba'zan raqibga noqulay holat qoldirib, oq sharni uning sharlaridan yashirish yaxshiroq (bu «safety» deyiladi).",
+   "en": "🛡 Playing safe\nYou do not have to take every hard shot. Sometimes it is better to leave your opponent in a bad spot and hide the cue ball behind your opponent's balls (this is called a 'safety')."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: kiy uchiga surtiladigan ko'k modda nima?",
+   "en": "Quiz: what is the blue substance rubbed on the cue tip?",
+   "options": [
+    "Moy / Oil",
+    "Bo'r / Chalk",
+    "Suv / Water",
+    "Sovun / Soap"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Bo'r kiy uchining oq sharda sirpanishini kamaytiradi.",
+    "en": "Chalk helps the tip grip the cue ball instead of slipping."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "🏅 Haftalik reyting\nHar hafta dushanba kuni (UTC 00:00) reyting yopiladi, eng yaxshilar mukofot oladi va yangi hafta boshlanadi. Reytingdagi o'rningizni Reyting bo'limidan ko'ring.",
+   "en": "🏅 Weekly ranking\nEvery Monday (00:00 UTC) the ranking closes, the best players get rewards and a new week begins. Check your place in the Ranking section."
+  }
+ },
+ {
+  "poll": {
+   "uz": "Qaysi mini-o'yin sizniki?",
+   "en": "Which minigame is yours?",
+   "options": [
+    "Spin & Win",
+    "Lucky Shot",
+    "Golden Shot",
+    "Scratch & Win",
+    "Surprise Boxes"
+   ]
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: oq sharning pastki qismiga urilsa u qanday aylanadi?",
+   "en": "Quiz: what spin does the cue ball get if it is hit below the center?",
+   "options": [
+    "Orqaga (backspin) / Backspin",
+    "Oldinga (topspin) / Topspin",
+    "Yonga / Sidespin",
+    "Aylanmaydi / None"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Pastga urilsa oq shar orqaga tortiladi (draw): nishon sharga tekkach orqaga qaytishi mumkin.",
+    "en": "Hit low and the cue ball draws back: after striking the object ball it can roll backwards."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "🏘 Klub tuzing\n6-darajaga yetgach klub tuzishingiz yoki mavjud klubga qo'shilishingiz mumkin. Klubda 50 kishigacha bo'ladi. Haftalik klublar reytingining eng yaxshi uchtasi mukofot oladi.",
+   "en": "🏘 Join a club\nFrom level 6 you can create a club or join an existing one. A club holds up to 50 members, and the three best clubs of the week get rewards."
+  }
+ },
+ {
+  "text": {
+   "uz": "🔔 Bildirishnomalar\nBot sizga o'yin haqida eslatma yuborishi mumkin. Istamasangiz, botga /stop deb yozing yoki Sozlamalarda o'chirib qo'ying.",
+   "en": "🔔 Notifications\nThe bot may send you reminders about the game. If you do not want them, send /stop to the bot or switch them off in Settings."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: yon aylanish (side spin) ingliz tilida nima deyiladi?",
+   "en": "Quiz: what is side spin called in English?",
+   "options": [
+    "English",
+    "Bridge",
+    "Rack",
+    "Chalk"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Billiardda yon aylanish «English» deb ataladi.",
+    "en": "In cue sports, side spin is known as 'English'."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "👀 Tomosha rejimi\nUstalarning jonli o'yinini kuzatib, ularning zarbalaridan o'rganing. Tomosha bo'limida «JONLI» belgisi bor o'yinlarni toping.",
+   "en": "👀 Watch mode\nWatch live games of strong players and learn from their shots. Find the matches marked LIVE in the Watch section."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🌆 Viktorina: o'yinda nechta shahar stoli bor?",
+   "en": "Quiz: how many city tables are there in the game?",
+   "options": [
+    "10",
+    "20",
+    "30",
+    "50"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "30 shahar, har birining o'z stoli bor.",
+    "en": "30 cities, each with its own table."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "🎯 Omadli zarba yangilandi\nEndi sharlar va nishon har safar boshqa joyda chiqadi, ba'zan nishon yaqinida ikkita shar ham bo'ladi. Har kuni bepul urinish bor!",
+   "en": "🎯 Lucky Shot has been updated\nThe balls and the target now land in a different place every time, and sometimes there are two balls near the target. There is a free try every day!"
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎙 Viktorina: ovozli chatli lobbida eng ko'pi bilan necha kishi o'ynay oladi?",
+   "en": "Quiz: how many players can be in one lobby with voice chat?",
+   "options": [
+    "2",
+    "4",
+    "8",
+    "16"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Lobbi 8 kishigacha: do'stlaringizni havola bilan taklif qiling.",
+    "en": "A lobby holds up to 8 players: invite your friends with a link."
+   }
+  }
+ },
+ {
+  "poll": {
+   "uz": "Kimlar bilan o'ynashni yoqtirasiz?",
+   "en": "Who do you like to play with?",
+   "options": [
+    "Yolg'iz / Alone",
+    "Do'stlar bilan / With friends",
+    "Tasodifiy raqib / Random opponents",
+    "Hammasi / All of it"
+   ]
+  }
+ },
+ {
+  "text": {
+   "uz": "🤝 Do'stingizni taklif qiling\nO'yin ichida do'stingizga havola yuboring: birga o'ynash yanada qiziqarli. Do'stlar bo'limida ularning onlayn holatini ko'rasiz.",
+   "en": "🤝 Invite a friend\nSend your friend a link from inside the game: playing together is more fun. In the Friends section you can see who is online."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🏆 Viktorina: «Mini-o'yinlar» ichida qaysi biri yo'q?",
+   "en": "Quiz: which of these is NOT among the game's minigames?",
+   "options": [
+    "Scratch & Win",
+    "Golden Shot",
+    "Surprise Boxes",
+    "Chess / Shaxmat"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Mini-o'yinlar: Spin & Win, Lucky Shot, Golden Shot, Scratch & Win va Surprise Boxes.",
+    "en": "The minigames are Spin & Win, Lucky Shot, Golden Shot, Scratch & Win and Surprise Boxes."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "💪 Zarba kuchi\nHar zarbani to'liq kuch bilan urish shart emas. Kuchli zarba oq sharni boshqarishni qiyinlashtiradi; o'rtacha kuch ko'pincha aniqroq natija beradi.",
+   "en": "💪 Shot power\nYou do not have to hit every shot at full power. A hard hit makes the cue ball harder to control; a medium power often gives a more accurate result."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🏅 Viktorina: o'yinda nechta liga bor?",
+   "en": "Quiz: how many leagues are there in the game?",
+   "options": [
+    "5",
+    "8",
+    "10",
+    "12"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Bronzadan eng yuqori ligagacha 10 ta liga bor. Haftalik reytingda yuqoriga ko'tariling.",
+    "en": "There are 10 leagues, from Bronze up to the top one. Climb them in the weekly ranking."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "🥇 Hafta natijalari kanalda\nHar hafta yopilgach eng yaxshi uchlik shu kanalda e'lon qilinadi. Ismingiz chiqishini xohlasangiz, Sozlamalarda «Kanalda ismimni ko'rsatish» ni yoqing. Yoqmasangiz, «bir o'yinchi» deb yoziladi.",
+   "en": "🥇 Weekly results in the channel\nWhen a week closes, the top three are announced here. To have your name shown, switch on 'Show my name in the channel' in Settings. Otherwise it says 'a player'."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: 8-ball'da o'z sharingizni to'g'ri tushirsangiz, keyingi zarba kimda?",
+   "en": "Quiz: in 8-ball, who shoots next after you pocket one of your balls legally?",
+   "options": [
+    "Raqibda / The opponent",
+    "Sizda / You",
+    "Qur'a tashlanadi / A coin toss",
+    "Oq shar yo'qoladi / Nobody"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "To'g'ri shar tushirsangiz, navbat sizda qoladi va yana urasiz.",
+    "en": "Pocket a legal ball and you keep the turn and shoot again."
+   }
+  }
+ },
+ {
+  "poll": {
+   "uz": "Keyingi yangilikda nimani ko'rmoqchisiz?",
+   "en": "What would you like to see in the next update?",
+   "options": [
+    "Yangi stollar / New tables",
+    "Yangi kiylar / New cues",
+    "Yangi mini-o'yinlar / New minigames",
+    "Yangi turnirlar / New tournaments"
+   ]
+  }
+ },
+ {
+  "text": {
+   "uz": "🔁 Oq sharning keyingi o'rni\nZarba urishdan oldin oq shar qayerda to'xtashini o'ylang. Yaxshi o'yinchi bitta sharni emas, ikkita-uchta zarbani oldindan rejalaydi.",
+   "en": "🔁 Where does the cue ball end up?\nBefore you shoot, think about where the cue ball will stop. A good player plans two or three shots ahead, not just one."
+  }
+ },
+ {
+  "text": {
+   "uz": "🎁 Kunlik sovg'alar yo'li\nHar kuni kirsangiz, sovg'a kattalashib boradi. Bir kun o'tkazib yuborsangiz ham, keyingi kun yana davom eting.",
+   "en": "🎁 Daily gift route\nThe more days you open the game, the bigger the gifts get. If you miss a day, simply carry on the next one."
+  }
+ },
+ {
+  "text": {
+   "uz": "🌀 Aylanish (spin)\nO'yinda oq sharga aylanish berish mumkin: pastga, yuqoriga yoki yonga. Mashq rejimida sinab ko'ring va oq shar zarbadan keyin qanday yurishini kuzating.",
+   "en": "🌀 Spin\nYou can put spin on the cue ball in the game: low, high or to the side. Try it in Practice mode and watch how the cue ball moves after the shot."
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🤖 Viktorina: botda bildirishnomalarni o'chirish uchun qaysi buyruq yoziladi?",
+   "en": "Quiz: which command do you send to the bot to stop notifications?",
+   "options": [
+    "/start",
+    "/stop",
+    "/id",
+    "/play"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "/stop yozsangiz bot sizga eslatma yubormaydi. Qayta yoqish uchun botda /start yozing.",
+    "en": "Send /stop and the bot will not send you reminders. Send /start to get them again."
+   }
+  }
+ },
+ {
+  "poll": {
+   "uz": "O'yinda sizga eng ko'p nima yoqadi?",
+   "en": "What do you like most in the game?",
+   "options": [
+    "1 vs 1",
+    "Kubok turnirlari / Cup tournaments",
+    "Mini-o'yinlar / Minigames",
+    "Klublar va do'stlar / Clubs and friends",
+    "Tomosha / Watch mode"
+   ]
+  }
+ },
+ {
+  "text": {
+   "uz": "📅 Kanal haqida\nBu kanalda har kuni bitta post chiqadi: o'yin maslahatlari, viktorinalar, so'rovnomalar va yangiliklar. Do'stlaringizni ham obuna bo'lishga chaqiring!",
+   "en": "📅 About this channel\nOne post a day: game tips, quizzes, polls and news. Invite your friends to subscribe too!"
+  }
+ },
+ {
+  "text": {
+   "uz": "🙋 Savollaringiz bormi?\nO'yin yoki kanal haqida savol, taklif yoki xatolik haqida shu kanalda izoh qoldiring. Hammasini o'qiymiz va javob beramiz.",
+   "en": "🙋 Any questions?\nLeave a comment in this channel with a question, an idea or a bug report about the game. We read everything and we reply."
+  }
  }
 ]

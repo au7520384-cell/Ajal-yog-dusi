@@ -343,6 +343,7 @@ function rollWeek() {
   state.lastWeek = {week: prev, countries, top: played.slice(0, 20).map(u => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, won: u.weekWon}))};
   state.week = curWeek();
   lbCache.clear(); markDirty();
+  try { chanQueueWeek(prev, played); } catch (e) { console.error("chan week:", e.message); }
   console.log(`week ${prev} closed: ${played.length} players ranked`);
 }
 setInterval(rollWeek, 60000);
@@ -615,6 +616,7 @@ async function chanSend(p) {
   const link = /^https:\/\/t\.me\//.test(TG_APP_LINK) ? TG_APP_LINK.split("?")[0] : "";   // the plain game link, shown as it is (like the posts typed by hand)
   if (p.poll) return tgApi("sendPoll", {chat_id: CHAN_ID, question: `${p.poll.uz} / ${p.poll.en}`.slice(0, 300), options: p.poll.options.slice(0, 10).map(o => String(o).slice(0, 100)), is_anonymous: true});
   if (p.quiz) { const q = p.quiz; return tgApi("sendPoll", {chat_id: CHAN_ID, question: `${q.uz} / ${q.en}`.slice(0, 300), options: q.options.slice(0, 10).map(o => String(o).slice(0, 100)), type: "quiz", correct_option_id: q.correct | 0, explanation: `${q.explanation.uz} / ${q.explanation.en}`.slice(0, 200), is_anonymous: true}); }   // a quiz poll: the right answer and a short explanation show after the vote
+  if (p.html) return tgApi("sendMessage", {chat_id: CHAN_ID, text: `${p.html.uz}\n\n${p.html.en}${link ? `\n\n▶ ${link}` : ""}`, parse_mode: "HTML", disable_web_page_preview: true});   // data posts: built here from already-escaped parts
   const t = p.text || p; let body = `${hesc(t.uz)}\n\n${hesc(t.en)}${link ? `\n\n▶ ${link}` : ""}`;
   if (p.img) { if (body.length > 1024) body = `${hesc(t.uz)}\n\n${hesc(t.en)}`.slice(0, 1000); return chanPhoto(CHAN_ID, path.join(__dirname, "channel", path.basename(p.img)), body); }
   return tgApi("sendMessage", {chat_id: CHAN_ID, text: body, parse_mode: "HTML", disable_web_page_preview: true});
@@ -624,16 +626,49 @@ async function chanNext() {   // posts the next one: "ok", "done", "busy" or the
   const c = chanState(); if (chanBusy) return "busy"; if (c.i >= CHAN_POSTS.length) return "done";
   chanBusy = true;
   try { await chanSend(CHAN_POSTS[c.i]); c.i++; c.last = Date.now(); c.next = c.last + (+process.env.CHAN_GAP_MS || (22 + Math.random() * 8) * 3600e3); c.err = ""; markDirty(); return "ok"; }
-  catch (e) {
-    c.err = String(e.message || e).slice(0, 200); const now = Date.now(); markDirty();
-    if (now - (+c.errAt || 0) > 6 * 3600e3) { c.errAt = now; if (ADMIN_TG) tgApi("sendMessage", {chat_id: ADMIN_TG, text: "📢 Kanalga post yuborilmadi: " + c.err + "\nBotni kanalga administrator qiling (Post messages huquqi bilan)."}).catch(() => {}); }
-    return c.err;
-  } finally { chanBusy = false; }
+  catch (e) { return chanFail(c, e); }
+  finally { chanBusy = false; }
+}
+function chanFail(c, e) {
+  c.err = String(e.message || e).slice(0, 200); const now = Date.now(); markDirty();
+  if (now - (+c.errAt || 0) > 6 * 3600e3) { c.errAt = now; if (ADMIN_TG) tgApi("sendMessage", {chat_id: ADMIN_TG, text: "📢 Kanalga post yuborilmadi: " + c.err + "\nBotni kanalga administrator qiling (Post messages huquqi bilan)."}).catch(() => {}); }
+  return c.err;
+}
+// Posts made from real game data (the weekly top, player-count milestones). They wait in db.meta.chan.ev, go out before the next ready-made post, and are dropped when they get old.
+// A player's name appears only when they switched "name in the channel" on (prefs.chanName); everybody else is "a player". No prize amounts are ever posted.
+const CHAN_NAMES = !/^(0|false|no)$/i.test(process.env.CHAN_NAMES || "1"), CHAN_EV_MAX_AGE = 3 * 864e5, CHAN_MILES = [50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000];
+const chanQueue = ev => { const c = chanState(); c.ev = (c.ev || []).filter(x => Date.now() - x.at < CHAN_EV_MAX_AGE).slice(-9); c.ev.push({...ev, at: Date.now()}); markDirty(); };
+function chanQueueWeek(week, played) {   // played: this week's ranked players, best first
+  if (!CHAN_ON || !TG_BOT_TOKEN || played.length < 3) return;   // too few players to make a top
+  const medal = ["🥇", "🥈", "🥉"], who = (u, lc) => u.prefs && u.prefs.chanName === true && CHAN_NAMES ? `<b>${hesc(cleanName(u.name))}</b> · ${lc === "uz" ? "daraja" : "Lv"} ${u.level | 0}` : lc === "uz" ? "bir o'yinchi" : "a player";
+  const top = played.slice(0, 3), n = played.length;
+  const uz = `🏆 Hafta natijalari\nBu hafta ${n} o'yinchi reytingda bahslashdi.\n\n${top.map((u, i) => medal[i] + " " + who(u, "uz")).join("\n")}\n\nTabriklaymiz! Yangi hafta boshlandi: reytingga chiqing.\n💡 Ismingiz shu yerda chiqishini xohlasangiz: Sozlamalar → «Kanalda ismimni ko'rsatish».`;
+  const en = `🏆 Weekly results\n${n} players competed in the ranking this week.\n\n${top.map((u, i) => medal[i] + " " + who(u, "en")).join("\n")}\n\nCongratulations! A new week has started: climb the ranking.\n💡 Want your name to show up here? Settings → "Show my name in the channel".`;
+  chanQueue({kind: "week", week, html: {uz, en}});
+}
+function chanMilestone() {   // the number of players who have played at least one game passed 50, 100, 250 ...
+  if (!CHAN_ON || !TG_BOT_TOKEN) return;
+  const c = chanState(), n = Object.values(db.users).filter(u => u.games > 0).length, hit = CHAN_MILES.filter(m => n >= m).pop() || 0;
+  if (c.mile === undefined) { c.mile = hit; markDirty(); return; }   // first run: take the current state as it is, announce only what comes next
+  if (hit <= c.mile) return;
+  c.mile = hit; markDirty();
+  chanQueue({kind: "mile", html: {
+    uz: `🎉 ${hit} dan ortiq o'yinchi!\nRoyal Billiard 8 da ${hit} dan ortiq kishi o'ynadi. Har bir o'yinchiga rahmat!`,
+    en: `🎉 ${hit}+ players!\nMore than ${hit} people have played Royal Billiard 8. Thank you, everyone!`}});
+}
+async function chanEventNext() {   // posts the oldest waiting data post: "ok", "none", "busy" or the error text
+  const c = chanState(); c.ev = (c.ev || []).filter(x => Date.now() - x.at < CHAN_EV_MAX_AGE); if (chanBusy) return "busy"; if (!c.ev.length) return "none";
+  chanBusy = true;
+  try { await chanSend({html: c.ev[0].html, img: c.ev[0].img}); c.ev.shift(); c.last = Date.now(); c.next = Math.max(c.next || 0, c.last + 6 * 3600e3); c.err = ""; markDirty(); return "ok"; }
+  catch (e) { return chanFail(c, e); }
+  finally { chanBusy = false; }
 }
 function chanTick() {
-  if (!CHAN_ON || !TG_BOT_TOKEN || !CHAN_POSTS.length) return;
-  const c = chanState(); if (c.i >= CHAN_POSTS.length || Date.now() < c.next) return;
-  const h = new Date(Date.now() + 5 * 3600e3).getUTCHours(); if (!process.env.CHAN_ANYTIME && (h < 9 || h >= 21)) return;   // only in the Tashkent daytime (09-21)
+  if (!CHAN_ON || !TG_BOT_TOKEN) return;
+  chanMilestone();
+  const c = chanState(), h = new Date(Date.now() + 5 * 3600e3).getUTCHours(); if (!process.env.CHAN_ANYTIME && (h < 9 || h >= 21)) return;   // only in the Tashkent daytime (09-21)
+  if ((c.ev || []).length && Date.now() - (c.last || 0) > 3 * 3600e3) return void chanEventNext().catch(e => console.error("chan:", e.message));   // data posts first, but not right after another post
+  if (c.i >= CHAN_POSTS.length || Date.now() < c.next) return;
   chanNext().catch(e => console.error("chan:", e.message));
 }
 setInterval(chanTick, +process.env.CHAN_TICK_MS || 15 * 60e3); setTimeout(chanTick, +process.env.CHAN_FIRST_MS || 20e3);
@@ -645,9 +680,9 @@ async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the
   }
   if (cmd === "/chan") {   // the owner only: the channel's post queue; "/chan now" posts the next one at once
     if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
-    let note = ""; if (arg === "now") { const r = await chanNext(); note = r === "ok" ? "✅ Post yuborildi.\n" : r === "done" ? "Hamma postlar yuborilgan.\n" : "❌ " + r + "\n"; }
+    let note = ""; if (arg === "now") { const r = chanState().ev && chanState().ev.length ? await chanEventNext() : await chanNext(); note = r === "ok" ? "✅ Post yuborildi.\n" : r === "done" || r === "none" ? "Hamma postlar yuborilgan.\n" : "❌ " + r + "\n"; }
     const c = chanState(), left = CHAN_POSTS.length - c.i;
-    return tgApi("sendMessage", {chat_id: m.chat.id, text: `${note}📢 ${CHAN_ID}: ${c.i}/${CHAN_POSTS.length} post yuborilgan${CHAN_ON ? "" : " (avtomatik joylash O'CHIQ: CHANNEL_AUTOPOST=1 qo'ying)"}.${left ? "\nKeyingisi: " + (c.next > Date.now() ? new Date(c.next).toISOString().slice(0, 16).replace("T", " ") + " UTC dan keyin" : "navbatda") : ""}${c.err ? "\nOxirgi xato: " + c.err : ""}`});
+    return tgApi("sendMessage", {chat_id: m.chat.id, text: `${note}📢 ${CHAN_ID}: ${c.i}/${CHAN_POSTS.length} post yuborilgan${(c.ev || []).length ? `, ${c.ev.length} ta natija posti kutyapti` : ""}${CHAN_ON ? "" : " (avtomatik joylash O'CHIQ: CHANNEL_AUTOPOST=1 qo'ying)"}.${left ? "\nKeyingisi: " + (c.next > Date.now() ? new Date(c.next).toISOString().slice(0, 16).replace("T", " ") + " UTC dan keyin" : "navbatda") : ""}${c.err ? "\nOxirgi xato: " + c.err : ""}`});
   }
   if (cmd === "/id") return tgApi("sendMessage", {chat_id: m.chat.id, text: "Telegram ID: " + m.from.id});   // the number for ADMIN_TG_ID
   const u = userByTg(m.from.id), lc = pushLang(u, m.from.language_code), L = PUSH_LANGS[lc];
@@ -805,7 +840,7 @@ const routes = {
     // Showdown event points (weekly): the device reports this week's total, the server keeps the highest value
     if (b.sd && b.sd.week === curWeek()) { if (u.sdWeek !== curWeek()) { u.sdWeek = curWeek(); u.sdPts = 0; } u.sdPts = Math.max(u.sdPts || 0, int(b.sd.pts, 1e7)); lbCache.clear(); }
     if (/^[a-z]{2}$/.test(String(b.lang || ""))) u.lang = String(b.lang);   // the language of the bot's messages
-    if (b.prefs && typeof b.prefs === "object") u.prefs = {allowFriend: b.prefs.allowFriend !== false, showOnline: b.prefs.showOnline !== false, notifyTg: b.prefs.notifyTg !== false};
+    if (b.prefs && typeof b.prefs === "object") u.prefs = {allowFriend: b.prefs.allowFriend !== false, showOnline: b.prefs.showOnline !== false, notifyTg: b.prefs.notifyTg !== false, chanName: b.prefs.chanName === true};   // chanName: off unless the player switched it on (their name may appear in the public channel)
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
