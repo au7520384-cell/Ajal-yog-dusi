@@ -1,16 +1,183 @@
 [
-  {"img": "p01.jpg", "uz": "🎯 Omadli zarba\nOq shar bilan oltin sharni nishon markaziga yuboring! Har kuni bepul urinish bor, sharlar va nishon har safar yangi joyda chiqadi.", "en": "🎯 Lucky Shot\nSend the golden ball to the bullseye with the cue ball! There is a free try every day, and the balls and the target land in a new place every time."},
-  {"img": "p02.jpg", "uz": "🌆 Har shaharning o'z stoli\n30 shahar, har birining o'ziga xos stoli: London, Madrid, Dubay va boshqalar. Qaysi stollarni ochdingiz?", "en": "🌆 A table for every city\n30 cities, each with its own table: London, Madrid, Dubai and more. Which tables have you unlocked?"},
-  {"img": "p03.jpg", "uz": "🏆 Kunlik kubok turnirlari\nKuniga 4 marta turnir ochiladi: Morning, Noon, Evening va Night Cup. Qatnashing va kubok yuting!", "en": "🏆 Daily cup tournaments\nA tournament opens 4 times a day: Morning, Noon, Evening and Night Cup. Join and win cups!"},
-  {"img": "p04.jpg", "uz": "🎱 Kiylar to'plami\nOddiy kiylardan premium kiylargacha: har birining o'z kuchi bor. O'z kolleksiyangizni yig'ing!", "en": "🎱 Cue collection\nFrom simple cues to premium ones, each with its own power. Build your own collection!"},
-  {"poll": {"uz": "Qaysi o'yin rejimi sizga ko'proq yoqadi?", "en": "Which game mode do you like most?", "options": ["1 vs 1", "Kubok turnirlari / Cups", "Do'stlar bilan lobbi / Lobby with friends", "Mini-o'yinlar / Minigames"]}},
-  {"img": "p05.jpg", "uz": "🎡 Omad g'ildiragi\nHar 24 soatda bitta bepul aylantirish: tangalar, olmos, naqd pul va boshqa sovg'alar.", "en": "🎡 Lucky wheel\nOne free spin every 24 hours: coins, gems, cash and other gifts."},
-  {"img": "p06.jpg", "uz": "🎁 Kunlik sovg'alar yo'li\nHar kuni o'yinga kiring va sovg'a oling. Ketma-ket kirgan sari sovg'alar kattalashadi.", "en": "🎁 Daily reward route\nOpen the game every day and collect a gift. The more days in a row, the bigger the gifts."},
-  {"img": "p07.jpg", "uz": "💡 Maslahat: aniq zarba\n1) Nishon chizig'ini sharga to'g'rilang.\n2) Kuchni me'yorida tanlang: ortiqcha kuch oq sharni ham yo'qotishi mumkin.\n3) Sinov o'yinida (Practice) tinch mashq qiling.", "en": "💡 Tip: a clean shot\n1) Line the aim guide up with the ball.\n2) Pick a moderate power: too much force can lose the cue ball too.\n3) Practice calmly in the Practice game."},
-  {"img": "p08.jpg", "uz": "🎮 Mini-o'yinlar\nSpin & Win, Lucky Shot, Golden Shot, Scratch & Win va Surprise Boxes: asosiy o'yin orasida dam olish uchun.", "en": "🎮 Minigames\nSpin & Win, Lucky Shot, Golden Shot, Scratch & Win and Surprise Boxes: a break between the main games."},
-  {"img": "p09.jpg", "uz": "⚡ Maxsus tadbirlar\nGrandmaster Table, Showdown, King's Gambit va boshqa tadbirlar: o'zingizni sinab ko'ring!", "en": "⚡ Special events\nGrandmaster Table, Showdown, King's Gambit and more: test yourself!"},
-  {"img": "p10.jpg", "uz": "🩸 Mavsum yo'li (Season Pass)\nO'yinlarda g'alaba qozonib, vazifalarni bajaring va mukofotlarni oching.", "en": "🩸 Season Pass\nWin matches, complete missions and unlock the rewards."},
-  {"img": "p11.jpg", "uz": "🎮 Hammasi bir joyda\n1 vs 1, 16–64 o'yinchilik kubok, tadbirlar, mini-o'yinlar va do'st bilan o'yin. Telegram'da, bepul.", "en": "🎮 Everything in one place\n1 vs 1, cups for 16–64 players, events, minigames and a game with a friend. In Telegram, free to play."},
-  {"text": {"uz": "🎙 Ovozli chat bilan o'ynang\n8 kishigacha lobbi: do'stlaringizni havola bilan taklif qiling va o'yin vaqtida jonli gaplashing.", "en": "🎙 Play with voice chat\nA lobby for up to 8 players: invite your friends with a link and talk live while you play."}},
-  {"text": {"uz": "🙏 Kanalga obuna bo'lganingiz uchun rahmat!\nO'yin sizga yoqdimi? Savol yoki taklifingiz bo'lsa, shu yerda yozing. Hammasini o'qiymiz.", "en": "🙏 Thank you for subscribing!\nDo you like the game? If you have a question or an idea, write it here. We read everything."}}
+ {
+  "img": "p01.jpg",
+  "uz": "🎯 Omadli zarba\nOq shar bilan oltin sharni nishon markaziga yuboring! Har kuni bepul urinish bor, sharlar va nishon har safar yangi joyda chiqadi.",
+  "en": "🎯 Lucky Shot\nSend the golden ball to the bullseye with the cue ball! There is a free try every day, and the balls and the target land in a new place every time."
+ },
+ {
+  "img": "p02.jpg",
+  "uz": "🌆 Har shaharning o'z stoli\n30 shahar, har birining o'ziga xos stoli: London, Madrid, Dubay va boshqalar. Qaysi stollarni ochdingiz?",
+  "en": "🌆 A table for every city\n30 cities, each with its own table: London, Madrid, Dubai and more. Which tables have you unlocked?"
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: 8-ball pool'da oq shar bilan birga nechta shar bor?",
+   "en": "Quiz: how many balls are used in 8-ball pool, including the cue ball?",
+   "options": [
+    "14",
+    "15",
+    "16",
+    "17"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "15 ta rangli shar va 1 ta oq shar: jami 16 ta.",
+    "en": "15 object balls plus the cue ball: 16 in total."
+   }
+  }
+ },
+ {
+  "img": "p03.jpg",
+  "uz": "🏆 Kunlik kubok turnirlari\nKuniga 4 marta turnir ochiladi: Morning, Noon, Evening va Night Cup. Qatnashing va kubok yuting!",
+  "en": "🏆 Daily cup tournaments\nA tournament opens 4 times a day: Morning, Noon, Evening and Night Cup. Join and win cups!"
+ },
+ {
+  "img": "p04.jpg",
+  "uz": "🎱 Kiylar to'plami\nOddiy kiylardan premium kiylargacha: har birining o'z kuchi bor. O'z kolleksiyangizni yig'ing!",
+  "en": "🎱 Cue collection\nFrom simple cues to premium ones, each with its own power. Build your own collection!"
+ },
+ {
+  "poll": {
+   "uz": "Qaysi o'yin rejimi sizga ko'proq yoqadi?",
+   "en": "Which game mode do you like most?",
+   "options": [
+    "1 vs 1",
+    "Kubok turnirlari / Cups",
+    "Do'stlar bilan lobbi / Lobby with friends",
+    "Mini-o'yinlar / Minigames"
+   ]
+  }
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: qora 8-sharni qachon tushirish kerak?",
+   "en": "Quiz: when do you pocket the black 8-ball?",
+   "options": [
+    "Birinchi bo'lib / First of all",
+    "O'z guruhingizdagi hamma sharni tushirgach / After all balls of your group",
+    "Istalgan vaqtda / Any time",
+    "Raqibning sharlaridan keyin / After the opponent's balls"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Avval o'z guruhingizni (1–7 yoki 9–15) tushirasiz, keyin 8-sharni.",
+    "en": "First clear your own group (1–7 or 9–15), then pocket the 8."
+   }
+  }
+ },
+ {
+  "img": "p05.jpg",
+  "uz": "🎡 Omad g'ildiragi\nHar 24 soatda bitta bepul aylantirish: tangalar, olmos, naqd pul va boshqa sovg'alar.",
+  "en": "🎡 Lucky wheel\nOne free spin every 24 hours: coins, gems, cash and other gifts."
+ },
+ {
+  "img": "p06.jpg",
+  "uz": "🎁 Kunlik sovg'alar yo'li\nHar kuni o'yinga kiring va sovg'a oling. Ketma-ket kirgan sari sovg'alar kattalashadi.",
+  "en": "🎁 Daily reward route\nOpen the game every day and collect a gift. The more days in a row, the bigger the gifts."
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: qaysi raqamli sharlar «yo'l-yo'l» (stripes) deyiladi?",
+   "en": "Quiz: which numbered balls are called 'stripes'?",
+   "options": [
+    "1–7",
+    "9–15",
+    "8",
+    "1–15"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "1–7 yaxlit rangli (solids), 9–15 yo'l-yo'l (stripes).",
+    "en": "1–7 are solids, 9–15 are stripes."
+   }
+  }
+ },
+ {
+  "img": "p07.jpg",
+  "uz": "💡 Maslahat: aniq zarba\n1) Nishon chizig'ini sharga to'g'rilang.\n2) Kuchni me'yorida tanlang: ortiqcha kuch oq sharni ham yo'qotishi mumkin.\n3) Sinov o'yinida (Practice) tinch mashq qiling.",
+  "en": "💡 Tip: a clean shot\n1) Line the aim guide up with the ball.\n2) Pick a moderate power: too much force can lose the cue ball too.\n3) Practice calmly in the Practice game."
+ },
+ {
+  "img": "p08.jpg",
+  "uz": "🎮 Mini-o'yinlar\nSpin & Win, Lucky Shot, Golden Shot, Scratch & Win va Surprise Boxes: asosiy o'yin orasida dam olish uchun.",
+  "en": "🎮 Minigames\nSpin & Win, Lucky Shot, Golden Shot, Scratch & Win and Surprise Boxes: a break between the main games."
+ },
+ {
+  "quiz": {
+   "uz": "🎱 Viktorina: qoida buzilgandan (foul) keyin raqib odatda nima oladi?",
+   "en": "Quiz: what does the opponent usually get after a foul?",
+   "options": [
+    "Qo'shimcha ochko / Bonus points",
+    "Oq sharni xohlagan joyga qo'yish / Ball in hand",
+    "Hech narsa / Nothing",
+    "Navbat o'tmaydi / The same turn again"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Raqib oq sharni stolning xohlagan joyiga qo'yib uradi (ball in hand).",
+    "en": "The opponent places the cue ball anywhere and shoots (ball in hand)."
+   }
+  }
+ },
+ {
+  "img": "p09.jpg",
+  "uz": "⚡ Maxsus tadbirlar\nGrandmaster Table, Showdown, King's Gambit va boshqa tadbirlar: o'zingizni sinab ko'ring!",
+  "en": "⚡ Special events\nGrandmaster Table, Showdown, King's Gambit and more: test yourself!"
+ },
+ {
+  "img": "p10.jpg",
+  "uz": "🩸 Mavsum yo'li (Season Pass)\nO'yinlarda g'alaba qozonib, vazifalarni bajaring va mukofotlarni oching.",
+  "en": "🩸 Season Pass\nWin matches, complete missions and unlock the rewards."
+ },
+ {
+  "quiz": {
+   "uz": "🎡 Viktorina: o'yinda omad g'ildiragini necha soatda bir marta bepul aylantirish mumkin?",
+   "en": "Quiz: how often can you spin the lucky wheel for free in the game?",
+   "options": [
+    "6 soat / 6 hours",
+    "12 soat / 12 hours",
+    "24 soat / 24 hours",
+    "7 kun / 7 days"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Har 24 soatda bitta bepul aylantirish bor.",
+    "en": "There is one free spin every 24 hours."
+   }
+  }
+ },
+ {
+  "img": "p11.jpg",
+  "uz": "🎮 Hammasi bir joyda\n1 vs 1, 16–64 o'yinchilik kubok, tadbirlar, mini-o'yinlar va do'st bilan o'yin. Telegram'da, bepul.",
+  "en": "🎮 Everything in one place\n1 vs 1, cups for 16–64 players, events, minigames and a game with a friend. In Telegram, free to play."
+ },
+ {
+  "quiz": {
+   "uz": "🏆 Viktorina: kunlik kubok turnirlari kuniga necha marta ochiladi?",
+   "en": "Quiz: how many times a day do the daily cup tournaments open?",
+   "options": [
+    "1",
+    "2",
+    "4",
+    "8"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Morning, Noon, Evening va Night Cup: kuniga 4 marta.",
+    "en": "Morning, Noon, Evening and Night Cup: 4 times a day."
+   }
+  }
+ },
+ {
+  "text": {
+   "uz": "🎙 Ovozli chat bilan o'ynang\n8 kishigacha lobbi: do'stlaringizni havola bilan taklif qiling va o'yin vaqtida jonli gaplashing.",
+   "en": "🎙 Play with voice chat\nA lobby for up to 8 players: invite your friends with a link and talk live while you play."
+  }
+ },
+ {
+  "text": {
+   "uz": "🙏 Kanalga obuna bo'lganingiz uchun rahmat!\nO'yin sizga yoqdimi? Savol yoki taklifingiz bo'lsa, shu yerda yozing. Hammasini o'qiymiz.",
+   "en": "🙏 Thank you for subscribing!\nDo you like the game? If you have a question or an idea, write it here. We read everything."
+  }
+ }
 ]
