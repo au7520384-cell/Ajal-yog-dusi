@@ -4355,6 +4355,25 @@ buttons: [{label: `📺 ${T("Reklama ko'rish")} ${adSteps("try_" + k)}/${TRY_ADS
 ...(pay ? [{label: `${PAYI}${usdTxt(TRY_USD)} · +1`, cls: "purple", fn: () => Net.checkout("try_" + k)}, ...cardSpec(TRY_USD, "try_" + k, "", " · +1")] : []),
 {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
+function luckyLayout() {   // a new layout every time: the white ball, the gold ball and the target anywhere on the cloth, and now and then a second, ordinary ball standing about. Every layout can be solved: the white ball can reach the spot where it touches the gold ball so that the gold ball heads for the target, the cut is not too thin and the two straight lines stay open.
+const D = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const seg = (p, a, b) => { const dx = b.x - a.x, dy = b.y - a.y, t = clamp(((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1), 0, 1); return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy); };   // point to segment
+for (let k = 0; k < 400; k++) {
+const target = {x: rnd(190, FW - 190), y: rnd(150, FH - 150)}, a1 = rnd(0, 7), ux = Math.cos(a1), uy = Math.sin(a1), dg = rnd(180, 480);   // the gold ball is sent from any side of the target
+const gold = {x: target.x - ux * dg, y: target.y - uy * dg}; if (gold.x < 80 || gold.x > FW - 80 || gold.y < 60 || gold.y > FH - 60) continue;
+const hit = {x: gold.x - ux * 2 * R, y: gold.y - uy * 2 * R};   // where the white ball touches the gold one to send it at the target
+const ang = a1 + rnd(-0.95, 0.95), dh = 150 + 450 * Math.random() ** 1.5, cue = {x: hit.x - Math.cos(ang) * dh, y: hit.y - Math.sin(ang) * dh};   // the white ball comes from behind the gold one (mostly near it), the cut angle stays under about 54 degrees
+if (cue.x < 60 || cue.x > FW - 60 || cue.y < 50 || cue.y > FH - 50 || D(cue, gold) < 150) continue;
+const extra = [];
+if (Math.random() < 0.45) for (let j = 0; j < 160; j++) {
+const e = {x: rnd(60, FW - 60), y: rnd(50, FH - 50)};
+if (D(e, cue) < 5 * R || D(e, gold) < 5 * R || D(e, target) < 60 || seg(e, cue, hit) < 3.2 * R || seg(e, gold, target) < 3.2 * R) continue;
+extra.push({n: [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15][Math.floor(rnd(0, 14))], x: e.x, y: e.y}); break;
+}
+return {cue, gold, target, extra};
+}
+return {cue: {x: 110, y: FH / 2 + rnd(-40, 40)}, gold: {x: FW * rnd(0.3, 0.38), y: FH / 2 + rnd(-90, 90)}, target: {x: FW * rnd(0.68, 0.76), y: FH / 2 + rnd(-60, 60)}, extra: []};   // (never reached in practice) the old fixed layout
+}
 function startLucky(golden) {
 goldenMode = golden === true; LUCKY_RINGS = goldenMode ? GOLDEN_RINGS : LUCKY_BASE;
 mission("lucky");
@@ -4363,9 +4382,9 @@ save(); updateNav();
 const city = goldenMode ? {id: "golden", felt: ["#2a2008", "#0e0a02"], rail: ["#ffd24d", "#8a5a00"], trim: "#fff1b8", pat: "lucky", skill: 0}
 : {felt: ["#1c2a4a", "#0b1328"], rail: ["#aab4c8", "#5b6680"], trim: "#dfe6f5", pat: "lucky", skill: 0};
 const G = baseGame("lucky", city, [mePlayer()]);
-const gold = mkBall("gold", FW * rnd(0.3, 0.38), FH / 2 + rnd(-90, 90));
-G.balls = [mkBall(0, 110, FH / 2 + rnd(-40, 40)), gold];
-G.target = {x: FW * rnd(0.68, 0.76), y: FH / 2 + rnd(-60, 60)};
+const L = luckyLayout(), gold = mkBall("gold", L.gold.x, L.gold.y);
+G.balls = [mkBall(0, L.cue.x, L.cue.y), gold, ...L.extra.map(e => mkBall(e.n, e.x, e.y))];   // the gold ball stays at index 1 (luckyFinish)
+G.target = L.target;
 G.pockets = null; G.ballInHand = false; G.isBreak = false;
 G.angle = Math.atan2(gold.y - G.balls[0].y, gold.x - G.balls[0].x);
 setGame(G); enterGameUi("lucky");

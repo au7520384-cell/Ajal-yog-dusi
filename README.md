@@ -21,7 +21,7 @@ An 8-ball pool game for phones and computers. The game is `index.html`; the onli
 - **Settings:** sound, vibration, cue sensitivity, tap to aim, aiming wheel, guideline in offline games, power bar side, cheering, friend requests, online status, friend-online notifications. Coin cues go up to **5 billion**; premium cash (💵) cues go up to **1 500 cash**. Cash is hard to earn (1–5 at a time).
 - **Currencies:** coins, cash and gems, with the game's own artwork.
 - **Shop:** Special Offers (starter pack, gem packs), Coins & Cash packs with bonus ribbons and VIP points, Free Rewards, Minigames, Cues & More. Real money via Stripe; cash→coins and gems→cash exchange.
-- **Gameplay:** 3D rolling balls, spin, synthesised pool sounds tuned to real recordings, 3D cues, a tournament bracket, the daily reward route, lucky shot, wheel, watch mode, achievements, and levels.
+- **Gameplay:** 3D rolling balls, spin, synthesised pool sounds tuned to real recordings, 3D cues, a tournament bracket, the daily reward route, lucky shot (a new layout every time: the white ball, the gold ball and the target are placed anywhere on the cloth, now and then with a second ball in the way; every layout can be solved), wheel, watch mode, achievements, and levels.
 
 ## Run it yourself
 ```bash
