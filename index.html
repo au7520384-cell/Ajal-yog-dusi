@@ -2624,6 +2624,8 @@ const DICT = {
 "Hamma": ["Everyone", "Все"],
 "Hech kim": ["No one", "Никто"],
 "Onlayn holatimni do'stlarga ko'rsatish": ["Show my online status to friends", "Показывать мой онлайн-статус друзьям"],
+"Kanalda ismimni ko'rsatish": ["Show my name in the channel", "Показывать моё имя в канале"],
+"Haftalik g'oliblar kanalda e'lon qilinganda ismingiz chiqadi. O'chiq bo'lsa «bir o'yinchi» deb yoziladi.": ["Your name appears when the weekly winners are posted in the channel. If off, it says \"a player\".", "Ваше имя появится, когда победители недели публикуются в канале. Если выключено, будет «игрок»."],
 "Do'stlar onlayn bo'lganda xabar berish": ["Notify when friends come online", "Уведомлять, когда друзья онлайн"],
 "Sozlamalar": ["Settings", "Настройки"],
 "Klub": ["Club", "Клуб"],
@@ -9794,7 +9796,7 @@ try {
 await ensure();
 const r = await api("/api/sync", {name: profile.name, avatar: profile.avatar, frame: profile.frame | 0, country: profile.country,
 level: profile.level, xp: profile.xp, won: profile.won, wins: profile.wins, games: profile.games, tbl: profile.tableSkin || "",
-lang: LANG, prefs: {allowFriend: opt("allowFriend"), showOnline: opt("showOnline"), notifyTg: opt("notifyTg")}, sd: {week: sdState().week, pts: sdState().pts}});
+lang: LANG, prefs: {allowFriend: opt("allowFriend"), showOnline: opt("showOnline"), notifyTg: opt("notifyTg"), chanName: opt("chanName") === true}, sd: {week: sdState().week, pts: sdState().pts}});
 if (Net.friends) profile.friendsN = Net.friends.length;
 if (r.cheer) { const d = cheerData(); for (const [k, v] of Object.entries(r.cheer.got || {})) d.got[k] = Math.max(d.got[k] | 0, v | 0); d.sent = Math.max(d.sent | 0, r.cheer.sent | 0); }
 if (r.me) { profile.league = r.me.league; profile.bestLeague = Math.max(profile.bestLeague | 0, r.me.league | 0); profile.inClub = !!r.me.club; }
@@ -12590,10 +12592,10 @@ if (Date.now() - lastBack < 2200) { try { history.back(); } catch (e) {} return;
 lastBack = Date.now(); guard(); toast("↩", T("Chiqish uchun yana bir marta bosing"), "");
 });
 }
-const SET_DEF = { gfx: "mid", fps: "90", vib: true, sens: "normal", tapAim: true, fine: true, guideOff: false, tray: true, btnSz: "normal", vol: "mid", power: "left", cheer: "all", allowFriend: true, showOnline: true, notifyFr: true, notifyTg: true};
+const SET_DEF = { gfx: "mid", fps: "90", vib: true, sens: "normal", tapAim: true, fine: true, guideOff: false, tray: true, btnSz: "normal", vol: "mid", power: "left", cheer: "all", allowFriend: true, showOnline: true, notifyFr: true, notifyTg: true, chanName: false};
 const opt = k => profile.set && k in profile.set ? profile.set[k] : SET_DEF[k];
 const SENS = {slow: 0.55, normal: 1, fast: 1.6};
-function setOpt(k, v) { profile.set = {...(profile.set || {}), [k]: v}; save(); applySettings(); if (k === "gfx") resize(); if (k === "allowFriend" || k === "showOnline" || k === "notifyTg") Net.sync(); }
+function setOpt(k, v) { profile.set = {...(profile.set || {}), [k]: v}; save(); applySettings(); if (k === "gfx") resize(); if (k === "allowFriend" || k === "showOnline" || k === "notifyTg" || k === "chanName") Net.sync(); }
 function vib(p) { if (opt("vib") && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
 function migrateGems() { if (profile.gemx) return; profile.gemx = 1; profile.gems = Math.round((profile.gems || 0) * 14); save(); }
 function applySettings() {
@@ -12664,6 +12666,8 @@ ${row("Olqish animatsiyalari", seg("cheer", [["all", "Hammasi"], ["mine", "Faqat
 ${row("Do'st qo'shishga ruxsat", seg("allowFriend", [[true, "Hamma"], [false, "Hech kim"]]))}
 ${row("Onlayn holatimni do'stlarga ko'rsatish", tg("showOnline", opt("showOnline")))}
 ${row("Do'stlar onlayn bo'lganda xabar berish", tg("notifyFr", opt("notifyFr")))}
+<div class="setrow"><span class="sri" style="display:grid;place-items:center;border-radius:50%;box-sizing:border-box;border:2px solid #c8a24a;background:radial-gradient(#3aa0f0,#0b3d7a);font-size:20px;filter:drop-shadow(0 2px 3px #000a)">📢</span><b>${T("Kanalda ismimni ko'rsatish")}</b>${tg("chanName", opt("chanName"))}</div>
+<div class="muted" style="margin:-2px 0 8px;font-size:13px">${T("Haftalik g'oliblar kanalda e'lon qilinganda ismingiz chiqadi. O'chiq bo'lsa «bir o'yinchi» deb yoziladi.")}</div>
 ${TG_LAUNCH ? `<div class="setrow"><span class="sri" style="display:grid;place-items:center;border-radius:50%;box-sizing:border-box;border:2px solid #c8a24a;background:radial-gradient(#3aa0f0,#0b3d7a);font-size:20px;filter:drop-shadow(0 2px 3px #000a)">✈️</span><b>${T("Telegram'da bildirishnoma")}</b>${tg("notifyTg", opt("notifyTg"))}</div>` : ""}
 <div class="setsec">☁️ ${T("Hisob va saqlash")}</div>
 ${row("Progress serverga saqlanadi", `<span class="muted">${Net.acct ? "ID " + esc(Net.acct.code) + (cloudAt ? " · ✅ " + new Date(cloudAt).toLocaleTimeString(LOC(), {hour: "2-digit", minute: "2-digit"}) : "") : T("oflayn")}</span>`)}
