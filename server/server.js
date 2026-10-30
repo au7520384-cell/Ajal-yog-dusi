@@ -37,6 +37,8 @@ const envKey = name => {   // a secret key from the environment; when the whole 
   return v;
 };
 const AD_KEY = envKey("ADSGRAM_REWARD_KEY"), adCred = new Map();   // Adsgram server-to-server reward ping: Telegram id -> {n, t} credits the player may claim once each (the page cannot fake a watched ad)
+const TG_CHANNEL = /^https:\/\/t\.me\/[A-Za-z0-9_]{4,}$/.test((process.env.TELEGRAM_CHANNEL_LINK || "").trim()) ? process.env.TELEGRAM_CHANNEL_LINK.trim() : "https://t.me/Royalbilliard8";   // the game's public channel: a second button under the bot's welcome message
+const CHAN_BTN = {uz: "📢 Rasmiy kanal", ru: "📢 Канал", en: "📢 Channel", tr: "📢 Kanal", es: "📢 Canal", pt: "📢 Canal", fr: "📢 Chaîne", de: "📢 Kanal", id: "📢 Kanal", ar: "📢 القناة", hi: "📢 चैनल", ko: "📢 채널", ja: "📢 チャンネル", zh: "📢 频道"};
 const TG_BOT_TOKEN = (process.env.TELEGRAM_BOT_TOKEN || "").trim(), TG_APP_LINK = process.env.TELEGRAM_APP_LINK || "";   // Telegram Mini App: the bot token verifies the players, the public app link (https://t.me/<bot>/<app>) is used for lobby invites
 const STARS_PER_USD = +process.env.STARS_PER_USD || 55;   // Telegram Stars: what 1 USD of the game's card price costs in Stars (the same number goes to the page, so both show and charge the same)
 const TG_HOOK_SECRET = crypto.createHash("sha256").update("b8hook:" + TG_BOT_TOKEN).digest("hex").slice(0, 40);   // Telegram sends it back in X-Telegram-Bot-Api-Secret-Token: only Telegram can post to /api/tg/webhook
@@ -582,6 +584,7 @@ function tgPush(to, kind, vars, o = {}) {   // o: {start: what the button opens 
   if (btn && /^https:\/\/t\.me\//.test(TG_APP_LINK)) {
     const sp = o.start === undefined ? "fr" : o.start;
     body.reply_markup = {inline_keyboard: [[{text: btn, url: TG_APP_LINK + (sp ? (TG_APP_LINK.includes("?") ? "&" : "?") + "startapp=" + sp : "")}]]};
+    if (kind === "start") body.reply_markup.inline_keyboard.push([{text: CHAN_BTN[pushLang(to)] || CHAN_BTN.en, url: TG_CHANNEL}]);
   }
   tgApi("sendMessage", body).catch(e => {
     if (/blocked|can't initiate|chat not found|deactivated|forbidden/i.test(e.message)) { to.tg = {...(to.tg || {}), no: Date.now()}; markDirty(); }
@@ -604,7 +607,7 @@ async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the
     return tgApi("sendMessage", {chat_id: m.chat.id, text: rows.length ? "📊 Reklama havolalari:\n" + rows.map(r => `${r.src}: ${r.botStarts} bot Start, ${r.newPlayers} yangi o'yinchi, ${r.opens} kirish`).join("\n") : "Hali hech kim reklama havolasi orqali kirmagan."});
   }
   if (cmd === "/id") return tgApi("sendMessage", {chat_id: m.chat.id, text: "Telegram ID: " + m.from.id});   // the number for ADMIN_TG_ID
-  const u = userByTg(m.from.id), L = PUSH_LANGS[pushLang(u, m.from.language_code)];
+  const u = userByTg(m.from.id), lc = pushLang(u, m.from.language_code), L = PUSH_LANGS[lc];
   if (cmd === "/stop") {
     if (u) { u.tg = {...(u.tg || {}), off: true}; markDirty(); }
     return tgApi("sendMessage", {chat_id: m.chat.id, text: L.stop[0]});
@@ -613,7 +616,7 @@ async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the
   const src = SRC_RE.test(arg || "") ? arg : "";   // t.me/<bot>?start=c_NAME (an ad that sends people to the bot first): counted here, and the Play button carries the same name into the game
   if (src) srcStart(src.slice(2), m.from.id);
   const body = {chat_id: m.chat.id, text: L.start[0], parse_mode: "HTML"};
-  if (/^https:\/\/t\.me\//.test(TG_APP_LINK)) body.reply_markup = {inline_keyboard: [[{text: L.start[1], url: TG_APP_LINK + (src ? (TG_APP_LINK.includes("?") ? "&" : "?") + "startapp=" + src : "")}]]};
+  if (/^https:\/\/t\.me\//.test(TG_APP_LINK)) body.reply_markup = {inline_keyboard: [[{text: L.start[1], url: TG_APP_LINK + (src ? (TG_APP_LINK.includes("?") ? "&" : "?") + "startapp=" + src : "")}], [{text: CHAN_BTN[lc] || CHAN_BTN.en, url: TG_CHANNEL}]]};
   return tgApi("sendMessage", body);
 }
 

@@ -2469,7 +2469,7 @@ const DICT = {
 "🔥 Kunlik seriya:": ["🔥 Daily streak:", "🔥 Серия дней:"], "kun": ["days", "дн."],
 "Qidirilmoqda…": ["Searching…", "Поиск…"], "Yutuq": ["Prize", "Приз"], "Kirish narxi": ["Entry fee", "Вход"], "O'yinchilar onlayn": ["Players online", "Игроков онлайн"],
 "O'YNASH": ["PLAY", "ИГРАТЬ"], "Naqd pulga sotib olish": ["Buy with real money", "Купить за деньги"], "Pulni tangaga almashtirish": ["Exchange cash for coins", "Обмен кэша на монеты"],
-"ALMASHTIRISH": ["EXCHANGE", "ОБМЕНЯТЬ"], "Mashhur": ["Popular", "Популярно"], "Eng foydali": ["Best value", "Выгоднее всего"],
+"ALMASHTIRISH": ["EXCHANGE", "ОБМЕНЯТЬ"], "Mashhur": ["Popular", "Популярно"], "Rasmiy kanal": ["Official channel", "Официальный канал"], "Eng foydali": ["Best value", "Выгоднее всего"],
 "To'lovlar xavfsiz Stripe orqali. Xarid qilingan pul va tangalar hisobingizga avtomatik tushadi.": ["Payments are processed securely by Stripe. Purchases are added to your account automatically.", "Оплата через Stripe. Покупки зачисляются на счёт автоматически."],
 "Pul yetmaydi": ["Not enough cash", "Недостаточно кэша"], "Tanga yetmaydi": ["Not enough coins", "Недостаточно монет"], "Almashtirildi": ["Exchanged", "Обменено"], "tanga": ["coins", "монет"],
 "Kolleksiya": ["Collection", "Коллекция"], "Kiy ko'rsatkichlari": ["Cue stats", "Характеристики кия"], "Yopish": ["Close", "Закрыть"],
@@ -12673,10 +12673,12 @@ ${row("Yangi telefonga o'tish uchun kalit", `<button class="btn orange" id="setK
 ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setRecover" style="padding:6px 14px">📲 ${T("Tiklash")}</button>`)}
 <div class="setsec">${T("Boshqa")}</div>
 ${row("Til", `<button class="btn blue" id="setLang" style="padding:6px 14px">🌐 ${LANGS[LANG]}</button>`)}
+<div class="setrow"><b>📢 ${T("Rasmiy kanal")}</b><button class="btn blue" id="setChan" style="padding:6px 14px">${T("Ochish")}</button></div>
 <div class="setrow"><b>🎧 ${T("Ovoz sinovi")}</b><button class="btn orange" id="setLab" style="padding:6px 14px">▶ ${T("Ochish")}</button></div>
 ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:6px 14px">👤 ${esc(profile.name)}</button>`)}
 <div class="muted" style="text-align:center;margin-top:10px">Royal Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}<span id="setBuild"></span><br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a> · <a href="/refund" target="_blank" style="color:#8fc4ff">Refund</a></div>`;
 { const lb = $("setLab"); if (lb) lb.onclick = openSoundLab; }
+{ const cb = $("setChan"); if (cb) cb.onclick = () => { const u = "https://t.me/Royalbilliard8"; Snd.click(); if (TG && TG.openTelegramLink) { try { TG.openTelegramLink(u); return; } catch (e) {} } window.open(u, "_blank", "noopener"); }; }   // the game's public Telegram channel
 { const tb = $("setBuild"); if (tb) { tb.style.cssText = "cursor:pointer;text-decoration:underline dotted"; tb.onclick = runTurnTest; } }
 { const bl = $("setBuild"), show = b => { if (bl) bl.textContent = b ? " · v " + b + (SRV_TURN === 1 ? " · TURN ✓" : SRV_TURN === 0 ? " · TURN ✗" : "") + (TG_LAUNCH ? (SRV_TG === 1 ? " · TG ✓" : SRV_TG === 0 ? " · TG ✗" : "") : "") : ""; }; if (SRV_BUILD) show(SRV_BUILD); else Net.api("/api/health").then(r => { SRV_BUILD = (r && r.build) || ""; SRV_TURN = r && typeof r.turn === "boolean" ? (r.turn ? 1 : 0) : -1; SRV_TG = r && typeof r.tg === "boolean" ? (r.tg ? 1 : 0) : -1; show(SRV_BUILD); }).catch(() => {}); }   // TURN ✗ = the voice-chat relay is not configured on the server (mobile networks may not connect)
 $("setBody").querySelectorAll("[data-t]").forEach(b => b.onclick = () => {
