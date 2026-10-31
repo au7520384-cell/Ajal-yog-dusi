@@ -2240,6 +2240,9 @@ const PV = 300, PV_N = 76, isPortrait = i => i >= PV && i < PV + PV_N;
 const normAv = i => (i >= 200 && i < 212) || (i >= 500 && i < 564) || isPortrait(i) || (i >= 400 && i < 470) ? i : ((i | 0) % AV_N + AV_N) % AV_N;
 const randAv = () => { const r = Math.random(); return r < 0.7 ? PV + (Math.random() * PV_N | 0) : 400 + (r < 0.95 ? Math.random() * 30 | 0 : 30 + (Math.random() * 40 | 0)); };
 const GA = 400, GA_N = 70, isPremiumAv = i => i >= GA && i < GA + GA_N;
+const GA_G = "mmmfmfmmfmfmfmfnfmmnnfnnnmmmmnffnfffffnnfnnnnmffmfmmnnmnfmfffmfmmnnnnn";   // the premium pictures: m / f / n (masked, helmets: no clear gender)
+const avGender = i => isPortrait(i) ? ((i - PV) % 2 ? "f" : "m") : isPremiumAv(i) ? (GA_G[i - GA] || "n") : "n";   // the 76 portraits alternate: even = boy, odd = girl
+const randPortrait = g => PV + 2 * (Math.random() * (PV_N / 2) | 0) + (g === "f" ? 1 : 0);
 const GA_NAMES = ["Oddly", "Sportchi", "Klassik", "Nozik", "Beparvo", "Yulduz", "Yapon", "Jin", "Rosa", "Arjun", "Nadia", "Felix", "Zara", "Leo", "Ivy", "Kai", "Luna", "Max", "Blaze", "Storm", "Shadow", "Queen", "Titan", "Viper", "Ghost", "King", "Royal", "Legend", "Phoenix", "Nebula", "Cosmos Girl", "Quantica", "Onna-Bugeisha", "Kunoichi", "Dragon Priestess", "Centurion", "Goddess", "Frost Queen", "Gladiator", "Emperor", "Leona", "Tigress", "Huntress", "Ninja", "Eagle-Eye", "Bearskin", "Reef Guard", "Venomous", "Ophidian", "Dynasty", "Archer", "Mountaineer", "Diver", "Stinger", "Sorcerer", "Rider", "Matriarch", "Star-Seeker", "Elysium", "Poseidon", "Star-Gazer", "Pathfinder", "Matrix", "Cyber God", "Elder Wise", "Ascendant", "Elysia", "Overlord", "Celestial Being", "Voidwalker"];
 const GA_PRICE = [["coin", 20000, 0], ["coin", 25000, 0], ["coin", 30000, 0], ["coin", 35000, 0], ["coin", 40000, 0], ["coin", 50000, 0], ["coin", 60000, 0], ["coin", 70000, 0], ["coin", 80000, 0], ["coin", 100000, 0], ["coin", 150000, 1], ["coin", 200000, 1], ["coin", 250000, 1], ["coin", 300000, 1], ["coin", 350000, 1], ["coin", 400000, 1], ["coin", 500000, 1], ["coin", 600000, 1], ["coin", 750000, 1], ["coin", 900000, 1], ["cash", 30, 2], ["cash", 40, 2], ["cash", 50, 2], ["cash", 60, 2], ["cash", 70, 2], ["cash", 90, 2], ["cash", 100, 2], ["cash", 110, 2], ["cash", 120, 2], ["cash", 140, 2], ["cash", 150, 3], ["cash", 165, 3], ["cash", 180, 3], ["cash", 195, 3], ["cash", 210, 3], ["cash", 225, 3], ["cash", 240, 3], ["cash", 255, 3], ["cash", 270, 3], ["cash", 285, 3], ["cash", 300, 3], ["cash", 315, 3], ["cash", 330, 3], ["cash", 345, 3], ["cash", 360, 3], ["cash", 375, 3], ["cash", 390, 3], ["cash", 405, 3], ["cash", 420, 3], ["cash", 435, 3], ["cash", 140, 3], ["cash", 160, 3], ["cash", 220, 3], ["cash", 260, 3], ["cash", 280, 3], ["cash", 600, 4], ["cash", 300, 3], ["cash", 240, 3], ["cash", 320, 3], ["cash", 650, 4], ["cash", 260, 3], ["cash", 280, 3], ["cash", 450, 4], ["cash", 620, 4], ["cash", 700, 4], ["cash", 780, 4], ["cash", 850, 4], ["cash", 910, 4], ["cash", 960, 4], ["cash", 990, 4]];
 const RARITY = [["Oddiy", "#b8c4d8"], ["Noyob", "#40a8ff"], ["Epik", "#b86aff"], ["Afsonaviy", "#ffb020"], ["Mifik", "#ff4f6a"]];
@@ -2469,7 +2472,11 @@ const DICT = {
 "🔥 Kunlik seriya:": ["🔥 Daily streak:", "🔥 Серия дней:"], "kun": ["days", "дн."],
 "Qidirilmoqda…": ["Searching…", "Поиск…"], "Yutuq": ["Prize", "Приз"], "Kirish narxi": ["Entry fee", "Вход"], "O'yinchilar onlayn": ["Players online", "Игроков онлайн"],
 "O'YNASH": ["PLAY", "ИГРАТЬ"], "Naqd pulga sotib olish": ["Buy with real money", "Купить за деньги"], "Pulni tangaga almashtirish": ["Exchange cash for coins", "Обмен кэша на монеты"],
-"ALMASHTIRISH": ["EXCHANGE", "ОБМЕНЯТЬ"], "Mashhur": ["Popular", "Популярно"], "Rasmiy kanal": ["Official channel", "Официальный канал"], "Eng foydali": ["Best value", "Выгоднее всего"],
+"ALMASHTIRISH": ["EXCHANGE", "ОБМЕНЯТЬ"], "Mashhur": ["Popular", "Популярно"], "Rasmiy kanal": ["Official channel", "Официальный канал"],
+"Siz kimsiz?": ["Who are you?", "Кто вы?"], "Bola": ["Boy", "Парень"], "Qiz": ["Girl", "Девушка"], "Barchasi": ["All", "Все"], "Hozirgisi qolsin": ["Keep the current one", "Оставить текущий"],
+"Avatar sizga mos qo'yiladi. Keyin Profilda o'zgartira olasiz.": ["Your avatar will match you. You can change it later in Profile.", "Аватар подберётся под вас. Позже его можно сменить в профиле."],
+"Do'st bilan o'ynaymizmi?": ["Play with your friend?", "Сыграем с другом?"], "Lobbiga kirish": ["Join the lobby", "В лобби"],
+"lobbiga taklif qilamiz. O'yin vaqtida 🎤 tugmasi bilan gaplashasiz.": ["we invite them to a lobby. During the game you can talk with the 🎤 button.", "приглашаем в лобби. Во время игры можно говорить кнопкой 🎤."], "Eng foydali": ["Best value", "Выгоднее всего"],
 "To'lovlar xavfsiz Stripe orqali. Xarid qilingan pul va tangalar hisobingizga avtomatik tushadi.": ["Payments are processed securely by Stripe. Purchases are added to your account automatically.", "Оплата через Stripe. Покупки зачисляются на счёт автоматически."],
 "Pul yetmaydi": ["Not enough cash", "Недостаточно кэша"], "Tanga yetmaydi": ["Not enough coins", "Недостаточно монет"], "Almashtirildi": ["Exchanged", "Обменено"], "tanga": ["coins", "монет"],
 "Kolleksiya": ["Collection", "Коллекция"], "Kiy ko'rsatkichlari": ["Cue stats", "Характеристики кия"], "Yopish": ["Close", "Закрыть"],
@@ -9645,10 +9652,16 @@ $("pCopy").onclick = () => { try { navigator.clipboard.writeText(code); toast("�
 $("pCups").onclick = () => openCabinet();
 $("pRings").onclick = () => { ringSel = null; ringsModal(); }; $("pMed").onclick = medalsModal; $("pCh").onclick = challengesModal; $("pAch").onclick = achModal; $("pCue").onclick = () => go("shop", "cues");
 $("pAvs").onclick = () => {
-const list = [...AV_SHOP().filter(ownsAvatar), ...(profile.avs || []).filter(i => i >= ZOD_AV)];
-openModal({icon: "🙂", title: T("Avatar"), text: "", extra: `<div class="avs" style="max-height:48vh;overflow:auto">${list.map(i => `<button data-a="${i}" class="${i === profile.avatar ? "on" : ""}" style="padding:0;overflow:hidden"><img src="${avatarURL(i)}" alt="" style="width:100%;height:100%"></button>`).join("")}</div>`,
-buttons: [{label: "🛍 " + T("Yana ko'p avatarlar"), cls: "purple", fn: () => go("shop", "avatars")}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+const all = [...AV_SHOP().filter(ownsAvatar), ...(profile.avs || []).filter(i => i >= ZOD_AV)];
+let gf = profile.gender || "";   // the list follows the player's gender; "all" shows everything
+const body = () => `<div style="display:flex;gap:8px;justify-content:center;margin-bottom:8px">${[["", T("Barchasi")], ["m", "👦"], ["f", "👧"]].map(([k, l]) => `<button data-g="${k}" class="btn ${gf === k ? "blue" : "gray"}" style="padding:4px 14px">${l}</button>`).join("")}</div><div class="avs" style="max-height:44vh;overflow:auto">${all.filter(i => !gf || avGender(i) === gf || avGender(i) === "n").map(i => `<button data-a="${i}" class="${i === profile.avatar ? "on" : ""}" style="padding:0;overflow:hidden"><img src="${avatarURL(i)}" alt="" style="width:100%;height:100%"></button>`).join("")}</div>`;
+const wire = () => {
+document.querySelectorAll("#mExtra [data-g]").forEach(b => b.onclick = () => { gf = b.dataset.g; $("mExtra").innerHTML = body(); wire(); });
 document.querySelectorAll("#mExtra [data-a]").forEach(b => b.onclick = () => { profile.avatar = +b.dataset.a; save(); updateNav(); Net.sync(); $("modal").classList.remove("on"); buildProfile(); });
+};
+openModal({icon: "🙂", title: T("Avatar"), text: "", extra: body(),
+buttons: [{label: "🛍 " + T("Yana ko'p avatarlar"), cls: "purple", fn: () => go("shop", "avatars")}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+wire();
 };
 if ($("y8Login")) $("y8Login").onclick = () => { try { Y8.sdk.login(); } catch (e) {} };
 if ($("y8Ach")) $("y8Ach").onclick = () => Y8.sdk.showAchievements().catch(() => {});
@@ -10439,6 +10452,7 @@ $("fsBtn").onclick = toggleFullscreen;
 if ("serviceWorker" in navigator && location.protocol.startsWith("http") && !ON_PORTAL && window.top === window.self) navigator.serviceWorker.register("sw.js").catch(() => {});
 $("y8Lb").onclick = () => { if (Y8.sdk) Y8.sdk.showLeaderboard({table: CONFIG.y8Leaderboard, mode: "alltime", highest: true}).catch(() => {}); };
 y8Init();
+try { genderAskWait(); } catch (e) {}
 $("tPlay").onclick = () => go("cities");
 $("tTour").onclick = () => go("tourScr");
 $("tMini").onclick = () => go("mini");
@@ -11368,7 +11382,7 @@ else toast("📨", nm, T("So'rov yuborildi"));
 }
 function frRespond(id, accept) {   // answer a request that was sent to me
 return Net.api("/api/friends/respond", {id, accept: !!accept}).then(r => {
-if (accept) { toast("👥", pname(r.friend.name), T("Do'st qo'shildi")); try { Snd.win(); } catch (e) {} }
+if (accept) { toast("👥", pname(r.friend.name), T("Do'st qo'shildi")); try { Snd.win(); } catch (e) {} friendPlayOffer(r.friend); }
 else toast("🚫", T("So'rov rad etildi"), "");
 if (Net.notify) Net.notify.frIn = (Net.notify.frIn || []).filter(x => x.id !== id);
 updateFrDot(); if ($("friendsScr").classList.contains("on")) loadFriends();
@@ -11514,6 +11528,30 @@ if (!TG_LAUNCH || !TG || !TG.requestWriteAccess || !Net.acct || tgAllowed() || p
 if (TG.isVersionAtLeast && !TG.isVersionAtLeast("6.9")) return;
 profile.tgAuto = Date.now(); save();
 try { TG.requestWriteAccess(ok => { if (!ok) return; profile.tgOk = 1; save(); Net.api("/api/tg/allow", {ok: true}).catch(() => {}); }); } catch (e) {}
+}
+function setGender(g) {   // "m" / "f": a default picture of the other gender is swapped for one that fits; a bought or chosen premium picture stays
+profile.gender = g; profile.genderAsked = true;
+const a = profile.avatar | 0;
+if ((isPortrait(a) && avGender(a) !== g) || (!isPortrait(a) && !isPremiumAv(a) && a < 200)) profile.avatar = randPortrait(g);
+save(); try { updateNav(); } catch (e) {} try { Net.sync(); } catch (e) {}
+}
+function genderAskWait() {   // asks once (boy / girl) when the player sees the menu: the first picture is random, so a boy could get a girl's face
+if (profile.genderAsked || profile.gender) return;
+let tries = 0; const t = setInterval(() => {
+if (++tries > 120 || profile.genderAsked) return clearInterval(t);
+if (!(mode === "menu" && $("home").classList.contains("on") && !$("modal").classList.contains("on") && !LB && !document.getElementById("loginSplash") && (typeof CRAZY_BUILD === "undefined" || profile.tutDone))) return;
+clearInterval(t); profile.genderAsked = true; save();
+openModal({icon: "🙂", title: T("Siz kimsiz?"), text: T("Avatar sizga mos qo'yiladi. Keyin Profilda o'zgartira olasiz."),
+buttons: [{label: "👦 " + T("Bola"), cls: "blue", fn: () => setGender("m")}, {label: "👧 " + T("Qiz"), cls: "purple", fn: () => setGender("f")}, {label: T("Hozirgisi qolsin"), cls: "gray", fn: () => {}}]});
+}, 1500);
+}
+function friendPlayOffer(f) {   // a new friend: one tap to a private table with them (the game has the 🎤 voice button during the match)
+if (!f || !f.id || LB) return;
+setTimeout(() => {
+if (LB || mode !== "menu" || $("modal").classList.contains("on")) return;
+openModal({icon: "🎱", title: T("Do'st bilan o'ynaymizmi?"), text: `${pname(f.name)}: ${T("lobbiga taklif qilamiz. O'yin vaqtida 🎤 tugmasi bilan gaplashasiz.")}`,
+buttons: [{label: "🎱 " + T("Lobbiga kirish"), cls: "green", fn: () => lobbyCreate(null, [f.id])}, {label: T("Keyinroq"), cls: "gray", fn: () => {}}]});
+}, 900);
 }
 function tgAutoWait() {   // waits until the player sees the menu (signed in, no pop-up, no lobby), then asks once
 let tries = 0; const t = setInterval(() => {
