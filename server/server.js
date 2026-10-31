@@ -1470,6 +1470,7 @@ const rooms = new Map();            // roomId -> room
 const BAD_RE = /(f+u+c+k+|sh[i1]+t|b[i1]tch|a+ssh[o0]le|d[i1]ck|cunt|n[i1]gg|wh[o0]re|slut|bastard|х[уy]+[йяеёию]|п[и1]зд|бл[яa]+[дт]|[еe]б[аaуyлн]|[еe]бать|сук[аи]|муд[аа]к|гандон|п[и1]д[оа]р|\bsik\b|\bsikay|qo.?t[oa]q|jalab|onangni|ammangni|nomussiz|\bkot\b|\bharom[iy]\b)/gi;
 const cleanChat = s => String(s || "").replace(BAD_RE, m => "*".repeat(m.length));
 const RELAY = new Set(["aim", "shot", "state", "chat", "place", "spin", "rtc"]);
+const LVOICE_KINDS = new Set(["hello", "bye", "offer", "answer", "ice", "mute"]);   // lobby voice room signalling (see "lvoice" below)
 const specList = room => [...room.specs].slice(0, 40).map(s => { const d = db.users[s.uid] || {}; return {name: String(d.name || "Player").slice(0, 16), avatar: d.avatar | 0, frame: d.frame | 0, country: d.country || "", level: d.level | 0}; });
 const specCount = room => { const msg = {t: "specs", n: room.specs.size, list: specList(room)}; for (const p of room.p) wsSend(p, msg); for (const sp of room.specs) wsSend(sp, msg); };   // everyone in the room sees how many people are watching
 const SPEC_FWD = new Set(["aim", "shot", "state", "place", "spin"]);   // what spectators get (no voice signalling, no chat)
@@ -1689,6 +1690,15 @@ wss.on("connection", (ws, req) => {
       if (ou) { ou.cheer = ou.cheer || {got: {}, sent: 0}; ou.cheer.got[g] = (ou.cheer.got[g] | 0) + 1; }
       markDirty();
       wsSend(other, {t: "gift", g, name: String(u.name || "").slice(0, 16)}); wsSend(ws, {t: "giftok", g});
+    } else if (m.t === "lvoice") {   // lobby voice room: WebRTC signalling between the members of one lobby (a mesh of up to 8; the audio itself never touches the server)
+      const L = ws.lobby && lobbies.get(ws.lobby);
+      if (!L || !L.players.includes(ws) || !bucket(ws, "lvoice", 240, 100)) return;
+      const k = String(m.k || "");
+      if (!LVOICE_KINDS.has(k)) return;
+      const d = m.d && typeof m.d === "object" && JSON.stringify(m.d).length < 16000 ? m.d : null;
+      const out = {t: "lvoice", from: ws.uid, k, d, re: m.re ? 1 : 0};
+      if (m.to) { const tp = L.players.find(p => p.uid === String(m.to).slice(0, 40)); if (tp && tp !== ws) wsSend(tp, out); }   // to one member
+      else for (const p of L.players) if (p !== ws) wsSend(p, out);                                                            // to everybody else
     } else if (RELAY.has(m.t) && ws.room && !ws.room.over) {
       const room = ws.room, other = room.p[1 - ws.seat];
       if (m.t === "chat") {

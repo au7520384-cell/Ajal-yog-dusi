@@ -892,6 +892,11 @@ background:linear-gradient(#5a8a4a,#2e5a26);box-shadow:inset 0 2px 0 #fff4,0 3px
 .lbslots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .lbslot{position:relative;min-height:104px;border:2px dashed #3b5a9a;border-radius:18px;background:#0b1636a8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:13px;padding:4px}.lbslot:not(.on){cursor:pointer}.lbplus{display:grid;place-items:center;width:44px;height:44px;border:2px solid #34508f;border-radius:50%;color:#3b5fa8;font-size:30px;font-weight:300;line-height:1}.lbslot:not(.on):hover .lbplus{border-color:#7ea4f0;color:#9bbcff}
 .lbslot.away{opacity:.45}
+.lbvc{display:flex;gap:6px;align-items:stretch}.lbvc .btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 8px;font-size:15px;line-height:1.1;border-radius:14px;min-width:0}.lbvc .btn.main{flex:1}.lbvc .btn.sq{flex:0 0 44px;padding:9px 0}.lbvc svg{width:20px;height:20px;fill:#fff;flex:none}.lbvc .btn span{min-width:0}
+.lbvn{text-align:center;font-size:12px;font-weight:700;color:#9fb3e8;min-height:15px}
+.lbvb{position:absolute;top:3px;right:4px;font-size:12px;line-height:1;text-decoration:none;pointer-events:none;background:#000b;border-radius:9px;padding:2px 3px}.lbvb:empty{display:none}
+.lbslot.talk{border-color:#3fe052;box-shadow:inset 0 0 14px #3fe05288,0 0 12px #3fe052aa}
+.mh520 .lbvc{gap:4px}.mh520 .lbvc .btn{font-size:10px;padding:4px 3px;gap:3px;border-radius:10px}.mh520 .lbvc .btn.sq{flex-basis:30px}.mh520 .lbvc svg{width:14px;height:14px}.mh520 .lbvn{font-size:10px;min-height:11px}.mh520 .lbvb{font-size:9px;top:1px;right:2px}
 .lbslot.on{border-style:solid;border-color:#6f93e8;background:linear-gradient(#1e3470,#142552);box-shadow:inset 0 0 14px #5b86e855}.lbslot b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lbslot i{font-style:normal;color:#ffe27a;font-size:11px;font-weight:800}.lbslot.host i{color:#a6f07a}.lbcrown{position:absolute;top:-14px;left:50%;transform:translateX(-50%);line-height:0;filter:drop-shadow(0 2px 3px #000a)}
 .lbstat,.lbwait,.lbme{text-align:center;font-weight:700}.lbme{color:#ffe27a;font-size:20px}.lbwait{color:#9fb3e8}
 .lbstart{text-align:center}.lbstart small{display:block;margin-top:4px;color:#9fb3e8}.lbstart .btn{min-width:min(60%,230px);font-size:24px;border:3px solid #e6c260;border-radius:18px;box-shadow:inset 0 2px 0 #fff6,0 4px 0 #0007,0 0 12px #e6c26055}
@@ -2774,6 +2779,15 @@ const DICT = {
 "Royal Billiard 8 — bilyard o'yini": ["Royal Billiard 8 — a billiards game", "Royal Billiard 8 — бильярд"],
 "Ulanmoqda…": ["Connecting…", "Подключение…"],
 "Ulandi": ["Connected", "Подключено"],
+"Ovozli xona": ["Voice room", "Голосовая комната"],
+"Ovozli xona yoqildi": ["Voice room is on", "Голосовая комната включена"],
+"Lobbidagilar sizni eshitadi": ["Everybody in the lobby can hear you", "Вас слышат все в лобби"],
+"Mikrofon yoqiq": ["Mic on", "Микрофон включён"],
+"{0} kishi ovozli xonada": ["{0} in the voice room", "В голосовой комнате: {0}"],
+"Lobbida mikrofonni yoqib gaplashing": ["Switch the mic on and talk in the lobby", "Включите микрофон и говорите в лобби"],
+"Ovozli xonadan chiqdingiz": ["You left the voice room", "Вы вышли из голосовой комнаты"],
+"Boshqalarni eshitasiz. Gapirish uchun 🎤 ni bosing": ["You can hear the others. Tap 🎤 to speak", "Вы слышите остальных. Нажмите 🎤, чтобы говорить"],
+"lobbiga taklif qilamiz. Lobbida 🎤 ovozli xona bilan gaplashasiz.": ["we invite them to a lobby. In the lobby you can talk in the 🎤 voice room.", "приглашаем в лобби. В лобби можно говорить в 🎤 голосовой комнате."],
 "Ulanmadi": ["Not connected", "Не удалось подключиться"],
 "Raqib bilan aloqa o'rnatilmoqda": ["Connecting to your opponent", "Подключаемся к сопернику"],
 "Endi bir-biringizni eshitasiz": ["You can hear each other now", "Теперь вы слышите друг друга"],
@@ -10140,7 +10154,7 @@ async function getMic() {
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("unsupported");
 return navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}});
 }
-async function micFail(e) {   // say WHY the microphone is not available and what to do about it
+async function micFail(e, lobby) {   // say WHY the microphone is not available and what to do about it
 const n = (e && e.name) || "", ua = navigator.userAgent || "", inFrame = window.top !== window.self;
 let perm = ""; try { perm = (await navigator.permissions.query({name: "microphone"})).state; } catch (x) {}
 const app = inAppApp(), noApi = !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia;
@@ -10153,7 +10167,7 @@ else if (inFrame && perm !== "granted") sub = "O'yinni alohida brauzer oynasida 
 else if (perm === "denied") sub = "🔒 → Ruxsatlar → Mikrofon → Ruxsat bering, so'ng sahifani yangilang";
 else sub = "Ruxsat so'rovida «Ruxsat berish» ni bosing";
 toast("🎤", T(title), sub ? T(sub) : "");
-setTimeout(() => toast("🎧", T("Faqat eshitish rejimi"), T("Raqibni eshitasiz. Gapirish uchun 🎤 ni bosing")), 700);
+setTimeout(() => toast("🎧", T("Faqat eshitish rejimi"), T(lobby ? "Boshqalarni eshitasiz. Gapirish uchun 🎤 ni bosing" : "Raqibni eshitasiz. Gapirish uchun 🎤 ni bosing")), 700);
 }
 async function enable() {
 if (!window.RTCPeerConnection) return toast("🎤", T("Bu qurilmada ovozli suhbat ishlamaydi"), "");
@@ -10197,7 +10211,7 @@ if (audioEl && audioEl.srcObject && audioEl.paused && !spkOff) audioEl.play().ca
 document.addEventListener("pointerdown", () => { if (audioEl && audioEl.srcObject && audioEl.paused && !spkOff) audioEl.play().catch(() => {}); }, true);   // any tap resumes remote sound the browser had held back
 const state = () => ({on, listenOnly, muted, remoteReady, stat, pcs: pc ? pc.connectionState : "", ice: pc ? pc.iceConnectionState : "", audio: !!(audioEl && audioEl.srcObject && audioEl.srcObject.getAudioTracks && audioEl.srcObject.getAudioTracks().length), paused: !!(audioEl && audioEl.paused)});
 const stats = async () => { const o = {inPackets: 0, outPackets: 0}; if (!pc) return o; (await pc.getStats()).forEach(r => { if (r.type === "inbound-rtp" && r.kind === "audio") o.inPackets += r.packetsReceived | 0; if (r.type === "outbound-rtp" && r.kind === "audio") o.outPackets += r.packetsSent | 0; }); return o; };
-return {onSignal, hang, ui, state, stats};
+return {onSignal, hang, ui, state, stats, getMic, micFail, iceServers, IC};
 })();
 Net.on("rtc", m => Voice.onSignal(m));
 async function turnTest() {   // does the TURN relay really hand out a relay address with the configured login? (tap the version line at the bottom of Settings)
@@ -11248,6 +11262,7 @@ const first = LB.pending; LB.pending = false;
 if (first && m.fee > profile.coins && m.host !== lbMe()) { Net.send({t: "cancel"}); return lbFail(T("Tanga yetmaydi")); }
 Object.assign(LB, {city: m.city, fee: m.fee, max: m.max, state: m.state, host: m.host, players: m.players, role: m.host === lbMe() ? "host" : "guest"});
 if (m.state === "open") LB.tour = null;
+LobbyVoice.sync(first);
 lhook("open", LB.code, m.state === "open" && m.players.length < m.max);
 if (first && LB.role === "host") {
 const ids = LB.opt.inviteIds || [];
@@ -11255,9 +11270,10 @@ if (LB.opt.auto) lbInviteAll(); else ids.forEach(id => lbInvite(id));
 }
 if ($("lbScr").classList.contains("on")) lbRender();
 }
-function lbFail(msg) { LB = null; try { Net.send({t: "cancel"}); } catch (e) {} lhook("leave"); toast("😕", msg, T("Lobbi")); if (mode === "menu") go("withFrScr"); else toMenu("withFrScr"); }
+function lbFail(msg) { LobbyVoice.stop(); LB = null; try { Net.send({t: "cancel"}); } catch (e) {} lhook("leave"); toast("😕", msg, T("Lobbi")); if (mode === "menu") go("withFrScr"); else toMenu("withFrScr"); }
 function lbLeave(force) {
 if (LB && LB.state === "running" && !(LB.results) && !force) return openModal({icon: "🏳️", title: T("Lobbi"), text: T("Turnirni tark etsangiz yutqazasiz. Chiqasizmi?"), buttons: [{label: T("Chiqish"), cls: "red", fn: () => lbLeave(true)}, {label: T("Davom etish"), cls: "green", fn: () => {}}]});
+LobbyVoice.stop();
 try { Net.send({t: "cancel"}); } catch (e) {}
 LB = null; lhook("leave"); go("withFrScr");
 }
@@ -11317,7 +11333,7 @@ function lbChip(on) {   // while I am in a lobby but looking at another screen a
 let el = $("lobbyChip");
 if (!on || !LB) { if (el) el.remove(); return; }
 if (!el) { el = document.createElement("div"); el.id = "lobbyChip"; el.style.cssText = "position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:9000;background:linear-gradient(#2a3d7a,#16214a);border:2px solid #ffd45a;border-radius:20px;padding:8px 18px;color:#ffe27a;font:800 18px/1.2 inherit;letter-spacing:3px;cursor:pointer;box-shadow:0 4px 18px #000a"; document.body.appendChild(el); el.onclick = () => lbShow(); }
-el.textContent = `🔑 ${LB.code} · ${LB.players.length}/${LB.max}`;
+el.textContent = `🔑 ${LB.code} · ${LB.players.length}/${LB.max}${LobbyVoice.on() ? " · 🎤" : ""}`;
 }
 setInterval(() => lbChip(!!LB && mode === "menu" && !$("lbScr").classList.contains("on") && !$("res").classList.contains("on") && !$("vs").classList.contains("on")), 900);
 function lbRender() {
@@ -11337,7 +11353,7 @@ return;
 const c = lbCityOf(LB.city), host = LB.role === "host", T_ = LB.tour, run = LB.state === "running", me = lbMe();
 title.textContent = run ? T("Turnir") : T("Lobbi");
 const slots = Array.from({length: LB.max}, (_, i) => { const p = LB.players[i];
-return p ? `<div class="lbslot on${p.host ? " host" : ""}${p.away ? " away" : ""}">${p.host ? `<span class="lbcrown">${SVG_CROWN}</span>` : ""}${avHTML(normAv(p.avatar | 0), p.frame | 0, document.documentElement.classList.contains("mh520") ? 30 : 52)}<b>${esc(pname(p.name))}</b>${p.host ? `<i>${T("Xost")}</i>` : ""}</div>` : `<div class="lbslot"><span class="lbplus">+</span></div>`; }).join("");
+return p ? `<div class="lbslot on${p.host ? " host" : ""}${p.away ? " away" : ""}" data-uid="${esc(String(p.uid))}"><u class="lbvb"></u>${p.host ? `<span class="lbcrown">${SVG_CROWN}</span>` : ""}${avHTML(normAv(p.avatar | 0), p.frame | 0, document.documentElement.classList.contains("mh520") ? 30 : 52)}<b>${esc(pname(p.name))}</b>${p.host ? `<i>${T("Xost")}</i>` : ""}</div>` : `<div class="lbslot"><span class="lbplus">+</span></div>`; }).join("");
 let right;
 if (run && T_) {
 const res = LB.results, mm = (T_.matches || []).map(x => { const an = x.a ? esc(pname(x.a.name)) : "—", bn = x.b ? esc(pname(x.b.name)) : T("Bay");
@@ -11358,14 +11374,209 @@ const pot = LB.fee * LB.players.length;
 body.innerHTML = `<div class="lbwrap"><div class="lbinfo"><div class="lbhd" style="--fg:${c.felt[0]}88${IMG["lc_" + c.id] ? `;background-image:url(${IMG["lc_" + c.id]})` : ""}">${lbName(c)}</div>
 <div class="lbfp"><span>${TT("Kirish to'lovi: {0}", fmt(LB.fee))} 🪙</span><span>${TT("Sovrin: {0} gacha", fmt(lbUpTo(c)))} 🪙</span></div>
 <div class="lbcode" id="lbCodeBox" title="${T("Lobbi kodi")}"><b id="lbCodeB">${LB.code}</b>${SVG_COPY}</div>
-<div class="lbbt"><button class="btn blue" id="lbShare">${SVG_SHARE}<span>${T("Ulashish")}</span></button><button class="btn blue" id="lbInv">${SVG_ADD}<span>${T("Do'stni chaqirish")}</span></button></div></div>
+<div class="lbbt"><button class="btn blue" id="lbShare">${SVG_SHARE}<span>${T("Ulashish")}</span></button><button class="btn blue" id="lbInv">${SVG_ADD}<span>${T("Do'stni chaqirish")}</span></button></div>${LobbyVoice.barHTML()}</div>
 <div class="lbright">${right}</div></div>`;
 $("lbCodeBox").onclick = () => { try { navigator.clipboard.writeText(LB.code); } catch (e) {} toast("🔑", LB.code, T("Havola nusxalandi — do'stingizga yuboring!")); };
 $("lbShare").onclick = lbShare; $("lbInv").onclick = lbInviteBox;
 body.querySelectorAll(".lbslot:not(.on)").forEach(el => el.onclick = lbInviteBox);   // an empty seat asks a friend
 if ($("lbStart")) $("lbStart").onclick = () => Net.send({t: "start"});
+LobbyVoice.bind();
 }
 $("lbBack").onclick = () => { if (LB) lbLeave(); else go("withFrScr"); };
+// ---- lobby voice room (like the voice room of a MOBA lobby): everybody in the lobby can talk to everybody. A mesh of WebRTC calls (<= 8 players, Opus audio is tiny);
+// the server only relays the signalling ("lvoice"), the sound goes phone to phone. The in-match 🎤 (Voice) takes over while a match is on screen; this room pauses and comes back.
+const LobbyVoice = (() => {
+let want = false, susp = false, mic = null, muted = false, listenOnly = false, spkOff = false, ctx = null, tk = 0, myAn = null, myBuf = null, myTalk = false, myUntil = 0, hinted = false;
+const peers = {}, els = [], IC = Voice.IC;
+const me = () => String(lbMe());
+const active = () => want && !susp && !!LB;
+const initiator = uid => me() < String(uid);                                   // the smaller id makes the offer, so two phones never offer at the same time
+const member = uid => !!LB && LB.players.some(x => String(x.uid) === String(uid));
+const here = uid => !!LB && LB.players.some(x => String(x.uid) === String(uid) && !x.away);
+const send = (k, to, d, re) => Net.send({t: "lvoice", k, to: to || undefined, d: d || undefined, re: re ? 1 : undefined});
+const peer = uid => peers[uid] || (peers[uid] = {uid, pc: null, el: null, q: [], ready: false, mute: false, tries: 0, bad: 0, gen: 0, busy: false, an: null, buf: null, src: null, talk: false, until: 0});
+const live = p => !!(p && p.pc && p.pc.connectionState === "connected");
+const myState = () => muted || listenOnly;
+const sm = () => spkOff || !!window.__B8_MUTE;   // speaker switched off by the player, or the portal (Playgama etc.) muted the game
+function prime() {   // runs inside the player's tap: audio output is unlocked (iOS / Safari) and one <audio> per possible friend is ready for their voice
+try { if (!ctx) { const AC = window.AudioContext || window.webkitAudioContext; ctx = new AC(); } if (ctx.state === "suspended") ctx.resume(); } catch (e) { ctx = null; }
+while (els.length < 7) {
+const a = document.createElement("audio"); a.autoplay = true; a.playsInline = true; a.style.display = "none"; document.body.appendChild(a);
+try { if (ctx) a.srcObject = ctx.createMediaStreamDestination().stream; } catch (e) {}
+a.muted = sm(); a.play().catch(() => {}); els.push(a);
+}
+}
+function tap(stream) {   // a level meter on a stream (the "who is speaking" ring); it only listens, it never plays
+if (!ctx) return null;
+try { const src = ctx.createMediaStreamSource(stream), an = ctx.createAnalyser(); an.fftSize = 256; src.connect(an); return {src, an, buf: new Uint8Array(an.fftSize)}; } catch (e) { return null; }
+}
+const level = (an, buf) => { if (!an) return 0; an.getByteTimeDomainData(buf); let s = 0; for (let i = 0; i < buf.length; i++) { const v = (buf[i] - 128) / 128; s += v * v; } return Math.sqrt(s / buf.length); };
+function attach(p, stream) {
+if (!p.el) { p.el = els.find(a => !a._uid) || null; if (!p.el) { prime(); p.el = els.find(a => !a._uid) || null; } if (!p.el) return; p.el._uid = p.uid; }
+p.el.srcObject = stream; p.el.muted = sm(); p.el.play().catch(() => {});
+const t = tap(stream); if (t) { p.src = t.src; p.an = t.an; p.buf = t.buf; }
+}
+function drop(p) {   // hang up on one player
+p.gen++;
+if (p.pc) { const pc = p.pc; p.pc = null; try { pc.onicecandidate = pc.ontrack = pc.onconnectionstatechange = null; pc.close(); } catch (e) {} }
+p.q = []; p.bad = 0; p.talk = false;
+if (p.src) { try { p.src.disconnect(); } catch (e) {} } p.src = p.an = p.buf = null;
+if (p.el) { p.el.srcObject = null; p.el._uid = null; p.el = null; }
+}
+async function makePC(p) {
+const gen = ++p.gen, ice = await Voice.iceServers();
+if (p.gen !== gen || !active()) return null;
+const pc = new RTCPeerConnection({iceServers: ice}); p.pc = pc; p.bad = 0;
+if (mic) mic.getTracks().forEach(t => pc.addTrack(t, mic)); else pc.addTransceiver("audio", {direction: "recvonly"});   // no microphone: still in the room as a listener
+pc.onicecandidate = e => { if (e.candidate && p.pc === pc) send("ice", p.uid, e.candidate.toJSON()); };
+pc.ontrack = e => { if (p.pc === pc) attach(p, e.streams[0] || new MediaStream([e.track])); };
+pc.onconnectionstatechange = () => { if (p.pc === pc && pc.connectionState === "connected") p.tries = 0; paint(); };
+return pc;
+}
+async function negotiate(p) {   // only the player with the smaller id offers
+if (!active() || !p.ready || !initiator(p.uid) || p.busy || !here(p.uid)) return;
+if (p.pc && !["failed", "closed"].includes(p.pc.connectionState)) return;
+p.busy = true;
+try { if (p.pc) drop(p); const pc = await makePC(p); if (!pc) return; const o = await pc.createOffer(); await pc.setLocalDescription(o); send("offer", p.uid, {type: o.type, sdp: o.sdp}); }
+catch (e) {} finally { p.busy = false; }
+}
+async function onSignal(m) {
+if (!LB || !m || !m.from || String(m.from) === me() || !member(m.from)) return;
+const p = peer(String(m.from)), k = m.k, d = m.d && typeof m.d === "object" ? m.d : null;
+try {
+if (k === "hello") {
+if (!(d && d.q)) { p.ready = true; p.mute = !!(d && d.m); }
+if (active()) {
+if (d && d.r) { drop(p); p.tries = 0; }                                 // that player (re)started his voice from scratch: our old call with him is void
+if (!m.re) send("hello", p.uid, {m: myState()}, 1);                      // answer, so he learns we are here too
+if (!(d && d.q)) negotiate(p);
+}
+} else if (k === "bye") { p.ready = false; drop(p); }
+else if (k === "mute") p.mute = !!(d && d.m);
+else if (!active()) return;
+else if (k === "offer" && d) {
+p.ready = true; drop(p);                                                   // every offer comes from a fresh connection of his: build a fresh one as well
+const pc = await makePC(p); if (!pc) return;
+await pc.setRemoteDescription(d); for (const c of p.q.splice(0)) pc.addIceCandidate(c).catch(() => {});
+const a = await pc.createAnswer(); await pc.setLocalDescription(a); send("answer", p.uid, {type: a.type, sdp: a.sdp});
+} else if (k === "answer" && d && p.pc && p.pc.signalingState === "have-local-offer") {
+p.ready = true; await p.pc.setRemoteDescription(d); for (const c of p.q.splice(0)) p.pc.addIceCandidate(c).catch(() => {});
+} else if (k === "ice" && d) { if (p.pc && p.pc.remoteDescription) p.pc.addIceCandidate(d).catch(() => {}); else p.q.push(d); }
+} catch (e) {}
+paint();
+}
+function announce() {   // "I am in the voice room": every old call is dropped, everybody answers with their own hello
+for (const p of Object.values(peers)) { drop(p); p.tries = 0; }
+send("hello", null, {m: myState(), r: 1}); paint();
+}
+async function start() {   // the player taps the 🎤 button of the lobby
+if (!LB) return;
+if (!window.RTCPeerConnection) return toast("🎤", T("Bu qurilmada ovozli suhbat ishlamaydi"), "");
+prime();
+let err = null;
+try { mic = await Voice.getMic(); listenOnly = false; } catch (e) { mic = null; listenOnly = true; err = e; }   // no microphone: the room works as a listener
+if (!LB) { if (mic) { mic.getTracks().forEach(t => t.stop()); mic = null; } return; }
+if (mic) { const t = tap(mic); myAn = t && t.an; myBuf = t && t.buf; }
+muted = false; want = true; susp = false;
+if (err) Voice.micFail(err, true); else toast("🎤", T("Ovozli xona yoqildi"), T("Lobbidagilar sizni eshitadi"));
+announce();
+}
+async function upgrade() {   // listener -> the player fixed the permission and taps again
+try { mic = await Voice.getMic(); } catch (e) { mic = null; return Voice.micFail(e, true); }
+const t = tap(mic); myAn = t && t.an; myBuf = t && t.buf;
+listenOnly = false; muted = false; toast("🎤", T("Mikrofon yoqildi"), "");
+announce();                                                                  // the calls are built again, now with the microphone in them
+}
+function toggleMute() {
+if (!mic) return;
+muted = !muted; mic.getAudioTracks().forEach(t => { t.enabled = !muted; });
+send("mute", null, {m: muted}); paint();
+}
+function release() { if (mic) { mic.getTracks().forEach(t => t.stop()); mic = null; } myAn = myBuf = null; myTalk = false; }
+function stop(tell = true) {
+if (tell && want && !susp) send("bye");
+for (const p of Object.values(peers)) drop(p);
+for (const k of Object.keys(peers)) delete peers[k];
+release(); want = false; susp = false; muted = false; listenOnly = false; paint();
+}
+function suspend() { send("bye"); susp = true; for (const p of Object.values(peers)) { drop(p); p.ready = false; } release(); paint(); }   // a match is on screen: the in-match 🎤 owns the microphone now
+async function resume() {
+susp = false;
+try { mic = await Voice.getMic(); listenOnly = false; const t = tap(mic); myAn = t && t.an; myBuf = t && t.buf; if (muted) mic.getAudioTracks().forEach(t => { t.enabled = false; }); } catch (e) { mic = null; listenOnly = true; }
+announce();
+}
+function sync(first) {   // the lobby's player list changed
+for (const uid of Object.keys(peers)) {
+const p = peers[uid];
+if (!member(uid)) { drop(p); delete peers[uid]; } else if (!here(uid)) drop(p);
+}
+if (first && !want) send("hello", null, {q: 1});                             // "who is already in the voice room?"
+if (!want && !hinted && LB && LB.players.length > 1) { hinted = true; toast("🎤", T("Ovozli xona"), T("Lobbida mikrofonni yoqib gaplashing")); }
+paint();
+}
+const count = () => (active() ? 1 : 0) + Object.values(peers).filter(p => p.ready && member(p.uid)).length;
+function barHTML() { return `<div class="lbvc"><button class="btn blue main" id="lbVoice"></button><button class="btn gray sq" id="lbSpk" style="display:none"></button><button class="btn red sq" id="lbVoff" style="display:none">✕</button></div><div class="lbvn" id="lbVn"></div>`; }
+function bind() {
+const b = $("lbVoice"); if (!b) return;
+b.onclick = () => { if (!want) start(); else if (susp) return; else if (listenOnly) upgrade(); else toggleMute(); };
+$("lbSpk").onclick = () => { spkOff = !spkOff; els.forEach(a => { a.muted = sm(); }); paint(); };
+$("lbVoff").onclick = () => { stop(true); toast("🎤", T("Ovozli xonadan chiqdingiz"), ""); };
+paint();
+}
+function paint() {
+const root = $("lbBody"); if (!root) return;
+const on = active();
+root.querySelectorAll(".lbslot[data-uid]").forEach(el => {
+const uid = el.dataset.uid, b = el.querySelector(".lbvb"); let txt = "", talk = false;
+if (uid === me()) { if (on) { txt = myState() ? "🔇" : "🎤"; talk = myTalk && !muted; } }
+else { const p = peers[uid]; if (p && p.ready) { txt = p.mute ? "🔇" : on && !live(p) ? "…" : "🎤"; talk = !!p.talk && !p.mute; } }
+if (b && b.textContent !== txt) b.textContent = txt;
+el.classList.toggle("talk", talk);
+});
+const bt = $("lbVoice"); if (!bt) return;
+const key = !want ? "off" : susp ? "susp" : listenOnly ? "listen" : muted ? "mute" : "on";
+if (bt.dataset.k !== key) {
+bt.dataset.k = key;
+bt.className = "btn main " + ({off: "blue", susp: "gray", listen: "gray", mute: "gray", on: "green"})[key];
+bt.innerHTML = (key === "on" ? IC.mic : IC.micOff) + `<span>${esc(T({off: "Ovozli xona", susp: "Ovozli xona", listen: "Faqat eshitish rejimi", mute: "Mikrofon o'chiq", on: "Mikrofon yoqiq"}[key]))}</span>`;
+}
+const sp = $("lbSpk"), off = $("lbVoff");
+sp.style.display = off.style.display = want ? "" : "none";
+const si = spkOff ? IC.spkOff : IC.spk; if (sp.dataset.i !== si) { sp.dataset.i = si; sp.innerHTML = si; }
+const n = count(), vn = $("lbVn"), tx = n ? TT("{0} kishi ovozli xonada", n) : "";
+if (vn && vn.textContent !== tx) vn.textContent = tx;
+}
+setInterval(() => {   // once a second: pause / resume around matches, health of every call, keep-alive hello
+if (want && !LB) return stop(false);
+if (!want) return;
+const g = mode === "game";
+if (g && !susp) return suspend();
+if (!g && susp) return void resume();
+if (!active()) return;
+tk++;
+for (const p of Object.values(peers)) {
+if (!p.pc) { if (p.ready && here(p.uid) && initiator(p.uid) && !p.busy && p.tries < 5) { p.tries++; negotiate(p); } continue; }
+const st = p.pc.connectionState;
+if (st === "connected") { p.bad = 0; continue; }
+if (st === "failed" || st === "closed" || ++p.bad > 25) { drop(p); if (initiator(p.uid) && p.tries < 5) { p.tries++; negotiate(p); } }
+}
+if (tk % 8 === 0 && LB.players.some(x => String(x.uid) !== me() && here(x.uid) && !live(peers[String(x.uid)]))) send("hello", null, {m: myState()});   // "ready" is repeated while somebody is not connected, so one lost message can never leave two phones waiting
+els.forEach(a => { a.muted = sm(); if (a.srcObject && a.paused && !sm()) a.play().catch(() => {}); });
+paint();
+}, 1000);
+setInterval(() => {   // the speaking ring
+if (!active()) return;
+const now = Date.now();
+if (myAn && !muted) { if (level(myAn, myBuf) > 0.035) myUntil = now + 350; myTalk = now < myUntil; } else myTalk = false;
+for (const p of Object.values(peers)) { if (p.an) { if (level(p.an, p.buf) > 0.035) p.until = now + 350; p.talk = now < p.until; } }
+paint();
+}, 180);
+document.addEventListener("pointerdown", () => { if (want && ctx && ctx.state === "suspended") ctx.resume(); els.forEach(a => { if (a.srcObject && a.paused && !spkOff) a.play().catch(() => {}); }); }, true);
+const state = () => ({want, susp, muted, listenOnly, spkOff, mic: !!mic, count: count(), peers: Object.fromEntries(Object.entries(peers).map(([k, p]) => [k, {ready: p.ready, mute: p.mute, pc: p.pc ? p.pc.connectionState : "", el: !!p.el, talk: p.talk}]))});
+const stats = async () => { const o = {}; for (const [k, p] of Object.entries(peers)) { o[k] = {in: 0, out: 0}; if (!p.pc) continue; (await p.pc.getStats()).forEach(r => { if (r.type === "inbound-rtp" && r.kind === "audio") o[k].in += r.packetsReceived | 0; if (r.type === "outbound-rtp" && r.kind === "audio") o[k].out += r.packetsSent | 0; }); } return o; };   // for the self-test of the TURN / connection check
+return {onSignal, start, stop, sync, bind, paint, barHTML, state, stats, on: () => active()};
+})();
+Net.on("lvoice", m => LobbyVoice.onSignal(m));
 // ---- friend requests (the other player accepts or refuses), direct messages between friends, sharing the invite
 const frShown = new Set();   // requests / play invitations already shown as a pop-up in this session (they stay in the Friends screen and behind the red dot)
 let dmPrev = null, dmOpenId = "", dmTimer = null, dmPullNow = null, notifyAt = 0, notifySig = "", tgSetAt = 0;
@@ -11556,7 +11767,7 @@ function friendPlayOffer(f) {   // a new friend: one tap to a private table with
 if (!f || !f.id || LB) return;
 setTimeout(() => {
 if (LB || mode !== "menu" || $("modal").classList.contains("on")) return;
-openModal({icon: "🎱", title: T("Do'st bilan o'ynaymizmi?"), text: `${pname(f.name)}: ${T("lobbiga taklif qilamiz. O'yin vaqtida 🎤 tugmasi bilan gaplashasiz.")}`,
+openModal({icon: "🎱", title: T("Do'st bilan o'ynaymizmi?"), text: `${pname(f.name)}: ${T("lobbiga taklif qilamiz. Lobbida 🎤 ovozli xona bilan gaplashasiz.")}`,
 buttons: [{label: "🎱 " + T("Lobbiga kirish"), cls: "green", fn: () => lobbyCreate(null, [f.id])}, {label: T("Keyinroq"), cls: "gray", fn: () => {}}]});
 }, 900);
 }
