@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Builds the CrazyGames variant: python3 tools/build_crazy.py [out_dir]  -> bilyard8-crazy.zip
 Same game, but ads / cloud save / mute / loading+gameplay events go through the CrazyGames SDK v3.
-No Google/Facebook login, no real-money shop, no legal links, no service worker."""
+No Google/Facebook login, no real-money shop, no legal links, no service worker.
+PORTAL=playgama python3 tools/build_crazy.py [out_dir]  -> bilyard8-playgama.zip: the same portal game on the Playgama Bridge SDK
+(saves only through bridge.storage, language from the platform, ads / audio / pause / game_ready as the Playgama required steps ask)."""
 import sys, zipfile, os
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 src = open(os.path.join(root, "index.html"), encoding="utf-8").read()
@@ -11,10 +13,38 @@ def sub(old, new, count=1):
     assert src.count(old) >= 1, "missing: " + old[:60]
     src = src.replace(old, new, count)
 
-sub("<head>", '<head>\n<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>')
+PG = os.environ.get("PORTAL", "crazy") == "playgama"
+PG_HEAD = r'''<script src="https://bridge.playgama.com/v2/stable/playgama-bridge.js"></script>
+<script>
+// Playgama: the Bridge is the first script; the game code runs only after bridge.initialize() and the saved keys are loaded (see the b8main loader at the end of the page)
+(function () {
+var KEYS = ["billiard8v2", "bilyard8v2", "b8guest", "b8acct", "b8finv", "b8server", "b8pn", "b8kb"];
+var C = window.__B8C = {}, dirty = {}, timer = 0, B = window.bridge, live = false;
+function flush() {
+  clearTimeout(timer); timer = 0;
+  var ks = Object.keys(dirty); if (!ks.length || !live) return; dirty = {};
+  var setK = [], setV = [], del = [];
+  ks.forEach(function (k) { if (k in C) { setK.push(k); setV.push(C[k]); } else del.push(k); });
+  try { if (setK.length) B.storage.set(setK, setV).catch(function () {}); if (del.length) B.storage.delete(del).catch(function () {}); } catch (e) {}
+}
+function mark(k) { dirty[k] = 1; if (!timer) timer = setTimeout(flush, 4000); }   // changes are gathered: one write every few seconds at most, never per frame
+window.__b8Put = function (k, v) { C[k] = v; mark(k); };
+window.__b8Del = function (k) { delete C[k]; mark(k); };
+window.__b8Flush = flush;
+addEventListener("pagehide", flush); document.addEventListener("visibilitychange", function () { if (document.hidden) flush(); });
+window.__B8_READY = (B ? B.initialize() : Promise.reject(new Error("no bridge"))).then(function () {
+  live = true;
+  try { window.__B8_LANG = String(B.platform.language || "").toLowerCase().slice(0, 2); } catch (e) {}
+  return B.storage.get(KEYS);
+}).then(function (vals) {
+  KEYS.forEach(function (k, i) { var v = vals && vals[i]; if (v !== null && v !== undefined) C[k] = typeof v === "string" ? v : JSON.stringify(v); });
+}).catch(function (e) { console.warn("Playgama Bridge:", e); });
+})();
+</script>'''
+sub("<head>", '<head>\n' + (PG_HEAD if PG else '<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>'))
 # portal mode on: no card shop, no Google/Facebook, no service worker, server taken from CONFIG
 sub("const ON_PORTAL = /(^|\\.)y8\\.com$", "const CRAZY_BUILD = true;\nconst ON_PORTAL = CRAZY_BUILD || /(^|\\.)y8\\.com$")
-sub("function y8Init() {\n", "function y8Init() {\nif (CRAZY_BUILD) return crazyInit();\n")
+sub("function y8Init() {\n", "function y8Init() {\nif (CRAZY_BUILD) return " + ("playgamaInit" if PG else "crazyInit") + "();\n")
 CRAZY_JS = r'''
 function crazyInit() {
 const CG = () => window.CrazyGames && window.CrazyGames.SDK;
@@ -88,7 +118,54 @@ try { window.CrazyGames.SDK.game.updateRoom({roomId: code, isJoinable: !!joinabl
 function crazyLeave() { try { window.CrazyGames.SDK.game.leftRoom(); } catch (e) {} }
 function crazyInviteHide() { try { window.CrazyGames.SDK.game.hideInviteButton(); } catch (e) {} }
 '''
-sub("function y8LoadCloud() {", CRAZY_JS + "function y8LoadCloud() {")
+PG_JS = r'''
+function playgamaInit() {
+const B = window.bridge; if (!B || !B.platform) return;
+const P = B.platform, A = B.advertisement || {}, EV = B.EVENT_NAME || {};
+const bye = () => Promise.resolve();
+let cur = null;   // the ad on screen: {kind, handle(state)}
+const onState = kind => state => { try { if (cur && cur.kind === kind) cur.handle(String(state)); } catch (e) {} };
+try { A.on(EV.INTERSTITIAL_STATE_CHANGED, onState("interstitial")); A.on(EV.REWARDED_STATE_CHANGED, onState("rewarded")); } catch (e) {}
+Y8.sdk = {
+// the game's own ad hook: type "reward" = rewarded video (a reward only in the "rewarded" state), anything else = an interstitial at a natural pause (Bridge decides when one is really shown)
+showAd(o) {
+return new Promise(resolve => {
+const kind = o.type === "reward" ? "rewarded" : "interstitial";
+let supported = false; try { supported = !!(kind === "rewarded" ? A.isRewardedSupported : A.isInterstitialSupported); } catch (e) {}
+const call = () => kind === "rewarded" ? A.showRewarded() : A.showInterstitial("between_matches");
+let over = false, guard = 0;
+const end = () => { if (over) return; over = true; cur = null; clearTimeout(guard); try { o.adBreakDone && o.adBreakDone(); } catch (e) {} resolve(); };
+if (!supported) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return end(); }
+let rewarded = false;
+cur = {kind, handle: s => {
+if (s === "opened") { try { o.beforeAd && o.beforeAd(); } catch (e) {} }
+else if (s === "rewarded") { rewarded = true; try { o.adViewed && o.adViewed(); } catch (e) {} }
+else if (s === "closed") end();
+else if (s === "failed") { if (!rewarded) { try { o.adDismissed && o.adDismissed(); } catch (e) {} } end(); }
+}};
+guard = setTimeout(end, 120000);
+try { call(); } catch (e) { end(); }
+});
+},
+saveData: bye, loadData: bye, awardAchievement: bye, saveLeaderboardScore: bye, trackCustomEvent: bye, showAchievements: bye, showLeaderboard: bye, login() {},
+};
+let rewardedOk = false; try { rewardedOk = !!A.isRewardedSupported; } catch (e) {}
+Y8.adsReady = rewardedOk;   // the reward buttons show only where rewarded video exists
+Y8.user = {nickname: ""};
+updateY8Ui();
+// audio: start muted when the platform says so, follow its audio and pause events (tab switch, an ad opening)
+let audioOn = P.isAudioEnabled !== false, paused = false;
+const applyAudio = () => { window.__B8_MUTE = !audioOn || paused; try { Snd.setMuted(!!profile.muted); } catch (e) {} };   // __B8_MUTE: the platform's silence, kept apart from the player's own mute switch
+applyAudio();
+try { P.on(EV.AUDIO_STATE_CHANGED, en => { audioOn = en !== false; applyAudio(); }); } catch (e) {}
+try { P.on(EV.PAUSE_STATE_CHANGED, p => { paused = !!p; if (paused) { try { input.charging = false; input.drag = null; input.power = 0; } catch (e) {} } applyAudio(); }); } catch (e) {}
+// the first playable frame: the logo splash is gone and the game accepts input
+let sent = false;
+const ready = () => { if (sent) return; sent = true; try { const r = P.sendMessage("game_ready"); if (r && r.catch) r.catch(() => {}); } catch (e) {} };
+const t0 = Date.now(), iv = setInterval(() => { if (!document.getElementById("boot") || Date.now() - t0 > 7000) { clearInterval(iv); setTimeout(ready, 400); } }, 250);
+}
+'''
+sub("function y8LoadCloud() {", (PG_JS if PG else CRAZY_JS) + "function y8LoadCloud() {")
 # keep the player's own name; no Y8 nickname
 sub('String(Y8.user.nickname || "O\'yinchi"', 'String((!CRAZY_BUILD && Y8.user.nickname) || "O\'yinchi"')
 sub('"☁️", T("Saqlangan o\'yin yuklandi"), "Y8")', '"☁️", T("Saqlangan o\'yin yuklandi"), CRAZY_BUILD ? "" : "Y8")')
@@ -114,7 +191,7 @@ sub('{ const fb = $("gFs"); const can = ', '{ const fb = $("gFs"); if (!fb) { /*
 sub('document.addEventListener("webkitfullscreenchange", sync); }', 'document.addEventListener("webkitfullscreenchange", sync); } }')
 sub('<br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a> · <a href="/refund" target="_blank" style="color:#8fc4ff">Refund</a></div>`;', '</div>`;')
 # language: English first (CrazyGames requires English; reviewers must not meet another language by chance). The other languages stay one tap away in Settings.
-sub("function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\n", "function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\nif (CRAZY_BUILD) return \"en\";\n")
+sub("function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\n", "function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\n" + ("if (CRAZY_BUILD) { const l = window.__B8_LANG; return l && LANGS[l] ? l : \"en\"; }\n" if PG else "if (CRAZY_BUILD) return \"en\";\n"))   # Playgama: the platform's language is the source language; CrazyGames: English first
 # hide Y8-only UI
 sub("${Y8.sdk && !TG_LAUNCH ? `<div class=\"card\"", "${!CRAZY_BUILD && Y8.sdk && !TG_LAUNCH ? `<div class=\"card\"")
 sub('<button class="btn orange y8ad" id="y8Lb" style="display:none;padding:8px 14px;font-size:16px">🏆 Y8</button>', '')
@@ -123,6 +200,41 @@ sub('<div id="hLegal"><a href="/terms" target="_blank">Terms of Service</a> · <
 
 # first open: straight onto the table (practice) with the skippable pulsing-marks tutorial, no menus in the way (CrazyGames quality guideline: onboarding in gameplay)
 sub("try { loginSplash(); } catch (e) {}\nrequestAnimationFrame(frame);", "try { loginSplash(); } catch (e) {}\nif (!profile.tutDone && !(profile.games | 0)) setTimeout(() => { try { if (mode !== \"game\" && !$(\"modal\").classList.contains(\"on\")) startMatch(\"practice\", CITIES[0]); } catch (e) {} }, 1500);\nrequestAnimationFrame(frame);")
+
+# Playgama-only patches
+sub('<head>', '<head>\n<style>.chanonly{display:none!important}</style>')   # the channel name switch and the channel row mean nothing on a portal
+if PG:
+    # saving only through Bridge Storage: the game's one save point (store) reads a cache filled from bridge.storage BEFORE the game starts; writes go back in batches
+    sub("const store = {\nget(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },\nset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },\n};",
+        "const store = {\nget(k, d) { try { const v = window.__B8C[k]; return v ? JSON.parse(v) : d; } catch (e) { return d; } },\nset(k, v) { try { window.__b8Put(k, JSON.stringify(v)); } catch (e) {} },\ndel(k) { try { window.__b8Del(k); } catch (e) {} },\n};")
+    src = src.replace("localStorage.removeItem(", "store.del(")
+    for bad in ("localStorage", "sessionStorage", "indexedDB", "document.cookie"):
+        assert bad not in src, "the Playgama build must not touch " + bad
+    # the platform's silence (audio off / paused) also holds for a sound engine that starts later, and survives the game's own setMuted calls
+    sub("master = ac.createGain(); master.gain.value = profile.muted ? 0 : level();", "master = ac.createGain(); master.gain.value = (profile.muted || window.__B8_MUTE) ? 0 : level();")
+    sub("setMuted(m) { if (master) master.gain.setTargetAtTime(m ? 0 : level(), ac.currentTime, 0.02); },", "setMuted(m) { if (master) master.gain.setTargetAtTime(m || window.__B8_MUTE ? 0 : level(), ac.currentTime, 0.02); },")
+    # ads: no own counters or timers, Bridge decides when an interstitial is really shown; the reward gate stays only for rewarded video
+    sub("if (Y8.sdk && Y8.adsReady && Y8.matches % 2 === 0 && Date.now() - Y8.lastBreak > 90000) {", "if (Y8.sdk) {")
+    sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
+    # the game code waits for bridge.initialize() + the stored keys: it sits in a text/plain block and a loader runs it afterwards
+    OPEN = '<script>\n"use strict";'
+    i = src.rfind(OPEN); assert i > 0, "main script not found"
+    src = src[:i] + '<script id="b8main" type="text/plain">\n"use strict";' + src[i + len(OPEN):]
+    j = src.rfind("</script>") + len("</script>")
+    LOADER = """
+<script>
+(function () {
+var go = function () {
+  var t = document.getElementById("b8main"); if (!t) return;
+  var s = document.createElement("script"); s.text = t.textContent; t.parentNode.removeChild(t);
+  document.body.appendChild(s);
+  if (document.readyState === "complete") { try { window.dispatchEvent(new Event("load")); } catch (e) {} }   // the game listens for "load": it may be over by now
+};
+(window.__B8_READY || Promise.resolve()).then(go, go);
+})();
+</script>"""
+    src = src[:j] + LOADER + src[j:]
+PG_CONFIG = '{\n  "advertisement": {\n    "minimumDelayBetweenInterstitial": 60,\n    "interstitial": {\n      "placements": [\n        {"id": "between_matches"}\n      ]\n    }\n  }\n}\n'
 
 # light build: every embedded picture becomes a real file in img/ (no base64 growth, and a picture is only downloaded when the game actually shows it)
 import re, hashlib, base64
@@ -170,14 +282,15 @@ src = re.sub(r"data:image/(webp|png|jpeg|jpg|gif);base64,([A-Za-z0-9+/=]+)", _fi
 
 out = sys.argv[1] if len(sys.argv) > 1 else root
 os.makedirs(out, exist_ok=True)
-z = os.path.join(out, "bilyard8-crazy.zip")
+z = os.path.join(out, "bilyard8-playgama.zip" if PG else "bilyard8-crazy.zip")
 with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
     zf.writestr("index.html", src)
+    if PG: zf.writestr("playgama-bridge-config.json", PG_CONFIG)   # next to index.html, as the Playgama required steps ask
     for n, raw in IMGS.items(): zf.writestr(n, raw)
     for f in []:   # index.html only: the portal rejects uploads with other file types
         p = os.path.join(root, f)
         if os.path.exists(p): zf.write(p, f)
-open(os.path.join(out, "crazy_index.html"), "w", encoding="utf-8").write(src)
+open(os.path.join(out, "playgama_index.html" if PG else "crazy_index.html"), "w", encoding="utf-8").write(src)
 os.makedirs(os.path.join(out, "crazy_site", "img"), exist_ok=True)
 open(os.path.join(out, "crazy_site", "index.html"), "w", encoding="utf-8").write(src)
 for n, raw in IMGS.items(): open(os.path.join(out, "crazy_site", n), "wb").write(raw)

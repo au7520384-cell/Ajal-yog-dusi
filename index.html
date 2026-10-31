@@ -12666,8 +12666,8 @@ ${row("Olqish animatsiyalari", seg("cheer", [["all", "Hammasi"], ["mine", "Faqat
 ${row("Do'st qo'shishga ruxsat", seg("allowFriend", [[true, "Hamma"], [false, "Hech kim"]]))}
 ${row("Onlayn holatimni do'stlarga ko'rsatish", tg("showOnline", opt("showOnline")))}
 ${row("Do'stlar onlayn bo'lganda xabar berish", tg("notifyFr", opt("notifyFr")))}
-<div class="setrow"><span class="sri" style="display:grid;place-items:center;border-radius:50%;box-sizing:border-box;border:2px solid #c8a24a;background:radial-gradient(#3aa0f0,#0b3d7a);font-size:20px;filter:drop-shadow(0 2px 3px #000a)">📢</span><b>${T("Kanalda ismimni ko'rsatish")}</b>${tg("chanName", opt("chanName"))}</div>
-<div class="muted" style="margin:-2px 0 8px;font-size:13px">${T("Haftalik g'oliblar kanalda e'lon qilinganda ismingiz chiqadi. O'chiq bo'lsa «bir o'yinchi» deb yoziladi.")}</div>
+<div class="setrow chanonly"><span class="sri" style="display:grid;place-items:center;border-radius:50%;box-sizing:border-box;border:2px solid #c8a24a;background:radial-gradient(#3aa0f0,#0b3d7a);font-size:20px;filter:drop-shadow(0 2px 3px #000a)">📢</span><b>${T("Kanalda ismimni ko'rsatish")}</b>${tg("chanName", opt("chanName"))}</div>
+<div class="muted chanonly" style="margin:-2px 0 8px;font-size:13px">${T("Haftalik g'oliblar kanalda e'lon qilinganda ismingiz chiqadi. O'chiq bo'lsa «bir o'yinchi» deb yoziladi.")}</div>
 ${TG_LAUNCH ? `<div class="setrow"><span class="sri" style="display:grid;place-items:center;border-radius:50%;box-sizing:border-box;border:2px solid #c8a24a;background:radial-gradient(#3aa0f0,#0b3d7a);font-size:20px;filter:drop-shadow(0 2px 3px #000a)">✈️</span><b>${T("Telegram'da bildirishnoma")}</b>${tg("notifyTg", opt("notifyTg"))}</div>` : ""}
 <div class="setsec">☁️ ${T("Hisob va saqlash")}</div>
 ${row("Progress serverga saqlanadi", `<span class="muted">${Net.acct ? "ID " + esc(Net.acct.code) + (cloudAt ? " · ✅ " + new Date(cloudAt).toLocaleTimeString(LOC(), {hour: "2-digit", minute: "2-digit"}) : "") : T("oflayn")}</span>`)}
@@ -12677,7 +12677,7 @@ ${row("Yangi telefonga o'tish uchun kalit", `<button class="btn orange" id="setK
 ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setRecover" style="padding:6px 14px">📲 ${T("Tiklash")}</button>`)}
 <div class="setsec">${T("Boshqa")}</div>
 ${row("Til", `<button class="btn blue" id="setLang" style="padding:6px 14px">🌐 ${LANGS[LANG]}</button>`)}
-<div class="setrow"><b>📢 ${T("Rasmiy kanal")}</b><button class="btn blue" id="setChan" style="padding:6px 14px">${T("Ochish")}</button></div>
+<div class="setrow chanonly"><b>📢 ${T("Rasmiy kanal")}</b><button class="btn blue" id="setChan" style="padding:6px 14px">${T("Ochish")}</button></div>
 <div class="setrow"><b>🎧 ${T("Ovoz sinovi")}</b><button class="btn orange" id="setLab" style="padding:6px 14px">▶ ${T("Ochish")}</button></div>
 ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:6px 14px">👤 ${esc(profile.name)}</button>`)}
 <div class="muted" style="text-align:center;margin-top:10px">Royal Billiard 8 · ${Net.acct ? "ID " + esc(Net.acct.code) : T("oflayn")}<span id="setBuild"></span><br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a> · <a href="/refund" target="_blank" style="color:#8fc4ff">Refund</a></div>`;
