@@ -913,6 +913,30 @@ background:linear-gradient(#5a8a4a,#2e5a26);box-shadow:inset 0 2px 0 #fff4,0 3px
 .mh520 .lbwrap{gap:8px;flex-wrap:nowrap}.mh520 .lbcode{padding:3px 8px;border-width:1.5px;border-radius:10px;gap:8px}.mh520 .lbcode b{font-size:18px;letter-spacing:3px}.mh520 .lbcode svg{width:15px;height:15px}
 .mh520 .lbright{flex:1 1 280px;gap:4px}.mh520 .lbslots{gap:5px}.mh520 .lbslot{min-height:50px;font-size:10px;gap:0}.mh520 .lbslot .avx{transform:scale(.9)}.mh520 .lbslot i{font-size:9px}
 .mh520 .lbstat,.mh520 .lbwait{font-size:12px}.mh520 .lbme{font-size:16px}.mh520 .lbm{padding:4px;font-size:12px}.mh520 .lbprz{font-size:12px}.mh520 .lbstart .btn{padding:3px 22px}
+/* open lobbies: a list of public lobbies with a Join button, "Quick join", the friends-hub banner */
+.opbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.opbar .btn{padding:7px 14px;font-size:15px;border-radius:12px;line-height:1.1;white-space:nowrap}
+.opbar .btn.gold{background:linear-gradient(#ffd45a,#d9951a);color:#3a2600;border:2px solid #fff3b0;font-weight:800}
+.opping{margin-left:auto;font-size:12px;font-weight:800;color:#9fe38a;background:#0a1a2e;border:1.5px solid #2e4a7a;border-radius:12px;padding:4px 10px;white-space:nowrap}.opping.mid{color:#ffd45a}.opping.bad{color:#ff7a6a}
+.opchips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.opchips>span{font-size:12px;font-weight:800;padding:4px 11px;border-radius:999px;background:#12224a;border:1.5px solid #34508f;color:#cfe0ff;cursor:pointer}.opchips>span.on{background:#2f6fe0;border-color:#ffd24d;color:#fff}
+.oplist{display:flex;flex-direction:column;gap:6px}
+.oprow{display:flex;align-items:center;gap:10px;background:linear-gradient(#1e3470,#142552);border:2px solid #6f93e8;border-radius:12px;padding:4px 8px;box-shadow:inset 0 0 12px #5b86e844}
+.oprow.off{opacity:.55;border-color:#3b5a9a}.oprow.fr{border-color:#ffd24d}
+.opart{flex:0 0 64px;height:36px;border-radius:9px;background:#0b1430 center/cover no-repeat;border:1.5px solid #f3d27a}
+.opcity{flex:0 0 112px;line-height:1.1;min-width:0}.opcity b{display:block;font-size:15px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.opcity small{font-size:12px;color:#ffe9a8;font-weight:700}
+.ophost{flex:0 0 130px;display:flex;align-items:center;gap:6px;min-width:0;font-size:11px;color:#cfe0ff;font-weight:700;line-height:1.1}.ophost span{min-width:0}.ophost b{display:block;color:#fff;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opseats{display:flex;gap:3px;flex:1;align-items:center;min-width:0}.opseats i{flex:0 0 18px;height:18px;border-radius:50%;border:1.5px dashed #3b5a9a;display:block}.opseats i.f{border:none;background:#7ea4f0;box-shadow:inset 0 0 0 1.5px #fff6}
+.opseats em{font-style:normal;font-size:13px;font-weight:800;margin-left:6px;color:#fff;white-space:nowrap}
+.opvc{display:flex;align-items:center;gap:3px;font-size:13px;font-weight:800;color:#e8f5fa;min-width:34px}
+.oprow .btn{padding:5px 14px;font-size:14px;border-radius:10px;min-width:96px;white-space:nowrap}
+.opempty{text-align:center;padding:16px 10px;color:#cfe0ff;font-weight:700;display:flex;flex-direction:column;gap:10px;align-items:center}
+.wfopen{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0;padding:10px 14px;border-radius:16px;border:2px solid #8fb0bc;background:linear-gradient(135deg,#1e6a7a,#0c3d4a);box-shadow:inset 0 2px 0 #fff5,inset 0 0 30px #0006,0 6px 14px #000a}
+.wfopen .wfot{flex:1 1 180px;min-width:0}.wfopen b{display:block;font-family:var(--fh);font-weight:400;font-size:22px;color:#f7edcf;text-shadow:0 2px 6px #000}.wfopen small{display:block;color:#d6ecf2;font-weight:700;text-shadow:0 1px 3px #000c}
+.wfopen .btn{padding:8px 16px;font-size:15px;border-radius:12px;white-space:nowrap}.wfopen .btn.gold{background:linear-gradient(#ffd45a,#d9951a);color:#3a2600;border:2px solid #fff3b0;font-weight:800}
+.lbpubrow{justify-content:flex-start;font-size:12px;padding:2px 4px}
+.mh520 .opbar .btn{padding:4px 10px;font-size:12px;border-radius:10px}.mh520 .opping{font-size:10px;padding:3px 8px}.mh520 .opchips{margin:3px 0}.mh520 .opchips>span{font-size:10px;padding:2px 8px}
+.mh520 .oprow{padding:2px 6px;gap:6px;border-radius:10px}.mh520 .opart{flex-basis:46px;height:26px}.mh520 .opcity{flex-basis:84px}.mh520 .opcity b{font-size:12px}.mh520 .opcity small{font-size:10px}.mh520 .ophost{flex-basis:92px;font-size:9px}.mh520 .ophost b{font-size:11px}
+.mh520 .opseats i{flex-basis:12px;height:12px}.mh520 .opseats em{font-size:11px;margin-left:3px}.mh520 .oprow .btn{padding:3px 8px;font-size:11px;min-width:72px}.mh520 .opvc{font-size:11px;min-width:28px}
+.mh520 .wfopen{margin-top:6px;padding:5px 10px;gap:6px;border-radius:12px}.mh520 .wfopen b{font-size:15px}.mh520 .wfopen small{font-size:10px}.mh520 .wfopen .btn{padding:4px 10px;font-size:12px}.mh520 .lbpubrow{font-size:10px;padding:0 2px}
 .wfgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;width:100%}
 .wfgrid .mgc{grid-column:span 3}
 .wf-teal{background:linear-gradient(135deg,#1e6a7a,#0c3d4a);border-color:#8fb0bc;box-shadow:inset 0 2px 0 #fff5,inset 0 0 40px #0006,0 8px 16px #000a}
@@ -1912,6 +1936,10 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 <div class="head"><button class="back" data-go="home">‹</button><h2>Do'stlar bilan o'ynash</h2></div>
 <div class="panel" id="wfBody"></div>
 </div>
+<div class="screen" id="openScr">
+<div class="head"><button class="back" id="opBack">‹</button><h2>Ochiq lobbilar</h2></div>
+<div class="panel" id="opBody"></div>
+</div>
 <div class="screen" id="lbScr">
 <div class="head"><button class="back" id="lbBack">‹</button><h2 id="lbTitle"></h2></div>
 <div class="panel" id="lbBody"></div>
@@ -2784,6 +2812,24 @@ const DICT = {
 "Ulanmoqda…": ["Connecting…", "Подключение…"],
 "Ulandi": ["Connected", "Подключено"],
 "Ovozli xona": ["Voice room", "Голосовая комната"],
+"Ochiq lobbilar": ["Open lobbies", "Открытые лобби"],
+"Tez qo'shilish": ["Quick join", "Быстрый вход"],
+"Lobbi ochish": ["Open a lobby", "Создать лобби"],
+"Bo'sh joy bor": ["Seats free", "Есть места"],
+"Do'stlarim": ["My friends", "Мои друзья"],
+"Aloqa": ["Connection", "Связь"],
+"Boshlangan": ["Started", "Началось"],
+"To'lgan": ["Full", "Заполнено"],
+"Hozircha ochiq lobbi yo'q": ["No open lobbies yet", "Открытых лобби пока нет"],
+"Bu filtrga mos lobbi yo'q": ["No lobby matches this filter", "Нет лобби под этот фильтр"],
+"Birinchi bo'ling: ochiq lobbi oching, do'stlar va boshqalar qo'shiladi": ["Be the first: open a public lobby and friends and other players will join", "Будьте первым: откройте публичное лобби — друзья и другие игроки присоединятся"],
+"Ochiq lobbi (hamma ko'radi)": ["Open lobby (everybody sees it)", "Открытое лобби (видят все)"],
+"Ochiq lobbi": ["Open lobby", "Открытое лобби"],
+"Lobbiga ulanilmoqda…": ["Connecting to the lobby…", "Подключение к лобби…"],
+"Ochiq lobbi ochildi": ["Your open lobby is ready", "Ваше открытое лобби создано"],
+"O'yinchilar kutilmoqda": ["Waiting for players", "Ждём игроков"],
+"Boshqa o'yinchilar bilan o'ynang va gaplashing": ["Play and talk with other players", "Играйте и общайтесь с другими игроками"],
+"{0} ta ochiq lobbi": ["{0} open lobbies", "Открытых лобби: {0}"],
 "Ovozli xona yoqildi": ["Voice room is on", "Голосовая комната включена"],
 "Lobbidagilar sizni eshitadi": ["Everybody in the lobby can hear you", "Вас слышат все в лобби"],
 "Mikrofon yoqiq": ["Mic on", "Микрофон включён"],
@@ -8210,7 +8256,7 @@ if (quiet > G.turnLimit + 8) { G.cur = 1; timeoutFoul(); setBanner(T("Raqib javo
 }
 if (now - (G.audioChk || 0) > 2500) { G.audioChk = now; try { Snd.check(); } catch (e) {} }
 }
-const MENU_SCREENS = ["lbScr", "eventsScr", "freeScr", "inbox", "withFrScr", "settingsScr", "clubsScr", "passScr", "home", "cities", "tourScr", "shop", "rewards", "leader", "mini", "wheelScr", "profileScr", "friendsScr"];
+const MENU_SCREENS = ["openScr", "lbScr", "eventsScr", "freeScr", "inbox", "withFrScr", "settingsScr", "clubsScr", "passScr", "home", "cities", "tourScr", "shop", "rewards", "leader", "mini", "wheelScr", "profileScr", "friendsScr"];
 function showScreen(id) {
 try { $("giftPanel").classList.remove("in", "on"); } catch (e) {}
 if (id !== "vs" && typeof Snd !== "undefined" && Snd.search) Snd.search(false);
@@ -8241,6 +8287,7 @@ if (id === "freeScr") buildFree();
 if (id === "roadScr") buildRoad();
 if (id === "inbox") buildInbox();
 if (id === "withFrScr") buildWithFr();
+if (id === "openScr") buildOpen();
 if (id === "settingsScr") buildSettings();
 if (id === "clubsScr") buildClubs();
 if (id === "liveScr") buildLive();
@@ -11214,7 +11261,10 @@ ${card("wf-key", "create", "wfc_key", T("Lobbi yaratish"), T("Kodni do'stingizga
 ${card("wf-code", "join", "wfc_code", T("Kod bilan qo'shilish"), T("Do'stingiz bergan kodni kiriting"), T("Qo'shilish"))}
 ${card("wf-two", "pvp", "wfc_two", T("Bitta qurilmada 2 kishi"), T("Navbatma-navbat o'ynang"), T("O'ynash"))}
 ${card("wf-cap", "practice", "wfc_cap", T("Mashq"), T("Qoidalarsiz, oflayn"), T("O'ynash"))}
-</div><div class="setsec">⚔️ ${T("Do'stni chaqirish")}</div><div id="wfFriends" class="muted">${T("Yuklanmoqda…")}</div>`;
+</div><div class="wfopen"><div class="wfot"><b>🌐 ${T("Ochiq lobbilar")}</b><small id="wfOpenN">${T("Boshqa o'yinchilar bilan o'ynang va gaplashing")}</small></div><button class="btn blue" id="wfOpenGo">${T("Ochish")}</button><button class="btn gold" id="wfQuick">⚡ ${T("Tez qo'shilish")}</button></div>
+<div class="setsec">⚔️ ${T("Do'stni chaqirish")}</div><div id="wfFriends" class="muted">${T("Yuklanmoqda…")}</div>`;
+$("wfOpenGo").onclick = () => go("openScr"); $("wfQuick").onclick = () => quickJoin($("wfQuick"));
+Net.ensure().then(() => Net.api("/api/lobbies")).then(r => { const n = (r.lobbies || []).filter(x => x.state === "open" && x.n < x.max).length, el = $("wfOpenN"); if (el && n) el.textContent = TT("{0} ta ochiq lobbi", n); }).catch(() => {});
 const acts = {create: lbTablesOpen, join: () => openModal({icon: "🔢", title: T("Kod bilan qo'shilish"), text: "", extra: `<input class="name" id="lbCode" maxlength="60" placeholder="ABCD12" style="text-transform:uppercase;text-align:center;font-size:24px">`,
 buttons: [{label: T("Qo'shilish"), cls: "green", fn: () => lobbyJoin(parseLobbyCode($("lbCode").value))}, {label: T("Yopish"), cls: "gray", fn: () => {}}]}),
 pvp: () => startMatch("pvp", CITIES[1]), practice: () => startMatch("practice", CITIES[0])};
@@ -11245,13 +11295,16 @@ const lbName = c => `<div class="lbnm"><small>${esc(T(c.sub))}</small><b>${esc(T
 const lbUpTo = c => Math.floor(c.fee * 8 * 0.9 * 0.55);   // first prize with a full lobby of 8
 const lbMe = () => (Net.acct && Net.acct.id) || "";
 function lbShow() { if (mode !== "menu") toMenu("lbScr"); else go("lbScr"); }
-function lbTablesOpen() { LB = null; lbShow(); }
+let LBX = {pub: false, from: ""};   // how the next lobby is opened: public (listed in the open lobbies)? did the player come from that list (the back button returns there)?
+function lbTablesOpen(pub, from) { LBX = {pub: !!pub, from: from || ""}; LB = null; lbShow(); }
 function lbCodeGen() { return Array.from({length: 6}, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.random() * 32 | 0]).join(""); }
-function lobbyCreate(cityId, inviteIds) {   // inviteIds: quick duel with one friend; no city given: the best table the player can afford
+function lobbyCreate(cityId, inviteIds, o) {   // inviteIds: quick duel with one friend; no city given: the best table the player can afford
 const c = cityId ? lbCityOf(cityId) : lobbyCity();
 if (profile.coins < c.fee) return toast("😕", T("Tanga yetmaydi"), c.name);
 const code = lbCodeGen(); lobbyLink = lobbyDefaultLink(code);
-lbConnect(code, false, c.id, {inviteIds: inviteIds || [], auto: !cityId ? false : !!(document.getElementById("lbAuto") && document.getElementById("lbAuto").checked)});
+const pubEl = document.getElementById("lbPub"), pub = o && o.pub != null ? !!o.pub : !!(pubEl && pubEl.checked), from = (o && o.from) || (inviteIds && inviteIds.length ? "" : LBX.from);
+LBX = {pub: false, from: ""};
+lbConnect(code, false, c.id, {inviteIds: inviteIds || [], auto: !cityId ? false : !!(document.getElementById("lbAuto") && document.getElementById("lbAuto").checked), pub, from});
 lhook("created", code);
 }
 function lobbyJoin(code) { code = parseLobbyCode(code); if (!code || code.length < 3) return; lbConnect(code, true, null, {}); }
@@ -11262,7 +11315,7 @@ const mine = LB;
 Net.ensure().then(() => Net.connect()).then(() => {
 if (LB !== mine) return;
 lbBind();
-Net.send({t: "queue", city: c.id, code, join: !!join, lobby: true, cue: profile.cue, tbl: profile.tableSkin || ""});
+Net.send({t: "queue", city: c.id, code, join: !!join, lobby: true, cue: profile.cue, tbl: profile.tableSkin || "", pub: !join && !!(opt && opt.pub)});
 }).catch(() => { if (LB === mine) lbFail(T("Server bilan aloqa yo'q. Internetni tekshiring.")); });
 setTimeout(() => { if (LB === mine && mine.pending) lbFail(T("Bunday lobbi topilmadi")); }, 30000);   // a sleeping free server needs up to ~50 s to wake: the "no such lobby" answer itself comes at once
 lbShow();
@@ -11289,7 +11342,7 @@ function lbState(m) {
 if (!LB || LB.code !== m.code) return;
 const first = LB.pending; LB.pending = false;
 if (first && m.fee > profile.coins && m.host !== lbMe()) { Net.send({t: "cancel"}); return lbFail(T("Tanga yetmaydi")); }
-Object.assign(LB, {city: m.city, fee: m.fee, max: m.max, state: m.state, host: m.host, players: m.players, role: m.host === lbMe() ? "host" : "guest"});
+Object.assign(LB, {city: m.city, fee: m.fee, max: m.max, state: m.state, pub: !!m.pub, host: m.host, players: m.players, role: m.host === lbMe() ? "host" : "guest"});
 if (m.state === "open") LB.tour = null;
 LobbyVoice.sync(first);
 lhook("open", LB.code, m.state === "open" && m.players.length < m.max);
@@ -11299,12 +11352,24 @@ if (LB.opt.auto) lbInviteAll(); else ids.forEach(id => lbInvite(id));
 }
 if ($("lbScr").classList.contains("on")) lbRender();
 }
-function lbFail(msg) { LobbyVoice.stop(); LB = null; try { Net.send({t: "cancel"}); } catch (e) {} lhook("leave"); toast("😕", msg, T("Lobbi")); if (mode === "menu") go("withFrScr"); else toMenu("withFrScr"); }
+function lbFail(msg) {
+const o = (LB && LB.opt) || {}, from = o.from || "";
+LobbyVoice.stop();
+if (o.quick) {   // "Quick join": this lobby is gone / full - try the next one, and when none is left open a public lobby of my own
+try { Net.send({t: "cancel"}); } catch (e) {}
+LB = null; const next = o.quick.shift();
+if (next) return lbConnect(next, true, null, {from, quick: o.quick});
+return lobbyCreate(null, [], {pub: true, from});
+}
+LB = null; try { Net.send({t: "cancel"}); } catch (e) {} lhook("leave"); toast("😕", msg, T("Lobbi"));
+const back = from === "open" ? "openScr" : "withFrScr"; if (mode === "menu") go(back); else toMenu(back);
+}
 function lbLeave(force) {
 if (LB && LB.state === "running" && !(LB.results) && !force) return openModal({icon: "🏳️", title: T("Lobbi"), text: T("Turnirni tark etsangiz yutqazasiz. Chiqasizmi?"), buttons: [{label: T("Chiqish"), cls: "red", fn: () => lbLeave(true)}, {label: T("Davom etish"), cls: "green", fn: () => {}}]});
 LobbyVoice.stop();
 try { Net.send({t: "cancel"}); } catch (e) {}
-LB = null; lhook("leave"); go("withFrScr");
+const back = LB && LB.opt && LB.opt.from === "open" ? "openScr" : "withFrScr";
+LB = null; lhook("leave"); go(back);
 }
 function lbInvite(id) { if (!LB || LB.invited[id]) return; LB.invited[id] = 1; Net.api("/api/challenge", {to: id, code: LB.code, city: LB.city}).catch(() => {}); }
 function lbFriends(cb) { if (LB && LB.friends) return cb(LB.friends); Net.api("/api/friends").then(r => { const f = (r.friends || []).slice().sort((x, y) => (y.online | 0) - (x.online | 0)).slice(0, 30); if (LB) LB.friends = f; cb(f); }).catch(() => cb([])); }
@@ -11374,7 +11439,8 @@ const cards = CITIES.map(c => { const lock = cityLock(c), poor = profile.coins <
 return `<div class="lbt${lock || poor ? " lock" : ""}" data-city="${c.id}" style="--f0:${c.felt[0]};--f1:${c.felt[1]};--fg:${c.felt[0]}88"><div class="lbart"${IMG["lc_" + c.id] ? ` style="background-image:url(${IMG["lc_" + c.id]})"` : ""}></div>${lbName(c)}
 <div class="lbtp">${TT("Sovrin: {0} gacha", nf(lbUpTo(c)))} 🪙</div><div class="lbtf">${TT("Kirish to'lovi: {0}", nf(c.fee))} 🪙</div>${lock ? `<div class="lbtk">🔒</div>` : poor ? `<div class="lbtk">${T("Tanga yetmaydi")}</div>` : ""}</div>`; }).join("");
 body.innerHTML = `<div class="lbtbls">${cards}</div><div class="lbfoot"><div class="lbnote">${T("Kirish to'lovi faqat turnir boshlanganda to'lanadi")}</div>
-<label class="lbauto"><input type="checkbox" id="lbAuto" checked> ${T("Hamma do'stlarni avtomatik chaqirish")}</label></div>`;
+<label class="lbauto"><input type="checkbox" id="lbAuto" checked> ${T("Hamma do'stlarni avtomatik chaqirish")}</label>
+<label class="lbauto"><input type="checkbox" id="lbPub"${LBX.pub ? " checked" : ""}> ${T("Ochiq lobbi (hamma ko'radi)")}</label></div>`;
 body.querySelectorAll(".lbt").forEach(el => el.onclick = () => { if (!el.classList.contains("lock")) lobbyCreate(el.dataset.city); });
 return;
 }
@@ -11403,15 +11469,70 @@ const pot = LB.fee * LB.players.length;
 body.innerHTML = `<div class="lbwrap"><div class="lbinfo"><div class="lbhd" style="--fg:${c.felt[0]}88${IMG["lc_" + c.id] ? `;background-image:url(${IMG["lc_" + c.id]})` : ""}">${lbName(c)}</div>
 <div class="lbfp"><span>${TT("Kirish to'lovi: {0}", fmt(LB.fee))} 🪙</span><span>${TT("Sovrin: {0} gacha", fmt(lbUpTo(c)))} 🪙</span></div>
 <div class="lbcode" id="lbCodeBox" title="${T("Lobbi kodi")}"><b id="lbCodeB">${LB.code}</b>${SVG_COPY}</div>
-<div class="lbbt"><button class="btn blue" id="lbShare">${SVG_SHARE}<span>${T("Ulashish")}</span></button><button class="btn blue" id="lbInv">${SVG_ADD}<span>${T("Do'stni chaqirish")}</span></button></div>${LobbyVoice.barHTML()}</div>
+<div class="lbbt"><button class="btn blue" id="lbShare">${SVG_SHARE}<span>${T("Ulashish")}</span></button><button class="btn blue" id="lbInv">${SVG_ADD}<span>${T("Do'stni chaqirish")}</span></button></div>${LobbyVoice.barHTML()}${run ? "" : host ? `<label class="lbauto lbpubrow"><input type="checkbox" id="lbPubT"${LB.pub ? " checked" : ""}> ${T("Ochiq lobbi (hamma ko'radi)")}</label>` : LB.pub ? `<div class="lbvn">🌐 ${T("Ochiq lobbi")}</div>` : ""}</div>
 <div class="lbright">${right}</div></div>`;
 $("lbCodeBox").onclick = () => { try { navigator.clipboard.writeText(LB.code); } catch (e) {} toast("🔑", LB.code, T("Havola nusxalandi — do'stingizga yuboring!")); };
 $("lbShare").onclick = lbShare; $("lbInv").onclick = lbInviteBox;
 body.querySelectorAll(".lbslot:not(.on)").forEach(el => el.onclick = lbInviteBox);   // an empty seat asks a friend
 if ($("lbStart")) $("lbStart").onclick = () => Net.send({t: "start"});
 LobbyVoice.bind();
+if ($("lbPubT")) $("lbPubT").onchange = e => Net.send({t: "lpub", on: e.target.checked});
 }
-$("lbBack").onclick = () => { if (LB) lbLeave(); else go("withFrScr"); };
+$("lbBack").onclick = () => { if (LB) lbLeave(); else { const f = LBX.from; LBX = {pub: false, from: ""}; go(f === "open" ? "openScr" : "withFrScr"); } };
+// ---- open (public) lobbies: a list with a Join button, "Quick join", the number of friends talking in each voice room
+const OPN = {list: null, err: false, filter: "all", ping: 0, fr: null, busy: false, qbusy: false, sig: ""};
+async function opFriendSet() { if (OPN.fr) return OPN.fr; try { const r = await Net.api("/api/friends"); OPN.fr = new Set((r.friends || []).map(f => String(f.id))); } catch (e) { OPN.fr = new Set(); } return OPN.fr; }
+async function opLoad() {
+if (OPN.busy) return; OPN.busy = true; const t0 = performance.now();
+try { await Net.ensure(); const r = await Net.api("/api/lobbies"), ms = Math.round(performance.now() - t0); OPN.ping = OPN.ping ? Math.round(OPN.ping * .6 + ms * .4) : ms; OPN.list = r.lobbies || []; OPN.err = false; }
+catch (e) { OPN.err = true; }
+OPN.busy = false; if ($("openScr").classList.contains("on")) opRender();
+}
+function opRow(x) {
+const c = lbCityOf(x.city), full = x.n >= x.max, run = x.state !== "open", poor = profile.coins < x.fee, fr = OPN.fr && OPN.fr.has(String(x.host.uid)), nf = document.documentElement.classList.contains("mh520") ? fmtS : fmt;
+const seats = Array.from({length: x.max}, (_, i) => `<i class="${i < x.n ? "f" : ""}"></i>`).join("");
+const btn = run ? `<button class="btn gray" disabled>${T("Boshlangan")}</button>` : full ? `<button class="btn gray" disabled>${T("To'lgan")}</button>` : poor ? `<button class="btn gray" disabled>${T("Tanga yetmaydi")}</button>` : `<button class="btn green" data-op="${esc(x.code)}">${T("Qo'shilish")}</button>`;
+return `<div class="oprow${run || full || poor ? " off" : ""}${fr ? " fr" : ""}"><div class="opart"${IMG["lc_" + c.id] ? ` style="background-image:url(${IMG["lc_" + c.id]})"` : ""}></div><div class="opcity"><b>${esc(T(c.name))}</b><small>${nf(x.fee)} 🪙</small></div>
+<div class="ophost">${avHTML(normAv(x.host.avatar | 0), x.host.frame | 0, 28)}<span><small>${T("Xost")}</small><b>${flagHTML(x.host.country, 12)} ${esc(pname(x.host.name))}</b></span></div>
+<div class="opseats">${seats}<em>${x.n}/${x.max}</em></div><div class="opvc">${x.voice ? MIC_SPAN() + x.voice : ""}</div>${btn}</div>`;
+}
+function opRender() {
+const box = $("opList"); if (!box) return;
+const pg = $("opPing"); if (pg) { pg.className = "opping" + (OPN.ping > 220 ? " bad" : OPN.ping > 110 ? " mid" : ""); pg.textContent = OPN.ping ? `📶 ${T("Aloqa")}: ${OPN.ping} ms` : ""; }
+document.querySelectorAll("#opChips [data-f]").forEach(e => e.classList.toggle("on", e.dataset.f === OPN.filter));
+const list = OPN.list; let html;
+if (!list) html = `<div class="opempty">${OPN.err ? "📡 " + T("Server bilan aloqa yo'q. Internetni tekshiring.") : T("Yuklanmoqda…")}</div>`;
+else {
+const L = list.filter(x => OPN.filter === "voice" ? x.voice > 0 : OPN.filter === "free" ? x.state === "open" && x.n < x.max : OPN.filter === "friends" ? !!(OPN.fr && OPN.fr.has(String(x.host.uid))) : true);
+html = L.length ? L.map(opRow).join("") : `<div class="opempty">${T(list.length ? "Bu filtrga mos lobbi yo'q" : "Hozircha ochiq lobbi yo'q")}${list.length ? "" : `<small>${T("Birinchi bo'ling: ochiq lobbi oching, do'stlar va boshqalar qo'shiladi")}</small>`}</div>`;
+}
+if (html === OPN.sig) return; OPN.sig = html;
+const par = box.parentElement, top = par ? par.scrollTop : 0;
+box.innerHTML = html; if (par) par.scrollTop = top;
+box.querySelectorAll("[data-op]").forEach(b => b.onclick = () => { if (profile.coins < (OPN.list.find(x => x.code === b.dataset.op) || {fee: 0}).fee) return toast("😕", T("Tanga yetmaydi"), T("Lobbi")); lbConnect(b.dataset.op, true, null, {from: "open"}); });
+}
+function buildOpen() {
+const body = $("opBody"); OPN.sig = "";
+body.innerHTML = `<div class="opbar"><button class="btn gold" id="opQuick">⚡ ${T("Tez qo'shilish")}</button><button class="btn blue" id="opNew">＋ ${T("Lobbi ochish")}</button><button class="btn gray" id="opRef">⟳</button><span class="opping" id="opPing"></span></div>
+<div class="opchips" id="opChips">${[["all", "Barchasi"], ["voice", "Ovozli xona"], ["free", "Bo'sh joy bor"], ["friends", "Do'stlarim"]].map(([k, t]) => `<span data-f="${k}">${k === "voice" ? "🎤 " : ""}${T(t)}</span>`).join("")}</div><div class="oplist" id="opList"></div>`;
+$("opQuick").onclick = () => quickJoin($("opQuick"));
+$("opNew").onclick = () => lbTablesOpen(true, "open");
+$("opRef").onclick = () => opLoad();
+body.querySelectorAll("#opChips [data-f]").forEach(e => e.onclick = () => { OPN.filter = e.dataset.f; if (OPN.filter === "friends") opFriendSet().then(opRender); opRender(); });
+opRender(); opFriendSet().then(() => { if ($("openScr").classList.contains("on")) opRender(); }); opLoad();
+}
+async function quickJoin(btn) {   // the busiest open lobby I can afford; when there is none, open a public lobby and wait for people
+if (OPN.qbusy) return; OPN.qbusy = true; if (btn) btn.disabled = true;
+try {
+await Net.ensure(); const r = await Net.api("/api/lobbies");
+const cand = (r.lobbies || []).filter(x => x.state === "open" && x.n < x.max && x.fee <= profile.coins && !cityLock(lbCityOf(x.city))).sort((a, b) => b.n - a.n).map(x => x.code);
+if (cand.length) { toast("⚡", T("Tez qo'shilish"), T("Lobbiga ulanilmoqda…")); lbConnect(cand[0], true, null, {from: "open", quick: cand.slice(1, 4)}); }
+else { lobbyCreate(null, [], {pub: true, from: "open"}); if (LB) toast("🌐", T("Ochiq lobbi ochildi"), T("O'yinchilar kutilmoqda")); }
+} catch (e) { toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), ""); }
+OPN.qbusy = false; if (btn) btn.disabled = false;
+}
+setInterval(() => { if ($("openScr").classList.contains("on") && !document.hidden) opLoad(); }, 5000);
+$("opBack").onclick = () => go("withFrScr");
 // ---- lobby voice room (like the voice room of a MOBA lobby): everybody in the lobby can talk to everybody. A mesh of WebRTC calls (<= 8 players, Opus audio is tiny);
 // the server only relays the signalling ("lvoice"), the sound goes phone to phone. The in-match 🎤 (Voice) takes over while a match is on screen; this room pauses and comes back.
 const LobbyVoice = (() => {
