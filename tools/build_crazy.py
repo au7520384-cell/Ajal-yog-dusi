@@ -246,7 +246,13 @@ var go = function () {
 </script>"""
     src = src[:j] + LOADER + src[j:]
 PG_ACH = [("first_win", "First Win"), ("double", "Double Pot"), ("breakpot", "Power Break"), ("runout", "Clean Table"), ("champ", "Tournament Champion"), ("lucky", "Bullseye"), ("streak7", "Loyal Player"), ("rich", "Rich"), ("collector", "Collector")]   # the game's Y8_ACH table
-PG_CONFIG = '{\n  "advertisement": {\n    "minimumDelayBetweenInterstitial": 60,\n    "interstitial": {\n      "placements": [\n        {"id": "between_matches"}\n      ]\n    }\n  },\n  "leaderboards": [\n    {"id": "main", "isMain": true}\n  ],\n  "achievements": [\n' + ",\n".join('    {"id": "%s", "name": "%s", "y8": {"achievement": "%s", "achievementkey": "%s"}}' % (k, v, v, k) for k, v in PG_ACH) + '\n  ]\n}\n'
+import json
+_cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "interstitial": {"placements": [{"id": "between_matches"}]}},
+        "leaderboards": [{"id": "main", "isMain": True}],
+        "achievements": [{"id": k, "name": v, "y8": {"achievement": v, "achievementkey": k}} for k, v in PG_ACH]}
+if os.environ.get("PG_SAAS_TOKEN"):   # Playgama's own leaderboard service (Bridge SaaS): the public token from the developer dashboard (it is meant to sit in the game files)
+    _cfg["saas"] = {"publicToken": os.environ["PG_SAAS_TOKEN"], "leaderboards": {"platforms": ["playgama", "qa_tool"]}}
+PG_CONFIG = json.dumps(_cfg, indent=2) + "\n"
 
 # light build: every embedded picture becomes a real file in img/ (no base64 growth, and a picture is only downloaded when the game actually shows it)
 import re, hashlib, base64
