@@ -147,7 +147,9 @@ guard = setTimeout(end, 120000);
 try { call(); } catch (e) { end(); }
 });
 },
-saveData: bye, loadData: bye, awardAchievement: bye, saveLeaderboardScore: bye, trackCustomEvent: bye, showAchievements: bye, showLeaderboard: bye, login() {},
+saveData: bye, loadData: bye, awardAchievement: bye, trackCustomEvent: bye, showAchievements: bye, showLeaderboard: bye, login() {},
+// the total winnings go to the platform's leaderboard where there is one (Facebook, Yandex, Y8 ... through Playgama); on Playgama itself the type is "not_available", then nothing is sent
+saveLeaderboardScore(o) { try { const L = B.leaderboards; if (L && L.type && L.type !== "not_available") return Promise.resolve(L.setScore("main", Math.max(0, Math.floor(+o.points || 0)))).catch(() => {}); } catch (e) {} return bye(); },
 };
 let rewardedOk = false; try { rewardedOk = !!A.isRewardedSupported; } catch (e) {}
 Y8.adsReady = rewardedOk;   // the reward buttons show only where rewarded video exists
@@ -240,7 +242,7 @@ var go = function () {
 })();
 </script>"""
     src = src[:j] + LOADER + src[j:]
-PG_CONFIG = '{\n  "advertisement": {\n    "minimumDelayBetweenInterstitial": 60,\n    "interstitial": {\n      "placements": [\n        {"id": "between_matches"}\n      ]\n    }\n  }\n}\n'
+PG_CONFIG = '{\n  "advertisement": {\n    "minimumDelayBetweenInterstitial": 60,\n    "interstitial": {\n      "placements": [\n        {"id": "between_matches"}\n      ]\n    }\n  },\n  "leaderboards": [\n    {"id": "main", "isMain": true}\n  ]\n}\n'
 
 # light build: every embedded picture becomes a real file in img/ (no base64 growth, and a picture is only downloaded when the game actually shows it)
 import re, hashlib, base64
