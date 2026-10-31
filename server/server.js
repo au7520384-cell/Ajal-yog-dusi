@@ -756,6 +756,19 @@ const routes = {
     const countries = {}; for (const r of rooms.values()) if (!r.over) for (const s of r.p) { const c = (s.profile.country || "").toUpperCase(); if (c) countries[c] = (countries[c] || 0) + 1; }
     return {live: list.slice(0, 50), total: list.length, countries};
   },
+  "GET /api/lobbies": () => {   // the open (public) lobbies: who hosts, how many seats are taken, how many are in the voice room
+    const now = Date.now(), out = [];
+    for (const L of lobbies.values()) {
+      if (!L.pub) continue;
+      const ps = L.players.filter(p => seatKept(p, now)); if (!ps.length) continue;
+      const h = (L.host && L.host.profile) || {};
+      out.push({code: L.code, city: L.city, fee: L.fee, n: ps.length, max: L.max, state: L.state,
+        host: {uid: L.host.uid, name: cleanChat(String(h.name || "Player").slice(0, 16)), avatar: h.avatar | 0, frame: h.frame | 0, country: String(h.country || "").slice(0, 3), level: h.level | 0},
+        voice: ps.filter(p => p.lvOn && p.readyState === 1).length});
+    }
+    out.sort((a, b) => (a.state === "open") !== (b.state === "open") ? (a.state === "open" ? -1 : 1) : ((a.n >= a.max) - (b.n >= b.max)) || b.n - a.n);
+    return {lobbies: out.slice(0, 40)};
+  },
   "GET /api/online": () => {
     const byCity = {}; for (const [city, q] of queues) byCity[city] = q.length;
     return {total: clients.size, playing: rooms.size * 2, byCity};
@@ -1496,10 +1509,10 @@ function sweepLobby(code) {   // drop the players who stayed away too long; an e
   lobbyBroadcast(L);
   if (L.players.some(p => p.readyState !== 1)) L.gc = setTimeout(() => sweepLobby(code), 30e3);
 }
-function lobbyState(L) { return {t: "lobbystate", code: L.code, city: L.city, fee: L.fee, max: L.max, state: L.state, host: L.host.uid, players: L.players.map(p => pubP(p, L))}; }
+function lobbyState(L) { return {t: "lobbystate", code: L.code, city: L.city, fee: L.fee, max: L.max, state: L.state, pub: !!L.pub, host: L.host.uid, players: L.players.map(p => pubP(p, L))}; }
 function lobbyBroadcast(L) { const m = lobbyState(L); for (const p of L.players) wsSend(p, m); }
 function leaveLobby(ws, dropped) {   // dropped: the socket just died (not a deliberate leave): while the lobby is open the seat is kept for a while
-  const code = ws.lobby; if (!code) return; ws.lobby = null;
+  const code = ws.lobby; if (!code) return; ws.lobby = null; ws.lvOn = false;
   const L = lobbies.get(code); if (!L) return;
   if (dropped && !L.T && L.state === "open" && L.players.includes(ws)) {
     ws.away = Date.now(); lobbyBroadcast(L);
@@ -1630,7 +1643,7 @@ wss.on("connection", (ws, req) => {
         if (L && !L.players.some(p => seatKept(p))) { lobbies.delete(code); L = null; }
         if (!L) {
           if (m.join || m.rejoin) return wsSend(ws, {t: "nocode"});
-          L = {code, host: ws, city, fee: FEE_OF(city), players: [ws], max: 8, state: "open", T: null}; lobbies.set(code, L); ws.lobby = code;
+          L = {code, host: ws, city, fee: FEE_OF(city), players: [ws], max: 8, state: "open", T: null, pub: !!m.pub && !m.join}; lobbies.set(code, L); ws.lobby = code;   // pub: listed in the open lobbies list (GET /api/lobbies)
           return lobbyBroadcast(L);
         }
         if (L.players.includes(ws)) return lobbyBroadcast(L);
@@ -1653,6 +1666,10 @@ wss.on("connection", (ws, req) => {
       const ps = L.players.filter(p => p.readyState === 1 && !p.room);
       if (ps.length < 2) return wsSend(ws, {t: "lobbyerr", why: "min"});
       startTournament(L, ps);
+    } else if (m.t === "lpub") {   // the host makes his lobby public (listed for everybody) or private again
+      const L = ws.lobby && lobbies.get(ws.lobby);
+      if (!L || L.host !== ws || !bucket(ws, "lpub", 6, 5000)) return;
+      L.pub = !!m.on; lobbyBroadcast(L);
     } else if (m.t === "cancel") {
       leaveQueue(ws);
     } else if (m.t === "spectate") {
@@ -1696,6 +1713,7 @@ wss.on("connection", (ws, req) => {
       const k = String(m.k || "");
       if (!LVOICE_KINDS.has(k)) return;
       const d = m.d && typeof m.d === "object" && JSON.stringify(m.d).length < 16000 ? m.d : null;
+      if (k === "hello" && !(d && d.q)) ws.lvOn = true; else if (k === "bye") ws.lvOn = false;   // counted in the open lobbies list
       const out = {t: "lvoice", from: ws.uid, k, d, re: m.re ? 1 : 0};
       if (m.to) { const tp = L.players.find(p => p.uid === String(m.to).slice(0, 40)); if (tp && tp !== ws) wsSend(tp, out); }   // to one member
       else for (const p of L.players) if (p !== ws) wsSend(p, out);                                                            // to everybody else
