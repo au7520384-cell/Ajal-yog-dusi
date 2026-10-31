@@ -201,6 +201,12 @@ sub('<div id="hLegal"><a href="/terms" target="_blank">Terms of Service</a> · <
 # first open: straight onto the table (practice) with the skippable pulsing-marks tutorial, no menus in the way (CrazyGames quality guideline: onboarding in gameplay)
 sub("try { loginSplash(); } catch (e) {}\nrequestAnimationFrame(frame);", "try { loginSplash(); } catch (e) {}\nif (!profile.tutDone && !(profile.games | 0)) setTimeout(() => { try { if (mode !== \"game\" && !$(\"modal\").classList.contains(\"on\")) startMatch(\"practice\", CITIES[0]); } catch (e) {} }, 1500);\nrequestAnimationFrame(frame);")
 
+# sharper picture on portals (reviewers judge the game in a small iframe on an ordinary 1x monitor): the canvas is drawn at about twice the page size (never above ~2560 px wide unless the screen itself is denser)
+# and shrunk by the browser, graphics level High by default, high-quality image smoothing
+sub('let gq = "mid"; try { gq = (profile.set && profile.set.gfx) || "mid"; } catch (e) {}', 'let gq = "high"; try { gq = (profile.set && profile.set.gfx) || "high"; } catch (e) {}')
+sub("dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5})[gq] || 2.5) * dprAuto);", "dpr = Math.max(1, Math.min(Math.max(window.devicePixelRatio || 1, Math.min(2, 2560 / Math.max(vw, 1))), ({low: 1.5, mid: 2, high: 2.5})[gq] || 2.5) * dprAuto);")
+sub("cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);", 'cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr); try { ctx.imageSmoothingQuality = "high"; } catch (e) {}')
+sub('const SET_DEF = { gfx: "mid", fps: "90"', 'const SET_DEF = { gfx: "high", fps: "90"')
 # Playgama-only patches
 sub('<head>', '<head>\n<style>.chanonly{display:none!important}</style>')   # the channel name switch and the channel row mean nothing on a portal
 if PG:
