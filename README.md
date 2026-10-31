@@ -127,3 +127,8 @@ With the same switch (`CHANNEL_AUTOPOST=1`) the server also posts from what real
 **Names need consent.** A player's name (and level) appears only if they switched on *Settings > Show my name in the channel* (`prefs.chanName`, off by default, stored on the server; a client that does not send it counts as "no"). Everyone else is "a player" / "bir o'yinchi". The post tells readers how to opt in. `CHAN_NAMES=0` on the server turns names off completely.
 
 `/chan` shows how many data posts are waiting, and `/chan now` sends those first.
+
+## Avatars by gender and the new-friend offer
+
+- The 76 portrait avatars alternate: even = boy, odd = girl (`avGender()`; the premium pictures carry an m / f / n string, masked and helmeted ones are neutral). The first picture is still random, so the menu asks once **"Who are you? Boy / Girl / Keep the current one"** (`profile.gender`, `profile.genderAsked`); a default portrait of the other gender is swapped for one that fits, a bought premium picture stays. On portals (CrazyGames / Playgama builds) the question waits until the tutorial is done. The avatar picker in Profile has *All / 👦 / 👧* chips and opens on the player's own gender.
+- Accepting a friend request now offers *"Play with your friend? Join the lobby"*: one tap opens a private table inviting that friend (the friend gets the usual invitation pop-up). The voice button works during the match; a voice room inside the lobby itself is not built yet.
