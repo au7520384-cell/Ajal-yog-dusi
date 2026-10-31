@@ -11064,7 +11064,7 @@ const items = [...Array.from({length: ROAD_N}, (_, k) => ({at: roadAt(k), k})), 
 let cur = items.length - 1; for (let i = 0; i < items.length; i++) if (items[i].at > tp) { cur = i; break; }
 const node = (it, i) => {
 if (it.city) { const c = it.city, ok = tp >= UNLOCK_TP[c.id];
-return `<div class="rdn rdcity${ok ? " ok" : ""}${i === cur ? " cur" : ""}"><div class="rdi">${IMG["rg_" + c.id] ? `<img src="${IMG["rg_" + c.id]}" style="width:54px;height:54px" alt="">` : "🏙"}</div><b>${esc(c.name)}</b><span class="rdv">🏆 ${fmt(UNLOCK_TP[c.id])}</span><i class="${ok ? "rdd" : "rdl"}">${ok ? "🔓" : "🔒"}</i></div>`; }
+return `<div class="rdn rdcity${ok ? " ok" : ""}${i === cur ? " cur" : ""}"><div class="rdi">${IMG["rg_" + c.id] ? `<img src="${IMG["rg_" + c.id]}" style="width:54px;height:54px;object-fit:contain" alt="">` : "🏙"}</div><b>${esc(c.name)}</b><span class="rdv">🏆 ${fmt(UNLOCK_TP[c.id])}</span><i class="${ok ? "rdd" : "rdl"}">${ok ? "🔓" : "🔒"}</i></div>`; }
 const k = it.k, r = roadRew(k), [ic, q] = rewIcon2(r), at = it.at, ok = tp >= at, cl = !!got[k];
 return `<div class="rdn${ok ? " ok" : ""}${cl ? " cl" : ""}${i === cur ? " cur" : ""}${k % 10 === 9 ? " big" : ""}" data-rk="${k}">${k === 0 ? `<small class="rds">${T("Mavsum")} 1</small>` : ""}<div class="rdi">${ic}</div><b>${esc(String(q))}</b><span class="rdv">🏆 ${fmt(at)}</span>${ok && !cl ? `<button class="btn green" data-rc="${k}">${T("Olish")}</button>` : cl ? `<i class="rdd">✅</i>` : `<i class="rdl">🔒</i>`}</div>`; };
 const prev = cur ? items[cur - 1].at : 0, frac = Math.min(1, Math.max(0, (tp - prev) / Math.max(1, items[cur].at - prev)));
