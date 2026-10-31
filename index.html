@@ -520,6 +520,8 @@ box-shadow:inset 0 2px 0 #ffffff30,0 0 22px var(--tg),0 12px 30px #000c;animatio
 .toast .ti::before{content:"";position:absolute;inset:-8px;border-radius:50%;background:repeating-conic-gradient(var(--tc) 0 7deg,transparent 7deg 24deg);opacity:.4;animation:tspin 7s linear infinite;
 -webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%)}
 .toast .ti>*{position:relative;animation:tpop .6s .15s cubic-bezier(.2,1.8,.4,1) both}.toast .ti img{width:50px;height:50px;object-fit:cover;border-radius:50%;filter:drop-shadow(0 3px 4px #000a)}
+img.ei{object-fit:contain!important;border-radius:0!important}   /* the little reward pictures (cup, knight, wheel, chest...) are never cropped, wherever they sit */
+.toast .ti img.ei{width:auto;height:50px;max-width:62px;object-fit:contain;border-radius:0;vertical-align:baseline}   /* the reward pictures (cup, knight, wheel, chest...) are shown whole, not cropped into a circle like the avatars / table photos above */
 .toast .ti .tia{display:grid;place-items:center;width:56px;height:56px}.toast .ti .tia img{width:54px;height:54px;border-radius:0;object-fit:contain}.toast .ti .tia svg{width:54px;height:54px}.toast .ti .tia .abring,.toast .ti .tia .achi{transform:scale(.9)}
 .toast b{display:block;font-family:var(--fh);font-weight:400;font-size:20px;color:#fff;text-shadow:0 2px 0 #0008;line-height:1.1;letter-spacing:.3px}
 .toast small{display:inline-block;background:#0007;border-radius:8px;padding:1px 8px;color:var(--tc);font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:800;margin-bottom:3px}
