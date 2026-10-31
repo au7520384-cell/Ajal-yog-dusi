@@ -279,6 +279,15 @@ def _file(m):
     IMGS[name] = raw
     return name
 src = re.sub(r"data:image/(webp|png|jpeg|jpg|gif);base64,([A-Za-z0-9+/=]+)", _file, src)
+# the table-rail / cue-art tables hold bare base64 WebP strings ("UklGR..."), about half of the page: files as well (the page turns a path or base64 into a source with W64(), as in build_web.py)
+# Playgama build (or BARE_WEBP=1): the page drops from ~10 MB to ~5 MB, those pictures load only when a screen shows them
+def _bare(m):
+    raw = base64.b64decode(m.group(1))
+    if len(raw) < int(os.environ.get("INLINE_UNDER", "0")): return m.group(0)
+    name = "img/" + hashlib.sha1(raw).hexdigest()[:14] + ".webp"
+    IMGS[name] = raw
+    return '"' + name + '"'
+if PG or os.environ.get("BARE_WEBP"): src = re.sub(r'"(UklGR[A-Za-z0-9+/=]{300,})"', _bare, src)
 
 out = sys.argv[1] if len(sys.argv) > 1 else root
 os.makedirs(out, exist_ok=True)
