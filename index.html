@@ -509,6 +509,8 @@ background:#0d1426ee;border:2px solid #34436a;border-radius:14px;padding:8px}
 @keyframes rise{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:1;transform:translate(0,-30px) scale(1.2)}100%{transform:translate(var(--dx),-55vh) scale(1);opacity:0}}
 /* toasts */
 #toasts{position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:50;display:flex;flex-direction:column;gap:8px;pointer-events:none;align-items:center}
+body:has(#res.on) #toasts{top:8px;left:auto;right:8px;transform:none;align-items:flex-end}   /* match result: the free top-right corner, one small card at a time - they used to sit on the avatars and the table name */
+body:has(#res.on) .toast{zoom:.82;min-width:0;max-width:min(320px,44vw)}
 body:has(#modal.on) #toasts{left:auto;right:12px;transform:none;align-items:flex-end}
 .toast{--tc:#ffcf3d;--t1:#2d3a6a;--t2:#121a33;--tg:#ffcf3d44;position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;min-width:250px;max-width:340px;
 padding:7px 18px 7px 7px;border-radius:16px;border:2px solid var(--tc);background:linear-gradient(135deg,var(--t1),var(--t2));
@@ -8352,7 +8354,7 @@ const boxImg = (id, px = 56) => IMG["bx_" + id] ? `<img src="${IMG["bx_" + id]}"
 function toast(icon, title, sub, o = {}) { if (toastQ.length < 12) toastQ.push([icon, title, sub, o]); pumpToast(); }
 function pumpToast() {
 const box = $("toasts");
-while (box.children.length < 2 && toastQ.length) {
+while (box.children.length < ($("res").classList.contains("on") ? 1 : 2) && toastQ.length) {   // on the result screen the reward cards come one after another, so they never cover the players
 let [icon, title0, sub0, o] = toastQ.shift(); const title = T(title0), sub = sub0 && T(sub0);
 if (icon === "🧩" && !o.img && !o.html) o = {...o, html: pcImg(40)};
 { const ri = {"🪙": 0, "🎯": 1, "💵": 3, "🎡": 4, "💎": 5, "👑": 7}[icon]; if (ri !== undefined && !o.img && !o.html && IMG["ri" + ri]) o = {...o, html: riImg(ri, 40)}; }
