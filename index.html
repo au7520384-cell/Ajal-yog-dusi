@@ -894,9 +894,9 @@ background:linear-gradient(#5a8a4a,#2e5a26);box-shadow:inset 0 2px 0 #fff4,0 3px
 .lbslot.away{opacity:.45}
 .lbvc{display:flex;gap:6px;align-items:stretch}.lbvc .btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 8px;font-size:15px;line-height:1.1;border-radius:14px;min-width:0}.lbvc .btn.main{flex:1}.lbvc .btn.sq{flex:0 0 44px;padding:9px 0}.lbvc svg{width:20px;height:20px;fill:#fff;flex:none}.lbvc .btn span{min-width:0}
 .lbvn{text-align:center;font-size:12px;font-weight:700;color:#9fb3e8;min-height:15px}
-.lbvb{position:absolute;top:3px;right:4px;font-size:12px;line-height:1;text-decoration:none;pointer-events:none;background:#000b;border-radius:9px;padding:2px 3px}.lbvb:empty{display:none}
+.lbvb{position:absolute;top:3px;right:4px;font-size:18px;line-height:1;text-decoration:none;pointer-events:none;filter:drop-shadow(0 1px 2px #000a)}.lbvb:empty{display:none}.lbvb .mico{vertical-align:top}
 .lbslot.talk{border-color:#3fe052;box-shadow:inset 0 0 14px #3fe05288,0 0 12px #3fe052aa}
-.mh520 .lbvc{gap:4px}.mh520 .lbvc .btn{font-size:10px;padding:4px 3px;gap:3px;border-radius:10px}.mh520 .lbvc .btn.sq{flex-basis:30px}.mh520 .lbvc svg{width:14px;height:14px}.mh520 .lbvn{font-size:10px;min-height:11px}.mh520 .lbvb{font-size:9px;top:1px;right:2px}
+.mh520 .lbvc{gap:4px}.mh520 .lbvc .btn{font-size:10px;padding:4px 3px;gap:3px;border-radius:10px}.mh520 .lbvc .btn.sq{flex-basis:30px}.mh520 .lbvc svg{width:14px;height:14px}.mh520 .lbvn{font-size:10px;min-height:11px}.mh520 .lbvb{font-size:13px;top:1px;right:2px}
 .lbslot.on{border-style:solid;border-color:#6f93e8;background:linear-gradient(#1e3470,#142552);box-shadow:inset 0 0 14px #5b86e855}.lbslot b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lbslot i{font-style:normal;color:#ffe27a;font-size:11px;font-weight:800}.lbslot.host i{color:#a6f07a}.lbcrown{position:absolute;top:-14px;left:50%;transform:translateX(-50%);line-height:0;filter:drop-shadow(0 2px 3px #000a)}
 .lbstat,.lbwait,.lbme{text-align:center;font-weight:700}.lbme{color:#ffe27a;font-size:20px}.lbwait{color:#9fb3e8}
 .lbstart{text-align:center}.lbstart small{display:block;margin-top:4px;color:#9fb3e8}.lbstart .btn{min-width:min(60%,230px);font-size:24px;border:3px solid #e6c260;border-radius:18px;box-shadow:inset 0 2px 0 #fff6,0 4px 0 #0007,0 0 12px #e6c26055}
@@ -10081,14 +10081,39 @@ const code = typeof LB !== "undefined" && LB ? LB.code : "", link = code ? (lobb
 openModal({icon: "🎧", title: T("Ovozli chat bu brauzerda ishlamaydi"), text: TT("{0} ichidagi brauzer mikrofonni bloklaydi. Havolani oddiy brauzerda oching: yuqoridagi ⋮ yoki ⋯ → «Brauzerda ochish». Eshitish ishlaydi.", app === "WebView" ? T("bu ilova") : app),
 buttons: [...(TG && TG.openLink ? [{label: T("Brauzerda ochish"), cls: "blue", fn: () => TG.openLink((Net.base || CONFIG.server) + "/" + (code ? "?join=" + code : ""))}] : []), {label: T("Havolani nusxalash"), cls: "green", fn: () => { copyText(link); toast("🔗", T("Havola nusxalandi"), ""); }}, {label: T("Davom etish"), cls: "gray", fn: () => {}}]});
 }
+// ---- the microphone picture (round dark badge + flat light microphone: capsule, U-shaped holder, stand) used instead of the 🎤 emoji everywhere: compact, and identical on every phone
+const micShapes = c => `<g fill="${c}"><rect x="8" y="2" width="8" height="12.4" rx="4"/><rect x="11" y="18.6" width="2" height="2.6"/><rect x="7.6" y="20.6" width="8.8" height="2" rx=".8"/></g><path d="M5 10.6v1.4a7 7 0 0 0 14 0v-1.4" fill="none" stroke="${c}" stroke-width="2.2"/>`;
+const MIC_SLASH = '<path d="M3.5 3.5l17 17" stroke="#ff5a5a" stroke-width="2.6" stroke-linecap="round" fill="none"/>';
+const micUri = off => "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><radialGradient id="g" cx=".5" cy=".4" r=".62"><stop offset="0" stop-color="#2b6d89"/><stop offset="1" stop-color="#0d2a3b"/></radialGradient></defs><circle cx="16" cy="16" r="15" fill="url(#g)" stroke="#6ab9cf" stroke-width="1.4"/><g transform="translate(6.4 6.2) scale(.8)">${micShapes(off ? "#9fb8c2" : "#e8f5fa")}${off ? MIC_SLASH : ""}</g></svg>`);
+const MIC_SPAN = (cls = "") => `<span class="mico${cls ? " " + cls : ""}"></span>`;
+{ const st = document.createElement("style");
+st.textContent = `.mico{display:inline-block;width:1.2em;height:1.2em;vertical-align:-.22em;background:center/contain no-repeat url("${micUri(0)}")}.mico.off{background-image:url("${micUri(1)}")}.mico.wait{opacity:.45}`;
+document.head.appendChild(st);
+const SKIP = {SCRIPT: 1, STYLE: 1, TEXTAREA: 1, OPTION: 1, TITLE: 1, NOSCRIPT: 1}, EM = "\u{1F3A4}";
+const wrapText = n => {   // a text node with 🎤 becomes text + picture + text
+const parts = n.nodeValue.split(EM), frag = document.createDocumentFragment();
+parts.forEach((t, i) => { if (i) { const sp = document.createElement("span"); sp.className = "mico"; frag.appendChild(sp); } if (t) frag.appendChild(document.createTextNode(t)); });
+n.parentNode.replaceChild(frag, n);
+};
+const wrapTree = root => {
+if (!root) return;
+if (root.nodeType === 3) { if (root.parentNode && root.parentNode.nodeType === 1 && !SKIP[root.parentNode.tagName] && root.nodeValue.includes(EM)) wrapText(root); return; }
+if (root.nodeType !== 1 || SKIP[root.tagName] || !root.textContent.includes(EM)) return;
+const list = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+for (let n = w.nextNode(); n; n = w.nextNode()) { const p = n.parentNode; if (p && p.nodeType === 1 && !SKIP[p.tagName] && n.nodeValue.includes(EM)) list.push(n); }
+list.forEach(wrapText);
+};
+const go_ = () => { wrapTree(document.body); new MutationObserver(ms => { for (const m of ms) { if (m.type === "characterData") wrapTree(m.target); else m.addedNodes.forEach(wrapTree); } }).observe(document.body, {childList: true, subtree: true, characterData: true}); };
+if (document.body) go_(); else document.addEventListener("DOMContentLoaded", go_);
+}
 const Voice = (() => {
 let pc = null, mic = null, on = false, muted = false, remoteReady = false, spkOff = false, ice = null, audioEl = null, queued = [], stat = "", tries = 0, readyTick = 0, listenOnly = false;
 const btn = () => $("gVoice"), spk = () => $("gSpk");
 const online = () => { const G = game; return !!(G && G.net && !G.net.spec && !G.over && mode === "game"); };
 const shown = () => { const G = game; return online() || !!(G && !G.net && !G.over && mode === "game" && (G.type === "ai" || G.type === "tour")); };
 const IC = {
-mic: '<svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 0 0 3.5-3.5V6a3.5 3.5 0 0 0-7 0v6a3.5 3.5 0 0 0 3.5 3.5zM6.5 11.5a.9.9 0 0 0-1.8 0 7.3 7.3 0 0 0 6.4 7.2V21H8.6a.9.9 0 0 0 0 1.8h6.8a.9.9 0 0 0 0-1.8h-2.5v-2.3a7.3 7.3 0 0 0 6.4-7.2.9.9 0 0 0-1.8 0 5.5 5.5 0 0 1-11 0z"/></svg>',
-micOff: '<svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 0 0 3.5-3.5V6a3.5 3.5 0 0 0-7 0v6a3.5 3.5 0 0 0 3.5 3.5zM6.5 11.5a.9.9 0 0 0-1.8 0 7.3 7.3 0 0 0 6.4 7.2V21H8.6a.9.9 0 0 0 0 1.8h6.8a.9.9 0 0 0 0-1.8h-2.5v-2.3a7.3 7.3 0 0 0 6.4-7.2.9.9 0 0 0-1.8 0 5.5 5.5 0 0 1-11 0z"/><path d="M3.5 3.5l17 17" stroke="#ff5a5a" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg>',
+mic: `<svg viewBox="0 0 24 24">${micShapes("#fff")}</svg>`,
+micOff: `<svg viewBox="0 0 24 24">${micShapes("#fff")}${MIC_SLASH}</svg>`,
 spk: '<svg viewBox="0 0 24 24"><path d="M3 9.5v5h3.6L12 19V5L6.6 9.5H3z"/><path d="M15 8.3a5 5 0 0 1 0 7.4M17.6 5.6a8.6 8.6 0 0 1 0 12.8" stroke="#fff" stroke-width="1.9" stroke-linecap="round" fill="none"/></svg>',
 spkOff: '<svg viewBox="0 0 24 24"><path d="M3 9.5v5h3.6L12 19V5L6.6 9.5H3z"/><path d="M3.5 3.5l17 17" stroke="#ff5a5a" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg>'};
 function ui() {
@@ -11333,7 +11358,7 @@ function lbChip(on) {   // while I am in a lobby but looking at another screen a
 let el = $("lobbyChip");
 if (!on || !LB) { if (el) el.remove(); return; }
 if (!el) { el = document.createElement("div"); el.id = "lobbyChip"; el.style.cssText = "position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:9000;background:linear-gradient(#2a3d7a,#16214a);border:2px solid #ffd45a;border-radius:20px;padding:8px 18px;color:#ffe27a;font:800 18px/1.2 inherit;letter-spacing:3px;cursor:pointer;box-shadow:0 4px 18px #000a"; document.body.appendChild(el); el.onclick = () => lbShow(); }
-el.textContent = `🔑 ${LB.code} · ${LB.players.length}/${LB.max}${LobbyVoice.on() ? " · 🎤" : ""}`;
+{ const h = `🔑 ${LB.code} · ${LB.players.length}/${LB.max}${LobbyVoice.on() ? " · " + MIC_SPAN() : ""}`; if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; } }
 }
 setInterval(() => lbChip(!!LB && mode === "menu" && !$("lbScr").classList.contains("on") && !$("res").classList.contains("on") && !$("vs").classList.contains("on")), 900);
 function lbRender() {
@@ -11527,10 +11552,10 @@ function paint() {
 const root = $("lbBody"); if (!root) return;
 const on = active();
 root.querySelectorAll(".lbslot[data-uid]").forEach(el => {
-const uid = el.dataset.uid, b = el.querySelector(".lbvb"); let txt = "", talk = false;
-if (uid === me()) { if (on) { txt = myState() ? "🔇" : "🎤"; talk = myTalk && !muted; } }
-else { const p = peers[uid]; if (p && p.ready) { txt = p.mute ? "🔇" : on && !live(p) ? "…" : "🎤"; talk = !!p.talk && !p.mute; } }
-if (b && b.textContent !== txt) b.textContent = txt;
+const uid = el.dataset.uid, b = el.querySelector(".lbvb"); let txt = "", talk = false;   // txt: "" nothing, "on" in the room, "off" muted, "wait" connecting
+if (uid === me()) { if (on) { txt = myState() ? "off" : "on"; talk = myTalk && !muted; } }
+else { const p = peers[uid]; if (p && p.ready) { txt = p.mute ? "off" : on && !live(p) ? "wait" : "on"; talk = !!p.talk && !p.mute; } }
+if (b && b.dataset.v !== txt) { b.dataset.v = txt; b.innerHTML = txt ? MIC_SPAN(txt === "on" ? "" : txt) : ""; }
 el.classList.toggle("talk", talk);
 });
 const bt = $("lbVoice"); if (!bt) return;
