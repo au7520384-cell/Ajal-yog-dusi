@@ -124,6 +124,7 @@ const B = window.bridge; if (!B || !B.platform) return;
 const P = B.platform, A = B.advertisement || {}, EV = B.EVENT_NAME || {};
 const bye = () => Promise.resolve();
 let cur = null;   // the ad on screen: {kind, handle(state)}
+const achSent = new Set();
 const onState = kind => state => { try { if (cur && cur.kind === kind) cur.handle(String(state)); } catch (e) {} };
 try { A.on(EV.INTERSTITIAL_STATE_CHANGED, onState("interstitial")); A.on(EV.REWARDED_STATE_CHANGED, onState("rewarded")); } catch (e) {}
 Y8.sdk = {
@@ -147,7 +148,9 @@ guard = setTimeout(end, 120000);
 try { call(); } catch (e) { end(); }
 });
 },
-saveData: bye, loadData: bye, awardAchievement: bye, trackCustomEvent: bye, showAchievements: bye, showLeaderboard: bye, login() {},
+saveData: bye, loadData: bye, trackCustomEvent: bye,
+// achievements: the game unlocks each one once; Bridge tracks them (locally on Playgama, natively on Y8 / Lagged, ids in the config)
+awardAchievement(o) { try { const k = String(o.achievementKey || ""); if (k && !achSent.has(k) && B.achievements) { achSent.add(k); return Promise.resolve(B.achievements.unlock(k)).catch(() => {}); } } catch (e) {} return bye(); }, showAchievements: bye, showLeaderboard: bye, login() {},
 // the total winnings go to the platform's leaderboard where there is one (Facebook, Yandex, Y8 ... through Playgama); on Playgama itself the type is "not_available", then nothing is sent
 saveLeaderboardScore(o) { try { const L = B.leaderboards; if (L && L.type && L.type !== "not_available") return Promise.resolve(L.setScore("main", Math.max(0, Math.floor(+o.points || 0)))).catch(() => {}); } catch (e) {} return bye(); },
 };
@@ -242,7 +245,8 @@ var go = function () {
 })();
 </script>"""
     src = src[:j] + LOADER + src[j:]
-PG_CONFIG = '{\n  "advertisement": {\n    "minimumDelayBetweenInterstitial": 60,\n    "interstitial": {\n      "placements": [\n        {"id": "between_matches"}\n      ]\n    }\n  },\n  "leaderboards": [\n    {"id": "main", "isMain": true}\n  ]\n}\n'
+PG_ACH = [("first_win", "First Win"), ("double", "Double Pot"), ("breakpot", "Power Break"), ("runout", "Clean Table"), ("champ", "Tournament Champion"), ("lucky", "Bullseye"), ("streak7", "Loyal Player"), ("rich", "Rich"), ("collector", "Collector")]   # the game's Y8_ACH table
+PG_CONFIG = '{\n  "advertisement": {\n    "minimumDelayBetweenInterstitial": 60,\n    "interstitial": {\n      "placements": [\n        {"id": "between_matches"}\n      ]\n    }\n  },\n  "leaderboards": [\n    {"id": "main", "isMain": true}\n  ],\n  "achievements": [\n' + ",\n".join('    {"id": "%s", "name": "%s", "y8": {"achievement": "%s", "achievementkey": "%s"}}' % (k, v, v, k) for k, v in PG_ACH) + '\n  ]\n}\n'
 
 # light build: every embedded picture becomes a real file in img/ (no base64 growth, and a picture is only downloaded when the game actually shows it)
 import re, hashlib, base64
