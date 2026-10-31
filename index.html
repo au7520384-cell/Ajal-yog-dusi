@@ -266,7 +266,7 @@ background:linear-gradient(120deg,#5a1a00,#2a0e3a 60%,#0e1a3a);border:2px solid 
 .frow{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;background:#1a2340;border:1px solid #2c3a60;border-radius:12px;padding:8px 10px;margin-bottom:6px}
 .frow .av{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-size:26px;position:relative}
 .frow .on{position:absolute;right:-3px;bottom:-3px;width:12px;height:12px;border-radius:50%;background:#3fe052;border:2px solid #1a2340}
-.codebox{display:flex;gap:8px;align-items:center;background:#0d1426;border:2px dashed #ffcf3d;border-radius:12px;padding:10px 14px;font-family:var(--fh);font-size:28px;letter-spacing:3px;color:#ffe27a;justify-content:space-between}
+.codebox{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#0d1426;border:2px dashed #ffcf3d;border-radius:12px;padding:10px 14px;font-family:var(--fh);font-size:28px;letter-spacing:3px;color:#ffe27a;justify-content:space-between;min-width:0}.codebox .btn{white-space:nowrap}   /* a long language (Russian): the buttons drop under the code inside the box instead of sticking out */
 .cuelist{display:flex;flex-direction:column;gap:10px}
 .cuerow{display:grid;grid-template-columns:minmax(0,1fr) 200px 150px;gap:14px;align-items:center;background:linear-gradient(#2d3a5e,#1b2440);border:2px solid #3e4f7c;border-radius:14px;padding:10px 14px}
 .cuerow.sel{border-color:var(--gold);box-shadow:0 0 0 2px #ffcf3d55,0 0 22px #ffcf3d44}
@@ -725,6 +725,7 @@ background:linear-gradient(#6aee5a,#25b01c);border:2px solid #15801a;border-radi
 .nb-cues{container-type:inline-size}.nb-cues .cb-t{position:absolute;left:64%;top:14%;width:34%;height:42%;display:grid;place-items:center;font-family:var(--fh);font-size:11cqw;color:#ffe27a;text-shadow:0 2px 0 #3a2400,0 0 6px #000;pointer-events:none;white-space:nowrap}
 .hbt-red{border-color:#d8303a;box-shadow:0 0 14px #e0303a88,inset 0 2px 0 #fff3}.hbt img.invbig{height:63px;width:100px;max-width:100px;object-fit:cover;border-radius:10px;-webkit-mask-image:none;mask-image:none;margin-bottom:3px;box-shadow:0 0 0 2px #4a7cf0aa,0 3px 8px #000b}.hbt-blue{border-color:#4a7cf0;box-shadow:0 0 14px #4a7cf088,inset 0 2px 0 #fff3}.hbt-cyan{border-color:#2aa8e8;box-shadow:0 0 14px #2ad8ff88,inset 0 2px 0 #fff3}
 .hbt-gold{border-color:#f0b83a;box-shadow:0 0 14px #ffc94a88,inset 0 2px 0 #fff3}.hbt-purple{border-color:#a07ae0;box-shadow:0 0 14px #a07ae088,inset 0 2px 0 #fff3}
+.honline{position:absolute;left:290px;top:36px;display:none;align-items:center;gap:10px;padding:8px 20px;border-radius:24px;background:rgba(8,18,40,.62);border:1px solid rgba(255,255,255,.22);font:800 22px/1 var(--fh);color:#b6f7c4;text-shadow:0 1px 3px #000;pointer-events:none;white-space:nowrap}.honline i{width:14px;height:14px;border-radius:50%;background:#35e06a;box-shadow:0 0 10px #35e06a}
 .hbt-top{width:112px;height:104px}.hbt-top .dot{top:-8px;right:-8px}.hbt-top em{top:auto;bottom:-10px}
 .hbt .hbe{font-size:52px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 3px 4px #000a)}.hbt-tv img{-webkit-mask-image:none;mask-image:none;height:62px}.hbt-tv video{width:100px;height:66px;object-fit:cover;border-radius:9px;margin-bottom:3px;box-shadow:0 0 0 2px #b890f0cc,0 3px 8px #000b;pointer-events:none;background:#101428}
 #hstage{--iky:1}
@@ -1808,6 +1809,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 <i class="dot" id="dotRw2" style="display:none"></i>
 <button class="hbt hbt-gold hbt-rw hbt-top" data-go="rewards" style="left:56px;top:4px"><img data-img="chest" alt=""><b>Sovg'alar yo'li</b><em id="hRwLeft"></em><i class="dot" id="dotRw" style="display:none">!</i></button>
 <button class="hs" data-go="inbox" style="left:186px;top:14px;width:76px;height:72px" title="Xat qutisi"><i class="dot" id="dotMail" style="display:none;top:-6px;right:-6px"></i></button>
+<div class="honline" id="hOnline"><i></i><span id="hOnlineN"></span></div>
 <img class="hpassart" data-img="rk_banner" alt="" style="left:1478px;top:0;width:336px;height:153.0px">
 <button class="hs" data-go="passScr" style="left:1478px;top:0;width:336px;height:153.0px"><i class="dot" id="dotPass2" style="display:none;top:-6px;left:-6px;right:auto"></i></button>
 <span class="htime hyel" id="hPassLeft" style="left:1645.3px;top:33.2px;width:67.1px;height:21.6px"></span>
@@ -9423,7 +9425,7 @@ box.innerHTML = `
 <p class="muted" style="margin:6px 0 10px">${T("Har bir taklif qilingan do'st uchun siz olasiz")}: <b style="color:#8dff9a">💵 ${inv.cash} + 🪙 ${fmt(inv.coins)}</b>.
 ${T("Do'stingiz ham oladi")}: <b style="color:#8dff9a">💵 ${got.cash} + 🪙 ${fmt(got.coins)}</b></p>
 <div class="muted">${T("Sizning ID-kodingiz")}</div>
-<div class="codebox"><span id="myCode">${esc(code)}</span><span style="display:flex;gap:6px">
+<div class="codebox"><span id="myCode">${esc(code)}</span><span style="display:flex;gap:6px;flex-wrap:wrap">
 <button class="btn blue" id="copyCode" style="padding:6px 12px;font-size:15px">${T("Nusxalash")}</button>
 <button class="btn green" id="shareCode" style="padding:6px 12px;font-size:15px">${T("Ulashish")}</button></span></div>
 <div class="muted" style="margin-top:14px">${T("Do'st kodini kiriting")}</div>
@@ -11418,6 +11420,11 @@ if (rq) { frShown.add(rq.id); return frAskModal(rq); }
 const ch = n.ch.find(c => !frShown.has("c" + c.code));
 if (ch) { frShown.add("c" + ch.code); challengeModal(ch); }
 }
+function pollOnline() {   // "559 online" on the menu: how many players are connected to the server right now (the number is the real one, hidden when the server does not answer)
+const el = $("hOnline"); if (!el || !Net.base || document.hidden) return;
+Net.api("/api/online").then(r => { const n = (r && r.total) | 0; if (n > 0) { $("hOnlineN").textContent = fmt(n) + " " + T("onlayn"); el.style.display = "flex"; } else el.style.display = "none"; }).catch(() => { el.style.display = "none"; });
+}
+setInterval(() => { if (mode === "menu" && $("home").classList.contains("on")) pollOnline(); }, 30000); setTimeout(pollOnline, 3500);
 function pollNotify(force) {
 if (!Net.acct || !Net.base || document.hidden) return Promise.resolve();
 if (!force && Date.now() - notifyAt < 8000) return Promise.resolve();
