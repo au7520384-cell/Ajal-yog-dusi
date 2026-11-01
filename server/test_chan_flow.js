@@ -1,19 +1,19 @@
 // node server/test_chan_flow.js [nopollkb]
 // The real server + a mock Telegram API (TG_API_BASE): slots, kinds, silent flag, Play button + tracked link, poll fallback, /chan, restart keeps the day's progress.
-// 'nopollkb': the mock refuses a reply markup on polls, like Telegram may do. Skips itself close to midnight in Tashkent (the slots are set a few minutes into the past).
+// 'nopollkb': the mock refuses a reply markup on polls, like Telegram may do. 'noquote': it refuses <blockquote> (the posts must then go out plain). Skips itself close to midnight in Tashkent (the slots are set a few minutes into the past).
 const http = require('http'); const { spawn } = require('child_process'); const fs = require('fs'); const crypto = require('crypto');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log('FAIL:', m, x !== undefined ? JSON.stringify(x).slice(0, 600) : ''); } };
 const TOKEN = '123:test', ADMIN = '777';
 (async () => {
-  const calls = []; let pollMarkupFails = process.argv[2] === 'nopollkb';
+  const calls = []; let pollMarkupFails = process.argv[2] === 'nopollkb'; const noQuote = process.argv[2] === 'noquote';
   const mock = http.createServer((req, res) => {
     const chunks = []; req.on('data', d => chunks.push(d)); req.on('end', () => {
       const m = /\/bot[^/]+\/(\w+)/.exec(req.url), method = m && m[1], raw = Buffer.concat(chunks), ct = req.headers['content-type'] || '';
       let body = {}; if (/json/.test(ct)) { try { body = JSON.parse(raw.toString()); } catch (e) {} } else if (/multipart/.test(ct)) { const t = raw.toString('utf8'); for (const f of ['chat_id', 'caption', 'parse_mode', 'disable_notification', 'reply_markup']) { const r = new RegExp(`name="${f}"\\r\\n\\r\\n([\\s\\S]*?)\\r\\n--`).exec(t); if (r) body[f] = r[1]; } body.photoBytes = raw.length; }
-      const refused = method === 'sendPoll' && pollMarkupFails && body.reply_markup; calls.push({ method, body, refused });
+      const refused = (method === 'sendPoll' && pollMarkupFails && body.reply_markup) || (noQuote && /<blockquote/.test(body.text || body.caption || '')); calls.push({ method, body, refused });
       res.setHeader('Content-Type', 'application/json');
-      if (refused) return res.end(JSON.stringify({ ok: false, error_code: 400, description: 'Bad Request: reply markup is not supported for this poll' }));
+      if (refused) return res.end(JSON.stringify({ ok: false, error_code: 400, description: noQuote ? 'Bad Request: can\'t parse entities: Unsupported start tag "blockquote" at byte offset 12' : 'Bad Request: reply markup is not supported for this poll' }));
       if (method === 'getMe') return res.end(JSON.stringify({ ok: true, result: { username: 'Billiard8PoolBot' } }));
       res.end(JSON.stringify({ ok: true, result: { message_id: calls.length } }));
     });
@@ -35,6 +35,8 @@ const TOKEN = '123:test', ADMIN = '777';
   ok(P[2] && ['sendPoll', 'sendMessage', 'sendPhoto'].includes(P[2].method), 'slot 2: the evening kind', P[2] && P[2].method);
   const silent = x => x.body.disable_notification === true || x.body.disable_notification === 'true';
   ok(!silent(P[0]) && silent(P[1]) && silent(P[2]), 'only the first post of the day makes a sound', P.map(x => x.body.disable_notification));
+  if (noQuote) ok(P.every(x => !/<blockquote/.test(x.body.text || x.body.caption || '')), 'when Telegram refuses quote blocks the posts go out plain', P.map(x => (x.body.text || x.body.caption || '').slice(0, 80)));
+  else ok(/<blockquote>/.test(P[0].body.text || P[0].body.caption || ''), 'the first post has a quote block', (P[0].body.text || P[0].body.caption || '').slice(0, 120));
   const kb = x => { const r = x.body.reply_markup; return typeof r === 'string' ? JSON.parse(r) : r; };
   const urls = P.map(x => { const k = kb(x); return k && k.inline_keyboard[0][0].url; });
   ok(urls[0] && /^https:\/\/t\.me\/Billiard8PoolBot\/Play\?startapp=c_ch_feat$/.test(urls[0]), 'the first post carries the Play button with the tracked link c_ch_feat', urls);
@@ -54,5 +56,5 @@ const TOKEN = '123:test', ADMIN = '777';
   ok(!/channel bank:.*problems/.test(log) || true, 'server log checked');
   console.log((log.match(/channel bank:[^\n]*/) || ['(no bank warnings)'])[0].slice(0, 300));
   srv.kill('SIGTERM'); mock.close(); await sleep(500); fs.rmSync(dd, { recursive: true, force: true });
-  console.log(`channel flow${pollMarkupFails ? ' (polls refuse the button)' : ''}: ${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);
+  console.log(`channel flow${pollMarkupFails ? ' (polls refuse the button)' : ''}${noQuote ? ' (no quote blocks)' : ''}: ${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);
 })();
