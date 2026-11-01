@@ -11483,10 +11483,19 @@ $("lbBack").onclick = () => { if (LB) lbLeave(); else { const f = LBX.from; LBX 
 const OPN = {list: null, err: false, filter: "all", ping: 0, fr: null, busy: false, qbusy: false, sig: ""};
 async function opFriendSet() { if (OPN.fr) return OPN.fr; try { const r = await Net.api("/api/friends"); OPN.fr = new Set((r.friends || []).map(f => String(f.id))); } catch (e) { OPN.fr = new Set(); } return OPN.fr; }
 async function opLoad() {
-if (OPN.busy) return; OPN.busy = true; const t0 = performance.now();
-try { await Net.ensure(); const r = await Net.api("/api/lobbies"), ms = Math.round(performance.now() - t0); OPN.ping = OPN.ping ? Math.round(OPN.ping * .6 + ms * .4) : ms; OPN.list = r.lobbies || []; OPN.err = false; }
+if (OPN.busy) return; OPN.busy = true;
+try { await Net.ensure(); const r = await Net.api("/api/lobbies"); OPN.list = r.lobbies || []; OPN.err = false; }
 catch (e) { OPN.err = true; }
 OPN.busy = false; if ($("openScr").classList.contains("on")) opRender();
+}
+async function opMeasure() {   // the real round trip to the server: one warm-up request (DNS / TLS / a sleeping free server are not "ping"), then the best of three tiny requests; the header shows the median of the last five
+if (OPN.pbusy || !Net.base) return; OPN.pbusy = true;
+const hit = async () => { const t0 = performance.now(), ac = new AbortController(), tm = setTimeout(() => ac.abort(), 8000); try { await fetch(Net.base + "/api/health", {cache: "no-store", signal: ac.signal}); return performance.now() - t0; } catch (e) { return 0; } finally { clearTimeout(tm); } };
+try {
+await hit(); const a = [await hit(), await hit(), await hit()].filter(x => x > 0);
+if (a.length) { (OPN.pw = OPN.pw || []).push(Math.min(...a)); OPN.pw = OPN.pw.slice(-5); const w = OPN.pw.slice().sort((x, y) => x - y); OPN.ping = Math.max(1, Math.round(w[w.length >> 1])); }
+} catch (e) {}
+OPN.pbusy = false; if ($("openScr").classList.contains("on")) opRender();
 }
 function opRow(x) {
 const c = lbCityOf(x.city), full = x.n >= x.max, run = x.state !== "open", poor = profile.coins < x.fee, fr = OPN.fr && OPN.fr.has(String(x.host.uid)), nf = document.documentElement.classList.contains("mh520") ? fmtS : fmt;
@@ -11498,7 +11507,7 @@ return `<div class="oprow${run || full || poor ? " off" : ""}${fr ? " fr" : ""}"
 }
 function opRender() {
 const box = $("opList"); if (!box) return;
-const pg = $("opPing"); if (pg) { pg.className = "opping" + (OPN.ping > 220 ? " bad" : OPN.ping > 110 ? " mid" : ""); pg.textContent = OPN.ping ? `📶 ${T("Aloqa")}: ${OPN.ping} ms` : ""; }
+const pg = $("opPing"); if (pg) { pg.className = "opping" + (OPN.ping > 300 ? " bad" : OPN.ping > 150 ? " mid" : ""); pg.textContent = OPN.ping ? `📶 ${T("Aloqa")}: ${OPN.ping} ms` : ""; }
 document.querySelectorAll("#opChips [data-f]").forEach(e => e.classList.toggle("on", e.dataset.f === OPN.filter));
 const list = OPN.list; let html;
 if (!list) html = `<div class="opempty">${OPN.err ? "📡 " + T("Server bilan aloqa yo'q. Internetni tekshiring.") : T("Yuklanmoqda…")}</div>`;
@@ -11517,9 +11526,9 @@ body.innerHTML = `<div class="opbar"><button class="btn gold" id="opQuick">⚡ $
 <div class="opchips" id="opChips">${[["all", "Barchasi"], ["voice", "Ovozli xona"], ["free", "Bo'sh joy bor"], ["friends", "Do'stlarim"]].map(([k, t]) => `<span data-f="${k}">${k === "voice" ? "🎤 " : ""}${T(t)}</span>`).join("")}</div><div class="oplist" id="opList"></div>`;
 $("opQuick").onclick = () => quickJoin($("opQuick"));
 $("opNew").onclick = () => lbTablesOpen(true, "open");
-$("opRef").onclick = () => opLoad();
+$("opRef").onclick = () => { opLoad(); opMeasure(); };
 body.querySelectorAll("#opChips [data-f]").forEach(e => e.onclick = () => { OPN.filter = e.dataset.f; if (OPN.filter === "friends") opFriendSet().then(opRender); opRender(); });
-opRender(); opFriendSet().then(() => { if ($("openScr").classList.contains("on")) opRender(); }); opLoad();
+opRender(); opFriendSet().then(() => { if ($("openScr").classList.contains("on")) opRender(); }); opLoad().then(opMeasure);
 }
 async function quickJoin(btn) {   // the busiest open lobby I can afford; when there is none, open a public lobby and wait for people
 if (OPN.qbusy) return; OPN.qbusy = true; if (btn) btn.disabled = true;
@@ -11532,6 +11541,7 @@ else { lobbyCreate(null, [], {pub: true, from: "open"}); if (LB) toast("🌐", T
 OPN.qbusy = false; if (btn) btn.disabled = false;
 }
 setInterval(() => { if ($("openScr").classList.contains("on") && !document.hidden) opLoad(); }, 5000);
+setInterval(() => { if ($("openScr").classList.contains("on") && !document.hidden) opMeasure(); }, 20000);
 $("opBack").onclick = () => go("withFrScr");
 // ---- lobby voice room (like the voice room of a MOBA lobby): everybody in the lobby can talk to everybody. A mesh of WebRTC calls (<= 8 players, Opus audio is tiny);
 // the server only relays the signalling ("lvoice"), the sound goes phone to phone. The in-match 🎤 (Voice) takes over while a match is on screen; this room pauses and comes back.
