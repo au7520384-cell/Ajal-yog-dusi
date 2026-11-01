@@ -1,0 +1,181 @@
+// Promo posts, part 1: lobbies, voice, matches, gifts, stickers, cues. Every number comes from the game's own data (see the checks in README: "Channel auto-poster").
+
+## feat lobby l_open
+when: {"to": "2026-12-31"}
+uz: 🚪 YANGI: Ochiq lobbilar, sherik qidirib yurmang
+Hozir kimdir o'ynashga tayyor. «Ochiq lobbilar» ro'yxatidan stolni tanlang va «Qo'shilish» ni bosing: bir necha soniyada o'yindasiz. Saralash bor: bo'sh joylar, ovozli xona, do'stlar.
+en: 🚪 NEW: Open lobbies, stop hunting for a partner
+Pick a table in the "Open lobbies" list and tap Join: you are in a game within seconds. Filters: free seats, voice room, friends.
+
+## feat lobby l_open
+when: {"to": "2026-12-31"}
+uz: ⚡ «Tez qo'shilish»: bitta tugma, tayyor o'yin
+Kutib o'tirish yo'q. Bosing, o'yin sizga mos ochiq lobbi topadi. Topilmasa, o'zi yangi ochiq lobbi ochadi va boshqalar sizga qo'shiladi.
+en: ⚡ Quick join: one button, a game right now
+Tap it and the game finds an open lobby for you. If there is none, it opens a public lobby itself and others can join you.
+
+## feat voice l_voice
+when: {"to": "2026-12-31"}
+uz: 🎙 YANGI: Ovozli xona, lobbida jonli gaplashing
+Lobbida «Ovozli xona» tugmasini bosing: hamma bir-birini eshitadi, xuddi bir davrada o'tirgandek. Sakkiz kishigacha. Mikrofon bo'lmasa ham «faqat eshitish» rejimi ishlaydi.
+en: 🎙 NEW: Voice room, talk live in the lobby
+Tap "Voice room" in the lobby and everyone hears each other, up to eight players. No microphone? Listen-only mode still works.
+
+## feat voice l_voice
+uz: 🎧 Ovozli xona uch qadamda
+1) Lobbi oching yoki kod bilan qo'shiling.
+2) «Ovozli xona» tugmasini bosing va mikrofonga ruxsat bering.
+3) Do'stlaringiz ham bossa, hammasi bir-birini eshitadi.
+Telefonda quloqchin bilan o'ynash yaxshiroq: aks-sado bo'lmaydi.
+en: 🎧 The voice room in three steps
+1) Open a lobby or join with a code. 2) Tap "Voice room" and allow the microphone. 3) When your friends do too, everyone hears each other. Headphones are better: no echo.
+
+## feat voice m_chat
+uz: 🎤 O'yin vaqtida ham ovoz bilan
+Raqib bilan jonli gaplashing: zo'r zarbaga qoyil qoling yoki hazillashing. Xohlamasangiz, mikrofonni o'chiring: yozma tezkor xabarlar va stikerlar ham bor.
+en: 🎤 Voice during the match, too
+Talk live with your opponent: cheer a great shot or crack a joke. Prefer silence? Mute the mic; quick messages and stickers are there as well.
+
+## feat lobby l_hub
+uz: 🏠 Do'stlar bilan lobbi: kod yuboring, o'ynang
+Lobbi oching, kod yoki havolani do'stingizga yuboring. Sakkiz kishigacha yig'ilasiz: o'yinchi qancha ko'p bo'lsa, sovrin shuncha katta.
+en: 🏠 A lobby with friends: send the code and play
+Open a lobby and send the code or link to a friend. Up to eight players: the more players, the bigger the prize.
+
+## feat modes l_hub
+uz: 👥 Bitta telefonda ikki kishi
+Do'stingiz yoningizdami? «2 o'yinchi, bitta qurilma» rejimida navbatma-navbat o'ynang. Kim kuchli ekanini hozir aniqlang!
+en: 👥 Two players, one phone
+Your friend is right next to you? Play turn by turn in "2 players, one device" mode. Find out who is stronger, right now!
+
+## feat watch
+uz: 👀 Do'stlaringiz o'yinini jonli kuzating
+«Tomosha» bo'limida «Do'stlar» yorlig'ini oching: ular hozir qaysi stolda o'ynayotganini ko'rasiz. «Top o'yinlar» da eng kuchlilarning o'yini. Davlat bo'yicha saralash ham bor.
+en: 👀 Watch your friends play, live
+Open the "Friends" tab in Watch to see which table they are at right now. "Top games" shows the strongest players. You can also filter by country.
+
+## feat chat m_chat
+uz: 💬 Tezkor xabarlar: bir bosishda
+O'yin paytida salom ayting, omad tilang, «zo'r zarba!» deng yoki rahmat ayting: hammasi bitta tugma bilan. Raqibga hurmat o'yinning bir qismi.
+en: 💬 Quick messages: one tap
+Say hello, wish good luck, call a shot great or say thanks during the match: all in one tap. Respect for your opponent is part of the game.
+
+## feat gifts m_gifts
+uz: 🎁 Raqibga sovg'a yuboring
+O'yin vaqtida sovg'a uchib boradi: yurak, yonca, shokolad, gul, tort, medal, toj, olmos, mototsikl, mashina, samolyot... Jami 13 xil! Har kuni 1 ta yonca va 1 ta shokolad bepul, yurak 15 🪙 (kuniga 5 tagacha).
+en: 🎁 Send a gift to your opponent
+During the match a gift flies across the screen: a heart, clover, chocolate, bouquet, cake, medal, crown, gem, bike, car, jet... 13 gifts in all! One clover and one chocolate are free every day, a heart costs 15 🪙 (up to 5 a day).
+
+## feat gifts m_gifts
+uz: 👍 Sovg'a: hurmat belgisi
+Har sovg'aning o'z 👍 qiymati bor: yurak ×1, yonca ×20, shokolad ×50... samolyot ×7 000 gacha. Olgan 👍 laringiz sizda yig'iladi. Yaxshi o'yin uchun raqibni siylang!
+en: 👍 A gift is a mark of respect
+Each gift has its own 👍 value: heart ×1, clover ×20, chocolate ×50... up to jet ×7,000. The 👍 you receive add up. Treat your opponent after a good game!
+
+## feat stickers s_stickers
+uz: 🎭 Stikerlar: his-tuyg'ularingizni ko'rsating
+6 ta to'plam: Bilyard, Hayvonlar, Kulgi, Taom, Sehr va Mehr: jami 50 dan ortiq stiker. O'yin chatidagi 🎭 tugmasi bilan raqibga yuboriladi. Har to'plam 10 💵 yoki 100 💎.
+en: 🎭 Stickers: show how you feel
+6 packs: Billiards, Animals, Funny, Food, Magic and Hearts, over 50 stickers. Send them with the 🎭 button in the match chat. A pack costs 10 💵 or 100 💎.
+
+## feat cues c_premium2
+uz: 🎱 Kiylar: 470 dan ortiq, har birining o'z xarakteri
+Har kiyda 4 ko'rsatkich bor: kuch, aniqlik, aylanish va vaqt. Kolleksiyangizni to'ldiring va o'z uslubingizga mos kiyni toping!
+en: 🎱 Cues: over 470 of them, each with its own character
+Every cue has 4 stats: force, aim, spin and time. Build your collection and find the cue that fits your style!
+
+## feat cues c_uz
+uz: 🌍 Har bir davlatning o'z kiyi bor
+199 ta davlat kiyi, har birida o'sha davlat bayrog'i ranglari. O'zbekiston kiyi ham bor 🇺🇿 O'z bayrog'ingiz bilan o'ynang!
+en: 🌍 Every country has its own cue
+199 country cues, each in the colours of its flag. Uzbekistan's is there too 🇺🇿 Play with your own flag!
+
+## feat cues c_horror
+uz: 💀 Qo'rqinchli kiylar: qorong'u uslub
+Sirli tun, Yarim tun, Qabr qo'ng'irog'i, Kabus o'rmoni... 12 ta qo'rqinchli kiy. Do'kondagi haftalik «Qo'rqinchli» takliflar aylanib turadi, ekranda taymer bor.
+en: 💀 Horror cues: the dark style
+Mystic Night, Midnight, Grave Bell and more: 12 horror cues. The shop's weekly horror offers rotate, with a timer on screen.
+
+## feat cues c_victory
+uz: 🏆 Victory kiylari: g'alaba bilan yig'iladi
+Ko'rsatilgan shaharda (yoki undan yuqorida) yuting va bo'laklarni to'plang. 4 bo'lak = 1 kiy. Har g'alaba sizni maqsadga yaqinlashtiradi.
+en: 🏆 Victory cues: earned by winning
+Win in the listed city (or above) to collect pieces. 4 pieces = 1 cue. Every win brings you closer.
+
+## feat cues c_surprise
+uz: 🎁 Syurpriz kiylar: omad bilan afsonaviy kiy
+Syurpriz qutilar ichidan afsonaviy kiylar ham chiqadi: Axiom, Crystal Blade va boshqalar. Qutini oching va nima chiqishini ko'ring!
+en: 🎁 Surprise cues: a legendary cue by luck
+Surprise boxes can hold legendary cues such as Axiom and Crystal Blade. Open a box and see what you get!
+
+## feat cues c_standard
+uz: 🪵 Boshlash uchun pul kerak emas
+Boshlang'ich kiy doim bepul. Keyin oddiy kiylarni tangaga olasiz: Chinor, Konfet va boshqalar. Tanga o'yinda yutiladi va bepul sovg'alardan tushadi.
+en: 🪵 You do not need money to start
+The starter cue is always free. Then buy standard cues with coins: Plane Tree, Candy and more. Coins are won in matches and come from free rewards.
+
+## feat limited c_premium3
+uz: 👑 Premium kiylar: atigi 300 dan 5 000 gacha nusxa
+Bronzadan Kamalak opalgacha 12 daraja. Har birining soni cheklangan: eng nodiri, Kamalak opal, bor-yo'g'i 300 dona. Har bir egasi tartib raqami (№) oladi.
+en: 👑 Premium cues: only 300 to 5,000 copies
+12 tiers from Bronze to Rainbow Opal, each in a fixed number of copies. The rarest, Rainbow Opal, exists in just 300. Every owner gets a serial number (№).
+
+## feat tables s_tables
+uz: 🪑 150 dan ortiq stol: sizning uslubingiz
+Shahar stollaridan tashqari kolleksiya stollari ham bor. Tanlangan stol hamma o'yinlaringizda ko'rinadi. Shahar uzugini yutsangiz, o'sha shahar stoli bepul.
+en: 🪑 Over 150 tables to match your style
+Besides the city tables there are collector tables. The table you pick shows in all your games. Win a city ring and that city's table is yours for free.
+
+## feat tables s_tables
+uz: 🔥 Haftaning stoli: −40%
+Har hafta do'konda bitta stol chegirma bilan taklif qilinadi. Yangisi dushanba kuni chiqadi. Bu hafta qaysi stol chegirmada ekanini «Stollar» bo'limida ko'ring.
+en: 🔥 Table of the week: −40%
+Every week one table is offered at a discount. A new one appears on Monday. See which table it is this week in the shop's Tables section.
+
+## feat limited s_tables
+uz: 🔢 Cheklangan nashr: №1 dan №300 gacha
+Eng nodir stollar, kiylar va ramkalar belgilangan sonda chiqariladi. Har bir egasi o'z tartib raqamini oladi. Nodir stolda o'ynasangiz, o'yin boshida «Cheklangan nashr · № 17 / 300» ko'rinadi.
+en: 🔢 Limited editions: №1 to №300
+The rarest tables, cues and frames exist in a fixed number of copies. Every owner gets a serial number. Play on a rare table and the match intro shows "Limited edition · № 17 / 300".
+
+## feat avatars s_avatars_all
+uz: 🧑 Avatar: o'yindagi yuzingiz
+76 ta portret avatar bepul! Premium avatarlar 70 ta, noyoblik darajasi 5 xil: Oddiydan Mifikkacha. Reytingda, lobbida va stolda hamma sizni shu rasm bilan ko'radi.
+en: 🧑 Avatar: your face in the game
+76 portrait avatars are free! There are 70 premium avatars in 5 rarities, from Common to Mythic. Everyone sees this picture in the ranking, the lobby and at the table.
+
+## feat frames s_frames
+uz: 🖼 Ramka: profilingizga hashamat qo'shing
+120 dan ortiq ramka: bronzadan brilliantgacha. Ramka avataringiz atrofida reytingda ham, lobbida ham ko'rinadi. Eng nodirlari cheklangan nashrda!
+en: 🖼 Frames: add some glamour to your profile
+Over 120 frames, from bronze to brilliant. The frame around your avatar shows in the ranking and in the lobby. The rarest are limited editions!
+
+## feat limited s_frames2
+uz: 💍 Cheklangan ramkalar: Bronza 5 000, Opal 300
+12 darajali seriya: Bronza, Kumush, Oltin, Pushti oltin, Platina, Sapfir, Zumrad, Yoqut, Ametist, Brilliant, Qora olmos, Kamalak opal. Daraja qancha yuqori bo'lsa, nusxa shuncha kam.
+en: 💍 Limited frames: Bronze 5,000, Opal 300
+A 12-tier series: Bronze up to Rainbow Opal. The higher the tier, the fewer copies exist.
+
+## feat boxes s_boxes
+uz: 🧰 Qutilar: Oddiy, Epik, Afsonaviy
+Quti qanchalik yuqori bo'lsa, ichida shuncha ko'p sovg'a: 1, 2 yoki 3 ta. Nima chiqishini oldindan bilib bo'lmaydi, shuning uchun qiziq!
+en: 🧰 Boxes: Rare, Epic, Legendary
+The higher the box, the more perks inside: 1, 2 or 3. You never know what comes out, which is the fun of it!
+
+## feat pass x_pass
+uz: 🩸 Mavsum yo'li: 400 daraja, har oy yangi mavzu
+G'alaba va vazifalar uchun ochko yig'ing: har daraja mukofot ochadi. Bepul yo'l hammaga, premium yo'lda yana ko'proq sovg'a. Kiylar, ramkalar, stollar va avatarlar.
+en: 🩸 Season Pass: 400 levels, a new theme every month
+Earn points from wins and missions; each level unlocks a reward. The free track is for everyone, the premium track has more. Cues, frames, tables and avatars.
+
+## feat road x_road
+uz: 🛣 Kubok yo'li: g'alaba, kubok, yangi shahar
+Har g'alaba kubok keltiradi. Yo'lda sovg'alar kutadi va yangi shaharlar ochiladi. Yutqazganda yo'ldagi kubok kamaymaydi: faqat oldinga!
+en: 🛣 Trophy Road: win, earn trophies, unlock cities
+Every win brings trophies. Rewards wait along the road and new cities open. Trophies on the road are not lost when you lose: only forward!
+
+## feat missions x_missions
+uz: 📋 Kunlik vazifalar: har kuni yangi maqsad
+«2 ta o'yinda g'alaba», «15 ta shar tushiring», «Omadli zarbani o'ynang»... Bajaring va mukofot oling.
+en: 📋 Daily missions: a new goal every day
+"Win 2 games", "Pot 15 balls", "Play the Lucky Shot"... Complete them and collect rewards.

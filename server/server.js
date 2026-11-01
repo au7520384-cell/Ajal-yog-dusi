@@ -601,34 +601,43 @@ function srcStart(name, tgId) {   // the ad link led to the bot (t.me/<bot>?star
   markDirty();
 }
 function srcStats() { return Object.entries((db.meta || {}).src || {}).map(([n, r]) => ({src: n, botStarts: r.starts | 0, newPlayers: r.fresh, opens: r.opens, last: new Date(r.last).toISOString()})).sort((a, b) => b.newPlayers - a.newPlayers || b.botStarts - a.botStarts); }
-// ---------------------------------------------------------------- the game's public channel: a post a day from channel_posts.json
+// ---------------------------------------------------------------- the game's public channel: 3+ posts a day from the bank (channel_bank.json + the older channel_posts.json)
 // Opt-in: CHANNEL_AUTOPOST=1 on the server, and the bot must be an administrator of the channel with the right to post messages. The bot's own token does the posting; nothing else is needed.
+// When and what goes out is decided by chan_plan.js (slots in Tashkent time, kinds of posts, no repeats until a whole list has gone out); this part keeps the state (db.meta.chan) and talks to Telegram.
+// Settings (all optional): CHAN_SLOTS="10:00,14:00,20:30" or CHAN_PER_DAY=3 (1-6), CHAN_JITTER_MIN=15, CHAN_GAP_MIN=45, CHAN_END=22:45, CHAN_MAX_DAY, CHAN_SILENT=1 (only the first post of a day makes a sound).
+const plan = require("./chan_plan");
 const CHAN_ID = "@" + TG_CHANNEL.split("/").pop(), CHAN_ON = /^(1|true|yes)$/i.test(process.env.CHANNEL_AUTOPOST || "");
-let CHAN_POSTS = []; try { CHAN_POSTS = JSON.parse(fs.readFileSync(path.join(__dirname, "channel_posts.json"), "utf8")); } catch (e) { console.error("channel_posts.json:", e.message); }
+const readJson = (f, dflt) => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, f), "utf8")); } catch (e) { console.error(f + ":", e.message); return dflt; } };
+const CHAN_POSTS = readJson("channel_posts.json", []);   // the first list (it used to go out one by one): part of the bank now, ids L00...
+const CHAN_OPT = plan.options(process.env);
+const CHAN_BANK = plan.makeBank(readJson("channel_bank.json", []), CHAN_POSTS, {hasImg: f => fs.existsSync(path.join(__dirname, "channel", path.basename(f)))});
+if (CHAN_BANK.problems.length) console.error("channel bank:", CHAN_BANK.problems.length, "problems:", CHAN_BANK.problems.slice(0, 12).join(" | "));
+const chanNow = () => Date.now() + (+process.env.CHAN_TIME_SHIFT_MS || 0);   // the shift is for tests only
 const chanState = () => { db.meta = db.meta || {}; return db.meta.chan = db.meta.chan || {i: 0, next: 0, last: 0, err: "", errAt: 0}; };
-async function chanPhoto(chat, file, caption) {   // sendPhoto with the picture uploaded from disk (multipart); tgPhoto below is the receipt one
-  const fd = new FormData(); fd.append("chat_id", chat); fd.append("caption", caption); fd.append("parse_mode", "HTML");
+const chanLink = cat => /^https:\/\/t\.me\//.test(TG_APP_LINK) ? TG_APP_LINK.split("?")[0] + "?startapp=c_ch_" + cat : "";   // every kind of post has its own ad name: /src shows which kind brings players
+async function chanPhoto(chat, file, caption, markup, quiet) {   // sendPhoto with the picture uploaded from disk (multipart); tgPhoto below is the receipt one
+  const fd = new FormData(); fd.append("chat_id", chat); fd.append("caption", caption); fd.append("parse_mode", "HTML"); fd.append("disable_notification", quiet ? "true" : "false");
+  if (markup) fd.append("reply_markup", JSON.stringify(markup));
   fd.append("photo", new Blob([fs.readFileSync(file)], {type: "image/jpeg"}), path.basename(file));
   const r = await fetch(`${process.env.TG_API_BASE || "https://api.telegram.org"}/bot${TG_BOT_TOKEN}/sendPhoto`, {method: "POST", body: fd});
   const j = await r.json().catch(() => ({})); if (!j.ok) throw new Error(`sendPhoto: ${j.description || r.status}`); return j.result;
 }
-async function chanSend(p) {
-  const link = /^https:\/\/t\.me\//.test(TG_APP_LINK) ? TG_APP_LINK.split("?")[0] : "";   // the plain game link, shown as it is (like the posts typed by hand)
-  if (p.poll) return tgApi("sendPoll", {chat_id: CHAN_ID, question: `${p.poll.uz} / ${p.poll.en}`.slice(0, 300), options: p.poll.options.slice(0, 10).map(o => String(o).slice(0, 100)), is_anonymous: true});
-  if (p.quiz) { const q = p.quiz; return tgApi("sendPoll", {chat_id: CHAN_ID, question: `${q.uz} / ${q.en}`.slice(0, 300), options: q.options.slice(0, 10).map(o => String(o).slice(0, 100)), type: "quiz", correct_option_id: q.correct | 0, explanation: `${q.explanation.uz} / ${q.explanation.en}`.slice(0, 200), is_anonymous: true}); }   // a quiz poll: the right answer and a short explanation show after the vote
-  if (p.html) return tgApi("sendMessage", {chat_id: CHAN_ID, text: `${p.html.uz}\n\n${p.html.en}${link ? `\n\n▶ ${link}` : ""}`, parse_mode: "HTML", disable_web_page_preview: true});   // data posts: built here from already-escaped parts
-  const t = p.text || p; let body = `${hesc(t.uz)}\n\n${hesc(t.en)}${link ? `\n\n▶ ${link}` : ""}`;
-  if (p.img) { if (body.length > 1024) body = `${hesc(t.uz)}\n\n${hesc(t.en)}`.slice(0, 1000); return chanPhoto(CHAN_ID, path.join(__dirname, "channel", path.basename(p.img)), body); }
-  return tgApi("sendMessage", {chat_id: CHAN_ID, text: body, parse_mode: "HTML", disable_web_page_preview: true});
+async function chanPoll(f, common, kb) {   // a poll or a quiz poll (the right answer and a short explanation show after the vote)
+  const body = {...common, question: f.question, options: f.options, is_anonymous: true};
+  if (f.kind === "quiz") Object.assign(body, {type: "quiz", correct_option_id: f.correct, explanation: f.explanation});
+  const c = chanState();
+  if (kb && c.pollKb !== false) { try { return await tgApi("sendPoll", {...body, reply_markup: kb}); } catch (e) { if (!/markup|button|keyboard/i.test(e.message)) throw e; c.pollKb = false; markDirty(); } }   // a poll that refuses the Play button is sent without it from now on
+  return tgApi("sendPoll", body);
+}
+async function chanSendItem(it, cat, quiet) {   // it: a post of the bank, or {html: {uz, en}} (the data posts, already escaped)
+  const link = chanLink(cat), kb = link ? {inline_keyboard: [[{text: "🎮 O'ynash · Play", url: link}]]} : undefined, common = {chat_id: CHAN_ID, disable_notification: !!quiet};
+  if (it.html) return tgApi("sendMessage", {...common, text: `${it.html.uz}\n\n${it.html.en}${link ? `\n\n▶ <a href="${plan.esc(link)}">O'ynash · Play</a>` : ""}`, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: kb});
+  const f = plan.format(it, {link});
+  if (f.kind === "poll" || f.kind === "quiz") return chanPoll(f, common, kb);
+  if (f.kind === "photo") return chanPhoto(CHAN_ID, path.join(__dirname, "channel", path.basename(f.img)), f.html, kb, quiet);
+  return tgApi("sendMessage", {...common, text: f.html, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: kb});
 }
 let chanBusy = false;
-async function chanNext() {   // posts the next one: "ok", "done", "busy" or the error text (the same post is tried again later)
-  const c = chanState(); if (chanBusy) return "busy"; if (c.i >= CHAN_POSTS.length) return "done";
-  chanBusy = true;
-  try { await chanSend(CHAN_POSTS[c.i]); c.i++; c.last = Date.now(); c.next = c.last + (+process.env.CHAN_GAP_MS || (22 + Math.random() * 8) * 3600e3); c.err = ""; markDirty(); return "ok"; }
-  catch (e) { return chanFail(c, e); }
-  finally { chanBusy = false; }
-}
 function chanFail(c, e) {
   c.err = String(e.message || e).slice(0, 200); const now = Date.now(); markDirty();
   if (now - (+c.errAt || 0) > 6 * 3600e3) { c.errAt = now; if (ADMIN_TG) tgApi("sendMessage", {chat_id: ADMIN_TG, text: "📢 Kanalga post yuborilmadi: " + c.err + "\nBotni kanalga administrator qiling (Post messages huquqi bilan)."}).catch(() => {}); }
@@ -656,33 +665,61 @@ function chanMilestone() {   // the number of players who have played at least o
     uz: `🎉 ${hit} dan ortiq o'yinchi!\nRoyal Billiard 8 da ${hit} dan ortiq kishi o'ynadi. Har bir o'yinchiga rahmat!`,
     en: `🎉 ${hit}+ players!\nMore than ${hit} people have played Royal Billiard 8. Thank you, everyone!`}});
 }
-async function chanEventNext() {   // posts the oldest waiting data post: "ok", "none", "busy" or the error text
-  const c = chanState(); c.ev = (c.ev || []).filter(x => Date.now() - x.at < CHAN_EV_MAX_AGE); if (chanBusy) return "busy"; if (!c.ev.length) return "none";
+async function chanPostSlot(slot, day, now, kind) {   // sends what this slot needs: "ok", "busy" or the error text (tried again in 10 minutes); kind: the owner asks for a kind
+  const c = chanState(); if (chanBusy) return "busy";
   chanBusy = true;
-  try { await chanSend({html: c.ev[0].html, img: c.ev[0].img}); c.ev.shift(); c.last = Date.now(); c.next = Math.max(c.next || 0, c.last + 6 * 3600e3); c.err = ""; markDirty(); return "ok"; }
-  catch (e) { return chanFail(c, e); }
+  try {
+    plan.migrate(CHAN_BANK, c);
+    const n = CHAN_OPT.slots.length, quiet = CHAN_OPT.silent && (c.today | 0) > 0;   // only the first post of the day makes a sound
+    c.ev = (c.ev || []).filter(x => now - x.at < CHAN_EV_MAX_AGE);
+    if (!kind && slot === n - 1 && c.ev.length) { await chanSendItem({html: c.ev[0].html}, "data", quiet); c.ev.shift(); }   // news made from real data (weekly top, player milestones) take the evening slot
+    else {
+      const pk = kind ? plan.pickKind(CHAN_BANK, c, kind, day, slot, n, Math.random) : plan.pick(CHAN_BANK, c, day, slot, n, Math.random);
+      if (!pk) return "the bank has nothing to post";
+      await chanSendItem(pk.item, pk.cat, quiet); plan.commit(c, pk.item, day);
+    }
+    c.done = c.done || []; if (!c.done.includes(slot)) c.done.push(slot);
+    c.today = (c.today | 0) + 1; c.total = (c.total | 0) + 1; c.last = now; c.err = ""; c.retryAt = 0; markDirty();
+    return "ok";
+  } catch (e) { c.retryAt = now + 10 * 60e3; return chanFail(c, e); }
   finally { chanBusy = false; }
 }
 function chanTick() {
   if (!CHAN_ON || !TG_BOT_TOKEN) return;
   chanMilestone();
-  const c = chanState(), h = new Date(Date.now() + 5 * 3600e3).getUTCHours(); if (!process.env.CHAN_ANYTIME && (h < 9 || h >= 21)) return;   // only in the Tashkent daytime (09-21)
-  if ((c.ev || []).length && Date.now() - (c.last || 0) > 3 * 3600e3) return void chanEventNext().catch(e => console.error("chan:", e.message));   // data posts first, but not right after another post
-  if (c.i >= CHAN_POSTS.length || Date.now() < c.next) return;
-  chanNext().catch(e => console.error("chan:", e.message));
+  const c = chanState(), now = chanNow(); if (chanBusy || now < (c.retryAt || 0)) return;
+  const d = plan.due(c, now, CHAN_OPT); if (!d) return;
+  chanPostSlot(d.slot, d.day, now).then(r => { if (r !== "ok" && r !== "busy") console.error("chan:", r); }).catch(e => console.error("chan:", e.message));
 }
-setInterval(chanTick, +process.env.CHAN_TICK_MS || 15 * 60e3); setTimeout(chanTick, +process.env.CHAN_FIRST_MS || 20e3);
+setInterval(chanTick, +process.env.CHAN_TICK_MS || 5 * 60e3); setTimeout(chanTick, +process.env.CHAN_FIRST_MS || 20e3);
+function chanReport() {   // the owner's /chan: today, the bank, the next days
+  const c = chanState(), now = chanNow(), day = plan.localDay(now), n = CHAN_OPT.slots.length, today = c.day === day.key ? c.today | 0 : 0, st = plan.stats(CHAN_BANK, c);
+  const hm = m => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+  const lines = [`📢 ${CHAN_ID}${CHAN_ON ? "" : " — avtomatik joylash O'CHIQ (Render'da CHANNEL_AUTOPOST=1 qo'ying)"}`,
+    `Bugun: ${today} post (reja: ${n}) · jami: ${c.total | 0} · soatlar (Toshkent): ${CHAN_OPT.slots.map(hm).join(" ")}`];
+  if ((c.ev || []).length) lines.push(`Natija postlari kutyapti: ${c.ev.length}`);
+  lines.push("Bank (shu aylanishda yuborilgan/jami): " + Object.entries(st).map(([k, v]) => `${k} ${v.used}/${v.size}`).join(" · "), "Keyingi kunlar:", ...plan.outlook(CHAN_OPT, now, 3));
+  if (CHAN_BANK.problems.length) lines.push(`⚠️ Bankda ${CHAN_BANK.problems.length} ta muammo bor (server logiga qarang)`);
+  if (c.err) lines.push("Oxirgi xato: " + c.err);
+  return lines.join("\n");
+}
 async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the bot chat
   if (cmd === "/src") {   // the owner only: new players per ad link
     if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
     const rows = srcStats();
     return tgApi("sendMessage", {chat_id: m.chat.id, text: rows.length ? "📊 Reklama havolalari:\n" + rows.map(r => `${r.src}: ${r.botStarts} bot Start, ${r.newPlayers} yangi o'yinchi, ${r.opens} kirish`).join("\n") : "Hali hech kim reklama havolasi orqali kirmagan."});
   }
-  if (cmd === "/chan") {   // the owner only: the channel's post queue; "/chan now" posts the next one at once
+  if (cmd === "/chan") {   // the owner only: the channel's plan; "/chan now" posts the next slot at once ("/chan now quiz": a chosen kind: feat quiz shop tip poll story)
     if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
-    let note = ""; if (arg === "now") { const r = chanState().ev && chanState().ev.length ? await chanEventNext() : await chanNext(); note = r === "ok" ? "✅ Post yuborildi.\n" : r === "done" || r === "none" ? "Hamma postlar yuborilgan.\n" : "❌ " + r + "\n"; }
-    const c = chanState(), left = CHAN_POSTS.length - c.i;
-    return tgApi("sendMessage", {chat_id: m.chat.id, text: `${note}📢 ${CHAN_ID}: ${c.i}/${CHAN_POSTS.length} post yuborilgan${(c.ev || []).length ? `, ${c.ev.length} ta natija posti kutyapti` : ""}${CHAN_ON ? "" : " (avtomatik joylash O'CHIQ: CHANNEL_AUTOPOST=1 qo'ying)"}.${left ? "\nKeyingisi: " + (c.next > Date.now() ? new Date(c.next).toISOString().slice(0, 16).replace("T", " ") + " UTC dan keyin" : "navbatda") : ""}${c.err ? "\nOxirgi xato: " + c.err : ""}`});
+    let note = ""; const parts = String(arg || "").trim().split(/\s+/);
+    if (parts[0].toLowerCase() === "now") {
+      const c = chanState(), now = chanNow(), day = plan.localDay(now), n = CHAN_OPT.slots.length;
+      if (c.day !== day.key) { c.day = day.key; c.done = []; c.today = 0; }
+      let slot = 0; while (slot < n - 1 && (c.done || []).includes(slot)) slot++;   // the first slot of today that has not gone out (the last one when all have)
+      const r = await chanPostSlot(slot, day, now, plan.CATS.includes(parts[1]) && parts[1] !== "dated" ? parts[1] : "");
+      note = r === "ok" ? "✅ Post yuborildi.\n" : "❌ " + r + "\n";
+    }
+    return tgApi("sendMessage", {chat_id: m.chat.id, text: note + chanReport()});
   }
   if (cmd === "/id") return tgApi("sendMessage", {chat_id: m.chat.id, text: "Telegram ID: " + m.from.id});   // the number for ADMIN_TG_ID
   const u = userByTg(m.from.id), lc = pushLang(u, m.from.language_code), L = PUSH_LANGS[lc];

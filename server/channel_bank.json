@@ -1,0 +1,4078 @@
+[
+ {
+  "id": "F001",
+  "cat": "feat",
+  "tag": "lobby",
+  "uz": "🚪 YANGI: Ochiq lobbilar, sherik qidirib yurmang\nHozir kimdir o'ynashga tayyor. «Ochiq lobbilar» ro'yxatidan stolni tanlang va «Qo'shilish» ni bosing: bir necha soniyada o'yindasiz. Saralash bor: bo'sh joylar, ovozli xona, do'stlar.",
+  "en": "🚪 NEW: Open lobbies, stop hunting for a partner\nPick a table in the \"Open lobbies\" list and tap Join: you are in a game within seconds. Filters: free seats, voice room, friends.",
+  "img": "l_open.jpg",
+  "when": {
+   "to": "2026-12-31"
+  }
+ },
+ {
+  "id": "F002",
+  "cat": "feat",
+  "tag": "lobby",
+  "uz": "⚡ «Tez qo'shilish»: bitta tugma, tayyor o'yin\nKutib o'tirish yo'q. Bosing, o'yin sizga mos ochiq lobbi topadi. Topilmasa, o'zi yangi ochiq lobbi ochadi va boshqalar sizga qo'shiladi.",
+  "en": "⚡ Quick join: one button, a game right now\nTap it and the game finds an open lobby for you. If there is none, it opens a public lobby itself and others can join you.",
+  "img": "l_open.jpg",
+  "when": {
+   "to": "2026-12-31"
+  }
+ },
+ {
+  "id": "F003",
+  "cat": "feat",
+  "tag": "voice",
+  "uz": "🎙 YANGI: Ovozli xona, lobbida jonli gaplashing\nLobbida «Ovozli xona» tugmasini bosing: hamma bir-birini eshitadi, xuddi bir davrada o'tirgandek. Sakkiz kishigacha. Mikrofon bo'lmasa ham «faqat eshitish» rejimi ishlaydi.",
+  "en": "🎙 NEW: Voice room, talk live in the lobby\nTap \"Voice room\" in the lobby and everyone hears each other, up to eight players. No microphone? Listen-only mode still works.",
+  "img": "l_voice.jpg",
+  "when": {
+   "to": "2026-12-31"
+  }
+ },
+ {
+  "id": "F004",
+  "cat": "feat",
+  "tag": "voice",
+  "uz": "🎧 Ovozli xona uch qadamda\n1) Lobbi oching yoki kod bilan qo'shiling.\n2) «Ovozli xona» tugmasini bosing va mikrofonga ruxsat bering.\n3) Do'stlaringiz ham bossa, hammasi bir-birini eshitadi.\nTelefonda quloqchin bilan o'ynash yaxshiroq: aks-sado bo'lmaydi.",
+  "en": "🎧 The voice room in three steps\n1) Open a lobby or join with a code. 2) Tap \"Voice room\" and allow the microphone. 3) When your friends do too, everyone hears each other. Headphones are better: no echo.",
+  "img": "l_voice.jpg"
+ },
+ {
+  "id": "F005",
+  "cat": "feat",
+  "tag": "voice",
+  "uz": "🎤 O'yin vaqtida ham ovoz bilan\nRaqib bilan jonli gaplashing: zo'r zarbaga qoyil qoling yoki hazillashing. Xohlamasangiz, mikrofonni o'chiring: yozma tezkor xabarlar va stikerlar ham bor.",
+  "en": "🎤 Voice during the match, too\nTalk live with your opponent: cheer a great shot or crack a joke. Prefer silence? Mute the mic; quick messages and stickers are there as well.",
+  "img": "m_chat.jpg"
+ },
+ {
+  "id": "F006",
+  "cat": "feat",
+  "tag": "lobby",
+  "uz": "🏠 Do'stlar bilan lobbi: kod yuboring, o'ynang\nLobbi oching, kod yoki havolani do'stingizga yuboring. Sakkiz kishigacha yig'ilasiz: o'yinchi qancha ko'p bo'lsa, sovrin shuncha katta.",
+  "en": "🏠 A lobby with friends: send the code and play\nOpen a lobby and send the code or link to a friend. Up to eight players: the more players, the bigger the prize.",
+  "img": "l_hub.jpg"
+ },
+ {
+  "id": "F007",
+  "cat": "feat",
+  "tag": "modes",
+  "uz": "👥 Bitta telefonda ikki kishi\nDo'stingiz yoningizdami? «2 o'yinchi, bitta qurilma» rejimida navbatma-navbat o'ynang. Kim kuchli ekanini hozir aniqlang!",
+  "en": "👥 Two players, one phone\nYour friend is right next to you? Play turn by turn in \"2 players, one device\" mode. Find out who is stronger, right now!",
+  "img": "l_hub.jpg"
+ },
+ {
+  "id": "F008",
+  "cat": "feat",
+  "tag": "watch",
+  "uz": "👀 Do'stlaringiz o'yinini jonli kuzating\n«Tomosha» bo'limida «Do'stlar» yorlig'ini oching: ular hozir qaysi stolda o'ynayotganini ko'rasiz. «Top o'yinlar» da eng kuchlilarning o'yini. Davlat bo'yicha saralash ham bor.",
+  "en": "👀 Watch your friends play, live\nOpen the \"Friends\" tab in Watch to see which table they are at right now. \"Top games\" shows the strongest players. You can also filter by country."
+ },
+ {
+  "id": "F009",
+  "cat": "feat",
+  "tag": "chat",
+  "uz": "💬 Tezkor xabarlar: bir bosishda\nO'yin paytida salom ayting, omad tilang, «zo'r zarba!» deng yoki rahmat ayting: hammasi bitta tugma bilan. Raqibga hurmat o'yinning bir qismi.",
+  "en": "💬 Quick messages: one tap\nSay hello, wish good luck, call a shot great or say thanks during the match: all in one tap. Respect for your opponent is part of the game.",
+  "img": "m_chat.jpg"
+ },
+ {
+  "id": "F010",
+  "cat": "feat",
+  "tag": "gifts",
+  "uz": "🎁 Raqibga sovg'a yuboring\nO'yin vaqtida sovg'a uchib boradi: yurak, yonca, shokolad, gul, tort, medal, toj, olmos, mototsikl, mashina, samolyot... Jami 13 xil! Har kuni 1 ta yonca va 1 ta shokolad bepul, yurak 15 🪙 (kuniga 5 tagacha).",
+  "en": "🎁 Send a gift to your opponent\nDuring the match a gift flies across the screen: a heart, clover, chocolate, bouquet, cake, medal, crown, gem, bike, car, jet... 13 gifts in all! One clover and one chocolate are free every day, a heart costs 15 🪙 (up to 5 a day).",
+  "img": "m_gifts.jpg"
+ },
+ {
+  "id": "F011",
+  "cat": "feat",
+  "tag": "gifts",
+  "uz": "👍 Sovg'a: hurmat belgisi\nHar sovg'aning o'z 👍 qiymati bor: yurak ×1, yonca ×20, shokolad ×50... samolyot ×7 000 gacha. Olgan 👍 laringiz sizda yig'iladi. Yaxshi o'yin uchun raqibni siylang!",
+  "en": "👍 A gift is a mark of respect\nEach gift has its own 👍 value: heart ×1, clover ×20, chocolate ×50... up to jet ×7,000. The 👍 you receive add up. Treat your opponent after a good game!",
+  "img": "m_gifts.jpg"
+ },
+ {
+  "id": "F012",
+  "cat": "feat",
+  "tag": "stickers",
+  "uz": "🎭 Stikerlar: his-tuyg'ularingizni ko'rsating\n6 ta to'plam: Bilyard, Hayvonlar, Kulgi, Taom, Sehr va Mehr: jami 50 dan ortiq stiker. O'yin chatidagi 🎭 tugmasi bilan raqibga yuboriladi. Har to'plam 10 💵 yoki 100 💎.",
+  "en": "🎭 Stickers: show how you feel\n6 packs: Billiards, Animals, Funny, Food, Magic and Hearts, over 50 stickers. Send them with the 🎭 button in the match chat. A pack costs 10 💵 or 100 💎.",
+  "img": "s_stickers.jpg"
+ },
+ {
+  "id": "F013",
+  "cat": "feat",
+  "tag": "cues",
+  "uz": "🎱 Kiylar: 470 dan ortiq, har birining o'z xarakteri\nHar kiyda 4 ko'rsatkich bor: kuch, aniqlik, aylanish va vaqt. Kolleksiyangizni to'ldiring va o'z uslubingizga mos kiyni toping!",
+  "en": "🎱 Cues: over 470 of them, each with its own character\nEvery cue has 4 stats: force, aim, spin and time. Build your collection and find the cue that fits your style!",
+  "img": "c_premium2.jpg"
+ },
+ {
+  "id": "F014",
+  "cat": "feat",
+  "tag": "cues",
+  "uz": "🌍 Har bir davlatning o'z kiyi bor\n199 ta davlat kiyi, har birida o'sha davlat bayrog'i ranglari. O'zbekiston kiyi ham bor 🇺🇿 O'z bayrog'ingiz bilan o'ynang!",
+  "en": "🌍 Every country has its own cue\n199 country cues, each in the colours of its flag. Uzbekistan's is there too 🇺🇿 Play with your own flag!",
+  "img": "c_uz.jpg"
+ },
+ {
+  "id": "F015",
+  "cat": "feat",
+  "tag": "cues",
+  "uz": "💀 Qo'rqinchli kiylar: qorong'u uslub\nSirli tun, Yarim tun, Qabr qo'ng'irog'i, Kabus o'rmoni... 12 ta qo'rqinchli kiy. Do'kondagi haftalik «Qo'rqinchli» takliflar aylanib turadi, ekranda taymer bor.",
+  "en": "💀 Horror cues: the dark style\nMystic Night, Midnight, Grave Bell and more: 12 horror cues. The shop's weekly horror offers rotate, with a timer on screen.",
+  "img": "c_horror.jpg"
+ },
+ {
+  "id": "F016",
+  "cat": "feat",
+  "tag": "cues",
+  "uz": "🏆 Victory kiylari: g'alaba bilan yig'iladi\nKo'rsatilgan shaharda (yoki undan yuqorida) yuting va bo'laklarni to'plang. 4 bo'lak = 1 kiy. Har g'alaba sizni maqsadga yaqinlashtiradi.",
+  "en": "🏆 Victory cues: earned by winning\nWin in the listed city (or above) to collect pieces. 4 pieces = 1 cue. Every win brings you closer.",
+  "img": "c_victory.jpg"
+ },
+ {
+  "id": "F017",
+  "cat": "feat",
+  "tag": "cues",
+  "uz": "🎁 Syurpriz kiylar: omad bilan afsonaviy kiy\nSyurpriz qutilar ichidan afsonaviy kiylar ham chiqadi: Axiom, Crystal Blade va boshqalar. Qutini oching va nima chiqishini ko'ring!",
+  "en": "🎁 Surprise cues: a legendary cue by luck\nSurprise boxes can hold legendary cues such as Axiom and Crystal Blade. Open a box and see what you get!",
+  "img": "c_surprise.jpg"
+ },
+ {
+  "id": "F018",
+  "cat": "feat",
+  "tag": "cues",
+  "uz": "🪵 Boshlash uchun pul kerak emas\nBoshlang'ich kiy doim bepul. Keyin oddiy kiylarni tangaga olasiz: Chinor, Konfet va boshqalar. Tanga o'yinda yutiladi va bepul sovg'alardan tushadi.",
+  "en": "🪵 You do not need money to start\nThe starter cue is always free. Then buy standard cues with coins: Plane Tree, Candy and more. Coins are won in matches and come from free rewards.",
+  "img": "c_standard.jpg"
+ },
+ {
+  "id": "F019",
+  "cat": "feat",
+  "tag": "limited",
+  "uz": "👑 Premium kiylar: atigi 300 dan 5 000 gacha nusxa\nBronzadan Kamalak opalgacha 12 daraja. Har birining soni cheklangan: eng nodiri, Kamalak opal, bor-yo'g'i 300 dona. Har bir egasi tartib raqami (№) oladi.",
+  "en": "👑 Premium cues: only 300 to 5,000 copies\n12 tiers from Bronze to Rainbow Opal, each in a fixed number of copies. The rarest, Rainbow Opal, exists in just 300. Every owner gets a serial number (№).",
+  "img": "c_premium3.jpg"
+ },
+ {
+  "id": "F020",
+  "cat": "feat",
+  "tag": "tables",
+  "uz": "🪑 150 dan ortiq stol: sizning uslubingiz\nShahar stollaridan tashqari kolleksiya stollari ham bor. Tanlangan stol hamma o'yinlaringizda ko'rinadi. Shahar uzugini yutsangiz, o'sha shahar stoli bepul.",
+  "en": "🪑 Over 150 tables to match your style\nBesides the city tables there are collector tables. The table you pick shows in all your games. Win a city ring and that city's table is yours for free.",
+  "img": "s_tables.jpg"
+ },
+ {
+  "id": "F021",
+  "cat": "feat",
+  "tag": "tables",
+  "uz": "🔥 Haftaning stoli: −40%\nHar hafta do'konda bitta stol chegirma bilan taklif qilinadi. Yangisi dushanba kuni chiqadi. Bu hafta qaysi stol chegirmada ekanini «Stollar» bo'limida ko'ring.",
+  "en": "🔥 Table of the week: −40%\nEvery week one table is offered at a discount. A new one appears on Monday. See which table it is this week in the shop's Tables section.",
+  "img": "s_tables.jpg"
+ },
+ {
+  "id": "F022",
+  "cat": "feat",
+  "tag": "limited",
+  "uz": "🔢 Cheklangan nashr: №1 dan №300 gacha\nEng nodir stollar, kiylar va ramkalar belgilangan sonda chiqariladi. Har bir egasi o'z tartib raqamini oladi. Nodir stolda o'ynasangiz, o'yin boshida «Cheklangan nashr · № 17 / 300» ko'rinadi.",
+  "en": "🔢 Limited editions: №1 to №300\nThe rarest tables, cues and frames exist in a fixed number of copies. Every owner gets a serial number. Play on a rare table and the match intro shows \"Limited edition · № 17 / 300\".",
+  "img": "s_tables.jpg"
+ },
+ {
+  "id": "F023",
+  "cat": "feat",
+  "tag": "avatars",
+  "uz": "🧑 Avatar: o'yindagi yuzingiz\n76 ta portret avatar bepul! Premium avatarlar 70 ta, noyoblik darajasi 5 xil: Oddiydan Mifikkacha. Reytingda, lobbida va stolda hamma sizni shu rasm bilan ko'radi.",
+  "en": "🧑 Avatar: your face in the game\n76 portrait avatars are free! There are 70 premium avatars in 5 rarities, from Common to Mythic. Everyone sees this picture in the ranking, the lobby and at the table.",
+  "img": "s_avatars_all.jpg"
+ },
+ {
+  "id": "F024",
+  "cat": "feat",
+  "tag": "frames",
+  "uz": "🖼 Ramka: profilingizga hashamat qo'shing\n120 dan ortiq ramka: bronzadan brilliantgacha. Ramka avataringiz atrofida reytingda ham, lobbida ham ko'rinadi. Eng nodirlari cheklangan nashrda!",
+  "en": "🖼 Frames: add some glamour to your profile\nOver 120 frames, from bronze to brilliant. The frame around your avatar shows in the ranking and in the lobby. The rarest are limited editions!",
+  "img": "s_frames.jpg"
+ },
+ {
+  "id": "F025",
+  "cat": "feat",
+  "tag": "limited",
+  "uz": "💍 Cheklangan ramkalar: Bronza 5 000, Opal 300\n12 darajali seriya: Bronza, Kumush, Oltin, Pushti oltin, Platina, Sapfir, Zumrad, Yoqut, Ametist, Brilliant, Qora olmos, Kamalak opal. Daraja qancha yuqori bo'lsa, nusxa shuncha kam.",
+  "en": "💍 Limited frames: Bronze 5,000, Opal 300\nA 12-tier series: Bronze up to Rainbow Opal. The higher the tier, the fewer copies exist.",
+  "img": "s_frames2.jpg"
+ },
+ {
+  "id": "F026",
+  "cat": "feat",
+  "tag": "boxes",
+  "uz": "🧰 Qutilar: Oddiy, Epik, Afsonaviy\nQuti qanchalik yuqori bo'lsa, ichida shuncha ko'p sovg'a: 1, 2 yoki 3 ta. Nima chiqishini oldindan bilib bo'lmaydi, shuning uchun qiziq!",
+  "en": "🧰 Boxes: Rare, Epic, Legendary\nThe higher the box, the more perks inside: 1, 2 or 3. You never know what comes out, which is the fun of it!",
+  "img": "s_boxes.jpg"
+ },
+ {
+  "id": "F027",
+  "cat": "feat",
+  "tag": "pass",
+  "uz": "🩸 Mavsum yo'li: 400 daraja, har oy yangi mavzu\nG'alaba va vazifalar uchun ochko yig'ing: har daraja mukofot ochadi. Bepul yo'l hammaga, premium yo'lda yana ko'proq sovg'a. Kiylar, ramkalar, stollar va avatarlar.",
+  "en": "🩸 Season Pass: 400 levels, a new theme every month\nEarn points from wins and missions; each level unlocks a reward. The free track is for everyone, the premium track has more. Cues, frames, tables and avatars.",
+  "img": "x_pass.jpg"
+ },
+ {
+  "id": "F028",
+  "cat": "feat",
+  "tag": "road",
+  "uz": "🛣 Kubok yo'li: g'alaba, kubok, yangi shahar\nHar g'alaba kubok keltiradi. Yo'lda sovg'alar kutadi va yangi shaharlar ochiladi. Yutqazganda yo'ldagi kubok kamaymaydi: faqat oldinga!",
+  "en": "🛣 Trophy Road: win, earn trophies, unlock cities\nEvery win brings trophies. Rewards wait along the road and new cities open. Trophies on the road are not lost when you lose: only forward!",
+  "img": "x_road.jpg"
+ },
+ {
+  "id": "F029",
+  "cat": "feat",
+  "tag": "missions",
+  "uz": "📋 Kunlik vazifalar: har kuni yangi maqsad\n«2 ta o'yinda g'alaba», «15 ta shar tushiring», «Omadli zarbani o'ynang»... Bajaring va mukofot oling.",
+  "en": "📋 Daily missions: a new goal every day\n\"Win 2 games\", \"Pot 15 balls\", \"Play the Lucky Shot\"... Complete them and collect rewards.",
+  "img": "x_missions.jpg"
+ },
+ {
+  "id": "F030",
+  "cat": "feat",
+  "tag": "rank",
+  "uz": "🌍 Dunyo reytingi: butun dunyo bilan bellashing\nReytingda 5 ta jadval bor: Ligam, Do'stlar, Davlat, Dunyo va Klub ligalari. O'rin hafta davomida yutgan tangalaringizga qarab belgilanadi. Hafta yopilganda dunyo top-3 ga 1 500 / 750 / 400 💵 beriladi.",
+  "en": "🌍 World ranking: compete with the whole world\nFive boards: My league, Friends, Country, World and Club leagues. Your place depends on the coins you win during the week. When the week closes, the world's top 3 get 1,500 / 750 / 400 💵."
+ },
+ {
+  "id": "F031",
+  "cat": "feat",
+  "tag": "rank",
+  "uz": "🏳 Davlat reytingi: bayrog'ingiz uchun!\nHar davlatning o'z reytingi bor. Haftalik top-3 ga 400 / 200 / 100 💵 beriladi. Ismingiz bayrog'ingiz bilan birga hammaga ko'rinadi. O'zbekistonni reytingda baland ko'taring 🇺🇿",
+  "en": "🏳 Country ranking: play for your flag!\nEvery country has its own ranking, and its weekly top 3 receive 400 / 200 / 100 💵. Your name shows next to your flag. Raise it high!"
+ },
+ {
+  "id": "F032",
+  "cat": "feat",
+  "tag": "rank",
+  "uz": "⭐ 10 ta liga: eng yuqorisi «To'qqiz ball championi»\nHar hafta ligangizdagi taxminan 20% eng yaxshi o'yinchi yuqoriga ko'tariladi, oxirgi 20% pastga tushadi. Liga imtiyozi: g'alaba qutisidagi tanga ×4 gacha oshadi.",
+  "en": "⭐ 10 leagues, the top one is Nine-Ball Champion\nEvery week roughly the top 20% of your league move up and the bottom 20% move down. League perk: the coins in your victory box grow up to ×4."
+ },
+ {
+  "id": "F033",
+  "cat": "feat",
+  "tag": "rank",
+  "uz": "🪪 Reyting qatori: sizning vizitkangiz\nIsmingiz yonida avatar va ramkangiz, davlat bayrog'i, liga, klub va stol belgisi ko'rinadi. Cheklangan nashr stoli bo'lsa, tartib raqamingiz ham chiqadi!",
+  "en": "🪪 Your ranking row is your business card\nNext to your name the ranking shows your avatar and frame, your country flag, league, club and table badge. Own a limited-edition table and your serial number shows too!",
+  "img": "x_profile.jpg"
+ },
+ {
+  "id": "F034",
+  "cat": "feat",
+  "tag": "clubs",
+  "uz": "🛡 Klub: jamoa bilan g'alaba qozoning\n6-darajadan boshlab klub yaratish yoki qo'shilish mumkin. Klubda 50 kishigacha, chat, sovg'alar va haftalik klublar ligasi bor: eng yaxshi uchta klubning har bir a'zosi 20 / 10 / 5 💵 oladi.",
+  "en": "🛡 Club: win together as a team\nFrom level 6 you can create or join a club: up to 50 members, a chat, gifts and a weekly club league. Every member of the top three clubs receives 20 / 10 / 5 💵."
+ },
+ {
+  "id": "F035",
+  "cat": "feat",
+  "tag": "showdown",
+  "uz": "♞ Showdown: har g'alaba hisobga olinadi\nHar g'alaba Showdown ochkosi va Gambit tokenini beradi. Ochko ko'paygan sari 8 ta mukofot ochiladi: tanga, token, 💵, quti, kiy bo'lagi va 💎. Hafta dushanba kuni yangilanadi.",
+  "en": "♞ Showdown: every win counts\nEvery win earns Showdown points and a Gambit token. Eight rewards unlock as the points add up: coins, tokens, 💵, a box, a cue piece and 💎. It resets every Monday.",
+  "img": "x_showdown.jpg"
+ },
+ {
+  "id": "F036",
+  "cat": "feat",
+  "tag": "showdown",
+  "uz": "🛍 Gambit do'koni: tokenlarga nimalar bor\nShowdown tokenlariga Kolleksiya qutisi, Davlat qutisi, maxsus avatar va Grandmaster kiyi bo'laklarini olasiz. Tokenni o'yin bilan yig'asiz: xarid uchun pul kerak emas.",
+  "en": "🛍 Gambit Shop: what tokens can buy\nShowdown tokens buy a Collection box, a Country box, a special avatar and pieces of the Grandmaster cue. You earn tokens by playing: no purchase needed.",
+  "img": "p09.jpg"
+ },
+ {
+  "id": "F037",
+  "cat": "feat",
+  "tag": "events",
+  "uz": "👑 Grandmaster stoli: eng kuchlilar uchun\n45 kubokka yetganingizda ochiladi. Maxsus stol, katta sovrin va afsonaviy Grandmaster kiyi: uni 40 ta bo'lakdan yig'asiz.",
+  "en": "👑 Grandmaster Table: for the strongest\nIt opens at 45 trophies. A special table with a big prize and the legendary Grandmaster cue, assembled from 40 pieces.",
+  "img": "p09.jpg"
+ },
+ {
+  "id": "F038",
+  "cat": "feat",
+  "tag": "cups",
+  "uz": "🏅 Kubok turnirlari: 32, 48 yoki 64 o'yinchi\nOsiyo, Janubiy Amerika, Yevropa va Jahon Kubogi. Eng kattasi, Jahon Kubogi: 64 o'yinchi va 7 500 000 🪙 sovrin. Olimpiya tizimi: yutsangiz davom etasiz, yutqazsangiz chiqasiz.",
+  "en": "🏅 Cup tournaments: 32, 48 or 64 players\nThe Asia, South America, Europe and World Cups. The biggest, the World Cup: 64 players and a 7,500,000 🪙 prize. Knockout format: win to go on, lose and you are out.",
+  "img": "p03.jpg"
+ },
+ {
+  "id": "F039",
+  "cat": "feat",
+  "tag": "cups",
+  "uz": "🏙 30 shahar, 30 chempionat\nHar shaharning o'z kubogi bor: 32 o'yinchi, o'sha shahar stolida o'ynaladi. Keyingi shaharning kubogi oldingisini yutganingizdan keyin ochiladi. Bugun qaysi shaharni zabt etasiz?",
+  "en": "🏙 30 cities, 30 championships\nEvery city has its own cup: 32 players, played on that city's table. The next city's cup opens once you have won the previous one. Which city will you conquer today?",
+  "img": "p02.jpg"
+ },
+ {
+  "id": "F040",
+  "cat": "feat",
+  "tag": "daily",
+  "uz": "⏰ Kunlik kubok: kuniga 4 marta\nToshkent vaqti bilan 09:00, 15:00, 21:00 va 03:00 da ochiladi, har biri 3 soat ochiq turadi. Birini o'tkazib yuborsangiz, keyingisi kutadi. Vaqtlar telefoningiz mintaqasiga moslab ko'rsatiladi.",
+  "en": "⏰ Daily cups: four times a day\nThey open at 09:00, 15:00, 21:00 and 03:00 Tashkent time and stay open for 3 hours each. Missed one? The next is waiting. Times are shown in your phone's time zone.",
+  "img": "p03.jpg"
+ },
+ {
+  "id": "F041",
+  "cat": "feat",
+  "tag": "daily",
+  "uz": "🌙 To'rtta kunlik kubok: Ertalabki, Tushki, Kechki, Tungi\nKirish 1 000 dan 10 000 🪙 gacha, sovrin 30 000 dan 400 000 🪙 gacha. Tungi Kubok eng katta: 400 000 🪙. Har birida 32 o'yinchi.",
+  "en": "🌙 Four daily cups: Morning, Noon, Evening, Night\nEntry from 1,000 to 10,000 🪙, prizes from 30,000 up to 400,000 🪙. The Night Cup is the biggest: 400,000 🪙. 32 players each.",
+  "img": "p03.jpg"
+ },
+ {
+  "id": "F042",
+  "cat": "feat",
+  "tag": "ring",
+  "uz": "💍 Shahar uzuklari: 30 shahar, 30 uzuk\nHar shaharda g'alaba uchun kubok yig'iladi. Maqsadga yetsangiz, o'sha shaharning uzugi sizniki: Showdown ochkolariga +50% va shahar stoli bepul. Uzuklar yangi kubok turnirlarini ochadi!",
+  "en": "💍 City rings: 30 cities, 30 rings\nWin trophies at each table. Reach the goal and that city's ring is yours: +50% Showdown points and the city table for free. Rings open new cup tournaments!",
+  "img": "p02.jpg"
+ },
+ {
+  "id": "F043",
+  "cat": "feat",
+  "tag": "ring",
+  "uz": "🥇 Birinchi uzuk: atigi 4 ta g'alaba\nLondon stolida uzuk uchun 15 kubok kerak, har g'alaba +4 kubok beradi, mag'lubiyatda esa kubok yo'qolmaydi. Demak, 4 ta g'alaba: uzuk sizniki. Sidneyda esa 5 ta g'alaba!",
+  "en": "🥇 Your first ring: just 4 wins\nAt the London table the ring needs 15 trophies, each win gives +4 and a loss costs nothing. So 4 wins and the ring is yours. In Sydney it takes 5 wins!",
+  "img": "p02.jpg"
+ },
+ {
+  "id": "F044",
+  "cat": "feat",
+  "tag": "medals",
+  "uz": "🏅 32 ta medal: har biri +1 000 🪙\nBirinchi o'yin, 5 ta ketma-ket g'alaba, 100 ta shar, klubga qo'shilish, turnirda g'alaba... Har yangi medal 1 000 🪙 beradi. Profilingizda nechtasini yig'dingiz?",
+  "en": "🏅 32 medals: +1,000 🪙 for each\nYour first game, 5 wins in a row, 100 balls potted, joining a club, winning a tournament... Every new medal pays 1,000 🪙. How many have you collected?",
+  "img": "x_profile.jpg"
+ },
+ {
+  "id": "F045",
+  "cat": "feat",
+  "tag": "medals",
+  "uz": "🔥 Qiyin medallar: kim birinchi?\n«Shafqatsiz»: raqib birorta shar tushirmasidan yuting. «Sovuq qon»: ketma-ket 10 g'alaba. «Ajoyib o'yin»: bitta zarbada 2 ta shar. «Tezkor»: sindirishda shar tushiring.",
+  "en": "🔥 Hard medals: who is first?\n\"Merciless\": win before your opponent pots a ball. \"Cold blood\": 10 wins in a row. \"Great game\": 2 balls in one shot. \"Quick\": pot a ball on the break."
+ },
+ {
+  "id": "F046",
+  "cat": "feat",
+  "tag": "friends",
+  "uz": "🤝 Do'stlar bo'limi: taklif kodi va havola\nShaxsiy kodingiz bilan do'stlaringizni qo'shing va ularning onlayn ekanini ko'ring. Birga o'ynash yakka o'yindan qiziqroq: lobbiga chaqiring yoki o'yinini tomosha qiling.",
+  "en": "🤝 The Friends section: your code and link\nAdd friends with your personal code and see when they are online. Playing together beats playing alone: invite them to a lobby or watch their match.",
+  "img": "x_friends.jpg"
+ },
+ {
+  "id": "F047",
+  "cat": "feat",
+  "tag": "friends",
+  "uz": "🎁 Do'stingizga har kuni 500 🪙 sovg'a qiling\n«Do'stlar» bo'limida «Sovg'a yuborish» ni bosing: har bir do'stga kuniga bir marta 500 🪙 yuboriladi. Siz uchun bepul, do'stingiz xursand bo'ladi. Ularning sovg'asini ham kuting!",
+  "en": "🎁 Send each friend 500 🪙 every day\nTap \"Send gift\" in the Friends section: each friend gets 500 🪙 once a day. It costs you nothing and makes your friend happy. Expect their gifts, too!",
+  "img": "x_friends.jpg"
+ },
+ {
+  "id": "F048",
+  "cat": "feat",
+  "tag": "friends",
+  "uz": "📣 Chempion bo'lsangiz, do'stlaringiz bilib oladi\nKubokni yutganingizda do'stlaringiz va klub a'zolaringizga xabar boradi. G'alabangizni ko'rsatish uchun alohida post yozish shart emas.",
+  "en": "📣 Win a cup and your friends will know\nWhen you win a championship cup, your friends and club mates are told. No need to write a post to show off."
+ },
+ {
+  "id": "F049",
+  "cat": "feat",
+  "tag": "brand",
+  "uz": "❓ Bu o'yin bepulmi?\nHa, boshlash bepul. Kunlik sovg'a, omad g'ildiragi, vazifalar, turnirlar: hammasi bepul. Do'kon ixtiyoriy: kiy, stol yoki ramka olishni o'zingiz hal qilasiz.",
+  "en": "❓ Is the game free?\nYes, starting is free. The daily gift, the lucky wheel, missions and tournaments are all free. The shop is optional: you decide whether to get a cue, table or frame."
+ },
+ {
+  "id": "F050",
+  "cat": "feat",
+  "tag": "brand",
+  "uz": "❓ Bu pul o'yinimi?\nYo'q. Tanga, 💵 va 💎 faqat o'yin ichida ishlaydi, yutuqlar ham o'yin ichidagi sovg'alardir. Bu bilyard o'yini: maqsad zavq, mahorat va raqobat.",
+  "en": "❓ Is it a money game?\nNo. Coins, 💵 and 💎 work only inside the game, and prizes are in-game rewards. This is a pool game: the goal is fun, skill and competition."
+ },
+ {
+  "id": "F051",
+  "cat": "feat",
+  "tag": "brand",
+  "uz": "❓ Qanday boshlayman?\nTelegram'da botni oching va «O'ynash» ni bosing: yuklab olish yoki o'rnatish shart emas. O'yin brauzerda ham ochiladi. Birinchi stol, London, hammaga ochiq.",
+  "en": "❓ How do I start?\nOpen the bot in Telegram and tap Play: no download or install. The game also opens in a browser. The first table, London, is open to everyone."
+ },
+ {
+  "id": "F052",
+  "cat": "feat",
+  "tag": "brand",
+  "uz": "❓ Raqib topilmasa nima bo'ladi?\nOnlayn raqib topilmasa, o'yin sizni bot bilan o'ynatadi, kutib o'tirmaysiz. Bunday o'yin reytingga kirmaydi. Haqiqiy raqib uchun «Ochiq lobbilar» yoki do'stingizni lobbiga chaqiring.",
+  "en": "❓ What if no opponent is found?\nIf no online opponent is found, the game lets you play a bot instead of waiting. Such a game does not count for the ranking. For a human opponent use \"Open lobbies\" or invite a friend to a lobby."
+ },
+ {
+  "id": "F053",
+  "cat": "feat",
+  "tag": "route",
+  "uz": "🎁 Kunlik sovg'alar yo'li: 8 kunlik sovg'alar\n1-kun 100 🪙, 2-kun Omadli zarba, 3-kun 300 🪙, 4-kun 1 💵, 5-kun omad g'ildiragi, 6-kun 1 000 🪙, 7-kun 2 💵 va katta sovrin, 8-kun 2 500 🪙. Bugungi sovg'ani oldingizmi?",
+  "en": "🎁 The daily reward route: 8 days of gifts\nDay 1: 100 🪙, day 2: a Lucky Shot, day 3: 300 🪙, day 4: 1 💵, day 5: a wheel spin, day 6: 1,000 🪙, day 7: 2 💵 and a big prize, day 8: 2,500 🪙. Did you collect today's gift?",
+  "img": "p06.jpg"
+ },
+ {
+  "id": "F054",
+  "cat": "feat",
+  "tag": "wheel",
+  "uz": "🎡 Omad g'ildiragi: 8 ta sektor\n500, 1 000 yoki 2 000 🪙, 15, 25 yoki 35 💎, 1 yoki 5 💵. Har 24 soatda bitta aylantirish bepul. Bugun qaysi sektor tushadi?",
+  "en": "🎡 The lucky wheel: 8 sectors\n500, 1,000 or 2,000 🪙, 15, 25 or 35 💎, 1 or 5 💵. One spin is free every 24 hours. Which sector will you land on today?",
+  "img": "p05.jpg"
+ },
+ {
+  "id": "F055",
+  "cat": "feat",
+  "tag": "profile",
+  "uz": "📊 Profil: o'yin tarixingiz bir joyda\nO'yinlar, g'alabalar, jami yutuq, haftalik reyting, medallar va kubok yo'li: hammasi profilingizda. Har g'alaba bilan raqamlar o'sadi.",
+  "en": "📊 Profile: your game history in one place\nGames, wins, total winnings, weekly ranking, medals and the trophy road: all in your profile. The numbers grow with every win.",
+  "img": "x_profile.jpg"
+ },
+ {
+  "id": "F056",
+  "cat": "feat",
+  "tag": "cities",
+  "uz": "🎨 Har shaharning o'z rangi\nLondon ko'k, Sidney yashil, Madrid qizil, Las-Vegas qora, Qohira oltin-sariq, Seul binafsha, Rio yorqin yashil... Stol sukno rangi shaharga qarab o'zgaradi. Sevimli stolingiz qaysi?",
+  "en": "🎨 Every city has its own colour\nLondon blue, Sydney green, Madrid red, Las Vegas black, Cairo golden, Seoul violet, Rio bright green... The cloth changes with the city. Which table is your favourite?",
+  "img": "p02.jpg"
+ },
+ {
+  "id": "F057",
+  "cat": "feat",
+  "tag": "cues",
+  "uz": "🧩 Kiy bo'laklarini qayerdan olasiz?\nVictory kiylari: shaharda g'alaba qozonib (4 bo'lak = 1 kiy). Showdown mukofoti. Ligadagi imtiyoz: +1 bo'lak. Gambit do'koni: Grandmaster bo'laklari.",
+  "en": "🧩 Where do cue pieces come from?\nVictory cues: win in a city (4 pieces = 1 cue). Showdown rewards. A league perk: +1 piece. The Gambit shop: Grandmaster pieces.",
+  "img": "c_premium3.jpg"
+ },
+ {
+  "id": "F058",
+  "cat": "feat",
+  "tag": "modes",
+  "uz": "🤖 Hozir o'ynamoqchimisiz? Kutish yo'q\nRaqib topish uzoq cho'zilsa, bot bilan o'ynaysiz, kutmaysiz. Mashq rejimida esa istalgancha zarba urib mahoratingizni oshirasiz: bu yerda hech kim shoshirmaydi.",
+  "en": "🤖 Want to play right now? No waiting\nIf finding an opponent takes long, you play a bot instead. In Practice mode you can shoot as much as you like and sharpen your skill: nobody rushes you.",
+  "img": "l_hub.jpg"
+ },
+ {
+  "id": "F059",
+  "cat": "feat",
+  "tag": "brand",
+  "uz": "📲 Yaxshi o'yin do'stingizga ham yoqadi\nBotni do'stingizga yuboring va birga lobbiga kiring. Ovozli xona bilan hazillashib o'ynash yanada qiziqarli. Kanalimizga ham taklif qiling!",
+  "en": "📲 Your friend will like a good game, too\nSend the bot to a friend and join a lobby together. With the voice room, playing and joking around is even more fun. Invite them to the channel as well!",
+  "img": "p11.jpg"
+ },
+ {
+  "id": "Q001",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "🎱 Viktorina: 9-ball o'yinida oq shar bilan birga stolda nechta shar bo'ladi?",
+   "en": "Quiz: how many balls are on the table in 9-ball, cue ball included?",
+   "options": [
+    "16",
+    "15",
+    "10",
+    "9"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "9 ta raqamli shar va oq shar: jami 10 ta.",
+    "en": "Nine numbered balls plus the cue ball: 10 in all."
+   }
+  }
+ },
+ {
+  "id": "Q002",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "🎱 Viktorina: 9-ball'da oq shar avval qaysi sharga tegishi kerak?",
+   "en": "Quiz: in 9-ball, which ball must the cue ball hit first?",
+   "options": [
+    "Istalgan sharga / Any ball",
+    "Eng katta raqamli sharga / The highest-numbered ball",
+    "9-sharga / The 9-ball",
+    "Eng kichik raqamli sharga / The lowest-numbered ball"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Doim stoldagi eng kichik raqamli sharga.",
+    "en": "Always the lowest-numbered ball left on the table."
+   }
+  }
+ },
+ {
+  "id": "Q003",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "🏆 Viktorina: 9-ball'da g'alaba uchun qaysi sharni qoidaga ko'ra tushirish kerak?",
+   "en": "Quiz: in 9-ball, which ball wins the game when pocketed legally?",
+   "options": [
+    "8-shar / Ball 8",
+    "1-shar / Ball 1",
+    "Oq shar / The cue ball",
+    "9-shar / Ball 9"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "9-sharni qonuniy tushirgan o'yinchi yutadi.",
+    "en": "Pocketing the 9-ball legally wins the game."
+   }
+  }
+ },
+ {
+  "id": "Q004",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "💎 Viktorina: 9-ball'da sharlar qanday shaklda teriladi?",
+   "en": "Quiz: in what shape are the balls racked in 9-ball?",
+   "options": [
+    "Romb / Diamond",
+    "Doira / Circle",
+    "Uchburchak / Triangle",
+    "Kvadrat / Square"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "1-2-3-2-1 qatorli romb; 9-shar o'rtada turadi.",
+    "en": "A diamond of 1-2-3-2-1 rows, with the 9-ball in the middle."
+   }
+  }
+ },
+ {
+  "id": "Q005",
+  "cat": "quiz",
+  "tag": "numbers",
+  "quiz": {
+   "uz": "🔺 Viktorina: 8-ball'da 15 shar uchburchakda nechta qatorga teriladi?",
+   "en": "Quiz: in how many rows are the 15 balls racked in a triangle?",
+   "options": [
+    "3",
+    "4",
+    "5",
+    "6"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "1+2+3+4+5 = 15: besh qator.",
+    "en": "1+2+3+4+5 = 15: five rows."
+   }
+  }
+ },
+ {
+  "id": "Q006",
+  "cat": "quiz",
+  "tag": "numbers",
+  "quiz": {
+   "uz": "➕ Viktorina: 1 dan 15 gacha raqamli sharlarning raqamlari yig'indisi nechaga teng?",
+   "en": "Quiz: what is the sum of the numbers on balls 1 to 15?",
+   "options": [
+    "150",
+    "120",
+    "105",
+    "100"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "15 × 16 / 2 = 120.",
+    "en": "15 × 16 / 2 = 120."
+   }
+  }
+ },
+ {
+  "id": "Q007",
+  "cat": "quiz",
+  "tag": "snooker",
+  "quiz": {
+   "uz": "🔴 Viktorina: snukerda stolda nechta qizil shar bor?",
+   "en": "Quiz: how many red balls are there in snooker?",
+   "options": [
+    "22",
+    "21",
+    "15",
+    "10"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "15 qizil, 6 rangli va oq shar: jami 22 ta.",
+    "en": "15 reds, 6 colours and the cue ball: 22 in all."
+   }
+  }
+ },
+ {
+  "id": "Q008",
+  "cat": "quiz",
+  "tag": "snooker",
+  "quiz": {
+   "uz": "🎯 Viktorina: snukerda eng yuqori mumkin bo'lgan seriya (maksimum break) necha ochko?",
+   "en": "Quiz: what is the maximum possible break in snooker?",
+   "options": [
+    "100",
+    "127",
+    "147",
+    "187"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "15 qizil + 15 qora = 120, ranglar yana 27: jami 147.",
+    "en": "15 reds + 15 blacks = 120, the colours add 27: 147."
+   }
+  }
+ },
+ {
+  "id": "Q009",
+  "cat": "quiz",
+  "tag": "snooker",
+  "quiz": {
+   "uz": "⚫ Viktorina: snukerda qora shar necha ochko beradi?",
+   "en": "Quiz: how many points is the black ball worth in snooker?",
+   "options": [
+    "4",
+    "5",
+    "6",
+    "7"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Qora 7, pushti 6, ko'k 5 ochko.",
+    "en": "Black is worth 7, pink 6 and blue 5."
+   }
+  }
+ },
+ {
+  "id": "Q010",
+  "cat": "quiz",
+  "tag": "snooker",
+  "quiz": {
+   "uz": "📏 Viktorina: to'liq o'lchamli snuker stoli necha futlik?",
+   "en": "Quiz: how long is a full-size snooker table?",
+   "options": [
+    "15 fut",
+    "12 fut",
+    "9 fut",
+    "7 fut"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "12 fut, taxminan 3,6 metr.",
+    "en": "12 ft, about 3.6 metres."
+   }
+  }
+ },
+ {
+  "id": "Q011",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "🕳 Viktorina: karambol bilyardi stolida nechta cho'ntak bor?",
+   "en": "Quiz: how many pockets does a carom billiards table have?",
+   "options": [
+    "8",
+    "6",
+    "4",
+    "0"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Karambolda cho'ntak yo'q, ochko sharlarni urib olinadi.",
+    "en": "Carom has no pockets: you score by hitting balls."
+   }
+  }
+ },
+ {
+  "id": "Q012",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🌀 Viktorina: «masse» zarbasi nima?",
+   "en": "Quiz: what is a \"masse\" shot?",
+   "options": [
+    "Oq sharni sakratish / Jumping the cue ball",
+    "Bortdan qaytarish / A bank shot",
+    "Sindirish zarbasi / The break",
+    "Kiy tik tutilib, oq shar egri yo'ldan yuradi / Cue held steeply, the ball curves"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Kiy deyarli tik tutiladi va oq shar yoy bo'ylab yuradi.",
+    "en": "The cue is almost vertical and the ball curves."
+   }
+  }
+ },
+ {
+  "id": "Q013",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🦘 Viktorina: oq sharni to'siq shar ustidan sakratib o'tkazish qanday ataladi?",
+   "en": "Quiz: what is it called when the cue ball is jumped over a blocking ball?",
+   "options": [
+    "Jump shot",
+    "Bank shot",
+    "Safety",
+    "Break"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Jump shot: oq shar havoga ko'tarilib to'siqdan oshadi.",
+    "en": "A jump shot lifts the cue ball over the obstacle."
+   }
+  }
+ },
+ {
+  "id": "Q014",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🔁 Viktorina: oq shar avval bortga tegib, keyin nishon sharga borsa, bu qanday zarba?",
+   "en": "Quiz: the cue ball hits a cushion first, then the object ball. What shot is it?",
+   "options": [
+    "Draw",
+    "Masse",
+    "Jump shot",
+    "Kick shot"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Kick shot: yo'l to'silganda bort orqali aylanib borasiz.",
+    "en": "A kick shot goes round a blocked path via a cushion."
+   }
+  }
+ },
+ {
+  "id": "Q015",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "📐 Viktorina: nishon shar bortga tegib keyin cho'ntakka tushsa, bu qanday zarba?",
+   "en": "Quiz: the object ball hits a cushion and then drops in a pocket. What is it?",
+   "options": [
+    "Combo",
+    "Kick shot",
+    "Scratch",
+    "Bank shot"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Bank shot: nishon shar bortdan qaytib cho'ntakka kiradi.",
+    "en": "In a bank shot the object ball rebounds into a pocket."
+   }
+  }
+ },
+ {
+  "id": "Q016",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🔗 Viktorina: oq shar bitta sharni uradi, u esa boshqa sharni cho'ntakka tushiradi. Bu...",
+   "en": "Quiz: the cue ball hits one ball, which pockets another. This is a...",
+   "options": [
+    "Kombinatsiya / Combination",
+    "Foul",
+    "Safety",
+    "Kick shot"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Kombinatsiya (combo): ikki sharning zanjirli zarbasi.",
+    "en": "A combination (combo): a chain hit through two balls."
+   }
+  }
+ },
+ {
+  "id": "Q017",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "✋ Viktorina: kiyni tayanch qiladigan qo'l (yoki asbob) inglizcha nima deyiladi?",
+   "en": "Quiz: what is the hand (or tool) that supports the cue called in English?",
+   "options": [
+    "Rack",
+    "Chalk",
+    "Spot",
+    "Bridge"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Bridge: kiy silliq yurishi uchun tayanch.",
+    "en": "The bridge steadies the cue as it slides."
+   }
+  }
+ },
+ {
+  "id": "Q018",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🔺 Viktorina: sharlarni birinchi zarbadan oldin teradigan uchburchak asbob nima deyiladi?",
+   "en": "Quiz: what is the triangle used to arrange the balls before the break called?",
+   "options": [
+    "Rack",
+    "Cushion",
+    "Chalk",
+    "Bridge"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Rack sharlarni zich va tekis teradi.",
+    "en": "The rack packs the balls tight and even."
+   }
+  }
+ },
+ {
+  "id": "Q019",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🧱 Viktorina: stolning yumshoq chetini (bort) inglizcha nima deyishadi?",
+   "en": "Quiz: what is the table's cushioned edge called in English?",
+   "options": [
+    "Felt",
+    "Spot",
+    "Pocket",
+    "Cushion (rail)"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Cushion yoki rail: sharlar undan qaytadi.",
+    "en": "The cushion (or rail) bounces the balls back."
+   }
+  }
+ },
+ {
+  "id": "Q020",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🟩 Viktorina: stol ustidagi yumshoq mato (sukno) inglizcha nima?",
+   "en": "Quiz: what is the soft cloth covering the table called?",
+   "options": [
+    "Felt",
+    "Cushion",
+    "Chalk",
+    "Rack"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Felt: stol suknosi. O'yinda uning rangi shaharga qarab o'zgaradi.",
+    "en": "The felt is the table cloth; in the game its colour changes with the city."
+   }
+  }
+ },
+ {
+  "id": "Q021",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🛑 Viktorina: oq shar nishon sharga tekkach joyida to'xtaydigan zarba qanday ataladi?",
+   "en": "Quiz: what is the shot called where the cue ball stops dead after contact?",
+   "options": [
+    "Masse",
+    "Follow",
+    "Jump shot",
+    "Stop shot"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "To'g'ri zarbadan keyin oq shar joyida to'xtaydi (markazdan sal pastga uriladi).",
+    "en": "Hit slightly below centre and the cue ball stops in place after a straight hit."
+   }
+  }
+ },
+ {
+  "id": "Q022",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "⏩ Viktorina: oq sharning yuqori qismiga urib, u nishonga tekkach oldinga yuradigan zarba?",
+   "en": "Quiz: hit above centre so the cue ball keeps rolling forward after contact. What is it?",
+   "options": [
+    "Follow (topspin)",
+    "Stop shot",
+    "Draw (backspin)",
+    "English"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Follow: yuqoridan urish oq sharni oldinga yuritadi.",
+    "en": "Follow: hitting high keeps the cue ball rolling forward."
+   }
+  }
+ },
+ {
+  "id": "Q023",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "💥 Viktorina: o'yinning birinchi zarbasi, terilgan sharlarni sochib yuboradigan zarba nima deyiladi?",
+   "en": "Quiz: what is the first shot of the game, scattering the racked balls, called?",
+   "options": [
+    "Bank",
+    "Rack",
+    "Safety",
+    "Break"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Break: terilgan sharlarni sochuvchi birinchi zarba.",
+    "en": "The break scatters the racked balls."
+   }
+  }
+ },
+ {
+  "id": "Q024",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "👻 Viktorina: «xayoliy shar» (ghost ball) usuli nima uchun kerak?",
+   "en": "Quiz: what is the \"ghost ball\" method for?",
+   "options": [
+    "Oq shar kelishi kerak bo'lgan joyni tasavvur qilish / Picturing where the cue ball must land",
+    "Kiyni bo'rlash / Chalking the cue",
+    "Sharni sakratish / Jumping a ball",
+    "Sharlarni terish / Racking"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Xayoliy shar nishon sharni to'g'ri yo'naltirishga yordam beradi.",
+    "en": "The ghost ball helps you aim the object ball accurately."
+   }
+  }
+ },
+ {
+  "id": "Q025",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "📐 Viktorina: ideal sharoitda shar bortga tekkach qanday burchak bilan qaytadi?",
+   "en": "Quiz: in ideal conditions, at what angle does a ball leave a cushion?",
+   "options": [
+    "Tasodifiy / Random",
+    "Ikki baravar katta / Twice as big",
+    "Doim 90° / Always 90°",
+    "Kirish burchagiga teng / Equal to the incoming angle"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Qaytish burchagi kirish burchagiga teng.",
+    "en": "The angle out equals the angle in."
+   }
+  }
+ },
+ {
+  "id": "Q026",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "🧵 Viktorina: bilyard kiyining uchi (tip) odatda nimadan yasaladi?",
+   "en": "Quiz: what is a cue tip usually made of?",
+   "options": [
+    "Teri / Leather",
+    "Shisha / Glass",
+    "Yog'och / Wood",
+    "Metall / Metal"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Teri uch bo'rni ushlaydi va oq sharga yaxshi ilashadi.",
+    "en": "A leather tip holds chalk and grips the cue ball."
+   }
+  }
+ },
+ {
+  "id": "Q027",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "⚪ Viktorina: zamonaviy bilyard sharlari asosan nimadan yasaladi?",
+   "en": "Quiz: what are modern pool balls mostly made of?",
+   "options": [
+    "Shisha / Glass",
+    "Fil suyagi / Ivory",
+    "Yog'och / Wood",
+    "Smola (plastik) / Resin (plastic)"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Fenol smolasi chidamli. Qadimda sharlar fil suyagidan ham yasalgan.",
+    "en": "Phenolic resin is tough; old balls were also made of ivory."
+   }
+  }
+ },
+ {
+  "id": "Q028",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "📏 Viktorina: standart bilyard kiyi taxminan necha santimetr uzunlikda?",
+   "en": "Quiz: how long is a standard pool cue, roughly?",
+   "options": [
+    "90 sm",
+    "120 sm",
+    "147 sm",
+    "200 sm"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Standart kiy taxminan 147 sm (58 dyuym).",
+    "en": "A standard cue is about 147 cm (58 in)."
+   }
+  }
+ },
+ {
+  "id": "Q029",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "⚪ Viktorina: standart bilyard sharining diametri taxminan qancha?",
+   "en": "Quiz: what is the diameter of a standard pool ball, roughly?",
+   "options": [
+    "3 sm",
+    "5,7 sm",
+    "8 sm",
+    "10 sm"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "57,15 mm (2¼ dyuym).",
+    "en": "57.15 mm (2¼ in)."
+   }
+  }
+ },
+ {
+  "id": "Q030",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "📐 Viktorina: 9 futlik turnir stolining o'yin maydoni taxminan qancha?",
+   "en": "Quiz: how big is the playing area of a 9-foot pool table, roughly?",
+   "options": [
+    "4 × 2 m",
+    "3,5 × 1,75 m",
+    "2,54 × 1,27 m",
+    "1,5 × 0,75 m"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "254 × 127 sm (100 × 50 dyuym): aynan 2:1.",
+    "en": "254 × 127 cm (100 × 50 in): exactly 2:1."
+   }
+  }
+ },
+ {
+  "id": "Q031",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "🟡 Viktorina: standart 8-ball to'plamida 1-shar qanday rangda?",
+   "en": "Quiz: what colour is ball number 1 in a standard 8-ball set?",
+   "options": [
+    "Sariq / Yellow",
+    "Yashil / Green",
+    "Ko'k / Blue",
+    "Qizil / Red"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "1 sariq, 2 ko'k, 3 qizil, 4 binafsha.",
+    "en": "1 yellow, 2 blue, 3 red, 4 purple."
+   }
+  }
+ },
+ {
+  "id": "Q032",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "🟠 Viktorina: standart to'plamda 5-shar qanday rangda?",
+   "en": "Quiz: what colour is ball number 5 in a standard set?",
+   "options": [
+    "To'q sariq / Orange",
+    "Yashil / Green",
+    "Qora / Black",
+    "Binafsha / Purple"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "5 to'q sariq, 6 yashil, 7 bordo, 8 qora.",
+    "en": "5 orange, 6 green, 7 maroon, 8 black."
+   }
+  }
+ },
+ {
+  "id": "Q033",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "🌟 Viktorina: «Sehrgar» laqabli mashhur bilyardchi Efren Reyes qaysi davlatdan?",
+   "en": "Quiz: Efren \"The Magician\" Reyes, a pool legend, comes from which country?",
+   "options": [
+    "Yaponiya / Japan",
+    "Xitoy / China",
+    "AQSh / USA",
+    "Filippin / Philippines"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Reyes filippinlik; 1999-yilda 9-ball bo'yicha jahon chempioni bo'lgan.",
+    "en": "Reyes is Filipino and won the 9-ball world title in 1999."
+   }
+  }
+ },
+ {
+  "id": "Q034",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "🏅 Viktorina: Villi Mosko 1956-yilda ko'rgazmali o'yinda ketma-ket nechta sharni tushirgan (straight pool rekordi)?",
+   "en": "Quiz: how many balls in a row did Willie Mosconi pocket in a 1956 straight-pool exhibition?",
+   "options": [
+    "1 000",
+    "526",
+    "256",
+    "126"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "526 ta: bilyard tarixidagi eng mashhur rekordlardan biri.",
+    "en": "526: one of the most famous records in cue sports."
+   }
+  }
+ },
+ {
+  "id": "Q035",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "🎬 Viktorina: «The Hustler» (1961) filmida bilyardchi «Tez Eddi» rolini kim o'ynagan?",
+   "en": "Quiz: who played pool hustler \"Fast Eddie\" in the 1961 film \"The Hustler\"?",
+   "options": [
+    "Paul Newman",
+    "Robert De Niro",
+    "Tom Cruise",
+    "Brad Pitt"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Paul Newman; u «Rang puli» (1986) filmida yana shu rolda.",
+    "en": "Paul Newman, who returned to the role in \"The Color of Money\" (1986)."
+   }
+  }
+ },
+ {
+  "id": "Q036",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "🎬 Viktorina: «The Color of Money» (1986) filmida Paul Newman bilan birga kim o'ynagan?",
+   "en": "Quiz: who starred alongside Paul Newman in \"The Color of Money\" (1986)?",
+   "options": [
+    "Tom Hanks",
+    "Keanu Reeves",
+    "Al Pacino",
+    "Tom Cruise"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Tom Cruise; film bilyard ustalari haqida.",
+    "en": "Tom Cruise; the film is about pool hustlers."
+   }
+  }
+ },
+ {
+  "id": "Q037",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "🚀 Viktorina: snuker afsonasi Ronni O'Sallivanning laqabi nima?",
+   "en": "Quiz: what is snooker legend Ronnie O'Sullivan's nickname?",
+   "options": [
+    "The Rocket",
+    "The Nugget",
+    "The Whirlwind",
+    "The Wizard"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "«Rocket» (raketa): u juda tez o'ynashi bilan mashhur.",
+    "en": "\"The Rocket\": known for his fast play."
+   }
+  }
+ },
+ {
+  "id": "Q038",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "📚 Viktorina: inglizcha «cue» so'zi qaysi fransuzcha so'zdan kelgan?",
+   "en": "Quiz: the English word \"cue\" comes from which French word?",
+   "options": [
+    "cube (kub / cube)",
+    "clé (kalit / key)",
+    "cible (nishon / target)",
+    "queue (dum / tail)"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Fransuzcha «queue»: dum. Kiyning shakli dumni eslatgan.",
+    "en": "French \"queue\" means tail, like the stick's shape."
+   }
+  }
+ },
+ {
+  "id": "Q039",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🕰 Viktorina: Big Ben qaysi shaharda? O'yinning birinchi stoli ham shu yerda!",
+   "en": "Quiz: in which city is Big Ben? It is also the game's first table!",
+   "options": [
+    "Parij",
+    "Madrid",
+    "Rim",
+    "London"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Big Ben Londonda. London stoli o'yindagi birinchi stol.",
+    "en": "Big Ben is in London, and the London table is the game's first."
+   }
+  }
+ },
+ {
+  "id": "Q040",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🦘 Viktorina: Opera teatri yelkanga o'xshash tomi bilan mashhur Sidney qaysi mamlakatda?",
+   "en": "Quiz: Sydney, famous for its sail-roofed Opera House, is in which country?",
+   "options": [
+    "Avstraliya / Australia",
+    "Kanada / Canada",
+    "Janubiy Afrika / South Africa",
+    "Yangi Zelandiya / New Zealand"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Avstraliyada. O'yindagi 2-stol: Harbour Bar.",
+    "en": "In Australia. The game's 2nd table is Harbour Bar."
+   }
+  }
+ },
+ {
+  "id": "Q041",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🥧 Viktorina: mashhur «pastel de nata» shirinligi qaysi mamlakatniki?",
+   "en": "Quiz: which country is the \"pastel de nata\" custard tart from?",
+   "options": [
+    "Ispaniya / Spain",
+    "Fransiya / France",
+    "Italiya / Italy",
+    "Portugaliya / Portugal"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Portugaliya; poytaxti Lissabon o'yinning 3-stoli.",
+    "en": "Portugal; its capital Lisbon is the game's 3rd table."
+   }
+  }
+ },
+ {
+  "id": "Q042",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "⚽ Viktorina: Santyago Bernabeu stadioni qaysi shaharda?",
+   "en": "Quiz: in which city is the Santiago Bernabéu stadium?",
+   "options": [
+    "Madrid",
+    "Lissabon",
+    "Barselona",
+    "Rim"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Madridda, «Real» ning uyi. O'yinda Madrid stoli: Plaza Mayor.",
+    "en": "In Madrid, home of Real. The game's Madrid table: Plaza Mayor."
+   }
+  }
+ },
+ {
+  "id": "Q043",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🗾 Viktorina: Tokio 1868-yilgacha qanday nomda bo'lgan?",
+   "en": "Quiz: what was Tokyo called before 1868?",
+   "options": [
+    "Osaka",
+    "Edo",
+    "Nagoya",
+    "Kioto"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Edo. «Samurai Dojo» stoli shu ruhda.",
+    "en": "Edo. The \"Samurai Dojo\" table has that spirit."
+   }
+  }
+ },
+ {
+  "id": "Q044",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🥋 Viktorina: yapon tilida «dojo» nima?",
+   "en": "Quiz: what is a \"dojo\" in Japanese?",
+   "options": [
+    "Jang san'atlari mashq zali / A martial-arts training hall",
+    "Bog' / A garden",
+    "Choyxona / A tea house",
+    "Ma'bad / A temple"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Dojo: mashq zali. O'yinda Tokio stoli «Samurai Dojo».",
+    "en": "A dojo is a training hall. The Tokyo table is \"Samurai Dojo\"."
+   }
+  }
+ },
+ {
+  "id": "Q045",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "💃 Viktorina: tango raqsi qaysi mamlakat bilan bog'liq (Buenos-Ayres stoli: «Tango Salon»)?",
+   "en": "Quiz: which country is the tango dance tied to (Buenos Aires' table: \"Tango Salon\")?",
+   "options": [
+    "Ispaniya / Spain",
+    "Braziliya / Brazil",
+    "Meksika / Mexico",
+    "Argentina"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Tango Argentina va Urugvay qirg'oqlarida tug'ilgan.",
+    "en": "Tango was born on the shores of Argentina and Uruguay."
+   }
+  }
+ },
+ {
+  "id": "Q046",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🏝 Viktorina: Jakarta joylashgan Indoneziya taxminan nechta orolga ega?",
+   "en": "Quiz: Indonesia, home of Jakarta, has roughly how many islands?",
+   "options": [
+    "170 000",
+    "17 000",
+    "1 700",
+    "170"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Taxminan 17 000 orol. O'yinda: «Volcano Arena».",
+    "en": "About 17,000 islands. In the game: \"Volcano Arena\"."
+   }
+  }
+ },
+ {
+  "id": "Q047",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🍁 Viktorina: Kanada bayrog'idagi barg qaysi daraxtniki (Toronto stoli: «Maple Lounge»)?",
+   "en": "Quiz: which tree's leaf is on Canada's flag (Toronto's table: \"Maple Lounge\")?",
+   "options": [
+    "Birch (qayin)",
+    "Oak (eman)",
+    "Palm (palma)",
+    "Maple"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Maple bargi: shuning uchun Toronto stoli «Maple Lounge».",
+    "en": "A maple leaf: hence the Toronto table \"Maple Lounge\"."
+   }
+  }
+ },
+ {
+  "id": "Q048",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🌋 Viktorina: Mexiko shahri qadimgi qaysi shahar o'rnida qurilgan?",
+   "en": "Quiz: on the site of which ancient city was Mexico City built?",
+   "options": [
+    "Tenochtitlan",
+    "Teotihuacan",
+    "Chichen Itza",
+    "Machu Picchu"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Atsteklar poytaxti Tenochtitlan, ko'l ustidagi shahar.",
+    "en": "Tenochtitlan, the Aztec capital built on a lake."
+   }
+  }
+ },
+ {
+  "id": "Q049",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🔺 Viktorina: Giza piramidalari qaysi mamlakatda (Qohira stoli: «Pyramid Hall»)?",
+   "en": "Quiz: in which country are the Giza pyramids (Cairo's table: \"Pyramid Hall\")?",
+   "options": [
+    "Sudan",
+    "Misr / Egypt",
+    "Marokash / Morocco",
+    "Iordaniya / Jordan"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Misrda, Qohira yonida.",
+    "en": "In Egypt, next to Cairo."
+   }
+  }
+ },
+ {
+  "id": "Q050",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🏙 Viktorina: 828 metrli Burj Xalifa qaysi shaharda?",
+   "en": "Quiz: in which city is the 828-metre Burj Khalifa?",
+   "options": [
+    "Singapur",
+    "Dubay",
+    "Shanxay",
+    "Nyu-York"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Dubayda. O'yinda Dubay stoli: «Golden Tower».",
+    "en": "In Dubai. The game's Dubai table: \"Golden Tower\"."
+   }
+  }
+ },
+ {
+  "id": "Q051",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🦁 Viktorina: «Singapur» nomi «Sher shahri» degan ma'noni bildiradi. To'g'rimi?",
+   "en": "Quiz: the name \"Singapore\" means \"Lion City\". True or false?",
+   "options": [
+    "To'g'ri / True",
+    "Noto'g'ri / False"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Sanskritcha «simha pura»: sher shahri.",
+    "en": "From Sanskrit \"simha pura\": lion city."
+   }
+  }
+ },
+ {
+  "id": "Q052",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🗼 Viktorina: «Sharq marvarid minorasi» (Oriental Pearl Tower) qaysi shaharda?",
+   "en": "Quiz: in which city is the Oriental Pearl Tower?",
+   "options": [
+    "Bangkok",
+    "Seul",
+    "Osaka",
+    "Shanxay"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Shanxayda. O'yinda stol: «Pearl Club».",
+    "en": "In Shanghai. The game's table: \"Pearl Club\"."
+   }
+  }
+ },
+ {
+  "id": "Q053",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🗼 Viktorina: Eyfel minorasi qaysi shaharda?",
+   "en": "Quiz: in which city is the Eiffel Tower?",
+   "options": [
+    "Parij",
+    "Rim",
+    "Berlin",
+    "Amsterdam"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Parijda. O'yinda stol: «Château Royal».",
+    "en": "In Paris. The game's table there: \"Château Royal\"."
+   }
+  }
+ },
+ {
+  "id": "Q054",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🗽 Viktorina: Nyu-York dastlab qanday nom bilan atalgan?",
+   "en": "Quiz: what was New York originally called?",
+   "options": [
+    "Yangi Amsterdam / New Amsterdam",
+    "Yangi Parij / New Paris",
+    "Yangi Rim / New Rome",
+    "Yangi London / New London"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "1664-yilgacha Yangi Amsterdam. O'yinda ikkala shahar ham bor.",
+    "en": "New Amsterdam until 1664. Both cities are in the game."
+   }
+  }
+ },
+ {
+  "id": "Q055",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🏛 Viktorina: Kolizey qaysi shaharda?",
+   "en": "Quiz: in which city is the Colosseum?",
+   "options": [
+    "Qohira",
+    "Istanbul",
+    "Afina",
+    "Rim"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Rimda. O'yinda stol: «Colosseo».",
+    "en": "In Rome. In the game the table is \"Colosseo\"."
+   }
+  }
+ },
+ {
+  "id": "Q056",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🇹🇭 Viktorina: Bangkok qaysi mamlakatning poytaxti?",
+   "en": "Quiz: Bangkok is the capital of which country?",
+   "options": [
+    "Kambodja / Cambodia",
+    "Tailand / Thailand",
+    "Malayziya / Malaysia",
+    "Vetnam / Vietnam"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Tailand poytaxti. O'yinda stol: «Golden Temple».",
+    "en": "Thailand's capital. In the game: \"Golden Temple\"."
+   }
+  }
+ },
+ {
+  "id": "Q057",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🏢 Viktorina: mashhur Petronas egizak minoralari qaysi shaharda?",
+   "en": "Quiz: in which city are the famous Petronas Twin Towers?",
+   "options": [
+    "Singapur",
+    "Kuala-Lumpur",
+    "Manila",
+    "Jakarta"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Kuala-Lumpurda. O'yinda stol: «Twin Towers».",
+    "en": "In Kuala Lumpur. The game's table: \"Twin Towers\"."
+   }
+  }
+ },
+ {
+  "id": "Q058",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🇰🇷 Viktorina: Seul qaysi mamlakatning poytaxti?",
+   "en": "Quiz: Seoul is the capital of which country?",
+   "options": [
+    "Xitoy / China",
+    "Yaponiya / Japan",
+    "Tailand / Thailand",
+    "Janubiy Koreya / South Korea"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Janubiy Koreya poytaxti. O'yinda stol: «Neon Tower».",
+    "en": "South Korea's capital. In the game: \"Neon Tower\"."
+   }
+  }
+ },
+ {
+  "id": "Q059",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🎬 Viktorina: Mumbay 1995-yilgacha qanday atalgan?",
+   "en": "Quiz: what was Mumbai called until 1995?",
+   "options": [
+    "Bombay",
+    "Madras",
+    "Delhi",
+    "Calcutta"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Bombay. Bollivud kinosining markazi. O'yinda: «Maharaja Palace».",
+    "en": "Bombay, the heart of Bollywood. In the game: \"Maharaja Palace\"."
+   }
+  }
+ },
+ {
+  "id": "Q060",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🏅 Viktorina: zamonaviy Olimpiya o'yinlari 1896-yilda qaysi shaharda birinchi marta o'tkazilgan?",
+   "en": "Quiz: in which city were the first modern Olympic Games held in 1896?",
+   "options": [
+    "Rim",
+    "Parij",
+    "London",
+    "Afina"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Afinada. O'yinda stol: «Acropolis Hall».",
+    "en": "In Athens. The game's table: \"Acropolis Hall\"."
+   }
+  }
+ },
+ {
+  "id": "Q061",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🧱 Viktorina: Berlin devori qaysi yilda qulagan?",
+   "en": "Quiz: in which year did the Berlin Wall fall?",
+   "options": [
+    "1979",
+    "1985",
+    "1989",
+    "1999"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "1989-yil 9-noyabrda. O'yinda stol: «Platz Arena».",
+    "en": "On 9 November 1989. The game's table: \"Platz Arena\"."
+   }
+  }
+ },
+ {
+  "id": "Q062",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🌉 Viktorina: Istanbul qaysi ikki qit'ada joylashgan?",
+   "en": "Quiz: which two continents does Istanbul sit on?",
+   "options": [
+    "Osiyo va Amerika / Asia and America",
+    "Yevropa va Osiyo / Europe and Asia",
+    "Yevropa va Afrika / Europe and Africa",
+    "Osiyo va Afrika / Asia and Africa"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Bosfor bo'g'ozi shaharni ikki qit'aga bo'ladi.",
+    "en": "The Bosphorus strait splits the city between two continents."
+   }
+  }
+ },
+ {
+  "id": "Q063",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🏠 Viktorina: «Kasablanka» nomi tarjimada nimani anglatadi?",
+   "en": "Quiz: what does the name \"Casablanca\" mean?",
+   "options": [
+    "Oq uy / White house",
+    "Yangi shahar / New city",
+    "Qora dengiz / Black sea",
+    "Katta bozor / Big market"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Ispancha casa blanca: oq uy. Shahar Marokashda.",
+    "en": "Spanish \"casa blanca\": white house. The city is in Morocco."
+   }
+  }
+ },
+ {
+  "id": "Q064",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🗾 Viktorina: o'yindagi 30 shaharning nechtasi Yaponiyada?",
+   "en": "Quiz: how many of the game's 30 cities are in Japan?",
+   "options": [
+    "4",
+    "3",
+    "2",
+    "1"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Ikkita: Tokio (Samurai Dojo) va Osaka (Skyline).",
+    "en": "Two: Tokyo (Samurai Dojo) and Osaka (Skyline)."
+   }
+  }
+ },
+ {
+  "id": "Q065",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🚇 Viktorina: Toshkent metrosi qaysi yilda ochilgan (Markaziy Osiyoda birinchi)?",
+   "en": "Quiz: in which year did the Tashkent metro open, the first in Central Asia?",
+   "options": [
+    "1957",
+    "1967",
+    "1977",
+    "1987"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "1977-yil 6-noyabrda. O'yinda: Toshkent stoli «Silk Road».",
+    "en": "On 6 November 1977. In the game: the Tashkent table \"Silk Road\"."
+   }
+  }
+ },
+ {
+  "id": "Q066",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🎂 Viktorina: Toshkent qaysi yilda 2200 yilligini nishonlagan?",
+   "en": "Quiz: in which year did Tashkent celebrate its 2,200th anniversary?",
+   "options": [
+    "1999",
+    "2009",
+    "2019",
+    "2029"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "2009-yilda. «Toshkent» so'zi «tosh shahar» degani.",
+    "en": "In 2009. \"Tashkent\" means \"stone city\"."
+   }
+  }
+ },
+ {
+  "id": "Q067",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🗿 Viktorina: «Rio-de-Janeyro» nomi nimani anglatadi?",
+   "en": "Quiz: what does the name \"Rio de Janeiro\" mean?",
+   "options": [
+    "Katta ko'l / Big Lake",
+    "Dengiz shamoli / Sea Wind",
+    "Oltin daryo / Golden River",
+    "Yanvar daryosi / January River"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Portugalcha «Yanvar daryosi»: 1502-yil yanvarida shunday atalgan.",
+    "en": "Portuguese for \"January River\", named in January 1502."
+   }
+  }
+ },
+ {
+  "id": "Q068",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "⛪ Viktorina: Vasiliy Blajenniy sobori qaysi maydonda joylashgan?",
+   "en": "Quiz: on which square does St Basil's Cathedral stand?",
+   "options": [
+    "Tayms-skver / Times Square",
+    "Qizil maydon / Red Square",
+    "Taksim maydoni / Taksim Square",
+    "Mustaqillik maydoni / Independence Square"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Moskvadagi Qizil maydonda. O'yinda eng yuqori stol: «Red Square».",
+    "en": "On Red Square in Moscow, the game's highest table."
+   }
+  }
+ },
+ {
+  "id": "Q069",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🌵 Viktorina: Las-Vegas AQShning qaysi shtatida joylashgan?",
+   "en": "Quiz: in which US state is Las Vegas?",
+   "options": [
+    "Nevada",
+    "Texas",
+    "Florida",
+    "Kaliforniya / California"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Nevada shtatida. O'yinda stol: «Royal Flush».",
+    "en": "In Nevada. The game's table: \"Royal Flush\"."
+   }
+  }
+ },
+ {
+  "id": "Q070",
+  "cat": "quiz",
+  "tag": "geo",
+  "quiz": {
+   "uz": "🌷 Viktorina: Amsterdam qaysi mamlakatning poytaxti?",
+   "en": "Quiz: Amsterdam is the capital of which country?",
+   "options": [
+    "Niderlandiya / The Netherlands",
+    "Daniya / Denmark",
+    "Shvetsiya / Sweden",
+    "Belgiya / Belgium"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Niderlandiya poytaxti, kanallar shahri. O'yinda: «Canal House».",
+    "en": "The Netherlands' capital, a city of canals. In the game: \"Canal House\"."
+   }
+  }
+ },
+ {
+  "id": "Q071",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🎱 Viktorina: o'yinda nechta kiy bor (taxminan)?",
+   "en": "Quiz: roughly how many cues are there in the game?",
+   "options": [
+    "50",
+    "150",
+    "470",
+    "1 000"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "470 dan ortiq. Kolleksiya hisobida «1/471» ko'rinadi.",
+    "en": "Over 470. The collection counter reads \"1/471\"."
+   }
+  }
+ },
+ {
+  "id": "Q072",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🌍 Viktorina: o'yinda nechta davlat kiyi bor?",
+   "en": "Quiz: how many country cues are in the game?",
+   "options": [
+    "300",
+    "199",
+    "100",
+    "50"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "199 ta, har biri o'sha davlat bayrog'i ranglarida.",
+    "en": "199, each in its flag's colours."
+   }
+  }
+ },
+ {
+  "id": "Q073",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🧑 Viktorina: nechta portret avatar bepul?",
+   "en": "Quiz: how many portrait avatars are free?",
+   "options": [
+    "126",
+    "76",
+    "36",
+    "16"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "76 ta portret bepul. Premium avatarlar alohida: 70 ta.",
+    "en": "76 portraits are free; the 70 premium avatars are separate."
+   }
+  }
+ },
+ {
+  "id": "Q074",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🎭 Viktorina: o'yinda nechta stiker to'plami bor?",
+   "en": "Quiz: how many sticker packs are there?",
+   "options": [
+    "12",
+    "9",
+    "6",
+    "3"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "6 ta: Bilyard, Hayvonlar, Kulgi, Taom, Sehr, Mehr.",
+    "en": "6: Billiards, Animals, Funny, Food, Magic, Hearts."
+   }
+  }
+ },
+ {
+  "id": "Q075",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🎭 Viktorina: bitta stiker to'plami necha 💎 turadi?",
+   "en": "Quiz: how many 💎 does one sticker pack cost?",
+   "options": [
+    "10",
+    "50",
+    "100",
+    "500"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "100 💎 yoki 10 💵.",
+    "en": "100 💎 or 10 💵."
+   }
+  }
+ },
+ {
+  "id": "Q076",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🎁 Viktorina: o'yin vaqtida raqibga nechta xil sovg'a yuborish mumkin?",
+   "en": "Quiz: how many kinds of gifts can you send to your opponent in a match?",
+   "options": [
+    "5",
+    "8",
+    "13",
+    "20"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "13 xil: yuraktdan samolyotgacha.",
+    "en": "13 kinds, from a heart to a jet."
+   }
+  }
+ },
+ {
+  "id": "Q077",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "✈️ Viktorina: eng katta sovg'a qaysi (👍 ×7 000)?",
+   "en": "Quiz: which gift is the biggest (👍 ×7,000)?",
+   "options": [
+    "Mashina / Car",
+    "Olmos / Gem",
+    "Samolyot / Jet",
+    "Toj / Crown"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Samolyot ×7 000; mashina ×5 000, mototsikl ×3 000.",
+    "en": "The jet ×7,000; the car ×5,000, the bike ×3,000."
+   }
+  }
+ },
+ {
+  "id": "Q078",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🍀 Viktorina: qaysi ikki sovg'a har kuni bepul beriladi?",
+   "en": "Quiz: which two gifts are free every day?",
+   "options": [
+    "Toj va olmos / Crown and gem",
+    "Mashina va samolyot / Car and jet",
+    "Tort va gul / Cake and bouquet",
+    "Yonca va shokolad / Clover and chocolate"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Har kuni 1 ta yonca va 1 ta shokolad bepul.",
+    "en": "One clover and one chocolate are free every day."
+   }
+  }
+ },
+ {
+  "id": "Q079",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🩸 Viktorina: Mavsum yo'lida nechta daraja bor?",
+   "en": "Quiz: how many levels does the Season Pass have?",
+   "options": [
+    "400",
+    "200",
+    "100",
+    "50"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "400 daraja; har oy yangi mavzu.",
+    "en": "400 levels, with a new theme every month."
+   }
+  }
+ },
+ {
+  "id": "Q080",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "⏰ Viktorina: kunlik kubok Toshkent vaqti bilan qaysi soatlarda ochiladi?",
+   "en": "Quiz: at what Tashkent times do the daily cups open?",
+   "options": [
+    "09:00, 15:00, 21:00, 03:00",
+    "08:00, 12:00, 16:00, 20:00",
+    "06:00, 12:00, 18:00, 00:00",
+    "10:00, 14:00, 18:00, 22:00"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Kuniga 4 marta, har biri 3 soat ochiq.",
+    "en": "Four times a day, each open for 3 hours."
+   }
+  }
+ },
+ {
+  "id": "Q081",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "⏳ Viktorina: kunlik kubok ochilgach necha soat ochiq turadi?",
+   "en": "Quiz: how long does a daily cup stay open once it starts?",
+   "options": [
+    "Butun kun / All day",
+    "3 soat / 3 hours",
+    "6 soat / 6 hours",
+    "1 soat / 1 hour"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "3 soat. Birini o'tkazsangiz, keyingisi kutadi.",
+    "en": "3 hours. Miss one and the next is waiting."
+   }
+  }
+ },
+ {
+  "id": "Q082",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🌐 Viktorina: Jahon Kubogida nechta o'yinchi qatnashadi?",
+   "en": "Quiz: how many players take part in the World Cup?",
+   "options": [
+    "64",
+    "48",
+    "32",
+    "16"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "64 o'yinchi; sovrin 7 500 000 🪙.",
+    "en": "64 players; a 7,500,000 🪙 prize."
+   }
+  }
+ },
+ {
+  "id": "Q083",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🌍 Viktorina: Yevropa Kubogida nechta o'yinchi bor?",
+   "en": "Quiz: how many players are in the Europe Cup?",
+   "options": [
+    "16",
+    "32",
+    "48",
+    "64"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "48 o'yinchi. Osiyo va Janubiy Amerika kubogida 32 tadan.",
+    "en": "48 players; the Asia and South America Cups have 32 each."
+   }
+  }
+ },
+ {
+  "id": "Q084",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "👑 Viktorina: Grandmaster stoli nechta kubokda ochiladi?",
+   "en": "Quiz: at how many trophies does the Grandmaster Table open?",
+   "options": [
+    "100",
+    "45",
+    "25",
+    "15"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "45 kubokda ochiladi.",
+    "en": "It opens at 45 trophies."
+   }
+  }
+ },
+ {
+  "id": "Q085",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🧩 Viktorina: afsonaviy Grandmaster kiyi nechta bo'lakdan yig'iladi?",
+   "en": "Quiz: from how many pieces is the legendary Grandmaster cue assembled?",
+   "options": [
+    "100",
+    "40",
+    "10",
+    "4"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "40 ta bo'lakdan.",
+    "en": "From 40 pieces."
+   }
+  }
+ },
+ {
+  "id": "Q086",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🏆 Viktorina: bitta Victory kiyi uchun nechta bo'lak kerak?",
+   "en": "Quiz: how many pieces make one Victory cue?",
+   "options": [
+    "2",
+    "4",
+    "8",
+    "12"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "4 bo'lak = 1 kiy. Bo'laklar g'alabadan keladi.",
+    "en": "4 pieces = 1 cue. Pieces come from winning."
+   }
+  }
+ },
+ {
+  "id": "Q087",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🛡 Viktorina: klub yaratish yoki klubga qo'shilish uchun nechanchi daraja kerak?",
+   "en": "Quiz: from which level can you create or join a club?",
+   "options": [
+    "10",
+    "6",
+    "3",
+    "1"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "6-darajadan.",
+    "en": "From level 6."
+   }
+  }
+ },
+ {
+  "id": "Q088",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "👥 Viktorina: bitta klubda eng ko'pi bilan nechta a'zo bo'ladi?",
+   "en": "Quiz: what is the maximum number of members in one club?",
+   "options": [
+    "10",
+    "25",
+    "50",
+    "100"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "50 kishigacha.",
+    "en": "Up to 50 members."
+   }
+  }
+ },
+ {
+  "id": "Q089",
+  "cat": "quiz",
+  "tag": "rank",
+  "quiz": {
+   "uz": "🥇 Viktorina: haftalik dunyo reytingida 1-o'rin uchun necha 💵 beriladi?",
+   "en": "Quiz: how many 💵 does 1st place in the weekly world ranking receive?",
+   "options": [
+    "5 000",
+    "1 500",
+    "400",
+    "150"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "1 500 💵; 2-o'rin 750, 3-o'rin 400.",
+    "en": "1,500 💵; 2nd gets 750 and 3rd gets 400."
+   }
+  }
+ },
+ {
+  "id": "Q090",
+  "cat": "quiz",
+  "tag": "rank",
+  "quiz": {
+   "uz": "🏳 Viktorina: davlat reytingida 1-o'rin uchun necha 💵 beriladi?",
+   "en": "Quiz: how many 💵 does 1st place in a country ranking receive?",
+   "options": [
+    "100",
+    "200",
+    "400",
+    "1 500"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "400 💵; 2-o'rin 200, 3-o'rin 100.",
+    "en": "400 💵; 2nd gets 200 and 3rd gets 100."
+   }
+  }
+ },
+ {
+  "id": "Q091",
+  "cat": "quiz",
+  "tag": "rank",
+  "quiz": {
+   "uz": "📅 Viktorina: haftalik reyting qachon yangilanadi (Toshkent vaqti bilan)?",
+   "en": "Quiz: when does the weekly ranking reset (Tashkent time)?",
+   "options": [
+    "Shanba, 20:00 / Saturday, 20:00",
+    "Dushanba, 05:00 / Monday, 05:00",
+    "Juma, 00:00 / Friday, 00:00",
+    "Seshanba, 12:00 / Tuesday, noon"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Hafta dushanba 00:00 UTC da yangilanadi: Toshkentda 05:00.",
+    "en": "The week resets Monday 00:00 UTC: 05:00 in Tashkent."
+   }
+  }
+ },
+ {
+  "id": "Q092",
+  "cat": "quiz",
+  "tag": "rank",
+  "quiz": {
+   "uz": "⭐ Viktorina: haftalik ligada eng yaxshi taxminan necha foiz yuqoriga ko'tariladi?",
+   "en": "Quiz: roughly what share of a league moves up each week?",
+   "options": [
+    "5%",
+    "10%",
+    "20%",
+    "50%"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Eng yaxshi 20% yuqoriga, oxirgi 20% pastga tushadi.",
+    "en": "The top 20% move up and the bottom 20% move down."
+   }
+  }
+ },
+ {
+  "id": "Q093",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🔥 Viktorina: «Haftaning stoli» necha foiz chegirma bilan taklif qilinadi?",
+   "en": "Quiz: what discount does the \"Table of the week\" carry?",
+   "options": [
+    "−10%",
+    "−20%",
+    "−40%",
+    "−75%"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "−40%; yangisi har dushanba chiqadi.",
+    "en": "−40%; a new one appears every Monday."
+   }
+  }
+ },
+ {
+  "id": "Q094",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🔢 Viktorina: eng nodir cheklangan nashr (Kamalak opal) nechta nusxada chiqariladi?",
+   "en": "Quiz: how many copies exist of the rarest limited edition, Rainbow Opal?",
+   "options": [
+    "30",
+    "300",
+    "3 000",
+    "30 000"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Atigi 300 ta; har bir egasi tartib raqami oladi.",
+    "en": "Just 300; every owner gets a serial number."
+   }
+  }
+ },
+ {
+  "id": "Q095",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🔢 Viktorina: cheklangan nashrning eng ommaviy «Bronza» darajasi nechta nusxada chiqadi?",
+   "en": "Quiz: how many copies are there of the most common limited-edition tier, Bronze?",
+   "options": [
+    "500",
+    "1 000",
+    "5 000",
+    "50 000"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "5 000 ta; Kamalak opal esa 300 ta.",
+    "en": "5,000, while Rainbow Opal has 300."
+   }
+  }
+ },
+ {
+  "id": "Q096",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🌆 Viktorina: o'yindagi eng arzon (birinchi) stol qaysi shaharda?",
+   "en": "Quiz: which city has the cheapest (first) table in the game?",
+   "options": [
+    "Toshkent",
+    "Dubay",
+    "Moskva",
+    "London"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "London: kirish 50 🪙, yutuq 100 🪙.",
+    "en": "London: entry 50 🪙, prize 100 🪙."
+   }
+  }
+ },
+ {
+  "id": "Q097",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🏔 Viktorina: o'yindagi eng yuqori (oxirgi) stol qaysi shaharda?",
+   "en": "Quiz: which city has the highest (last) table in the game?",
+   "options": [
+    "Moskva",
+    "Nyu-York",
+    "Toshkent",
+    "Rio"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Moskva, Red Square: kirish 100 000 000 🪙.",
+    "en": "Moscow, Red Square: entry 100,000,000 🪙."
+   }
+  }
+ },
+ {
+  "id": "Q098",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🇺🇿 Viktorina: o'yindagi Toshkent stolining nomi nima?",
+   "en": "Quiz: what is the name of the game's Tashkent table?",
+   "options": [
+    "Harbour Bar",
+    "Golden Tower",
+    "Silk Road",
+    "Red Square"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "«Silk Road»: Buyuk Ipak yo'li ruhida.",
+    "en": "\"Silk Road\", in the spirit of the Great Silk Road."
+   }
+  }
+ },
+ {
+  "id": "Q099",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🎨 Viktorina: London stolining sukno rangi qanday?",
+   "en": "Quiz: what colour is the cloth of the London table?",
+   "options": [
+    "Qizil / Red",
+    "Ko'k / Blue",
+    "Qora / Black",
+    "Sariq / Yellow"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "London ko'k, Sidney yashil, Madrid qizil.",
+    "en": "London is blue, Sydney green, Madrid red."
+   }
+  }
+ },
+ {
+  "id": "Q100",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "⚫ Viktorina: qaysi shaharning stoli qora suknoli?",
+   "en": "Quiz: which city's table has black cloth?",
+   "options": [
+    "London",
+    "Madrid",
+    "Las-Vegas",
+    "Sidney"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Las-Vegas: «Royal Flush» zali qora sukno bilan.",
+    "en": "Las Vegas: the \"Royal Flush\" room, with black cloth."
+   }
+  }
+ },
+ {
+  "id": "Q101",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "📆 Viktorina: kunlik sovg'alar yo'lining nechanchi kunida «katta sovrin» bor?",
+   "en": "Quiz: on which day of the reward route is the \"big prize\"?",
+   "options": [
+    "8-kun / Day 8",
+    "7-kun / Day 7",
+    "5-kun / Day 5",
+    "3-kun / Day 3"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "7-kun: 2 💵 va katta sovrin.",
+    "en": "Day 7: 2 💵 and a big prize."
+   }
+  }
+ },
+ {
+  "id": "Q102",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🏅 Viktorina: o'yinda nechta medal (yutuq nishoni) bor?",
+   "en": "Quiz: how many medals (achievements) are there?",
+   "options": [
+    "12",
+    "22",
+    "32",
+    "52"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "32 ta; har yangi medal 1 000 🪙 beradi.",
+    "en": "32; every new medal pays 1,000 🪙."
+   }
+  }
+ },
+ {
+  "id": "Q103",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🚪 Viktorina: «Ochiq lobbilar» ro'yxatida qaysi saralash YO'Q?",
+   "en": "Quiz: which of these is NOT a filter in the \"Open lobbies\" list?",
+   "options": [
+    "Bo'sh joy / Free seats",
+    "Ovozli xona / Voice room",
+    "Do'stlar / Friends",
+    "Kiy narxi / Cue price"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Saralash: bo'sh joy, ovozli xona va do'stlar bo'yicha.",
+    "en": "Filters: free seats, voice room and friends."
+   }
+  }
+ },
+ {
+  "id": "Q104",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "💍 Viktorina: shahar uzugi Showdown ochkolariga necha foiz qo'shadi?",
+   "en": "Quiz: how much extra do city rings add to your Showdown points?",
+   "options": [
+    "+10%",
+    "+25%",
+    "+50%",
+    "+100%"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "+50%, ustiga shahar stoli bepul.",
+    "en": "+50%, and the city table is free."
+   }
+  }
+ },
+ {
+  "id": "Q105",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🥇 Viktorina: London stolida uzuk uchun nechta g'alaba yetadi (g'alaba +4, maqsad 15 kubok)?",
+   "en": "Quiz: how many wins earn the ring at the London table (+4 per win, goal 15 trophies)?",
+   "options": [
+    "2",
+    "4",
+    "8",
+    "15"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "4 × 4 = 16, ya'ni 15 dan oshadi: to'rt g'alaba.",
+    "en": "4 × 4 = 16, above 15: four wins."
+   }
+  }
+ },
+ {
+  "id": "Q106",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "♞ Viktorina: Showdown'da nechta mukofot bosqichi bor?",
+   "en": "Quiz: how many reward stages does Showdown have?",
+   "options": [
+    "3",
+    "5",
+    "8",
+    "12"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "8 ta: tanga, token, 💵, quti, kiy bo'lagi va 💎.",
+    "en": "8: coins, tokens, 💵, a box, a cue piece and 💎."
+   }
+  }
+ },
+ {
+  "id": "Q107",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🏙 Viktorina: har shaharning o'z chempionat kubogida nechta o'yinchi bor?",
+   "en": "Quiz: how many players are in each city's own championship cup?",
+   "options": [
+    "8",
+    "16",
+    "32",
+    "64"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "32 o'yinchi, o'sha shahar stolida o'ynaladi.",
+    "en": "32 players, played on that city's table."
+   }
+  }
+ },
+ {
+  "id": "Q108",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🌙 Viktorina: kunlik kuboklarning eng kattasi qaysi (sovrin 400 000 🪙)?",
+   "en": "Quiz: which is the biggest daily cup (a 400,000 🪙 prize)?",
+   "options": [
+    "Kechki / Evening",
+    "Ertalabki / Morning",
+    "Tushki / Noon",
+    "Tungi / Night"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Tungi Kubok: kirish 10 000 🪙, sovrin 400 000 🪙.",
+    "en": "The Night Cup: entry 10,000 🪙, prize 400,000 🪙."
+   }
+  }
+ },
+ {
+  "id": "Q109",
+  "cat": "quiz",
+  "tag": "game",
+  "quiz": {
+   "uz": "🗣 Viktorina: lobbidagi ovozli xonada eng ko'pi bilan necha kishi gaplasha oladi?",
+   "en": "Quiz: how many players can talk in a lobby's voice room at most?",
+   "options": [
+    "2",
+    "4",
+    "8",
+    "16"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Sakkiz kishigacha, lobbi bilan bir xil.",
+    "en": "Up to eight, the same as the lobby."
+   }
+  }
+ },
+ {
+  "id": "Q110",
+  "cat": "quiz",
+  "tag": "brain",
+  "quiz": {
+   "uz": "🧠 Viktorina: 8-ball'da bitta o'yinchi guruhida nechta shar bor (8-sharsiz)?",
+   "en": "Quiz: how many balls does one player's group have in 8-ball (not counting the 8)?",
+   "options": [
+    "8",
+    "7",
+    "6",
+    "5"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "1–7 yoki 9–15: yettitadan.",
+    "en": "1–7 or 9–15: seven each."
+   }
+  }
+ },
+ {
+  "id": "Q111",
+  "cat": "quiz",
+  "tag": "brain",
+  "quiz": {
+   "uz": "🧠 Viktorina: 15 ta shar va oq shar: nechta shar yo'l-yo'l (stripes)?",
+   "en": "Quiz: with 15 object balls and a cue ball, how many balls are stripes?",
+   "options": [
+    "6",
+    "7",
+    "8",
+    "9"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "9 dan 15 gacha: yettita yo'l-yo'l shar.",
+    "en": "Balls 9 to 15: seven stripes."
+   }
+  }
+ },
+ {
+  "id": "Q112",
+  "cat": "quiz",
+  "tag": "brain",
+  "quiz": {
+   "uz": "🧠 Viktorina: oq sharni hisobga olmasdan, 8-ball stolidagi sharlar necha xil guruhga bo'linadi?",
+   "en": "Quiz: not counting the cue ball, into how many groups are 8-ball's balls split?",
+   "options": [
+    "5",
+    "4",
+    "3",
+    "2"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Yaxlit (1–7), yo'l-yo'l (9–15) va yagona qora 8-shar: uchta.",
+    "en": "Solids (1–7), stripes (9–15) and the lone black 8-ball: three."
+   }
+  }
+ },
+ {
+  "id": "C001",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_lon.jpg",
+  "uz": "🇬🇧 London: Thames Pub\nBig Ben soyasidagi klassik pab, ko'k sukno. Hamma shu yerdan boshlaydi: eng arzon kirish, mag'lubiyatda kubok yo'qolmaydi.\n🎟 Kirish: 50 🪙 → 💰 yutuq: 100 🪙\n🔓 1-daraja\n💍 Shahar uzugi: 15 🏆 (g'alaba +4, mag'lubiyatda kubok yo'qolmaydi)",
+  "en": "London: Thames Pub. A classic pub in Big Ben's shadow, blue cloth. Everyone starts here. Entry 50 🪙 → prize 100 🪙. Needs level 1. City ring: 15 🏆 (win +4, no trophies lost on a loss)."
+ },
+ {
+  "id": "C002",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_syd.jpg",
+  "uz": "🇦🇺 Sidney: Harbour Bar\nKo'rfaz bo'yidagi bar, yashil sukno. Ikkinchi stol: dastlabki g'alabalardan keyin shu yerga o'tasiz.\n🎟 Kirish: 100 🪙 → 💰 yutuq: 200 🪙\n🔓 2-daraja · 8 🏆 kubok yo'lida\n💍 Shahar uzugi: 30 🏆 (g'alaba +6, mag'lubiyatda kubok yo'qolmaydi)",
+  "en": "Sydney: Harbour Bar. A harbour bar, green cloth. Your second table. Entry 100 🪙 → prize 200 🪙. Needs level 2 and 8 🏆 on the Trophy Road. City ring: 30 🏆 (win +6, no trophies lost on a loss)."
+ },
+ {
+  "id": "C003",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_lis.jpg",
+  "uz": "🇵🇹 Lissabon: Summer Terrace\nYozgi terrasada tushga yaqin o'yin: firuza rangli sukno, yengil kayfiyat.\n🎟 Kirish: 500 🪙 → 💰 yutuq: 1 000 🪙\n🔓 3-daraja · 28 🏆 kubok yo'lida\n💍 Shahar uzugi: 60 🏆 (g'alaba +8, mag'lubiyat −1)",
+  "en": "Lisbon: Summer Terrace. A summer terrace, turquoise cloth, an easy mood. Entry 500 🪙 → prize 1 000 🪙. Needs level 3 and 28 🏆 on the Trophy Road. City ring: 60 🏆 (win +8, a loss −1)."
+ },
+ {
+  "id": "C004",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_mad.jpg",
+  "uz": "🇪🇸 Madrid: Plaza Mayor\nMadridning qalbi: qizil sukno va qaynoq raqobat.\n🎟 Kirish: 1 000 🪙 → 💰 yutuq: 2 000 🪙\n🔓 4-daraja · 48 🏆 kubok yo'lida\n💍 Shahar uzugi: 65 🏆 (g'alaba +9, mag'lubiyat −1)",
+  "en": "Madrid: Plaza Mayor. The heart of Madrid: red cloth and a hot rivalry. Entry 1 000 🪙 → prize 2 000 🪙. Needs level 4 and 48 🏆 on the Trophy Road. City ring: 65 🏆 (win +9, a loss −1)."
+ },
+ {
+  "id": "C005",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_tok.jpg",
+  "uz": "🇯🇵 Tokio: Samurai Dojo\nSukunat, diqqat va qizil sukno. Bu yerda shoshilgan yutqazadi.\n🎟 Kirish: 2 500 🪙 → 💰 yutuq: 5 000 🪙\n🔓 5-daraja · 68 🏆 kubok yo'lida\n💍 Shahar uzugi: 75 🏆 (g'alaba +10, mag'lubiyat −2)",
+  "en": "Tokyo: Samurai Dojo. Silence, focus and red cloth. Rush it and you lose. Entry 2 500 🪙 → prize 5 000 🪙. Needs level 5 and 68 🏆 on the Trophy Road. City ring: 75 🏆 (win +10, a loss −2)."
+ },
+ {
+  "id": "C006",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_veg.jpg",
+  "uz": "🇺🇸 Las-Vegas: Royal Flush\nLas-Vegas chiroqlari ostida qora sukno. Kirish narxi birdan o'sadi: bu endi katta liga.\n🎟 Kirish: 10 000 🪙 → 💰 yutuq: 20 000 🪙\n🔓 7-daraja · 115 🏆 kubok yo'lida\n💍 Shahar uzugi: 100 🏆 (g'alaba +13, mag'lubiyat −4)",
+  "en": "Las Vegas: Royal Flush. Black cloth under the lights of Las Vegas. The entry fee jumps: this is the big league. Entry 10 000 🪙 → prize 20 000 🪙. Needs level 7 and 115 🏆 on the Trophy Road. City ring: 100 🏆 (win +13, a loss −4)."
+ },
+ {
+  "id": "C007",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_bue.jpg",
+  "uz": "🇦🇷 Buenos-Ayres: Tango Salon\nTango saloni: sekin ritm, och ko'k sukno, aniq zarba. Tangoning vatanida o'yin ham nafis bo'ladi.\n🎟 Kirish: 25 000 🪙 → 💰 yutuq: 50 000 🪙\n🔓 8-daraja · 140 🏆 kubok yo'lida\n💍 Shahar uzugi: 110 🏆 (g'alaba +14, mag'lubiyat −5)",
+  "en": "Buenos Aires: Tango Salon. A tango salon: slow rhythm, light-blue cloth, a precise shot. Entry 25 000 🪙 → prize 50 000 🪙. Needs level 8 and 140 🏆 on the Trophy Road. City ring: 110 🏆 (win +14, a loss −5)."
+ },
+ {
+  "id": "C008",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_jak.jpg",
+  "uz": "🇮🇩 Jakarta: Volcano Arena\nOlovrang sukno, o'yin qizib boradi. Sovuqqonlar yutadi.\n🎟 Kirish: 50 000 🪙 → 💰 yutuq: 100 000 🪙\n🔓 9-daraja · 170 🏆 kubok yo'lida\n💍 Shahar uzugi: 125 🏆 (g'alaba +16, mag'lubiyat −6)",
+  "en": "Jakarta: Volcano Arena. Fire-orange cloth, the game heats up. Cool heads win. Entry 50 000 🪙 → prize 100 000 🪙. Needs level 9 and 170 🏆 on the Trophy Road. City ring: 125 🏆 (win +16, a loss −6)."
+ },
+ {
+  "id": "C009",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_tor.jpg",
+  "uz": "🇨🇦 Toronto: Maple Lounge\nKulrang-ko'k sukno, sokin va jiddiy muhit. O'yin endi hazil emas.\n🎟 Kirish: 100 000 🪙 → 💰 yutuq: 200 000 🪙\n🔓 11-daraja · 230 🏆 kubok yo'lida\n💍 Shahar uzugi: 160 🏆 (g'alaba +20, mag'lubiyat −9)",
+  "en": "Toronto: Maple Lounge. Grey-blue cloth, a calm and serious room. Entry 100 000 🪙 → prize 200 000 🪙. Needs level 11 and 230 🏆 on the Trophy Road. City ring: 160 🏆 (win +20, a loss −9)."
+ },
+ {
+  "id": "C010",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_mex.jpg",
+  "uz": "🇲🇽 Mexiko: Fiesta Cantina\nYashil sukno va bayramona kayfiyat. Ritm tez, zarbalar aniq bo'lsin.\n🎟 Kirish: 160 000 🪙 → 💰 yutuq: 320 000 🪙\n🔓 12-daraja · 260 🏆 kubok yo'lida\n💍 Shahar uzugi: 180 🏆 (g'alaba +22, mag'lubiyat −11)",
+  "en": "Mexico City: Fiesta Cantina. Green cloth and a party mood. Fast rhythm, accurate shots. Entry 160 000 🪙 → prize 320 000 🪙. Needs level 12 and 260 🏆 on the Trophy Road. City ring: 180 🏆 (win +22, a loss −11)."
+ },
+ {
+  "id": "C011",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_cai.jpg",
+  "uz": "🇪🇬 Qohira: Pyramid Hall\nOltin-sariq sukno, ming yillik piramidalar yurtidan ilhomlangan zal.\n🎟 Kirish: 250 000 🪙 → 💰 yutuq: 500 000 🪙\n🔓 13-daraja · 290 🏆 kubok yo'lida\n💍 Shahar uzugi: 200 🏆 (g'alaba +25, mag'lubiyat −13)",
+  "en": "Cairo: Pyramid Hall. Golden cloth, a room inspired by the land of the pyramids. Entry 250 000 🪙 → prize 500 000 🪙. Needs level 13 and 290 🏆 on the Trophy Road. City ring: 200 🏆 (win +25, a loss −13)."
+ },
+ {
+  "id": "C012",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_dub.jpg",
+  "uz": "🇦🇪 Dubay: Golden Tower\nTo'q ko'k sukno va osmono'par bino manzarasi. Birinchi million shu yerda.\n🎟 Kirish: 500 000 🪙 → 💰 yutuq: 1 000 000 🪙\n🔓 15-daraja · 340 🏆 kubok yo'lida\n💍 Shahar uzugi: 230 🏆 (g'alaba +30, mag'lubiyat −17)",
+  "en": "Dubai: Golden Tower. Deep blue cloth and a skyscraper view. Your first million lives here. Entry 500 000 🪙 → prize 1 000 000 🪙. Needs level 15 and 340 🏆 on the Trophy Road. City ring: 230 🏆 (win +30, a loss −17)."
+ },
+ {
+  "id": "C013",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_sin.jpg",
+  "uz": "🇸🇬 Singapur: Marina Bay\nKo'rfaz chiroqlari va ko'k sukno. Toza, tartibli, aniq zarbalar uchun.\n🎟 Kirish: 700 000 🪙 → 💰 yutuq: 1 400 000 🪙\n🔓 16-daraja · 365 🏆 kubok yo'lida\n💍 Shahar uzugi: 250 🏆 (g'alaba +32, mag'lubiyat −19)",
+  "en": "Singapore: Marina Bay. Bay lights and blue cloth. Clean, tidy, made for accurate shots. Entry 700 000 🪙 → prize 1 400 000 🪙. Needs level 16 and 365 🏆 on the Trophy Road. City ring: 250 🏆 (win +32, a loss −19)."
+ },
+ {
+  "id": "C014",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_sha.jpg",
+  "uz": "🇨🇳 Shanxay: Pearl Club\nZumrad yashil sukno va Sharq marvaridining hashamati.\n🎟 Kirish: 1 000 000 🪙 → 💰 yutuq: 2 000 000 🪙\n🔓 17-daraja · 390 🏆 kubok yo'lida\n💍 Shahar uzugi: 270 🏆 (g'alaba +35, mag'lubiyat −21)",
+  "en": "Shanghai: Pearl Club. Emerald-green cloth and the glamour of the Pearl of the Orient. Entry 1 000 000 🪙 → prize 2 000 000 🪙. Needs level 17 and 390 🏆 on the Trophy Road. City ring: 270 🏆 (win +35, a loss −21)."
+ },
+ {
+  "id": "C015",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_par.jpg",
+  "uz": "🇫🇷 Parij: Château Royal\nQirollik zali, pushti sukno. Bu yerda faqat tajribalilar o'ynaydi.\n🎟 Kirish: 2 500 000 🪙 → 💰 yutuq: 5 000 000 🪙\n🔓 19-daraja · 480 🏆 kubok yo'lida\n💍 Shahar uzugi: 305 🏆 (g'alaba +40, mag'lubiyat −27)",
+  "en": "Paris: Château Royal. A royal hall, rose-pink cloth. Experienced players only. Entry 2 500 000 🪙 → prize 5 000 000 🪙. Needs level 19 and 480 🏆 on the Trophy Road. City ring: 305 🏆 (win +40, a loss −27)."
+ },
+ {
+  "id": "C016",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_ams.jpg",
+  "uz": "🇳🇱 Amsterdam: Canal House\nKanallar bo'yidagi uy, to'q sariq sukno. Yutuq millionlab tanga.\n🎟 Kirish: 3 000 000 🪙 → 💰 yutuq: 6 000 000 🪙\n🔓 20-daraja · 505 🏆 kubok yo'lida\n💍 Shahar uzugi: 325 🏆 (g'alaba +42, mag'lubiyat −30)",
+  "en": "Amsterdam: Canal House. A house on the canals, orange cloth. Prizes in the millions. Entry 3 000 000 🪙 → prize 6 000 000 🪙. Needs level 20 and 505 🏆 on the Trophy Road. City ring: 325 🏆 (win +42, a loss −30)."
+ },
+ {
+  "id": "C017",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_rom.jpg",
+  "uz": "🇮🇹 Rim: Colosseo\nQadimiy Rim ruhi, jigarrang-oltin sukno. Gladiatorlar o'rniga bilyardchilar jang qiladi.\n🎟 Kirish: 4 000 000 🪙 → 💰 yutuq: 8 000 000 🪙\n🔓 21-daraja · 530 🏆 kubok yo'lida\n💍 Shahar uzugi: 350 🏆 (g'alaba +45, mag'lubiyat −33)",
+  "en": "Rome: Colosseo. The spirit of ancient Rome, brown-and-gold cloth. Cue players instead of gladiators. Entry 4 000 000 🪙 → prize 8 000 000 🪙. Needs level 21 and 530 🏆 on the Trophy Road. City ring: 350 🏆 (win +45, a loss −33)."
+ },
+ {
+  "id": "C018",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_bkk.jpg",
+  "uz": "🇹🇭 Bangkok: Golden Temple\nZaytun yashil sukno va oltin ma'bad ruhi. Sabr va aniqlik.\n🎟 Kirish: 5 000 000 🪙 → 💰 yutuq: 10 000 000 🪙\n🔓 23-daraja · 600 🏆 kubok yo'lida\n💍 Shahar uzugi: 400 🏆 (g'alaba +50, mag'lubiyat −39)",
+  "en": "Bangkok: Golden Temple. Olive-green cloth and a golden temple spirit. Patience and accuracy. Entry 5 000 000 🪙 → prize 10 000 000 🪙. Needs level 23 and 600 🏆 on the Trophy Road. City ring: 400 🏆 (win +50, a loss −39)."
+ },
+ {
+  "id": "C019",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_kul.jpg",
+  "uz": "🇲🇾 Kuala-Lumpur: Twin Towers\nEgizak minoralar soyasida to'q ko'k sukno.\n🎟 Kirish: 7 000 000 🪙 → 💰 yutuq: 14 000 000 🪙\n🔓 24-daraja · 640 🏆 kubok yo'lida\n💍 Shahar uzugi: 440 🏆 (g'alaba +52, mag'lubiyat −42)",
+  "en": "Kuala Lumpur: Twin Towers. Deep blue cloth in the shadow of the twin towers. Entry 7 000 000 🪙 → prize 14 000 000 🪙. Needs level 24 and 640 🏆 on the Trophy Road. City ring: 440 🏆 (win +52, a loss −42)."
+ },
+ {
+  "id": "C020",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_seo.jpg",
+  "uz": "🇰🇷 Seul: Neon Tower\nBinafsha neon va tungi Seul. Tezkor, yorqin, hayajonli o'yin.\n🎟 Kirish: 10 000 000 🪙 → 💰 yutuq: 20 000 000 🪙\n🔓 25-daraja · 680 🏆 kubok yo'lida\n💍 Shahar uzugi: 480 🏆 (g'alaba +55, mag'lubiyat −45)",
+  "en": "Seoul: Neon Tower. Violet neon and Seoul by night. A fast, bright, thrilling game. Entry 10 000 000 🪙 → prize 20 000 000 🪙. Needs level 25 and 680 🏆 on the Trophy Road. City ring: 480 🏆 (win +55, a loss −45)."
+ },
+ {
+  "id": "C021",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_mum.jpg",
+  "uz": "🇮🇳 Mumbay: Maharaja Palace\nMagenta sukno va saroy hashamati. Katta stol, katta sovrin.\n🎟 Kirish: 15 000 000 🪙 → 💰 yutuq: 30 000 000 🪙\n🔓 28-daraja · 780 🏆 kubok yo'lida\n💍 Shahar uzugi: 700 🏆 (g'alaba +65, mag'lubiyat −56)",
+  "en": "Mumbai: Maharaja Palace. Magenta cloth and palace splendour. A big table, a big prize. Entry 15 000 000 🪙 → prize 30 000 000 🪙. Needs level 28 and 780 🏆 on the Trophy Road. City ring: 700 🏆 (win +65, a loss −56)."
+ },
+ {
+  "id": "C022",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_ath.jpg",
+  "uz": "🇬🇷 Afina: Acropolis Hall\nAkropol ruhidagi ko'k sukno. Qadimgi Yunonistonda sport ham san'at edi.\n🎟 Kirish: 20 000 000 🪙 → 💰 yutuq: 40 000 000 🪙\n🔓 29-daraja · 855 🏆 kubok yo'lida\n💍 Shahar uzugi: 1 800 🏆 (g'alaba +70, mag'lubiyat −61)",
+  "en": "Athens: Acropolis Hall. Blue cloth in the spirit of the Acropolis. Sport was an art in ancient Greece. Entry 20 000 000 🪙 → prize 40 000 000 🪙. Needs level 29 and 855 🏆 on the Trophy Road. City ring: 1 800 🏆 (win +70, a loss −61)."
+ },
+ {
+  "id": "C023",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_ber.jpg",
+  "uz": "🇩🇪 Berlin: Platz Arena\nZamonaviy Berlin, firuza sukno. Aniqlik va sovuqqonlik talab qilinadi.\n🎟 Kirish: 25 000 000 🪙 → 💰 yutuq: 50 000 000 🪙\n🔓 31-daraja · 930 🏆 kubok yo'lida\n💍 Shahar uzugi: 3 000 🏆 (g'alaba +75, mag'lubiyat −67)",
+  "en": "Berlin: Platz Arena. Modern Berlin, teal cloth. Precision and a cool head wanted. Entry 25 000 000 🪙 → prize 50 000 000 🪙. Needs level 31 and 930 🏆 on the Trophy Road. City ring: 3 000 🏆 (win +75, a loss −67)."
+ },
+ {
+  "id": "C024",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_ist.jpg",
+  "uz": "🇹🇷 Istanbul: Bosphorus Palace\nIkki qit'a chorrahasi, bordo sukno. Sharq bilan G'arb bir stolda uchrashadi.\n🎟 Kirish: 35 000 000 🪙 → 💰 yutuq: 70 000 000 🪙\n🔓 34-daraja · 1 040 🏆 kubok yo'lida\n💍 Shahar uzugi: 3 250 🏆 (g'alaba +80, mag'lubiyat −72)",
+  "en": "Istanbul: Bosphorus Palace. Where two continents meet, burgundy cloth. East meets West at one table. Entry 35 000 000 🪙 → prize 70 000 000 🪙. Needs level 34 and 1 040 🏆 on the Trophy Road. City ring: 3 250 🏆 (win +80, a loss −72)."
+ },
+ {
+  "id": "C025",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_cas.jpg",
+  "uz": "🇲🇦 Kasablanka: Medina Riad\nEski medina hovlisi, mis rangli sukno. Sokin hovli, qaynoq o'yin.\n🎟 Kirish: 45 000 000 🪙 → 💰 yutuq: 90 000 000 🪙\n🔓 36-daraja · 1 095 🏆 kubok yo'lida\n💍 Shahar uzugi: 3 375 🏆 (g'alaba +84, mag'lubiyat −76)",
+  "en": "Casablanca: Medina Riad. An old medina courtyard, copper cloth. A quiet courtyard, a hot game. Entry 45 000 000 🪙 → prize 90 000 000 🪙. Needs level 36 and 1 095 🏆 on the Trophy Road. City ring: 3 375 🏆 (win +84, a loss −76)."
+ },
+ {
+  "id": "C026",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_osa.jpg",
+  "uz": "🇯🇵 Osaka: Skyline\nOsmono'par binolar ustidagi binafsha-ko'k sukno, tungi Osaka manzarasi.\n🎟 Kirish: 55 000 000 🪙 → 💰 yutuq: 110 000 000 🪙\n🔓 38-daraja · 1 150 🏆 kubok yo'lida\n💍 Shahar uzugi: 3 500 🏆 (g'alaba +87, mag'lubiyat −79)",
+  "en": "Osaka: Skyline. Violet-blue cloth high above Osaka's night lights. Entry 55 000 000 🪙 → prize 110 000 000 🪙. Needs level 38 and 1 150 🏆 on the Trophy Road. City ring: 3 500 🏆 (win +87, a loss −79)."
+ },
+ {
+  "id": "C027",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_tas.jpg",
+  "uz": "🇺🇿 Toshkent: Silk Road\nBuyuk Ipak yo'li shahri, bizning Toshkent stolimiz! O'zbekiston bayrog'i ostida o'ynang.\n🎟 Kirish: 65 000 000 🪙 → 💰 yutuq: 130 000 000 🪙\n🔓 42-daraja · 1 300 🏆 kubok yo'lida\n💍 Shahar uzugi: 3 800 🏆 (g'alaba +92, mag'lubiyat −84)",
+  "en": "Tashkent: Silk Road. The city of the Great Silk Road, our Tashkent table! Entry 65 000 000 🪙 → prize 130 000 000 🪙. Needs level 42 and 1 300 🏆 on the Trophy Road. City ring: 3 800 🏆 (win +92, a loss −84)."
+ },
+ {
+  "id": "C028",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_rio.jpg",
+  "uz": "🇧🇷 Rio-de-Janeyro: Carnival Hall\nKarnaval ritmi va yorqin yashil sukno. Zarba ham raqsdek yengil bo'lsin.\n🎟 Kirish: 75 000 000 🪙 → 💰 yutuq: 150 000 000 🪙\n🔓 46-daraja · 1 500 🏆 kubok yo'lida\n💍 Shahar uzugi: 4 200 🏆 (g'alaba +97, mag'lubiyat −89)",
+  "en": "Rio: Carnival Hall. Carnival rhythm and bright green cloth. Let the shot be as light as a dance step. Entry 75 000 000 🪙 → prize 150 000 000 🪙. Needs level 46 and 1 500 🏆 on the Trophy Road. City ring: 4 200 🏆 (win +97, a loss −89)."
+ },
+ {
+  "id": "C029",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_nyc.jpg",
+  "uz": "🇺🇸 Nyu-York: Penthouse Loft\nTungi Manxetten ustidagi shaxsiy loft, to'q sukno.\n🎟 Kirish: 87 500 000 🪙 → 💰 yutuq: 175 000 000 🪙\n🔓 50-daraja · 1 750 🏆 kubok yo'lida\n💍 Shahar uzugi: 4 600 🏆 (g'alaba +102, mag'lubiyat −94)",
+  "en": "New York: Penthouse Loft. A private loft above night-time Manhattan, dark cloth. Entry 87 500 000 🪙 → prize 175 000 000 🪙. Needs level 50 and 1 750 🏆 on the Trophy Road. City ring: 4 600 🏆 (win +102, a loss −94)."
+ },
+ {
+  "id": "C030",
+  "cat": "city",
+  "tag": "city",
+  "img": "t_mos.jpg",
+  "uz": "🇷🇺 Moskva: Red Square\nOxirgi, eng yuqori stol. Cho'qqiga yetish oson emas: siz yetasizmi?\n🎟 Kirish: 100 000 000 🪙 → 💰 yutuq: 200 000 000 🪙\n🔓 55-daraja · 2 000 🏆 kubok yo'lida\n💍 Shahar uzugi: 5 000 🏆 (g'alaba +108, mag'lubiyat −100)",
+  "en": "Moscow: Red Square. The last and highest table. Reaching the summit is not easy: will you? Entry 100 000 000 🪙 → prize 200 000 000 🪙. Needs level 55 and 2 000 🏆 on the Trophy Road. City ring: 5 000 🏆 (win +108, a loss −100)."
+ },
+ {
+  "id": "S001",
+  "cat": "shop",
+  "tag": "cues",
+  "uz": "🎱 Kiy: sizning imzoyingiz\nStolda hamma sizning kiyingizni ko'radi. Oddiy kiydan afsonaviygacha: 470 dan ortiq kiy ichidan o'zingiznikini toping. Chiroy bilan birga ko'rsatkichlar ham farq qiladi: kuch, aniqlik, aylanish, vaqt.",
+  "en": "🎱 The cue: your signature\nEveryone at the table sees your cue. From a simple one to a legendary one: find yours among 470+. Besides the looks, the stats differ too: force, aim, spin, time.",
+  "img": "c_premium2.jpg"
+ },
+ {
+  "id": "S002",
+  "cat": "shop",
+  "tag": "cues",
+  "uz": "🇺🇿 O'zbekiston kiyi: bayrog'ingiz qo'lingizda\nKo'k rangda, yarim oy nishoni bilan. «Do'kon · Kiylar · Mamlakat» bo'limida: 40 💵 yoki 400 💎. Dunyoning boshqa 198 ta davlati kiyi ham shu yerda.",
+  "en": "🇺🇿 The Uzbekistan cue: your flag in your hands\nBlue, with a crescent. In \"Shop · Cues · Country\": 40 💵 or 400 💎. The cues of 198 other countries are there too.",
+  "img": "c_uz.jpg"
+ },
+ {
+  "id": "S003",
+  "cat": "shop",
+  "tag": "limited",
+  "uz": "🌈 Kamalak opal: dunyoda atigi 300 ta\nPremium kiylar seriyasining eng nodiri. Bronzadan boshlab nusxalar kamayib boradi: 5 000, 4 000, 3 000... va 300. Tugagach, boshqa chiqmaydi. Egasi tartib raqamini oladi.",
+  "en": "🌈 Rainbow Opal: only 300 in the world\nThe rarest of the premium cue series. The copies shrink from Bronze on: 5,000, 4,000, 3,000... down to 300. When they are gone, they are gone. The owner gets a serial number.",
+  "img": "c_premium3.jpg"
+ },
+ {
+  "id": "S004",
+  "cat": "shop",
+  "tag": "cues",
+  "uz": "💀 Qo'rqinchli kiylar: qorong'u uslubga qiziqasizmi?\nSirli tun, Yarim tun, Qabr qo'ng'irog'i va boshqalar: jami 12 ta. Do'kondagi haftalik taklif aylanib turadi, shuning uchun bu hafta kimning navbati ekanini ko'ring.",
+  "en": "💀 Horror cues: into the dark style?\nMystic Night, Midnight, Grave Bell and more: 12 in total. The weekly offer in the shop rotates, so check whose turn it is this week.",
+  "img": "c_horror.jpg"
+ },
+ {
+  "id": "S005",
+  "cat": "shop",
+  "tag": "tables",
+  "uz": "🛒 Do'kon: bu hafta stol −40% arzon\nDo'kondagi «Stollar» bo'limining eng tepasida bu haftaning chegirmali stoli turadi. Har dushanba yangisi almashadi, shuning uchun yoqqan bo'lsa, kutib o'tirmang.",
+  "en": "🛒 Shop: a table at −40% this week\nAt the very top of the shop's \"Tables\" section sits this week's discounted table. A new one replaces it every Monday, so if you like it, do not wait.",
+  "img": "s_tables.jpg"
+ },
+ {
+  "id": "S006",
+  "cat": "shop",
+  "tag": "tables",
+  "uz": "🪑 Stol: o'yin sahnangiz\nTanlagan stolingiz hamma o'yinlaringizda ko'rinadi va raqibingiz ham uni ko'radi. 150 dan ortiq stol: oddiy ranglardan nodir cheklangan nashrlargacha.",
+  "en": "🪑 The table: your stage\nThe table you pick shows in all your games and your opponent sees it too. Over 150 tables: from plain colours to rare limited editions.",
+  "img": "s_tables.jpg"
+ },
+ {
+  "id": "S007",
+  "cat": "shop",
+  "tag": "frames",
+  "uz": "🖼 Ramka: 5 000 🪙 dan\nBronza ramka 5 000 🪙, Kumush 25 000 🪙, Oltin 150 000 🪙. Ramka reytingda, lobbida va stolda avataringiz atrofida porlaydi. Yutgan tangangizga ozgina hashamat qo'shing.",
+  "en": "🖼 Frames: from 5,000 🪙\nBronze frame 5,000 🪙, Silver 25,000 🪙, Gold 150,000 🪙. The frame glows around your avatar in the ranking, the lobby and at the table. Add a little glamour to the coins you win.",
+  "img": "s_frames.jpg"
+ },
+ {
+  "id": "S008",
+  "cat": "shop",
+  "tag": "limited",
+  "uz": "💎 Cheklangan ramkalar: kim birinchi?\nBronzadan Kamalak opalgacha 12 daraja, soni 5 000 dan 300 gacha. Sotilib bo'lganlarini keyin sotib bo'lmaydi: qaysi daraja sizniki?",
+  "en": "💎 Limited frames: who is first?\n12 tiers from Bronze to Rainbow Opal, from 5,000 copies down to 300. Sold-out ones can no longer be bought: which tier will be yours?",
+  "img": "s_frames2.jpg"
+ },
+ {
+  "id": "S009",
+  "cat": "shop",
+  "tag": "avatars",
+  "uz": "🧑 Premium avatar: 20 000 🪙 dan\n70 ta premium avatar, 5 xil noyoblik: Oddiy, Noyob, Epik, Afsonaviy, Mifik. Eng arzoni 20 000 🪙, eng noyobi 💵 bilan. Rasmingiz sizning vizitkangiz.",
+  "en": "🧑 Premium avatars: from 20,000 🪙\n70 premium avatars in 5 rarities: Common, Rare, Epic, Legendary, Mythic. The cheapest is 20,000 🪙 and the rarest cost 💵. Your picture is your business card.",
+  "img": "s_avatars_all.jpg"
+ },
+ {
+  "id": "S010",
+  "cat": "shop",
+  "tag": "avatars",
+  "uz": "🙂 Avatarni o'zingizga mos tanlang\n76 ta portret bepul: bu yerdan o'zingizga o'xshaganini toping. Ko'proq ajralib turmoqchimisiz? Premium avatarlar «Avatarlar» bo'limida.",
+  "en": "🙂 Pick the avatar that fits you\n76 portraits are free: find one that looks like you. Want to stand out more? Premium avatars are in the \"Avatars\" section.",
+  "img": "s_avatars.jpg"
+ },
+ {
+  "id": "S011",
+  "cat": "shop",
+  "tag": "stickers",
+  "uz": "🎭 Stiker to'plami: bir bosishda kayfiyat\nBilyard, Hayvonlar, Kulgi, Taom, Sehr, Mehr: 6 ta to'plam. Har biri 10 💵 yoki 100 💎. Raqibingizga zarba paytida kulgi, hayrat yoki rahmat yuboring.",
+  "en": "🎭 A sticker pack: a mood in one tap\nBilliards, Animals, Funny, Food, Magic, Hearts: 6 packs. Each costs 10 💵 or 100 💎. Send your opponent a laugh, a gasp or a thank-you in the middle of the match.",
+  "img": "s_stickers.jpg"
+ },
+ {
+  "id": "S012",
+  "cat": "shop",
+  "tag": "stickers",
+  "uz": "😂 «Kulgi» stikerlari: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩\n9 ta stiker: g'alabada 🕶️, omadsizlikda 🤯, hazilda 🤡. O'yin chatidagi 🎭 tugmasi orqali yuboriladi. To'plam 10 💵 yoki 100 💎.",
+  "en": "😂 The \"Funny\" stickers: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩\n9 stickers: 🕶️ for a win, 🤯 for bad luck, 🤡 for a joke. Send them with the 🎭 button in the match chat. The pack costs 10 💵 or 100 💎.",
+  "img": "s_stickers.jpg"
+ },
+ {
+  "id": "S013",
+  "cat": "shop",
+  "tag": "stickers",
+  "uz": "💗 «Mehr» stikerlari: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘\n8 ta iliq stiker: do'stingizga yoqimli xabar yuboring. «Bilyard» to'plamida esa 🎱 🏆 👑 🎖️ bor. Har to'plam 10 💵 yoki 100 💎.",
+  "en": "💗 The \"Hearts\" stickers: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘\n8 warm stickers: send your friend a kind word. The \"Billiards\" pack has 🎱 🏆 👑 🎖️. Each pack costs 10 💵 or 100 💎.",
+  "img": "s_stickers.jpg"
+ },
+ {
+  "id": "S014",
+  "cat": "shop",
+  "tag": "gifts",
+  "uz": "✈️ Samolyot: eng katta sovg'a\nRaqibga uchib boradigan samolyot 👍 ×7 000 beradi va 100 💵 turadi. Mashina ×5 000, mototsikl ×3 000. Katta o'yindan keyin katta hurmat!",
+  "en": "✈️ The jet: the biggest gift\nThe jet that flies to your opponent is worth 👍 ×7,000 and costs 100 💵. The car is ×5,000, the bike ×3,000. Big respect after a big game!",
+  "img": "m_gifts.jpg"
+ },
+ {
+  "id": "S015",
+  "cat": "shop",
+  "tag": "gifts",
+  "uz": "🍫 Arzon sovg'alar: yurak, yonca, shokolad\nYonca va shokolad har kuni bepul. Yurak 15 🪙, kuniga 5 tagacha. Tangaga olinadigan eng arzon hurmat belgisi: yaxshi o'yindan keyin yuboring.",
+  "en": "🍫 Cheap gifts: heart, clover, chocolate\nClover and chocolate are free every day. A heart costs 15 🪙, up to 5 a day. The cheapest sign of respect for coins: send one after a good game.",
+  "img": "m_gifts.jpg"
+ },
+ {
+  "id": "S016",
+  "cat": "shop",
+  "tag": "cues",
+  "uz": "🪵 Tanga bilan olinadigan kiylar\nBoshlang'ich kiy bepul. Chinor 4 000 🪙, Konfet 18 000 🪙 va boshqalar. Birinchi g'alabalaringizdan keyin o'zingizga yangi kiy sovg'a qiling!",
+  "en": "🪵 Cues you can buy with coins\nThe starter cue is free. Plane Tree 4,000 🪙, Candy 18,000 🪙 and more. After your first wins, treat yourself to a new cue!",
+  "img": "c_standard.jpg"
+ },
+ {
+  "id": "S017",
+  "cat": "shop",
+  "tag": "cues",
+  "uz": "🏆 Sotib olinmaydigan kiylar\nVictory kiylarini sotib olmaysiz, yutib olasiz: ko'rsatilgan shaharda g'alaba qozonib bo'laklarni yig'asiz. Har bir kiy: 4 bo'lak. Qaysi shahardan boshlaysiz?",
+  "en": "🏆 Cues you cannot buy\nYou do not buy Victory cues, you win them: collect pieces by winning in the listed city. Each cue takes 4 pieces. Which city will you start with?",
+  "img": "c_victory.jpg"
+ },
+ {
+  "id": "S018",
+  "cat": "shop",
+  "tag": "cues",
+  "uz": "🎁 Syurpriz quti: nima chiqadi?\nAfsonaviy kiylar, masalan Axiom yoki Crystal Blade, syurpriz qutilardan chiqadi. Eng qiziq tomoni: nima chiqishini oldindan bilmaysiz.",
+  "en": "🎁 The surprise box: what will it be?\nLegendary cues such as Axiom or Crystal Blade come out of surprise boxes. The best part: you never know what you will get.",
+  "img": "c_surprise.jpg"
+ },
+ {
+  "id": "S019",
+  "cat": "shop",
+  "tag": "pass",
+  "uz": "🩸 Premium Mavsum yo'li: 600 💵 yoki 2 800 💎\nOy tugaguncha ochiq: premium yo'l yana ko'p kiy, ramka, stol va avatar beradi. Bepul yo'l esa hammaga ochiq. Oy tugashiga qancha qoldi? Mavsum yo'lida taymer bor.",
+  "en": "🩸 The premium Season Pass: 600 💵 or 2,800 💎\nOpen until the month ends: the premium track gives many more cues, frames, tables and avatars. The free track is open to all. How long is left? The pass has a timer.",
+  "img": "x_pass.jpg"
+ },
+ {
+  "id": "S020",
+  "cat": "shop",
+  "tag": "tables",
+  "uz": "💍 Uzukni yuting: stol bepul\nShahar uzugini yutsangiz, o'sha shahar stoli sizga bepul beriladi. Boshlash oson: London uzugi atigi 4 ta g'alaba, Sidney uzugi 5 ta. Qaysi shahar stoli birinchi bo'ladi?",
+  "en": "💍 Win the ring: the table is free\nWin a city's ring and that city's table is yours for free. An easy start: London's ring takes just 4 wins, Sydney's 5. Which city's table will be your first?",
+  "img": "s_tables.jpg"
+ },
+ {
+  "id": "S021",
+  "cat": "shop",
+  "tag": "boxes",
+  "uz": "🧰 Quti ochish: nima chiqadi?\nQuti qanchalik yuqori bo'lsa, ichidagi sovg'a shuncha ko'p: 1, 2 yoki 3 ta. Nima chiqishini oldindan bilmaysiz, shuning uchun har bir quti kichik bayram.",
+  "en": "🧰 Opening a box: what will it be?\nThe higher the box, the more perks inside: 1, 2 or 3. You never know what comes out, so every box is a little celebration.",
+  "img": "s_boxes.jpg"
+ },
+ {
+  "id": "S022",
+  "cat": "shop",
+  "tag": "look",
+  "uz": "✨ To'liq obraz: avatar, ramka, kiy, stol\nAvatar yuzingiz, ramka uning hoshiyasi, kiy qo'lingizdagi imzo, stol esa sahna. Hammasini birlashtiring va reytingda hamda stolda ajralib turing.",
+  "en": "✨ The full look: avatar, frame, cue, table\nThe avatar is your face, the frame its border, the cue your signature and the table the stage. Put it all together and stand out in the ranking and at the table.",
+  "img": "x_profile.jpg"
+ },
+ {
+  "id": "S023",
+  "cat": "shop",
+  "tag": "cues",
+  "uz": "👑 Premium kiy: cheklangan nashr, tartib raqami bilan\nPremium kiylar soni cheklangan: har bir egasi «№ 17 / 300» kabi tartib raqamini oladi. Raqamingiz kamyob bo'lsa, shuncha qimmatli. Do'kon · Kiylar · Premium.",
+  "en": "👑 A premium cue: a limited edition with a serial number\nPremium cues are limited: every owner gets a serial number such as \"№ 17 / 300\". The lower your number, the rarer. Shop · Cues · Premium.",
+  "img": "c_premium3.jpg"
+ },
+ {
+  "id": "S024",
+  "cat": "shop",
+  "tag": "cues",
+  "uz": "🌍 Davlat kiyi: 199 davlat, 199 bayroq\nHar bir davlatning kiyi o'z bayrog'i ranglarida. Do'kon · Kiylar · Mamlakat bo'limida o'z davlatingizni, yoki yoqqan boshqasini toping. Narxi: 40 💵 yoki 400 💎.",
+  "en": "🌍 A country cue: 199 countries, 199 flags\nEach country's cue wears its own flag colours. In Shop · Cues · Country find your own country or another you like. The price: 40 💵 or 400 💎.",
+  "img": "c_country.jpg"
+ },
+ {
+  "id": "T001",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: sindirishda oq sharni nazoratda saqlang\nBoshlang'ich zarbada eng kuchli urish shart emas. Oq shar uchburchakka to'g'ri tegsin va stol o'rtasida qolsin: shunda keyingi zarbangiz oson bo'ladi.",
+  "en": "💡 Tip: keep the cue ball under control on the break\nYou do not have to hit the break with full force. Let the cue ball meet the rack squarely and stay near the middle of the table, and your next shot is easy."
+ },
+ {
+  "id": "T002",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: oson sharlardan boshlang\nQiyin sharni birinchi urmang. Avval oson sharlarni tushiring, oq sharni keyingi qiyin shar yoniga olib keling. Natijada stolda faqat oson zarbalar qoladi.",
+  "en": "💡 Tip: start with the easy balls\nDo not shoot the hard ball first. Pocket the easy ones and bring the cue ball next to the harder one. You end up with only easy shots on the table."
+ },
+ {
+  "id": "T003",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: 8-sharni oxiriga qoldiring, lekin yo'lini oldindan tozalang\nO'z guruhingiz oxirgi shari tushganda 8-shar cho'ntakka ochiq yo'lda turishi kerak. Oxirgi 2–3 zarbadan oldin 8-shar yo'lida to'siq bormi, tekshiring.",
+  "en": "💡 Tip: leave the 8-ball for last, but clear its path early\nWhen your last group ball drops, the 8-ball needs a clear path to a pocket. Before your last 2-3 shots, check whether anything blocks it."
+ },
+ {
+  "id": "T004",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: yo'l to'silsa, bortdan aylaning\nRaqibning shari yo'lingizni to'ssa, to'g'ridan-to'g'ri urishga urinmang: oq sharni bortga uring (kick shot). Burchak kirish burchagiga teng qaytadi.",
+  "en": "💡 Tip: if the path is blocked, go round the cushion\nWhen an opponent's ball blocks you, do not force the direct shot: send the cue ball off a cushion (a kick shot). The angle out equals the angle in."
+ },
+ {
+  "id": "T005",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: ingichka zarbada kuchni pasaytiring\nNishon sharni faqat chetidan ilashtirsangiz (ingichka kesim), kuchli urmang. Sekin zarba aniqroq bo'ladi va oq shar ham uzoqqa ketmaydi.",
+  "en": "💡 Tip: soften the power on a thin cut\nWhen you only clip the edge of the object ball (a thin cut), do not hit hard. A slow shot is more accurate and the cue ball does not run away."
+ },
+ {
+  "id": "T006",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: oq sharning keyingi o'rnini o'ylang\nZarba tushdi, endi oq shar qayerda to'xtaydi? Pastdan urish (draw) uni orqaga tortadi, yuqoridan urish (follow) oldinga yuritadi. Mashq rejimida ikkalasini sinab ko'ring.",
+  "en": "💡 Tip: think about where the cue ball will stop\nThe ball dropped, but where does the cue ball end up? Hitting low (draw) pulls it back, hitting high (follow) sends it forward. Try both in Practice mode."
+ },
+ {
+  "id": "T007",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: oq sharni bort yoniga qoldirmang\nBort yonidagi oq shar bilan zarba qiyinlashadi. Sharni stolning o'rtasiga yaqin qoldirishga harakat qiling: u yerdan hamma tomonga yo'l ochiq.",
+  "en": "💡 Tip: do not leave the cue ball against the cushion\nA cue ball hugging the cushion makes the next shot hard. Try to leave it near the middle of the table: from there every direction is open."
+ },
+ {
+  "id": "T008",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: kombinatsiyani qidiring\nIkki shar bir-biriga yaqin turganda birinchisini ursangiz, u ikkinchisini cho'ntakka itarishi mumkin. Bunday zarba kam uchraydi, lekin raqibni hayratda qoldiradi.",
+  "en": "💡 Tip: look for the combination\nWhen two balls sit close together, hitting the first can push the second into a pocket. Such shots are rare, but they impress your opponent."
+ },
+ {
+  "id": "T009",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: har zarbada vaqt bor\nNavbatingiz boshlanishi bilan taymer yuradi. Zarbani oldindan rejalashtiring: raqib zarba urayotganda keyingi sharlaringizni hisoblab qo'ying.",
+  "en": "💡 Tip: every shot has a clock\nThe timer runs as soon as your turn starts. Plan the shot ahead: work out your next balls while your opponent is shooting."
+ },
+ {
+  "id": "T010",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: avval o'z guruhingiz sharini uring\nOq shar birinchi bo'lib raqibning sharini yoki 8-sharni ursa, qoida buzilishi bo'ladi va raqib oq sharni xohlagan joyga qo'yadi. Nishonni diqqat bilan tanlang.",
+  "en": "💡 Tip: hit your own group first\nIf the cue ball touches an opponent's ball or the 8-ball first, it is a foul and your opponent can place the cue ball anywhere. Choose your target carefully."
+ },
+ {
+  "id": "T011",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: oq shar qo'lingizda bo'lsa, ikki zarbani rejalashtiring\nOq sharni xohlagan joyga qo'yish imkonini bersa, faqat bitta sharni emas, keyingi sharni ham o'ylang: oq shar birinchi zarbadan keyin ikkinchisiga qulay joyda to'xtasin.",
+  "en": "💡 Tip: with the cue ball in hand, plan two shots\nWhen you may place the cue ball anywhere, think about the next ball too, not just one: let the cue ball finish in a good spot for the second shot."
+ },
+ {
+  "id": "T012",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: har kuni 5 daqiqa mashq\nMashq rejimida bitta qiyin zarbani 10 marta takrorlang. Bir haftadan keyin qiyin zarba odatiy bo'lib qoladi. Bunda tanga ham, reyting ham xavf ostida emas.",
+  "en": "💡 Tip: 5 minutes of practice a day\nIn Practice mode repeat one hard shot 10 times. After a week the hard shot becomes routine. Neither coins nor ranking are at stake."
+ },
+ {
+  "id": "T013",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: aylanishni oz-ozdan qo'shing\nYon aylanish (English) oq shar yo'lini o'zgartiradi. Boshlang'ich darajada oz miqdorda ishlating, aks holda zarba aniqligi buziladi. Avval Mashq rejimida kuzating.",
+  "en": "💡 Tip: add spin little by little\nSide spin (\"English\") bends the cue ball's path. Use a small amount at first, or your accuracy suffers. Watch it in Practice mode first."
+ },
+ {
+  "id": "T014",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: nishon chizig'ini barmog'ingiz bilan to'smang\nTelefonda nishonni aniq ko'rish uchun barmoqni chizig'ingiz yonidan uzoqroq tuting. Aniq nishon yarim g'alaba.",
+  "en": "💡 Tip: do not hide the aim line with your finger\nOn a phone, keep your finger away from the aim line so you can see it clearly. A clear aim is half the win."
+ },
+ {
+  "id": "T015",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: qiyin zarbadan oldin xavf va foydani solishtiring\nQiyin zarba urilmasa, raqibga qulay holat qoladi. Foydasi kichik, xavfi katta bo'lsa, himoya (safety) tanlang: oq sharni raqib sharlari orqasiga yashiring.",
+  "en": "💡 Tip: weigh risk against reward before a hard shot\nA missed hard shot leaves your opponent a good position. If the reward is small and the risk is big, play safe: hide the cue ball behind your opponent's balls."
+ },
+ {
+  "id": "T016",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: butun tangangizni bitta o'yinga sarflamang\nStolni hamyoningizga mos tanlang. Yutqazish ham o'yinning bir qismi: tangangiz bir necha o'yinga yetsin, shunda ruhiy bosim kam bo'ladi va zarbalar aniqroq chiqadi.",
+  "en": "💡 Tip: do not put all your coins on one match\nChoose a table that fits your wallet. Losing is part of the game: if your coins last for several matches, there is less pressure and your shots come out cleaner."
+ },
+ {
+  "id": "T017",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: kuchli raqib oldida sabr qiling\nKuchli raqib ham xato qiladi. Shoshilmang, oddiy zarbalarni ishonch bilan uring va uning xatosini kuting. Ko'pincha o'yinni sabrli o'yinchi yutadi.",
+  "en": "💡 Tip: be patient against a strong opponent\nEven a strong opponent makes mistakes. Do not rush, play the simple shots with confidence and wait for the slip. Often the patient player wins."
+ },
+ {
+  "id": "T018",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: sportcha o'ynang\nO'yin tugagach «Yaxshi o'yin» deb yozing, yurak yuboring. G'alabada ham, mag'lubiyatda ham hurmat saqlang: shunda raqiblar siz bilan yana o'ynashni xohlaydi.",
+  "en": "💡 Tip: be a good sport\nAfter the match type \"Good game\" and send a heart. Keep your respect in a win and in a loss: that way opponents want to play you again."
+ },
+ {
+  "id": "T019",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: ko'zingizni asrang\nBir soat o'ynagach 5 daqiqa tanaffus qiling: uzoqqa qarang, suv iching. Ko'z va qo'l dam olsa, zarbalar aniqroq bo'ladi. O'yin dam olish uchun, charchash uchun emas.",
+  "en": "💡 Tip: look after your eyes\nAfter an hour of play take a 5-minute break: look into the distance, drink some water. Rested eyes and hands shoot better. The game is for relaxing, not for wearing yourself out."
+ },
+ {
+  "id": "T020",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: yangi o'yinchi uchun yo'l\nLondon → Sidney → Lissabon: avval birinchi uzukni yig'ing (4 ta g'alaba), keyin keyingisini. Har uzuk yangi stol va yangi kubokni ochadi.",
+  "en": "💡 Tip: a path for new players\nLondon → Sydney → Lisbon: collect the first ring first (4 wins), then the next one. Each ring opens a new table and a new cup."
+ },
+ {
+  "id": "T021",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: kunlik kubokka oldindan tayyorlaning\nKubok ochilishidan 10 daqiqa oldin Mashq rejimida qizinib oling. Ochilgach 3 soat bor, lekin tayyor bo'lsangiz, birinchi raundda ham xato qilmaysiz.",
+  "en": "💡 Tip: warm up before the daily cup\nWarm up in Practice mode 10 minutes before the cup opens. You have 3 hours once it does, but if you are ready you will not slip even in round one."
+ },
+ {
+  "id": "T022",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: bir zarbada ikki shar\nIkki shar bir-biriga yaqin bo'lsa va cho'ntak oldida bo'lsa, ikkalasini bitta zarbada tushirish mumkin. «Ajoyib o'yin» medalini shunday olasiz: ichida 1 000 🪙 bor.",
+  "en": "💡 Tip: two balls with one shot\nIf two balls are close together near a pocket, you may drop both with one shot. That is how you earn the \"Great game\" medal, with 1,000 🪙 inside."
+ },
+ {
+  "id": "T023",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: sindirishda shar tushiring\nBirinchi zarbada shar tushirsangiz, «Tezkor» medalini olasiz. Oq sharni uchburchak uchi bilan to'g'ri ro'para qiling va o'rtacha kuchli uring.",
+  "en": "💡 Tip: pot a ball on the break\nPot a ball on the break and you earn the \"Quick\" medal. Line the cue ball up squarely with the head ball and hit with moderate power."
+ },
+ {
+  "id": "T024",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: sharning qaysi qismiga urishni biling\nNishon shar to'g'ridan-to'g'ri cho'ntak tomon ketishi uchun, oq shar uning cho'ntakka qarama-qarshi tomoniga tegishi kerak. Xayoliy shar usuli shu yerda yordam beradi.",
+  "en": "💡 Tip: know where to hit the ball\nFor the object ball to head straight for the pocket, the cue ball must touch it on the side opposite the pocket. The ghost-ball method helps here."
+ },
+ {
+  "id": "T025",
+  "cat": "tip",
+  "tag": "tips",
+  "uz": "💡 Maslahat: kichik maqsadlar qo'ying\nBugun 3 ta g'alaba, ertaga uzuk, indinga yangi shahar. Kichik maqsadlar yo'lni qisqartiradi va har kuni sizni o'yinga qaytaradi. Maqsadingiz nima?",
+  "en": "💡 Tip: set small goals\nToday 3 wins, tomorrow a ring, the day after a new city. Small goals shorten the road and bring you back every day. What is yours?"
+ },
+ {
+  "id": "P001",
+  "cat": "poll",
+  "tag": "cues",
+  "poll": {
+   "uz": "🎱 Qaysi kiy turi sizga ko'proq yoqadi?",
+   "en": "Which kind of cue do you like most?",
+   "options": [
+    "Premium (cheklangan nashr) / Premium (limited)",
+    "Davlat kiylari / Country cues",
+    "Qo'rqinchli kiylar / Horror cues",
+    "Victory (g'alaba bilan) / Victory (earned)",
+    "Syurpriz kiylar / Surprise cues"
+   ]
+  }
+ },
+ {
+  "id": "P002",
+  "cat": "poll",
+  "tag": "voice",
+  "poll": {
+   "uz": "🎙 Ovozli xonada gaplashasizmi?",
+   "en": "Do you talk in the voice room?",
+   "options": [
+    "Ha, doim / Yes, always",
+    "Ba'zan / Sometimes",
+    "Faqat eshitaman / I only listen",
+    "Yo'q, yozishni afzal ko'raman / No, I prefer typing"
+   ]
+  }
+ },
+ {
+  "id": "P003",
+  "cat": "poll",
+  "tag": "device",
+  "poll": {
+   "uz": "📱 O'yinni asosan qayerda o'ynaysiz?",
+   "en": "Where do you mostly play?",
+   "options": [
+    "Telegram'da, telefondan / Telegram on a phone",
+    "Brauzerda / In a browser",
+    "Planshetda / On a tablet",
+    "Kompyuterda / On a computer"
+   ]
+  }
+ },
+ {
+  "id": "P004",
+  "cat": "poll",
+  "tag": "modes",
+  "poll": {
+   "uz": "🎱 Sizga qaysi bilyard turi yoqadi?",
+   "en": "Which kind of cue sport do you like?",
+   "options": [
+    "8-ball",
+    "9-ball",
+    "Snuker / Snooker",
+    "Rus bilyardi (Pyramid) / Russian billiards"
+   ]
+  }
+ },
+ {
+  "id": "P005",
+  "cat": "poll",
+  "tag": "rank",
+  "poll": {
+   "uz": "🌍 Reytingning qaysi jadvali siz uchun muhim?",
+   "en": "Which ranking board matters most to you?",
+   "options": [
+    "Dunyo / World",
+    "Davlat / Country",
+    "Do'stlar / Friends",
+    "Klub ligalari / Club leagues",
+    "Ligam / My league"
+   ]
+  }
+ },
+ {
+  "id": "P006",
+  "cat": "poll",
+  "tag": "style",
+  "poll": {
+   "uz": "🎯 O'yin uslubingiz qanday?",
+   "en": "What is your playing style?",
+   "options": [
+    "Hujumkor / Attacker",
+    "Himoyachi / Defender",
+    "Aralash / A mix",
+    "Hali bilmayman / Not sure yet"
+   ]
+  }
+ },
+ {
+  "id": "P007",
+  "cat": "poll",
+  "tag": "cities",
+  "poll": {
+   "uz": "🌆 Qaysi shaharga yetdingiz?",
+   "en": "Which city have you reached?",
+   "options": [
+    "London – Madrid (1–4)",
+    "Tokio – Jakarta (5–8)",
+    "Toronto – Amsterdam (9–16)",
+    "Rim – Istanbul (17–24)",
+    "Kasablanka va yuqori / Casablanca and up (25–30)"
+   ]
+  }
+ },
+ {
+  "id": "P008",
+  "cat": "poll",
+  "tag": "daily",
+  "poll": {
+   "uz": "⏰ Kunlik kuboklardan qaysi birini ko'proq o'ynaysiz?",
+   "en": "Which daily cup do you play most?",
+   "options": [
+    "Ertalabki (09:00) / Morning",
+    "Tushki (15:00) / Noon",
+    "Kechki (21:00) / Evening",
+    "Tungi (03:00) / Night",
+    "Hech qaysini / None yet"
+   ]
+  }
+ },
+ {
+  "id": "P009",
+  "cat": "poll",
+  "tag": "stickers",
+  "poll": {
+   "uz": "🎭 Qaysi stiker to'plami sizga yoqadi?",
+   "en": "Which sticker pack do you like?",
+   "options": [
+    "Bilyard / Billiards",
+    "Hayvonlar / Animals",
+    "Kulgi / Funny",
+    "Taom / Food",
+    "Sehr / Magic",
+    "Mehr / Hearts"
+   ]
+  }
+ },
+ {
+  "id": "P010",
+  "cat": "poll",
+  "tag": "goals",
+  "poll": {
+   "uz": "🏆 Bu hafta nechta g'alaba qozonmoqchisiz?",
+   "en": "How many wins do you want this week?",
+   "options": [
+    "1–3",
+    "4–7",
+    "8–15",
+    "16 va undan ko'p / 16 or more"
+   ]
+  }
+ },
+ {
+  "id": "P011",
+  "cat": "poll",
+  "tag": "channel",
+  "poll": {
+   "uz": "📢 Kanalda ko'proq nimani ko'rmoqchisiz?",
+   "en": "What would you like to see more of in the channel?",
+   "options": [
+    "Viktorinalar / Quizzes",
+    "Maslahatlar / Tips",
+    "Yangiliklar / News",
+    "Shahar stollari / City tables",
+    "Do'kon yangiliklari / Shop news"
+   ]
+  }
+ },
+ {
+  "id": "Y001",
+  "cat": "story",
+  "tag": "brand",
+  "uz": "🎱 Oxirgi shar\nStolda faqat 8-shar qoldi. Raqibingiz ham bitta zarba uzoqlikda. Qo'lingiz yengil titraydi, taymer yuradi... Nafas oling, nishonni to'g'rilang va uring. Bilyard aynan shu daqiqalar uchun yaratilgan.",
+  "en": "🎱 The last ball\nOnly the 8-ball is left. Your opponent is one shot away too. Your hand trembles a little, the timer runs... Breathe, line up the aim and shoot. Cue sports exist for moments like this.",
+  "img": "p07.jpg"
+ },
+ {
+  "id": "Y002",
+  "cat": "story",
+  "tag": "friends",
+  "uz": "😏 «Men sendan kuchliman»\nDo'stingiz shunday dedimi? Gapirib o'tirmang: lobbi oching, kodni yuboring va stolda isbotlang. Ovozli xonani yoqing: hamma kim haq ekanini eshitsin!",
+  "en": "😏 \"I am better than you\"\nDid your friend say that? Do not argue: open a lobby, send the code and prove it at the table. Turn on the voice room so everyone hears who is right!",
+  "img": "l_hub.jpg"
+ },
+ {
+  "id": "Y003",
+  "cat": "story",
+  "tag": "daily",
+  "uz": "🌅 🌞 🌆 🌙 Kunning to'rt imkoniyati\n09:00, 15:00, 21:00 va 03:00 (Toshkent vaqti bilan). To'rt kubok, to'rt imkoniyat. Ertalabkisini o'tkazib yuborgan bo'lsangiz, tushdagisini ushlab oling. Bugun qaysi birida o'ynaysiz?",
+  "en": "🌅 🌞 🌆 🌙 Four chances a day\n09:00, 15:00, 21:00 and 03:00 (Tashkent time). Four cups, four chances. Missed the morning one? Catch the afternoon one. Which will you play today?",
+  "img": "p03.jpg"
+ },
+ {
+  "id": "Y004",
+  "cat": "story",
+  "tag": "road",
+  "uz": "🛣 London'dan Toshkentgacha\nBirinchi stol London: kirish atigi 50 🪙. 27-stol Toshkent: kirish 65 000 000 🪙. Orada 25 ta shahar, har birining o'z uzugi. Siz hozir qaysi shahardasiz?",
+  "en": "🛣 From London to Tashkent\nThe first table is London: entry just 50 🪙. The 27th is Tashkent: entry 65,000,000 🪙. Between them 25 cities, each with its own ring. Which city are you in right now?",
+  "img": "p02.jpg"
+ },
+ {
+  "id": "Y005",
+  "cat": "story",
+  "tag": "rank",
+  "uz": "🏳 Bayroqlar bellashadi\nDavlat reytingida har davlatning o'z jadvali bor, hafta oxirida eng yaxshi uchtasi 💵 oladi. Sizning bayrog'ingiz qaysi o'rinda bo'ladi? Birinchi g'alabadan boshlang.",
+  "en": "🏳 Flags compete\nEvery country has its own ranking board, and at the end of the week the best three receive 💵. Where will your flag be? Start with your first win."
+ },
+ {
+  "id": "Y006",
+  "cat": "story",
+  "tag": "voice",
+  "uz": "🎙 Ovoz bilan boshqacha\nMatn yozib o'tirmaysiz: «Zo'r zarba!», «Oh, oz qoldi!», kulgi, hayrat... Ovozli xona o'yinni jonli suhbatga aylantiradi. Do'stlaringizni lobbiga chaqiring va sinab ko'ring.",
+  "en": "🎙 Different with voice\nNo typing: \"Great shot!\", \"Oh, so close!\", laughter, gasps... The voice room turns the game into a live conversation. Invite your friends to a lobby and try it.",
+  "img": "l_voice.jpg"
+ },
+ {
+  "id": "Y007",
+  "cat": "story",
+  "tag": "brand",
+  "uz": "📅 Mukammal kun rejasi\nErtalab: kunlik sovg'a va omad g'ildiragi. Tushda: kunlik kubok. Kechqurun: do'stlar bilan lobbi va ovozli xona. Tunda: bugun nechta medal yig'ganingizni sanang. Hammasi bepul boshlanadi.",
+  "en": "📅 A perfect day plan\nMorning: the daily gift and the lucky wheel. Noon: a daily cup. Evening: a lobby with friends and the voice room. Night: count the medals you collected today. It all starts for free.",
+  "img": "p11.jpg"
+ },
+ {
+  "id": "Y008",
+  "cat": "story",
+  "tag": "medals",
+  "uz": "🔥 Bugungi chaqiriq: ketma-ket g'alabalar\n5 ta ketma-ket g'alaba «Ketma-ket g'alaba» medalini beradi, 10 tasi esa «Sovuq qon» ni. Har medal 1 000 🪙. Bitta yutqazish seriyani uzadi, shuning uchun diqqat bilan!",
+  "en": "🔥 Today's challenge: wins in a row\n5 wins in a row earn the \"Win streak\" medal and 10 earn \"Cold blood\". Each medal pays 1,000 🪙. One loss breaks the streak, so stay sharp!"
+ },
+ {
+  "id": "Y009",
+  "cat": "story",
+  "tag": "ring",
+  "uz": "💍 Bugun birinchi uzukni yig'ing\nLondon stolida uzuk uchun 15 kubok kerak, har g'alaba +4, mag'lubiyatda yo'qotish yo'q. Atigi 4 g'alaba. Bugun shuni sinab ko'ring: boshlaymizmi?",
+  "en": "💍 Collect your first ring today\nAt the London table the ring needs 15 trophies, +4 per win and nothing lost on a loss. Just 4 wins. Try it today: shall we start?\n(Claim \"Bir soatda bo'lishi mumkin\": unverifiable. Remove: \"Bugun shu uzukni yig'ib ko'ring.\" Edit below.)"
+ },
+ {
+  "id": "Y010",
+  "cat": "story",
+  "tag": "brand",
+  "uz": "📲 Cho'ntagingizdagi bilyard zali\nNavbat kutayotganda, yo'lda, tanaffusda: Telegram'ni oching, bir bosish va siz stol oldidasiz. Yuklab olish ham, o'rnatish ham yo'q. Qisqa o'yin uchun mukammal.",
+  "en": "📲 A billiard hall in your pocket\nWaiting in a queue, on the road, on a break: open Telegram, one tap and you are at the table. No download, no install. Perfect for a quick game."
+ },
+ {
+  "id": "Y011",
+  "cat": "story",
+  "tag": "gifts",
+  "uz": "❤️ Yaxshi o'yindan keyin yurak yuboring\nRaqib yaxshi o'ynadimi? Kichik yurak 15 🪙, yonca va shokolad esa kuniga bepul. Bir kichik sovg'a kayfiyatni ko'taradi va ertaga yana o'ynashga undaydi.",
+  "en": "❤️ Send a heart after a good game\nDid your opponent play well? A little heart is 15 🪙, and the clover and chocolate are free every day. One small gift lifts the mood and brings you back tomorrow."
+ },
+ {
+  "id": "Y012",
+  "cat": "story",
+  "tag": "brand",
+  "uz": "🧭 Yangi boshlovchi uchun 3 qadam\n1) Botni oching va «O'ynash» ni bosing.\n2) London stolini tanlang: birinchi stol hammaga ochiq.\n3) Kunlik sovg'ani va omad g'ildiragini oling.\nQolganini o'yinning o'zi ko'rsatadi.",
+  "en": "🧭 3 steps for a new player\n1) Open the bot and tap Play. 2) Pick the London table: the first table is open to everyone. 3) Collect the daily gift and spin the lucky wheel. The game shows you the rest."
+ },
+ {
+  "id": "Y013",
+  "cat": "story",
+  "tag": "medals",
+  "uz": "🔁 7 kunlik seriya\n7 kun ketma-ket kirsangiz «Vaqtida» medalini olasiz (1 000 🪙). Kunlik sovg'alar yo'li ham har kuni kattalashadi: 1-kun 100 🪙, 7-kun esa katta sovrin. Bugun nechanchi kundasiz?",
+  "en": "🔁 A 7-day streak\nOpen the game 7 days in a row and you get the \"On time\" medal (1,000 🪙). The reward route also grows every day: day 1 is 100 🪙, day 7 a big prize. Which day are you on?"
+ },
+ {
+  "id": "Y014",
+  "cat": "story",
+  "tag": "style",
+  "uz": "🥷 Qanday o'yinchi bo'lmoqchisiz?\nSovuq qonli ustozmi, tezkor hujumchimi yoki jim rejalashtiruvchimi? O'yin uslubingizni o'zingiz yarating: har g'alaba uni mustahkamlaydi, har mag'lubiyat esa o'rgatadi.",
+  "en": "🥷 What kind of player do you want to be?\nA cold-blooded master, a fast attacker or a quiet planner? Build your own style: every win strengthens it and every loss teaches you something."
+ },
+ {
+  "id": "D001",
+  "cat": "dated",
+  "tag": "rank",
+  "uz": "🗓 Yangi hafta: hamma noldan boshlaydi\nBugun ertalab soat 05:00 da hafta yopildi: reyting va Showdown yangilandi. Ochkolar nolga qaytdi, hamma bir xil boshlaydi. Birinchi g'alabani hoziroq yozdiring!",
+  "en": "🗓 A new week: everyone starts from zero\nAt 05:00 this morning the week closed: the ranking and Showdown reset. Points are back to zero and everyone starts level. Log the first win right now!",
+  "img": "x_showdown.jpg",
+  "when": {
+   "dow": [
+    1
+   ],
+   "slot": 0,
+   "dom": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  }
+ },
+ {
+  "id": "D002",
+  "cat": "dated",
+  "tag": "tables",
+  "uz": "🔥 Dushanba: uchta narsa yangilandi\n1) Haftalik reyting nolga qaytdi. 2) Showdown yangi haftaga o'tdi. 3) Do'konda «Haftaning stoli» (−40%) va haftalik «Qo'rqinchli» takliflar almashdi. Bugun nimadan boshlaysiz?",
+  "en": "🔥 Monday: three things refreshed\n1) The weekly ranking is back to zero. 2) Showdown moved to a new week. 3) The shop's \"Table of the week\" (−40%) and the weekly horror offers have changed. Where will you start today?",
+  "img": "s_tables.jpg",
+  "when": {
+   "dow": [
+    1
+   ],
+   "slot": 0,
+   "dom": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ]
+  }
+ },
+ {
+  "id": "D003",
+  "cat": "dated",
+  "tag": "rank",
+  "uz": "🏁 Dushanba: haftalik marafon boshlandi\nDunyo va davlat reytingining 1-o'rni uchun 1 500 va 400 💵 beriladi. Ligangizda yuqoriga chiqish uchun eng yaxshi 20% ga kirish kerak. Hafta uzun: shoshilmang, lekin boshlang!",
+  "en": "🏁 Monday: the weekly marathon has started\n1st place in the world and country rankings gets 1,500 and 400 💵. To move up in your league you need to be in the top 20%. The week is long: no rush, but do start!",
+  "when": {
+   "dow": [
+    1
+   ],
+   "slot": 0,
+   "dom": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+   ]
+  }
+ },
+ {
+  "id": "D004",
+  "cat": "dated",
+  "tag": "goals",
+  "uz": "🧭 Dushanba: haftalik reja\nBu hafta uchun 3 ta maqsad: 1) kamida 5 ta g'alaba, 2) bitta yangi medal (+1 000 🪙), 3) Showdown'dan bitta mukofot. Hafta yakshanba kechasigacha: maqsadlarni bugundan boshlang!",
+  "en": "🧭 Monday: the weekly plan\n3 goals for this week: 1) at least 5 wins, 2) one new medal (+1,000 🪙), 3) one Showdown reward. The week runs until Sunday night: start on your goals today!",
+  "when": {
+   "dow": [
+    1
+   ],
+   "slot": 0,
+   "dom": [
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28
+   ]
+  }
+ },
+ {
+  "id": "D005",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "🗓 Oyning oxirgi dushanbasi: yangi hafta, mavsum yakuniga yaqin\nHafta yangidan boshlandi, Mavsum yo'li esa oy tugashi bilan yopiladi: bir-ikki kun qoldi. Yig'ilgan mukofotlarni olib, qolgan ochkolarni yig'ib ulguring!",
+  "en": "🗓 The last Monday of the month: a new week, the season nearly over\nThe week has started afresh, and the Season Pass closes with the month: just a day or two left. Claim your rewards and squeeze in the remaining points!",
+  "img": "x_pass.jpg",
+  "when": {
+   "dow": [
+    1
+   ],
+   "slot": 0,
+   "dom": [
+    29,
+    30,
+    31
+   ]
+  }
+ },
+ {
+  "id": "D006",
+  "cat": "dated",
+  "tag": "lobby",
+  "uz": "🎉 Juma kechasi: hafta oxiri boshlandi\nDo'stlaringizni lobbiga chaqiring yoki «Ochiq lobbilar» ga kiring: kimdir albatta o'ynashga tayyor. Ovozli xona bilan hazil ham bo'ladi. Dam olish kunlari qiziqarli o'tsin!",
+  "en": "🎉 Friday night: the weekend has started\nInvite your friends to a lobby or head to \"Open lobbies\": someone is surely ready to play. With the voice room there is banter too. Have a fun weekend!",
+  "img": "l_open.jpg",
+  "when": {
+   "dow": [
+    5
+   ],
+   "dom": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  }
+ },
+ {
+  "id": "D007",
+  "cat": "dated",
+  "tag": "voice",
+  "uz": "🎙 Dam olish oldidan: do'stlar bilan ovozli xona\nKod yuboring, 8 kishigacha yig'iling va gaplashib o'ynang. Kim stolda kuchli, kim gapda kuchli: bugun aniq bo'ladi!",
+  "en": "🎙 Before the weekend: a voice room with friends\nSend a code, gather up to 8 players and talk while you play. Who is strong at the table and who is strong at talking: tonight we will see!",
+  "img": "l_voice.jpg",
+  "when": {
+   "dow": [
+    5
+   ],
+   "dom": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+   ]
+  }
+ },
+ {
+  "id": "D008",
+  "cat": "dated",
+  "tag": "tables",
+  "uz": "⏳ Haftaning stoli −40%: dushanbagacha\nBu haftaning chegirmali stoli dushanba ertalab (05:00) yangisiga almashadi. Yoqqan bo'lsa, dam olish kunlarida tanlab oling: do'kon · Stollar bo'limining eng tepasida.",
+  "en": "⏳ Table of the week at −40%: until Monday\nThis week's discounted table is replaced on Monday morning (05:00). If you like it, pick it up this weekend: it sits at the top of the shop's Tables section.",
+  "img": "s_tables.jpg",
+  "when": {
+   "dow": [
+    5
+   ],
+   "dom": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ]
+  }
+ },
+ {
+  "id": "D009",
+  "cat": "dated",
+  "tag": "rank",
+  "uz": "⏰ Hafta yopilishiga bir necha soat qoldi\nDushanba ertalab soat 05:00 da hafta yopiladi. Reytingda o'rningizni tekshiring: dunyo top-3 ga 1 500 / 750 / 400 💵, davlat top-3 ga 400 / 200 / 100 💵 beriladi. Oxirgi g'alabalar sizni baland ko'tarishi mumkin!",
+  "en": "⏰ A few hours until the week closes\nThe week closes on Monday at 05:00. Check your place in the ranking: the world's top 3 get 1,500 / 750 / 400 💵 and each country's top 3 get 400 / 200 / 100 💵. A few last wins can lift you up!",
+  "when": {
+   "dow": [
+    7
+   ],
+   "dom": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  }
+ },
+ {
+  "id": "D010",
+  "cat": "dated",
+  "tag": "showdown",
+  "uz": "♞ Yakshanba: Showdown mukofotlarini oling\nShowdown haftasi tugashiga oz qoldi. Ochkolaringiz qaysi mukofot bosqichiga yetdi? Oxirgi bosqichgacha bir-ikki g'alaba qolgan bo'lsa, hozir vaqti.",
+  "en": "♞ Sunday: collect your Showdown rewards\nThe Showdown week is almost over. Which reward stage have your points reached? If you are a win or two from the next stage, now is the time.",
+  "img": "x_showdown.jpg",
+  "when": {
+   "dow": [
+    7
+   ],
+   "dom": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ]
+  }
+ },
+ {
+  "id": "D011",
+  "cat": "dated",
+  "tag": "league",
+  "uz": "⭐ Ligada qolish yoki ko'tarilish: bugun hal bo'ladi\nHar hafta ligangizning eng yaxshi 20% i yuqoriga chiqadi, oxirgi 20% i pastga tushadi. Hafta yopilishidan oldin joyingizni tekshirib, xavfdan qoching!",
+  "en": "⭐ Stay or move up: it is decided today\nEvery week the top 20% of your league move up and the bottom 20% move down. Check your place before the week closes and keep out of danger!",
+  "when": {
+   "dow": [
+    7
+   ],
+   "dom": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+   ]
+  }
+ },
+ {
+  "id": "D012",
+  "cat": "dated",
+  "tag": "medals",
+  "uz": "⏱ Hafta oxirgi soatlarida: yana bir medal yoki uzuk?\nHaftalik reyting va Showdown bugun tunda soat 05:00 da yangilanadi. Qolgan vaqtda bitta medal yoki shahar uzugini olishga ulgurasizmi? Bir-ikki g'alaba ko'p narsani o'zgartiradi.",
+  "en": "⏱ The final hours of the week: one more medal or ring?\nThe weekly ranking and Showdown reset tonight at 05:00. Can you fit in one medal or a city ring before then? A win or two can change a lot.",
+  "img": "x_missions.jpg",
+  "when": {
+   "dow": [
+    7
+   ],
+   "dom": [
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28
+   ]
+  }
+ },
+ {
+  "id": "D013",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "⏳ Hafta ham, oy ham tugash arafasida\nHaftalik reyting dushanba ertalab soat 05:00 da yopiladi, Mavsum yo'li esa oy bilan birga yopilishiga oz qoldi. Mukofotlaringizni olib, oxirgi g'alabalarni yozdirishga ulguring!",
+  "en": "⏳ The week and the month are both nearly over\nThe weekly ranking closes on Monday at 05:00 and the Season Pass is about to close with the month. Claim your rewards and log your last wins in time!",
+  "img": "x_pass.jpg",
+  "when": {
+   "dow": [
+    7
+   ],
+   "dom": [
+    29,
+    30,
+    31
+   ]
+  }
+ },
+ {
+  "id": "D014",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "🌫 Yangi oy, yangi mavsum: «Tuman shohligi»\nMavsum yo'li noldan boshlandi: 400 daraja, yangi kiylar, ramkalar, stollar va avatarlar. Bepul yo'l hammaga ochiq. G'alaba va vazifalar uchun ochko yig'ing!",
+  "en": "🌫 A new month, a new season: \"Kingdom of Mist\"\nThe Season Pass started from scratch: 400 levels with new cues, frames, tables and avatars. The free track is open to everyone. Earn points from wins and missions!",
+  "img": "x_pass.jpg",
+  "when": {
+   "md": [
+    "11-01"
+   ]
+  }
+ },
+ {
+  "id": "D015",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "⏳ «Tuman shohligi» bugun tunda tugaydi\nMavsum yo'li ertaga ertalab soat 05:00 da yopiladi. Yig'ilgan mukofotlarni olishni unutmang. Ertadan yangi mavsum: «Qor malikasi».",
+  "en": "⏳ \"Kingdom of Mist\" ends tonight\nThe Season Pass closes tomorrow morning at 05:00. Do not forget to claim your collected rewards. From tomorrow a new season: \"Snow Queen\".",
+  "img": "x_pass.jpg",
+  "when": {
+   "md": [
+    "11-30"
+   ]
+  }
+ },
+ {
+  "id": "D016",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "❄️ Yangi mavsum: «Qor malikasi»\nDekabr keldi, Mavsum yo'li yangilandi: 400 daraja va yangi mukofotlar. Qishki kayfiyatda o'ynang. Kechagi mavsum yopildi, yangisida hamma noldan boshlaydi.",
+  "en": "❄️ A new season: \"Snow Queen\"\nDecember is here and the Season Pass is renewed: 400 levels and new rewards. Play in a wintery mood. Last month's season is closed, and in the new one everybody starts from zero.",
+  "img": "x_pass.jpg",
+  "when": {
+   "md": [
+    "12-01"
+   ]
+  }
+ },
+ {
+  "id": "D017",
+  "cat": "dated",
+  "tag": "constitution",
+  "uz": "🇺🇿 Konstitutsiya kuni muborak!\nBayram kayfiyatida do'stlaringiz bilan lobbi oching yoki Toshkent stolida («Silk Road») o'ynab ko'ring. Hamma o'yinchilarimizga tinchlik, quvonch va omad tilaymiz!",
+  "en": "🇺🇿 Happy Constitution Day!\nIn a festive mood open a lobby with friends or try the Tashkent table (\"Silk Road\"). We wish all our players peace, joy and good luck!",
+  "img": "l_hub.jpg",
+  "when": {
+   "md": [
+    "12-08"
+   ]
+  }
+ },
+ {
+  "id": "D018",
+  "cat": "dated",
+  "tag": "friends",
+  "uz": "🎄 Yangi yilgacha 5 kun\nYangi yil oldidan do'stlaringiz bilan lobbi oching: kim yilni g'alaba bilan yakunlaydi? Ovozli xona bilan bayram oldi kayfiyati yanada yorqin bo'ladi.",
+  "en": "🎄 5 days until New Year\nOpen a lobby with your friends before the holiday: who will end the year with a win? The voice room makes the pre-holiday mood even brighter.",
+  "img": "l_hub.jpg",
+  "when": {
+   "md": [
+    "12-26"
+   ]
+  }
+ },
+ {
+  "id": "D019",
+  "cat": "dated",
+  "tag": "newyear",
+  "uz": "🎆 Yangi yil bilan!\nYil oxirgi soatlari. Bugun tunda soat 05:00 da dekabr mavsumi yopiladi: kutilgan mukofotlarni oling. Yangi yilda barchaga sog'lik, quvonch va ko'p g'alaba tilaymiz!",
+  "en": "🎆 Happy New Year!\nThe last hours of the year. Tonight at 05:00 the December season closes: collect any rewards waiting for you. We wish everyone health, joy and many wins in the new year!",
+  "img": "p11.jpg",
+  "when": {
+   "md": [
+    "12-31"
+   ]
+  }
+ },
+ {
+  "id": "D020",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "❄️ Yangi yil, yangi mavsum: «Muz saltanati»\nYangi yilning birinchi kuni Mavsum yo'li yangilandi: 400 daraja, yangi mukofotlar. Yilni birinchi g'alabadan boshlang!",
+  "en": "❄️ A new year, a new season: \"Ice Kingdom\"\nOn the first day of the year the Season Pass is renewed: 400 levels, new rewards. Start the year with your first win!",
+  "img": "x_pass.jpg",
+  "when": {
+   "md": [
+    "01-01"
+   ]
+  }
+ },
+ {
+  "id": "D021",
+  "cat": "dated",
+  "tag": "goals",
+  "uz": "🎯 Yangi yil uchun 3 ta o'yin maqsadi\n1) Birinchi uzukni yig'ing (London: 4 g'alaba). 2) Bitta medalni oling (+1 000 🪙). 3) Do'stlar bilan lobbi oching. Kichik maqsadlar katta yutuqqa olib boradi.",
+  "en": "🎯 3 game goals for the new year\n1) Collect your first ring (London: 4 wins). 2) Earn one medal (+1,000 🪙). 3) Open a lobby with friends. Small goals lead to big wins.",
+  "when": {
+   "md": [
+    "01-03"
+   ]
+  }
+ },
+ {
+  "id": "D022",
+  "cat": "dated",
+  "tag": "defenders",
+  "uz": "🇺🇿 Vatan himoyachilari kuni muborak!\nBayram bilan! Bugun dilni tinchitib, do'stlar bilan bir-ikki o'yin o'ynang. Sog'lik, tinchlik va omad tilaymiz!",
+  "en": "🇺🇿 Happy Defenders of the Motherland Day!\nCongratulations! Relax today and play a game or two with friends. We wish you health, peace and good luck!",
+  "when": {
+   "md": [
+    "01-14"
+   ]
+  }
+ },
+ {
+  "id": "D023",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "⏳ «Muz saltanati» bugun tunda tugaydi\nMavsum yo'li ertaga ertalab soat 05:00 da yopiladi. Yig'ilgan mukofotlarni oling. Ertadan yangi mavsum: «Sevgi bog'i».",
+  "en": "⏳ \"Ice Kingdom\" ends tonight\nThe Season Pass closes tomorrow morning at 05:00. Claim your collected rewards. From tomorrow a new season: \"Garden of Love\".",
+  "img": "x_pass.jpg",
+  "when": {
+   "md": [
+    "01-31"
+   ]
+  }
+ },
+ {
+  "id": "D024",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "💗 Yangi mavsum: «Sevgi bog'i»\nFevral keldi, Mavsum yo'li yangilandi: 400 daraja va yangi mukofotlar. Yangi oyni birinchi g'alabadan boshlang!",
+  "en": "💗 A new season: \"Garden of Love\"\nFebruary is here and the Season Pass is renewed: 400 levels and new rewards. Start the new month with your first win!",
+  "img": "x_pass.jpg",
+  "when": {
+   "md": [
+    "02-01"
+   ]
+  }
+ },
+ {
+  "id": "D025",
+  "cat": "dated",
+  "tag": "stickers",
+  "uz": "💘 14-fevral: «Mehr» stikerlari\n💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 ta iliq stiker do'stingizga iliq so'z yuborish uchun. Har to'plam 10 💵 yoki 100 💎. Yaxshi o'yindan keyin yurak sovg'asi ham yubora olasiz.",
+  "en": "💘 14 February: the \"Hearts\" stickers\n💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 warm stickers for sending a kind word to a friend. Each pack costs 10 💵 or 100 💎. After a good game you can send a heart gift too.",
+  "img": "s_stickers.jpg",
+  "when": {
+   "md": [
+    "02-14"
+   ]
+  }
+ },
+ {
+  "id": "D026",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "⏳ «Sevgi bog'i» bugun tunda tugaydi\nMavsum yo'li ertaga ertalab soat 05:00 da yopiladi. Yig'ilgan mukofotlarni olishni unutmang. Ertadan yangi mavsum: «Bahor uyg'onishi».",
+  "en": "⏳ \"Garden of Love\" ends tonight\nThe Season Pass closes tomorrow morning at 05:00. Do not forget your collected rewards. From tomorrow a new season: \"Spring Awakening\".",
+  "img": "x_pass.jpg",
+  "when": {
+   "md": [
+    "02-28"
+   ]
+  }
+ },
+ {
+  "id": "D027",
+  "cat": "dated",
+  "tag": "pass",
+  "uz": "🌱 Yangi mavsum: «Bahor uyg'onishi»\nMart keldi, Mavsum yo'li yangilandi: 400 daraja, yangi mukofotlar. Bahor kayfiyatida yangi mavsumni birinchi g'alabadan boshlang!",
+  "en": "🌱 A new season: \"Spring Awakening\"\nMarch is here and the Season Pass is renewed: 400 levels, new rewards. In a spring mood, start the new season with your first win!",
+  "img": "x_pass.jpg",
+  "when": {
+   "md": [
+    "03-01"
+   ]
+  }
+ },
+ {
+  "id": "D028",
+  "cat": "dated",
+  "tag": "womensday",
+  "uz": "💐 8-mart bayrami muborak!\nAziz ayollarimiz, o'yinchilarimiz va kanal a'zolarimiz, bayramingiz muborak! O'yinda gul dastasi sovg'asi bor 💐: yaxshi o'yindan keyin raqibingizga yuboring.",
+  "en": "💐 Happy International Women's Day!\nTo our dear women, players and channel members: happy holiday! The game has a bouquet gift 💐: send one to your opponent after a good game.",
+  "img": "m_gifts.jpg",
+  "when": {
+   "md": [
+    "03-08"
+   ]
+  }
+ },
+ {
+  "id": "D029",
+  "cat": "dated",
+  "tag": "navruz",
+  "uz": "🌷 Navro'z bayrami muborak!\nBahor va yangilanish bayrami bilan! Bugun do'stlar bilan lobbi oching va yangi mavsumni baxtli boshlang. Hammaga tinchlik, farovonlik va omad tilaymiz!",
+  "en": "🌷 Happy Navruz!\nCongratulations on the holiday of spring and renewal! Open a lobby with friends today and start the new season happily. We wish everyone peace, prosperity and good luck!",
+  "img": "p11.jpg",
+  "when": {
+   "md": [
+    "03-21"
+   ]
+  }
+ }
+]

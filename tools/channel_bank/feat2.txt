@@ -1,0 +1,182 @@
+// Promo posts, part 2: ranking, clubs, events, cups, rings, medals, friends, questions people ask.
+// Money wording: the game uses virtual coins / 💵 / 💎 only. The lint (server/chan_plan.js) rejects phrases that sound like real-money promises.
+
+## feat rank
+uz: 🌍 Dunyo reytingi: butun dunyo bilan bellashing
+Reytingda 5 ta jadval bor: Ligam, Do'stlar, Davlat, Dunyo va Klub ligalari. O'rin hafta davomida yutgan tangalaringizga qarab belgilanadi. Hafta yopilganda dunyo top-3 ga 1 500 / 750 / 400 💵 beriladi.
+en: 🌍 World ranking: compete with the whole world
+Five boards: My league, Friends, Country, World and Club leagues. Your place depends on the coins you win during the week. When the week closes, the world's top 3 get 1,500 / 750 / 400 💵.
+
+## feat rank
+uz: 🏳 Davlat reytingi: bayrog'ingiz uchun!
+Har davlatning o'z reytingi bor. Haftalik top-3 ga 400 / 200 / 100 💵 beriladi. Ismingiz bayrog'ingiz bilan birga hammaga ko'rinadi. O'zbekistonni reytingda baland ko'taring 🇺🇿
+en: 🏳 Country ranking: play for your flag!
+Every country has its own ranking, and its weekly top 3 receive 400 / 200 / 100 💵. Your name shows next to your flag. Raise it high!
+
+## feat rank
+uz: ⭐ 10 ta liga: eng yuqorisi «To'qqiz ball championi»
+Har hafta ligangizdagi taxminan 20% eng yaxshi o'yinchi yuqoriga ko'tariladi, oxirgi 20% pastga tushadi. Liga imtiyozi: g'alaba qutisidagi tanga ×4 gacha oshadi.
+en: ⭐ 10 leagues, the top one is Nine-Ball Champion
+Every week roughly the top 20% of your league move up and the bottom 20% move down. League perk: the coins in your victory box grow up to ×4.
+
+## feat rank x_profile
+uz: 🪪 Reyting qatori: sizning vizitkangiz
+Ismingiz yonida avatar va ramkangiz, davlat bayrog'i, liga, klub va stol belgisi ko'rinadi. Cheklangan nashr stoli bo'lsa, tartib raqamingiz ham chiqadi!
+en: 🪪 Your ranking row is your business card
+Next to your name the ranking shows your avatar and frame, your country flag, league, club and table badge. Own a limited-edition table and your serial number shows too!
+
+## feat clubs
+uz: 🛡 Klub: jamoa bilan g'alaba qozoning
+6-darajadan boshlab klub yaratish yoki qo'shilish mumkin. Klubda 50 kishigacha, chat, sovg'alar va haftalik klublar ligasi bor: eng yaxshi uchta klubning har bir a'zosi 20 / 10 / 5 💵 oladi.
+en: 🛡 Club: win together as a team
+From level 6 you can create or join a club: up to 50 members, a chat, gifts and a weekly club league. Every member of the top three clubs receives 20 / 10 / 5 💵.
+
+## feat showdown x_showdown
+uz: ♞ Showdown: har g'alaba hisobga olinadi
+Har g'alaba Showdown ochkosi va Gambit tokenini beradi. Ochko ko'paygan sari 8 ta mukofot ochiladi: tanga, token, 💵, quti, kiy bo'lagi va 💎. Hafta dushanba kuni yangilanadi.
+en: ♞ Showdown: every win counts
+Every win earns Showdown points and a Gambit token. Eight rewards unlock as the points add up: coins, tokens, 💵, a box, a cue piece and 💎. It resets every Monday.
+
+## feat showdown p09
+uz: 🛍 Gambit do'koni: tokenlarga nimalar bor
+Showdown tokenlariga Kolleksiya qutisi, Davlat qutisi, maxsus avatar va Grandmaster kiyi bo'laklarini olasiz. Tokenni o'yin bilan yig'asiz: xarid uchun pul kerak emas.
+en: 🛍 Gambit Shop: what tokens can buy
+Showdown tokens buy a Collection box, a Country box, a special avatar and pieces of the Grandmaster cue. You earn tokens by playing: no purchase needed.
+
+## feat events p09
+uz: 👑 Grandmaster stoli: eng kuchlilar uchun
+45 kubokka yetganingizda ochiladi. Maxsus stol, katta sovrin va afsonaviy Grandmaster kiyi: uni 40 ta bo'lakdan yig'asiz.
+en: 👑 Grandmaster Table: for the strongest
+It opens at 45 trophies. A special table with a big prize and the legendary Grandmaster cue, assembled from 40 pieces.
+
+## feat cups p03
+uz: 🏅 Kubok turnirlari: 32, 48 yoki 64 o'yinchi
+Osiyo, Janubiy Amerika, Yevropa va Jahon Kubogi. Eng kattasi, Jahon Kubogi: 64 o'yinchi va 7 500 000 🪙 sovrin. Olimpiya tizimi: yutsangiz davom etasiz, yutqazsangiz chiqasiz.
+en: 🏅 Cup tournaments: 32, 48 or 64 players
+The Asia, South America, Europe and World Cups. The biggest, the World Cup: 64 players and a 7,500,000 🪙 prize. Knockout format: win to go on, lose and you are out.
+
+## feat cups p02
+uz: 🏙 30 shahar, 30 chempionat
+Har shaharning o'z kubogi bor: 32 o'yinchi, o'sha shahar stolida o'ynaladi. Keyingi shaharning kubogi oldingisini yutganingizdan keyin ochiladi. Bugun qaysi shaharni zabt etasiz?
+en: 🏙 30 cities, 30 championships
+Every city has its own cup: 32 players, played on that city's table. The next city's cup opens once you have won the previous one. Which city will you conquer today?
+
+## feat daily p03
+uz: ⏰ Kunlik kubok: kuniga 4 marta
+Toshkent vaqti bilan 09:00, 15:00, 21:00 va 03:00 da ochiladi, har biri 3 soat ochiq turadi. Birini o'tkazib yuborsangiz, keyingisi kutadi. Vaqtlar telefoningiz mintaqasiga moslab ko'rsatiladi.
+en: ⏰ Daily cups: four times a day
+They open at 09:00, 15:00, 21:00 and 03:00 Tashkent time and stay open for 3 hours each. Missed one? The next is waiting. Times are shown in your phone's time zone.
+
+## feat daily p03
+uz: 🌙 To'rtta kunlik kubok: Ertalabki, Tushki, Kechki, Tungi
+Kirish 1 000 dan 10 000 🪙 gacha, sovrin 30 000 dan 400 000 🪙 gacha. Tungi Kubok eng katta: 400 000 🪙. Har birida 32 o'yinchi.
+en: 🌙 Four daily cups: Morning, Noon, Evening, Night
+Entry from 1,000 to 10,000 🪙, prizes from 30,000 up to 400,000 🪙. The Night Cup is the biggest: 400,000 🪙. 32 players each.
+
+## feat ring p02
+uz: 💍 Shahar uzuklari: 30 shahar, 30 uzuk
+Har shaharda g'alaba uchun kubok yig'iladi. Maqsadga yetsangiz, o'sha shaharning uzugi sizniki: Showdown ochkolariga +50% va shahar stoli bepul. Uzuklar yangi kubok turnirlarini ochadi!
+en: 💍 City rings: 30 cities, 30 rings
+Win trophies at each table. Reach the goal and that city's ring is yours: +50% Showdown points and the city table for free. Rings open new cup tournaments!
+
+## feat ring p02
+uz: 🥇 Birinchi uzuk: atigi 4 ta g'alaba
+London stolida uzuk uchun 15 kubok kerak, har g'alaba +4 kubok beradi, mag'lubiyatda esa kubok yo'qolmaydi. Demak, 4 ta g'alaba: uzuk sizniki. Sidneyda esa 5 ta g'alaba!
+en: 🥇 Your first ring: just 4 wins
+At the London table the ring needs 15 trophies, each win gives +4 and a loss costs nothing. So 4 wins and the ring is yours. In Sydney it takes 5 wins!
+
+## feat medals x_profile
+uz: 🏅 32 ta medal: har biri +1 000 🪙
+Birinchi o'yin, 5 ta ketma-ket g'alaba, 100 ta shar, klubga qo'shilish, turnirda g'alaba... Har yangi medal 1 000 🪙 beradi. Profilingizda nechtasini yig'dingiz?
+en: 🏅 32 medals: +1,000 🪙 for each
+Your first game, 5 wins in a row, 100 balls potted, joining a club, winning a tournament... Every new medal pays 1,000 🪙. How many have you collected?
+
+## feat medals
+uz: 🔥 Qiyin medallar: kim birinchi?
+«Shafqatsiz»: raqib birorta shar tushirmasidan yuting. «Sovuq qon»: ketma-ket 10 g'alaba. «Ajoyib o'yin»: bitta zarbada 2 ta shar. «Tezkor»: sindirishda shar tushiring.
+en: 🔥 Hard medals: who is first?
+"Merciless": win before your opponent pots a ball. "Cold blood": 10 wins in a row. "Great game": 2 balls in one shot. "Quick": pot a ball on the break.
+
+## feat friends x_friends
+uz: 🤝 Do'stlar bo'limi: taklif kodi va havola
+Shaxsiy kodingiz bilan do'stlaringizni qo'shing va ularning onlayn ekanini ko'ring. Birga o'ynash yakka o'yindan qiziqroq: lobbiga chaqiring yoki o'yinini tomosha qiling.
+en: 🤝 The Friends section: your code and link
+Add friends with your personal code and see when they are online. Playing together beats playing alone: invite them to a lobby or watch their match.
+
+## feat friends x_friends
+uz: 🎁 Do'stingizga har kuni 500 🪙 sovg'a qiling
+«Do'stlar» bo'limida «Sovg'a yuborish» ni bosing: har bir do'stga kuniga bir marta 500 🪙 yuboriladi. Siz uchun bepul, do'stingiz xursand bo'ladi. Ularning sovg'asini ham kuting!
+en: 🎁 Send each friend 500 🪙 every day
+Tap "Send gift" in the Friends section: each friend gets 500 🪙 once a day. It costs you nothing and makes your friend happy. Expect their gifts, too!
+
+## feat friends
+uz: 📣 Chempion bo'lsangiz, do'stlaringiz bilib oladi
+Kubokni yutganingizda do'stlaringiz va klub a'zolaringizga xabar boradi. G'alabangizni ko'rsatish uchun alohida post yozish shart emas.
+en: 📣 Win a cup and your friends will know
+When you win a championship cup, your friends and club mates are told. No need to write a post to show off.
+
+## feat brand
+uz: ❓ Bu o'yin bepulmi?
+Ha, boshlash bepul. Kunlik sovg'a, omad g'ildiragi, vazifalar, turnirlar: hammasi bepul. Do'kon ixtiyoriy: kiy, stol yoki ramka olishni o'zingiz hal qilasiz.
+en: ❓ Is the game free?
+Yes, starting is free. The daily gift, the lucky wheel, missions and tournaments are all free. The shop is optional: you decide whether to get a cue, table or frame.
+
+## feat brand
+uz: ❓ Bu pul o'yinimi?
+Yo'q. Tanga, 💵 va 💎 faqat o'yin ichida ishlaydi, yutuqlar ham o'yin ichidagi sovg'alardir. Bu bilyard o'yini: maqsad zavq, mahorat va raqobat.
+en: ❓ Is it a money game?
+No. Coins, 💵 and 💎 work only inside the game, and prizes are in-game rewards. This is a pool game: the goal is fun, skill and competition.
+
+## feat brand
+uz: ❓ Qanday boshlayman?
+Telegram'da botni oching va «O'ynash» ni bosing: yuklab olish yoki o'rnatish shart emas. O'yin brauzerda ham ochiladi. Birinchi stol, London, hammaga ochiq.
+en: ❓ How do I start?
+Open the bot in Telegram and tap Play: no download or install. The game also opens in a browser. The first table, London, is open to everyone.
+
+## feat brand
+uz: ❓ Raqib topilmasa nima bo'ladi?
+Onlayn raqib topilmasa, o'yin sizni bot bilan o'ynatadi, kutib o'tirmaysiz. Bunday o'yin reytingga kirmaydi. Haqiqiy raqib uchun «Ochiq lobbilar» yoki do'stingizni lobbiga chaqiring.
+en: ❓ What if no opponent is found?
+If no online opponent is found, the game lets you play a bot instead of waiting. Such a game does not count for the ranking. For a human opponent use "Open lobbies" or invite a friend to a lobby.
+
+## feat route p06
+uz: 🎁 Kunlik sovg'alar yo'li: 8 kunlik sovg'alar
+1-kun 100 🪙, 2-kun Omadli zarba, 3-kun 300 🪙, 4-kun 1 💵, 5-kun omad g'ildiragi, 6-kun 1 000 🪙, 7-kun 2 💵 va katta sovrin, 8-kun 2 500 🪙. Bugungi sovg'ani oldingizmi?
+en: 🎁 The daily reward route: 8 days of gifts
+Day 1: 100 🪙, day 2: a Lucky Shot, day 3: 300 🪙, day 4: 1 💵, day 5: a wheel spin, day 6: 1,000 🪙, day 7: 2 💵 and a big prize, day 8: 2,500 🪙. Did you collect today's gift?
+
+## feat wheel p05
+uz: 🎡 Omad g'ildiragi: 8 ta sektor
+500, 1 000 yoki 2 000 🪙, 15, 25 yoki 35 💎, 1 yoki 5 💵. Har 24 soatda bitta aylantirish bepul. Bugun qaysi sektor tushadi?
+en: 🎡 The lucky wheel: 8 sectors
+500, 1,000 or 2,000 🪙, 15, 25 or 35 💎, 1 or 5 💵. One spin is free every 24 hours. Which sector will you land on today?
+
+## feat profile x_profile
+uz: 📊 Profil: o'yin tarixingiz bir joyda
+O'yinlar, g'alabalar, jami yutuq, haftalik reyting, medallar va kubok yo'li: hammasi profilingizda. Har g'alaba bilan raqamlar o'sadi.
+en: 📊 Profile: your game history in one place
+Games, wins, total winnings, weekly ranking, medals and the trophy road: all in your profile. The numbers grow with every win.
+
+## feat cities p02
+uz: 🎨 Har shaharning o'z rangi
+London ko'k, Sidney yashil, Madrid qizil, Las-Vegas qora, Qohira oltin-sariq, Seul binafsha, Rio yorqin yashil... Stol sukno rangi shaharga qarab o'zgaradi. Sevimli stolingiz qaysi?
+en: 🎨 Every city has its own colour
+London blue, Sydney green, Madrid red, Las Vegas black, Cairo golden, Seoul violet, Rio bright green... The cloth changes with the city. Which table is your favourite?
+
+## feat cues c_premium3
+uz: 🧩 Kiy bo'laklarini qayerdan olasiz?
+Victory kiylari: shaharda g'alaba qozonib (4 bo'lak = 1 kiy). Showdown mukofoti. Ligadagi imtiyoz: +1 bo'lak. Gambit do'koni: Grandmaster bo'laklari.
+en: 🧩 Where do cue pieces come from?
+Victory cues: win in a city (4 pieces = 1 cue). Showdown rewards. A league perk: +1 piece. The Gambit shop: Grandmaster pieces.
+
+## feat modes l_hub
+uz: 🤖 Hozir o'ynamoqchimisiz? Kutish yo'q
+Raqib topish uzoq cho'zilsa, bot bilan o'ynaysiz, kutmaysiz. Mashq rejimida esa istalgancha zarba urib mahoratingizni oshirasiz: bu yerda hech kim shoshirmaydi.
+en: 🤖 Want to play right now? No waiting
+If finding an opponent takes long, you play a bot instead. In Practice mode you can shoot as much as you like and sharpen your skill: nobody rushes you.
+
+## feat brand p11
+uz: 📲 Yaxshi o'yin do'stingizga ham yoqadi
+Botni do'stingizga yuboring va birga lobbiga kiring. Ovozli xona bilan hazillashib o'ynash yanada qiziqarli. Kanalimizga ham taklif qiling!
+en: 📲 Your friend will like a good game, too
+Send the bot to a friend and join a lobby together. With the voice room, playing and joking around is even more fun. Invite them to the channel as well!

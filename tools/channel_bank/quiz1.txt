@@ -1,0 +1,306 @@
+// Quizzes, part 1: rules and terms of cue sports, history, people. Only facts that are certain. Telegram limits: question uz + en <= 300, option <= 100, explanation uz + en <= 200.
+// The builder shuffles the options (not the number rows and not true/false) so the right answer is not always in the same place.
+
+## quiz rules
+uz: 🎱 Viktorina: 9-ball o'yinida oq shar bilan birga stolda nechta shar bo'ladi?
+en: Quiz: how many balls are on the table in 9-ball, cue ball included?
+o: 9 | 10 | 15 | 16
+c: 1
+xu: 9 ta raqamli shar va oq shar: jami 10 ta.
+xe: Nine numbered balls plus the cue ball: 10 in all.
+
+## quiz rules
+uz: 🎱 Viktorina: 9-ball'da oq shar avval qaysi sharga tegishi kerak?
+en: Quiz: in 9-ball, which ball must the cue ball hit first?
+o: Istalgan sharga / Any ball | Eng kichik raqamli sharga / The lowest-numbered ball | 9-sharga / The 9-ball | Eng katta raqamli sharga / The highest-numbered ball
+c: 1
+xu: Doim stoldagi eng kichik raqamli sharga.
+xe: Always the lowest-numbered ball left on the table.
+
+## quiz rules
+uz: 🏆 Viktorina: 9-ball'da g'alaba uchun qaysi sharni qoidaga ko'ra tushirish kerak?
+en: Quiz: in 9-ball, which ball wins the game when pocketed legally?
+o: 1-shar / Ball 1 | 8-shar / Ball 8 | 9-shar / Ball 9 | Oq shar / The cue ball
+c: 2
+xu: 9-sharni qonuniy tushirgan o'yinchi yutadi.
+xe: Pocketing the 9-ball legally wins the game.
+
+## quiz rules
+uz: 💎 Viktorina: 9-ball'da sharlar qanday shaklda teriladi?
+en: Quiz: in what shape are the balls racked in 9-ball?
+o: Uchburchak / Triangle | Romb / Diamond | Doira / Circle | Kvadrat / Square
+c: 1
+xu: 1-2-3-2-1 qatorli romb; 9-shar o'rtada turadi.
+xe: A diamond of 1-2-3-2-1 rows, with the 9-ball in the middle.
+
+## quiz numbers
+uz: 🔺 Viktorina: 8-ball'da 15 shar uchburchakda nechta qatorga teriladi?
+en: Quiz: in how many rows are the 15 balls racked in a triangle?
+o: 3 | 4 | 5 | 6
+c: 2
+xu: 1+2+3+4+5 = 15: besh qator.
+xe: 1+2+3+4+5 = 15: five rows.
+
+## quiz numbers
+uz: ➕ Viktorina: 1 dan 15 gacha raqamli sharlarning raqamlari yig'indisi nechaga teng?
+en: Quiz: what is the sum of the numbers on balls 1 to 15?
+o: 100 | 105 | 120 | 150
+c: 2
+xu: 15 × 16 / 2 = 120.
+xe: 15 × 16 / 2 = 120.
+
+## quiz snooker
+uz: 🔴 Viktorina: snukerda stolda nechta qizil shar bor?
+en: Quiz: how many red balls are there in snooker?
+o: 10 | 15 | 21 | 22
+c: 1
+xu: 15 qizil, 6 rangli va oq shar: jami 22 ta.
+xe: 15 reds, 6 colours and the cue ball: 22 in all.
+
+## quiz snooker
+uz: 🎯 Viktorina: snukerda eng yuqori mumkin bo'lgan seriya (maksimum break) necha ochko?
+en: Quiz: what is the maximum possible break in snooker?
+o: 100 | 127 | 147 | 187
+c: 2
+xu: 15 qizil + 15 qora = 120, ranglar yana 27: jami 147.
+xe: 15 reds + 15 blacks = 120, the colours add 27: 147.
+
+## quiz snooker
+uz: ⚫ Viktorina: snukerda qora shar necha ochko beradi?
+en: Quiz: how many points is the black ball worth in snooker?
+o: 4 | 5 | 6 | 7
+c: 3
+xu: Qora 7, pushti 6, ko'k 5 ochko.
+xe: Black is worth 7, pink 6 and blue 5.
+
+## quiz snooker
+uz: 📏 Viktorina: to'liq o'lchamli snuker stoli necha futlik?
+en: Quiz: how long is a full-size snooker table?
+o: 7 fut | 9 fut | 12 fut | 15 fut
+c: 2
+xu: 12 fut, taxminan 3,6 metr.
+xe: 12 ft, about 3.6 metres.
+
+## quiz rules
+uz: 🕳 Viktorina: karambol bilyardi stolida nechta cho'ntak bor?
+en: Quiz: how many pockets does a carom billiards table have?
+o: 0 | 4 | 6 | 8
+c: 0
+xu: Karambolda cho'ntak yo'q, ochko sharlarni urib olinadi.
+xe: Carom has no pockets: you score by hitting balls.
+
+## quiz terms
+uz: 🌀 Viktorina: «masse» zarbasi nima?
+en: Quiz: what is a "masse" shot?
+o: Kiy tik tutilib, oq shar egri yo'ldan yuradi / Cue held steeply, the ball curves | Oq sharni sakratish / Jumping the cue ball | Bortdan qaytarish / A bank shot | Sindirish zarbasi / The break
+c: 0
+xu: Kiy deyarli tik tutiladi va oq shar yoy bo'ylab yuradi.
+xe: The cue is almost vertical and the ball curves.
+
+## quiz terms
+uz: 🦘 Viktorina: oq sharni to'siq shar ustidan sakratib o'tkazish qanday ataladi?
+en: Quiz: what is it called when the cue ball is jumped over a blocking ball?
+o: Jump shot | Bank shot | Safety | Break
+c: 0
+xu: Jump shot: oq shar havoga ko'tarilib to'siqdan oshadi.
+xe: A jump shot lifts the cue ball over the obstacle.
+
+## quiz terms
+uz: 🔁 Viktorina: oq shar avval bortga tegib, keyin nishon sharga borsa, bu qanday zarba?
+en: Quiz: the cue ball hits a cushion first, then the object ball. What shot is it?
+o: Kick shot | Jump shot | Draw | Masse
+c: 0
+xu: Kick shot: yo'l to'silganda bort orqali aylanib borasiz.
+xe: A kick shot goes round a blocked path via a cushion.
+
+## quiz terms
+uz: 📐 Viktorina: nishon shar bortga tegib keyin cho'ntakka tushsa, bu qanday zarba?
+en: Quiz: the object ball hits a cushion and then drops in a pocket. What is it?
+o: Bank shot | Kick shot | Combo | Scratch
+c: 0
+xu: Bank shot: nishon shar bortdan qaytib cho'ntakka kiradi.
+xe: In a bank shot the object ball rebounds into a pocket.
+
+## quiz terms
+uz: 🔗 Viktorina: oq shar bitta sharni uradi, u esa boshqa sharni cho'ntakka tushiradi. Bu...
+en: Quiz: the cue ball hits one ball, which pockets another. This is a...
+o: Kombinatsiya / Combination | Kick shot | Safety | Foul
+c: 0
+xu: Kombinatsiya (combo): ikki sharning zanjirli zarbasi.
+xe: A combination (combo): a chain hit through two balls.
+
+## quiz terms
+uz: ✋ Viktorina: kiyni tayanch qiladigan qo'l (yoki asbob) inglizcha nima deyiladi?
+en: Quiz: what is the hand (or tool) that supports the cue called in English?
+o: Bridge | Rack | Chalk | Spot
+c: 0
+xu: Bridge: kiy silliq yurishi uchun tayanch.
+xe: The bridge steadies the cue as it slides.
+
+## quiz terms
+uz: 🔺 Viktorina: sharlarni birinchi zarbadan oldin teradigan uchburchak asbob nima deyiladi?
+en: Quiz: what is the triangle used to arrange the balls before the break called?
+o: Bridge | Rack | Chalk | Cushion
+c: 1
+xu: Rack sharlarni zich va tekis teradi.
+xe: The rack packs the balls tight and even.
+
+## quiz terms
+uz: 🧱 Viktorina: stolning yumshoq chetini (bort) inglizcha nima deyishadi?
+en: Quiz: what is the table's cushioned edge called in English?
+o: Cushion (rail) | Pocket | Felt | Spot
+c: 0
+xu: Cushion yoki rail: sharlar undan qaytadi.
+xe: The cushion (or rail) bounces the balls back.
+
+## quiz terms
+uz: 🟩 Viktorina: stol ustidagi yumshoq mato (sukno) inglizcha nima?
+en: Quiz: what is the soft cloth covering the table called?
+o: Felt | Cushion | Chalk | Rack
+c: 0
+xu: Felt: stol suknosi. O'yinda uning rangi shaharga qarab o'zgaradi.
+xe: The felt is the table cloth; in the game its colour changes with the city.
+
+## quiz terms
+uz: 🛑 Viktorina: oq shar nishon sharga tekkach joyida to'xtaydigan zarba qanday ataladi?
+en: Quiz: what is the shot called where the cue ball stops dead after contact?
+o: Stop shot | Follow | Jump shot | Masse
+c: 0
+xu: To'g'ri zarbadan keyin oq shar joyida to'xtaydi (markazdan sal pastga uriladi).
+xe: Hit slightly below centre and the cue ball stops in place after a straight hit.
+
+## quiz terms
+uz: ⏩ Viktorina: oq sharning yuqori qismiga urib, u nishonga tekkach oldinga yuradigan zarba?
+en: Quiz: hit above centre so the cue ball keeps rolling forward after contact. What is it?
+o: Follow (topspin) | Draw (backspin) | Stop shot | English
+c: 0
+xu: Follow: yuqoridan urish oq sharni oldinga yuritadi.
+xe: Follow: hitting high keeps the cue ball rolling forward.
+
+## quiz terms
+uz: 💥 Viktorina: o'yinning birinchi zarbasi, terilgan sharlarni sochib yuboradigan zarba nima deyiladi?
+en: Quiz: what is the first shot of the game, scattering the racked balls, called?
+o: Break | Rack | Bank | Safety
+c: 0
+xu: Break: terilgan sharlarni sochuvchi birinchi zarba.
+xe: The break scatters the racked balls.
+
+## quiz terms
+uz: 👻 Viktorina: «xayoliy shar» (ghost ball) usuli nima uchun kerak?
+en: Quiz: what is the "ghost ball" method for?
+o: Oq shar kelishi kerak bo'lgan joyni tasavvur qilish / Picturing where the cue ball must land | Sharni sakratish / Jumping a ball | Kiyni bo'rlash / Chalking the cue | Sharlarni terish / Racking
+c: 0
+xu: Xayoliy shar nishon sharni to'g'ri yo'naltirishga yordam beradi.
+xe: The ghost ball helps you aim the object ball accurately.
+
+## quiz rules
+uz: 📐 Viktorina: ideal sharoitda shar bortga tekkach qanday burchak bilan qaytadi?
+en: Quiz: in ideal conditions, at what angle does a ball leave a cushion?
+o: Kirish burchagiga teng / Equal to the incoming angle | Ikki baravar katta / Twice as big | Doim 90° / Always 90° | Tasodifiy / Random
+c: 0
+xu: Qaytish burchagi kirish burchagiga teng.
+xe: The angle out equals the angle in.
+
+## quiz gear
+uz: 🧵 Viktorina: bilyard kiyining uchi (tip) odatda nimadan yasaladi?
+en: Quiz: what is a cue tip usually made of?
+o: Teri / Leather | Metall / Metal | Shisha / Glass | Yog'och / Wood
+c: 0
+xu: Teri uch bo'rni ushlaydi va oq sharga yaxshi ilashadi.
+xe: A leather tip holds chalk and grips the cue ball.
+
+## quiz gear
+uz: ⚪ Viktorina: zamonaviy bilyard sharlari asosan nimadan yasaladi?
+en: Quiz: what are modern pool balls mostly made of?
+o: Smola (plastik) / Resin (plastic) | Yog'och / Wood | Shisha / Glass | Fil suyagi / Ivory
+c: 0
+xu: Fenol smolasi chidamli. Qadimda sharlar fil suyagidan ham yasalgan.
+xe: Phenolic resin is tough; old balls were also made of ivory.
+
+## quiz gear
+uz: 📏 Viktorina: standart bilyard kiyi taxminan necha santimetr uzunlikda?
+en: Quiz: how long is a standard pool cue, roughly?
+o: 90 sm | 120 sm | 147 sm | 200 sm
+c: 2
+xu: Standart kiy taxminan 147 sm (58 dyuym).
+xe: A standard cue is about 147 cm (58 in).
+
+## quiz gear
+uz: ⚪ Viktorina: standart bilyard sharining diametri taxminan qancha?
+en: Quiz: what is the diameter of a standard pool ball, roughly?
+o: 3 sm | 5,7 sm | 8 sm | 10 sm
+c: 1
+xu: 57,15 mm (2¼ dyuym).
+xe: 57.15 mm (2¼ in).
+
+## quiz gear
+uz: 📐 Viktorina: 9 futlik turnir stolining o'yin maydoni taxminan qancha?
+en: Quiz: how big is the playing area of a 9-foot pool table, roughly?
+o: 1,5 × 0,75 m | 2,54 × 1,27 m | 3,5 × 1,75 m | 4 × 2 m
+c: 1
+xu: 254 × 127 sm (100 × 50 dyuym): aynan 2:1.
+xe: 254 × 127 cm (100 × 50 in): exactly 2:1.
+
+## quiz gear
+uz: 🟡 Viktorina: standart 8-ball to'plamida 1-shar qanday rangda?
+en: Quiz: what colour is ball number 1 in a standard 8-ball set?
+o: Sariq / Yellow | Ko'k / Blue | Qizil / Red | Yashil / Green
+c: 0
+xu: 1 sariq, 2 ko'k, 3 qizil, 4 binafsha.
+xe: 1 yellow, 2 blue, 3 red, 4 purple.
+
+## quiz gear
+uz: 🟠 Viktorina: standart to'plamda 5-shar qanday rangda?
+en: Quiz: what colour is ball number 5 in a standard set?
+o: To'q sariq / Orange | Yashil / Green | Binafsha / Purple | Qora / Black
+c: 0
+xu: 5 to'q sariq, 6 yashil, 7 bordo, 8 qora.
+xe: 5 orange, 6 green, 7 maroon, 8 black.
+
+## quiz history
+uz: 🌟 Viktorina: «Sehrgar» laqabli mashhur bilyardchi Efren Reyes qaysi davlatdan?
+en: Quiz: Efren "The Magician" Reyes, a pool legend, comes from which country?
+o: Filippin / Philippines | Yaponiya / Japan | AQSh / USA | Xitoy / China
+c: 0
+xu: Reyes filippinlik; 1999-yilda 9-ball bo'yicha jahon chempioni bo'lgan.
+xe: Reyes is Filipino and won the 9-ball world title in 1999.
+
+## quiz history
+uz: 🏅 Viktorina: Villi Mosko 1956-yilda ko'rgazmali o'yinda ketma-ket nechta sharni tushirgan (straight pool rekordi)?
+en: Quiz: how many balls in a row did Willie Mosconi pocket in a 1956 straight-pool exhibition?
+o: 126 | 256 | 526 | 1 000
+c: 2
+xu: 526 ta: bilyard tarixidagi eng mashhur rekordlardan biri.
+xe: 526: one of the most famous records in cue sports.
+
+## quiz history
+uz: 🎬 Viktorina: «The Hustler» (1961) filmida bilyardchi «Tez Eddi» rolini kim o'ynagan?
+en: Quiz: who played pool hustler "Fast Eddie" in the 1961 film "The Hustler"?
+o: Paul Newman | Tom Cruise | Robert De Niro | Brad Pitt
+c: 0
+xu: Paul Newman; u «Rang puli» (1986) filmida yana shu rolda.
+xe: Paul Newman, who returned to the role in "The Color of Money" (1986).
+
+## quiz history
+uz: 🎬 Viktorina: «The Color of Money» (1986) filmida Paul Newman bilan birga kim o'ynagan?
+en: Quiz: who starred alongside Paul Newman in "The Color of Money" (1986)?
+o: Tom Cruise | Keanu Reeves | Tom Hanks | Al Pacino
+c: 0
+xu: Tom Cruise; film bilyard ustalari haqida.
+xe: Tom Cruise; the film is about pool hustlers.
+
+## quiz history
+uz: 🚀 Viktorina: snuker afsonasi Ronni O'Sallivanning laqabi nima?
+en: Quiz: what is snooker legend Ronnie O'Sullivan's nickname?
+o: The Rocket | The Nugget | The Whirlwind | The Wizard
+c: 0
+xu: «Rocket» (raketa): u juda tez o'ynashi bilan mashhur.
+xe: "The Rocket": known for his fast play.
+
+## quiz history
+uz: 📚 Viktorina: inglizcha «cue» so'zi qaysi fransuzcha so'zdan kelgan?
+en: Quiz: the English word "cue" comes from which French word?
+o: queue (dum / tail) | cube (kub / cube) | clé (kalit / key) | cible (nishon / target)
+c: 0
+xu: Fransuzcha «queue»: dum. Kiyning shakli dumni eslatgan.
+xe: French "queue" means tail, like the stick's shape.

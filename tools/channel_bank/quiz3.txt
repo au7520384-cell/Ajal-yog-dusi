@@ -1,0 +1,337 @@
+// Quizzes, part 3: facts of the game itself (every number is read from the game's data, see README "Channel auto-poster") and a few brain teasers.
+
+## quiz game
+uz: 🎱 Viktorina: o'yinda nechta kiy bor (taxminan)?
+en: Quiz: roughly how many cues are there in the game?
+o: 50 | 150 | 470 | 1 000
+c: 2
+xu: 470 dan ortiq. Kolleksiya hisobida «1/471» ko'rinadi.
+xe: Over 470. The collection counter reads "1/471".
+
+## quiz game
+uz: 🌍 Viktorina: o'yinda nechta davlat kiyi bor?
+en: Quiz: how many country cues are in the game?
+o: 50 | 100 | 199 | 300
+c: 2
+xu: 199 ta, har biri o'sha davlat bayrog'i ranglarida.
+xe: 199, each in its flag's colours.
+
+## quiz game
+uz: 🧑 Viktorina: nechta portret avatar bepul?
+en: Quiz: how many portrait avatars are free?
+o: 16 | 36 | 76 | 126
+c: 2
+xu: 76 ta portret bepul. Premium avatarlar alohida: 70 ta.
+xe: 76 portraits are free; the 70 premium avatars are separate.
+
+## quiz game
+uz: 🎭 Viktorina: o'yinda nechta stiker to'plami bor?
+en: Quiz: how many sticker packs are there?
+o: 3 | 6 | 9 | 12
+c: 1
+xu: 6 ta: Bilyard, Hayvonlar, Kulgi, Taom, Sehr, Mehr.
+xe: 6: Billiards, Animals, Funny, Food, Magic, Hearts.
+
+## quiz game
+uz: 🎭 Viktorina: bitta stiker to'plami necha 💎 turadi?
+en: Quiz: how many 💎 does one sticker pack cost?
+o: 10 | 50 | 100 | 500
+c: 2
+xu: 100 💎 yoki 10 💵.
+xe: 100 💎 or 10 💵.
+
+## quiz game
+uz: 🎁 Viktorina: o'yin vaqtida raqibga nechta xil sovg'a yuborish mumkin?
+en: Quiz: how many kinds of gifts can you send to your opponent in a match?
+o: 5 | 8 | 13 | 20
+c: 2
+xu: 13 xil: yuraktdan samolyotgacha.
+xe: 13 kinds, from a heart to a jet.
+
+## quiz game
+uz: ✈️ Viktorina: eng katta sovg'a qaysi (👍 ×7 000)?
+en: Quiz: which gift is the biggest (👍 ×7,000)?
+o: Mashina / Car | Samolyot / Jet | Toj / Crown | Olmos / Gem
+c: 1
+xu: Samolyot ×7 000; mashina ×5 000, mototsikl ×3 000.
+xe: The jet ×7,000; the car ×5,000, the bike ×3,000.
+
+## quiz game
+uz: 🍀 Viktorina: qaysi ikki sovg'a har kuni bepul beriladi?
+en: Quiz: which two gifts are free every day?
+o: Yonca va shokolad / Clover and chocolate | Mashina va samolyot / Car and jet | Toj va olmos / Crown and gem | Tort va gul / Cake and bouquet
+c: 0
+xu: Har kuni 1 ta yonca va 1 ta shokolad bepul.
+xe: One clover and one chocolate are free every day.
+
+## quiz game
+uz: 🩸 Viktorina: Mavsum yo'lida nechta daraja bor?
+en: Quiz: how many levels does the Season Pass have?
+o: 50 | 100 | 200 | 400
+c: 3
+xu: 400 daraja; har oy yangi mavzu.
+xe: 400 levels, with a new theme every month.
+
+## quiz game
+uz: ⏰ Viktorina: kunlik kubok Toshkent vaqti bilan qaysi soatlarda ochiladi?
+en: Quiz: at what Tashkent times do the daily cups open?
+o: 09:00, 15:00, 21:00, 03:00 | 08:00, 12:00, 16:00, 20:00 | 06:00, 12:00, 18:00, 00:00 | 10:00, 14:00, 18:00, 22:00
+c: 0
+xu: Kuniga 4 marta, har biri 3 soat ochiq.
+xe: Four times a day, each open for 3 hours.
+
+## quiz game
+uz: ⏳ Viktorina: kunlik kubok ochilgach necha soat ochiq turadi?
+en: Quiz: how long does a daily cup stay open once it starts?
+o: 1 soat / 1 hour | 3 soat / 3 hours | 6 soat / 6 hours | Butun kun / All day
+c: 1
+xu: 3 soat. Birini o'tkazsangiz, keyingisi kutadi.
+xe: 3 hours. Miss one and the next is waiting.
+
+## quiz game
+uz: 🌐 Viktorina: Jahon Kubogida nechta o'yinchi qatnashadi?
+en: Quiz: how many players take part in the World Cup?
+o: 16 | 32 | 48 | 64
+c: 3
+xu: 64 o'yinchi; sovrin 7 500 000 🪙.
+xe: 64 players; a 7,500,000 🪙 prize.
+
+## quiz game
+uz: 🌍 Viktorina: Yevropa Kubogida nechta o'yinchi bor?
+en: Quiz: how many players are in the Europe Cup?
+o: 16 | 32 | 48 | 64
+c: 2
+xu: 48 o'yinchi. Osiyo va Janubiy Amerika kubogida 32 tadan.
+xe: 48 players; the Asia and South America Cups have 32 each.
+
+## quiz game
+uz: 👑 Viktorina: Grandmaster stoli nechta kubokda ochiladi?
+en: Quiz: at how many trophies does the Grandmaster Table open?
+o: 15 | 25 | 45 | 100
+c: 2
+xu: 45 kubokda ochiladi.
+xe: It opens at 45 trophies.
+
+## quiz game
+uz: 🧩 Viktorina: afsonaviy Grandmaster kiyi nechta bo'lakdan yig'iladi?
+en: Quiz: from how many pieces is the legendary Grandmaster cue assembled?
+o: 4 | 10 | 40 | 100
+c: 2
+xu: 40 ta bo'lakdan.
+xe: From 40 pieces.
+
+## quiz game
+uz: 🏆 Viktorina: bitta Victory kiyi uchun nechta bo'lak kerak?
+en: Quiz: how many pieces make one Victory cue?
+o: 2 | 4 | 8 | 12
+c: 1
+xu: 4 bo'lak = 1 kiy. Bo'laklar g'alabadan keladi.
+xe: 4 pieces = 1 cue. Pieces come from winning.
+
+## quiz game
+uz: 🛡 Viktorina: klub yaratish yoki klubga qo'shilish uchun nechanchi daraja kerak?
+en: Quiz: from which level can you create or join a club?
+o: 1 | 3 | 6 | 10
+c: 2
+xu: 6-darajadan.
+xe: From level 6.
+
+## quiz game
+uz: 👥 Viktorina: bitta klubda eng ko'pi bilan nechta a'zo bo'ladi?
+en: Quiz: what is the maximum number of members in one club?
+o: 10 | 25 | 50 | 100
+c: 2
+xu: 50 kishigacha.
+xe: Up to 50 members.
+
+## quiz rank
+uz: 🥇 Viktorina: haftalik dunyo reytingida 1-o'rin uchun necha 💵 beriladi?
+en: Quiz: how many 💵 does 1st place in the weekly world ranking receive?
+o: 150 | 400 | 1 500 | 5 000
+c: 2
+xu: 1 500 💵; 2-o'rin 750, 3-o'rin 400.
+xe: 1,500 💵; 2nd gets 750 and 3rd gets 400.
+
+## quiz rank
+uz: 🏳 Viktorina: davlat reytingida 1-o'rin uchun necha 💵 beriladi?
+en: Quiz: how many 💵 does 1st place in a country ranking receive?
+o: 100 | 200 | 400 | 1 500
+c: 2
+xu: 400 💵; 2-o'rin 200, 3-o'rin 100.
+xe: 400 💵; 2nd gets 200 and 3rd gets 100.
+
+## quiz rank
+uz: 📅 Viktorina: haftalik reyting qachon yangilanadi (Toshkent vaqti bilan)?
+en: Quiz: when does the weekly ranking reset (Tashkent time)?
+o: Juma, 00:00 / Friday, 00:00 | Seshanba, 12:00 / Tuesday, noon | Dushanba, 05:00 / Monday, 05:00 | Shanba, 20:00 / Saturday, 20:00
+c: 2
+xu: Hafta dushanba 00:00 UTC da yangilanadi: Toshkentda 05:00.
+xe: The week resets Monday 00:00 UTC: 05:00 in Tashkent.
+
+## quiz rank
+uz: ⭐ Viktorina: haftalik ligada eng yaxshi taxminan necha foiz yuqoriga ko'tariladi?
+en: Quiz: roughly what share of a league moves up each week?
+o: 5% | 10% | 20% | 50%
+c: 2
+xu: Eng yaxshi 20% yuqoriga, oxirgi 20% pastga tushadi.
+xe: The top 20% move up and the bottom 20% move down.
+
+## quiz game
+uz: 🔥 Viktorina: «Haftaning stoli» necha foiz chegirma bilan taklif qilinadi?
+en: Quiz: what discount does the "Table of the week" carry?
+o: −10% | −20% | −40% | −75%
+c: 2
+xu: −40%; yangisi har dushanba chiqadi.
+xe: −40%; a new one appears every Monday.
+
+## quiz game
+uz: 🔢 Viktorina: eng nodir cheklangan nashr (Kamalak opal) nechta nusxada chiqariladi?
+en: Quiz: how many copies exist of the rarest limited edition, Rainbow Opal?
+o: 30 | 300 | 3 000 | 30 000
+c: 1
+xu: Atigi 300 ta; har bir egasi tartib raqami oladi.
+xe: Just 300; every owner gets a serial number.
+
+## quiz game
+uz: 🔢 Viktorina: cheklangan nashrning eng ommaviy «Bronza» darajasi nechta nusxada chiqadi?
+en: Quiz: how many copies are there of the most common limited-edition tier, Bronze?
+o: 500 | 1 000 | 5 000 | 50 000
+c: 2
+xu: 5 000 ta; Kamalak opal esa 300 ta.
+xe: 5,000, while Rainbow Opal has 300.
+
+## quiz game
+uz: 🌆 Viktorina: o'yindagi eng arzon (birinchi) stol qaysi shaharda?
+en: Quiz: which city has the cheapest (first) table in the game?
+o: London | Moskva | Dubay | Toshkent
+c: 0
+xu: London: kirish 50 🪙, yutuq 100 🪙.
+xe: London: entry 50 🪙, prize 100 🪙.
+
+## quiz game
+uz: 🏔 Viktorina: o'yindagi eng yuqori (oxirgi) stol qaysi shaharda?
+en: Quiz: which city has the highest (last) table in the game?
+o: Nyu-York | Moskva | Rio | Toshkent
+c: 1
+xu: Moskva, Red Square: kirish 100 000 000 🪙.
+xe: Moscow, Red Square: entry 100,000,000 🪙.
+
+## quiz game
+uz: 🇺🇿 Viktorina: o'yindagi Toshkent stolining nomi nima?
+en: Quiz: what is the name of the game's Tashkent table?
+o: Silk Road | Golden Tower | Red Square | Harbour Bar
+c: 0
+xu: «Silk Road»: Buyuk Ipak yo'li ruhida.
+xe: "Silk Road", in the spirit of the Great Silk Road.
+
+## quiz game
+uz: 🎨 Viktorina: London stolining sukno rangi qanday?
+en: Quiz: what colour is the cloth of the London table?
+o: Ko'k / Blue | Qizil / Red | Qora / Black | Sariq / Yellow
+c: 0
+xu: London ko'k, Sidney yashil, Madrid qizil.
+xe: London is blue, Sydney green, Madrid red.
+
+## quiz game
+uz: ⚫ Viktorina: qaysi shaharning stoli qora suknoli?
+en: Quiz: which city's table has black cloth?
+o: London | Madrid | Las-Vegas | Sidney
+c: 2
+xu: Las-Vegas: «Royal Flush» zali qora sukno bilan.
+xe: Las Vegas: the "Royal Flush" room, with black cloth.
+
+## quiz game
+uz: 📆 Viktorina: kunlik sovg'alar yo'lining nechanchi kunida «katta sovrin» bor?
+en: Quiz: on which day of the reward route is the "big prize"?
+o: 3-kun / Day 3 | 5-kun / Day 5 | 7-kun / Day 7 | 8-kun / Day 8
+c: 2
+xu: 7-kun: 2 💵 va katta sovrin.
+xe: Day 7: 2 💵 and a big prize.
+
+## quiz game
+uz: 🏅 Viktorina: o'yinda nechta medal (yutuq nishoni) bor?
+en: Quiz: how many medals (achievements) are there?
+o: 12 | 22 | 32 | 52
+c: 2
+xu: 32 ta; har yangi medal 1 000 🪙 beradi.
+xe: 32; every new medal pays 1,000 🪙.
+
+## quiz game
+uz: 🚪 Viktorina: «Ochiq lobbilar» ro'yxatida qaysi saralash YO'Q?
+en: Quiz: which of these is NOT a filter in the "Open lobbies" list?
+o: Bo'sh joy / Free seats | Ovozli xona / Voice room | Do'stlar / Friends | Kiy narxi / Cue price
+c: 3
+xu: Saralash: bo'sh joy, ovozli xona va do'stlar bo'yicha.
+xe: Filters: free seats, voice room and friends.
+
+## quiz game
+uz: 💍 Viktorina: shahar uzugi Showdown ochkolariga necha foiz qo'shadi?
+en: Quiz: how much extra do city rings add to your Showdown points?
+o: +10% | +25% | +50% | +100%
+c: 2
+xu: +50%, ustiga shahar stoli bepul.
+xe: +50%, and the city table is free.
+
+## quiz game
+uz: 🥇 Viktorina: London stolida uzuk uchun nechta g'alaba yetadi (g'alaba +4, maqsad 15 kubok)?
+en: Quiz: how many wins earn the ring at the London table (+4 per win, goal 15 trophies)?
+o: 2 | 4 | 8 | 15
+c: 1
+xu: 4 × 4 = 16, ya'ni 15 dan oshadi: to'rt g'alaba.
+xe: 4 × 4 = 16, above 15: four wins.
+
+## quiz game
+uz: ♞ Viktorina: Showdown'da nechta mukofot bosqichi bor?
+en: Quiz: how many reward stages does Showdown have?
+o: 3 | 5 | 8 | 12
+c: 2
+xu: 8 ta: tanga, token, 💵, quti, kiy bo'lagi va 💎.
+xe: 8: coins, tokens, 💵, a box, a cue piece and 💎.
+
+## quiz game
+uz: 🏙 Viktorina: har shaharning o'z chempionat kubogida nechta o'yinchi bor?
+en: Quiz: how many players are in each city's own championship cup?
+o: 8 | 16 | 32 | 64
+c: 2
+xu: 32 o'yinchi, o'sha shahar stolida o'ynaladi.
+xe: 32 players, played on that city's table.
+
+## quiz game
+uz: 🌙 Viktorina: kunlik kuboklarning eng kattasi qaysi (sovrin 400 000 🪙)?
+en: Quiz: which is the biggest daily cup (a 400,000 🪙 prize)?
+o: Ertalabki / Morning | Tushki / Noon | Kechki / Evening | Tungi / Night
+c: 3
+xu: Tungi Kubok: kirish 10 000 🪙, sovrin 400 000 🪙.
+xe: The Night Cup: entry 10,000 🪙, prize 400,000 🪙.
+
+## quiz game
+uz: 🗣 Viktorina: lobbidagi ovozli xonada eng ko'pi bilan necha kishi gaplasha oladi?
+en: Quiz: how many players can talk in a lobby's voice room at most?
+o: 2 | 4 | 8 | 16
+c: 2
+xu: Sakkiz kishigacha, lobbi bilan bir xil.
+xe: Up to eight, the same as the lobby.
+
+## quiz brain
+uz: 🧠 Viktorina: 8-ball'da bitta o'yinchi guruhida nechta shar bor (8-sharsiz)?
+en: Quiz: how many balls does one player's group have in 8-ball (not counting the 8)?
+o: 5 | 6 | 7 | 8
+c: 2
+xu: 1–7 yoki 9–15: yettitadan.
+xe: 1–7 or 9–15: seven each.
+
+## quiz brain
+uz: 🧠 Viktorina: 15 ta shar va oq shar: nechta shar yo'l-yo'l (stripes)?
+en: Quiz: with 15 object balls and a cue ball, how many balls are stripes?
+o: 6 | 7 | 8 | 9
+c: 1
+xu: 9 dan 15 gacha: yettita yo'l-yo'l shar.
+xe: Balls 9 to 15: seven stripes.
+
+## quiz brain
+uz: 🧠 Viktorina: oq sharni hisobga olmasdan, 8-ball stolidagi sharlar necha xil guruhga bo'linadi?
+en: Quiz: not counting the cue ball, into how many groups are 8-ball's balls split?
+o: 2 | 3 | 4 | 5
+c: 1
+xu: Yaxlit (1–7), yo'l-yo'l (9–15) va yagona qora 8-shar: uchta.
+xe: Solids (1–7), stripes (9–15) and the lone black 8-ball: three.

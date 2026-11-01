@@ -1,0 +1,211 @@
+// Dated posts: tied to a weekday or a date (Tashkent time). `when` is JSON, see whenOk() in server/chan_plan.js:
+//   dow: [1..7] (1 = Monday), md: ["12-31"], range: ["12-26", "12-30"], from / to: "2026-12-01", slot: 0 (morning) | "last" | "any"; no slot = the evening post.
+// The weekly reset (ranking, Showdown, Table of the week, horror offers, season pass at the end of a month) is Monday 00:00 UTC = 05:00 in Tashkent;
+// the Season Pass month ends on the 1st at 00:00 UTC = 05:00 in Tashkent.
+
+// ---- Mondays (morning)
+## dated rank x_showdown
+when: {"dow": [1], "slot": 0, "dom": [1, 2, 3, 4, 5, 6, 7]}
+uz: 🗓 Yangi hafta: hamma noldan boshlaydi
+Bugun ertalab soat 05:00 da hafta yopildi: reyting va Showdown yangilandi. Ochkolar nolga qaytdi, hamma bir xil boshlaydi. Birinchi g'alabani hoziroq yozdiring!
+en: 🗓 A new week: everyone starts from zero
+At 05:00 this morning the week closed: the ranking and Showdown reset. Points are back to zero and everyone starts level. Log the first win right now!
+
+## dated tables s_tables
+when: {"dow": [1], "slot": 0, "dom": [8, 9, 10, 11, 12, 13, 14]}
+uz: 🔥 Dushanba: uchta narsa yangilandi
+1) Haftalik reyting nolga qaytdi. 2) Showdown yangi haftaga o'tdi. 3) Do'konda «Haftaning stoli» (−40%) va haftalik «Qo'rqinchli» takliflar almashdi. Bugun nimadan boshlaysiz?
+en: 🔥 Monday: three things refreshed
+1) The weekly ranking is back to zero. 2) Showdown moved to a new week. 3) The shop's "Table of the week" (−40%) and the weekly horror offers have changed. Where will you start today?
+
+## dated rank
+when: {"dow": [1], "slot": 0, "dom": [15, 16, 17, 18, 19, 20, 21]}
+uz: 🏁 Dushanba: haftalik marafon boshlandi
+Dunyo va davlat reytingining 1-o'rni uchun 1 500 va 400 💵 beriladi. Ligangizda yuqoriga chiqish uchun eng yaxshi 20% ga kirish kerak. Hafta uzun: shoshilmang, lekin boshlang!
+en: 🏁 Monday: the weekly marathon has started
+1st place in the world and country rankings gets 1,500 and 400 💵. To move up in your league you need to be in the top 20%. The week is long: no rush, but do start!
+
+## dated goals
+when: {"dow": [1], "slot": 0, "dom": [22, 23, 24, 25, 26, 27, 28]}
+uz: 🧭 Dushanba: haftalik reja
+Bu hafta uchun 3 ta maqsad: 1) kamida 5 ta g'alaba, 2) bitta yangi medal (+1 000 🪙), 3) Showdown'dan bitta mukofot. Hafta yakshanba kechasigacha: maqsadlarni bugundan boshlang!
+en: 🧭 Monday: the weekly plan
+3 goals for this week: 1) at least 5 wins, 2) one new medal (+1,000 🪙), 3) one Showdown reward. The week runs until Sunday night: start on your goals today!
+
+## dated pass x_pass
+when: {"dow": [1], "slot": 0, "dom": [29, 30, 31]}
+uz: 🗓 Oyning oxirgi dushanbasi: yangi hafta, mavsum yakuniga yaqin
+Hafta yangidan boshlandi, Mavsum yo'li esa oy tugashi bilan yopiladi: bir-ikki kun qoldi. Yig'ilgan mukofotlarni olib, qolgan ochkolarni yig'ib ulguring!
+en: 🗓 The last Monday of the month: a new week, the season nearly over
+The week has started afresh, and the Season Pass closes with the month: just a day or two left. Claim your rewards and squeeze in the remaining points!
+
+// ---- Fridays (evening)
+## dated lobby l_open
+when: {"dow": [5], "dom": [1, 2, 3, 4, 5, 6, 7]}
+uz: 🎉 Juma kechasi: hafta oxiri boshlandi
+Do'stlaringizni lobbiga chaqiring yoki «Ochiq lobbilar» ga kiring: kimdir albatta o'ynashga tayyor. Ovozli xona bilan hazil ham bo'ladi. Dam olish kunlari qiziqarli o'tsin!
+en: 🎉 Friday night: the weekend has started
+Invite your friends to a lobby or head to "Open lobbies": someone is surely ready to play. With the voice room there is banter too. Have a fun weekend!
+
+## dated voice l_voice
+when: {"dow": [5], "dom": [15, 16, 17, 18, 19, 20, 21]}
+uz: 🎙 Dam olish oldidan: do'stlar bilan ovozli xona
+Kod yuboring, 8 kishigacha yig'iling va gaplashib o'ynang. Kim stolda kuchli, kim gapda kuchli: bugun aniq bo'ladi!
+en: 🎙 Before the weekend: a voice room with friends
+Send a code, gather up to 8 players and talk while you play. Who is strong at the table and who is strong at talking: tonight we will see!
+
+## dated tables s_tables
+when: {"dow": [5], "dom": [8, 9, 10, 11, 12, 13, 14]}
+uz: ⏳ Haftaning stoli −40%: dushanbagacha
+Bu haftaning chegirmali stoli dushanba ertalab (05:00) yangisiga almashadi. Yoqqan bo'lsa, dam olish kunlarida tanlab oling: do'kon · Stollar bo'limining eng tepasida.
+en: ⏳ Table of the week at −40%: until Monday
+This week's discounted table is replaced on Monday morning (05:00). If you like it, pick it up this weekend: it sits at the top of the shop's Tables section.
+
+// ---- Sundays (evening)
+## dated rank
+when: {"dow": [7], "dom": [1, 2, 3, 4, 5, 6, 7]}
+uz: ⏰ Hafta yopilishiga bir necha soat qoldi
+Dushanba ertalab soat 05:00 da hafta yopiladi. Reytingda o'rningizni tekshiring: dunyo top-3 ga 1 500 / 750 / 400 💵, davlat top-3 ga 400 / 200 / 100 💵 beriladi. Oxirgi g'alabalar sizni baland ko'tarishi mumkin!
+en: ⏰ A few hours until the week closes
+The week closes on Monday at 05:00. Check your place in the ranking: the world's top 3 get 1,500 / 750 / 400 💵 and each country's top 3 get 400 / 200 / 100 💵. A few last wins can lift you up!
+
+## dated showdown x_showdown
+when: {"dow": [7], "dom": [8, 9, 10, 11, 12, 13, 14]}
+uz: ♞ Yakshanba: Showdown mukofotlarini oling
+Showdown haftasi tugashiga oz qoldi. Ochkolaringiz qaysi mukofot bosqichiga yetdi? Oxirgi bosqichgacha bir-ikki g'alaba qolgan bo'lsa, hozir vaqti.
+en: ♞ Sunday: collect your Showdown rewards
+The Showdown week is almost over. Which reward stage have your points reached? If you are a win or two from the next stage, now is the time.
+
+## dated league
+when: {"dow": [7], "dom": [15, 16, 17, 18, 19, 20, 21]}
+uz: ⭐ Ligada qolish yoki ko'tarilish: bugun hal bo'ladi
+Har hafta ligangizning eng yaxshi 20% i yuqoriga chiqadi, oxirgi 20% i pastga tushadi. Hafta yopilishidan oldin joyingizni tekshirib, xavfdan qoching!
+en: ⭐ Stay or move up: it is decided today
+Every week the top 20% of your league move up and the bottom 20% move down. Check your place before the week closes and keep out of danger!
+
+## dated medals x_missions
+when: {"dow": [7], "dom": [22, 23, 24, 25, 26, 27, 28]}
+uz: ⏱ Hafta oxirgi soatlarida: yana bir medal yoki uzuk?
+Haftalik reyting va Showdown bugun tunda soat 05:00 da yangilanadi. Qolgan vaqtda bitta medal yoki shahar uzugini olishga ulgurasizmi? Bir-ikki g'alaba ko'p narsani o'zgartiradi.
+en: ⏱ The final hours of the week: one more medal or ring?
+The weekly ranking and Showdown reset tonight at 05:00. Can you fit in one medal or a city ring before then? A win or two can change a lot.
+
+## dated pass x_pass
+when: {"dow": [7], "dom": [29, 30, 31]}
+uz: ⏳ Hafta ham, oy ham tugash arafasida
+Haftalik reyting dushanba ertalab soat 05:00 da yopiladi, Mavsum yo'li esa oy bilan birga yopilishiga oz qoldi. Mukofotlaringizni olib, oxirgi g'alabalarni yozdirishga ulguring!
+en: ⏳ The week and the month are both nearly over
+The weekly ranking closes on Monday at 05:00 and the Season Pass is about to close with the month. Claim your rewards and log your last wins in time!
+
+// ---- Season Pass months (the pass of a month ends on the 1st at 05:00 Tashkent time)
+## dated pass x_pass
+when: {"md": ["11-01"]}
+uz: 🌫 Yangi oy, yangi mavsum: «Tuman shohligi»
+Mavsum yo'li noldan boshlandi: 400 daraja, yangi kiylar, ramkalar, stollar va avatarlar. Bepul yo'l hammaga ochiq. G'alaba va vazifalar uchun ochko yig'ing!
+en: 🌫 A new month, a new season: "Kingdom of Mist"
+The Season Pass started from scratch: 400 levels with new cues, frames, tables and avatars. The free track is open to everyone. Earn points from wins and missions!
+
+## dated pass x_pass
+when: {"md": ["11-30"]}
+uz: ⏳ «Tuman shohligi» bugun tunda tugaydi
+Mavsum yo'li ertaga ertalab soat 05:00 da yopiladi. Yig'ilgan mukofotlarni olishni unutmang. Ertadan yangi mavsum: «Qor malikasi».
+en: ⏳ "Kingdom of Mist" ends tonight
+The Season Pass closes tomorrow morning at 05:00. Do not forget to claim your collected rewards. From tomorrow a new season: "Snow Queen".
+
+## dated pass x_pass
+when: {"md": ["12-01"]}
+uz: ❄️ Yangi mavsum: «Qor malikasi»
+Dekabr keldi, Mavsum yo'li yangilandi: 400 daraja va yangi mukofotlar. Qishki kayfiyatda o'ynang. Kechagi mavsum yopildi, yangisida hamma noldan boshlaydi.
+en: ❄️ A new season: "Snow Queen"
+December is here and the Season Pass is renewed: 400 levels and new rewards. Play in a wintery mood. Last month's season is closed, and in the new one everybody starts from zero.
+
+## dated constitution l_hub
+when: {"md": ["12-08"]}
+uz: 🇺🇿 Konstitutsiya kuni muborak!
+Bayram kayfiyatida do'stlaringiz bilan lobbi oching yoki Toshkent stolida («Silk Road») o'ynab ko'ring. Hamma o'yinchilarimizga tinchlik, quvonch va omad tilaymiz!
+en: 🇺🇿 Happy Constitution Day!
+In a festive mood open a lobby with friends or try the Tashkent table ("Silk Road"). We wish all our players peace, joy and good luck!
+
+## dated friends l_hub
+when: {"md": ["12-26"]}
+uz: 🎄 Yangi yilgacha 5 kun
+Yangi yil oldidan do'stlaringiz bilan lobbi oching: kim yilni g'alaba bilan yakunlaydi? Ovozli xona bilan bayram oldi kayfiyati yanada yorqin bo'ladi.
+en: 🎄 5 days until New Year
+Open a lobby with your friends before the holiday: who will end the year with a win? The voice room makes the pre-holiday mood even brighter.
+
+## dated newyear p11
+when: {"md": ["12-31"]}
+uz: 🎆 Yangi yil bilan!
+Yil oxirgi soatlari. Bugun tunda soat 05:00 da dekabr mavsumi yopiladi: kutilgan mukofotlarni oling. Yangi yilda barchaga sog'lik, quvonch va ko'p g'alaba tilaymiz!
+en: 🎆 Happy New Year!
+The last hours of the year. Tonight at 05:00 the December season closes: collect any rewards waiting for you. We wish everyone health, joy and many wins in the new year!
+
+## dated pass x_pass
+when: {"md": ["01-01"]}
+uz: ❄️ Yangi yil, yangi mavsum: «Muz saltanati»
+Yangi yilning birinchi kuni Mavsum yo'li yangilandi: 400 daraja, yangi mukofotlar. Yilni birinchi g'alabadan boshlang!
+en: ❄️ A new year, a new season: "Ice Kingdom"
+On the first day of the year the Season Pass is renewed: 400 levels, new rewards. Start the year with your first win!
+
+## dated goals
+when: {"md": ["01-03"]}
+uz: 🎯 Yangi yil uchun 3 ta o'yin maqsadi
+1) Birinchi uzukni yig'ing (London: 4 g'alaba). 2) Bitta medalni oling (+1 000 🪙). 3) Do'stlar bilan lobbi oching. Kichik maqsadlar katta yutuqqa olib boradi.
+en: 🎯 3 game goals for the new year
+1) Collect your first ring (London: 4 wins). 2) Earn one medal (+1,000 🪙). 3) Open a lobby with friends. Small goals lead to big wins.
+
+## dated defenders
+when: {"md": ["01-14"]}
+uz: 🇺🇿 Vatan himoyachilari kuni muborak!
+Bayram bilan! Bugun dilni tinchitib, do'stlar bilan bir-ikki o'yin o'ynang. Sog'lik, tinchlik va omad tilaymiz!
+en: 🇺🇿 Happy Defenders of the Motherland Day!
+Congratulations! Relax today and play a game or two with friends. We wish you health, peace and good luck!
+
+## dated pass x_pass
+when: {"md": ["01-31"]}
+uz: ⏳ «Muz saltanati» bugun tunda tugaydi
+Mavsum yo'li ertaga ertalab soat 05:00 da yopiladi. Yig'ilgan mukofotlarni oling. Ertadan yangi mavsum: «Sevgi bog'i».
+en: ⏳ "Ice Kingdom" ends tonight
+The Season Pass closes tomorrow morning at 05:00. Claim your collected rewards. From tomorrow a new season: "Garden of Love".
+
+## dated pass x_pass
+when: {"md": ["02-01"]}
+uz: 💗 Yangi mavsum: «Sevgi bog'i»
+Fevral keldi, Mavsum yo'li yangilandi: 400 daraja va yangi mukofotlar. Yangi oyni birinchi g'alabadan boshlang!
+en: 💗 A new season: "Garden of Love"
+February is here and the Season Pass is renewed: 400 levels and new rewards. Start the new month with your first win!
+
+## dated stickers s_stickers
+when: {"md": ["02-14"]}
+uz: 💘 14-fevral: «Mehr» stikerlari
+💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 ta iliq stiker do'stingizga iliq so'z yuborish uchun. Har to'plam 10 💵 yoki 100 💎. Yaxshi o'yindan keyin yurak sovg'asi ham yubora olasiz.
+en: 💘 14 February: the "Hearts" stickers
+💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 warm stickers for sending a kind word to a friend. Each pack costs 10 💵 or 100 💎. After a good game you can send a heart gift too.
+
+## dated pass x_pass
+when: {"md": ["02-28"]}
+uz: ⏳ «Sevgi bog'i» bugun tunda tugaydi
+Mavsum yo'li ertaga ertalab soat 05:00 da yopiladi. Yig'ilgan mukofotlarni olishni unutmang. Ertadan yangi mavsum: «Bahor uyg'onishi».
+en: ⏳ "Garden of Love" ends tonight
+The Season Pass closes tomorrow morning at 05:00. Do not forget your collected rewards. From tomorrow a new season: "Spring Awakening".
+
+## dated pass x_pass
+when: {"md": ["03-01"]}
+uz: 🌱 Yangi mavsum: «Bahor uyg'onishi»
+Mart keldi, Mavsum yo'li yangilandi: 400 daraja, yangi mukofotlar. Bahor kayfiyatida yangi mavsumni birinchi g'alabadan boshlang!
+en: 🌱 A new season: "Spring Awakening"
+March is here and the Season Pass is renewed: 400 levels, new rewards. In a spring mood, start the new season with your first win!
+
+## dated womensday m_gifts
+when: {"md": ["03-08"]}
+uz: 💐 8-mart bayrami muborak!
+Aziz ayollarimiz, o'yinchilarimiz va kanal a'zolarimiz, bayramingiz muborak! O'yinda gul dastasi sovg'asi bor 💐: yaxshi o'yindan keyin raqibingizga yuboring.
+en: 💐 Happy International Women's Day!
+To our dear women, players and channel members: happy holiday! The game has a bouquet gift 💐: send one to your opponent after a good game.
+
+## dated navruz p11
+when: {"md": ["03-21"]}
+uz: 🌷 Navro'z bayrami muborak!
+Bahor va yangilanish bayrami bilan! Bugun do'stlar bilan lobbi oching va yangi mavsumni baxtli boshlang. Hammaga tinchlik, farovonlik va omad tilaymiz!
+en: 🌷 Happy Navruz!
+Congratulations on the holiday of spring and renewal! Open a lobby with friends today and start the new season happily. We wish everyone peace, prosperity and good luck!

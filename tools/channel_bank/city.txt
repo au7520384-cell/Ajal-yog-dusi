@@ -1,0 +1,122 @@
+// The flavour line of each city table: the numbers (fee, prize, level, trophies, ring) are added by build_channel_bank.py from cities.json,
+// so they are NOT repeated here. Cloth colours and venue names are the game's own (see CITIES in index.html).
+
+## city lon
+uz: Big Ben soyasidagi klassik pab, ko'k sukno. Hamma shu yerdan boshlaydi: eng arzon kirish, mag'lubiyatda kubok yo'qolmaydi.
+en: A classic pub in Big Ben's shadow, blue cloth. Everyone starts here.
+
+## city syd
+uz: Ko'rfaz bo'yidagi bar, yashil sukno. Ikkinchi stol: dastlabki g'alabalardan keyin shu yerga o'tasiz.
+en: A harbour bar, green cloth. Your second table.
+
+## city lis
+uz: Yozgi terrasada tushga yaqin o'yin: firuza rangli sukno, yengil kayfiyat.
+en: A summer terrace, turquoise cloth, an easy mood.
+
+## city mad
+uz: Plaza Mayor, Madridning qalbi: qizil sukno va qaynoq raqobat.
+en: Plaza Mayor, the heart of Madrid: red cloth and a hot rivalry.
+
+## city tok
+uz: Samurai Dojo: sukunat, diqqat va qizil sukno. Bu yerda shoshilgan yutqazadi.
+en: Samurai Dojo: silence, focus and red cloth. Rush it and you lose.
+
+## city veg
+uz: Las-Vegas chiroqlari ostida qora sukno. Kirish narxi birdan o'sadi: bu endi katta liga.
+en: Black cloth under the lights of Las Vegas. The entry fee jumps: this is the big league.
+
+## city bue
+uz: Tango saloni: sekin ritm, och ko'k sukno, aniq zarba. Tangoning vatanida o'yin ham nafis bo'ladi.
+en: A tango salon: slow rhythm, light-blue cloth, a precise shot.
+
+## city jak
+uz: Volcano Arena: olovrang sukno, o'yin qizib boradi. Sovuqqonlar yutadi.
+en: Volcano Arena: fire-orange cloth, the game heats up. Cool heads win.
+
+## city tor
+uz: Maple Lounge: kulrang-ko'k sukno, sokin va jiddiy muhit. O'yin endi hazil emas.
+en: Maple Lounge: grey-blue cloth, a calm and serious room.
+
+## city mex
+uz: Fiesta Cantina: yashil sukno va bayramona kayfiyat. Ritm tez, zarbalar aniq bo'lsin.
+en: Fiesta Cantina: green cloth and a party mood. Fast rhythm, accurate shots.
+
+## city cai
+uz: Pyramid Hall: oltin-sariq sukno, ming yillik piramidalar yurtidan ilhomlangan zal.
+en: Pyramid Hall: golden cloth, a room inspired by the land of the pyramids.
+
+## city dub
+uz: Golden Tower: to'q ko'k sukno va osmono'par bino manzarasi. Birinchi million shu yerda.
+en: Golden Tower: deep blue cloth and a skyscraper view. Your first million lives here.
+
+## city sin
+uz: Marina Bay: ko'rfaz chiroqlari va ko'k sukno. Toza, tartibli, aniq zarbalar uchun.
+en: Marina Bay: bay lights and blue cloth. Clean, tidy, made for accurate shots.
+
+## city sha
+uz: Pearl Club: zumrad yashil sukno va Sharq marvaridining hashamati.
+en: Pearl Club: emerald-green cloth and the glamour of the Pearl of the Orient.
+
+## city par
+uz: Château Royal: qirollik zali, pushti sukno. Bu yerda faqat tajribalilar o'ynaydi.
+en: Château Royal: a royal hall, rose-pink cloth. Experienced players only.
+
+## city ams
+uz: Canal House: kanallar bo'yidagi uy, to'q sariq sukno. Yutuq millionlab tanga.
+en: Canal House: a house on the canals, orange cloth. Prizes in the millions.
+
+## city rom
+uz: Colosseo: qadimiy Rim ruhi, jigarrang-oltin sukno. Gladiatorlar o'rniga bilyardchilar jang qiladi.
+en: Colosseo: the spirit of ancient Rome, brown-and-gold cloth. Cue players instead of gladiators.
+
+## city bkk
+uz: Golden Temple: zaytun yashil sukno va oltin ma'bad ruhi. Sabr va aniqlik.
+en: Golden Temple: olive-green cloth and a golden temple spirit. Patience and accuracy.
+
+## city kul
+uz: Twin Towers: egizak minoralar soyasida to'q ko'k sukno.
+en: Twin Towers: deep blue cloth in the shadow of the twin towers.
+
+## city seo
+uz: Neon Tower: binafsha neon va tungi Seul. Tezkor, yorqin, hayajonli o'yin.
+en: Neon Tower: violet neon and Seoul by night. A fast, bright, thrilling game.
+
+## city mum
+uz: Maharaja Palace: magenta sukno va saroy hashamati. Katta stol, katta sovrin.
+en: Maharaja Palace: magenta cloth and palace splendour. A big table, a big prize.
+
+## city ath
+uz: Acropolis Hall: Akropol ruhidagi ko'k sukno. Qadimgi Yunonistonda sport ham san'at edi.
+en: Acropolis Hall: blue cloth in the spirit of the Acropolis. Sport was an art in ancient Greece.
+
+## city ber
+uz: Platz Arena: zamonaviy Berlin, firuza sukno. Aniqlik va sovuqqonlik talab qilinadi.
+en: Platz Arena: modern Berlin, teal cloth. Precision and a cool head wanted.
+
+## city ist
+uz: Bosphorus Palace: ikki qit'a chorrahasi, bordo sukno. Sharq bilan G'arb bir stolda uchrashadi.
+en: Bosphorus Palace: where two continents meet, burgundy cloth. East meets West at one table.
+
+## city cas
+uz: Medina Riad: eski medina hovlisi, mis rangli sukno. Sokin hovli, qaynoq o'yin.
+en: Medina Riad: an old medina courtyard, copper cloth. A quiet courtyard, a hot game.
+
+## city osa
+uz: Skyline: osmono'par binolar ustidagi binafsha-ko'k sukno, tungi Osaka manzarasi.
+en: Skyline: violet-blue cloth high above Osaka's night lights.
+
+## city tas
+uz: Silk Road: Buyuk Ipak yo'li shahri, bizning Toshkent stolimiz! O'zbekiston bayrog'i ostida o'ynang.
+en: Silk Road: the city of the Great Silk Road, our Tashkent table!
+
+## city rio
+uz: Carnival Hall: karnaval ritmi va yorqin yashil sukno. Zarba ham raqsdek yengil bo'lsin.
+en: Carnival Hall: carnival rhythm and bright green cloth. Let the shot be as light as a dance step.
+
+## city nyc
+uz: Penthouse Loft: tungi Manxetten ustidagi shaxsiy loft, to'q sukno.
+en: Penthouse Loft: a private loft above night-time Manhattan, dark cloth.
+
+## city mos
+uz: Red Square: oxirgi, eng yuqori stol. Cho'qqiga yetish oson emas: siz yetasizmi?
+en: Red Square: the last and highest table. Reaching the summit is not easy: will you?

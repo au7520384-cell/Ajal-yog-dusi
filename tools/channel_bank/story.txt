@@ -1,0 +1,89 @@
+// Stories: short scenes and challenges that make people want to open the game. No invented testimonials, no invented numbers: only scenes anyone can imagine, and facts of the game.
+
+## story brand p07
+uz: 🎱 Oxirgi shar
+Stolda faqat 8-shar qoldi. Raqibingiz ham bitta zarba uzoqlikda. Qo'lingiz yengil titraydi, taymer yuradi... Nafas oling, nishonni to'g'rilang va uring. Bilyard aynan shu daqiqalar uchun yaratilgan.
+en: 🎱 The last ball
+Only the 8-ball is left. Your opponent is one shot away too. Your hand trembles a little, the timer runs... Breathe, line up the aim and shoot. Cue sports exist for moments like this.
+
+## story friends l_hub
+uz: 😏 «Men sendan kuchliman»
+Do'stingiz shunday dedimi? Gapirib o'tirmang: lobbi oching, kodni yuboring va stolda isbotlang. Ovozli xonani yoqing: hamma kim haq ekanini eshitsin!
+en: 😏 "I am better than you"
+Did your friend say that? Do not argue: open a lobby, send the code and prove it at the table. Turn on the voice room so everyone hears who is right!
+
+## story daily p03
+uz: 🌅 🌞 🌆 🌙 Kunning to'rt imkoniyati
+09:00, 15:00, 21:00 va 03:00 (Toshkent vaqti bilan). To'rt kubok, to'rt imkoniyat. Ertalabkisini o'tkazib yuborgan bo'lsangiz, tushdagisini ushlab oling. Bugun qaysi birida o'ynaysiz?
+en: 🌅 🌞 🌆 🌙 Four chances a day
+09:00, 15:00, 21:00 and 03:00 (Tashkent time). Four cups, four chances. Missed the morning one? Catch the afternoon one. Which will you play today?
+
+## story road p02
+uz: 🛣 London'dan Toshkentgacha
+Birinchi stol London: kirish atigi 50 🪙. 27-stol Toshkent: kirish 65 000 000 🪙. Orada 25 ta shahar, har birining o'z uzugi. Siz hozir qaysi shahardasiz?
+en: 🛣 From London to Tashkent
+The first table is London: entry just 50 🪙. The 27th is Tashkent: entry 65,000,000 🪙. Between them 25 cities, each with its own ring. Which city are you in right now?
+
+## story rank
+uz: 🏳 Bayroqlar bellashadi
+Davlat reytingida har davlatning o'z jadvali bor, hafta oxirida eng yaxshi uchtasi 💵 oladi. Sizning bayrog'ingiz qaysi o'rinda bo'ladi? Birinchi g'alabadan boshlang.
+en: 🏳 Flags compete
+Every country has its own ranking board, and at the end of the week the best three receive 💵. Where will your flag be? Start with your first win.
+
+## story voice l_voice
+uz: 🎙 Ovoz bilan boshqacha
+Matn yozib o'tirmaysiz: «Zo'r zarba!», «Oh, oz qoldi!», kulgi, hayrat... Ovozli xona o'yinni jonli suhbatga aylantiradi. Do'stlaringizni lobbiga chaqiring va sinab ko'ring.
+en: 🎙 Different with voice
+No typing: "Great shot!", "Oh, so close!", laughter, gasps... The voice room turns the game into a live conversation. Invite your friends to a lobby and try it.
+
+## story brand p11
+uz: 📅 Mukammal kun rejasi
+Ertalab: kunlik sovg'a va omad g'ildiragi. Tushda: kunlik kubok. Kechqurun: do'stlar bilan lobbi va ovozli xona. Tunda: bugun nechta medal yig'ganingizni sanang. Hammasi bepul boshlanadi.
+en: 📅 A perfect day plan
+Morning: the daily gift and the lucky wheel. Noon: a daily cup. Evening: a lobby with friends and the voice room. Night: count the medals you collected today. It all starts for free.
+
+## story medals
+uz: 🔥 Bugungi chaqiriq: ketma-ket g'alabalar
+5 ta ketma-ket g'alaba «Ketma-ket g'alaba» medalini beradi, 10 tasi esa «Sovuq qon» ni. Har medal 1 000 🪙. Bitta yutqazish seriyani uzadi, shuning uchun diqqat bilan!
+en: 🔥 Today's challenge: wins in a row
+5 wins in a row earn the "Win streak" medal and 10 earn "Cold blood". Each medal pays 1,000 🪙. One loss breaks the streak, so stay sharp!
+
+## story ring
+uz: 💍 Bugun birinchi uzukni yig'ing
+London stolida uzuk uchun 15 kubok kerak, har g'alaba +4, mag'lubiyatda yo'qotish yo'q. Atigi 4 g'alaba. Bugun shuni sinab ko'ring: boshlaymizmi?
+en: 💍 Collect your first ring today
+At the London table the ring needs 15 trophies, +4 per win and nothing lost on a loss. Just 4 wins. Try it today: shall we start?
+(Claim "Bir soatda bo'lishi mumkin": unverifiable. Remove: "Bugun shu uzukni yig'ib ko'ring." Edit below.)
+
+## story brand
+uz: 📲 Cho'ntagingizdagi bilyard zali
+Navbat kutayotganda, yo'lda, tanaffusda: Telegram'ni oching, bir bosish va siz stol oldidasiz. Yuklab olish ham, o'rnatish ham yo'q. Qisqa o'yin uchun mukammal.
+en: 📲 A billiard hall in your pocket
+Waiting in a queue, on the road, on a break: open Telegram, one tap and you are at the table. No download, no install. Perfect for a quick game.
+
+## story gifts
+uz: ❤️ Yaxshi o'yindan keyin yurak yuboring
+Raqib yaxshi o'ynadimi? Kichik yurak 15 🪙, yonca va shokolad esa kuniga bepul. Bir kichik sovg'a kayfiyatni ko'taradi va ertaga yana o'ynashga undaydi.
+en: ❤️ Send a heart after a good game
+Did your opponent play well? A little heart is 15 🪙, and the clover and chocolate are free every day. One small gift lifts the mood and brings you back tomorrow.
+
+## story brand
+uz: 🧭 Yangi boshlovchi uchun 3 qadam
+1) Botni oching va «O'ynash» ni bosing.
+2) London stolini tanlang: birinchi stol hammaga ochiq.
+3) Kunlik sovg'ani va omad g'ildiragini oling.
+Qolganini o'yinning o'zi ko'rsatadi.
+en: 🧭 3 steps for a new player
+1) Open the bot and tap Play. 2) Pick the London table: the first table is open to everyone. 3) Collect the daily gift and spin the lucky wheel. The game shows you the rest.
+
+## story medals
+uz: 🔁 7 kunlik seriya
+7 kun ketma-ket kirsangiz «Vaqtida» medalini olasiz (1 000 🪙). Kunlik sovg'alar yo'li ham har kuni kattalashadi: 1-kun 100 🪙, 7-kun esa katta sovrin. Bugun nechanchi kundasiz?
+en: 🔁 A 7-day streak
+Open the game 7 days in a row and you get the "On time" medal (1,000 🪙). The reward route also grows every day: day 1 is 100 🪙, day 7 a big prize. Which day are you on?
+
+## story style
+uz: 🥷 Qanday o'yinchi bo'lmoqchisiz?
+Sovuq qonli ustozmi, tezkor hujumchimi yoki jim rejalashtiruvchimi? O'yin uslubingizni o'zingiz yarating: har g'alaba uni mustahkamlaydi, har mag'lubiyat esa o'rgatadi.
+en: 🥷 What kind of player do you want to be?
+A cold-blooded master, a fast attacker or a quiet planner? Build your own style: every win strengthens it and every loss teaches you something.
