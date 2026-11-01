@@ -1,0 +1,145 @@
+// Shop showcase posts: honest status / collector appeal. Prices are the in-game ones (coins, 💵, 💎), taken from the game's data. Scarcity only where it is real (limited editions, the weekly table, the monthly pass).
+
+## shop cues c_premium2
+uz: 🎱 Kiy: sizning imzoyingiz
+Stolda hamma sizning kiyingizni ko'radi. Oddiy kiydan afsonaviygacha: 470 dan ortiq kiy ichidan o'zingiznikini toping. Chiroy bilan birga ko'rsatkichlar ham farq qiladi: kuch, aniqlik, aylanish, vaqt.
+en: 🎱 The cue: your signature
+Everyone at the table sees your cue. From a simple one to a legendary one: find yours among 470+. Besides the looks, the stats differ too: force, aim, spin, time.
+
+## shop cues c_uz
+uz: 🇺🇿 O'zbekiston kiyi: bayrog'ingiz qo'lingizda
+Ko'k rangda, yarim oy nishoni bilan. «Do'kon · Kiylar · Mamlakat» bo'limida: 40 💵 yoki 400 💎. Dunyoning boshqa 198 ta davlati kiyi ham shu yerda.
+en: 🇺🇿 The Uzbekistan cue: your flag in your hands
+Blue, with a crescent. In "Shop · Cues · Country": 40 💵 or 400 💎. The cues of 198 other countries are there too.
+
+## shop limited c_premium3
+uz: 🌈 Kamalak opal: dunyoda atigi 300 ta
+Premium kiylar seriyasining eng nodiri. Bronzadan boshlab nusxalar kamayib boradi: 5 000, 4 000, 3 000... va 300. Tugagach, boshqa chiqmaydi. Egasi tartib raqamini oladi.
+en: 🌈 Rainbow Opal: only 300 in the world
+The rarest of the premium cue series. The copies shrink from Bronze on: 5,000, 4,000, 3,000... down to 300. When they are gone, they are gone. The owner gets a serial number.
+
+## shop cues c_horror
+uz: 💀 Qo'rqinchli kiylar: qorong'u uslubga qiziqasizmi?
+Sirli tun, Yarim tun, Qabr qo'ng'irog'i va boshqalar: jami 12 ta. Do'kondagi haftalik taklif aylanib turadi, shuning uchun bu hafta kimning navbati ekanini ko'ring.
+en: 💀 Horror cues: into the dark style?
+Mystic Night, Midnight, Grave Bell and more: 12 in total. The weekly offer in the shop rotates, so check whose turn it is this week.
+
+## shop tables s_tables
+uz: 🛒 Do'kon: bu hafta stol −40% arzon
+Do'kondagi «Stollar» bo'limining eng tepasida bu haftaning chegirmali stoli turadi. Har dushanba yangisi almashadi, shuning uchun yoqqan bo'lsa, kutib o'tirmang.
+en: 🛒 Shop: a table at −40% this week
+At the very top of the shop's "Tables" section sits this week's discounted table. A new one replaces it every Monday, so if you like it, do not wait.
+
+## shop tables s_tables
+uz: 🪑 Stol: o'yin sahnangiz
+Tanlagan stolingiz hamma o'yinlaringizda ko'rinadi va raqibingiz ham uni ko'radi. 150 dan ortiq stol: oddiy ranglardan nodir cheklangan nashrlargacha.
+en: 🪑 The table: your stage
+The table you pick shows in all your games and your opponent sees it too. Over 150 tables: from plain colours to rare limited editions.
+
+## shop frames s_frames
+uz: 🖼 Ramka: 5 000 🪙 dan
+Bronza ramka 5 000 🪙, Kumush 25 000 🪙, Oltin 150 000 🪙. Ramka reytingda, lobbida va stolda avataringiz atrofida porlaydi. Yutgan tangangizga ozgina hashamat qo'shing.
+en: 🖼 Frames: from 5,000 🪙
+Bronze frame 5,000 🪙, Silver 25,000 🪙, Gold 150,000 🪙. The frame glows around your avatar in the ranking, the lobby and at the table. Add a little glamour to the coins you win.
+
+## shop limited s_frames2
+uz: 💎 Cheklangan ramkalar: kim birinchi?
+Bronzadan Kamalak opalgacha 12 daraja, soni 5 000 dan 300 gacha. Sotilib bo'lganlarini keyin sotib bo'lmaydi: qaysi daraja sizniki?
+en: 💎 Limited frames: who is first?
+12 tiers from Bronze to Rainbow Opal, from 5,000 copies down to 300. Sold-out ones can no longer be bought: which tier will be yours?
+
+## shop avatars s_avatars_all
+uz: 🧑 Premium avatar: 20 000 🪙 dan
+70 ta premium avatar, 5 xil noyoblik: Oddiy, Noyob, Epik, Afsonaviy, Mifik. Eng arzoni 20 000 🪙, eng noyobi 💵 bilan. Rasmingiz sizning vizitkangiz.
+en: 🧑 Premium avatars: from 20,000 🪙
+70 premium avatars in 5 rarities: Common, Rare, Epic, Legendary, Mythic. The cheapest is 20,000 🪙 and the rarest cost 💵. Your picture is your business card.
+
+## shop avatars s_avatars
+uz: 🙂 Avatarni o'zingizga mos tanlang
+76 ta portret bepul: bu yerdan o'zingizga o'xshaganini toping. Ko'proq ajralib turmoqchimisiz? Premium avatarlar «Avatarlar» bo'limida.
+en: 🙂 Pick the avatar that fits you
+76 portraits are free: find one that looks like you. Want to stand out more? Premium avatars are in the "Avatars" section.
+
+## shop stickers s_stickers
+uz: 🎭 Stiker to'plami: bir bosishda kayfiyat
+Bilyard, Hayvonlar, Kulgi, Taom, Sehr, Mehr: 6 ta to'plam. Har biri 10 💵 yoki 100 💎. Raqibingizga zarba paytida kulgi, hayrat yoki rahmat yuboring.
+en: 🎭 A sticker pack: a mood in one tap
+Billiards, Animals, Funny, Food, Magic, Hearts: 6 packs. Each costs 10 💵 or 100 💎. Send your opponent a laugh, a gasp or a thank-you in the middle of the match.
+
+## shop stickers s_stickers
+uz: 😂 «Kulgi» stikerlari: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩
+9 ta stiker: g'alabada 🕶️, omadsizlikda 🤯, hazilda 🤡. O'yin chatidagi 🎭 tugmasi orqali yuboriladi. To'plam 10 💵 yoki 100 💎.
+en: 😂 The "Funny" stickers: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩
+9 stickers: 🕶️ for a win, 🤯 for bad luck, 🤡 for a joke. Send them with the 🎭 button in the match chat. The pack costs 10 💵 or 100 💎.
+
+## shop stickers s_stickers
+uz: 💗 «Mehr» stikerlari: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘
+8 ta iliq stiker: do'stingizga yoqimli xabar yuboring. «Bilyard» to'plamida esa 🎱 🏆 👑 🎖️ bor. Har to'plam 10 💵 yoki 100 💎.
+en: 💗 The "Hearts" stickers: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘
+8 warm stickers: send your friend a kind word. The "Billiards" pack has 🎱 🏆 👑 🎖️. Each pack costs 10 💵 or 100 💎.
+
+## shop gifts m_gifts
+uz: ✈️ Samolyot: eng katta sovg'a
+Raqibga uchib boradigan samolyot 👍 ×7 000 beradi va 100 💵 turadi. Mashina ×5 000, mototsikl ×3 000. Katta o'yindan keyin katta hurmat!
+en: ✈️ The jet: the biggest gift
+The jet that flies to your opponent is worth 👍 ×7,000 and costs 100 💵. The car is ×5,000, the bike ×3,000. Big respect after a big game!
+
+## shop gifts m_gifts
+uz: 🍫 Arzon sovg'alar: yurak, yonca, shokolad
+Yonca va shokolad har kuni bepul. Yurak 15 🪙, kuniga 5 tagacha. Tangaga olinadigan eng arzon hurmat belgisi: yaxshi o'yindan keyin yuboring.
+en: 🍫 Cheap gifts: heart, clover, chocolate
+Clover and chocolate are free every day. A heart costs 15 🪙, up to 5 a day. The cheapest sign of respect for coins: send one after a good game.
+
+## shop cues c_standard
+uz: 🪵 Tanga bilan olinadigan kiylar
+Boshlang'ich kiy bepul. Chinor 4 000 🪙, Konfet 18 000 🪙 va boshqalar. Birinchi g'alabalaringizdan keyin o'zingizga yangi kiy sovg'a qiling!
+en: 🪵 Cues you can buy with coins
+The starter cue is free. Plane Tree 4,000 🪙, Candy 18,000 🪙 and more. After your first wins, treat yourself to a new cue!
+
+## shop cues c_victory
+uz: 🏆 Sotib olinmaydigan kiylar
+Victory kiylarini sotib olmaysiz, yutib olasiz: ko'rsatilgan shaharda g'alaba qozonib bo'laklarni yig'asiz. Har bir kiy: 4 bo'lak. Qaysi shahardan boshlaysiz?
+en: 🏆 Cues you cannot buy
+You do not buy Victory cues, you win them: collect pieces by winning in the listed city. Each cue takes 4 pieces. Which city will you start with?
+
+## shop cues c_surprise
+uz: 🎁 Syurpriz quti: nima chiqadi?
+Afsonaviy kiylar, masalan Axiom yoki Crystal Blade, syurpriz qutilardan chiqadi. Eng qiziq tomoni: nima chiqishini oldindan bilmaysiz.
+en: 🎁 The surprise box: what will it be?
+Legendary cues such as Axiom or Crystal Blade come out of surprise boxes. The best part: you never know what you will get.
+
+## shop pass x_pass
+uz: 🩸 Premium Mavsum yo'li: 600 💵 yoki 2 800 💎
+Oy tugaguncha ochiq: premium yo'l yana ko'p kiy, ramka, stol va avatar beradi. Bepul yo'l esa hammaga ochiq. Oy tugashiga qancha qoldi? Mavsum yo'lida taymer bor.
+en: 🩸 The premium Season Pass: 600 💵 or 2,800 💎
+Open until the month ends: the premium track gives many more cues, frames, tables and avatars. The free track is open to all. How long is left? The pass has a timer.
+
+## shop tables s_tables
+uz: 💍 Uzukni yuting: stol bepul
+Shahar uzugini yutsangiz, o'sha shahar stoli sizga bepul beriladi. Boshlash oson: London uzugi atigi 4 ta g'alaba, Sidney uzugi 5 ta. Qaysi shahar stoli birinchi bo'ladi?
+en: 💍 Win the ring: the table is free
+Win a city's ring and that city's table is yours for free. An easy start: London's ring takes just 4 wins, Sydney's 5. Which city's table will be your first?
+
+## shop boxes s_boxes
+uz: 🧰 Quti ochish: nima chiqadi?
+Quti qanchalik yuqori bo'lsa, ichidagi sovg'a shuncha ko'p: 1, 2 yoki 3 ta. Nima chiqishini oldindan bilmaysiz, shuning uchun har bir quti kichik bayram.
+en: 🧰 Opening a box: what will it be?
+The higher the box, the more perks inside: 1, 2 or 3. You never know what comes out, so every box is a little celebration.
+
+## shop look x_profile
+uz: ✨ To'liq obraz: avatar, ramka, kiy, stol
+Avatar yuzingiz, ramka uning hoshiyasi, kiy qo'lingizdagi imzo, stol esa sahna. Hammasini birlashtiring va reytingda hamda stolda ajralib turing.
+en: ✨ The full look: avatar, frame, cue, table
+The avatar is your face, the frame its border, the cue your signature and the table the stage. Put it all together and stand out in the ranking and at the table.
+
+## shop cues c_premium3
+uz: 👑 Premium kiy: cheklangan nashr, tartib raqami bilan
+Premium kiylar soni cheklangan: har bir egasi «№ 17 / 300» kabi tartib raqamini oladi. Raqamingiz kamyob bo'lsa, shuncha qimmatli. Do'kon · Kiylar · Premium.
+en: 👑 A premium cue: a limited edition with a serial number
+Premium cues are limited: every owner gets a serial number such as "№ 17 / 300". The lower your number, the rarer. Shop · Cues · Premium.
+
+## shop cues c_country
+uz: 🌍 Davlat kiyi: 199 davlat, 199 bayroq
+Har bir davlatning kiyi o'z bayrog'i ranglarida. Do'kon · Kiylar · Mamlakat bo'limida o'z davlatingizni, yoki yoqqan boshqasini toping. Narxi: 40 💵 yoki 400 💎.
+en: 🌍 A country cue: 199 countries, 199 flags
+Each country's cue wears its own flag colours. In Shop · Cues · Country find your own country or another you like. The price: 40 💵 or 400 💎.

@@ -1,0 +1,257 @@
+// Quizzes, part 2: the cities of the game's tables (geography, history, culture). Each ends by pointing at the city's table in the game.
+
+## quiz geo
+uz: 🕰 Viktorina: Big Ben qaysi shaharda? O'yinning birinchi stoli ham shu yerda!
+en: Quiz: in which city is Big Ben? It is also the game's first table!
+o: Parij | London | Madrid | Rim
+c: 1
+xu: Big Ben Londonda. London stoli o'yindagi birinchi stol.
+xe: Big Ben is in London, and the London table is the game's first.
+
+## quiz geo
+uz: 🦘 Viktorina: Opera teatri yelkanga o'xshash tomi bilan mashhur Sidney qaysi mamlakatda?
+en: Quiz: Sydney, famous for its sail-roofed Opera House, is in which country?
+o: Avstraliya / Australia | Yangi Zelandiya / New Zealand | Janubiy Afrika / South Africa | Kanada / Canada
+c: 0
+xu: Avstraliyada. O'yindagi 2-stol: Harbour Bar.
+xe: In Australia. The game's 2nd table is Harbour Bar.
+
+## quiz geo
+uz: 🥧 Viktorina: mashhur «pastel de nata» shirinligi qaysi mamlakatniki?
+en: Quiz: which country is the "pastel de nata" custard tart from?
+o: Portugaliya / Portugal | Ispaniya / Spain | Italiya / Italy | Fransiya / France
+c: 0
+xu: Portugaliya; poytaxti Lissabon o'yinning 3-stoli.
+xe: Portugal; its capital Lisbon is the game's 3rd table.
+
+## quiz geo
+uz: ⚽ Viktorina: Santyago Bernabeu stadioni qaysi shaharda?
+en: Quiz: in which city is the Santiago Bernabéu stadium?
+o: Barselona | Madrid | Lissabon | Rim
+c: 1
+xu: Madridda, «Real» ning uyi. O'yinda Madrid stoli: Plaza Mayor.
+xe: In Madrid, home of Real. The game's Madrid table: Plaza Mayor.
+
+## quiz geo
+uz: 🗾 Viktorina: Tokio 1868-yilgacha qanday nomda bo'lgan?
+en: Quiz: what was Tokyo called before 1868?
+o: Edo | Kioto | Osaka | Nagoya
+c: 0
+xu: Edo. «Samurai Dojo» stoli shu ruhda.
+xe: Edo. The "Samurai Dojo" table has that spirit.
+
+## quiz geo
+uz: 🥋 Viktorina: yapon tilida «dojo» nima?
+en: Quiz: what is a "dojo" in Japanese?
+o: Jang san'atlari mashq zali / A martial-arts training hall | Choyxona / A tea house | Bog' / A garden | Ma'bad / A temple
+c: 0
+xu: Dojo: mashq zali. O'yinda Tokio stoli «Samurai Dojo».
+xe: A dojo is a training hall. The Tokyo table is "Samurai Dojo".
+
+## quiz geo
+uz: 💃 Viktorina: tango raqsi qaysi mamlakat bilan bog'liq (Buenos-Ayres stoli: «Tango Salon»)?
+en: Quiz: which country is the tango dance tied to (Buenos Aires' table: "Tango Salon")?
+o: Argentina | Meksika / Mexico | Braziliya / Brazil | Ispaniya / Spain
+c: 0
+xu: Tango Argentina va Urugvay qirg'oqlarida tug'ilgan.
+xe: Tango was born on the shores of Argentina and Uruguay.
+
+## quiz geo
+uz: 🏝 Viktorina: Jakarta joylashgan Indoneziya taxminan nechta orolga ega?
+en: Quiz: Indonesia, home of Jakarta, has roughly how many islands?
+o: 170 | 1 700 | 17 000 | 170 000
+c: 2
+xu: Taxminan 17 000 orol. O'yinda: «Volcano Arena».
+xe: About 17,000 islands. In the game: "Volcano Arena".
+
+## quiz geo
+uz: 🍁 Viktorina: Kanada bayrog'idagi barg qaysi daraxtniki (Toronto stoli: «Maple Lounge»)?
+en: Quiz: which tree's leaf is on Canada's flag (Toronto's table: "Maple Lounge")?
+o: Maple | Oak (eman) | Birch (qayin) | Palm (palma)
+c: 0
+xu: Maple bargi: shuning uchun Toronto stoli «Maple Lounge».
+xe: A maple leaf: hence the Toronto table "Maple Lounge".
+
+## quiz geo
+uz: 🌋 Viktorina: Mexiko shahri qadimgi qaysi shahar o'rnida qurilgan?
+en: Quiz: on the site of which ancient city was Mexico City built?
+o: Tenochtitlan | Machu Picchu | Chichen Itza | Teotihuacan
+c: 0
+xu: Atsteklar poytaxti Tenochtitlan, ko'l ustidagi shahar.
+xe: Tenochtitlan, the Aztec capital built on a lake.
+
+## quiz geo
+uz: 🔺 Viktorina: Giza piramidalari qaysi mamlakatda (Qohira stoli: «Pyramid Hall»)?
+en: Quiz: in which country are the Giza pyramids (Cairo's table: "Pyramid Hall")?
+o: Misr / Egypt | Iordaniya / Jordan | Sudan | Marokash / Morocco
+c: 0
+xu: Misrda, Qohira yonida.
+xe: In Egypt, next to Cairo.
+
+## quiz geo
+uz: 🏙 Viktorina: 828 metrli Burj Xalifa qaysi shaharda?
+en: Quiz: in which city is the 828-metre Burj Khalifa?
+o: Dubay | Shanxay | Nyu-York | Singapur
+c: 0
+xu: Dubayda. O'yinda Dubay stoli: «Golden Tower».
+xe: In Dubai. The game's Dubai table: "Golden Tower".
+
+## quiz geo
+uz: 🦁 Viktorina: «Singapur» nomi «Sher shahri» degan ma'noni bildiradi. To'g'rimi?
+en: Quiz: the name "Singapore" means "Lion City". True or false?
+o: To'g'ri / True | Noto'g'ri / False
+c: 0
+xu: Sanskritcha «simha pura»: sher shahri.
+xe: From Sanskrit "simha pura": lion city.
+
+## quiz geo
+uz: 🗼 Viktorina: «Sharq marvarid minorasi» (Oriental Pearl Tower) qaysi shaharda?
+en: Quiz: in which city is the Oriental Pearl Tower?
+o: Shanxay | Seul | Bangkok | Osaka
+c: 0
+xu: Shanxayda. O'yinda stol: «Pearl Club».
+xe: In Shanghai. The game's table: "Pearl Club".
+
+## quiz geo
+uz: 🗼 Viktorina: Eyfel minorasi qaysi shaharda?
+en: Quiz: in which city is the Eiffel Tower?
+o: Parij | Rim | Berlin | Amsterdam
+c: 0
+xu: Parijda. O'yinda stol: «Château Royal».
+xe: In Paris. The game's table there: "Château Royal".
+
+## quiz geo
+uz: 🗽 Viktorina: Nyu-York dastlab qanday nom bilan atalgan?
+en: Quiz: what was New York originally called?
+o: Yangi Amsterdam / New Amsterdam | Yangi London / New London | Yangi Parij / New Paris | Yangi Rim / New Rome
+c: 0
+xu: 1664-yilgacha Yangi Amsterdam. O'yinda ikkala shahar ham bor.
+xe: New Amsterdam until 1664. Both cities are in the game.
+
+## quiz geo
+uz: 🏛 Viktorina: Kolizey qaysi shaharda?
+en: Quiz: in which city is the Colosseum?
+o: Afina | Rim | Istanbul | Qohira
+c: 1
+xu: Rimda. O'yinda stol: «Colosseo».
+xe: In Rome. In the game the table is "Colosseo".
+
+## quiz geo
+uz: 🇹🇭 Viktorina: Bangkok qaysi mamlakatning poytaxti?
+en: Quiz: Bangkok is the capital of which country?
+o: Tailand / Thailand | Vetnam / Vietnam | Malayziya / Malaysia | Kambodja / Cambodia
+c: 0
+xu: Tailand poytaxti. O'yinda stol: «Golden Temple».
+xe: Thailand's capital. In the game: "Golden Temple".
+
+## quiz geo
+uz: 🏢 Viktorina: mashhur Petronas egizak minoralari qaysi shaharda?
+en: Quiz: in which city are the famous Petronas Twin Towers?
+o: Kuala-Lumpur | Jakarta | Singapur | Manila
+c: 0
+xu: Kuala-Lumpurda. O'yinda stol: «Twin Towers».
+xe: In Kuala Lumpur. The game's table: "Twin Towers".
+
+## quiz geo
+uz: 🇰🇷 Viktorina: Seul qaysi mamlakatning poytaxti?
+en: Quiz: Seoul is the capital of which country?
+o: Janubiy Koreya / South Korea | Yaponiya / Japan | Xitoy / China | Tailand / Thailand
+c: 0
+xu: Janubiy Koreya poytaxti. O'yinda stol: «Neon Tower».
+xe: South Korea's capital. In the game: "Neon Tower".
+
+## quiz geo
+uz: 🎬 Viktorina: Mumbay 1995-yilgacha qanday atalgan?
+en: Quiz: what was Mumbai called until 1995?
+o: Bombay | Madras | Calcutta | Delhi
+c: 0
+xu: Bombay. Bollivud kinosining markazi. O'yinda: «Maharaja Palace».
+xe: Bombay, the heart of Bollywood. In the game: "Maharaja Palace".
+
+## quiz geo
+uz: 🏅 Viktorina: zamonaviy Olimpiya o'yinlari 1896-yilda qaysi shaharda birinchi marta o'tkazilgan?
+en: Quiz: in which city were the first modern Olympic Games held in 1896?
+o: Afina | Parij | London | Rim
+c: 0
+xu: Afinada. O'yinda stol: «Acropolis Hall».
+xe: In Athens. The game's table: "Acropolis Hall".
+
+## quiz geo
+uz: 🧱 Viktorina: Berlin devori qaysi yilda qulagan?
+en: Quiz: in which year did the Berlin Wall fall?
+o: 1979 | 1985 | 1989 | 1999
+c: 2
+xu: 1989-yil 9-noyabrda. O'yinda stol: «Platz Arena».
+xe: On 9 November 1989. The game's table: "Platz Arena".
+
+## quiz geo
+uz: 🌉 Viktorina: Istanbul qaysi ikki qit'ada joylashgan?
+en: Quiz: which two continents does Istanbul sit on?
+o: Yevropa va Osiyo / Europe and Asia | Osiyo va Afrika / Asia and Africa | Yevropa va Afrika / Europe and Africa | Osiyo va Amerika / Asia and America
+c: 0
+xu: Bosfor bo'g'ozi shaharni ikki qit'aga bo'ladi.
+xe: The Bosphorus strait splits the city between two continents.
+
+## quiz geo
+uz: 🏠 Viktorina: «Kasablanka» nomi tarjimada nimani anglatadi?
+en: Quiz: what does the name "Casablanca" mean?
+o: Oq uy / White house | Qora dengiz / Black sea | Katta bozor / Big market | Yangi shahar / New city
+c: 0
+xu: Ispancha casa blanca: oq uy. Shahar Marokashda.
+xe: Spanish "casa blanca": white house. The city is in Morocco.
+
+## quiz geo
+uz: 🗾 Viktorina: o'yindagi 30 shaharning nechtasi Yaponiyada?
+en: Quiz: how many of the game's 30 cities are in Japan?
+o: 1 | 2 | 3 | 4
+c: 1
+xu: Ikkita: Tokio (Samurai Dojo) va Osaka (Skyline).
+xe: Two: Tokyo (Samurai Dojo) and Osaka (Skyline).
+
+## quiz geo
+uz: 🚇 Viktorina: Toshkent metrosi qaysi yilda ochilgan (Markaziy Osiyoda birinchi)?
+en: Quiz: in which year did the Tashkent metro open, the first in Central Asia?
+o: 1957 | 1967 | 1977 | 1987
+c: 2
+xu: 1977-yil 6-noyabrda. O'yinda: Toshkent stoli «Silk Road».
+xe: On 6 November 1977. In the game: the Tashkent table "Silk Road".
+
+## quiz geo
+uz: 🎂 Viktorina: Toshkent qaysi yilda 2200 yilligini nishonlagan?
+en: Quiz: in which year did Tashkent celebrate its 2,200th anniversary?
+o: 1999 | 2009 | 2019 | 2029
+c: 1
+xu: 2009-yilda. «Toshkent» so'zi «tosh shahar» degani.
+xe: In 2009. "Tashkent" means "stone city".
+
+## quiz geo
+uz: 🗿 Viktorina: «Rio-de-Janeyro» nomi nimani anglatadi?
+en: Quiz: what does the name "Rio de Janeiro" mean?
+o: Yanvar daryosi / January River | Oltin daryo / Golden River | Katta ko'l / Big Lake | Dengiz shamoli / Sea Wind
+c: 0
+xu: Portugalcha «Yanvar daryosi»: 1502-yil yanvarida shunday atalgan.
+xe: Portuguese for "January River", named in January 1502.
+
+## quiz geo
+uz: ⛪ Viktorina: Vasiliy Blajenniy sobori qaysi maydonda joylashgan?
+en: Quiz: on which square does St Basil's Cathedral stand?
+o: Qizil maydon / Red Square | Taksim maydoni / Taksim Square | Tayms-skver / Times Square | Mustaqillik maydoni / Independence Square
+c: 0
+xu: Moskvadagi Qizil maydonda. O'yinda eng yuqori stol: «Red Square».
+xe: On Red Square in Moscow, the game's highest table.
+
+## quiz geo
+uz: 🌵 Viktorina: Las-Vegas AQShning qaysi shtatida joylashgan?
+en: Quiz: in which US state is Las Vegas?
+o: Nevada | Kaliforniya / California | Texas | Florida
+c: 0
+xu: Nevada shtatida. O'yinda stol: «Royal Flush».
+xe: In Nevada. The game's table: "Royal Flush".
+
+## quiz geo
+uz: 🌷 Viktorina: Amsterdam qaysi mamlakatning poytaxti?
+en: Quiz: Amsterdam is the capital of which country?
+o: Niderlandiya / The Netherlands | Belgiya / Belgium | Daniya / Denmark | Shvetsiya / Sweden
+c: 0
+xu: Niderlandiya poytaxti, kanallar shahri. O'yinda: «Canal House».
+xe: The Netherlands' capital, a city of canals. In the game: "Canal House".

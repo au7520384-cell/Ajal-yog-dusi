@@ -1,0 +1,422 @@
+[
+{
+"id": "lon",
+"name": "London",
+"sub": "Thames Pub",
+"fee": 50,
+"prize": 100,
+"lvl": 1,
+"tp": 0,
+"tro": [
+4,
+0,
+15
+]
+},
+{
+"id": "syd",
+"name": "Sydney",
+"sub": "Harbour Bar",
+"fee": 100,
+"prize": 200,
+"lvl": 2,
+"tp": 8,
+"tro": [
+6,
+0,
+30
+]
+},
+{
+"id": "lis",
+"name": "Lisbon",
+"sub": "Summer Terrace",
+"fee": 500,
+"prize": 1000,
+"lvl": 3,
+"tp": 28,
+"tro": [
+8,
+1,
+60
+]
+},
+{
+"id": "mad",
+"name": "Madrid",
+"sub": "Plaza Mayor",
+"fee": 1000,
+"prize": 2000,
+"lvl": 4,
+"tp": 48,
+"tro": [
+9,
+1,
+65
+]
+},
+{
+"id": "tok",
+"name": "Tokyo",
+"sub": "Samurai Dojo",
+"fee": 2500,
+"prize": 5000,
+"lvl": 5,
+"tp": 68,
+"tro": [
+10,
+2,
+75
+]
+},
+{
+"id": "veg",
+"name": "Las Vegas",
+"sub": "Royal Flush",
+"fee": 10000,
+"prize": 20000,
+"lvl": 7,
+"tp": 115,
+"tro": [
+13,
+4,
+100
+]
+},
+{
+"id": "bue",
+"name": "Buenos Aires",
+"sub": "Tango Salon",
+"fee": 25000,
+"prize": 50000,
+"lvl": 8,
+"tp": 140,
+"tro": [
+14,
+5,
+110
+]
+},
+{
+"id": "jak",
+"name": "Jakarta",
+"sub": "Volcano Arena",
+"fee": 50000,
+"prize": 100000,
+"lvl": 9,
+"tp": 170,
+"tro": [
+16,
+6,
+125
+]
+},
+{
+"id": "tor",
+"name": "Toronto",
+"sub": "Maple Lounge",
+"fee": 100000,
+"prize": 200000,
+"lvl": 11,
+"tp": 230,
+"tro": [
+20,
+9,
+160
+]
+},
+{
+"id": "mex",
+"name": "Mexico City",
+"sub": "Fiesta Cantina",
+"fee": 160000,
+"prize": 320000,
+"lvl": 12,
+"tp": 260,
+"tro": [
+22,
+11,
+180
+]
+},
+{
+"id": "cai",
+"name": "Cairo",
+"sub": "Pyramid Hall",
+"fee": 250000,
+"prize": 500000,
+"lvl": 13,
+"tp": 290,
+"tro": [
+25,
+13,
+200
+]
+},
+{
+"id": "dub",
+"name": "Dubai",
+"sub": "Golden Tower",
+"fee": 500000,
+"prize": 1000000,
+"lvl": 15,
+"tp": 340,
+"tro": [
+30,
+17,
+230
+]
+},
+{
+"id": "sin",
+"name": "Singapore",
+"sub": "Marina Bay",
+"fee": 700000,
+"prize": 1400000,
+"lvl": 16,
+"tp": 365,
+"tro": [
+32,
+19,
+250
+]
+},
+{
+"id": "sha",
+"name": "Shanghai",
+"sub": "Pearl Club",
+"fee": 1000000,
+"prize": 2000000,
+"lvl": 17,
+"tp": 390,
+"tro": [
+35,
+21,
+270
+]
+},
+{
+"id": "par",
+"name": "Paris",
+"sub": "Château Royal",
+"fee": 2500000,
+"prize": 5000000,
+"lvl": 19,
+"tp": 480,
+"tro": [
+40,
+27,
+305
+]
+},
+{
+"id": "ams",
+"name": "Amsterdam",
+"sub": "Canal House",
+"fee": 3000000,
+"prize": 6000000,
+"lvl": 20,
+"tp": 505,
+"tro": [
+42,
+30,
+325
+]
+},
+{
+"id": "rom",
+"name": "Rome",
+"sub": "Colosseo",
+"fee": 4000000,
+"prize": 8000000,
+"lvl": 21,
+"tp": 530,
+"tro": [
+45,
+33,
+350
+]
+},
+{
+"id": "bkk",
+"name": "Bangkok",
+"sub": "Golden Temple",
+"fee": 5000000,
+"prize": 10000000,
+"lvl": 23,
+"tp": 600,
+"tro": [
+50,
+39,
+400
+]
+},
+{
+"id": "kul",
+"name": "Kuala Lumpur",
+"sub": "Twin Towers",
+"fee": 7000000,
+"prize": 14000000,
+"lvl": 24,
+"tp": 640,
+"tro": [
+52,
+42,
+440
+]
+},
+{
+"id": "seo",
+"name": "Seoul",
+"sub": "Neon Tower",
+"fee": 10000000,
+"prize": 20000000,
+"lvl": 25,
+"tp": 680,
+"tro": [
+55,
+45,
+480
+]
+},
+{
+"id": "mum",
+"name": "Mumbai",
+"sub": "Maharaja Palace",
+"fee": 15000000,
+"prize": 30000000,
+"lvl": 28,
+"tp": 780,
+"tro": [
+65,
+56,
+700
+]
+},
+{
+"id": "ath",
+"name": "Athens",
+"sub": "Acropolis Hall",
+"fee": 20000000,
+"prize": 40000000,
+"lvl": 29,
+"tp": 855,
+"tro": [
+70,
+61,
+1800
+]
+},
+{
+"id": "ber",
+"name": "Berlin",
+"sub": "Platz Arena",
+"fee": 25000000,
+"prize": 50000000,
+"lvl": 31,
+"tp": 930,
+"tro": [
+75,
+67,
+3000
+]
+},
+{
+"id": "ist",
+"name": "Istanbul",
+"sub": "Bosphorus Palace",
+"fee": 35000000,
+"prize": 70000000,
+"lvl": 34,
+"tp": 1040,
+"tro": [
+80,
+72,
+3250
+]
+},
+{
+"id": "cas",
+"name": "Casablanca",
+"sub": "Medina Riad",
+"fee": 45000000,
+"prize": 90000000,
+"lvl": 36,
+"tp": 1095,
+"tro": [
+84,
+76,
+3375
+]
+},
+{
+"id": "osa",
+"name": "Osaka",
+"sub": "Skyline",
+"fee": 55000000,
+"prize": 110000000,
+"lvl": 38,
+"tp": 1150,
+"tro": [
+87,
+79,
+3500
+]
+},
+{
+"id": "tas",
+"name": "Tashkent",
+"sub": "Silk Road",
+"fee": 65000000,
+"prize": 130000000,
+"lvl": 42,
+"tp": 1300,
+"tro": [
+92,
+84,
+3800
+]
+},
+{
+"id": "rio",
+"name": "Rio",
+"sub": "Carnival Hall",
+"fee": 75000000,
+"prize": 150000000,
+"lvl": 46,
+"tp": 1500,
+"tro": [
+97,
+89,
+4200
+]
+},
+{
+"id": "nyc",
+"name": "New York",
+"sub": "Penthouse Loft",
+"fee": 87500000,
+"prize": 175000000,
+"lvl": 50,
+"tp": 1750,
+"tro": [
+102,
+94,
+4600
+]
+},
+{
+"id": "mos",
+"name": "Moscow",
+"sub": "Red Square",
+"fee": 100000000,
+"prize": 200000000,
+"lvl": 55,
+"tp": 2000,
+"tro": [
+108,
+100,
+5000
+]
+}
+]
