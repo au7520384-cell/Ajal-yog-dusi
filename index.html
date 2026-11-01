@@ -445,8 +445,10 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 #nav.nf3 .pc-m{width:84px!important} #nav.nf3 #navName{max-width:56px!important}
 #nav.nf4 .nb-cues{width:48px!important;overflow:hidden}#nav.nf4 .nb-cues .cb-t,#nav.nf4 .nb-cues .cb-n,#nav.nf4 .nb-cues .cb-r{display:none!important}
 #nav.nf5 .mchip .plus{display:none} #nav.nf5 .nb{min-width:32px!important}
-#nav.nf6 #muteBtn,#nav.nf6 .pinfo,#nav.nf6 .pc-m,#nav.nf6 .pc-r{display:none!important}
-#nav.nf7 #fsBtn{display:none!important}
+#nav.nf6 #muteBtn,#nav.nf6 .pinfo{display:none!important}
+#nav.nf7 #navName{display:none!important} #nav.nf7 .pc-m{width:58px!important}   /* tight: the name goes first, the level star and the XP bar stay */
+#nav.nf8 #fsBtn{display:none!important}
+#nav.nf9 .pc-m,#nav.nf9 .pc-r{display:none!important}   /* the very last resort: only the avatar */
 /* modal */
 #modal{justify-content:center;background:#000b;z-index:40;padding-top:14px}
 #modal .panel{max-width:460px;text-align:center;animation:pop .35s cubic-bezier(.2,1.5,.4,1)}
@@ -916,7 +918,6 @@ background:linear-gradient(#5a8a4a,#2e5a26);box-shadow:inset 0 2px 0 #fff4,0 3px
 /* open lobbies: a list of public lobbies with a Join button, "Quick join", the friends-hub banner */
 .opbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.opbar .btn{padding:7px 14px;font-size:15px;border-radius:12px;line-height:1.1;white-space:nowrap}
 .opbar .btn.gold{background:linear-gradient(#ffd45a,#d9951a);color:#3a2600;border:2px solid #fff3b0;font-weight:800}
-.opping{margin-left:auto;font-size:12px;font-weight:800;color:#9fe38a;background:#0a1a2e;border:1.5px solid #2e4a7a;border-radius:12px;padding:4px 10px;white-space:nowrap}.opping.mid{color:#ffd45a}.opping.bad{color:#ff7a6a}
 .opchips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.opchips>span{font-size:12px;font-weight:800;padding:4px 11px;border-radius:999px;background:#12224a;border:1.5px solid #34508f;color:#cfe0ff;cursor:pointer}.opchips>span.on{background:#2f6fe0;border-color:#ffd24d;color:#fff}
 .oplist{display:flex;flex-direction:column;gap:6px}
 .oprow{display:flex;align-items:center;gap:10px;background:linear-gradient(#1e3470,#142552);border:2px solid #6f93e8;border-radius:12px;padding:4px 8px;box-shadow:inset 0 0 12px #5b86e844}
@@ -933,7 +934,7 @@ background:linear-gradient(#5a8a4a,#2e5a26);box-shadow:inset 0 2px 0 #fff4,0 3px
 .wfopen .wfot{flex:1 1 180px;min-width:0}.wfopen b{display:block;font-family:var(--fh);font-weight:400;font-size:22px;color:#f7edcf;text-shadow:0 2px 6px #000}.wfopen small{display:block;color:#d6ecf2;font-weight:700;text-shadow:0 1px 3px #000c}
 .wfopen .btn{padding:8px 16px;font-size:15px;border-radius:12px;white-space:nowrap}.wfopen .btn.gold{background:linear-gradient(#ffd45a,#d9951a);color:#3a2600;border:2px solid #fff3b0;font-weight:800}
 .lbpubrow{justify-content:flex-start;font-size:12px;padding:2px 4px}
-.mh520 .opbar .btn{padding:4px 10px;font-size:12px;border-radius:10px}.mh520 .opping{font-size:10px;padding:3px 8px}.mh520 .opchips{margin:3px 0}.mh520 .opchips>span{font-size:10px;padding:2px 8px}
+.mh520 .opbar .btn{padding:4px 10px;font-size:12px;border-radius:10px}.mh520 .opchips{margin:3px 0}.mh520 .opchips>span{font-size:10px;padding:2px 8px}
 .mh520 .oprow{padding:2px 6px;gap:6px;border-radius:10px}.mh520 .opart{flex-basis:46px;height:26px}.mh520 .opcity{flex-basis:84px}.mh520 .opcity b{font-size:12px}.mh520 .opcity small{font-size:10px}.mh520 .ophost{flex-basis:92px;font-size:9px}.mh520 .ophost b{font-size:11px}
 .mh520 .opseats i{flex-basis:12px;height:12px}.mh520 .opseats em{font-size:11px;margin-left:3px}.mh520 .oprow .btn{padding:3px 8px;font-size:11px;min-width:72px}.mh520 .opvc{font-size:11px;min-width:28px}
 .mh520 .wfopen{margin-top:6px;padding:5px 10px;gap:6px;border-radius:12px}.mh520 .wfopen b{font-size:15px}.mh520 .wfopen small{font-size:10px}.mh520 .wfopen .btn{padding:4px 10px;font-size:12px}.mh520 .lbpubrow{font-size:10px;padding:0 2px}
@@ -2817,7 +2818,6 @@ const DICT = {
 "Lobbi ochish": ["Open a lobby", "Создать лобби"],
 "Bo'sh joy bor": ["Seats free", "Есть места"],
 "Do'stlarim": ["My friends", "Мои друзья"],
-"Aloqa": ["Connection", "Связь"],
 "Boshlangan": ["Started", "Началось"],
 "To'lgan": ["Full", "Заполнено"],
 "Hozircha ochiq lobbi yo'q": ["No open lobbies yet", "Открытых лобби пока нет"],
@@ -4588,6 +4588,15 @@ const mainCtx = ctx;
 let scale = 1, offX = 0, offY = 0, dpr = 1, zoom = 1;
 let kbH = 0;   // the in-game keyboard (igk) takes this many px off the bottom of the turned page while a text box is being edited
 let rotated = false, vw = innerWidth, vh = innerHeight, insL = 0, insT = 0, insB = 0;   // ins*: Telegram full screen leaves the phone's status bar / Telegram's own buttons out of the page (left / top of the page's own, possibly turned, frame)
+// ---- viewport units: "vh" / "vw" in the style sheet mean the PAGE's own height / width. A phone held upright shows the page turned 90° (html.rot), where the browser's vh / vw are the wrong axes: a 392x733 phone sized the whole result screen for a page 733 px tall that is really 392 px tall, so the layout depended on the phone's shape (overlapping texts on some phones).
+// Every "N vh / vw / vmin / vmax" in the style sheets becomes calc(N * var(--u-vh)) ...; resize() sets --u-vh / --u-vw to the page's real 1% (or leaves 1vh / 1vw when the page is upright).
+const UNIT_RE = /(-?\d*\.?\d+)(vh|vw|vmin|vmax)\b/g, UNIT_TEST = /\d(vh|vw|vmin|vmax)\b/;
+const fixUnits = t => t.split(/(url\([^)]*\))/).map((p, i) => i % 2 ? p : p.replace(UNIT_RE, (m, n, u) => `calc(${n} * ${u === "vh" ? "var(--u-vh,1vh)" : u === "vw" ? "var(--u-vw,1vw)" : u === "vmin" ? "min(var(--u-vw,1vw),var(--u-vh,1vh))" : "max(var(--u-vw,1vw),var(--u-vh,1vh))"})`)).join("");
+(function () {   // done on the style sheets' own text (the browser's rule objects lose declarations such as `background: linear-gradient(... var(--x))` when they are written back)
+const t0 = performance.now(); let n = 0;
+for (const st of document.querySelectorAll("style")) { const t = st.textContent; if (UNIT_TEST.test(t)) { st.textContent = fixUnits(t); n++; } }
+window.__b8Units = {sheets: n, ms: Math.round(performance.now() - t0)};   // diagnostics
+})();
 const MQ = (() => {
 const list = [], css = [];
 for (const sh of document.styleSheets) {
@@ -4634,7 +4643,7 @@ if (!rotated && kbH) igkHide(false);   // the phone was turned: the page is upri
 const I = tgInsets(); insB = I.b; if (rotated && kbH) I.b += kbH;   // the in-game keyboard owns the bottom strip of the turned page (= the screen's left edge)
 insL = I.l; insT = I.t;
 vw = (rotated ? innerHeight : innerWidth) - I.l - I.r; vh = (rotated ? innerWidth : innerHeight) - I.t - I.b;
-const uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : 1;
+const uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : Math.max(0.8, Math.min(1, vw / 700, vh / 340));   // big monitors scale the menus up; a small page (a phone in a narrow Telegram window, a Vivo Y31 ...) scales them down a little (never below 80%) instead of dropping or overlapping pieces
 for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) / uiz <= q.v);
 const bs = document.body.style, inset = I.l || I.t || I.r || I.b;
 bs.width = rotated || inset ? vw + "px" : ""; bs.height = rotated || inset ? vh + "px" : "";
@@ -4644,6 +4653,8 @@ let gq = "mid"; try { gq = (profile.set && profile.set.gfx) || "mid"; } catch (e
 dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5})[gq] || 2.5) * dprAuto);   // Settings → Graphics: Low 1.5 / Medium 2 / High 2.5 (sharper, heavier)
 cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
 scale = Math.min(vw / W, vh / H) * zoom;
+{ const px = rotated || inset || uiz < 1, ds = document.documentElement.style;   // --u-vh / --u-vw: 1% of the page's own height / width (CSS px inside the zoomed boxes); upright and unzoomed: the browser's own units
+ds.setProperty("--u-vh", px ? (vh / uiz / 100).toFixed(4) + "px" : "1vh"); ds.setProperty("--u-vw", px ? (vw / uiz / 100).toFixed(4) + "px" : "1vw"); }
 document.documentElement.style.setProperty("--uiz", uiz.toFixed(3)); document.documentElement.style.setProperty("--pvh", vh + "px");   // --pvh: the turned page's own height (CSS vh would be the wrong axis)
 document.documentElement.style.setProperty("--bks", (rotated ? 1 : Math.max(1, Math.min(2.2, vh / uiz / 430))).toFixed(3));   // the tournament bracket is drawn in tiny px for phones; on a monitor it grows with the screen height   // big monitors: scale the menus up with the table so nothing looks tiny
 offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
@@ -8304,7 +8315,7 @@ go(screen, opt);
 }
 function fitNav() {   // the top menu never overlaps itself: if the buttons and money chips collide, shrink or hide the least important pieces step by step (language, cues banner, ...)
 const nav = $("nav"); if (!nav || !nav.classList.contains("on")) return;
-const lv = ["nf1", "nf2", "nf3", "nf4", "nf5", "nf6", "nf7"]; nav.classList.remove(...lv);
+const lv = ["nf1", "nf2", "nf3", "nf4", "nf5", "nf6", "nf7", "nf8", "nf9"]; nav.classList.remove(...lv);
 const bad = () => {
 const it = [], add = e => { if (getComputedStyle(e).display === "none") return; const r = e.getBoundingClientRect(); if (r.width < 2 && r.height < 2) return; it.push(rotated ? [r.top, r.bottom] : [r.left, r.right]); };
 for (const c of nav.children) { if (c.classList.contains("navbtns") || c.classList.contains("money")) for (const d of c.children) add(d); else add(c); }
@@ -11480,22 +11491,13 @@ if ($("lbPubT")) $("lbPubT").onchange = e => Net.send({t: "lpub", on: e.target.c
 }
 $("lbBack").onclick = () => { if (LB) lbLeave(); else { const f = LBX.from; LBX = {pub: false, from: ""}; go(f === "open" ? "openScr" : "withFrScr"); } };
 // ---- open (public) lobbies: a list with a Join button, "Quick join", the number of friends talking in each voice room
-const OPN = {list: null, err: false, filter: "all", ping: 0, fr: null, busy: false, qbusy: false, sig: ""};
+const OPN = {list: null, err: false, filter: "all", fr: null, busy: false, qbusy: false, sig: ""};
 async function opFriendSet() { if (OPN.fr) return OPN.fr; try { const r = await Net.api("/api/friends"); OPN.fr = new Set((r.friends || []).map(f => String(f.id))); } catch (e) { OPN.fr = new Set(); } return OPN.fr; }
 async function opLoad() {
 if (OPN.busy) return; OPN.busy = true;
 try { await Net.ensure(); const r = await Net.api("/api/lobbies"); OPN.list = r.lobbies || []; OPN.err = false; }
 catch (e) { OPN.err = true; }
 OPN.busy = false; if ($("openScr").classList.contains("on")) opRender();
-}
-async function opMeasure() {   // the real round trip to the server: one warm-up request (DNS / TLS / a sleeping free server are not "ping"), then the best of three tiny requests; the header shows the median of the last five
-if (OPN.pbusy || !Net.base) return; OPN.pbusy = true;
-const hit = async () => { const t0 = performance.now(), ac = new AbortController(), tm = setTimeout(() => ac.abort(), 8000); try { await fetch(Net.base + "/api/health", {cache: "no-store", signal: ac.signal}); return performance.now() - t0; } catch (e) { return 0; } finally { clearTimeout(tm); } };
-try {
-await hit(); const a = [await hit(), await hit(), await hit()].filter(x => x > 0);
-if (a.length) { (OPN.pw = OPN.pw || []).push(Math.min(...a)); OPN.pw = OPN.pw.slice(-5); const w = OPN.pw.slice().sort((x, y) => x - y); OPN.ping = Math.max(1, Math.round(w[w.length >> 1])); }
-} catch (e) {}
-OPN.pbusy = false; if ($("openScr").classList.contains("on")) opRender();
 }
 function opRow(x) {
 const c = lbCityOf(x.city), full = x.n >= x.max, run = x.state !== "open", poor = profile.coins < x.fee, fr = OPN.fr && OPN.fr.has(String(x.host.uid)), nf = document.documentElement.classList.contains("mh520") ? fmtS : fmt;
@@ -11507,7 +11509,6 @@ return `<div class="oprow${run || full || poor ? " off" : ""}${fr ? " fr" : ""}"
 }
 function opRender() {
 const box = $("opList"); if (!box) return;
-const pg = $("opPing"); if (pg) { pg.className = "opping" + (OPN.ping > 300 ? " bad" : OPN.ping > 150 ? " mid" : ""); pg.textContent = OPN.ping ? `📶 ${T("Aloqa")}: ${OPN.ping} ms` : ""; }
 document.querySelectorAll("#opChips [data-f]").forEach(e => e.classList.toggle("on", e.dataset.f === OPN.filter));
 const list = OPN.list; let html;
 if (!list) html = `<div class="opempty">${OPN.err ? "📡 " + T("Server bilan aloqa yo'q. Internetni tekshiring.") : T("Yuklanmoqda…")}</div>`;
@@ -11522,13 +11523,13 @@ box.querySelectorAll("[data-op]").forEach(b => b.onclick = () => { if (profile.c
 }
 function buildOpen() {
 const body = $("opBody"); OPN.sig = "";
-body.innerHTML = `<div class="opbar"><button class="btn gold" id="opQuick">⚡ ${T("Tez qo'shilish")}</button><button class="btn blue" id="opNew">＋ ${T("Lobbi ochish")}</button><button class="btn gray" id="opRef">⟳</button><span class="opping" id="opPing"></span></div>
+body.innerHTML = `<div class="opbar"><button class="btn gold" id="opQuick">⚡ ${T("Tez qo'shilish")}</button><button class="btn blue" id="opNew">＋ ${T("Lobbi ochish")}</button><button class="btn gray" id="opRef">⟳</button></div>
 <div class="opchips" id="opChips">${[["all", "Barchasi"], ["voice", "Ovozli xona"], ["free", "Bo'sh joy bor"], ["friends", "Do'stlarim"]].map(([k, t]) => `<span data-f="${k}">${k === "voice" ? "🎤 " : ""}${T(t)}</span>`).join("")}</div><div class="oplist" id="opList"></div>`;
 $("opQuick").onclick = () => quickJoin($("opQuick"));
 $("opNew").onclick = () => lbTablesOpen(true, "open");
-$("opRef").onclick = () => { opLoad(); opMeasure(); };
+$("opRef").onclick = () => opLoad();
 body.querySelectorAll("#opChips [data-f]").forEach(e => e.onclick = () => { OPN.filter = e.dataset.f; if (OPN.filter === "friends") opFriendSet().then(opRender); opRender(); });
-opRender(); opFriendSet().then(() => { if ($("openScr").classList.contains("on")) opRender(); }); opLoad().then(opMeasure);
+opRender(); opFriendSet().then(() => { if ($("openScr").classList.contains("on")) opRender(); }); opLoad();
 }
 async function quickJoin(btn) {   // the busiest open lobby I can afford; when there is none, open a public lobby and wait for people
 if (OPN.qbusy) return; OPN.qbusy = true; if (btn) btn.disabled = true;
@@ -11541,7 +11542,6 @@ else { lobbyCreate(null, [], {pub: true, from: "open"}); if (LB) toast("🌐", T
 OPN.qbusy = false; if (btn) btn.disabled = false;
 }
 setInterval(() => { if ($("openScr").classList.contains("on") && !document.hidden) opLoad(); }, 5000);
-setInterval(() => { if ($("openScr").classList.contains("on") && !document.hidden) opMeasure(); }, 20000);
 $("opBack").onclick = () => go("withFrScr");
 // ---- lobby voice room (like the voice room of a MOBA lobby): everybody in the lobby can talk to everybody. A mesh of WebRTC calls (<= 8 players, Opus audio is tiny);
 // the server only relays the signalling ("lvoice"), the sound goes phone to phone. The in-match 🎤 (Voice) takes over while a match is on screen; this room pauses and comes back.
