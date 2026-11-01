@@ -610,7 +610,9 @@ const CHAN_ID = "@" + TG_CHANNEL.split("/").pop(), CHAN_ON = /^(1|true|yes)$/i.t
 const readJson = (f, dflt) => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, f), "utf8")); } catch (e) { console.error(f + ":", e.message); return dflt; } };
 const CHAN_POSTS = readJson("channel_posts.json", []);   // the first list (it used to go out one by one): part of the bank now, ids L00...
 const CHAN_OPT = plan.options(process.env);
-const CHAN_BANK = plan.makeBank(readJson("channel_bank.json", []), CHAN_POSTS, {hasImg: f => fs.existsSync(path.join(__dirname, "channel", path.basename(f)))});
+const chanHas = f => fs.existsSync(path.join(__dirname, "channel", path.basename(f)));
+const chanPic = (img, id) => { if (img && /^b_/.test(path.basename(img))) return null; const b = img ? "b_" + path.basename(img) : "b_a_" + id + ".jpg"; return chanHas(b) ? b : null; };   // the banner of a post (tools/build_channel_banners.js): b_<picture>.jpg, or b_a_<id>.jpg
+const CHAN_BANK = plan.makeBank(readJson("channel_bank.json", []), CHAN_POSTS, {hasImg: chanHas, pic: chanPic});
 if (CHAN_BANK.problems.length) console.error("channel bank:", CHAN_BANK.problems.length, "problems:", CHAN_BANK.problems.slice(0, 12).join(" | "));
 const chanNow = () => Date.now() + (+process.env.CHAN_TIME_SHIFT_MS || 0);   // the shift is for tests only
 const chanState = () => { db.meta = db.meta || {}; return db.meta.chan = db.meta.chan || {i: 0, next: 0, last: 0, err: "", errAt: 0}; };
@@ -632,10 +634,11 @@ async function chanPoll(f, common, kb) {   // a poll or a quiz poll (the right a
 async function chanSendItem(it, cat, quiet) {   // it: a post of the bank, or {html: {uz, en}} (the data posts, already escaped)
   const link = chanLink(cat), kb = link ? {inline_keyboard: [[{text: "🎮 O'ynash · Play", url: link}]]} : undefined, common = {chat_id: CHAN_ID, disable_notification: !!quiet};
   if (it.html) return tgApi("sendMessage", {...common, text: `${it.html.uz}\n\n${it.html.en}${link ? `\n\n▶ <a href="${plan.esc(link)}">O'ynash · Play</a>` : ""}`, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: kb});
-  const f = plan.format(it, {link});
-  if (f.kind === "poll" || f.kind === "quiz") return chanPoll(f, common, kb);
-  if (f.kind === "photo") return chanPhoto(CHAN_ID, path.join(__dirname, "channel", path.basename(f.img)), f.html, kb, quiet);
-  return tgApi("sendMessage", {...common, text: f.html, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: kb});
+  const f0 = plan.format(it, {link});
+  if (f0.kind === "poll" || f0.kind === "quiz") return chanPoll(f0, common, kb);
+  const go = f => f.kind === "photo" ? chanPhoto(CHAN_ID, path.join(__dirname, "channel", path.basename(f.img)), f.html, kb, quiet) : tgApi("sendMessage", {...common, text: f.html, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: kb});
+  try { return await go(f0); }
+  catch (e) { if (!/parse|entit|tag/i.test(e.message)) throw e; console.error("chan: Telegram refused the quote blocks, posting this one plain:", e.message); return go(plan.format(it, {link, plain: true})); }   // quote blocks are the new look; the old plain one is the fallback
 }
 let chanBusy = false;
 function chanFail(c, e) {

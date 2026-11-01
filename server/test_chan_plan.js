@@ -87,7 +87,7 @@ const c2 = JSON.parse(JSON.stringify(c)); plan.migrate(lb, c2); ok(JSON.stringif
 const bad = [{id: "x1", cat: "quiz", quiz: {uz: "u", en: "e", options: ["a", "a"], correct: 0, explanation: {uz: "x", en: "y"}}}, {id: "x2", cat: "feat", uz: "Pul ishlang! daromad", en: "earn money"}, {id: "x3", cat: "quiz", quiz: {uz: "u", en: "e", options: ["a", "b"], correct: 5, explanation: {uz: "x".repeat(150), en: "y".repeat(80)}}}, {id: "x4", cat: "feat", uz: "x".repeat(900), en: "y", img: "a.jpg"}, {id: "x5", cat: "dated", uz: "a", en: "b"}, {id: "", cat: "feat", uz: "a", en: "b"}];
 const bb = plan.makeBank(bad, [], {}); ok(bb.items.length === 0 && bb.problems.length === 6, "lint rejects duplicate options, money wording, bad answer / long explanation, long captions, dated without when, bad id", bb.problems);
 const f1 = plan.format({id: "a", cat: "feat", tag: "lobby", uz: "🎯 Sarlavha <b>\nMatn & boshqa", en: "Title\nBody", img: "p01.jpg"}, {link: "https://t.me/Bot/Play?startapp=c_ch_feat"});
-ok(f1.kind === "photo" && f1.html.startsWith("<b>🎯 Sarlavha &lt;b&gt;</b>\nMatn &amp; boshqa") && /🇬🇧 <i>Title · Body<\/i>/.test(f1.html) && /href="https:\/\/t\.me\/Bot\/Play\?startapp=c_ch_feat"/.test(f1.html) && /#RoyalBilliard8 #lobbi/.test(f1.html), "a photo post: bold title, escaped text, English line, tracked link, hashtags", f1.html);
+ok(f1.kind === "photo" && f1.html.startsWith("<b>🎯 Sarlavha &lt;b&gt;</b>\n<blockquote>Matn &amp; boshqa</blockquote>\n<blockquote expandable>🇬🇧 <i>Title · Body</i></blockquote>") && /href="https:\/\/t\.me\/Bot\/Play\?startapp=c_ch_feat"/.test(f1.html) && /#RoyalBilliard8 #lobbi/.test(f1.html), "a photo post: bold title, escaped text, English line, tracked link, hashtags", f1.html);
 const long = plan.format({id: "a", cat: "feat", tag: "x", uz: "T\n" + "u".repeat(600), en: "e".repeat(300), img: "p.jpg"}, {link: "https://t.me/B/P?startapp=c_ch_feat"}); ok(long.html.length <= 1000, "a long photo caption is shortened to 1000", long.html.length);
 const qf = plan.format({id: "q", cat: "quiz", quiz: {uz: "S", en: "Q", options: ["1", "2"], correct: 1, explanation: {uz: "a", en: "b"}}}, {}); ok(qf.kind === "quiz" && qf.question === "S / Q" && qf.correct === 1 && qf.explanation === "a / b", "a quiz poll", qf);
 ok(plan.format({id: "t", cat: "feat", uz: "T", en: "t"}, {}).html.indexOf("▶") < 0, "no link when the game link is unknown");
@@ -97,7 +97,9 @@ const read = f => { try { return JSON.parse(fs.readFileSync(path.join(__dirname,
 const raw = read("channel_bank.json"), leg = read("channel_posts.json") || [];
 if (!raw) console.log("(no channel_bank.json yet: the real bank is not checked)");
 else {
-  const bank = plan.makeBank(raw, leg, {hasImg: f => fs.existsSync(path.join(__dirname, "channel", path.basename(f)))});
+  const has = f => fs.existsSync(path.join(__dirname, "channel", path.basename(f)));
+  const pic = (img, id) => { if (img && /^b_/.test(path.basename(img))) return null; const b = img ? "b_" + path.basename(img) : "b_a_" + id + ".jpg"; return has(b) ? b : null; };   // the same as the server: a post's banner
+  const bank = plan.makeBank(raw, leg, {hasImg: has, pic});
   ok(bank.problems.length === 0, "the bank has no problems", bank.problems.slice(0, 8));
   const st = {}; for (const k of plan.CATS) st[k] = (bank.byCat[k] || []).length; console.log("bank:", JSON.stringify(st), "total", bank.items.length);
   // 100 days with the clock ticking every 5 minutes, a state that is saved and reloaded each tick like the database
@@ -128,5 +130,11 @@ else {
   const dupQ = quizzes.map(i => i.quiz.uz.toLowerCase()); ok(new Set(dupQ).size === dupQ.length, "no two quizzes ask the same question");
   const texts = bank.items.filter(i => !i.quiz && !i.poll).map(i => i.uz.split("\n")[0].toLowerCase()); ok(new Set(texts).size === texts.length, "no two text posts share a title line", texts.filter((x, i) => texts.indexOf(x) !== i).slice(0, 5));
   const imgs = bank.items.filter(i => i.img); console.log("posts with a picture:", imgs.length, "different pictures:", new Set(imgs.map(i => i.img)).size);
+  const textOnly = bank.items.filter(i => !i.quiz && !i.poll && !i.img); ok(textOnly.length === 0, "every text post has a picture (a banner)", textOnly.slice(0, 5).map(i => i.id));
+  const notBanner = imgs.filter(i => !/^b_/.test(i.img)); ok(notBanner.length === 0, "every picture is a banner (b_*.jpg)", notBanner.slice(0, 5).map(i => i.id + " " + i.img));
+  const sample = bank.items.find(i => i.cat === "feat" && i.img && i.id.startsWith("F")), f1 = plan.format(sample, {link: "https://t.me/x"});
+  ok(/<blockquote>/.test(f1.html) && /<blockquote expandable>🇬🇧/.test(f1.html) && f1.html.length <= 1000, "a post's body is a quote block and the English one is collapsed, within the caption limit", f1.html.length);
+  ok(!/<blockquote/.test(plan.format(sample, {link: "https://t.me/x", plain: true}).html), "the plain look (the fallback) has no quote blocks");
+  const tooLong = bank.items.filter(i => !i.quiz && !i.poll).map(i => [i.id, plan.format(i, {link: "https://t.me/Billiard8PoolBot/Play?startapp=c_ch_feat"}).html.length]).filter(([, n]) => n > 1000); ok(tooLong.length === 0, "every caption fits Telegram's 1024 limit", tooLong.slice(0, 5));
 }
 console.log(`channel planner: ${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0);

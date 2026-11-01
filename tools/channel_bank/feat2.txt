@@ -13,7 +13,7 @@ Har davlatning o'z reytingi bor. Haftalik top-3 ga 400 / 200 / 100 💵 beriladi
 en: 🏳 Country ranking: play for your flag!
 Every country has its own ranking, and its weekly top 3 receive 400 / 200 / 100 💵. Your name shows next to your flag. Raise it high!
 
-## feat rank
+## feat league
 uz: ⭐ 10 ta liga: eng yuqorisi «To'qqiz ball championi»
 Har hafta ligangizdagi taxminan 20% eng yaxshi o'yinchi yuqoriga ko'tariladi, oxirgi 20% pastga tushadi. Liga imtiyozi: g'alaba qutisidagi tanga ×4 gacha oshadi.
 en: ⭐ 10 leagues, the top one is Nine-Ball Champion

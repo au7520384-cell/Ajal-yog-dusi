@@ -30,10 +30,6 @@ PREFIX = {"feat": "F", "quiz": "Q", "city": "C", "shop": "S", "tip": "T", "poll"
 FLAG = {"lon": "🇬🇧", "syd": "🇦🇺", "lis": "🇵🇹", "mad": "🇪🇸", "tok": "🇯🇵", "veg": "🇺🇸", "bue": "🇦🇷", "jak": "🇮🇩", "tor": "🇨🇦", "mex": "🇲🇽",
         "cai": "🇪🇬", "dub": "🇦🇪", "sin": "🇸🇬", "sha": "🇨🇳", "par": "🇫🇷", "ams": "🇳🇱", "rom": "🇮🇹", "bkk": "🇹🇭", "kul": "🇲🇾", "seo": "🇰🇷",
         "mum": "🇮🇳", "ath": "🇬🇷", "ber": "🇩🇪", "ist": "🇹🇷", "cas": "🇲🇦", "osa": "🇯🇵", "tas": "🇺🇿", "rio": "🇧🇷", "nyc": "🇺🇸", "mos": "🇷🇺"}
-NAME_UZ = {"lon": "London", "syd": "Sidney", "lis": "Lissabon", "mad": "Madrid", "tok": "Tokio", "veg": "Las-Vegas", "bue": "Buenos-Ayres", "jak": "Jakarta",
-           "tor": "Toronto", "mex": "Mexiko", "cai": "Qohira", "dub": "Dubay", "sin": "Singapur", "sha": "Shanxay", "par": "Parij", "ams": "Amsterdam",
-           "rom": "Rim", "bkk": "Bangkok", "kul": "Kuala-Lumpur", "seo": "Seul", "mum": "Mumbay", "ath": "Afina", "ber": "Berlin", "ist": "Istanbul",
-           "cas": "Kasablanka", "osa": "Osaka", "tas": "Toshkent", "rio": "Rio-de-Janeyro", "nyc": "Nyu-York", "mos": "Moskva"}
 KEYS = ("uz", "en", "o", "c", "xu", "xe", "when")
 
 
@@ -72,7 +68,7 @@ def build_city(b, cities):
     cid = b["tag"]; c = cities[cid]; w, l, goal = c["tro"]
     lose_uz = f"mag'lubiyat −{l}" if l else "mag'lubiyatda kubok yo'qolmaydi"
     lose_en = f"a loss −{l}" if l else "no trophies lost on a loss"
-    uz = (f"{FLAG[cid]} {NAME_UZ[cid]}: {c['sub']}\n{strip_venue(b['f']['uz'], c['sub'])}\n"
+    uz = (f"{FLAG[cid]} {c['uz']}: {c['sub']}\n{strip_venue(b['f']['uz'], c['sub'])}\n"
           f"🎟 Kirish: {num(c['fee'])} 🪙 → 💰 yutuq: {num(c['prize'])} 🪙\n"
           f"🔓 {c['lvl']}-daraja" + (f" · {num(c['tp'])} 🏆 kubok yo'lida" if c["tp"] else "") + f"\n💍 Shahar uzugi: {num(goal)} 🏆 (g'alaba +{w}, {lose_uz})")
     en = (f"{c['name']}: {c['sub']}. {strip_venue(b['f']['en'], c['sub'])} Entry {num(c['fee'])} 🪙 → prize {num(c['prize'])} 🪙. "

@@ -138,12 +138,14 @@ function fromLegacy(p, i) {
   if (p.poll) return {...base, cat: "poll", poll: p.poll};
   const t = p.text || p; return {...base, cat: "feat", uz: t.uz, en: t.en, img: p.img};
 }
-function makeBank(raw, legacy, opt) {   // raw: the entries of channel_bank.json; legacy: channel_posts.json; opt.hasImg(file) tells whether a picture exists
-  const items = [], byCat = {}, byId = {}, problems = [], has = (opt && opt.hasImg) || (() => true);
+function makeBank(raw, legacy, opt) {   // raw: the entries of channel_bank.json; legacy: channel_posts.json; opt.hasImg(file) tells whether a picture exists;
+  // opt.pic(img, id) may give a nicer picture for a post (its banner: b_<name>.jpg, or b_a_<id>.jpg for a post without a picture), or nothing
+  const items = [], byCat = {}, byId = {}, problems = [], has = (opt && opt.hasImg) || (() => true), pic = (opt && opt.pic) || (() => null);
   const add = it => {
     const kind = it && (it.quiz ? "quiz" : it.poll ? "poll" : "feat"); if (it && !it.cat) it.cat = kind;
     const bad = lint(it); if (bad.length) { problems.push(`${it && it.id}: ${bad.join("; ")}`); return; }
     if (byId[it.id]) { problems.push(`${it.id}: duplicate id`); return; }
+    if (!it.quiz && !it.poll) { const b = pic(it.img, it.id); if (b) it = {...it, img: b}; }
     if (it.img && !has(it.img)) { problems.push(`${it.id}: picture ${it.img} is missing, posted as text`); it = {...it, img: undefined}; }
     it.tag = it.tag || "gen"; items.push(it); byId[it.id] = it; (byCat[it.cat] = byCat[it.cat] || []).push(it);
   };
@@ -157,15 +159,17 @@ const HASH = {city: "shahar", lobby: "lobbi", voice: "ovoz", gifts: "sovgalar", 
   limited: "cheklangan", chat: "chat", watch: "tomosha", boxes: "qutilar", ring: "uzuk", road: "kubokyoli", route: "sovgalar", wheel: "omadgildiragi", medals: "medallar", profile: "profil", look: "obraz", events: "tadbirlar", league: "liga", goals: "maqsad", newyear: "yangiyil",
   constitution: "bayram", defenders: "bayram", womensday: "bayram", navruz: "bayram", shop: "dokon"};
 function hashtags(it) { const h = HASH[it.tag]; return "#RoyalBilliard8" + (h ? " #" + h : ""); }
-function format(it, o) {   // o: {link: tracked game link or ""}; the shape sendMessage / sendPhoto / sendPoll need
+function format(it, o) {   // o: {link: tracked game link or "", plain: true = no quote blocks}; the shape sendMessage / sendPhoto / sendPoll need
   if (it.quiz) { const q = it.quiz; return {kind: "quiz", question: `${q.uz} / ${q.en}`.slice(0, 300), options: q.options.map(x => String(x).slice(0, 100)), correct: q.correct | 0, explanation: `${q.explanation.uz} / ${q.explanation.en}`.slice(0, 200)}; }
   if (it.poll) { const q = it.poll; return {kind: "poll", question: `${q.uz} / ${q.en}`.slice(0, 300), options: q.options.map(x => String(x).slice(0, 100))}; }
-  const lines = String(it.uz).split("\n"), head = `<b>${esc(lines[0])}</b>${lines.length > 1 ? "\n" + esc(lines.slice(1).join("\n")) : ""}`;
-  const en = it.en ? `\n\n🇬🇧 <i>${esc(String(it.en).replace(/\n/g, " · "))}</i>` : "", go = o && o.link ? `\n\n▶ <a href="${esc(o.link)}">O'ynash · Play</a>` : "", tags = `\n${hashtags(it)}`;
+  const quote = !(o && o.plain), qt = (t, exp) => quote ? `<blockquote${exp ? " expandable" : ""}>${t}</blockquote>` : t;
+  const lines = String(it.uz).split("\n"), title = `<b>${esc(lines[0])}</b>`, body = lines.length > 1 ? esc(lines.slice(1).join("\n")) : "";
+  const head = title + (body ? "\n" + qt(body) : "");
+  const en = it.en ? "\n" + qt(`🇬🇧 <i>${esc(String(it.en).replace(/\n/g, " · "))}</i>`, true) : "", go = o && o.link ? `\n\n▶ <a href="${esc(o.link)}">O'ynash · Play</a>` : "", tags = `\n${hashtags(it)}`;
   const max = it.img ? 1000 : 4000; let html = head + en + go + tags;
   if (html.length > max) html = head + en + go;                      // too long for a photo caption: no hashtags,
   if (html.length > max) html = head + go;                            // then no English,
-  if (html.length > max) html = head.slice(0, max - 20) + "…";
+  if (html.length > max) html = title + (body ? "\n" + qt(body.slice(0, max - 80) + "…") : "");
   return {kind: it.img ? "photo" : "text", html, img: it.img};
 }
 
