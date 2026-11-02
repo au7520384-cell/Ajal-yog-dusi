@@ -168,6 +168,7 @@ saveLeaderboardScore(o) { try { const L = B.leaderboards; if (L && L.type && L.t
 };
 let rewardedOk = false; try { rewardedOk = !!A.isRewardedSupported; } catch (e) {}
 Y8.adsReady = rewardedOk;   // the reward buttons show only where rewarded video exists
+Y8.startAds = "bridge";   // an interstitial request before a solo match too (Bridge decides whether one really shows)
 Y8.user = {nickname: ""};
 updateY8Ui();
 // audio: start muted when the platform says so, follow its audio and pause events (tab switch, an ad opening)
@@ -275,9 +276,6 @@ if PG:
     # ads: no own counters or timers, Bridge decides when an interstitial is really shown; the reward gate stays only for rewarded video
     sub("if (Y8.sdk && Y8.adsReady && Y8.matches % 2 === 0 && Date.now() - Y8.lastBreak > 90000) {", "if (Y8.sdk) {")
     sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
-    # an interstitial request before a solo match too (not the tutorial, not an online match): players who leave before the match ends would otherwise never see one, and
-    # the sandbox wants about 0.3 ad shows per play. Bridge still decides whether one really shows; a second tap on Play while it waits is ignored
-    sub("function startMatch(type, city, opp, net) {\nlet players;", 'function startMatch(type, city, opp, net, adDone) {\nif (!adDone && !net && (type === "ai" || type === "tour" || type === "pvp") && profile.tutDone && Y8.sdk) { if (window.__msPending) return; window.__msPending = 1; y8Ad("next", "match-start").then(() => { window.__msPending = 0; startMatch(type, city, opp, net, 1); }); return; }\nlet players;')
     # the game code waits for bridge.initialize() + the stored keys: it sits in a text/plain block and a loader runs it afterwards
     OPEN = '<script>\n"use strict";'
     i = src.rfind(OPEN); assert i > 0, "main script not found"

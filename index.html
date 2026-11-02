@@ -3909,7 +3909,13 @@ function drawTut(G) {
   else if (st.at === "fine") { const f = FINE; box(f.x, f.y, f.w, f.h); arrow(f.x - 10, f.y + 200, 1, 0); }
   else for (const p of POCKETS) ring(FX + p.x + p.dx * 0.4, FY + p.y + p.dy * 0.4, 34);
 }
-function startMatch(type, city, opp, net) {
+function y8StartAdOk() {   // an ad before a solo match (the short ad the player taps through): Telegram with an Adsgram interstitial block, and the Playgama build (Bridge decides when one really shows)
+if (!Y8.sdk || !Y8.startAds || !profile.tutDone) return false;
+if (Y8.startAds === "bridge") return true;
+return (profile.games | 0) >= 3 && Date.now() - Y8.lastBreak > 150000;   // not for new players, not right after another ad
+}
+function startMatch(type, city, opp, net, adDone) {
+if (!adDone && !net && (type === "ai" || type === "tour" || type === "pvp") && y8StartAdOk()) { if (window.__msPending) return; window.__msPending = 1; Y8.lastBreak = Date.now(); y8Ad("next", "match-start").then(() => { window.__msPending = 0; startMatch(type, city, opp, net, 1); }); return; }
 let players;
 if (type === "ai" || type === "tour") { players = [mePlayer(), opp || botPlayer(city.lvl, city.lvl + 3)]; if (players[1].isAI) players[1].ring = Math.random() < 0.45; }
 else if (type === "pvp") players = [mePlayer(T("1-o'yinchi")), {name: T("2-o'yinchi"), avatar: 5, color: AV_COLORS[1], level: 1, isAI: false, cue: profile.cue}];
@@ -12901,7 +12907,7 @@ return false;
 ctl.show().then(async r => { if (r && r.done && await claim()) { if (o.adViewed) o.adViewed(); } else if (o.adDismissed) o.adDismissed(); }).catch(() => { if (o.adDismissed) o.adDismissed(); }).then(end);
 });
 }};
-Y8.adsReady = true; try { updateY8Ui(); } catch (e) {}
+Y8.adsReady = true; Y8.startAds = it ? "tg" : 0; try { updateY8Ui(); } catch (e) {}
 }).catch(() => {});
 }
 function tgBoot() {   // Telegram Mini App: full screen, dark chrome, silent sign-in with the Telegram account, lobby invites (?startapp=CODE)
