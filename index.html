@@ -5053,15 +5053,70 @@ ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(c.cv, 0, 0); ctx.r
 }
 function drawBackground() {
 const bg = game && game.city && tblOf(tableLook(game.city)).bg;
-screenLayer("bg", (bg ? bg[0] + bg[1] : "-") + "|" + cv.width + "|" + cv.height + "|" + scale + "|" + offX + "|" + offY, () => paintBackground(bg));
+const rid = game && game.city && game.city.id, kind = roomKind(rid);
+screenLayer("bg", (bg ? bg[0] + bg[1] : "-") + "|" + kind + "|" + roomSeed(rid) + "|" + cv.width + "|" + cv.height + "|" + scale + "|" + offX + "|" + offY, () => paintBackground(bg, kind, roomSeed(rid)));
 }
-function paintBackground(bg) {
+function paintBackground(bg, kind, seed) {
 const g = ctx.createRadialGradient(W / 2, H * 0.55, 80, W / 2, H * 0.5, W * 0.8);
 if (bg) { g.addColorStop(0, bg[0]); g.addColorStop(0.55, shade(bg[1], 14)); g.addColorStop(1, shade(bg[1], -12)); }
 else { g.addColorStop(0, "#26324f"); g.addColorStop(0.55, "#151d33"); g.addColorStop(1, "#070a14"); }
 ctx.fillStyle = g; ctx.fillRect(-3000, -3000, W + 6000, H + 6000);
-ctx.save(); ctx.globalAlpha = 0.05; ctx.strokeStyle = "#9fb4ff"; ctx.lineWidth = 1;
-for (let i = -H; i < W; i += 28) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + H, H); ctx.stroke(); }
+paintRoom(bg, kind || "tile", seed || 1);
+}
+// ---- the hall around the table (painted once with the background): a tiled or parquet floor, a rug under the table, the table's shadow, a few things seen from above
+// (bar table with stools, armchair, plants, a cue rack) and a pool of light over the table. On a wide phone the sides of the table are no longer empty.
+const ROOM_RUGS = [["#5a1426", "#d8b25a"], ["#143a5a", "#e0c070"], ["#1d4a34", "#d8c070"], ["#3a1a5a", "#e8b86a"]];
+function roomSeed(id) { let h = 7; for (const c of String(id || "x")) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0; return (h >>> 0) || 1; }
+function roomKind(id) { return roomSeed(id) & 1 ? "parquet" : "tile"; }
+function paintRoom(bg, kind, seed) {
+const X0 = Math.floor(-offX / scale) - 80, X1 = Math.ceil((cv.width / dpr - offX) / scale) + 80, Y0 = Math.floor(-offY / scale) - 80, Y1 = Math.ceil((cv.height / dpr - offY) / scale) + 80, cx = FX + FW / 2, cy = FY + FH / 2, base = bg ? bg[1] : "#151d33";   // X0..Y1: only what the screen shows
+let rs = seed; const rnd = () => ((rs = (Math.imul(rs, 1664525) + 1013904223) >>> 0) / 4294967296);
+ctx.save();
+// floor
+if (kind === "tile") {
+const T = 76;
+for (let y = Y0, j = 0; y < Y1; y += T, j++) for (let x = X0, i = 0; x < X1; x += T, i++) { ctx.fillStyle = (i + j) & 1 ? shade(base, 30) : shade(base, 6); ctx.globalAlpha = 0.62; ctx.fillRect(x, y, T, T); }
+ctx.globalAlpha = 1; ctx.beginPath();
+for (let x = X0; x <= X1; x += T) { ctx.moveTo(x, Y0); ctx.lineTo(x, Y1); } for (let y = Y0; y <= Y1; y += T) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); }
+ctx.strokeStyle = "rgba(0,0,0,.42)"; ctx.lineWidth = 2.5; ctx.stroke();
+ctx.beginPath(); for (let x = X0; x <= X1; x += T) { ctx.moveTo(x + 2.5, Y0); ctx.lineTo(x + 2.5, Y1); } for (let y = Y0; y <= Y1; y += T) { ctx.moveTo(X0, y + 2.5); ctx.lineTo(X1, y + 2.5); }
+ctx.strokeStyle = "rgba(255,255,255,.07)"; ctx.lineWidth = 1.2; ctx.stroke();
+} else {
+const L = 300, P = 46;
+const offs = []; for (let y = Y0, j = 0; y < Y1; y += P, j++) offs.push(rnd() * L);
+for (let y = Y0, j = 0; y < Y1; y += P, j++) { for (let x = X0 - offs[j]; x < X1; x += L) { const t = rnd(); ctx.fillStyle = `rgb(${100 + t * 26 | 0},${64 + t * 18 | 0},${38 + t * 12 | 0})`; ctx.globalAlpha = 0.6; ctx.fillRect(x, y, L, P); } }
+ctx.globalAlpha = 1; ctx.beginPath();
+for (let y = Y0, j = 0; y < Y1; y += P, j++) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); for (let x = X0 - offs[j]; x < X1; x += L) { ctx.moveTo(x, y); ctx.lineTo(x, y + P); } }
+ctx.strokeStyle = "rgba(0,0,0,.4)"; ctx.lineWidth = 1.6; ctx.stroke();
+ctx.globalAlpha = 0.07; ctx.fillStyle = "#fff"; for (let y = Y0; y < Y1; y += P) ctx.fillRect(X0, y + 2, X1 - X0, 2);
+ctx.globalAlpha = 0.05; ctx.strokeStyle = "#000"; ctx.lineWidth = 1; ctx.beginPath(); for (let y = Y0 + 12; y < Y1; y += P) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); ctx.moveTo(X0, y + 20); ctx.lineTo(X1, y + 20); } ctx.stroke(); ctx.globalAlpha = 1;
+}
+// rug under the table
+const [rc, gc] = ROOM_RUGS[seed % ROOM_RUGS.length], rw = FW + RAIL * 2 + 320, rh = FH + RAIL * 2 + 170, rx = cx - rw / 2, ry = cy - rh / 2;
+ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 26; ctx.shadowOffsetY = 8; ctx.fillStyle = rc; rr(rx, ry, rw, rh, 34); ctx.fill(); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+ctx.save(); rr(rx + 20, ry + 20, rw - 40, rh - 40, 22); ctx.clip(); ctx.strokeStyle = gc; ctx.globalAlpha = 0.14; ctx.lineWidth = 2.2; ctx.beginPath();
+for (let d = -rh; d < rw; d += 52) { ctx.moveTo(rx + d, ry); ctx.lineTo(rx + d + rh, ry + rh); ctx.moveTo(rx + d + rh, ry); ctx.lineTo(rx + d, ry + rh); } ctx.stroke(); ctx.restore();
+ctx.strokeStyle = gc; ctx.globalAlpha = 0.85; ctx.lineWidth = 9; rr(rx + 9, ry + 9, rw - 18, rh - 18, 26); ctx.stroke(); ctx.lineWidth = 2.4; ctx.globalAlpha = 0.6; rr(rx + 28, ry + 28, rw - 56, rh - 56, 18); ctx.stroke();
+ctx.globalAlpha = 0.55; ctx.lineWidth = 2; ctx.beginPath(); for (let y = ry + 34; y < ry + rh - 30; y += 12) { ctx.moveTo(rx - 14, y); ctx.lineTo(rx, y); ctx.moveTo(rx + rw, y); ctx.lineTo(rx + rw + 14, y); } ctx.stroke(); ctx.globalAlpha = 1;
+// the table's shadow on the rug
+ctx.shadowColor = "rgba(0,0,0,.62)"; ctx.shadowBlur = 48; ctx.shadowOffsetY = 22; ctx.fillStyle = "#000"; rr(FX - RAIL + 6, FY - RAIL + 6, FW + RAIL * 2 - 12, FH + RAIL * 2 - 12, 40); ctx.fill(); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+// things seen from above
+const soft = (x, y, rx2, ry2) => { ctx.fillStyle = "rgba(0,0,0,.38)"; ctx.beginPath(); ctx.ellipse(x + 8, y + 12, rx2, ry2, 0, 0, 7); ctx.fill(); };
+const stool = (x, y) => { soft(x, y, 25, 22); const k = ctx.createRadialGradient(x - 6, y - 7, 3, x, y, 25); k.addColorStop(0, "#9a4a2c"); k.addColorStop(1, "#4a1c10"); ctx.fillStyle = k; ctx.beginPath(); ctx.arc(x, y, 24, 0, 7); ctx.fill(); ctx.strokeStyle = "#d8b25a"; ctx.lineWidth = 3.5; ctx.stroke(); ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 14, 0, 7); ctx.stroke(); };
+const barTable = (x, y, r) => { for (let k = 0; k < 3; k++) { const a = -1.2 + k * 2.1; stool(x + Math.cos(a) * (r + 36), y + Math.sin(a) * (r + 36)); } soft(x, y, r, r - 2);
+const k = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 4, x, y, r); k.addColorStop(0, "#c98a52"); k.addColorStop(1, "#6a3a1c"); ctx.fillStyle = k; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.strokeStyle = "#2a1408"; ctx.lineWidth = 4; ctx.stroke(); ctx.strokeStyle = "rgba(255,230,170,.35)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r - 7, 3.6, 5.3); ctx.stroke();
+for (const [gx, gy] of [[-14, -6], [12, 10]]) { ctx.fillStyle = "rgba(0,0,0,.3)"; ctx.beginPath(); ctx.arc(x + gx + 3, y + gy + 4, 10, 0, 7); ctx.fill(); ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.beginPath(); ctx.arc(x + gx, y + gy, 10, 0, 7); ctx.fill(); ctx.fillStyle = "#e8a030"; ctx.beginPath(); ctx.arc(x + gx, y + gy, 7.2, 0, 7); ctx.fill(); ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.beginPath(); ctx.arc(x + gx - 2.5, y + gy - 2.5, 2.2, 0, 7); ctx.fill(); } };
+const plant = (x, y, s) => { soft(x, y, 30 * s, 27 * s); ctx.fillStyle = "#8a4624"; ctx.beginPath(); ctx.arc(x, y, 26 * s, 0, 7); ctx.fill(); ctx.strokeStyle = "#c8783e"; ctx.lineWidth = 3.5 * s; ctx.stroke();
+for (let k = 0; k < 10; k++) { ctx.save(); ctx.translate(x, y); ctx.rotate(k * 0.628 + 0.3); ctx.fillStyle = k & 1 ? "#2f9a46" : "#1f7a38"; ctx.beginPath(); ctx.ellipse(0, -30 * s, 9 * s, 31 * s, 0, 0, 7); ctx.fill(); ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(0, -6 * s); ctx.lineTo(0, -56 * s); ctx.stroke(); ctx.restore(); }
+ctx.fillStyle = "#5ac870"; ctx.beginPath(); ctx.arc(x, y, 7 * s, 0, 7); ctx.fill(); };
+const armchair = (x, y, rot) => { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.fillStyle = "rgba(0,0,0,.38)"; rr(-40, -30, 92, 82, 20); ctx.fill();
+ctx.fillStyle = "#4a2414"; rr(-46, -42, 92, 84, 18); ctx.fill(); ctx.fillStyle = "#6e3a22"; rr(-46, -42, 92, 24, 14); ctx.fill(); rr(-46, -42, 20, 84, 14); ctx.fill(); rr(26, -42, 20, 84, 14); ctx.fill();
+const k = ctx.createLinearGradient(0, -18, 0, 40); k.addColorStop(0, "#8a4a2c"); k.addColorStop(1, "#5e2e18"); ctx.fillStyle = k; rr(-26, -18, 52, 56, 10); ctx.fill(); ctx.strokeStyle = "rgba(255,230,170,.3)"; ctx.lineWidth = 2; rr(-22, -14, 44, 48, 8); ctx.stroke(); ctx.restore(); };
+// left of the table (x < 0) and right of it (x > 1340), above and below
+plant(-262, 62, 1.15); barTable(-170, 332, 46); armchair(-196, 560, Math.PI / 2); plant(-96, 700, 0.9);
+plant(1538, 700, 1.15); barTable(1448, 340, 46); armchair(1470, 548, -Math.PI / 2); plant(1500, 92, 0.95);
+// a pool of warm light over the table (a lamp hangs there)
+ctx.save(); ctx.translate(cx, cy); ctx.scale(1.75, 1); const lg = ctx.createRadialGradient(0, 0, 40, 0, 0, 500); lg.addColorStop(0, "rgba(255,228,180,.24)"); lg.addColorStop(0.55, "rgba(255,200,130,.09)"); lg.addColorStop(1, "rgba(255,200,130,0)"); ctx.fillStyle = lg; ctx.fillRect(-1000, -700, 2000, 1400); ctx.restore();
 ctx.restore();
 }
 function tableFxKind(id) {
