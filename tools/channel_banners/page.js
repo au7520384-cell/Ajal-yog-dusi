@@ -1,6 +1,7 @@
 // Runs INSIDE the game page (tools/build_channel_banners.js injects it after the game has loaded): it needs the game's own art (IMG, CUES, STK_ART, LEAGUE_IMG ...)
 // and its font (Philosopher). B.render(spec) builds one 1280x720 banner in a fixed overlay; the driver takes the screenshot.
 (() => {
+  let lastSpec = null;
   const W = 1280, H = 720, NS = "http://www.w3.org/2000/svg", SHOTS = "/server/channel/";
   const rng = seed => { let s = (seed >>> 0) || 1; return () => ((s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296); };
   const hashStr = s => { let h = 2166136261; for (const c of String(s)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
@@ -41,13 +42,13 @@
     for (const w of words) { if (cur && (cur + " " + w).length > target * 1.18 && lines.length < n - 1) { lines.push(cur); cur = w; } else cur = cur ? cur + " " + w : w; }
     lines.push(cur); return lines;
   }
-  function titleSVG(text, maxW, maxFs, minFs, one) {   // big gold lettering: a soft glow, a dark outline, a gold gradient
+  function titleSVG(text, maxW, maxFs, minFs, one, center) {   // big gold lettering: a soft glow, a dark outline, a gold gradient
     const lines = one ? [String(text).toUpperCase()] : balance(String(text).toUpperCase()), unit = Math.max(...lines.map(l => measure(l, 100))) / 100;
     const fs = Math.max(minFs || 46, Math.min(maxFs || 112, maxW / unit)), lh = fs * 1.02, w = Math.ceil(unit * fs) + 40, h = Math.ceil(lines.length * lh + fs * 0.3) + 30;
     const svg = document.createElementNS(NS, "svg"); svg.setAttribute("width", w); svg.setAttribute("height", h); svg.style.cssText = "display:block;overflow:visible";
     lines.forEach((l, i) => {
       for (const layer of ["glow", "outline", "fill"]) {
-        const t = document.createElementNS(NS, "text"); t.setAttribute("x", 20); t.setAttribute("y", 20 + fs * 0.82 + i * lh); t.setAttribute("font-family", "Philosopher"); t.setAttribute("font-weight", 700); t.setAttribute("font-size", fs); t.setAttribute("stroke-linejoin", "round"); t.textContent = l;
+        const t = document.createElementNS(NS, "text"); t.setAttribute("x", center ? w / 2 : 20); if (center) t.setAttribute("text-anchor", "middle"); t.setAttribute("y", 20 + fs * 0.82 + i * lh); t.setAttribute("font-family", "Philosopher"); t.setAttribute("font-weight", 700); t.setAttribute("font-size", fs); t.setAttribute("stroke-linejoin", "round"); t.textContent = l;
         if (layer === "glow") { t.setAttribute("fill", "#ffa81c"); t.setAttribute("stroke", "#ff9400"); t.setAttribute("stroke-width", fs * 0.2); t.setAttribute("filter", "url(#fBlur)"); t.setAttribute("opacity", 0.6); }
         if (layer === "outline") { t.setAttribute("fill", "#3a1800"); t.setAttribute("stroke", "#3a1800"); t.setAttribute("stroke-width", fs * 0.17); }
         if (layer === "fill") { t.setAttribute("fill", "url(#gGold)"); t.setAttribute("stroke", "#8a4700"); t.setAttribute("stroke-width", fs * 0.018); }
@@ -183,18 +184,18 @@
   function ballsSVG() { let s = ""; [[800, 520, 78, 8], [925, 560, 70, 3], [1050, 515, 74, 1], [870, 400, 72, 5], [1000, 420, 70, 6], [1130, 400, 66, 2], [930, 285, 68, 4], [1060, 300, 64, 7]].forEach(([x, y, r, n]) => { s += `<ellipse cx="${x + 8}" cy="${y + r * 0.92}" rx="${r * 0.9}" ry="${r * 0.2}" fill="#000" opacity=".4"/>` + ballG(x, y, r, n); }); return s; }
 
   // ---- the banner
-  async function render(spec) {
-    defs();
+  async function render(spec, opts) {   // opts.social: only the art (no background, shade, text, button): renderSocial() puts it into a vertical frame
+    opts = opts || {}; defs(); lastSpec = spec;
     const old = document.getElementById("bn"); if (old) old.remove();
-    const root = div(`position:fixed;left:0;top:0;width:${W}px;height:${H}px;overflow:hidden;z-index:2147483647;background:#06101f;font-family:Philosopher,Georgia,serif;color:#fff`); root.id = "bn"; document.body.appendChild(root);
-    if (spec.raw) return renderRaw(root, spec);
+    const root = div(`position:fixed;left:0;top:0;width:${W}px;height:${H}px;overflow:hidden;z-index:2147483647;background:${opts.social ? "transparent" : "#06101f"};font-family:Philosopher,Georgia,serif;color:#fff`); root.id = "bn"; document.body.appendChild(root);
+    if (spec.raw) return opts.social ? true : renderRaw(root, spec);
     const hasHero = !!(spec.hero || spec.shot), textW = spec.textW || (hasHero ? 520 : 900);
     // 1) background art, blurred a little and darkened, plus a tint
     const bg = typeof spec.bg === "string" ? {k: spec.bg} : (spec.bg || {k: "tour_bg"});
-    const bgEl = div(`position:absolute;inset:-30px;background:url("${src(bg.k)}") ${bg.pos || "center"}/cover no-repeat;filter:blur(${bg.blur === undefined ? 3 : bg.blur}px) brightness(${bg.dim || 0.7}) saturate(${bg.sat || 1.15});z-index:0`); root.appendChild(bgEl);
-    if (bg.tint) root.appendChild(div(`position:absolute;inset:0;background:${bg.tint};mix-blend-mode:${bg.blend || "soft-light"};z-index:1`));
+    const bgEl = opts.social ? div("display:none") : div(`position:absolute;inset:-30px;background:url("${src(bg.k)}") ${bg.pos || "center"}/cover no-repeat;filter:blur(${bg.blur === undefined ? 3 : bg.blur}px) brightness(${bg.dim || 0.7}) saturate(${bg.sat || 1.15});z-index:0`); root.appendChild(bgEl);
+    if (bg.tint && !opts.social) root.appendChild(div(`position:absolute;inset:0;background:${bg.tint};mix-blend-mode:${bg.blend || "soft-light"};z-index:1`));
     // 2) shade: the left side (text) is darker
-    root.appendChild(div(`position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,rgba(4,8,20,.92) 0%,rgba(4,8,20,.72) ${hasHero ? 38 : 60}%,rgba(4,8,20,.15) ${hasHero ? 72 : 100}%,rgba(4,8,20,0) 100%),radial-gradient(ellipse at 50% 120%,rgba(0,0,0,.65),transparent 60%),radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.45) 100%)`));
+    if (!opts.social) root.appendChild(div(`position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,rgba(4,8,20,.92) 0%,rgba(4,8,20,.72) ${hasHero ? 38 : 60}%,rgba(4,8,20,.15) ${hasHero ? 72 : 100}%,rgba(4,8,20,0) 100%),radial-gradient(ellipse at 50% 120%,rgba(0,0,0,.65),transparent 60%),radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,.45) 100%)`));
     // 3) light behind the hero
     const hc = spec.glowAt || [950, 385];
     if (hasHero && spec.glow !== false) { root.appendChild(rays(hc[0], hc[1], 1050, 3, spec.rays)); root.appendChild(glow(hc[0], hc[1], 380, spec.glowCol, 3)); }
@@ -214,6 +215,7 @@
     if (extra) root.appendChild(svgLayer(extra, spec.coinsFront ? 9 : 5));
     // 6) a screenshot of the game in a frame
     if (spec.shot) { const s = typeof spec.shot === "string" ? {k: spec.shot} : spec.shot; root.appendChild(shot(s.k, {cx: 955, cy: 385, w: 600, ...s})); }
+    if (opts.social) { await Promise.all([...root.querySelectorAll("img")].map(i => i.decode().catch(() => 0))); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))); return true; }
     // 7) the text column
     const col = div(`position:absolute;left:64px;top:0;width:${textW}px;height:${H}px;display:flex;flex-direction:column;justify-content:${spec.top ? "flex-start" : "center"};${spec.top ? "padding-top:46px;box-sizing:border-box;" : ""}z-index:12`); root.appendChild(col);
     const bd = spec.badge ? (typeof spec.badge === "string" ? {t: spec.badge} : spec.badge) : null, red = bd && (bd.red || /yangi|new/i.test(bd.t));
@@ -243,10 +245,10 @@
     return true;
   }
   // the city banners: a blurred landmark as the air around, the table of the game in a frame, the name in gold
-  async function renderCity(c) {
+  async function renderCity(c, opts) {
     const spec = {key: "city_" + c.id, bg: {k: "lc_" + c.id, blur: 7, dim: 0.62, sat: 1.25}, kicker: `SHAHAR STOLI · ${c.no} / 30`, title: c.uz, sub: c.sub, en: c.en, textW: 520, maxFs: 112, glow: false, sparks: false,
       chips: [{t: fmt(c.fee), s: "KIRISH"}, {t: fmt(c.prize), s: "YUTUQ"}], hero: [], badge: c.badge, glowAt: [960, 380]};
-    await render(spec);
+    await render(spec, opts);
     const root = document.getElementById("bn");
     root.appendChild(shot("t_" + c.id, {cx: 965, cy: 330, w: 600, rot: -2, z: 8}));
     const card = div(`position:absolute;left:1030px;top:548px;width:300px;aspect-ratio:3/2;transform:translate(-50%,-50%) rotate(3deg);padding:5px;border-radius:16px;background:linear-gradient(135deg,#fff3b0,#e8a21c 45%,#8a4f05);box-shadow:0 16px 26px rgba(0,0,0,.6);z-index:9`);
@@ -254,5 +256,39 @@
     await Promise.all([...root.querySelectorAll("img")].map(im => im.decode().catch(() => 0))); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     return true;
   }
-  window.B = {render, renderCity, remove() { const e = document.getElementById("bn"); if (e) e.remove(); }};
+
+  // ---- the social formats (Instagram / Facebook / Pinterest / Reels): the same art, drawn by render(spec, {social:true}), enlarged and centred inside a portrait frame
+  //   kind "p" = 1080 x 1350 (4:5, feed posts), "v" = 1080 x 1920 (9:16, stories / reels / Pinterest). spec.soc = {s, hx, cy} can move the art (s = scale, hx / cy = the centre of the hero in the 1280 x 720 banner).
+  const FORMATS = { p: {w: 1080, h: 1350, s: 1.3, yc: 850, top: 52, bottom: 46}, v: {w: 1080, h: 1920, s: 1.55, yc: 1090, top: 225, bottom: 340} };
+  async function renderSocial(job, kind) {
+    defs(); const F = FORMATS[kind], old = document.getElementById("sn"); if (old) old.remove();
+    if (job.city) await renderCity(job.city, {social: true}); else await render(job.spec, {social: true});
+    const spec = lastSpec, art = document.getElementById("bn"), soc = spec.soc || {};
+    const sn = div(`position:fixed;left:0;top:0;width:${F.w}px;height:${F.h}px;overflow:hidden;z-index:2147483647;background:#06101f;font-family:Philosopher,Georgia,serif;color:#fff`); sn.id = "sn"; document.body.appendChild(sn);
+    const bg = spec.raw ? {k: spec.raw, blur: 16, dim: 0.5} : typeof spec.bg === "string" ? {k: spec.bg} : (spec.bg || {k: "tour_bg"});
+    sn.appendChild(div(`position:absolute;inset:-60px;background:url("${src(bg.k)}") ${bg.pos || "center"}/cover no-repeat;filter:blur(${bg.blur === undefined ? 5 : Math.max(bg.blur, 5)}px) brightness(${bg.dim || 0.62}) saturate(${bg.sat || 1.15});z-index:0`));
+    if (bg.tint) sn.appendChild(div(`position:absolute;inset:0;background:${bg.tint};mix-blend-mode:${bg.blend || "soft-light"};z-index:1`));
+    sn.appendChild(div(`position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(4,8,20,.9) 0%,rgba(4,8,20,.62) 26%,rgba(4,8,20,0) 44%,rgba(4,8,20,0) 70%,rgba(4,8,20,.9) 100%),radial-gradient(ellipse at 50% 50%,transparent 50%,rgba(0,0,0,.5) 100%)`));
+    if (spec.raw) {   // the key art as it is, in the middle
+      art.remove(); const w = F.w - 80, h = Math.round(w * 941 / 1672), box = div(`position:absolute;left:40px;top:${F.yc - h / 2}px;width:${w}px;height:${h}px;z-index:5;padding:6px;box-sizing:content-box;margin:-6px;border-radius:22px;background:linear-gradient(135deg,#fff3b0,#e8a21c 45%,#8a4f05);box-shadow:0 22px 34px rgba(0,0,0,.65),0 0 40px rgba(255,190,70,.45)`);
+      const i = document.createElement("img"); i.src = src(spec.raw); i.style.cssText = "width:100%;height:100%;border-radius:17px;display:block;object-fit:cover"; box.appendChild(i); sn.appendChild(box);
+    } else {
+      const s = soc.s || F.s, hx = soc.hx || 955, cy = soc.cy || 385;
+      art.style.cssText = `position:absolute;left:0;top:0;width:1280px;height:720px;overflow:visible;transform-origin:0 0;transform:translate(${F.w / 2 - hx * s}px,${F.yc - cy * s}px) scale(${s});z-index:5;background:transparent`; sn.appendChild(art);
+    }
+    const bd = spec.badge ? (typeof spec.badge === "string" ? {t: spec.badge} : spec.badge) : null, red = bd && (bd.red || /yangi|new/i.test(bd.t));
+    const pill = bd ? `<span style="margin-left:8px;padding:5px 22px;border-radius:12px;background:${red ? "linear-gradient(#ff8a6a,#e0281e 55%,#a81408)" : "linear-gradient(#fff3b0,#ffc13a 50%,#e0901a)"};color:${red ? "#fff" : "#3a1800"};font:700 36px Philosopher;letter-spacing:2px;border:2px solid ${red ? "#ffd0c0" : "#fff8d0"};box-shadow:0 4px 0 rgba(0,0,0,.4),0 0 22px ${red ? "#ff4a2a88" : "#ffb02088"}">${bd.t}</span>` : "";
+    const head = div(`position:absolute;left:40px;right:40px;top:${F.top}px;z-index:12;display:flex;flex-direction:column;align-items:center;text-align:center`); sn.appendChild(head);
+    head.appendChild(div(`display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;font:700 31px Philosopher;letter-spacing:5px;color:#ffd75a;text-shadow:0 2px 6px #000;white-space:nowrap`, `<span style="width:40px;height:3px;background:#ffd75a;box-shadow:0 0 8px #ffb02088"></span>${(spec.kicker || "ROYAL BILLIARD 8").toUpperCase()}<span style="width:40px;height:3px;background:#ffd75a;box-shadow:0 0 8px #ffb02088"></span>${pill}`));
+    const t = titleSVG(spec.raw ? spec.line : spec.title, 940, spec.raw ? 100 : 126, 58, spec.oneLine, true); t.style.cssText += ";margin-bottom:4px"; head.appendChild(t);
+    if (spec.sub) head.appendChild(div(`font:700 46px/1.15 Philosopher;color:#fff;text-shadow:0 3px 8px #000,0 0 18px #000;max-width:960px;margin-top:2px`, spec.sub));
+    if (spec.en) head.appendChild(div(`font:400 31px/1.25 Philosopher;color:#c9d6ff;text-shadow:0 2px 6px #000;max-width:960px;margin-top:8px;font-style:italic`, spec.en));
+    if (spec.chips && spec.chips.length) head.appendChild(div("display:flex;gap:14px;margin-top:18px", spec.chips.map(c => `<div style="display:flex;align-items:center;gap:10px;padding:7px 20px 7px 10px;border-radius:999px;background:rgba(10,18,40,.82);border:2px solid #ffd24d;box-shadow:0 0 16px #ffb02055;font:700 33px Philosopher;color:#fff;white-space:nowrap"><svg width="42" height="42" viewBox="-22 -22 44 44"><g>${coinG(0, 0, 19, 1, 0, 8)}</g></svg><span style="line-height:1">${c.t}<small style="display:block;font:400 17px Philosopher;color:#ffd75a;letter-spacing:1px;margin-top:2px">${c.s || ""}</small></span></div>`).join("")));
+    sn.appendChild(div(`position:absolute;left:0;right:0;bottom:${F.bottom}px;z-index:12;display:flex;align-items:center;justify-content:center;gap:24px`, `<div style="display:flex;align-items:center;gap:14px;padding:12px 32px 12px 22px;border-radius:999px;background:linear-gradient(#7dff8a,#1fb84a 55%,#0e8a34);border:3px solid #eaffd0;box-shadow:0 6px 0 #0a5a22,0 0 24px #3dff7a66;font:700 35px Philosopher;color:#fff;text-shadow:0 2px 0 #0a5a22;letter-spacing:1px"><span style="display:inline-block;width:0;height:0;border-left:24px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent"></span>${spec.cta || "BEPUL O'YNANG"}</div><span style="font:700 33px Philosopher;color:#ffe9a8;text-shadow:0 2px 6px #000">@Billiard8PoolBot</span>`));
+    await document.fonts.load("700 60px Philosopher", String(spec.title || spec.line) + (spec.sub || "") + (spec.kicker || "") + "ROYAL BILLIARD 8 BEPUL O'YNANG 0123456789"); await document.fonts.load("400 31px Philosopher", String(spec.en || "x")); await document.fonts.ready;
+    await Promise.all([...sn.querySelectorAll("img")].map(i => i.decode().catch(() => 0)));
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    return true;
+  }
+  window.B = {render, renderCity, renderSocial, remove() { for (const id of ["bn", "sn"]) { const e = document.getElementById(id); if (e) e.remove(); } }};
 })();

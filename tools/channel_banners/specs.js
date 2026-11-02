@@ -8,14 +8,14 @@ module.exports = ctx => {
   T("p11", { raw: "ls_bg", line: "HAMMASI BIR JOYDA" });
   // ---- the first set of screenshots
   T("p01", { bg: { k: "lvl_bg", blur: 5 }, title: "Omadli zarba", sub: "Oltin sharni nishon markaziga yuboring", en: "Lucky Shot: a free try every day", hero: "target", badge: "BEPUL", coins: COINS });
-  T("p02", { bg: "homeBg", top: true, textW: 1100, oneLine: true, title: "30 shahar · 30 stol", sub: "Qaysi stollarni ochdingiz?", en: "30 cities, each with its own table", hero: "cityCards", glow: false, sparks: false, badge: "30" });
+  T("p02", { bg: "homeBg", top: true, textW: 1100, oneLine: true, title: "30 shahar · 30 stol", sub: "Qaysi stollarni ochdingiz?", en: "30 cities, each with its own table", hero: "cityCards", glow: false, sparks: false, badge: "30", soc: { s: 0.95, hx: 640, cy: 470 } });
   T("p03", { bg: "tour_bg", title: "Kunlik kuboklar", sub: "Kuniga 4 marta", en: "09:00 · 15:00 · 21:00 · 03:00 Tashkent time", hero: "dailyCups", badge: "4×", coins: { x: 700, y: 595, w: 540, h: 80, n: 16 } });
   T("p04", { bg: "shop_bg", title: "Kiylar kolleksiyasi", sub: "470 dan ortiq kiy", en: "Over 470 cues, each with its own stats", hero: [fan(["cue:olov", "cue:ajdar", "cue:galaktika", "cue:afsona", "cue:s4"])], badge: "470+" });
   T("p05", { bg: { k: "lvl_bg", blur: 4 }, title: "Omad g'ildiragi", sub: "Har 24 soatda bitta aylantirish bepul", en: "One free spin every 24 hours", hero: "wheel", badge: "BEPUL", coins: COINS });
   T("p06", { bg: { k: "lvl_bg", blur: 4 }, title: "Kunlik sovg'alar", sub: "Har kuni kirsangiz, sovg'a kattalashadi", en: "The daily reward route: 8 days", hero: "chest", badge: "8 KUN", coins: { x: 700, y: 590, w: 540, h: 90, n: 22 } });
   T("p07", { bg: "shop_bg", title: "Aniq zarba", sub: "Nishon, kuch, aylanish", en: "Aim, power and spin", shot: { k: "p07", w: 620 }, coins: false });
   T("p08", { bg: { k: "lvl_bg", blur: 4 }, title: "Mini-o'yinlar", sub: "Besh qisqa o'yin: tanaffus uchun", en: "Five quick games for a break", shot: { k: "p08", w: 620 }, badge: "5 TA", coins: false });
-  T("p09", { bg: "tour_bg", title: "Tadbirlar", sub: "Grandmaster · Showdown · King's Gambit", en: "Special events for the strongest", hero: "events3" });
+  T("p09", { bg: "tour_bg", title: "Tadbirlar", sub: "Grandmaster · Showdown · King's Gambit", en: "Special events for the strongest", hero: "events3", soc: { hx: 975 } });
   T("p10", { bg: { k: "lvl_bg", blur: 4 }, title: "Mavsum yo'li", sub: "400 daraja, har oy yangi mavzu", en: "The Season Pass", shot: { k: "p10", w: 620 }, badge: "400", coins: false });
   // ---- shop
   T("s_avatars", { bg: "shop_bg", title: "Avatarlar", sub: "76 ta portret bepul", en: "76 free portraits", hero: "avatarsFree", badge: "76 BEPUL" });
@@ -27,7 +27,7 @@ module.exports = ctx => {
   T("s_tables", { bg: "shop_bg", title: "150+ stol", sub: "O'yin sahnangizni tanlang", en: "Collector tables for your matches", hero: "tables3", coins: false });
   // ---- cues
   T("c_country", { bg: "shop_bg", title: "199 davlat kiyi", sub: "Har biri bayrog'i ranglarida", en: "Every country has its own cue", hero: [fan(["cue:c_UZ", "cue:c_TR", "cue:c_US", "cue:c_GB", "cue:c_DE"])], badge: "199" });
-  T("c_uz", { bg: { k: "shop_bg", tint: "rgba(0,120,180,.55)" }, title: "O'zbekiston kiyi", sub: "Bayrog'ingiz qo'lingizda", en: "The Uzbekistan cue", hero: [{ preset: "uzFlag" }, ["cue:c_UZ", { cx: 940, cy: 590, w: 720, rot: -4 }]] });
+  T("c_uz", { bg: { k: "shop_bg", tint: "rgba(0,120,180,.55)" }, title: "O'zbekiston kiyi", sub: "Bayrog'ingiz qo'lingizda", en: "The Uzbekistan cue", hero: [{ preset: "uzFlag" }, ["cue:c_UZ", { cx: 940, cy: 590, w: 720, rot: -4 }]], soc: { s: 1.25, hx: 925 } });
   T("c_horror", { bg: { k: "homeBg", tint: "rgba(110,20,160,.7)", blend: "color", dim: 0.55 }, title: "Qo'rqinchli kiylar", sub: "Haftalik takliflar aylanib turadi", en: "Weekly horror offers", hero: [fan(["tier:Qo'rqinchli:0", "tier:Qo'rqinchli:3", "tier:Qo'rqinchli:5", "tier:Qo'rqinchli:8", "tier:Qo'rqinchli:11"])], badge: "12 TA" });
   T("c_premium2", { bg: "shop_bg", title: "Premium kiylar", sub: "Bronzadan Kamalak opalgacha", en: "12 tiers of premium cues", hero: [fan(["tier:Premium:0", "tier:Premium:6", "tier:Premium:12", "tier:Premium:18", "tier:Premium:24"])], badge: "12 DARAJA" });
   T("c_premium3", { bg: "tour_bg", title: "Cheklangan nashr", sub: "Faqat 300 dan 5 000 gacha nusxa", en: "Every owner gets a serial number", hero: [fan(["tier:Premium:19", "tier:Premium:20", "tier:Premium:21", "tier:Premium:22", "tier:Premium:23"])], badge: "№ 17 / 300" });
