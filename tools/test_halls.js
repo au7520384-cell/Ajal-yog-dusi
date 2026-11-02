@@ -11,8 +11,18 @@ const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__d
   await p.route(u => !/localhost|127\.0\.0\.1/.test(String(u)), r => r.abort());
   await p.goto("http://localhost:8197/index.html", { waitUntil: "commit" });
   await p.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 120000 });
-  // two screens: a wide one (desktop / phone on its side) and a tall one (a phone held upright, where much more of the back wall shows)
   let failed = false;
+  // the floor pictures (FLOOR_FOR): every table without a hall picture has its own, all sheets decode, the numbers are valid and no picture is used twice
+  const fp = await p.evaluate(async () => {
+    const ids = Object.keys(TBL).filter(id => !roomPlateOf(id)), miss = ids.filter(id => !FLOOR_FOR[id]), used = new Set(), bad = [];
+    for (const id of ids) { const f = FLOOR_FOR[id]; if (!f) continue; const k = f[0] + "." + f[1]; if (used.has(k)) bad.push("twice: " + id); used.add(k); if (!FLOOR_SRC[f[0]] || f[1] < 0 || f[1] >= 20) bad.push("bad number: " + id); }
+    const sizes = [];
+    for (let i = 0; i < FLOOR_SRC.length; i++) { let im = floorSheet(i); for (let t = 0; t < 100 && !im; t++) { await new Promise(r => setTimeout(r, 50)); im = floorSheet(i); } sizes.push(im ? im.naturalWidth + "x" + im.naturalHeight : "NOT LOADED"); }
+    return { tables: ids.length, miss, bad, sizes, sheets: FLOOR_SRC.length };
+  });
+  console.log(`floor pictures: ${fp.tables} tables, ${fp.sheets} sheets (${fp.sizes.join(" ")}), tables without one ${fp.miss.length}, problems ${fp.bad.length}`);
+  if (fp.miss.length || fp.bad.length || fp.sizes.includes("NOT LOADED")) { console.log("FLOOR ERRORS", fp.miss.slice(0, 5), fp.bad.slice(0, 5), fp.sizes); failed = true; }
+  // two screens: a wide one (desktop / phone on its side) and a tall one (a phone held upright, where much more of the back wall shows)
   for (const [vw, vh] of [[1600, 720], [390, 844]]) {
     await p.setViewportSize({ width: vw, height: vh }); await sleep(600);
     const r = await p.evaluate(() => {
@@ -20,7 +30,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__d
       Object.keys(TBL).forEach((id, i) => {
         const city = cities[i % cities.length], oc = document.createElement("canvas"); oc.width = cv.width; oc.height = cv.height; const saved = ctx; ctx = oc.getContext("2d"); ctx.setTransform(scale * dpr, 0, 0, scale * dpr, offX * dpr, offY * dpr);
         const t0 = performance.now();
-        try { paintBackground(TBL[id].bg, roomSeed(id + "|" + city), null, null, city); } catch (e) { bad.push(id + ": " + e.message); }
+        try { const fl = FLOOR_FOR[id]; paintBackground(TBL[id].bg, roomSeed(id + "|" + city), null, null, city, fl, fl && floorSheet(fl[0])); } catch (e) { bad.push(id + ": " + e.message); }
         worst = Math.max(worst, performance.now() - t0);
         const sm = document.createElement("canvas"); sm.width = 48; sm.height = 27; sm.getContext("2d").drawImage(oc, 0, 0, 48, 27); ctx = saved;
         out.push([id, Array.from(sm.getContext("2d").getImageData(0, 0, 48, 27).data).join(",")]);
