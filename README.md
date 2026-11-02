@@ -43,6 +43,14 @@ Player data is stored in Postgres when `DATABASE_URL` is set; without it the ser
 
 The free Render plan sleeps after ~15 minutes without visitors; the first visitor then waits about 30 s. Data is safe in Neon either way. A paid instance removes the sleep.
 
+## Fast loading: the light build (`web/`)
+`index.html` is one 40 MB file (every picture and sound is inside it). Opened from Render it would be downloaded again and again, so the repo also holds the **light build** in `web/`:
+a 4 MB page plus the pictures (`img/<hash>.webp`) and sounds (`a/<hash>.wav|mp4`) as files. `server/server.js` serves `web/` itself (same origin, so the API works as before):
+* the page is downloaded once (about 2 MB gzipped), the pictures only when a screen shows them; their names are hashes, so they are sent with `Cache-Control: public, max-age=31536000, immutable` and the phone keeps them - an update downloads only the changed page and the new pictures;
+* `sw.js` (service worker, where the browser allows it) keeps the pictures too (cache first) and never copies a huge page; a new cache name drops the old 40 MB copy;
+* **after every change of `index.html` run `SAME_ORIGIN=1 INLINE_UNDER=6000 NO_ZIP=1 python3 tools/build_web.py web` and commit `web/`.** The file `web/.src` holds the hash of the `index.html` it was made from; if they differ (you forgot) the server ignores `web/` and serves the old single-file page, `/api/health` shows `"web": false`;
+* `node tools/test_web_serve.js` checks it all: light page, immutable pictures, 304, Range for the video, the game boots and a match starts, a second visit downloads nothing, a stale build is ignored.
+
 ## Publish on Y8.com
 The game has the Y8 SDK built in (login, cloud save, ads, leaderboard, achievements). It stays off until you fill in `CONFIG` at the top of the script in `index.html`:
 ```js

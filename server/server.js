@@ -69,7 +69,28 @@ function gzipFor(p, etag) {
   return null;   // not ready yet: this request gets the plain file
 }
 const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/icon-1024.png": "icon-1024.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js"};
-const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript"};
+const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript", ".webp": "image/webp", ".jpg": "image/jpeg", ".gif": "image/gif", ".wav": "audio/wav", ".mp4": "video/mp4"};
+// The light build (./web, made by tools/build_web.py): a 4 MB page and the pictures / sounds as files. A visitor downloads the page, the pictures only when a screen shows them, and keeps them
+// (their names are hashes, so a file never changes: cached for a year); after an update only the changed page is downloaded again. A build older than index.html is ignored (the single-file page is served).
+const WEB = path.join(ROOT, "web"), WEBFILE = /^\/(img|a)\/[A-Za-z0-9._-]+$/;
+let WEB_OK = false, WEB_ETAG = "";
+try {
+  const h = crypto.createHash("sha1").update(fs.readFileSync(path.join(ROOT, "index.html"))).digest("hex");
+  WEB_OK = fs.readFileSync(path.join(WEB, ".src"), "utf8").trim() === h && fs.existsSync(path.join(WEB, "index.html"));
+  if (WEB_OK) WEB_ETAG = `W/"${crypto.createHash("sha1").update(fs.readFileSync(path.join(WEB, "index.html"))).digest("hex").slice(0, 16)}"`;
+} catch (e) {}
+console.log(WEB_OK ? "web build: serving ./web (light page, cached pictures)" : "web build: missing or stale, serving the single-file page");
+function sendFile(req, res, p, head) {   // a file with Range support (the little video needs it)
+  const st = fs.statSync(p), r = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range || ""));
+  if (r && (r[1] || r[2])) {
+    const a = r[1] === "" ? Math.max(0, st.size - +r[2]) : +r[1], b = r[1] === "" || r[2] === "" ? st.size - 1 : Math.min(+r[2], st.size - 1);
+    if (a > b || a >= st.size) { res.writeHead(416, {"Content-Range": `bytes */${st.size}`}); return res.end(); }
+    res.writeHead(206, {...head, "Content-Range": `bytes ${a}-${b}/${st.size}`, "Content-Length": b - a + 1, "Accept-Ranges": "bytes"});
+    return fs.createReadStream(p, {start: a, end: b}).pipe(res);
+  }
+  res.writeHead(200, {...head, "Content-Length": st.size, "Accept-Ranges": "bytes"});
+  fs.createReadStream(p).pipe(res);
+}
 
 
 // ---------------------------------------------------------------- legal pages (required by Google / Facebook sign-in and by the stores)
@@ -740,7 +761,7 @@ async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the
 
 // ---------------------------------------------------------------- routes
 const routes = {
-  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err}),
+  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, web: WEB_OK, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
   "GET /api/ice": () => {
     const iceServers = [{urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}];
@@ -1493,12 +1514,20 @@ const server = http.createServer(async (req, res) => {
       if (Array.isArray(out) && out[1] && out[1].__html) { res.writeHead(out[0], {"Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store"}); return res.end(out[1].__html); }
       return Array.isArray(out) ? send(res, out[0], out[1]) : send(res, 200, out);
     }
+    if (WEB_OK && req.method === "GET" && WEBFILE.test(url.pathname)) {   // a picture / sound of the light build: its name is its hash, it never changes
+      const p = path.join(WEB, url.pathname), tag = `"${path.basename(p)}"`;
+      if (fs.existsSync(p)) {
+        const head = {"Content-Type": MIME[path.extname(p)] || "application/octet-stream", "Cache-Control": "public, max-age=31536000, immutable", ETag: tag};
+        if (req.headers["if-none-match"] === tag) { res.writeHead(304, head); return res.end(); }
+        return sendFile(req, res, p, head);
+      }
+    }
     const file = STATIC[url.pathname];
     if (req.method === "GET" && file) {
-      const p = path.join(ROOT, file);
+      const light = WEB_OK && file === "index.html", p = path.join(light ? WEB : ROOT, file);
       if (fs.existsSync(p)) {
-        // the 35 MB game page: a version tag (repeat visits cost a 304, not 35 MB) and gzip when the browser accepts it (saves bandwidth on a free host)
-        const st = fs.statSync(p), etag = `W/"${st.size.toString(36)}-${Math.round(st.mtimeMs).toString(36)}"`, type = MIME[path.extname(p)] || "application/octet-stream";
+        // the game page: a version tag (repeat visits cost a 304) and gzip when the browser accepts it (saves bandwidth on a free host); the light build is a 4 MB page instead of 40 MB
+        const st = fs.statSync(p), etag = light ? WEB_ETAG : `W/"${st.size.toString(36)}-${Math.round(st.mtimeMs).toString(36)}"`, type = MIME[path.extname(p)] || "application/octet-stream";
         const head = {"Content-Type": type, "Cache-Control": "no-cache", ETag: etag, Vary: "Accept-Encoding"};
         if (req.headers["if-none-match"] === etag) { res.writeHead(304, head); return res.end(); }
         const gz = /\bgzip\b/.test(String(req.headers["accept-encoding"] || "")) && st.size > 2000 ? gzipFor(p, etag) : null;
