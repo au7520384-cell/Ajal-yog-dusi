@@ -5052,71 +5052,119 @@ c = {cv: oc, key}; if (slot === "bg") bgCache = c; else vigCache = c;
 ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(c.cv, 0, 0); ctx.restore();
 }
 function drawBackground() {
-const bg = game && game.city && tblOf(tableLook(game.city)).bg;
-const rid = game && game.city && game.city.id, kind = roomKind(rid);
-screenLayer("bg", (bg ? bg[0] + bg[1] : "-") + "|" + kind + "|" + roomSeed(rid) + "|" + cv.width + "|" + cv.height + "|" + scale + "|" + offX + "|" + offY, () => paintBackground(bg, kind, roomSeed(rid)));
+const look = game && game.city && tableLook(game.city), bg = look && tblOf(look).bg, seed = roomSeed((look && look.id) + "|" + (game && game.city && game.city.id));   // every table has its own hall
+screenLayer("bg", (bg ? bg[0] + bg[1] : "-") + "|" + seed + "|" + cv.width + "|" + cv.height + "|" + scale + "|" + offX + "|" + offY, () => paintBackground(bg, seed));
 }
-function paintBackground(bg, kind, seed) {
+function paintBackground(bg, seed) {
 const g = ctx.createRadialGradient(W / 2, H * 0.55, 80, W / 2, H * 0.5, W * 0.8);
 if (bg) { g.addColorStop(0, bg[0]); g.addColorStop(0.55, shade(bg[1], 14)); g.addColorStop(1, shade(bg[1], -12)); }
 else { g.addColorStop(0, "#26324f"); g.addColorStop(0.55, "#151d33"); g.addColorStop(1, "#070a14"); }
 ctx.fillStyle = g; ctx.fillRect(-3000, -3000, W + 6000, H + 6000);
-paintRoom(bg, kind || "tile", seed || 1);
+paintRoom(bg, seed || 1);
 }
-// ---- the hall around the table (painted once with the background): a tiled or parquet floor, a rug under the table, the table's shadow, a few things seen from above
-// (bar table with stools, armchair, plants, a cue rack) and a pool of light over the table. On a wide phone the sides of the table are no longer empty.
-const ROOM_RUGS = [["#5a1426", "#d8b25a"], ["#143a5a", "#e0c070"], ["#1d4a34", "#d8c070"], ["#3a1a5a", "#e8b86a"]];
-function roomSeed(id) { let h = 7; for (const c of String(id || "x")) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0; return (h >>> 0) || 1; }
-function roomKind(id) { return roomSeed(id) & 1 ? "parquet" : "tile"; }
-function paintRoom(bg, kind, seed) {
-const X0 = Math.floor(-offX / scale) - 80, X1 = Math.ceil((cv.width / dpr - offX) / scale) + 80, Y0 = Math.floor(-offY / scale) - 80, Y1 = Math.ceil((cv.height / dpr - offY) / scale) + 80, cx = FX + FW / 2, cy = FY + FH / 2, base = bg ? bg[1] : "#151d33";   // X0..Y1: only what the screen shows
-let rs = seed; const rnd = () => ((rs = (Math.imul(rs, 1664525) + 1013904223) >>> 0) / 4294967296);
+// ---- the hall around the table (painted once with the background). Every table gets its own hall, drawn from a seed made of the table's and the city's id: one of 8 floors
+// (checker tiles, diamond tiles, marble slabs, planks, basket-weave parquet, hexagons, terrazzo, wide deck planks), a rug under the table (its colour, trim, border pattern and
+// size vary), the table's shadow, a pool of light (warm / cool / rose / green) and, on a wide screen, things seen from above on both sides (bar tables with stools, sofas,
+// armchairs, poufs, trophy cases, floor lamps, three kinds of plants). Only the part the screen shows is painted (about 50-100 ms once per match / resize).
+const ROOM_WOODS = [[104, 66, 38], [78, 46, 28], [128, 76, 48], [52, 36, 30], [138, 108, 70], [92, 70, 52]];
+const ROOM_TRIMS = ["#d8b25a", "#d4dbe6", "#d08a50", "#ead9a0"];
+const ROOM_LIGHT = [[255, 228, 180], [196, 222, 255], [255, 206, 224], [210, 255, 214]];
+const ROOM_LEATHER = ["#6e3a22", "#2e2e36", "#7a1e22", "#1f3f5a", "#4a5a2a", "#8a6a3a", "#5a2a5a"];
+const ROOM_FLOORS = ["checker", "diamond", "marble", "planks", "weave", "hex", "terrazzo", "wide"];
+function roomSeed(key) { let h = 7; for (const c of String(key || "x")) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0; h = Math.imul(h ^ (h >>> 15), 2246822519); h ^= h >>> 13; return (h >>> 0) || 1; }
+function paintRoom(bg, seed) {
+const X0 = Math.floor(-offX / scale) - 80, X1 = Math.ceil((cv.width / dpr - offX) / scale) + 80, Y0 = Math.floor(-offY / scale) - 80, Y1 = Math.ceil((cv.height / dpr - offY) / scale) + 80;
+const cx = FX + FW / 2, cy = FY + FH / 2, base = bg ? bg[1] : "#151d33";   // X0..Y1: only what the screen shows
+let rs = seed; const rnd = () => ((rs = (Math.imul(rs, 1664525) + 1013904223) >>> 0) / 4294967296), pick = a => a[Math.floor(rnd() * a.length)], ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+const kind = ROOM_FLOORS[(seed >>> 3) % ROOM_FLOORS.length], wood = pick(ROOM_WOODS), trim = pick(ROOM_TRIMS), lite = pick(ROOM_LIGHT), lea = pick(ROOM_LEATHER), hue = ri(0, 359);
+const wd = t => `rgb(${wood[0] + t * 30 | 0},${wood[1] + t * 20 | 0},${wood[2] + t * 14 | 0})`;
+const grid = (T, a, b, grout) => {   // a square grid of tiles (alternating tones) over the visible part
+for (let y = Y0, j = 0; y < Y1; y += T, j++) for (let x = X0, i = 0; x < X1; x += T, i++) { ctx.fillStyle = (i + j) & 1 ? a : b; ctx.fillRect(x, y, T, T); }
+ctx.globalAlpha = 1; ctx.beginPath(); for (let x = X0; x <= X1; x += T) { ctx.moveTo(x, Y0); ctx.lineTo(x, Y1); } for (let y = Y0; y <= Y1; y += T) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); }
+ctx.strokeStyle = grout; ctx.lineWidth = 2.5; ctx.stroke(); };
 ctx.save();
-// floor
-if (kind === "tile") {
-const T = 76;
-for (let y = Y0, j = 0; y < Y1; y += T, j++) for (let x = X0, i = 0; x < X1; x += T, i++) { ctx.fillStyle = (i + j) & 1 ? shade(base, 30) : shade(base, 6); ctx.globalAlpha = 0.62; ctx.fillRect(x, y, T, T); }
-ctx.globalAlpha = 1; ctx.beginPath();
-for (let x = X0; x <= X1; x += T) { ctx.moveTo(x, Y0); ctx.lineTo(x, Y1); } for (let y = Y0; y <= Y1; y += T) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); }
-ctx.strokeStyle = "rgba(0,0,0,.42)"; ctx.lineWidth = 2.5; ctx.stroke();
-ctx.beginPath(); for (let x = X0; x <= X1; x += T) { ctx.moveTo(x + 2.5, Y0); ctx.lineTo(x + 2.5, Y1); } for (let y = Y0; y <= Y1; y += T) { ctx.moveTo(X0, y + 2.5); ctx.lineTo(X1, y + 2.5); }
-ctx.strokeStyle = "rgba(255,255,255,.07)"; ctx.lineWidth = 1.2; ctx.stroke();
-} else {
-const L = 300, P = 46;
-const offs = []; for (let y = Y0, j = 0; y < Y1; y += P, j++) offs.push(rnd() * L);
-for (let y = Y0, j = 0; y < Y1; y += P, j++) { for (let x = X0 - offs[j]; x < X1; x += L) { const t = rnd(); ctx.fillStyle = `rgb(${100 + t * 26 | 0},${64 + t * 18 | 0},${38 + t * 12 | 0})`; ctx.globalAlpha = 0.6; ctx.fillRect(x, y, L, P); } }
-ctx.globalAlpha = 1; ctx.beginPath();
-for (let y = Y0, j = 0; y < Y1; y += P, j++) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); for (let x = X0 - offs[j]; x < X1; x += L) { ctx.moveTo(x, y); ctx.lineTo(x, y + P); } }
-ctx.strokeStyle = "rgba(0,0,0,.4)"; ctx.lineWidth = 1.6; ctx.stroke();
-ctx.globalAlpha = 0.07; ctx.fillStyle = "#fff"; for (let y = Y0; y < Y1; y += P) ctx.fillRect(X0, y + 2, X1 - X0, 2);
-ctx.globalAlpha = 0.05; ctx.strokeStyle = "#000"; ctx.lineWidth = 1; ctx.beginPath(); for (let y = Y0 + 12; y < Y1; y += P) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); ctx.moveTo(X0, y + 20); ctx.lineTo(X1, y + 20); } ctx.stroke(); ctx.globalAlpha = 1;
+// ---- floor
+ctx.globalAlpha = 0.62;
+if (kind === "checker") { const T = ri(60, 92); grid(T, shade(base, 30), shade(base, 6), "rgba(0,0,0,.42)"); }
+else if (kind === "diamond") {
+const T = ri(56, 80), Rr = Math.hypot(X1 - X0, Y1 - Y0) / 2 + 60; ctx.translate((X0 + X1) / 2, (Y0 + Y1) / 2); ctx.rotate(Math.PI / 4);
+for (let y = -Rr, j = 0; y < Rr; y += T, j++) for (let x = -Rr, i = 0; x < Rr; x += T, i++) { ctx.fillStyle = (i + j) & 1 ? shade(base, 34) : shade(base, 8); ctx.fillRect(x, y, T, T); }
+ctx.globalAlpha = 1; ctx.beginPath(); for (let x = -Rr; x <= Rr; x += T) { ctx.moveTo(x, -Rr); ctx.lineTo(x, Rr); ctx.moveTo(-Rr, x); ctx.lineTo(Rr, x); } ctx.strokeStyle = "rgba(0,0,0,.42)"; ctx.lineWidth = 2.5; ctx.stroke();
+ctx.strokeStyle = trim; ctx.globalAlpha = 0.3; ctx.lineWidth = 2; ctx.beginPath(); for (let x = -Rr; x <= Rr; x += T * 4) { ctx.moveTo(x, -Rr); ctx.lineTo(x, Rr); ctx.moveTo(-Rr, x); ctx.lineTo(Rr, x); } ctx.stroke();
+ctx.setTransform(scale * dpr, 0, 0, scale * dpr, offX * dpr, offY * dpr);
+} else if (kind === "marble") {
+const S = ri(150, 210);
+for (let y = Y0, j = 0; y < Y1; y += S, j++) for (let x = X0, i = 0; x < X1; x += S, i++) { ctx.fillStyle = (i + j) & 1 ? shade(base, 52) : shade(base, 20); ctx.fillRect(x, y, S, S); }
+ctx.globalAlpha = 1; ctx.strokeStyle = "rgba(255,255,255,.14)"; ctx.lineWidth = 1.6; ctx.beginPath();
+for (let y = Y0; y < Y1; y += S) for (let x = X0; x < X1; x += S) for (let k = 0; k < 2; k++) { ctx.moveTo(x + rnd() * S, y); ctx.quadraticCurveTo(x + rnd() * S, y + S * 0.5, x + rnd() * S, y + S); }
+ctx.stroke(); ctx.strokeStyle = trim; ctx.globalAlpha = 0.4; ctx.lineWidth = 2.5; ctx.beginPath(); for (let x = X0; x <= X1; x += S) { ctx.moveTo(x, Y0); ctx.lineTo(x, Y1); } for (let y = Y0; y <= Y1; y += S) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); } ctx.stroke();
+} else if (kind === "planks") {
+const L = ri(240, 340), P = ri(34, 58), offs = []; for (let y = Y0; y < Y1; y += P) offs.push(rnd() * L);
+for (let y = Y0, j = 0; y < Y1; y += P, j++) for (let x = X0 - offs[j]; x < X1; x += L) { ctx.fillStyle = wd(rnd()); ctx.fillRect(x, y, L, P); }
+ctx.globalAlpha = 1; ctx.beginPath(); for (let y = Y0, j = 0; y < Y1; y += P, j++) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); for (let x = X0 - offs[j]; x < X1; x += L) { ctx.moveTo(x, y); ctx.lineTo(x, y + P); } }
+ctx.strokeStyle = "rgba(0,0,0,.4)"; ctx.lineWidth = 1.6; ctx.stroke(); ctx.globalAlpha = 0.07; ctx.fillStyle = "#fff"; for (let y = Y0; y < Y1; y += P) ctx.fillRect(X0, y + 2, X1 - X0, 2);
+} else if (kind === "weave") {
+const p = ri(26, 36), B = p * 3;
+for (let y = Y0, j = 0; y < Y1; y += B, j++) for (let x = X0, i = 0; x < X1; x += B, i++) for (let k = 0; k < 3; k++) { ctx.fillStyle = wd(rnd()); if ((i + j) & 1) ctx.fillRect(x, y + k * p, B, p); else ctx.fillRect(x + k * p, y, p, B); }
+ctx.globalAlpha = 1; ctx.beginPath(); for (let y = Y0, j = 0; y < Y1; y += B, j++) for (let x = X0, i = 0; x < X1; x += B, i++) for (let k = 0; k <= 3; k++) { if ((i + j) & 1) { ctx.moveTo(x, y + k * p); ctx.lineTo(x + B, y + k * p); } else { ctx.moveTo(x + k * p, y); ctx.lineTo(x + k * p, y + B); } }
+ctx.strokeStyle = "rgba(0,0,0,.45)"; ctx.lineWidth = 1.6; ctx.stroke(); ctx.strokeStyle = trim; ctx.globalAlpha = 0.25; ctx.lineWidth = 2; ctx.beginPath(); for (let y = Y0; y < Y1; y += B * 2) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); } ctx.stroke();
+} else if (kind === "hex") {
+const r = ri(38, 52), h = Math.sqrt(3) * r, tones = [shade(base, 10), shade(base, 28), shade(base, 46)];
+for (let x = X0 - r, col = 0; x < X1 + r; x += 1.5 * r, col++) for (let y = Y0 - h - (col & 1 ? h / 2 : 0), k = 0; y < Y1 + h; y += h, k++) {
+ctx.beginPath(); for (let v = 0; v < 6; v++) { const a = v * Math.PI / 3; ctx.lineTo(x + Math.cos(a) * (r - 1.5), y + Math.sin(a) * (r - 1.5)); } ctx.closePath(); ctx.fillStyle = tones[(col + k * 2) % 3]; ctx.fill(); }
+} else if (kind === "terrazzo") {
+ctx.fillStyle = shade(base, 18); ctx.fillRect(X0, Y0, X1 - X0, Y1 - Y0); ctx.globalAlpha = 1;
+const cols = ["rgba(255,255,255,.14)", "rgba(216,178,90,.16)", "rgba(0,0,0,.22)", "rgba(160,200,255,.12)", "rgba(255,170,150,.1)"], n = Math.round((X1 - X0) * (Y1 - Y0) / 700);
+for (let k = 0; k < n; k++) { ctx.fillStyle = cols[k % 5]; const s = ri(3, 10); ctx.fillRect(X0 + rnd() * (X1 - X0), Y0 + rnd() * (Y1 - Y0), s, s * (0.5 + rnd())); }
+} else {   // wide deck planks
+const P = ri(60, 84), L = ri(480, 640), offs = []; for (let y = Y0; y < Y1; y += P) offs.push(rnd() * L);
+for (let y = Y0, j = 0; y < Y1; y += P, j++) for (let x = X0 - offs[j]; x < X1; x += L) { ctx.fillStyle = shade(base, 20 + rnd() * 16); ctx.fillRect(x, y, L, P); }
+ctx.globalAlpha = 1; ctx.beginPath(); for (let y = Y0, j = 0; y < Y1; y += P, j++) { ctx.moveTo(X0, y); ctx.lineTo(X1, y); for (let x = X0 - offs[j]; x < X1; x += L) { ctx.moveTo(x, y); ctx.lineTo(x, y + P); } }
+ctx.strokeStyle = "rgba(0,0,0,.5)"; ctx.lineWidth = 2.5; ctx.stroke(); ctx.strokeStyle = trim; ctx.globalAlpha = 0.28; ctx.lineWidth = 1.6; ctx.beginPath(); for (let y = Y0 + P * 2, j = 2; y < Y1; y += P * 4) { ctx.moveTo(X0, y + 4); ctx.lineTo(X1, y + 4); } ctx.stroke();
 }
-// rug under the table
-const [rc, gc] = ROOM_RUGS[seed % ROOM_RUGS.length], rw = FW + RAIL * 2 + 320, rh = FH + RAIL * 2 + 170, rx = cx - rw / 2, ry = cy - rh / 2;
-ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 26; ctx.shadowOffsetY = 8; ctx.fillStyle = rc; rr(rx, ry, rw, rh, 34); ctx.fill(); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-ctx.save(); rr(rx + 20, ry + 20, rw - 40, rh - 40, 22); ctx.clip(); ctx.strokeStyle = gc; ctx.globalAlpha = 0.14; ctx.lineWidth = 2.2; ctx.beginPath();
-for (let d = -rh; d < rw; d += 52) { ctx.moveTo(rx + d, ry); ctx.lineTo(rx + d + rh, ry + rh); ctx.moveTo(rx + d + rh, ry); ctx.lineTo(rx + d, ry + rh); } ctx.stroke(); ctx.restore();
-ctx.strokeStyle = gc; ctx.globalAlpha = 0.85; ctx.lineWidth = 9; rr(rx + 9, ry + 9, rw - 18, rh - 18, 26); ctx.stroke(); ctx.lineWidth = 2.4; ctx.globalAlpha = 0.6; rr(rx + 28, ry + 28, rw - 56, rh - 56, 18); ctx.stroke();
-ctx.globalAlpha = 0.55; ctx.lineWidth = 2; ctx.beginPath(); for (let y = ry + 34; y < ry + rh - 30; y += 12) { ctx.moveTo(rx - 14, y); ctx.lineTo(rx, y); ctx.moveTo(rx + rw, y); ctx.lineTo(rx + rw + 14, y); } ctx.stroke(); ctx.globalAlpha = 1;
-// the table's shadow on the rug
+ctx.globalAlpha = 1;
+// ---- the rug under the table
+const rugC = `hsl(${hue} ${ri(34, 52)}% ${ri(18, 25)}%)`, mx = ri(110, 190), my = ri(60, 110), rw = FW + RAIL * 2 + mx * 2, rh = FH + RAIL * 2 + my * 2, rx = cx - rw / 2, ry = cy - rh / 2, rad = ri(14, 50);
+const inner = pick(["lattice", "stripes", "dots", "none"]), shape = pick(["dots", "diamonds", "dashes", "none"]), tk = ri(6, 11);
+ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 26; ctx.shadowOffsetY = 8; ctx.fillStyle = rugC; rr(rx, ry, rw, rh, rad); ctx.fill(); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+ctx.save(); rr(rx + 20, ry + 20, rw - 40, rh - 40, Math.max(6, rad - 12)); ctx.clip(); ctx.strokeStyle = trim; ctx.fillStyle = trim; ctx.globalAlpha = 0.14; ctx.lineWidth = 2.2;
+if (inner === "lattice") { ctx.beginPath(); for (let d = -rh; d < rw; d += 52) { ctx.moveTo(rx + d, ry); ctx.lineTo(rx + d + rh, ry + rh); ctx.moveTo(rx + d + rh, ry); ctx.lineTo(rx + d, ry + rh); } ctx.stroke(); }
+else if (inner === "stripes") { for (let y = ry + 24; y < ry + rh; y += 28) ctx.fillRect(rx, y, rw, 3); }
+else if (inner === "dots") { for (let y = ry + 30; y < ry + rh; y += 40) for (let x = rx + 30 + ((y - ry) / 40 & 1) * 20; x < rx + rw; x += 40) { ctx.beginPath(); ctx.arc(x, y, 3.4, 0, 7); ctx.fill(); } }
+ctx.restore();
+ctx.strokeStyle = trim; ctx.fillStyle = trim; ctx.globalAlpha = 0.85; ctx.lineWidth = tk; rr(rx + tk, ry + tk, rw - tk * 2, rh - tk * 2, Math.max(6, rad - 8)); ctx.stroke(); ctx.lineWidth = 2.4; ctx.globalAlpha = 0.6; rr(rx + 30, ry + 30, rw - 60, rh - 60, Math.max(6, rad - 16)); ctx.stroke();
+if (shape !== "none") { ctx.globalAlpha = 0.7; const ins = 20 + tk / 2 + 8, x0 = rx + ins, y0 = ry + ins, w = rw - ins * 2, h = rh - ins * 2, mark = (x, y) => { if (shape === "dots") { ctx.beginPath(); ctx.arc(x, y, 3, 0, 7); ctx.fill(); } else if (shape === "diamonds") { ctx.beginPath(); ctx.moveTo(x, y - 5); ctx.lineTo(x + 5, y); ctx.lineTo(x, y + 5); ctx.lineTo(x - 5, y); ctx.fill(); } else ctx.fillRect(x - 5, y - 1.5, 10, 3); };
+for (let t = 0; t <= w; t += 26) { mark(x0 + t, y0); mark(x0 + t, y0 + h); } for (let t = 26; t < h; t += 26) { mark(x0, y0 + t); mark(x0 + w, y0 + t); } }
+if (rnd() < 0.6) { ctx.globalAlpha = 0.55; ctx.lineWidth = 2; ctx.beginPath(); for (let y = ry + 34; y < ry + rh - 30; y += 12) { ctx.moveTo(rx - 14, y); ctx.lineTo(rx, y); ctx.moveTo(rx + rw, y); ctx.lineTo(rx + rw + 14, y); } ctx.stroke(); }
+ctx.globalAlpha = 1;
+// ---- the table's shadow on the rug
 ctx.shadowColor = "rgba(0,0,0,.62)"; ctx.shadowBlur = 48; ctx.shadowOffsetY = 22; ctx.fillStyle = "#000"; rr(FX - RAIL + 6, FY - RAIL + 6, FW + RAIL * 2 - 12, FH + RAIL * 2 - 12, 40); ctx.fill(); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-// things seen from above
-const soft = (x, y, rx2, ry2) => { ctx.fillStyle = "rgba(0,0,0,.38)"; ctx.beginPath(); ctx.ellipse(x + 8, y + 12, rx2, ry2, 0, 0, 7); ctx.fill(); };
-const stool = (x, y) => { soft(x, y, 25, 22); const k = ctx.createRadialGradient(x - 6, y - 7, 3, x, y, 25); k.addColorStop(0, "#9a4a2c"); k.addColorStop(1, "#4a1c10"); ctx.fillStyle = k; ctx.beginPath(); ctx.arc(x, y, 24, 0, 7); ctx.fill(); ctx.strokeStyle = "#d8b25a"; ctx.lineWidth = 3.5; ctx.stroke(); ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 14, 0, 7); ctx.stroke(); };
-const barTable = (x, y, r) => { for (let k = 0; k < 3; k++) { const a = -1.2 + k * 2.1; stool(x + Math.cos(a) * (r + 36), y + Math.sin(a) * (r + 36)); } soft(x, y, r, r - 2);
-const k = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 4, x, y, r); k.addColorStop(0, "#c98a52"); k.addColorStop(1, "#6a3a1c"); ctx.fillStyle = k; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.strokeStyle = "#2a1408"; ctx.lineWidth = 4; ctx.stroke(); ctx.strokeStyle = "rgba(255,230,170,.35)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r - 7, 3.6, 5.3); ctx.stroke();
-for (const [gx, gy] of [[-14, -6], [12, 10]]) { ctx.fillStyle = "rgba(0,0,0,.3)"; ctx.beginPath(); ctx.arc(x + gx + 3, y + gy + 4, 10, 0, 7); ctx.fill(); ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.beginPath(); ctx.arc(x + gx, y + gy, 10, 0, 7); ctx.fill(); ctx.fillStyle = "#e8a030"; ctx.beginPath(); ctx.arc(x + gx, y + gy, 7.2, 0, 7); ctx.fill(); ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.beginPath(); ctx.arc(x + gx - 2.5, y + gy - 2.5, 2.2, 0, 7); ctx.fill(); } };
-const plant = (x, y, s) => { soft(x, y, 30 * s, 27 * s); ctx.fillStyle = "#8a4624"; ctx.beginPath(); ctx.arc(x, y, 26 * s, 0, 7); ctx.fill(); ctx.strokeStyle = "#c8783e"; ctx.lineWidth = 3.5 * s; ctx.stroke();
-for (let k = 0; k < 10; k++) { ctx.save(); ctx.translate(x, y); ctx.rotate(k * 0.628 + 0.3); ctx.fillStyle = k & 1 ? "#2f9a46" : "#1f7a38"; ctx.beginPath(); ctx.ellipse(0, -30 * s, 9 * s, 31 * s, 0, 0, 7); ctx.fill(); ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(0, -6 * s); ctx.lineTo(0, -56 * s); ctx.stroke(); ctx.restore(); }
-ctx.fillStyle = "#5ac870"; ctx.beginPath(); ctx.arc(x, y, 7 * s, 0, 7); ctx.fill(); };
-const armchair = (x, y, rot) => { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.fillStyle = "rgba(0,0,0,.38)"; rr(-40, -30, 92, 82, 20); ctx.fill();
-ctx.fillStyle = "#4a2414"; rr(-46, -42, 92, 84, 18); ctx.fill(); ctx.fillStyle = "#6e3a22"; rr(-46, -42, 92, 24, 14); ctx.fill(); rr(-46, -42, 20, 84, 14); ctx.fill(); rr(26, -42, 20, 84, 14); ctx.fill();
-const k = ctx.createLinearGradient(0, -18, 0, 40); k.addColorStop(0, "#8a4a2c"); k.addColorStop(1, "#5e2e18"); ctx.fillStyle = k; rr(-26, -18, 52, 56, 10); ctx.fill(); ctx.strokeStyle = "rgba(255,230,170,.3)"; ctx.lineWidth = 2; rr(-22, -14, 44, 48, 8); ctx.stroke(); ctx.restore(); };
-// left of the table (x < 0) and right of it (x > 1340), above and below
-plant(-262, 62, 1.15); barTable(-170, 332, 46); armchair(-196, 560, Math.PI / 2); plant(-96, 700, 0.9);
-plant(1538, 700, 1.15); barTable(1448, 340, 46); armchair(1470, 548, -Math.PI / 2); plant(1500, 92, 0.95);
-// a pool of warm light over the table (a lamp hangs there)
-ctx.save(); ctx.translate(cx, cy); ctx.scale(1.75, 1); const lg = ctx.createRadialGradient(0, 0, 40, 0, 0, 500); lg.addColorStop(0, "rgba(255,228,180,.24)"); lg.addColorStop(0.55, "rgba(255,200,130,.09)"); lg.addColorStop(1, "rgba(255,200,130,0)"); ctx.fillStyle = lg; ctx.fillRect(-1000, -700, 2000, 1400); ctx.restore();
+// ---- things seen from above
+const soft = (x, y, a, b) => { ctx.fillStyle = "rgba(0,0,0,.38)"; ctx.beginPath(); ctx.ellipse(x + 8, y + 12, a, b, 0, 0, 7); ctx.fill(); };
+const disc = (x, y, r, c0, c1) => { const k = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, 2, x, y, r); k.addColorStop(0, c0); k.addColorStop(1, c1); ctx.fillStyle = k; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); };
+const stool = (x, y) => { soft(x, y, 25, 22); disc(x, y, 24, shade(lea, 40), shade(lea, -30)); ctx.strokeStyle = trim; ctx.lineWidth = 3.5; ctx.stroke(); ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 14, 0, 7); ctx.stroke(); };
+const bar = (x, y) => { const r = 46; for (let k = 0; k < 3; k++) { const a = -1.2 + k * 2.1 + rnd() * 0.3; stool(x + Math.cos(a) * (r + 36), y + Math.sin(a) * (r + 36)); } soft(x, y, r, r - 2);
+disc(x, y, r, wd(0.9), wd(0)); ctx.strokeStyle = "#1a0e06"; ctx.lineWidth = 4; ctx.stroke(); ctx.strokeStyle = "rgba(255,230,170,.35)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, r - 7, 3.6, 5.3); ctx.stroke();
+for (const [gx, gy] of [[-14, -6], [12, 10]]) { ctx.fillStyle = "rgba(0,0,0,.3)"; ctx.beginPath(); ctx.arc(x + gx + 3, y + gy + 4, 10, 0, 7); ctx.fill(); ctx.fillStyle = "rgba(255,255,255,.55)"; ctx.beginPath(); ctx.arc(x + gx, y + gy, 10, 0, 7); ctx.fill(); ctx.fillStyle = pick(["#e8a030", "#d83a4a", "#4ab0e8", "#7ad84a"]); ctx.beginPath(); ctx.arc(x + gx, y + gy, 7.2, 0, 7); ctx.fill(); ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.beginPath(); ctx.arc(x + gx - 2.5, y + gy - 2.5, 2.2, 0, 7); ctx.fill(); } };
+const withRot = (x, y, rot, f) => { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); f(); ctx.restore(); };
+const chair = (x, y, rot) => withRot(x, y, rot, () => { ctx.fillStyle = "rgba(0,0,0,.38)"; rr(-40, -30, 92, 82, 20); ctx.fill(); ctx.fillStyle = shade(lea, -30); rr(-46, -42, 92, 84, 18); ctx.fill(); ctx.fillStyle = lea; rr(-46, -42, 92, 24, 14); ctx.fill(); rr(-46, -42, 20, 84, 14); ctx.fill(); rr(26, -42, 20, 84, 14); ctx.fill();
+const k = ctx.createLinearGradient(0, -18, 0, 40); k.addColorStop(0, shade(lea, 24)); k.addColorStop(1, shade(lea, -10)); ctx.fillStyle = k; rr(-26, -18, 52, 56, 10); ctx.fill(); ctx.strokeStyle = "rgba(255,230,170,.3)"; ctx.lineWidth = 2; rr(-22, -14, 44, 48, 8); ctx.stroke(); });
+const sofa = (x, y, rot) => withRot(x, y, rot, () => { ctx.fillStyle = "rgba(0,0,0,.38)"; rr(-70, -30, 156, 82, 22); ctx.fill(); ctx.fillStyle = shade(lea, -30); rr(-78, -42, 156, 84, 20); ctx.fill(); ctx.fillStyle = lea; rr(-78, -42, 156, 24, 14); ctx.fill(); rr(-78, -42, 20, 84, 14); ctx.fill(); rr(58, -42, 20, 84, 14); ctx.fill();
+for (let k = 0; k < 3; k++) { const g2 = ctx.createLinearGradient(0, -18, 0, 40); g2.addColorStop(0, shade(lea, 26)); g2.addColorStop(1, shade(lea, -8)); ctx.fillStyle = g2; rr(-56 + k * 38, -18, 36, 56, 9); ctx.fill(); ctx.strokeStyle = "rgba(255,230,170,.28)"; ctx.lineWidth = 1.8; rr(-53 + k * 38, -15, 30, 50, 7); ctx.stroke(); } });
+const pouf = (x, y) => { soft(x, y, 30, 27); disc(x, y, 28, shade(lea, 46), shade(lea, -24)); ctx.strokeStyle = trim; ctx.lineWidth = 2.5; ctx.stroke(); ctx.setLineDash([5, 5]); ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(x, y, 17, 0, 7); ctx.stroke(); ctx.setLineDash([]); };
+const trophy = (x, y, rot) => withRot(x, y, rot, () => { ctx.fillStyle = "rgba(0,0,0,.4)"; rr(-22, -48, 56, 110, 8); ctx.fill(); ctx.fillStyle = wd(0.2); rr(-30, -56, 56, 112, 8); ctx.fill(); ctx.fillStyle = "rgba(150,210,240,.35)"; rr(-24, -50, 44, 100, 5); ctx.fill(); ctx.strokeStyle = trim; ctx.lineWidth = 2.5; rr(-30, -56, 56, 112, 8); ctx.stroke(); for (let k = 0; k < 3; k++) { disc(-2, -30 + k * 30, 9, "#fff2a8", "#c98a18"); } });
+const lamp = (x, y) => { const k = ctx.createRadialGradient(x, y, 6, x, y, 96); k.addColorStop(0, `rgba(${lite[0]},${lite[1]},${lite[2]},.35)`); k.addColorStop(1, `rgba(${lite[0]},${lite[1]},${lite[2]},0)`); ctx.fillStyle = k; ctx.beginPath(); ctx.arc(x, y, 96, 0, 7); ctx.fill(); soft(x, y, 22, 20); disc(x, y, 21, "#fff4d0", `rgb(${lite[0]},${lite[1]},${lite[2] - 40})`); ctx.strokeStyle = trim; ctx.lineWidth = 3; ctx.stroke(); disc(x, y, 6, "#6a4a20", "#2a1a08"); };
+const greens = pick([["#2f9a46", "#1f7a38", "#5ac870"], ["#4aa05a", "#2a7a44", "#8ad88a"], ["#2a8a6a", "#1a6a50", "#5ad8b0"]]);
+const pot = (x, y, s) => { soft(x, y, 30 * s, 27 * s); ctx.fillStyle = pick(["#8a4624", "#4a4a56", "#8a8a96", "#2a5a8a"]); ctx.beginPath(); ctx.arc(x, y, 26 * s, 0, 7); ctx.fill(); ctx.strokeStyle = "rgba(255,255,255,.3)"; ctx.lineWidth = 3.5 * s; ctx.stroke(); };
+const palm = (x, y) => { const s = 1 + rnd() * 0.2; pot(x, y, s); for (let k = 0; k < 10; k++) { ctx.save(); ctx.translate(x, y); ctx.rotate(k * 0.628 + 0.3); ctx.fillStyle = k & 1 ? greens[0] : greens[1]; ctx.beginPath(); ctx.ellipse(0, -30 * s, 9 * s, 31 * s, 0, 0, 7); ctx.fill(); ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(0, -6 * s); ctx.lineTo(0, -56 * s); ctx.stroke(); ctx.restore(); } disc(x, y, 7 * s, greens[2], greens[0]); };
+const bush = (x, y) => { const s = 1 + rnd() * 0.25; pot(x, y, s * 0.9); for (let k = 0; k < 9; k++) { const a = k * 0.7, d = (k % 3) * 11 * s; disc(x + Math.cos(a) * d, y + Math.sin(a) * d, (24 - (k % 3) * 4) * s, k & 1 ? greens[2] : greens[0], greens[1]); } };
+const fern = (x, y) => { const s = 1 + rnd() * 0.25; pot(x, y, s * 0.8); for (let k = 0; k < 14; k++) { ctx.save(); ctx.translate(x, y); ctx.rotate(k * 0.449); ctx.strokeStyle = k & 1 ? greens[0] : greens[1]; ctx.lineWidth = 3.2 * s; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(10 * s, -26 * s, 0, -54 * s); ctx.stroke(); for (let m = 1; m < 5; m++) { ctx.lineWidth = 2 * s; ctx.beginPath(); ctx.moveTo(0, -m * 11 * s); ctx.lineTo(-8 * s, -m * 11 * s - 6 * s); ctx.moveTo(0, -m * 11 * s); ctx.lineTo(8 * s, -m * 11 * s - 6 * s); ctx.stroke(); } ctx.restore(); } };
+const bigOnes = [bar, sofa, chair, sofa, bar, chair], smallOnes = [palm, bush, fern, lamp, pouf, trophy, palm, lamp];
+const slots = [[-250, 70, 0, -1], [-175, 335, 1, -1], [-190, 560, 1, -1], [-100, 700, 0, -1], [1500, 92, 0, 1], [1450, 340, 1, 1], [1470, 548, 1, 1], [1538, 700, 0, 1]];
+let lastBig = null;
+for (const [x, y, isBig, side] of slots) { if (rnd() < 0.12) { lastBig = null; continue; } let f = pick(isBig ? bigOnes : smallOnes); if (isBig && f === bar && lastBig === bar) f = pick([sofa, chair]); lastBig = isBig ? f : null; f(x, y, side * Math.PI / 2); }   // two bar tables never side by side
+// ---- a pool of light over the table (a lamp hangs there)
+ctx.save(); ctx.translate(cx, cy); ctx.scale(1.75, 1); const lg = ctx.createRadialGradient(0, 0, 40, 0, 0, 500); lg.addColorStop(0, `rgba(${lite[0]},${lite[1]},${lite[2]},.24)`); lg.addColorStop(0.55, `rgba(${lite[0]},${lite[1] - 28},${lite[2] - 50},.09)`); lg.addColorStop(1, `rgba(${lite[0]},${lite[1] - 28},${lite[2] - 50},0)`); ctx.fillStyle = lg; ctx.fillRect(-1000, -700, 2000, 1400); ctx.restore();
 ctx.restore();
 }
 function tableFxKind(id) {
