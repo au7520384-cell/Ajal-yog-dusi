@@ -7666,13 +7666,16 @@ function drawCue(G, pull) {
 const cue = G.balls[0], cd = cueDef(curP().cue);
 const dx = Math.cos(G.angle), dy = Math.sin(G.angle), start = R + 3 + pull * 210, L = 540;
 const tx = FX + cue.x - dx * start, ty = FY + cue.y - dy * start, th = G.angle + Math.PI;
-const al = (G.elev || 0) * 1.2, ca = Math.cos(al), sa = Math.sin(al), cs = Math.cos(th), sn = Math.sin(th);   // raised butt: the stick shortens in top view and its butt end rises on screen (tip stays on the cue ball)
+const al = (G.elev || 0) * 1.2, ca = Math.max(0.5, Math.cos(al)), sa = Math.sin(al), cs = Math.cos(th), sn = Math.sin(th);
+// A raised butt (the "Kiy balandligi" slider): seen from above the stick gets shorter (never under half) and a little thicker (the butt is nearer to us), but it stays ON the aim line behind the cue ball and as solid as ever.
+// Before, the stick was sheared up the screen: it left the aim line and, at some angles, collapsed into a hair-thin line. The lift shows in the shadow, which slides away from the stick towards the butt.
+const ex = 34 * sa, ey = 48 * sa, lx = ex * cs + ey * sn, ly = -ex * sn + ey * cs;   // the butt end of the shadow, in the stick's own directions (along, across)
 ctx.save();
 ctx.translate(tx + 10, ty + 14); ctx.rotate(th);
-ctx.fillStyle = "rgba(0,0,0,.28)"; ctx.beginPath(); ctx.moveTo(0, -3.5); ctx.lineTo(L * ca, -8); ctx.lineTo(L * ca, 8); ctx.lineTo(0, 3.5); ctx.fill();
+ctx.fillStyle = "rgba(0,0,0,.28)"; ctx.beginPath(); ctx.moveTo(0, -3.5); ctx.lineTo(L * ca + lx, ly - 8 - 3 * sa); ctx.lineTo(L * ca + lx, ly + 8 + 3 * sa); ctx.lineTo(0, 3.5); ctx.fill();
 ctx.restore();
-ctx.save(); ctx.translate(tx, ty); ctx.transform(cs * ca, sn * ca - 0.5 * sa, -sn, cs, 0, 0);
-if (Math.cos(th) < 0) ctx.scale(1, -1);
+ctx.save(); ctx.translate(tx, ty); ctx.rotate(th); ctx.scale(ca, 1 + 0.2 * sa);
+if (cs < 0) ctx.scale(1, -1);
 drawCueStick(ctx, L, cd, 1);
 if (cd.lux || cd.cat === "vip") {
 const t = performance.now() / 1000, vip = cd.cat === "vip", sc = vip ? (cd.glow || "#fff") : "#ffffff";
