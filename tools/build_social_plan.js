@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 // The 3-month plan for Instagram / Facebook / Threads (posted with Metricool): social/metricool_<YYYY-MM>.csv, one file a month in Metricool's own import format
 // (the columns of tools/metricool_template.csv = Planning > menu > Import CSV > Download template).
-//   node tools/build_social_plan.js [--from 2026-11-03] [--days 90] [--per-month 20] [--time 19:00] [--base <public url of the social/ folder>]
+//   node tools/build_social_plan.js [--from 2026-11-03] [--days 90] [--per-month 20] [--time 19:00] [--threads] [--brand "exact brand name"] [--base <public url of the social/ folder>]
 // The free Metricool plan allows 20 posts a month, so --per-month picks that many days of each month (holiday posts first, the rest evenly spread).
 // Posts come from server/channel_bank.json (the same texts as the Telegram channel, only those that have a picture in social/), holiday posts on their own dates,
 // the weekly ones (Monday reset, Friday lobby ...) on their weekday; no post repeats. The game link is tracked: ...startapp=c_so_<topic> (shown in the game's /src).
 // Pictures: social/p_<key>.jpg (4:5) and social/v_<key>.jpg (9:16), made by tools/build_social_images.js; the CSV holds their public (raw.githubusercontent.com) addresses.
 const fs = require("fs"), path = require("path"), plan = require("../server/chan_plan");
 const ROOT = path.resolve(__dirname, ".."), args = process.argv.slice(2), arg = (n, d) => { const i = args.indexOf(n); return i < 0 ? d : args[i + 1]; };
-const FROM = arg("--from", "2026-11-03"), DAYS = +arg("--days", 90), TIME = arg("--time", "19:00") + ":00", PER = +arg("--per-month", 20);
+const FROM = arg("--from", "2026-11-03"), DAYS = +arg("--days", 90), TIME = arg("--time", "19:00") + ":00", PER = +arg("--per-month", 20), THREADS = args.includes("--threads"), BRAND = arg("--brand", "");   // Threads only with --threads (it must be connected in Metricool); no brand name = the brand that is open when importing
 const BASE = arg("--base", "https://raw.githubusercontent.com/au7520384-cell/Ajal-yog-dusi/claude/shunaqa-oyin-yaratish-5dujy5/social");
 const LINK = "https://t.me/Billiard8PoolBot/Play?startapp=c_so_";
 const bank = JSON.parse(fs.readFileSync(path.join(ROOT, "server", "channel_bank.json"), "utf8"));
@@ -46,8 +46,8 @@ for (const { day, it } of chosen) {
   const key = pics(it), tag = (it.tag || it.cat).replace(/[^A-Za-z0-9_-]/g, "").slice(0, 16) || "x";
   const text = `${it.uz}\n\n${it.en}\n\n▶ O'ynash / Play: ${LINK}${tag}\n${plan.hashtags(it)} #8ball #pool #telegramgame`;
   const alt = String(it.uz).split("\n")[0].replace(/^[^\p{L}\p{N}]+/u, "").slice(0, 120);
-  const v = { Text: q(text), Date: q(day.key), Time: q(TIME), Draft: false, Facebook: true, Instagram: true, Threads: text.length <= 500,   // Threads takes 500 characters
-    "Picture Url 1": q(`${BASE}/p_${key}.jpg`), "Alt text picture 1": q(alt), Shortener: false, "Instagram Post Type": q("POST"), "Facebook Post Type": q("POST"), "Threads Post Type": q("POST"), "Brand name": q("Royalbilliard8") };
+  const v = { Text: q(text), Date: q(day.key), Time: q(TIME), Draft: false, Facebook: true, Instagram: true, Threads: THREADS && text.length <= 500,   // Threads takes 500 characters
+    "Picture Url 1": q(`${BASE}/p_${key}.jpg`), "Alt text picture 1": q(alt), Shortener: false, "Instagram Post Type": q("POST"), "Facebook Post Type": q("POST"), "Threads Post Type": q("POST"), "Brand name": q(BRAND) };
   (byMonth[day.key.slice(0, 7)] = byMonth[day.key.slice(0, 7)] || []).push(cols.map(c => c in v ? v[c] : (/^(Draft|Facebook|Twitter\/X|LinkedIn|GBP|Instagram|Pinterest|TikTok|Youtube|Threads|Bluesky)$/.test(c) ? false : "")).join(","));
 }
 for (const f of fs.readdirSync(path.join(ROOT, "social"))) if (/^(plan|metricool_.*)\.csv$/.test(f)) fs.unlinkSync(path.join(ROOT, "social", f));
