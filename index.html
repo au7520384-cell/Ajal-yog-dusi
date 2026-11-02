@@ -2528,7 +2528,7 @@ const DICT = {
 "Sizning navbatingiz": ["Your turn", "Ваш ход"], "Siz sindirasiz — omad!": ["You are breaking, good luck!", "Вы разбиваете, удачи!"],
 "QOIDA BUZILDI!": ["FOUL!", "ФОЛ!"], "VAQT TUGADI!": ["TIME'S UP!", "ВРЕМЯ ВЫШЛО!"], "Raqib javob bermadi": ["Opponent is not responding", "Соперник не отвечает"], "Navbat sizda": ["It's your turn", "Ваш ход"], "G'ALABA!": ["VICTORY!", "ПОБЕДА!"], "MAG'LUBIYAT": ["DEFEAT", "ПОРАЖЕНИЕ"],
 "ZO'R!": ["NICE!", "КЛАСС!"], "AJOYIB!": ["AMAZING!", "ПОТРЯСАЮЩЕ!"], "MASHQ": ["PRACTICE", "ТРЕНИРОВКА"],
-"Yana o'ynash": ["Play again", "Ещё раз"], "Menyu": ["Menu", "Меню"], "Davom etish": ["Continue", "Продолжить"], "Pauza": ["Paused", "Пауза"],
+"Yana o'ynash": ["Play again", "Ещё раз"], "Keyingi stol": ["Next table", "Следующий стол"], "Menyu": ["Menu", "Меню"], "Davom etish": ["Continue", "Продолжить"], "Pauza": ["Paused", "Пауза"],
 "Taslim bo'lish": ["Resign", "Сдаться"], "Chiqish": ["Exit", "Выход"], "Keyingi o'yin": ["Next game", "Следующая игра"], "Qayta o'ynash": ["Rematch", "Реванш"],
 "Onlayn raqib qidirilmoqda…": ["Looking for an online opponent…", "Ищем соперника онлайн…"], "Raqib topildi!": ["Opponent found!", "Соперник найден!"],
 "Raqib o'yinni tark etdi": ["Your opponent left the game", "Соперник покинул игру"],
@@ -4193,8 +4193,10 @@ if (G.city && CITIES.includes(G.city)) setTimeout(() => victoryPiece(G.city), 26
 save(); Net.sync();
 setTimeout(() => {
 const offer = (G.trial && trialOffer(G)) || (G.trialCue && cueTrialOffer(G));
+const nxt = humanWon && !G.tourLobby && !G.trial ? CITIES[CITIES.indexOf(G.city) + 1] : null, goNext = !!nxt && !cityLock(nxt);   // won: the next table of the road, when it is open, comes first ("continue" used to start the same table again)
 (offer ? resultModal : resultScreen)(humanWon, why, G.players[winner], humanWon && !G.tourLobby ? G.city.prize : 0, offer || (G.tourLobby ? [{label: T("Davom etish"), cls: "green", fn: () => lbAfterMatch()}] : [
-{label: T("Yana o'ynash"), cls: "green", fn: () => playCity(G.city)},
+...(goNext ? [{label: `${T("Keyingi stol")}: ${T(nxt.name)}`, cls: "green", fn: () => playCity(nxt)}] : []),
+{label: T("Yana o'ynash"), cls: goNext ? "blue" : "green", fn: () => playCity(G.city)},
 {label: T("Menyu"), cls: "gray", fn: () => toMenu()},
 ]));
 if (offer && G.trialCue) { $("mText").textContent = T("Kiy yoqdimi? Hozir 30% chegirma bilan oling!"); $("mExtra").insertAdjacentHTML("beforeend", `<canvas class="tpcv cuepv" width="620" height="200"></canvas>`); previewCue(cueDef(G.trialCue), document.querySelector("#modal .cuepv")); }
@@ -5176,9 +5178,10 @@ for (let b = b0; b < b1; b++) for (let a = a0; a < a1; a++) {
 const fx = a & 1, fy = b & 1, x = ox + a * T, y = oy + b * T, w = T + 1;   // one unit more than the tile: the next tile covers it, no hairline between two
 ctx.save(); ctx.translate(fx ? x + T + 1 : x, fy ? y + T + 1 : y); ctx.scale(fx ? -1 : 1, fy ? -1 : 1); ctx.drawImage(im, sx, sy, c, c, 0, 0, w, w); ctx.restore();
 }
-ctx.fillStyle = "rgba(5,7,16,.1)"; ctx.fillRect(X0, Y0, X1 - X0, Y1 - Y0);
+ctx.fillStyle = "rgba(6,8,18,.44)"; ctx.fillRect(X0, Y0, X1 - X0, Y1 - Y0);   // a calm floor: darker and less contrast, so the pattern never dazzles and the table stands out
+ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 130; ctx.fillStyle = "#000"; rr(FX - RAIL - 20, FY - RAIL - 14, FW + RAIL * 2 + 40, FH + RAIL * 2 + 28, 60); ctx.fill(); ctx.restore();   // a wide soft shadow round the table
 const tg = ctx.createLinearGradient(0, Y0, 0, 150); tg.addColorStop(0, "rgba(0,0,0,.62)"); tg.addColorStop(0.7, "rgba(0,0,0,.34)"); tg.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = tg; ctx.fillRect(X0, Y0, X1 - X0, 150 - Y0);   // a shade at the top, where the names and the coins are
-ctx.translate(cx, cy); ctx.scale(1.7, 1); const vg = ctx.createRadialGradient(0, 0, 330, 0, 0, 760); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.4)"); ctx.fillStyle = vg; ctx.fillRect((X0 - cx) / 1.7, Y0 - cy, (X1 - X0) / 1.7, Y1 - Y0);   // an oval shade round the table (over the whole visible floor, also on a tall screen)
+ctx.translate(cx, cy); ctx.scale(1.7, 1); const vg = ctx.createRadialGradient(0, 0, 330, 0, 0, 760); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.3)"); ctx.fillStyle = vg; ctx.fillRect((X0 - cx) / 1.7, Y0 - cy, (X1 - X0) / 1.7, Y1 - Y0);   // an oval shade round the table (over the whole visible floor, also on a tall screen)
 ctx.restore();
 }
 function paintRoom(bg, seed, city, fl, fim) {
