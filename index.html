@@ -3451,7 +3451,7 @@ s.connect(f); f.connect(g); g.connect(master); s.start(t, Math.random() * 0.5); 
 const now = () => ac.currentTime;
 return {
 init,
-check() { if (ac && ac.state !== "running") wake(); },   // called every few seconds during a match: the sound system can be paused by the phone (call, voice chat, another app) and would stay silent until the next tap
+check() { if (ac && ac.state !== "running") wake(); else if (ac && master && !profile.muted && !window.__B8_MUTE && !Y8.busy && master.gain.value < 0.05) master.gain.setTargetAtTime(level(), ac.currentTime, 0.02); },   // also: the sound is silent although nothing mutes it (an ad broke the order of the platform events) -> back on   // called every few seconds during a match: the sound system can be paused by the phone (call, voice chat, another app) and would stay silent until the next tap
 state: () => ac ? ac.state : "none",
 
 turn() { if (ok() && ui.turn) play(ui.turn, 0.7); },
@@ -9800,7 +9800,7 @@ if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);
 Y8.busy = true;
 let viewed = false, finished = false;
 const wasMuted = profile.muted;
-const done = () => { if (finished) return; finished = true; Y8.busy = false; if (!wasMuted) Snd.setMuted(false); resolve(viewed); };
+const done = () => { if (finished) return; finished = true; Y8.busy = false; if (!wasMuted) Snd.setMuted(false); for (const ms of [500, 2000]) setTimeout(() => { try { if (!Y8.busy) { Snd.init(); Snd.setMuted(!!profile.muted); } } catch (e) {} }, ms); resolve(viewed); };   // the platform's pause / audio events can arrive after the ad closed: the sound is set again
 Y8.sdk.showAd({type, name,
 beforeAd: () => Snd.setMuted(true),
 beforeReward: showAdFn => showAdFn(),
