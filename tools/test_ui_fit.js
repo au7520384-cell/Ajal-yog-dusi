@@ -2,6 +2,7 @@
 // Two screens the owner marked on his phone:  node tools/test_ui_fit.js
 // - the four tabs of the friends screen stand in ONE row in every language and at every size (they used to wrap into 3 rows in Russian)
 // - the 28 illustrated frames (premium, scary shop, plain) have no name plaque under the window any more: the lowest part of every picture is transparent
+// - the 40 floral frames of the owner (IMG.fa0 .. fa39, tools/replace_frame_art.py) are transparent in the window and the corners and the avatar scale of each is known
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__dirname, "..");
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 300) : ""); } };
@@ -32,6 +33,22 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
         return { n: ids.length, bad };
       });
       ok(fr.n === 28 && fr.bad.length === 0, "28 frames without a plaque", fr.bad.slice(0, 4));
+    }
+    if (vw === 844 && lang === "en") {   // the 40 frames of the owner's floral set (IMG.fa0 .. fa39): transparent window and corners, a frame all round, the avatar scale is known for each
+      const fa = await p.evaluate(async () => {
+        const bad = [];
+        for (let i = 0; i < 40; i++) {
+          const u = IMG["fa" + i]; if (!u) { bad.push("fa" + i + ": missing"); continue; }
+          const im = new Image(); im.src = u; await im.decode(); const c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight; const x = c.getContext("2d"); x.drawImage(im, 0, 0);
+          const N = c.width, al = (px, py) => x.getImageData(px, py, 1, 1).data[3], cen = x.getImageData(Math.round(N * 0.42), Math.round(N * 0.42), Math.round(N * 0.16), Math.round(N * 0.16)).data;
+          let opq = 0; for (let k = 3; k < cen.length; k += 4) if (cen[k] > 40) opq++;
+          const d = x.getImageData(0, 0, N, N).data; let solid = 0; for (let k = 3; k < d.length; k += 4) if (d[k] > 200) solid++;
+          if (N !== 256) bad.push("fa" + i + ": " + N + " px"); if (opq > 8) bad.push("fa" + i + ": the window is not clear (" + opq + ")"); if (al(1, 1) > 10 || al(N - 2, N - 2) > 10) bad.push("fa" + i + ": the corners are not clear");
+          if (solid < N * N * 0.08) bad.push("fa" + i + ": the frame is too thin (" + solid + ")"); if (!(FA_AVS["fa" + i] > 0.6 && FA_AVS["fa" + i] <= 1)) bad.push("fa" + i + ": avatar scale " + FA_AVS["fa" + i]);
+        }
+        return bad;
+      });
+      ok(fa.length === 0, "40 floral frames in IMG.fa0..fa39", fa.slice(0, 5));
     }
     await p.close();
   }
