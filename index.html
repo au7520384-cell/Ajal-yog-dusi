@@ -5268,6 +5268,44 @@ function decor(P) {
   const yT = 54, xTop = -60, S = 0.8, map = (u, v) => [xTop - S * u, yT + u - v];
   const style = pick(["panels", "panels", "pilasters", "tiles", "wood"]), dark = HSL(bh, 40, 5, 0.94), kind = pick(["rose", "rose", "daisy"]);
   const [fh, fs, fl0] = pick([[352, 66, 42], [344, 62, 50], [8, 72, 48], [28, 82, 52], [48, 88, 58], [300, 46, 46], [276, 44, 50], [0, 0, 90], [330, 62, 56]]), fl = kind === "rose" ? fl0 : Math.min(92, fl0 + 16), leafPal = [HSL(128, 50, 32), HSL(140, 55, 14)];
+  const archPath = (g, u0, v0, w, h) => { const r = w / 2, vTop = v0 + h - r; g.beginPath(); g.moveTo(u0 - r, v0); g.lineTo(u0 - r, vTop); g.arc(u0, vTop, r, Math.PI, 0, true); g.lineTo(u0 + r, v0); g.closePath(); };
+  const frameArt = (g, u0, v0, w, h, s) => { archPath(g, u0, v0, w, h); g.lineJoin = "round"; g.strokeStyle = mt[2]; g.lineWidth = 16 * s; g.stroke(); g.strokeStyle = mt[1]; g.lineWidth = 10 * s; g.stroke(); g.strokeStyle = mt[0]; g.globalAlpha = 0.65; g.lineWidth = 2.5 * s; g.stroke(); g.globalAlpha = 1; const gs = g.createLinearGradient(0, v0 - 18 * s, 0, v0); gs.addColorStop(0, mt[0]); gs.addColorStop(1, mt[2]); g.fillStyle = gs; g.fillRect(u0 - w / 2 - 14 * s, v0 - 18 * s, w + 28 * s, 18 * s); };
+  const windowArt = (g, u0, v0, s, rnd) => {   // an arched window onto the night city (s = size, 1 = 120 wide, 300 high)
+    const w = 120 * s, h = 300 * s, r = w / 2;
+    g.save(); g.globalCompositeOperation = "lighter"; const wg = g.createRadialGradient(u0, v0 + h * 0.45, 20 * s, u0, v0 + h * 0.45, 230 * s); wg.addColorStop(0, "rgba(130,120,255,.2)"); wg.addColorStop(1, "rgba(130,120,255,0)"); g.fillStyle = wg; g.fillRect(u0 - 250 * s, v0 - 70 * s, 500 * s, h + 150 * s); g.restore();
+    g.save(); archPath(g, u0, v0, w, h); g.clip();
+    const sg = g.createLinearGradient(0, v0, 0, v0 + h); sg.addColorStop(0, sky[2]); sg.addColorStop(0.45, sky[1]); sg.addColorStop(1, sky[0]); g.fillStyle = sg; g.fillRect(u0 - r - 4, v0 - 4, w + 8, h + 8);
+    for (let i = 0, n = Math.round(16 * s); i < n; i++) { g.fillStyle = `rgba(255,255,255,${0.25 + rnd() * 0.5})`; g.fillRect(u0 - r + rnd() * w, v0 + h * (0.5 + rnd() * 0.5), 1.8 * s, 1.8 * s); }
+    g.fillStyle = HSL(bh, 36, 12, 0.85); for (let x = u0 - r; x < u0 + r;) { const bw = (14 + rnd() * 16) * s, bh2 = (26 + rnd() * 60) * s; g.fillRect(x, v0, bw, bh2); x += bw + 2 * s; }
+    g.fillStyle = dark; (LM[LMAP[city]] || LM.generic)(g, u0 + (rnd() - 0.5) * 20 * s, v0 + 4 * s, h / 270);
+    g.fillStyle = dark; for (let x = u0 - r; x < u0 + r;) { const bw = (12 + rnd() * 18) * s, bh2 = (14 + rnd() * 36) * s; g.fillRect(x, v0, bw, bh2); for (let q = 0; q < 4; q++) { g.fillStyle = `rgba(255,${190 + rnd() * 50 | 0},110,${0.5 + rnd() * 0.5})`; g.fillRect(x + 2 * s + rnd() * (bw - 5 * s), v0 + 3 * s + rnd() * (bh2 - 7 * s), 2.2 * s, 2.6 * s); } g.fillStyle = dark; x += bw + 1 * s; }
+    for (let i = 0, n = Math.round(24 * s * s); i < n; i++) glow(g, u0 - r + rnd() * w, v0 + (8 + rnd() * 70) * s, (8 + rnd() * 6) * s, (8 + rnd() * 6) * s, [255, 206, 130], 0.9);
+    g.strokeStyle = HSL(bh, 20, 8, 0.9); g.lineWidth = 4.5 * s; g.beginPath(); g.moveTo(u0, v0); g.lineTo(u0, v0 + h); for (const f of [0.36, 0.64]) { g.moveTo(u0 - r, v0 + h * f); g.lineTo(u0 + r, v0 + h * f); } g.stroke();
+    g.fillStyle = "rgba(255,255,255,.07)"; g.beginPath(); g.moveTo(u0 - r, v0 + h * 0.2); g.lineTo(u0 - r + 38 * s, v0); g.lineTo(u0 - r + 70 * s, v0); g.lineTo(u0 - r, v0 + h * 0.34); g.closePath(); g.fill();
+    g.restore();
+    frameArt(g, u0, v0, w, h, Math.min(s, 1.5));
+  };
+  const mirrorArt = (g, u0, v0, s, rnd) => {   // a tall gilded mirror of the same size as a window
+    const w = 120 * s, h = 300 * s, r = w / 2;
+    g.save(); archPath(g, u0, v0, w, h); g.clip();
+    const mg = g.createLinearGradient(u0 - r, v0, u0 + r, v0 + h); mg.addColorStop(0, HSL(ah, 26, 32)); mg.addColorStop(0.5, HSL(ah, 22, 13)); mg.addColorStop(1, HSL(ah, 30, 24)); g.fillStyle = mg; g.fillRect(u0 - r - 4, v0 - 4, w + 8, h + 8);
+    g.fillStyle = "rgba(255,255,255,.11)"; g.beginPath(); g.moveTo(u0 - r, v0 + h * 0.2); g.lineTo(u0 - r + 44 * s, v0); g.lineTo(u0 - r + 82 * s, v0); g.lineTo(u0 - r, v0 + h * 0.42); g.closePath(); g.fill();
+    g.fillStyle = "rgba(255,255,255,.06)"; g.beginPath(); g.moveTo(u0 + r, v0 + h * 0.55); g.lineTo(u0 + r, v0 + h * 0.78); g.lineTo(u0 + r * 0.1, v0 + h); g.lineTo(u0 + r * 0.55, v0 + h); g.closePath(); g.fill();
+    for (let i = 0; i < 5; i++) glow(g, u0 + (rnd() - 0.5) * w * 0.7, v0 + h * (0.15 + rnd() * 0.65), 12 * s, 16 * s, lite, 0.55);
+    g.restore();
+    archPath(g, u0, v0 + 12 * s, w - 26 * s, h - 22 * s); g.strokeStyle = mt[0]; g.globalAlpha = 0.35; g.lineWidth = 1.6; g.stroke(); g.globalAlpha = 1;
+    frameArt(g, u0, v0, w, h, Math.min(s, 1.5));
+  };
+  const curtainArt = (g, cu0, cu1, cv0, cv1, tv) => {   // a drape from the rod (cv1) down to the floor (cv0), held back by a gold cord at tv
+    for (let i = 0, n = 9; i < n; i++) { const x0 = cu0 + (cu1 - cu0) * i / n, x1 = cu0 + (cu1 - cu0) * (i + 1) / n, hem = cv0 + 6 + Math.sin(i * 1.9) * 7, lg = g.createLinearGradient(x0, 0, x1, 0); lg.addColorStop(0, HSL(ah, 62, 9)); lg.addColorStop(0.5, HSL(ah, 62, 28)); lg.addColorStop(1, HSL(ah, 60, 11)); g.fillStyle = lg; g.fillRect(x0, hem, x1 - x0 + 0.6, cv1 - hem); }
+    g.fillStyle = mt[1]; g.fillRect(cu0 - 6, cv1 - 10, cu1 - cu0 + 12, 12); g.fillStyle = HSL(ah, 60, 20); for (let x = cu0 - 6; x < cu1 + 6; x += 24) { g.beginPath(); g.moveTo(x, cv1 - 10); g.quadraticCurveTo(x + 12, cv1 - 58, x + 24, cv1 - 10); g.closePath(); g.fill(); }
+    g.strokeStyle = mt[1]; g.lineWidth = 5; g.beginPath(); g.moveTo(cu0 - 4, tv); g.quadraticCurveTo((cu0 + cu1) / 2, tv - 22, cu1 + 4, tv); g.stroke();
+  };
+  const pilaster = (g, u, v0, v1) => {   // a fluted column against the wall, gold foot and capital
+    const w = 44, gp = g.createLinearGradient(u - w / 2, 0, u + w / 2, 0); gp.addColorStop(0, HSL(wallH, wallS, 8)); gp.addColorStop(0.35, HSL(wallH, wallS + 4, 24)); gp.addColorStop(0.55, HSL(wallH, wallS + 4, 18)); gp.addColorStop(1, HSL(wallH, wallS, 7)); g.fillStyle = gp; g.fillRect(u - w / 2, v0, w, v1 - v0);
+    g.strokeStyle = "rgba(0,0,0,.35)"; g.lineWidth = 1.6; g.beginPath(); for (const f of [-0.25, 0, 0.25]) { g.moveTo(u + f * w, v0 + 12); g.lineTo(u + f * w, v1 - 14); } g.stroke();
+    g.fillStyle = mt[2]; g.fillRect(u - w / 2 - 6, v0, w + 12, 12); g.fillStyle = mt[1]; g.fillRect(u - w / 2 - 8, v1 - 16, w + 16, 16); g.fillStyle = mt[0]; g.globalAlpha = 0.6; g.fillRect(u - w / 2 - 8, v1 - 4, w + 16, 2.4); g.globalAlpha = 1;
+  };
   const drawElevation = () => {
     const g = ctx, uMax = 560, vMax = 760;
     let gr = g.createLinearGradient(0, 0, 0, vMax); gr.addColorStop(0, HSL(wallH, wallS, 8)); gr.addColorStop(0.28, HSL(wallH, wallS, 14)); gr.addColorStop(1, HSL(wallH, wallS, 9)); g.fillStyle = gr; g.fillRect(-60, -60, uMax + 120, vMax + 120);
@@ -5277,24 +5315,7 @@ function decor(P) {
     else { g.strokeStyle = "rgba(0,0,0,.4)"; g.lineWidth = 2; for (let u = -40; u < uMax; u += 30) { g.fillStyle = HSL(28, 36, 11 + ((u / 30 | 0) % 3) * 2); g.fillRect(u, 20, 29, 82); g.strokeRect(u, 20, 29, 82); } }
     const gb = g.createLinearGradient(0, 0, 0, 20); gb.addColorStop(0, mt[2]); gb.addColorStop(1, mt[1]); g.fillStyle = gb; g.fillRect(-60, 0, uMax + 120, 20); g.fillStyle = "rgba(255,255,255,.35)"; g.fillRect(-60, 17, uMax + 120, 2.4);
     g.fillStyle = mt[2]; g.fillRect(-60, 100, uMax + 120, 13); g.fillStyle = mt[0]; g.globalAlpha = 0.7; g.fillRect(-60, 110, uMax + 120, 2.4); g.globalAlpha = 1;
-    const [u0, v0, w, h] = [265, 132, 120, 300], r = w / 2, vTop = v0 + h - r, arch = () => { g.beginPath(); g.moveTo(u0 - r, v0); g.lineTo(u0 - r, vTop); g.arc(u0, vTop, r, Math.PI, 0, true); g.lineTo(u0 + r, v0); g.closePath(); };
-    g.save(); g.globalCompositeOperation = "lighter"; const wg = g.createRadialGradient(u0, v0 + h * 0.45, 20, u0, v0 + h * 0.45, 230); wg.addColorStop(0, "rgba(130,120,255,.2)"); wg.addColorStop(1, "rgba(130,120,255,0)"); g.fillStyle = wg; g.fillRect(u0 - 250, v0 - 70, 500, h + 150); g.restore();
-    g.save(); arch(); g.clip();
-    const sg = g.createLinearGradient(0, v0, 0, v0 + h); sg.addColorStop(0, sky[2]); sg.addColorStop(0.45, sky[1]); sg.addColorStop(1, sky[0]); g.fillStyle = sg; g.fillRect(u0 - r - 4, v0 - 4, w + 8, h + 8);
-    for (let i = 0; i < 16; i++) { g.fillStyle = `rgba(255,255,255,${0.25 + rnd() * 0.5})`; g.fillRect(u0 - r + rnd() * w, v0 + h * (0.5 + rnd() * 0.5), 1.8, 1.8); }
-    g.fillStyle = HSL(bh, 36, 12, 0.85); for (let x = u0 - r; x < u0 + r;) { const bw = 14 + rnd() * 16, bh2 = 26 + rnd() * 60; g.fillRect(x, v0, bw, bh2); x += bw + 2; }
-    g.fillStyle = dark; (LM[LMAP[city]] || LM.generic)(g, u0 + (rnd() - 0.5) * 20, v0 + 4, h / 270);
-    g.fillStyle = dark; for (let x = u0 - r; x < u0 + r;) { const bw = 12 + rnd() * 18, bh2 = 14 + rnd() * 36; g.fillRect(x, v0, bw, bh2); for (let q = 0; q < 4; q++) { g.fillStyle = `rgba(255,${190 + rnd() * 50 | 0},110,${0.5 + rnd() * 0.5})`; g.fillRect(x + 2 + rnd() * (bw - 5), v0 + 3 + rnd() * (bh2 - 7), 2.2, 2.6); } g.fillStyle = dark; x += bw + 1; }
-    for (let i = 0; i < 24; i++) glow(g, u0 - r + rnd() * w, v0 + 8 + rnd() * 70, 8 + rnd() * 6, 8 + rnd() * 6, [255, 206, 130], 0.9);
-    g.strokeStyle = HSL(bh, 20, 8, 0.9); g.lineWidth = 4.5; g.beginPath(); g.moveTo(u0, v0); g.lineTo(u0, v0 + h); for (const f of [0.36, 0.64]) { g.moveTo(u0 - r, v0 + h * f); g.lineTo(u0 + r, v0 + h * f); } g.stroke();
-    g.fillStyle = "rgba(255,255,255,.07)"; g.beginPath(); g.moveTo(u0 - r, v0 + h * 0.2); g.lineTo(u0 - r + 38, v0); g.lineTo(u0 - r + 70, v0); g.lineTo(u0 - r, v0 + h * 0.34); g.closePath(); g.fill();
-    g.restore();
-    arch(); g.lineJoin = "round"; g.strokeStyle = mt[2]; g.lineWidth = 16; g.stroke(); g.strokeStyle = mt[1]; g.lineWidth = 10; g.stroke(); g.strokeStyle = mt[0]; g.globalAlpha = 0.65; g.lineWidth = 2.5; g.stroke(); g.globalAlpha = 1;
-    const gs = g.createLinearGradient(0, v0 - 18, 0, v0); gs.addColorStop(0, mt[0]); gs.addColorStop(1, mt[2]); g.fillStyle = gs; g.fillRect(u0 - r - 14, v0 - 18, w + 28, 18);
-    const cu0 = 400, cu1 = 500, cv0 = 24, cv1 = 640;
-    for (let i = 0, n = 9; i < n; i++) { const x0 = cu0 + (cu1 - cu0) * i / n, x1 = cu0 + (cu1 - cu0) * (i + 1) / n, hem = cv0 + 6 + Math.sin(i * 1.9) * 7, lg = g.createLinearGradient(x0, 0, x1, 0); lg.addColorStop(0, HSL(ah, 62, 9)); lg.addColorStop(0.5, HSL(ah, 62, 28)); lg.addColorStop(1, HSL(ah, 60, 11)); g.fillStyle = lg; g.fillRect(x0, hem, x1 - x0 + 0.6, cv1 - hem); }
-    g.fillStyle = mt[1]; g.fillRect(cu0 - 6, cv1 - 10, cu1 - cu0 + 12, 12); g.fillStyle = HSL(ah, 60, 20); for (let x = cu0 - 6; x < cu1 + 6; x += 24) { g.beginPath(); g.moveTo(x, cv1 - 10); g.quadraticCurveTo(x + 12, cv1 - 58, x + 24, cv1 - 10); g.closePath(); g.fill(); }
-    g.strokeStyle = mt[1]; g.lineWidth = 5; g.beginPath(); g.moveTo(cu0 - 4, 300); g.quadraticCurveTo((cu0 + cu1) / 2, 278, cu1 + 4, 300); g.stroke();
+    windowArt(g, 265, 132, 1, rnd); curtainArt(g, 400, 500, 24, 640, 300);
     g.fillStyle = mt[2]; g.fillRect(-60, 600, uMax + 120, 14); g.fillStyle = mt[1]; g.globalAlpha = 0.8; g.fillRect(-60, 612, uMax + 120, 4); g.globalAlpha = 1;
   };
   // ---- light on the floor: under the lanterns, the windows and the vases
@@ -5319,6 +5340,15 @@ function decor(P) {
     const gb = g.createLinearGradient(0, 0, 0, 20); gb.addColorStop(0, mt[2]); gb.addColorStop(1, mt[1]); g.fillStyle = gb; g.fillRect(bx0, 0, bx1 - bx0, 20); g.fillStyle = mt[2]; g.fillRect(bx0, 100, bx1 - bx0, 13);
     g.fillStyle = HSL(wallH, wallS, 11); g.fillRect(cx - 140, 118, 280, 120); g.strokeStyle = mt[1]; g.lineWidth = 4; g.strokeRect(cx - 140, 118, 280, 120); g.strokeStyle = mt[0]; g.globalAlpha = 0.5; g.lineWidth = 1.6; g.strokeRect(cx - 130, 128, 260, 100); g.globalAlpha = 1;
     g.fillStyle = mt[1]; g.beginPath(); g.moveTo(cx, 150); g.quadraticCurveTo(cx + 22, 178, cx, 212); g.quadraticCurveTo(cx - 22, 178, cx, 150); g.fill(); g.beginPath(); g.ellipse(cx - 26, 186, 11, 24, 0.8, 0, 7); g.ellipse(cx + 26, 186, 11, 24, -0.8, 0, 7); g.fill(); g.fillRect(cx - 24, 166, 48, 6);
+    if (vMax > 250) {   // a tall view (a phone held upright): the wall rises on - fluted pilasters, tall windows (or gilded mirrors), drapes, a cornice and a coffered ceiling
+      const R = P.stream(4), flank = R.pick(["window", "window", "mirror"]), top = 960;
+      for (const dx of [-540, -272, 272, 540]) pilaster(g, cx + dx, 114, top);
+      for (const dx of [-400, 400]) { (flank === "window" ? windowArt : mirrorArt)(g, cx + dx, 150, 1.15, R.rnd); g.fillStyle = HSL(wallH, wallS, 12); g.fillRect(cx + dx - 70, 548, 140, 340); g.strokeStyle = mt[1]; g.globalAlpha = 0.5; g.lineWidth = 1.6; g.strokeRect(cx + dx - 62, 556, 124, 324); g.globalAlpha = 1; }
+      windowArt(g, cx, 290, 2, R.rnd);
+      curtainArt(g, cx - 226, cx - 146, 24, 930, 560); curtainArt(g, cx + 146, cx + 226, 24, 930, 560);
+      const gc = g.createLinearGradient(0, top, 0, top + 34); gc.addColorStop(0, mt[2]); gc.addColorStop(0.5, mt[1]); gc.addColorStop(1, mt[0]); g.fillStyle = gc; g.fillRect(bx0, top, bx1 - bx0, 34);
+      if (vMax > top + 34) { g.fillStyle = "rgba(0,0,0,.38)"; g.fillRect(bx0, top + 34, bx1 - bx0, vMax - top - 34); g.fillStyle = "rgba(255,255,255,.05)"; for (let u = bx0 + 20; u < bx1; u += 170) g.fillRect(u, top + 60, 130, 90); }
+    }
   }
   ctx.restore();
   for (const x of [bx0, bx1]) { const gl = ctx.createLinearGradient(x - 6, 0, x + 6, 0); gl.addColorStop(0, mt[2]); gl.addColorStop(0.5, mt[0]); gl.addColorStop(1, mt[2]); ctx.fillStyle = gl; ctx.fillRect(x - 5, Y0 - 90, 10, yT - (Y0 - 90)); }
