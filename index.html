@@ -5176,14 +5176,16 @@ for (let b = b0; b < b1; b++) for (let a = a0; a < a1; a++) {
 const fx = a & 1, fy = b & 1, x = ox + a * T, y = oy + b * T, w = T + 1;   // one unit more than the tile: the next tile covers it, no hairline between two
 ctx.save(); ctx.translate(fx ? x + T + 1 : x, fy ? y + T + 1 : y); ctx.scale(fx ? -1 : 1, fy ? -1 : 1); ctx.drawImage(im, sx, sy, c, c, 0, 0, w, w); ctx.restore();
 }
-ctx.fillStyle = "rgba(5,7,16,.2)"; ctx.fillRect(X0, Y0, X1 - X0, Y1 - Y0);
-ctx.translate(cx, cy); ctx.scale(1.7, 1); const vg = ctx.createRadialGradient(0, 0, 330, 0, 0, 760); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.46)"); ctx.fillStyle = vg; ctx.fillRect((X0 - cx) / 1.7, Y0 - cy, (X1 - X0) / 1.7, Y1 - Y0);   // an oval shade round the table (over the whole visible floor, also on a tall screen)
+ctx.fillStyle = "rgba(5,7,16,.1)"; ctx.fillRect(X0, Y0, X1 - X0, Y1 - Y0);
+const tg = ctx.createLinearGradient(0, Y0, 0, 150); tg.addColorStop(0, "rgba(0,0,0,.62)"); tg.addColorStop(0.7, "rgba(0,0,0,.34)"); tg.addColorStop(1, "rgba(0,0,0,0)"); ctx.fillStyle = tg; ctx.fillRect(X0, Y0, X1 - X0, 150 - Y0);   // a shade at the top, where the names and the coins are
+ctx.translate(cx, cy); ctx.scale(1.7, 1); const vg = ctx.createRadialGradient(0, 0, 330, 0, 0, 760); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.4)"); ctx.fillStyle = vg; ctx.fillRect((X0 - cx) / 1.7, Y0 - cy, (X1 - X0) / 1.7, Y1 - Y0);   // an oval shade round the table (over the whole visible floor, also on a tall screen)
 ctx.restore();
 }
 function paintRoom(bg, seed, city, fl, fim) {
 const P = roomSetup(bg, seed, city);
 ctx.save();
-if (fl) floorTiles(P, fl, fim); else { roomFloor(P); roomRug(P); }
+if (fl) { floorTiles(P, fl, fim); roomShadow(); ctx.restore(); return; }   // a floor picture: nothing but the picture (no walls, windows, vases) and the table's shadow
+roomFloor(P); roomRug(P);
 roomShadow();
 HALL.decor(P);
 roomLight(P);
