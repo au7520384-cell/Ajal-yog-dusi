@@ -225,12 +225,18 @@ sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,
 # default language: the device language (English stays English); the country-based guess is for the standalone game only
 sub('const cl = CC_LANG[profile.country || detectCountry()];', 'const cl = CRAZY_BUILD ? "" : CC_LANG[profile.country || detectCountry()];')
 # the portal brings its own full-screen button and shows no outside pages: no own full-screen buttons / auto full screen, no legal links in Settings
-sub("function goFullscreen(force) {\n", "function goFullscreen(force) {\nif (CRAZY_BUILD) return;\n")
-sub('<button class="iconbtn" id="fsBtn" title="To\'liq ekran">⛶</button>', '')
-sub('<button class="gbtn gray" id="gFs" title="To\'liq ekran">⛶</button>', '')
-sub('$("fsBtn").onclick = toggleFullscreen;', 'if ($("fsBtn")) $("fsBtn").onclick = toggleFullscreen;')
-sub('{ const fb = $("gFs"); const can = ', '{ const fb = $("gFs"); if (!fb) { /* CrazyGames: no own full-screen button */ } else { const can = ')
-sub('document.addEventListener("webkitfullscreenchange", sync); }', 'document.addEventListener("webkitfullscreenchange", sync); } }')
+if PG:   # Playgama's page has no full-screen button of its own: the game keeps its two (menu bar, in a match); no automatic full screen on the first tap, only on the button.
+    # They stay hidden where the browser does not allow full screen for the game's frame (document.fullscreenEnabled false). On a phone the button also turns the screen to landscape.
+    sub("function goFullscreen(force) {\n", "function goFullscreen(force) {\nif (CRAZY_BUILD && !force) return;\n")
+    sub("const can = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen); fb.style.display", "const can = document.fullscreenEnabled !== false && !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen); fb.style.display")
+    sub('$("fsBtn").onclick = toggleFullscreen;', '$("fsBtn").onclick = toggleFullscreen; if (document.fullscreenEnabled === false) $("fsBtn").style.display = "none";')
+else:
+    sub("function goFullscreen(force) {\n", "function goFullscreen(force) {\nif (CRAZY_BUILD) return;\n")
+    sub('<button class="iconbtn" id="fsBtn" title="To\'liq ekran">⛶</button>', '')
+    sub('<button class="gbtn gray" id="gFs" title="To\'liq ekran">⛶</button>', '')
+    sub('$("fsBtn").onclick = toggleFullscreen;', 'if ($("fsBtn")) $("fsBtn").onclick = toggleFullscreen;')
+    sub('{ const fb = $("gFs"); const can = ', '{ const fb = $("gFs"); if (!fb) { /* CrazyGames: no own full-screen button */ } else { const can = ')
+    sub('document.addEventListener("webkitfullscreenchange", sync); }', 'document.addEventListener("webkitfullscreenchange", sync); } }')
 sub('<br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a> · <a href="/refund" target="_blank" style="color:#8fc4ff">Refund</a></div>`;', '</div>`;')
 # language: English first (CrazyGames requires English; reviewers must not meet another language by chance). The other languages stay one tap away in Settings.
 sub("function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\n", "function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\n" + ("if (CRAZY_BUILD) { const l = window.__B8_LANG; return l && LANGS[l] ? l : \"en\"; }\n" if PG else "if (CRAZY_BUILD) return \"en\";\n"))   # Playgama: the platform's language is the source language; CrazyGames: English first
