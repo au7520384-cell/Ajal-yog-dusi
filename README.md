@@ -22,6 +22,7 @@ An 8-ball pool game for phones and computers. The game is `index.html`; the onli
 - **Currencies:** coins, cash and gems, with the game's own artwork.
 - **Shop:** Special Offers (starter pack, gem packs), Coins & Cash packs with bonus ribbons and VIP points, Free Rewards, Minigames, Cues & More. Real money via Stripe; cash→coins and gems→cash exchange.
 - **Gameplay:** 3D rolling balls, spin, synthesised pool sounds tuned to real recordings, 3D cues, a tournament bracket, the daily reward route, lucky shot (a new layout every time: the white ball, the gold ball and the target are placed anywhere on the cloth, now and then with a second ball in the way; every layout can be solved), wheel, watch mode, achievements, and levels.
+- **The hall around the table** (`paintRoom()` in `index.html`, painted once with the background): a tiled or parquet floor (by city), a rug under the table, the table's shadow, a pool of light, and a few things seen from above (bar table with stools, armchairs, plants) that show on the sides of a wide screen. Only the visible part of the screen is painted (about 50-100 ms once per match / resize).
 
 ## Run it yourself
 ```bash
