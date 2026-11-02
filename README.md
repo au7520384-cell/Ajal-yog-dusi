@@ -154,6 +154,13 @@ With the same switch the server also posts from what really happens in the game.
 
 **Names need consent.** A player's name (and level) appears only if they switched on *Settings > Show my name in the channel* (`prefs.chanName`, off by default, stored on the server; a client that does not send it counts as "no"). Everyone else is "a player" / "bir o'yinchi". The post tells readers how to opt in. `CHAN_NAMES=0` on the server turns names off completely.
 
+## Social networks (Instagram / Facebook / Threads / Pinterest via Metricool)
+
+Portrait pictures and a 3-month plan made from the same specs and texts as the channel:
+
+- `node tools/build_social_images.js` draws `social/p_<key>.jpg` (1080x1350, 4:5, feed posts) and `social/v_<key>.jpg` (1080x1920, 9:16, stories / reels / Pinterest) for every spec of `tools/channel_banners/specs.js` (only what changed; `--only p03,t_tas --kind p`, `--sheet <prefix>` for contact sheets). The art is the banner art (`B.render(spec, {social:true})` in `tools/channel_banners/page.js`) enlarged inside a portrait frame by `B.renderSocial`; a spec can move it with `soc: {s, hx, cy}`.
+- `node tools/build_social_plan.js` writes `social/plan.csv`: one post a day (90 days from `--from`, 19:00 Tashkent), texts of `server/channel_bank.json` that have a picture, holiday posts on their own dates, weekly ones on their weekday, no repeats. The game link is tracked as `...startapp=c_so_<topic>` (visible in the game's `/src`). The picture columns hold public `raw.githubusercontent.com` addresses of `social/` (`--base` changes them, e.g. when the branch is merged to main).
+
 ## Avatars by gender and the new-friend offer
 
 - The 76 portrait avatars alternate: even = boy, odd = girl (`avGender()`; the premium pictures carry an m / f / n string, masked and helmeted ones are neutral). The first picture is still random, so the menu asks once **"Who are you? Boy / Girl / Keep the current one"** (`profile.gender`, `profile.genderAsked`); a default portrait of the other gender is swapped for one that fits, a bought premium picture stays. On portals (CrazyGames / Playgama builds) the question waits until the tutorial is done. The avatar picker in Profile has *All / 👦 / 👧* chips and opens on the player's own gender.
