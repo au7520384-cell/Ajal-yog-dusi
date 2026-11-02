@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Floor patterns for the halls: node tools/dump_tables.js > tables.json; /usr/bin/python3 tools/add_floor_patterns.py <folder with naqsh_*.jpg> --tables tables.json [--margin 0.16] [--cell 360] [--quality 74] [--preview out.png] [--no-embed]
+"""Floor patterns for the halls: node tools/dump_tables.js > tables.json; /usr/bin/python3 tools/add_floor_patterns.py <folder with the pictures: naqsh_001.jpg or 001_marmar_01.jpg ...> --tables tables.json [--margin 0.045] [--cell 400] [--quality 80] [--preview out.png] [--no-embed]
 
 One picture of a floor (marble, parquet, tiles, an inlaid medallion ...) for every table that has no hall picture of its own (ROOM_FOR): the 156 pictures an artist / an AI made
 are matched to the 156 tables by colour (the table's hall colour against the picture's average colour, the best overall pairing - Hungarian method), so a red table stands on a
 red marble, a blue one on a blue-grey stone and so on, and no two tables get the same floor.
-* every picture is cut to its middle (--margin = the part thrown away on each side, default 16 %): the edges of the AI pictures carry black bands, gold frames, lanterns and vases
+* every picture is cut to its middle (--margin = the part thrown away on each side, default 4.5 % for the clean 'tuzatilgan' set that has only a thin frame line at the edge; the first AI set needed 16 %: black bands, gold frames, lanterns and vases)
 * the cut pictures are packed 5 x 4 into sheets of 20 (WebP, a 2 px rim repeated around every picture so scaling never bleeds into the neighbour) - 8 files in the portal builds, not 156
 * index.html gets FLOOR_SRC (the sheets, bare base64 WebP like ROOM_SRC), FLOOR_FOR (table -> [sheet, number on the sheet]) and FLOOR_CELL / FLOOR_PAD / FLOOR_COLS between
   the FLOOR_PATTERNS_BEGIN / _END marker lines; the game lays the picture as tiles (every second one mirrored, so the joins never show), see floorTiles() in index.html.
@@ -66,12 +66,12 @@ def tables(src, jpath):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("folder"); ap.add_argument("--tables", required=True, help="tables.json from node tools/dump_tables.js"); ap.add_argument("--margin", type=float, default=0.16); ap.add_argument("--margin-for", default="")
-    ap.add_argument("--cell", type=int, default=360); ap.add_argument("--pad", type=int, default=2); ap.add_argument("--quality", type=int, default=74)
+    ap.add_argument("folder"); ap.add_argument("--tables", required=True, help="tables.json from node tools/dump_tables.js"); ap.add_argument("--margin", type=float, default=0.045); ap.add_argument("--margin-for", default="")
+    ap.add_argument("--cell", type=int, default=400); ap.add_argument("--pad", type=int, default=2); ap.add_argument("--quality", type=int, default=80)
     ap.add_argument("--preview", help="PNG of the first sheet"); ap.add_argument("--map", help="CSV: table id, picture number, sheet, number on the sheet")
     ap.add_argument("--no-embed", action="store_true")
     a = ap.parse_args()
-    files = sorted(glob.glob(os.path.join(a.folder, "**", "naqsh_*.jpg"), recursive=True), key=os.path.basename)
+    files = sorted((f for f in glob.glob(os.path.join(a.folder, "**", "*.jpg"), recursive=True) if re.match(r"(?:naqsh_)?\d+", os.path.basename(f))), key=os.path.basename)   # naqsh_001.jpg or 001_marmar_01.jpg
     over = {int(k): float(v) for k, v in (x.split("=") for x in a.margin_for.split(",") if x)}
     path = os.path.join(ROOT, "index.html"); src = open(path, encoding="utf-8").read()
     tbl, taken = tables(src, a.tables); tbl = [t for t in tbl if t[0] not in taken]
@@ -79,7 +79,7 @@ def main():
     if len(files) != len(tbl): sys.exit("the number of pictures must equal the number of tables")
     cells, means = [], []
     for f in files:
-        num = int(re.search(r"naqsh_(\d+)", f).group(1)); im = Image.open(f).convert("RGB"); w, h = im.size; m = over.get(num, a.margin)
+        num = int(re.match(r"(?:naqsh_)?(\d+)", os.path.basename(f)).group(1)); im = Image.open(f).convert("RGB"); w, h = im.size; m = over.get(num, a.margin)
         im = im.crop((round(w * m), round(h * m), round(w * (1 - m)), round(h * (1 - m)))).resize((a.cell, a.cell), Image.LANCZOS).filter(ImageFilter.UnsharpMask(1.0, 45, 3))
         cells.append((num, im)); means.append(np.asarray(im, np.float64).reshape(-1, 3).mean(axis=0))
     pl = lab(np.array(means)); tl = lab(np.array([[int(c[i:i + 2], 16) for i in (1, 3, 5)] for _, c in tbl], np.float64))
