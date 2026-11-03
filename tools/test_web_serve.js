@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // The light build (./web) served by the game server: node tools/test_web_serve.js
 // - the page is the small one (a few MB, not 40), pictures / sounds come as files with a one-year "immutable" cache and 304 for a tag, Range works for the little video
-// - the game boots to the menu and a match starts with no page error and no failed request; a second visit downloads (almost) nothing again
+// - the game boots to the menu and a match starts with no page error and no failed request; a second visit downloads (almost) nothing again (the first one downloads all pictures with a progress screen: see test_preload.js)
 // - a build older than index.html is ignored (the single-file page is served and /api/health says web:false)
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__dirname, "..");
@@ -46,7 +46,7 @@ const get = async (u, h) => { const r = await fetch(u, { headers: h || {} }); re
   const first = v1.bytes; await v1.p.close();
   const v2 = await visit(); const second = v2.bytes; await v2.p.close();
   console.log(`first visit: ${v1.reqs} requests, ${(first / 1e6).toFixed(1)} MB; second visit: ${v2.reqs} requests, ${(second / 1e6).toFixed(1)} MB`);
-  ok(first < 15e6, "the first visit stays under 15 MB (the single-file page was 40 MB)", first);
+  ok(first < 45e6, "the first visit stays under 45 MB (it now downloads every picture once, with a progress screen; the single-file page was 40 MB)", first);
   ok(second < 0.35 * first + 300000, "the second visit downloads far less than the first", [first, second]);
   ok(errs.length === 0, "no page errors", errs); ok(failed.length === 0, "no failed requests", failed.slice(0, 5));
   await b.close(); srv.kill();

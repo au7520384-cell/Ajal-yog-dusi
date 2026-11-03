@@ -52,6 +52,10 @@ for f in ["sw.js", "manifest.webmanifest", "icon.svg", "favicon-48.png", "apple-
     shutil.copy(os.path.join(root, f), os.path.join(out, f))
 # Cloudflare Pages / Netlify header rules: the hashed pictures never change
 open(os.path.join(out, "_headers"), "w").write("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n/a/*\n  Cache-Control: public, max-age=31536000, immutable\n/index.html\n  Cache-Control: no-cache\n/\n  Cache-Control: no-cache\n")
+# the list of every picture / sound with its size: the page downloads them with a progress bar on the first visit (and only the new ones after an update)
+import json
+files = sorted((n, len(raw)) for n, raw in list(IMGS.items()) + list(AUD.items()))
+open(os.path.join(out, "assets.json"), "w").write(json.dumps({"v": hashlib.sha1("".join(n for n, _ in files).encode()).hexdigest()[:12], "files": files}, separators=(",", ":")))
 size = os.path.getsize(os.path.join(out, "index.html"))
 assert size < 25 * 1024 * 1024, "index.html is over the 25 MiB per-file limit of Cloudflare Pages"
 z = out.rstrip("/") + ".zip"

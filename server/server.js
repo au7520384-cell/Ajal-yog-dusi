@@ -68,8 +68,8 @@ function gzipFor(p, etag) {
   if (!c || c.etag !== etag) { GZ.set(p, {etag, buf: null}); fs.readFile(p, (e, data) => { if (e) return GZ.delete(p); zlib.gzip(data, {level: 6}, (e2, buf) => { if (!e2 && GZ.get(p) && GZ.get(p).etag === etag) GZ.set(p, {etag, buf}); }); }); }
   return null;   // not ready yet: this request gets the plain file
 }
-const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/icon-1024.png": "icon-1024.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js"};
-const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript", ".webp": "image/webp", ".jpg": "image/jpeg", ".gif": "image/gif", ".wav": "audio/wav", ".mp4": "video/mp4"};
+const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/icon-1024.png": "icon-1024.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js", "/assets.json": "assets.json"};
+const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript", ".webp": "image/webp", ".jpg": "image/jpeg", ".gif": "image/gif", ".wav": "audio/wav", ".mp4": "video/mp4"};
 // The light build (./web, made by tools/build_web.py): a 4 MB page and the pictures / sounds as files. A visitor downloads the page, the pictures only when a screen shows them, and keeps them
 // (their names are hashes, so a file never changes: cached for a year); after an update only the changed page is downloaded again. A build older than index.html is ignored (the single-file page is served).
 const WEB = path.join(ROOT, "web"), WEBFILE = /^\/(img|a)\/[A-Za-z0-9._-]+$/;
@@ -1577,6 +1577,11 @@ const server = http.createServer(async (req, res) => {
     }
     const file = STATIC[url.pathname];
     if (req.method === "GET" && file) {
+      if (file === "assets.json") {   // the list of the light build's pictures (the page's preloader): small, never cached
+        const ap = path.join(WEB, file);
+        if (WEB_OK && fs.existsSync(ap)) { const b = fs.readFileSync(ap); res.writeHead(200, {"Content-Type": MIME[".json"], "Cache-Control": "no-store", "Content-Length": b.length}); return res.end(b); }
+        return send(res, 404, {error: "not found"});
+      }
       const light = WEB_OK && file === "index.html", p = path.join(light ? WEB : ROOT, file);
       if (fs.existsSync(p)) {
         // the game page: a version tag (repeat visits cost a 304) and gzip when the browser accepts it (saves bandwidth on a free host); the light build is a 4 MB page instead of 40 MB
