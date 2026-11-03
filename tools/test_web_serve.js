@@ -46,7 +46,7 @@ const get = async (u, h) => { const r = await fetch(u, { headers: h || {} }); re
   const first = v1.bytes; await v1.p.close();
   const v2 = await visit(); const second = v2.bytes; await v2.p.close();
   console.log(`first visit: ${v1.reqs} requests, ${(first / 1e6).toFixed(1)} MB; second visit: ${v2.reqs} requests, ${(second / 1e6).toFixed(1)} MB`);
-  ok(first < 45e6, "the first visit stays under 45 MB (it now downloads every picture once, with a progress screen; the single-file page was 40 MB)", first);
+  ok(first < 100e6, "the first visit stays under 100 MB (every picture once, standard 33 MB + HD pack 51 MB, with a progress screen; the single-file page was 40 MB)", first);
   ok(second < 0.35 * first + 300000, "the second visit downloads far less than the first", [first, second]);
   ok(errs.length === 0, "no page errors", errs); ok(failed.length === 0, "no failed requests", failed.slice(0, 5));
   await b.close(); srv.kill();
