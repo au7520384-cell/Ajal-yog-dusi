@@ -26,3 +26,4 @@ de3a223676bff9  # ?: canvas3 on canvas
 d46a0480d4fa4e  # mad: canvas3 on canvas
 bd6b858ec7f8b5  # bue: canvas3 on canvas
 54e410d98ac675  # mex: canvas3 on canvas
+c0c8f16af14388  # acx_rich: bg on free#click13 . size=auto 100%
