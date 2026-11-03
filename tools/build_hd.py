@@ -19,15 +19,77 @@ MAX_PX = 1_100_000          # most output pixels of one picture
 Q = 82                      # WebP quality of the HD copies
 
 def page_images(src):
-    """(hash, raw bytes, page key) of every picture inside index.html, found the way tools/build_web.py finds them."""
+    """hash -> (raw bytes, page key, owner) of every picture inside index.html, found the way tools/build_web.py finds them. owner = the constant it is declared in (IMG, CUE_ART2, D ...)."""
+    import bisect
+    decl = [(m.start(), m.group(1) or m.group(2)) for m in re.finditer(r'(?:^|[;\n{}]\s*)(?:(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=|Object\.assign\(\s*([A-Za-z_$][\w$]*)\s*,)', src)]
+    pos = [d[0] for d in decl]
     pat = re.compile(r'(?:"([^"\n]{1,40})"\s*:\s*|([A-Za-z_][A-Za-z0-9_]*)\s*=\s*)?"?(?:data:image/(?:webp|png|jpeg|jpg|gif);base64,)?((?:UklGR|iVBOR|/9j/|R0lGOD)[A-Za-z0-9+/=]{300,})')
     seen = {}
     for m in pat.finditer(src):
         try: raw = base64.b64decode(m.group(3))
         except Exception: continue
         h = hashlib.sha1(raw).hexdigest()[:14]
-        if h not in seen: seen[h] = (raw, m.group(1) or m.group(2) or "?")
+        if h not in seen:
+            i = bisect.bisect_right(pos, m.start()) - 1
+            seen[h] = (raw, m.group(1) or m.group(2) or "?", decl[i][1] if i >= 0 else "?")
     return seen
+
+# Pictures that must keep their own pixels: the code (or the CSS) measures them in pixels, so a bigger copy would be drawn too big / cut in the wrong place.
+EXCLUDE_OWNERS = {   # constants of the page whose pictures are table art / frames / UI chrome with pixel tables next to them (pocket ring centres, rail caps, 9-slice borders ...)
+    "D", "ART_SRC", "PANART_SRC", "PREM_COL_SRC", "ROYAL_COL", "LON_TILE", "CORNER_ART", "POCKET_RING", "MODAL_FRAME", "MODAL_ART", "UI_SPR", "FLOOR_SRC", "LW", "ROOM_SRC", "s", "ctl"}
+EXCLUDE_FILE = os.path.join(root, "tools", "hd", "exclude.txt")   # hash  # why   (found by tools/hd_risk_audit.js: shown at its natural size somewhere)
+
+PIXEL_PROPS = {"border-image", "border-image-source", "-webkit-mask-image", "mask-image", "mask", "-webkit-mask", "list-style-image", "list-style", "cursor", "content",
+               "borderimage", "borderimagesource", "maskimage", "webkitmaskimage", "liststyleimage"}
+BG_PROPS = {"background", "background-image", "backgroundimage"}
+
+def css_risky(src, imgs):
+    """hash -> why, for the pictures that CSS uses in a way that depends on their pixels: border-image / mask / cursor / list-style / content, or a background with no background-size.
+    Looks at url(<data uri>) inside the page's CSS, at url(${DICT.key}) in the page's templates and at CSS variables set with setProperty("--x", `url(${DICT.key})`) and used as var(--x)."""
+    short = re.sub(r"[A-Za-z0-9+/=]{200,}", "<B64>", src)                      # the pictures themselves are not needed here (and make the regexes slow)
+    by_key = {(v[2], v[1]): h for h, v in imgs.items()}                          # (owner, key) -> hash
+    risky = {}
+    def decl_prop(txt, pos):
+        pre = txt[max(0, pos - 320): pos]
+        m = re.search(r"([a-zA-Z-]+)\s*:\s*[^;{}]*$", pre) or re.search(r"\.([A-Za-z]+)\s*=\s*[`'\"]?[^;]*$", pre)
+        return m.group(1).lower() if m else ""
+    def judge(txt, pos, h, what):
+        prop = decl_prop(txt, pos)
+        if prop in PIXEL_PROPS: risky.setdefault(h, f"{prop} ({what})")
+        elif prop in BG_PROPS:
+            win = txt[max(0, pos - 500): pos + 500]
+            if not re.search(r"background-size|backgroundSize|/\s*(?:cover|contain|\d|auto|100%)", win): risky.setdefault(h, f"background without a size ({what})")
+    # 1. url(${DICT.key}) / url(${DICT["key"]}) right in a template or a style string
+    for m in re.finditer(r"url\(\s*['\"]?\$\{\s*([A-Za-z_]\w*)(?:\.(\w+)|\[\s*['\"]([\w-]+)['\"]\s*\])\s*\}", short):
+        h = by_key.get((m.group(1), m.group(2) or m.group(3)))
+        if h: judge(short, m.start(), h, f"{m.group(1)}.{m.group(2) or m.group(3)}")
+    # 2. CSS variables: setProperty("--x", `url(${DICT.key})`)  ...  var(--x)
+    var_hash = {}
+    for m in re.finditer(r"setProperty\(\s*['\"](--[\w-]+)['\"]\s*,\s*[`'\"]url\(\s*['\"]?\$\{\s*([A-Za-z_]\w*)(?:\.(\w+)|\[\s*['\"]([\w-]+)['\"]\s*\])\s*\}", short):
+        h = by_key.get((m.group(2), m.group(3) or m.group(4)))
+        if h: var_hash.setdefault(m.group(1), set()).add(h)
+    for v, hs in var_hash.items():
+        for m in re.finditer(r"var\(\s*" + re.escape(v) + r"\s*[,)]", short):
+            prop = decl_prop(short, m.start())
+            for h in hs:
+                if prop in PIXEL_PROPS: risky.setdefault(h, f"{prop} via {v}")
+                elif prop in BG_PROPS:
+                    win = short[max(0, m.start() - 500): m.end() + 500]
+                    if not re.search(r"background-size|/\s*(?:cover|contain|\d|auto|100%)", win): risky.setdefault(h, f"background without a size via {v}")
+    # 3. url(<data uri>) written straight into the CSS
+    for m in re.finditer(r"url\(\s*['\"]?data:image/[a-z]+;base64,<B64>", short):
+        pass   # (no picture of the page is written this way: they all come from the dictionaries above)
+    return risky
+
+def excluded(src, imgs):
+    """hash -> reason for every picture that must not get an HD copy."""
+    ex = {h: "owner " + v[2] for h, v in imgs.items() if v[2] in EXCLUDE_OWNERS}
+    for h, why in css_risky(src, imgs).items(): ex.setdefault(h, "css: " + why)
+    if os.path.exists(EXCLUDE_FILE):
+        for ln in open(EXCLUDE_FILE):
+            ln = ln.split("#")[0].strip()
+            if ln: ex.setdefault(ln.split()[0], "exclude.txt: " + ln.partition(" ")[2].strip())
+    return ex
 
 def plan(key, w, h):
     """How many times bigger the HD copy is (None: no HD copy)."""
@@ -43,18 +105,24 @@ def plan(key, w, h):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dry", action="store_true"); ap.add_argument("--only"); ap.add_argument("--limit", type=int); ap.add_argument("--force", action="store_true")
+    ap.add_argument("--dry", action="store_true"); ap.add_argument("--prune", action="store_true", help="delete the HD copies of excluded pictures"); ap.add_argument("--only"); ap.add_argument("--limit", type=int); ap.add_argument("--force", action="store_true")
     a = ap.parse_args()
     src = open(os.path.join(root, "index.html"), encoding="utf-8").read()
-    imgs = page_images(src); todo = []
-    for h, (raw, key) in imgs.items():
+    imgs = page_images(src); ex = excluded(src, imgs); todo = []
+    for h, (raw, key, owner) in imgs.items():
+        if h in ex: continue
         try: im = Image.open(io.BytesIO(raw)); im.load()
         except Exception: continue
         if getattr(im, "is_animated", False) and im.n_frames > 1: continue
         k = plan(key, *im.size)
         if k is None or (a.only and not re.search(a.only, key)): continue
         todo.append((h, key, im, k))
+    print(f"{len(ex)} pictures are excluded (pixel-measured by the code or the CSS)")
     os.makedirs(OUT, exist_ok=True)
+    if a.prune:
+        gone = [f for f in os.listdir(OUT) if f.endswith(".webp") and f[:-5] in ex]
+        for f in gone: os.remove(os.path.join(OUT, f))
+        print("pruned", len(gone), "HD copies of excluded pictures")
     have = {f[:-5] for f in os.listdir(OUT) if f.endswith(".webp")}
     need = [t for t in todo if a.force or t[0] not in have]
     print(f"{len(imgs)} pictures in the page, {len(todo)} get an HD copy, {len(todo) - len(need)} already made, {len(need)} to make")
