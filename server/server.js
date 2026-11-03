@@ -369,6 +369,23 @@ function rollWeek() {
 }
 setInterval(rollWeek, 60000);
 function grant(u, g) { (u.grants = u.grants || []).push({...g, at: Date.now()}); markDirty(); }
+const QUIZ_COINS = 300, QUIZ_BONUS_CASH = 1, QUIZ_SET = 5, QUIZ_DAY_CAP = 10;   // a right answer = 300 coins, all five of the day right = +1 cash, at most 10 paid answers a day
+const quizState = (u, day) => {
+  const q = u.qz = u.qz || {done: {}, set: {day: "", ids: [], bonus: false}, paid: 0, pd: ""};
+  if (q.pd !== day) { q.pd = day; q.paid = 0; }
+  return q;
+};
+let _quizIds = null;
+function quizOrder(day) {   // all quiz ids in an order that only depends on the day (a small seeded shuffle)
+  if (!_quizIds) _quizIds = (CHAN_BANK.byCat.quiz || []).map(x => x.id).filter(id => /^Q\d+$/.test(id)).sort()   // only the quizzes of channel_bank.json (checked facts);
+  let h = 2166136261; for (const ch of day) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  const a = _quizIds.slice(); for (let i = a.length - 1; i > 0; i--) { h = (Math.imul(h, 1664525) + 1013904223) >>> 0; const j = h % (i + 1); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function quizView(id, qz) {   // what the page may see: the question and the options; the right answer and the explanation only after this player has answered it
+  const it = CHAN_BANK.byId[id], q = it.quiz, d = qz.done[id];
+  return {id, q: {uz: q.uz, en: q.en}, o: q.options, done: d ? {c: d.c, ok: d.ok, correct: q.correct | 0, x: {uz: q.explanation.uz, en: q.explanation.en}} : null};
+}
 const CLUB_MAX = 50, CLUB_LEVEL = 6, CLUB_PRIZES = [20, 10, 5];
 function clubScore(c) { const w = curWeek(); return c.members.reduce((a, id) => a + (db.users[id] && db.users[id].week === w ? db.users[id].weekWon || 0 : 0), 0); }
 function clubInfo(c) { return {id: c.id, name: c.name, badge: c.badge || 0, color: c.color || 0, members: c.members.length, score: clubScore(c), league: c.league || 0}; }
@@ -653,7 +670,8 @@ async function chanPoll(f, common, kb) {   // a poll or a quiz poll (the right a
   return tgApi("sendPoll", body);
 }
 async function chanSendItem(it, cat, quiet) {   // it: a post of the bank, or {html: {uz, en}} (the data posts, already escaped)
-  const link = chanLink(cat), kb = link ? {inline_keyboard: [[{text: "🎮 O'ynash · Play", url: link}]]} : undefined, common = {chat_id: CHAN_ID, disable_notification: !!quiet};
+  const qz = it.quiz && it.id && /^[A-Za-z0-9]{2,12}$/.test(it.id) && /^https:\/\/t\.me\//.test(TG_APP_LINK);   // a quiz post: the button opens the SAME question in the game, a right answer there pays coins (the channel cannot tell who voted)
+  const link = qz ? TG_APP_LINK.split("?")[0] + "?startapp=q_" + it.id : chanLink(cat), kb = link ? {inline_keyboard: [[{text: qz ? "🎁 Sovg'ani olish · Get your gift" : "🎮 O'ynash · Play", url: link}]]} : undefined, common = {chat_id: CHAN_ID, disable_notification: !!quiet};
   if (it.html) return tgApi("sendMessage", {...common, text: `${it.html.uz}\n\n${it.html.en}${link ? `\n\n▶ <a href="${plan.esc(link)}">O'ynash · Play</a>` : ""}`, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: kb});
   const f0 = plan.format(it, {link});
   if (f0.kind === "poll" || f0.kind === "quiz") return chanPoll(f0, common, kb);
@@ -838,6 +856,35 @@ const routes = {
   "GET /api/auth/config"() { return {google: GOOGLE_CLIENT_ID, facebook: FB_APP_ID, telegram: !!TG_BOT_TOKEN, tgLink: TG_APP_LINK, adsgram: process.env.ADSGRAM_BLOCK_ID || "", adsgramInt: process.env.ADSGRAM_INT_ID || "", adsgramVerify: !!AD_KEY, starsPerUsd: STARS_PER_USD, tgPay: !!TG_PAY_TOKEN && !!TG_BOT_TOKEN, payCur: TG_PAY_CUR, payPerUsd: PAY_PER_USD, p2p: (m => m[0].auto || m[0].atm || m[1].auto || m[1].atm ? {uz: m[0], world: m[1]} : null)([p2pModes(true), p2pModes(false)])}; },   // Adsgram block ids are public (they sit in the page); set in Render so the page needs no redeploy
   // body: {provider: "google"|"facebook", token}. A known provider id returns that account; otherwise the provider is linked to the signed-in account (or a new one is made).
   // Adsgram calls this when a player finished a rewarded video: GET /api/adsgram/reward?key=<ADSGRAM_REWARD_KEY>&userid=<Telegram id>
+  // ---- billiard quizzes with a gift: the daily set of 5 and the question a channel post links to. The server knows the right answers (the page never gets them before the player answers), pays each question
+  // once per player (coins arrive as a server grant: the game adds them by itself the next time it syncs) and stops at QUIZ_DAY_CAP paid answers a day.
+  async "POST /api/quiz/day"(req, u) {
+    const day = plan.localDay(Date.now()).key, qz = quizState(u, day);
+    if (qz.set.day !== day) {   // today's five: the same order for everybody on a given day, but questions this player has already answered (for instance from a channel post) are left out
+      const ids = quizOrder(day).filter(id => !qz.done[id]).slice(0, QUIZ_SET), all = quizOrder(day);
+      for (const id of all) { if (ids.length >= QUIZ_SET) break; if (!ids.includes(id)) ids.push(id); }
+      qz.set = {day, ids, bonus: false}; markDirty();
+    }
+    return {day, coins: QUIZ_COINS, bonusCash: QUIZ_BONUS_CASH, bonus: !!qz.set.bonus, items: qz.set.ids.map(id => quizView(id, qz))};
+  },
+  async "POST /api/quiz/one"(req, u) {   // the question a channel post sends to (startapp=q_<id>)
+    const b = await jsonBody(req), id = String(b.id || ""), it = CHAN_BANK.byId[id];
+    if (!it || !it.quiz || !/^Q\d+$/.test(id)) return [404, {error: "no_quiz"}];
+    return {coins: QUIZ_COINS, item: quizView(id, quizState(u, plan.localDay(Date.now()).key))};
+  },
+  async "POST /api/quiz/answer"(req, u) {
+    if (limited(req, "quizans", 60)) return [429, {error: "slow down"}];
+    const b = await jsonBody(req), id = String(b.id || ""), it = CHAN_BANK.byId[id];
+    if (!it || !it.quiz || !/^Q\d+$/.test(id)) return [404, {error: "no_quiz"}];
+    const day = plan.localDay(Date.now()).key, qz = quizState(u, day), q = it.quiz, c = Math.floor(+b.c);
+    if (qz.done[id]) return {again: true, coins: 0, ...quizView(id, qz)};   // answered before: shown again, nothing more is paid
+    if (!(c >= 0 && c < q.options.length)) return [400, {error: "bad_choice"}];
+    const ok = c === (q.correct | 0); qz.done[id] = {c, ok, d: day};
+    let coins = 0, cash = 0;
+    if (ok && (qz.paid | 0) < QUIZ_DAY_CAP) { coins = QUIZ_COINS; qz.paid = (qz.paid | 0) + 1; grant(u, {coins, cash: 0, kind: "quiz", from: id}); }
+    if (qz.set.day === day && !qz.set.bonus && qz.set.ids.every(x => qz.done[x] && qz.done[x].ok)) { qz.set.bonus = true; cash = QUIZ_BONUS_CASH; grant(u, {coins: 0, cash, kind: "quiz", from: "5/5"}); }
+    markDirty(); return {again: false, coins, cash, ...quizView(id, qz)};
+  },
   "POST /api/src"(req, u) {   // the page reports the ad link it was opened from (startapp=c_NAME): opens, and new players (account made in the last 6 h, counted once)
     return jsonBody(req).then(b => {
       const n = String(b.src || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 24); if (!n) return [400, {error: "bad_src"}];

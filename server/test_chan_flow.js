@@ -40,7 +40,7 @@ const TOKEN = '123:test', ADMIN = '777';
   const kb = x => { const r = x.body.reply_markup; return typeof r === 'string' ? JSON.parse(r) : r; };
   const urls = P.map(x => { const k = kb(x); return k && k.inline_keyboard[0][0].url; });
   ok(urls[0] && /^https:\/\/t\.me\/Billiard8PoolBot\/Play\?startapp=c_ch_feat$/.test(urls[0]), 'the first post carries the Play button with the tracked link c_ch_feat', urls);
-  ok(urls[1] && /startapp=c_ch_quiz$/.test(urls[1]) || pollMarkupFails, 'the quiz carries c_ch_quiz', urls);
+  ok(urls[1] && /startapp=q_Q[0-9]+$/.test(urls[1]) || pollMarkupFails, 'the quiz button opens the game question (startapp=q_<id>), which also counts as the ch_quiz source', urls);
   const text0 = P[0].body.text || P[0].body.caption || ''; ok(/<b>/.test(text0) && /▶ <a href="https:\/\/t\.me\/Billiard8PoolBot\/Play\?startapp=c_ch_feat">/.test(text0) && /#RoyalBilliard8/.test(text0), 'the text has a bold title, a tracked link and a hashtag', text0.slice(0, 300));
   if (P[0].method === 'sendPhoto') ok(P[0].body.photoBytes > 20000, 'a picture was uploaded', P[0].body.photoBytes);
   // the owner's /chan
