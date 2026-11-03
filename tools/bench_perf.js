@@ -4,6 +4,7 @@
 // idle = the table with nothing moving, break = the first 2 seconds after a full-power break (all balls rolling). js = the game's own code per frame (ms), frame = time between frames, slow = frames over 25 ms.
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = process.env.B8_ROOT || path.resolve(__dirname, "..");
+const WARM = +process.env.WARM || 2500;   // ms between the start of the match and the first measurement (the first seconds also decode the pictures: a one-off cost)
 const CPUS = (process.env.CPUS || "1,4").split(",").map(Number), GFX = (process.env.GFX || "mid,high,ultra").split(","), DPR = +process.env.DPR || 3, VW = +process.env.VW || 915, VH = +process.env.VH || 412;
 (async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8bp-")), P = 8371, base = `http://localhost:${P}`;
@@ -22,15 +23,15 @@ const CPUS = (process.env.CPUS || "1,4").split(",").map(Number), GFX = (process.
       for (const rate of CPUS) {
         await cdp.send("Emulation.setCPUThrottlingRate", { rate });
         for (const q of GFX) {
-          const r = await p.evaluate(async q => {
+          const r = await p.evaluate(async ([q, W]) => {
             try { toMenu("home"); } catch (e) {} setOpt("gfx", q); startMatch("ai", CITIES[0]);
-            await new Promise(r => setTimeout(r, 2500));
+            await new Promise(r => setTimeout(r, W));
             const frames = async n => { const t = []; let last = performance.now(); await new Promise(res => { let k = 0; const f = now => { t.push(now - last); last = now; if (++k < n) requestAnimationFrame(f); else res(); }; requestAnimationFrame(f); }); return t; };
             const stat = (t, js) => ({ js: +(js.s / (js.n || 1)).toFixed(1), jsMax: +js.m.toFixed(0), frame: +(t.reduce((a, b) => a + b, 0) / t.length).toFixed(1), slow: t.filter(x => x > 25).length });
             perfJ.s = perfJ.n = perfJ.m = 0; const t1 = await frames(60), idle = stat(t1, perfJ);
             perfJ.s = perfJ.n = perfJ.m = 0; game.angle = 0; try { doShoot(1); } catch (e) {} const t2 = await frames(120), brk = stat(t2, perfJ);
             return { canvas: cv.width + "x" + cv.height, dpr: +dpr.toFixed(2), idle, brk };
-          }, q);
+          }, [q, WARM]);
           console.log(JSON.stringify({ hd, cpu: rate, gfx: q, ...r }));
         }
       }
