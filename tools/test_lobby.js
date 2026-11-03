@@ -6,7 +6,7 @@
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), N = +process.env.MATCHES || 4;
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 400) : ""); } };
-const STATE = () => { const G = typeof game !== "undefined" ? game : null; return { mode, hasGame: !!G, net: !!(G && G.net), over: !!(G && G.over), cur: G ? G.cur : null, seat: G && G.net ? G.net.seat : null, busy: !!(G && (G.moving || G.strike)), ctl: G ? !!canControl() : false,
+const STATE = () => { const G = typeof game !== "undefined" ? game : null; return { mode, hasGame: !!G, net: !!(G && G.net), over: !!(G && G.over), cur: G ? G.cur : null, seat: G && G.net ? G.net.seat : null, busy: !!(G && (G.moving || G.strike || (G.replayQ && G.replayQ.length))), ctl: G ? !!canControl() : false,
   res: document.getElementById("res").classList.contains("on"), lb: !!(typeof LB !== "undefined" && LB), queued: !!(typeof LB !== "undefined" && LB && LB.queued), room: G && G.net ? G.net.room || "" : "",
   balls: G && G.balls ? G.balls.map(b => [Math.round(b.x), Math.round(b.y), b.out ? 1 : 0]) : null, shots: window.__shots | 0 }; };
 (async () => {
@@ -65,7 +65,7 @@ const STATE = () => { const G = typeof game !== "undefined" ? game : null; retur
         await waitGame(A); const ctl = await A.evaluate(() => ({ cur: game.cur, intro: introOn(game) })); await sleep(500);
         if (ctl.cur === 0) { await A.waitForFunction(() => canControl(), null, { timeout: 20000 }).catch(() => {}); await shoot(A); await sleep(5000); }   // the host shoots before the guest has even started the match
         else await sleep(1500);
-        await B.evaluate(() => lbAfterMatch()); await waitGame(B).catch(e => ok(false, `match ${m + 1} (race): the guest starts the match`, String(e).slice(0, 80))); await sleep(1500);
+        await B.evaluate(() => lbAfterMatch()); await waitGame(B).catch(e => ok(false, `match ${m + 1} (race): the guest starts the match`, String(e).slice(0, 80))); await sleep(800); await still(); await sleep(800);   // the late phone replays the shots it missed: wait until it has finished
         const [a2, c2] = [await st(A), await st(B)];
         ok(a2.cur + c2.cur === 1, `match ${m + 1} (race): after the guest joins, exactly one phone has the turn`, { a: a2.cur, b: c2.cur, hostShot: ctl.cur === 0 });
         ok(JSON.stringify(a2.balls) === JSON.stringify(c2.balls) || a2.balls.every((x, i) => Math.abs(x[0] - c2.balls[i][0]) <= 2 && Math.abs(x[1] - c2.balls[i][1]) <= 2 && x[2] === c2.balls[i][2]), `match ${m + 1} (race): the late phone shows the same balls (the first shot was not lost)`, { a: a2.balls && a2.balls.slice(0, 3), b: c2.balls && c2.balls.slice(0, 3) });
