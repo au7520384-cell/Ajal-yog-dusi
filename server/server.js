@@ -1853,7 +1853,7 @@ wss.on("connection", (ws, req) => {
         if (!bucket(ws, "rtc", 60, 500)) return;
         m = {t: "rtc", k: String(m.k || "").slice(0, 12), d: m.d && typeof m.d === "object" ? m.d : null};
       }
-      const out = {...m, from: ws.seat};
+      const out = {...m, from: ws.seat, room: room.id};   // the match id: a phone that has not started this match yet keeps the message, one that is in another match drops it
       if (m.t === "state") room.last = out;
       wsSend(other, out);
       if (SPEC_FWD.has(m.t) && room.specs.size) for (const sp of room.specs) wsSend(sp, out);
