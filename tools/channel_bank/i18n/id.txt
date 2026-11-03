@@ -1,0 +1,151 @@
+// Indonesian (questions and options; the explanation in English is shown after the answer)
+Q001|Berapa bola di meja pada biliar 9 bola, termasuk bola putih?|=;=;=;=|
+Q002|Pada biliar 9 bola, bola mana yang harus disentuh bola putih lebih dulu?|Bola mana saja;Bola dengan nomor tertinggi;Bola 9;Bola dengan nomor terendah|
+Q003|Pada biliar 9 bola, bola mana yang memenangkan permainan jika dimasukkan secara sah?|Bola 8;Bola 1;Bola putih;Bola 9|
+Q004|Dalam bentuk apa bola disusun pada biliar 9 bola?|Lingkaran;Segitiga;Persegi;Belah ketupat|
+Q005|Dalam berapa baris 15 bola disusun dalam segitiga?|=;=;=;=|
+Q006|Berapa jumlah nomor bola 1 sampai 15?|=;=;=;=|
+Q007|Berapa bola merah dalam snooker?|=;=;=;=|
+Q008|Berapa break maksimum yang mungkin dalam snooker?|=;=;=;=|
+Q009|Berapa poin bola hitam dalam snooker?|=;=;=;=|
+Q010|Berapa panjang meja snooker ukuran penuh?|15 kaki;12 kaki;9 kaki;7 kaki|
+Q011|Berapa lubang di meja biliar karambol?|=;=;=;=|
+Q012|Apa itu pukulan «masse»?|Melompatkan bola putih;Pukulan memantul bantalan;Pukulan pembuka;Stik hampir tegak dan bola melengkung|
+Q013|Apa nama pukulan ketika bola putih dilompatkan melewati bola yang menghalangi?|=;Pukulan bantalan (bank shot);Bertahan (safety);Pembuka (break)|
+Q014|Bola putih mengenai bantalan dulu, baru bola target. Pukulan apa itu?|=;=;=;=|
+Q015|Bola target mengenai bantalan lalu masuk lubang. Apa itu?|Kombinasi;Kick shot;Scratch;=|
+Q016|Bola putih memukul satu bola, yang memasukkan bola lain. Ini disebut...|Kombinasi;Pelanggaran;Bertahan;Kick shot|
+Q017|Apa nama tangan (atau alat) penahan stik dalam bahasa Inggris?|=;=;=;=|
+Q018|Apa nama segitiga untuk menyusun bola sebelum pukulan pembuka dalam bahasa Inggris?|=;=;=;=|
+Q019|Apa nama tepi empuk meja dalam bahasa Inggris?|=;=;=;Cushion (rail): bantalan|
+Q020|Apa nama kain lembut yang menutupi meja?|=;=;=;=|
+Q021|Apa nama pukulan ketika bola putih berhenti di tempat setelah menyentuh?|=;=;=;=|
+Q022|Anda memukul di atas tengah agar bola putih terus menggelinding ke depan. Apa namanya?|Follow (efek maju);Stop shot;Draw (efek mundur);=|
+Q023|Apa nama pukulan pertama permainan yang menyebarkan bola yang tersusun?|=;=;=;=|
+Q024|Untuk apa metode «bola hantu» (ghost ball)?|Mengapuri stik;Melompati bola;Menyusun bola;Membayangkan ke mana bola putih harus tiba|
+Q025|Dalam kondisi ideal, dengan sudut berapa bola meninggalkan bantalan?|Sama dengan sudut datang;Acak;Dua kali lipat;Selalu 90°|
+Q026|Dari apa ujung (tip) stik biasanya dibuat?|Kaca;Kayu;Logam;Kulit|
+Q027|Dari apa bola biliar modern sebagian besar dibuat?|Resin (plastik);Kaca;Gading;Kayu|
+Q028|Kira-kira berapa panjang stik biliar standar?|90 cm;120 cm;147 cm;200 cm|
+Q029|Kira-kira berapa diameter bola biliar standar?|3 cm;5,7 cm;8 cm;10 cm|
+Q030|Kira-kira seberapa besar area permainan meja biliar 9 kaki?|=;=;=;=|
+Q031|Bola nomor 1 pada set 8 bola standar berwarna apa?|Kuning;Hijau;Biru;Merah|
+Q032|Bola nomor 5 pada set standar berwarna apa?|Hijau;Hitam;Ungu;Oranye|
+Q033|Efren «Sang Penyihir» Reyes, legenda biliar, berasal dari negara mana?|Jepang;Tiongkok;AS;Filipina|
+Q034|Berapa bola berturut-turut yang dimasukkan Willie Mosconi dalam pertunjukan straight pool?|=;=;=;=|
+Q035|Siapa yang memerankan «Fast Eddie» dalam film «The Hustler» (1961)?|=;Robert De Niro;Tom Cruise;Brad Pitt|
+Q036|Siapa yang bermain bersama Paul Newman dalam «The Color of Money» (1986)?|Tom Cruise;Tom Hanks;Keanu Reeves;Al Pacino|
+Q037|Apa julukan legenda snooker Ronnie O'Sullivan?|=;=;=;=|
+Q038|Kata Inggris «cue» berasal dari kata Prancis apa?|cube (kubus);clé (kunci);cible (sasaran);queue (ekor)|
+Q039|Di kota mana Big Ben berada? Itu juga meja pertama dalam game!|London;Paris;Madrid;Roma|
+Q040|Sydney, terkenal dengan Gedung Opera beratap layar, ada di negara mana?|Kanada;Afrika Selatan;Selandia Baru;Australia|
+Q041|Kue tart custard «pastel de nata» berasal dari negara mana?|Portugal;Spanyol;Prancis;Italia|
+Q042|Di kota mana stadion Santiago Bernabéu berada?|Lisbon;Barcelona;Roma;Madrid|
+Q043|Apa nama Tokyo sebelum tahun 1868?|=;Osaka;Nagoya;Kyoto|
+Q044|Apa itu «dojo» dalam bahasa Jepang?|Aula latihan bela diri;Taman;Rumah teh;Kuil|
+Q045|Tarian tango terkait dengan negara mana (meja Buenos Aires: «Tango Salon»)?|Spanyol;Brasil;Meksiko;Argentina|
+Q046|Indonesia, tempat Jakarta berada, memiliki kira-kira berapa pulau?|=;=;=;=|
+Q047|Daun pohon apa yang ada di bendera Kanada (meja Toronto: «Maple Lounge»)?|Maple;Ek;Palem;Birch|
+Q048|Kota Meksiko dibangun di atas kota kuno apa?|Teotihuacan;Chichén Itzá;Machu Picchu;Tenochtitlan|
+Q049|Di negara mana piramida Giza berada (meja Kairo: «Pyramid Hall»)?|Mesir;Sudan;Maroko;Yordania|
+Q050|Di kota mana Burj Khalifa setinggi 828 meter berada?|Singapura;Shanghai;New York;Dubai|
+Q051|Nama «Singapura» berarti «Kota Singa». Benar atau salah?|Benar;Salah|
+Q052|Di kota mana Menara Mutiara Oriental berada?|Bangkok;Shanghai;Seoul;Osaka|
+Q053|Di kota mana Menara Eiffel berada?|Roma;Paris;Berlin;Amsterdam|
+Q054|Apa nama asli New York?|New Amsterdam;New Paris;New Rome;New London|
+Q055|Di kota mana Colosseum berada?|Kairo;Istanbul;Athena;Roma|
+Q056|Bangkok adalah ibu kota negara mana?|Kamboja;Thailand;Malaysia;Vietnam|
+Q057|Di kota mana Menara Kembar Petronas yang terkenal berada?|Singapura;Manila;Jakarta;Kuala Lumpur|
+Q058|Seoul adalah ibu kota negara mana?|Korea Selatan;Tiongkok;Jepang;Thailand|
+Q059|Apa nama Mumbai sampai tahun 1995?|Bombay;Madras;Delhi;Kolkata|
+Q060|Di kota mana Olimpiade modern pertama diadakan pada 1896?|Roma;London;Paris;Athena|
+Q061|Pada tahun berapa Tembok Berlin runtuh?|=;=;=;=|
+Q062|Istanbul berada di dua benua apa?|Asia dan Amerika;Eropa dan Asia;Eropa dan Afrika;Asia dan Afrika|
+Q063|Apa arti nama «Casablanca»?|Rumah putih;Kota baru;Laut Hitam;Pasar besar|
+Q064|Berapa dari 30 kota dalam game ini yang ada di Jepang?|=;=;=;=|
+Q065|Pada tahun berapa metro Tashkent, yang pertama di Asia Tengah, dibuka?|=;=;=;=|
+Q066|Pada tahun berapa Tashkent merayakan ulang tahun ke-2.200?|=;=;=;=|
+Q067|Apa arti nama «Rio de Janeiro»?|Danau besar;Sungai Januari;Sungai emas;Angin laut|
+Q068|Di alun-alun mana Katedral Santo Basilius berdiri?|Times Square;Alun-alun Taksim;Alun-alun Kemerdekaan;Lapangan Merah|
+Q069|Di negara bagian AS mana Las Vegas berada?|Texas;Nevada;Florida;California|
+Q070|Amsterdam adalah ibu kota negara mana?|Belanda;Denmark;Swedia;Belgia|
+Q071|Kira-kira berapa banyak stik dalam game ini?|=;=;=;=|
+Q072|Berapa stik negara dalam game ini?|=;=;=;=|
+Q073|Berapa avatar potret yang gratis?|=;=;=;=|
+Q074|Berapa paket stiker yang ada?|=;=;=;=|
+Q075|Berapa 💎 harga satu paket stiker?|=;=;=;=|
+Q076|Berapa jenis hadiah yang bisa dikirim ke lawan dalam pertandingan?|=;=;=;=|
+Q077|Hadiah mana yang terbesar (👍 ×7.000)?|Mobil;Permata;Mahkota;Jet|
+Q078|Dua hadiah mana yang gratis setiap hari?|Mahkota dan permata;Semanggi dan cokelat;Mobil dan jet;Kue dan buket|
+Q079|Berapa level Season Pass?|=;=;=;=|
+Q080|Pukul berapa (waktu Tashkent) piala harian dibuka?|=;=;=;=|
+Q081|Berapa lama piala harian terbuka setelah dimulai?|Sepanjang hari;6 jam;1 jam;3 jam|
+Q082|Berapa pemain yang ikut Piala Dunia?|=;=;=;=|
+Q083|Berapa pemain di Piala Eropa?|=;=;=;=|
+Q084|Dengan berapa trofi Meja Grandmaster terbuka?|=;=;=;=|
+Q085|Dari berapa potongan stik Grandmaster legendaris dirakit?|=;=;=;=|
+Q086|Berapa potongan yang membentuk satu stik Kemenangan?|=;=;=;=|
+Q087|Mulai level berapa Anda bisa membuat atau bergabung dengan klub?|=;=;=;=|
+Q088|Berapa jumlah maksimum anggota dalam satu klub?|=;=;=;=|
+Q089|Berapa 💵 yang diterima peringkat 1 dalam peringkat dunia mingguan?|=;=;=;=|
+Q090|Berapa 💵 yang diterima peringkat 1 dalam peringkat negara?|=;=;=;=|
+Q091|Kapan peringkat mingguan direset (waktu Tashkent)?|Senin, 05:00;Sabtu, 20:00;Jumat, 00:00;Selasa, 12:00|
+Q092|Kira-kira berapa bagian liga yang naik setiap minggu?|=;=;=;=|
+Q093|Berapa diskon «Meja Minggu Ini»?|=;=;=;=|
+Q094|Berapa salinan edisi terbatas paling langka, Opal Pelangi?|=;=;=;=|
+Q095|Berapa salinan tingkat terbatas paling umum, Perunggu?|=;=;=;=|
+Q096|Kota mana yang punya meja termurah (pertama) dalam game?|Tashkent;Dubai;Moskow;London|
+Q097|Kota mana yang punya meja tertinggi (terakhir) dalam game?|Moskow;New York;Tashkent;Rio|
+Q098|Apa nama meja Tashkent dalam game?|=;=;=;=|
+Q099|Apa warna kain meja London?|Biru;Merah;Hitam;Kuning|
+Q100|Meja kota mana yang berkain hitam?|London;Madrid;Sydney;Las Vegas|
+Q101|Pada hari keberapa rute hadiah ada «hadiah besar»?|Hari 8;Hari 7;Hari 5;Hari 3|
+Q102|Berapa banyak medali (pencapaian)?|=;=;=;=|
+Q103|Manakah yang BUKAN filter di daftar «Lobi terbuka»?|Kursi kosong;Ruang suara;Teman;Harga stik|
+Q104|Berapa tambahan cincin kota pada poin Showdown Anda?|=;=;=;=|
+Q105|Berapa kemenangan untuk cincin meja London (+4 per kemenangan, target 15 trofi)?|=;=;=;=|
+Q106|Berapa tahap hadiah di Showdown?|=;=;=;=|
+Q107|Berapa pemain di piala kejuaraan setiap kota?|=;=;=;=|
+Q108|Piala harian mana yang terbesar (hadiah 400.000 🪙)?|Sore;Malam;Pagi;Siang|
+Q109|Berapa pemain maksimum yang dapat berbicara di ruang suara lobi?|=;=;=;=|
+Q110|Berapa bola dalam kelompok satu pemain di biliar 8 bola (tanpa bola 8)?|=;=;=;=|
+Q111|Dengan 15 bola target dan satu bola putih, berapa bola yang bergaris?|=;=;=;=|
+Q112|Tanpa bola putih, bola biliar 8 bola terbagi menjadi berapa kelompok?|=;=;=;=|
+Q113|Berapa kali legenda Willie Mosconi menjadi juara dunia?|=;=;=;=|
+Q114|Pada 1953, berapa bola berturut-turut yang dimasukkan Mosconi dalam straight pool?|=;=;=;=|
+Q115|Siapa yang memerankan Minnesota Fats dalam film «The Hustler» (1961)?|Jackie Gleason;Paul Newman;Robert De Niro;Tom Cruise|
+Q116|Apa julukan karakter Paul Newman dalam «The Hustler»?|=;=;=;=|
+Q117|Juara mana yang mengajari Paul Newman dan memainkan pukulan sulitnya di film?|Efren Reyes;Willie Mosconi;Steve Davis;Ronnie O'Sullivan|
+Q118|Apa julukan bintang snooker Ronnie O'Sullivan?|=;=;=;=|
+Q119|Dengan julukan apa Alex Higgins dari snooker dikenal?|=;=;=;=|
+Q120|Dengan julukan apa Jimmy White dikenal?|=;=;=;=|
+Q121|Apa julukan juara dunia berkali-kali Steve Davis?|=;=;=;=|
+Q122|Apa arti julukan «Bata» milik Efren Reyes dalam bahasa Tagalog?|Singa;Petir;Master;Anak|
+Q123|Dengan julukan apa Earl Strickland dikenal?|=;=;=;=|
+Q124|Apa julukan Shane Van Boening?|=;=;=;=|
+Q125|Leo Tolstoy menulis cerita «Catatan Seorang Marker» pada 1855. Tentang permainan apa?|Kartu;Dam;Catur;Biliar|
+Q126|Dalam lakon Shakespeare yang mana biliar disebut?|Macbeth;Romeo dan Juliet;Antony dan Cleopatra;Hamlet|
+Q127|Raja mana yang, atas saran dokternya, bermain biliar untuk olahraga dan membuatnya populer di istana?|Amir Temur;Pyotr I dari Rusia;Louis XIV dari Prancis;Julius Caesar|
+Q128|Apa yang ada di rumah komponis Wolfgang Amadeus Mozart di Wina?|Kandang kuda;Meja biliar;Kolam di perpustakaan;Ring tinju|
+Q129|Biliar konon berkembang dari jenis permainan apa?|Permainan bola di rumput;Gulat;Renang;Catur|
+Q130|Dari bahasa apa kata «biliar» berasal?|Arab;Spanyol;Jerman;Prancis|
+Q131|Apa arti awal kata «pool»?|Kain meja;Kolam renang;Jenis stik;Kumpulan taruhan bersama|
+Q132|Sebelum abad ke-19, dari apa bola biliar dibuat?|Baja;Kayu dicat;Gading;Kaca|
+Q133|Dari apa bola biliar profesional modern sebagian besar dibuat?|Resin fenolik;Karet;Logam;Batu alam|
+Q134|Dari apa ujung stik biasanya dibuat?|Logam;Kulit;Plastik;Kaca|
+Q135|Untuk apa kapur di ujung stik?|Agar terlihat bagus;Untuk cengkeraman, agar stik tidak tergelincir;Mengubah warna bola;Membersihkan meja|
+Q136|Kira-kira berapa diameter bola biliar?|=;=;=;=|
+Q137|Berapa diameter bola pada biliar Rusia (piramida)?|=;=;=;=|
+Q138|Kira-kira seberapa besar area permainan meja biliar 9 kaki?|=;=;=;=|
+Q139|Berapa poin bola biru dalam snooker?|=;=;=;=|
+Q140|Berapa poin bola merah muda dalam snooker?|=;=;=;=|
+Q141|Berapa bola merah di meja snooker?|=;=;=;=|
+Q142|Dalam bentuk apa bola disusun pada biliar 9 bola?|Segitiga;Persegi;Lingkaran;Belah ketupat|
+Q143|Pada biliar 8 bola, apa yang terjadi jika Anda memasukkan bola 8 terlalu cepat?|Biasanya kalah;Dapat poin tambahan;Tidak ada;Giliran tidak berpindah|
+Q144|Dalam «14.1 straight pool», apa arti angka 14?|Menit;Ukuran meja;Setelah 14 bola masuk, sisanya disusun ulang;Jumlah pemain|
+Q145|Berapa lubang di meja biliar karambol?|=;=;=;=|
+Q146|Dalam biliar tiga bantalan, apa yang harus dilakukan bola putih?|Menyentuh minimal 3 bantalan dan mengenai bola kedua;Berputar 3 kali;Berhenti dalam 3 detik;Memasukkan 3 bola|
+Q147|Apa itu «jump shot» (pukulan lompat)?|Pemain melompat;Meja melompat;Stik melompat;Bola putih melompati bola lain|
+Q148|Apa yang dilakukan dalam pukulan «masse»?|Hanya memukul bantalan;Stik dilempar;Stik hampir tegak dan bola melengkung;Bola dipukul lurus|
+Q149|Apa itu «bank shot»?|Ganti meja;Memasukkan bola target dengan memantul bantalan;Memasukkan bola putih;Memukul bola dua kali|
+Q150|Dalam biliar, apa itu «kiss» (ciuman)?|Bola saling menyentuh pelan;Bola dimasukkan;Pelanggaran;Akhir permainan|
