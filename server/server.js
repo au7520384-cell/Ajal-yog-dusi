@@ -674,6 +674,10 @@ async function chanSendItem(it, cat, quiet) {   // it: a post of the bank, or {h
   const link = qz ? TG_APP_LINK.split("?")[0] + "?startapp=q_" + it.id : chanLink(cat), kb = link ? {inline_keyboard: [[{text: qz ? "🎁 Sovg'ani olish · Get your gift" : "🎮 O'ynash · Play", url: link}]]} : undefined, common = {chat_id: CHAN_ID, disable_notification: !!quiet};
   if (it.html) return tgApi("sendMessage", {...common, text: `${it.html.uz}\n\n${it.html.en}${link ? `\n\n▶ <a href="${plan.esc(link)}">O'ynash · Play</a>` : ""}`, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: kb});
   const f0 = plan.format(it, {link});
+  if (f0.kind === "quiz" && qz) {   // a picture card with the question and the options first, the quiz poll right under it (a poll cannot carry a picture); no card file or Telegram refusing it: the poll alone
+    const card = path.join(__dirname, "channel", `qc_${it.id}.jpg`);
+    if (fs.existsSync(card)) { try { const m = await chanPhoto(CHAN_ID, card, "", undefined, quiet); return await chanPoll(f0, {...common, reply_parameters: {message_id: m.message_id, allow_sending_without_reply: true}}, kb); } catch (e) { console.error("chan: quiz card:", e.message); } }
+  }
   if (f0.kind === "poll" || f0.kind === "quiz") return chanPoll(f0, common, kb);
   const go = f => f.kind === "photo" ? chanPhoto(CHAN_ID, path.join(__dirname, "channel", path.basename(f.img)), f.html, kb, quiet) : tgApi("sendMessage", {...common, text: f.html, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: kb});
   try { return await go(f0); }
