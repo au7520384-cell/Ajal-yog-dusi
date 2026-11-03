@@ -1,0 +1,28 @@
+# Pictures that must not get an HD copy: shown at their natural size by the page (found by tools/hd_risk_audit.js; the pixel-measured families are excluded by owner in tools/build_hd.py).
+# format:  <hash>  # <key>: <why>   - re-run the audit after big UI changes and add what it finds
+15eb4e5c3890a0  # ach2_bg: bg on home,shop_cues,shop_avatars .panel size=auto, cover, auto
+4eb6f72c38a948  # ach_frame: borderImageSource on home,shop_cues,shop_avatars .panel
+5bb9c4d127abd6  # shop_bg: bg on shop_cues,shop_avatars,shop_frames shop.screen on size=auto, cover
+362304d61ffa8a  # wood_card: borderImageSource on shop_avatars,shop_frames,shop_boxes .avcard
+f55d574a65aaf5  # c3: img on shop_money . < .pkimg
+17ab052221c7d6  # c4: img on shop_money . < .pkimg
+d32ff35171d121  # c6: img on shop_money . < .pkimg
+9463968eb1c7f6  # k2: img on shop_money . < .pkimg
+6119d0d69231d1  # k5: img on shop_money . < .pkimg
+4f295f5bfc5c8f  # k6: img on shop_money . < .pkimg
+6da553bcfeb876  # ach_card: borderImageSource on tour,friends,clubs .card dailybox
+8aa80bff07d1d9  # tbl_syd: canvas3 on canvas
+c417b1cfce47bc  # src: canvas3 on canvas
+34fca4f767f5cf  # lon: canvas3 on canvas
+90be711348ec62  # l_sap: canvas3 on canvas
+0fb2768bb4003e  # ?: canvas3 on canvas
+375f4ea3865db9  # ?: canvas3 on canvas
+2f9af27fb930d4  # ?: canvas3 on canvas
+3a7e67b378ecab  # ?: canvas3 on canvas
+1de6535ad03801  # ?: canvas3 on canvas
+6c3ccd29e69aad  # ?: canvas3 on canvas
+de3a223676bff9  # ?: canvas3 on canvas
+07475b2873a113  # ?: canvas3 on canvas
+d46a0480d4fa4e  # mad: canvas3 on canvas
+bd6b858ec7f8b5  # bue: canvas3 on canvas
+54e410d98ac675  # mex: canvas3 on canvas

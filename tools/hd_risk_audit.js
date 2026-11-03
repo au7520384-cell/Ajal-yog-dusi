@@ -2,6 +2,7 @@
 // Which pictures would break if their file became 2-4 times bigger?  node tools/hd_risk_audit.js [out.json]     (B8_ROOT=<repo copy>)
 // An HD copy has the same picture but more pixels. Code that sizes things by the picture's own pixels (an <img> with no CSS size, a background-size:auto, drawImage(img, x, y) with no size,
 // drawImage(img, x, y, img.width, img.height)) would draw it 2-4 times too big. This visits the screens with the HD pack OFF and lists every picture that is shown at its natural size.
+// CRAWL=1 also clicks the buttons / cards of every screen one by one (dialogs, popups) and looks again after each click (slow: ~20 min).
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), OUTF = process.argv[2] || "";
 const SCREENS = [["home", ""], ["shop_cues", "go('shop','cues')"], ["shop_avatars", "go('shop','avatars')"], ["shop_frames", "go('shop','frames')"], ["shop_tables", "go('shop','tables')"], ["shop_boxes", "go('shop','boxes')"],
@@ -26,15 +27,12 @@ const SCREENS = [["home", ""], ["shop_cues", "go('shop','cues')"], ["shop_avatar
         return dI.apply(this, arguments);
       };
     });
+    p.on("dialog", d => d.dismiss().catch(() => {})); ctx.on("page", pg => { if (pg !== p) pg.close().catch(() => {}); });
+    await p.addInitScript(() => { window.__clk = () => [...document.querySelectorAll("button, .btn, .card, .tab, [data-go], [data-tab], [data-s], .avcard, .gitem, .tile, [onclick]")].filter(e => { const r = e.getBoundingClientRect(); return r.width > 8 && r.height > 8 && r.top < innerHeight && r.left < innerWidth && !e.closest("#perfBox") && !e.hasAttribute("data-hd") && e.id !== "lsGuest" && !/pay|buy|stripe|ads?|watch/i.test(e.id + e.className); }); });
     await p.goto(base + "/", { waitUntil: "commit" });
     await p.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 120000 }); await sleep(1200);
     const g = await p.$("#lsGuest"); if (g) await g.click().catch(() => {}); await sleep(800);
-    for (const [name, code] of SCREENS) {
-      try {
-        if (!/^match/.test(name)) await p.evaluate(() => { try { if (mode !== "menu") toMenu("home"); } catch (e) {} }); await sleep(300);
-        if (code) await p.evaluate(c => { eval(c); }, code);
-        await sleep(/^match/.test(name) ? 3000 : 1600);
-        const risk = await p.evaluate(() => {
+    const audit = () => p.evaluate(() => {
           const out = [], hash = u => { const m = /\/img\/([0-9a-f]{14})\./.exec(u || ""); return m ? m[1] : null; };
           for (const im of document.images) {
             const r = im.getBoundingClientRect(), h = hash(im.currentSrc || im.src); if (!h || !im.complete || !im.naturalWidth || (r.width === 0 && r.height === 0)) continue;
@@ -43,12 +41,31 @@ const SCREENS = [["home", ""], ["shop_cues", "go('shop','cues')"], ["shop_avatar
           for (const el of document.querySelectorAll("*")) {
             const cs = getComputedStyle(el), bi = cs.backgroundImage; if (!bi || bi === "none" || !/img\/[0-9a-f]{14}/.test(bi)) continue;
             const r = el.getBoundingClientRect(); if (r.width === 0 && r.height === 0) continue;
-            if (/^auto/.test(cs.backgroundSize)) for (const m of bi.matchAll(/img\/([0-9a-f]{14})/g)) out.push({ k: "bg", h: m[1], c: (el.id || "") + "." + (el.className || "") + " size=" + cs.backgroundSize });
+            if (/(^|,\s*)auto/.test(cs.backgroundSize)) for (const m of bi.matchAll(/img\/([0-9a-f]{14})/g)) out.push({ k: "bg", h: m[1], c: (el.id || "") + "." + (el.className || "") + " size=" + cs.backgroundSize });
           }
           for (const el of document.querySelectorAll("*")) { const cs = getComputedStyle(el); for (const pr of ["listStyleImage", "borderImageSource", "maskImage", "webkitMaskImage"]) { const v = cs[pr]; if (v && /img\/[0-9a-f]{14}/.test(v)) out.push({ k: pr, h: (v.match(/img\/([0-9a-f]{14})/) || [])[1], c: (el.id || "") + "." + (el.className || "") }); } }
           return out;
         });
+    const clicks = async name => {   // CRAWL=1: click every visible button / card of the screen, one per round, and audit the result
+      const n = await p.evaluate(() => window.__clk().length); let k = 0;
+      for (let i = 0; i < Math.min(n, +process.env.MAXC || 30); i++) {
+        try {
+          await p.evaluate(() => { try { if (mode !== "menu") toMenu("home"); } catch (e) {} }); await sleep(250);
+          const code = SCREENS.find(x => x[0] === name)[1]; if (code) await p.evaluate(c => { eval(c); }, code); await sleep(900);
+          const did = await p.evaluate(i => { const e = window.__clk()[i]; if (!e) return false; e.click(); return true; }, i); if (!did) continue; await sleep(900);
+          for (const r of await audit()) add(r.h, r.k, name + "#click" + i, r.c); k++;
+        } catch (e) { /* a click that navigated away */ }
+      }
+      return k;
+    };
+    for (const [name, code] of SCREENS) {
+      try {
+        if (!/^match/.test(name)) await p.evaluate(() => { try { if (mode !== "menu") toMenu("home"); } catch (e) {} }); await sleep(300);
+        if (code) await p.evaluate(c => { eval(c); }, code);
+        await sleep(/^match/.test(name) ? 3000 : 1600);
+        const risk = await audit();
         for (const r of risk) add(r.h, r.k, name, r.c);
+        if (process.env.CRAWL === "1" && !/^match/.test(name)) console.log("crawled", name, await clicks(name), "clicks");
       } catch (e) { console.log("screen failed", name, String(e).slice(0, 100)); }
       if (/^match/.test(name)) { await p.evaluate(() => { try { toMenu("home"); } catch (e) {} }); await sleep(600); }
     }
