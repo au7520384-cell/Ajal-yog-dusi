@@ -52,13 +52,14 @@ const SCREENS = [["home", ""], ["shop_cues", "go('shop','cues')"], ["shop_avatar
         try {
           await p.evaluate(() => { try { if (mode !== "menu") toMenu("home"); } catch (e) {} }); await sleep(250);
           const code = SCREENS.find(x => x[0] === name)[1]; if (code) await p.evaluate(c => { eval(c); }, code); await sleep(900);
-          const did = await p.evaluate(i => { const e = window.__clk()[i]; if (!e) return false; e.click(); return true; }, i); if (!did) continue; await sleep(900);
+          const did = await p.evaluate(i => { const e = window.__clk()[i]; if (!e) return false; e.click(); return true; }, i); if (process.env.VERBOSE) console.log("  click", name, i, did); if (!did) continue; await sleep(900);
           for (const r of await audit()) add(r.h, r.k, name + "#click" + i, r.c); k++;
         } catch (e) { /* a click that navigated away */ }
       }
       return k;
     };
     for (const [name, code] of SCREENS) {
+      if (process.env.VERBOSE) console.log("screen", name);
       try {
         if (!/^match/.test(name)) await p.evaluate(() => { try { if (mode !== "menu") toMenu("home"); } catch (e) {} }); await sleep(300);
         if (code) await p.evaluate(c => { eval(c); }, code);
