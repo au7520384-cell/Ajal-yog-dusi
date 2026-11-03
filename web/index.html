@@ -12,7 +12,13 @@ if (/[#&?]tgWebApp(Data|Version|Platform)=/.test(location.hash + location.search
 <style>#boot{position:fixed;inset:0;z-index:2147483000;background:#06122e center 12%/cover no-repeat;transition:opacity .5s ease;pointer-events:none}#boot.off{opacity:0}
 @media (min-aspect-ratio:23/10){#boot{background-position:center;background-size:contain}}
 /* a phone held upright: the page is turned later by the script, so the logo is turned the same way from the start (it then fills the screen) */
-@media (orientation:portrait) and (pointer:coarse){html:not(.rot) #boot{inset:auto;top:0;left:100vw;width:100vh;height:100vw;transform-origin:0 0;transform:rotate(90deg)}}</style>
+@media (orientation:portrait) and (pointer:coarse){html:not(.rot) #boot{inset:auto;top:0;left:100vw;width:100vh;height:100vw;transform-origin:0 0;transform:rotate(90deg)}}
+#boot.dl{pointer-events:auto}
+#bootDl{position:absolute;left:4%;right:4%;bottom:2.5%;color:#ffd84a;font:600 clamp(11px,2.5vmin,16px)/1.35 system-ui,sans-serif;text-shadow:0 1px 3px #000;display:flex;flex-direction:column;gap:1px}
+#bootDl:empty{display:none}#bootDl i{font-style:normal;color:#fff;font-weight:500}#bootDl .bar{height:4px;background:rgba(255,255,255,.28);border-radius:3px;overflow:hidden;margin:4px 0}
+#bootDl .bar u{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffb300,#ffe680);border-radius:3px;transition:width .25s linear}#bootDl small{font-size:.84em;font-weight:500;opacity:.9}
+#bootDl .r{display:flex;align-items:center;justify-content:space-between;gap:12px}#bootDl button{flex:none;background:rgba(0,0,0,.45);color:#fff;border:1px solid rgba(255,255,255,.45);border-radius:14px;padding:3px 14px;font:inherit;cursor:pointer}
+#boot.dl::after{content:"";position:absolute;left:0;right:0;bottom:0;height:30%;background:linear-gradient(transparent,rgba(0,0,0,.78));z-index:-1}</style>
 <meta name="theme-color" content="#0b1220">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1805,7 +1811,62 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 </style>
 </head>
 <body>
-<div id="boot" style="background-image:url(img/055f2df1078b8e.webp)"></div>
+<div id="boot" style="background-image:url(img/055f2df1078b8e.webp)"><div id="bootDl"></div></div>
+<script>
+/* First visit, like a big mobile game: the pictures and sounds (the light build's img/ and a/ files) are downloaded ONCE with a progress bar, kept in the browser's cache, and the game opens when they are here.
+   Next visits find everything in the cache and open at once; after an update only the new files are downloaded. "Later" lets the player in at once (the download goes on in the background).
+   Nothing happens in the single-file build, inside a portal frame, or when the browser has no cache storage. window.__pre is the promise the start-up waits for (the boot picture stays until it is done). */
+(function () {
+  var fin; window.__pre = new Promise(function (r) { fin = r; });
+  try {
+    if (!/^https?:$/.test(location.protocol) || !("serviceWorker" in navigator) || !window.caches || window.top !== window.self) return fin();
+    var boot = document.getElementById("boot"), box = document.getElementById("bootDl"); if (!boot || !box) return fin();
+    var CN = "billiard8-v6";   /* the same cache as sw.js */
+    var TX = {uz: ["Resurslar yuklab olinmoqda", "Faqat bir marta yuklanadi, keyin o'yin tez va yengil ishlaydi.", "Keyinroq"], en: ["Downloading game resources", "Downloaded once only, then the game runs fast and light.", "Later"],
+      ru: ["Загрузка ресурсов игры", "Загружается один раз, потом игра работает быстро и легко.", "Позже"], tr: ["Oyun kaynakları indiriliyor", "Yalnızca bir kez indirilir; sonra oyun hızlı ve akıcı çalışır.", "Sonra"],
+      es: ["Descargando recursos del juego", "Se descarga una sola vez; después el juego va rápido y ligero.", "Más tarde"], pt: ["Baixando recursos do jogo", "Baixa apenas uma vez; depois o jogo roda rápido e leve.", "Depois"],
+      fr: ["Téléchargement des ressources du jeu", "Téléchargé une seule fois ; ensuite le jeu tourne vite et léger.", "Plus tard"], de: ["Spielressourcen werden geladen", "Nur einmal geladen – danach läuft das Spiel schnell und flüssig.", "Später"],
+      ar: ["جارٍ تنزيل موارد اللعبة", "يُنزَّل مرة واحدة فقط، وبعدها تعمل اللعبة بسرعة وخفة.", "لاحقًا"], id: ["Mengunduh sumber daya game", "Hanya diunduh sekali, setelah itu game berjalan cepat dan ringan.", "Nanti"],
+      hi: ["गेम रिसोर्स डाउनलोड हो रहे हैं", "सिर्फ़ एक बार डाउनलोड होता है, फिर गेम तेज़ और हल्का चलता है।", "बाद में"], ko: ["게임 리소스 다운로드 중", "한 번만 내려받으면 이후 게임이 빠르고 가볍게 실행됩니다.", "나중에"],
+      ja: ["ゲームリソースをダウンロード中", "ダウンロードは一度だけ。その後はゲームが軽く速く動きます。", "あとで"], zh: ["正在下载游戏资源", "只需下载一次，之后游戏运行更流畅轻便。", "稍后"]};
+    var ALIAS = {kk: "ru", ky: "ru", tg: "ru", be: "ru", uk: "ru", tk: "ru", az: "tr", ms: "id"}, lang = "";
+    try { lang = (JSON.parse(localStorage.getItem("billiard8v2") || "{}").lang) || ""; } catch (e) {}
+    if (!TX[lang]) { var dv = (navigator.languages || [navigator.language || ""]).map(function (l) { return String(l).slice(0, 2).toLowerCase(); }); lang = ""; for (var i = 0; i < dv.length && !lang; i++) lang = TX[dv[i]] ? dv[i] : (ALIAS[dv[i]] || ""); }
+    var tx = TX[lang] || TX.en, seen = ""; try { seen = localStorage.getItem("b8_assets") || ""; } catch (e) {}
+    var mark = function (v) { try { localStorage.setItem("b8_assets", v); } catch (e) {} };
+    fetch("assets.json", {cache: "no-store"}).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (m) {
+      if (!m || !m.files || seen === m.v) return fin();
+      return caches.open(CN).then(function (c) {
+        var miss = [];
+        return Promise.all(m.files.map(function (f) { return c.match(f[0]).then(function (h) { if (!h) miss.push(f); }); })).then(function () {
+          if (!miss.length) { mark(m.v); return fin(); }
+          var total = 0, got = 0, last = -1, idle = Date.now(), bad = 0, over = false;
+          miss.forEach(function (f) { total += f[1]; });
+          box.innerHTML = '<div><b></b> <i></i></div><div class="bar"><u></u></div><div class="r"><small></small><button type="button"></button></div>';
+          var el = [box.querySelector("b"), box.querySelector("i"), box.querySelector(".bar"), box.querySelector("small"), box.querySelector("button")]; el[4].textContent = tx[2]; el[3].textContent = tx[1]; if (lang === "ar") box.dir = "rtl";
+          boot.classList.add("dl"); window.__preWaited = true;
+          var mb = function (n) { return (n / 1048576).toFixed(1) + " MB"; };
+          var paint = function () { var g = Math.min(got, total); if (g !== last) { last = g; idle = Date.now(); } el[0].textContent = tx[0]; el[1].textContent = "(" + mb(g) + " / " + mb(total) + ")  " + Math.floor(100 * g / total) + "%"; el[2].firstChild.style.width = (100 * g / total) + "%"; };
+          var leave = function () { if (over) return; over = true; boot.classList.remove("dl"); box.style.display = "none"; fin(); };
+          el[4].onclick = leave;
+          var one = function (f, tries) {
+            return fetch(f[0]).then(function (res) {
+              if (!res.ok) throw 0;
+              var cl = res.clone(), rd = cl.body && cl.body.getReader(), pump = Promise.resolve();
+              if (rd) pump = (function p() { return rd.read().then(function (x) { if (x.done) return; got += x.value.length; paint(); return p(); }); })();
+              return Promise.all([c.put(f[0], res), pump]).then(function () { if (!rd) { got += f[1]; paint(); } });
+            }).catch(function () { if (tries > 0) return one(f, tries - 1); bad++; });
+          };
+          var q = miss.slice(), worker = function () { var f = q.shift(); return f ? one(f, 1).then(worker) : 0; };
+          var dog = setInterval(function () { if (Date.now() - idle > 20000) { clearInterval(dog); leave(); } }, 2000);   /* a stalled connection never keeps the player out */
+          paint();
+          return Promise.all([worker(), worker(), worker(), worker()]).then(function () { clearInterval(dog); if (!bad) mark(m.v); got = total; paint(); setTimeout(leave, 350); });
+        });
+      });
+    }).catch(function () { fin(); });
+  } catch (e) { fin(); }
+})();
+</script>
 <noscript><p style="font:16px system-ui;padding:24px;color:#222;background:#fff">Royal Billiard 8 is a free online 8-ball pool game. Virtual items can be bought with in-game currency or by card. <a href="/terms">Terms of Service</a> · <a href="/privacy">Privacy Policy</a> · <a href="/refund">Refund Policy</a>. JavaScript is required to play.</p></noscript>
 <canvas id="c"></canvas>
 <div id="shade"></div>
@@ -13956,7 +14017,7 @@ if (/[?&]perf=1/.test(location.search)) {
 setTimeout(() => { try { (window.requestIdleCallback || setTimeout)(() => { try { Snd.init(); } catch (e) {} }); } catch (e) {} }, 2500);
 try { loginSplash(); } catch (e) {}
 requestAnimationFrame(frame);
-setTimeout(() => { const b = document.getElementById("boot"); if (b) { b.classList.add("off"); setTimeout(() => b.remove(), 700); } }, 900);   // the logo shown while the page loads fades out once the game is running
+Promise.resolve(window.__pre).then(() => setTimeout(() => { const b = document.getElementById("boot"); if (b) { b.classList.add("off"); setTimeout(() => b.remove(), 700); } }, window.__preWaited ? 250 : 900));   // the logo shown while the page loads fades out once the game is running
 setTimeout(bgStart, 3000);   // table / cue pictures load in the background once the menu is up
 </script>
 </body>

@@ -221,3 +221,10 @@ Quizzes are shown to every player in their own game language. `uz` and `en` come
 `python3 tools/build_quiz_i18n.py` to validate them and regenerate `server/quiz_i18n.json`.
 `ru` has full explanations; the others have questions and options only, and show the English explanation.
 A native-speaker review of the less common languages is recommended. The Telegram channel stays uz + en.
+
+## First-visit download screen (like PUBG)
+The light build (`web/`) lists every picture and sound with its size in `web/assets.json` (made by `tools/build_web.py`, served by the game server with `no-store`).
+On the first visit the page shows a progress screen ("Downloading game resources (5.3 MB / 30.1 MB) 18%"), puts all files into the browser cache (`billiard8-v6`, the same one `sw.js` reads) and opens the game when done (~30 MB, once).
+The next visits find everything in the cache and open at once; after an update only the new files are downloaded (the list version is kept in `localStorage.b8_assets`).
+"Later" lets the player in at once, the download goes on in the background; a stalled connection (20 s with no progress) lets the player in as well. The text is in all 14 languages (small table inside the page's first script).
+Nothing changes in the single-file build, in portal frames, or in browsers without cache storage. Test: `node tools/test_preload.js`.
