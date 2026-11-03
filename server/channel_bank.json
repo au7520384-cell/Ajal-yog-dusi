@@ -537,12 +537,12 @@
    "uz": "💎 Viktorina: 9-ball'da sharlar qanday shaklda teriladi?",
    "en": "Quiz: in what shape are the balls racked in 9-ball?",
    "options": [
-    "Romb / Diamond",
     "Doira / Circle",
     "Uchburchak / Triangle",
-    "Kvadrat / Square"
+    "Kvadrat / Square",
+    "Romb / Diamond"
    ],
-   "correct": 0,
+   "correct": 3,
    "explanation": {
     "uz": "1-2-3-2-1 qatorli romb; 9-shar o'rtada turadi.",
     "en": "A diamond of 1-2-3-2-1 rows, with the 9-ball in the middle."
@@ -737,12 +737,12 @@
    "uz": "🔁 Viktorina: oq shar avval bortga tegib, keyin nishon sharga borsa, bu qanday zarba?",
    "en": "Quiz: the cue ball hits a cushion first, then the object ball. What shot is it?",
    "options": [
+    "Kick shot",
     "Draw",
     "Masse",
-    "Jump shot",
-    "Kick shot"
+    "Jump shot"
    ],
-   "correct": 3,
+   "correct": 0,
    "explanation": {
     "uz": "Kick shot: yo'l to'silganda bort orqali aylanib borasiz.",
     "en": "A kick shot goes round a blocked path via a cushion."
@@ -937,12 +937,12 @@
    "uz": "👻 Viktorina: «xayoliy shar» (ghost ball) usuli nima uchun kerak?",
    "en": "Quiz: what is the \"ghost ball\" method for?",
    "options": [
-    "Oq shar kelishi kerak bo'lgan joyni tasavvur qilish / Picturing where the cue ball must land",
     "Kiyni bo'rlash / Chalking the cue",
     "Sharni sakratish / Jumping a ball",
-    "Sharlarni terish / Racking"
+    "Sharlarni terish / Racking",
+    "Oq shar kelishi kerak bo'lgan joyni tasavvur qilish / Picturing where the cue ball must land"
    ],
-   "correct": 0,
+   "correct": 3,
    "explanation": {
     "uz": "Xayoliy shar nishon sharni to'g'ri yo'naltirishga yordam beradi.",
     "en": "The ghost ball helps you aim the object ball accurately."
@@ -957,12 +957,12 @@
    "uz": "📐 Viktorina: ideal sharoitda shar bortga tekkach qanday burchak bilan qaytadi?",
    "en": "Quiz: in ideal conditions, at what angle does a ball leave a cushion?",
    "options": [
+    "Kirish burchagiga teng / Equal to the incoming angle",
     "Tasodifiy / Random",
     "Ikki baravar katta / Twice as big",
-    "Doim 90° / Always 90°",
-    "Kirish burchagiga teng / Equal to the incoming angle"
+    "Doim 90° / Always 90°"
    ],
-   "correct": 3,
+   "correct": 0,
    "explanation": {
     "uz": "Qaytish burchagi kirish burchagiga teng.",
     "en": "The angle out equals the angle in."
@@ -977,12 +977,12 @@
    "uz": "🧵 Viktorina: bilyard kiyining uchi (tip) odatda nimadan yasaladi?",
    "en": "Quiz: what is a cue tip usually made of?",
    "options": [
-    "Teri / Leather",
     "Shisha / Glass",
     "Yog'och / Wood",
-    "Metall / Metal"
+    "Metall / Metal",
+    "Teri / Leather"
    ],
-   "correct": 0,
+   "correct": 3,
    "explanation": {
     "uz": "Teri uch bo'rni ushlaydi va oq sharga yaxshi ilashadi.",
     "en": "A leather tip holds chalk and grips the cue ball."
@@ -997,12 +997,12 @@
    "uz": "⚪ Viktorina: zamonaviy bilyard sharlari asosan nimadan yasaladi?",
    "en": "Quiz: what are modern pool balls mostly made of?",
    "options": [
+    "Smola (plastik) / Resin (plastic)",
     "Shisha / Glass",
     "Fil suyagi / Ivory",
-    "Yog'och / Wood",
-    "Smola (plastik) / Resin (plastic)"
+    "Yog'och / Wood"
    ],
-   "correct": 3,
+   "correct": 0,
    "explanation": {
     "uz": "Fenol smolasi chidamli. Qadimda sharlar fil suyagidan ham yasalgan.",
     "en": "Phenolic resin is tough; old balls were also made of ivory."
@@ -1097,12 +1097,12 @@
    "uz": "🟠 Viktorina: standart to'plamda 5-shar qanday rangda?",
    "en": "Quiz: what colour is ball number 5 in a standard set?",
    "options": [
-    "To'q sariq / Orange",
     "Yashil / Green",
     "Qora / Black",
-    "Binafsha / Purple"
+    "Binafsha / Purple",
+    "To'q sariq / Orange"
    ],
-   "correct": 0,
+   "correct": 3,
    "explanation": {
     "uz": "5 to'q sariq, 6 yashil, 7 bordo, 8 qora.",
     "en": "5 orange, 6 green, 7 maroon, 8 black."
@@ -1177,12 +1177,12 @@
    "uz": "🎬 Viktorina: «The Color of Money» (1986) filmida Paul Newman bilan birga kim o'ynagan?",
    "en": "Quiz: who starred alongside Paul Newman in \"The Color of Money\" (1986)?",
    "options": [
+    "Tom Cruise",
     "Tom Hanks",
     "Keanu Reeves",
-    "Al Pacino",
-    "Tom Cruise"
+    "Al Pacino"
    ],
-   "correct": 3,
+   "correct": 0,
    "explanation": {
     "uz": "Tom Cruise; film bilyard ustalari haqida.",
     "en": "Tom Cruise; the film is about pool hustlers."
@@ -1197,12 +1197,12 @@
    "uz": "🚀 Viktorina: snuker afsonasi Ronni O'Sallivanning laqabi nima?",
    "en": "Quiz: what is snooker legend Ronnie O'Sullivan's nickname?",
    "options": [
-    "The Rocket",
     "The Nugget",
     "The Whirlwind",
-    "The Wizard"
+    "The Wizard",
+    "The Rocket"
    ],
-   "correct": 0,
+   "correct": 3,
    "explanation": {
     "uz": "«Rocket» (raketa): u juda tez o'ynashi bilan mashhur.",
     "en": "\"The Rocket\": known for his fast play."
@@ -1237,12 +1237,12 @@
    "uz": "🕰 Viktorina: Big Ben qaysi shaharda? O'yinning birinchi stoli ham shu yerda!",
    "en": "Quiz: in which city is Big Ben? It is also the game's first table!",
    "options": [
+    "London",
     "Parij",
     "Madrid",
-    "Rim",
-    "London"
+    "Rim"
    ],
-   "correct": 3,
+   "correct": 0,
    "explanation": {
     "uz": "Big Ben Londonda. London stoli o'yindagi birinchi stol.",
     "en": "Big Ben is in London, and the London table is the game's first."
@@ -1257,12 +1257,12 @@
    "uz": "🦘 Viktorina: Opera teatri yelkanga o'xshash tomi bilan mashhur Sidney qaysi mamlakatda?",
    "en": "Quiz: Sydney, famous for its sail-roofed Opera House, is in which country?",
    "options": [
-    "Avstraliya / Australia",
     "Kanada / Canada",
     "Janubiy Afrika / South Africa",
-    "Yangi Zelandiya / New Zealand"
+    "Yangi Zelandiya / New Zealand",
+    "Avstraliya / Australia"
    ],
-   "correct": 0,
+   "correct": 3,
    "explanation": {
     "uz": "Avstraliyada. O'yindagi 2-stol: Harbour Bar.",
     "en": "In Australia. The game's 2nd table is Harbour Bar."
@@ -1277,12 +1277,12 @@
    "uz": "🥧 Viktorina: mashhur «pastel de nata» shirinligi qaysi mamlakatniki?",
    "en": "Quiz: which country is the \"pastel de nata\" custard tart from?",
    "options": [
+    "Portugaliya / Portugal",
     "Ispaniya / Spain",
     "Fransiya / France",
-    "Italiya / Italy",
-    "Portugaliya / Portugal"
+    "Italiya / Italy"
    ],
-   "correct": 3,
+   "correct": 0,
    "explanation": {
     "uz": "Portugaliya; poytaxti Lissabon o'yinning 3-stoli.",
     "en": "Portugal; its capital Lisbon is the game's 3rd table."
@@ -1297,12 +1297,12 @@
    "uz": "⚽ Viktorina: Santyago Bernabeu stadioni qaysi shaharda?",
    "en": "Quiz: in which city is the Santiago Bernabéu stadium?",
    "options": [
-    "Madrid",
     "Lissabon",
     "Barselona",
-    "Rim"
+    "Rim",
+    "Madrid"
    ],
-   "correct": 0,
+   "correct": 3,
    "explanation": {
     "uz": "Madridda, «Real» ning uyi. O'yinda Madrid stoli: Plaza Mayor.",
     "en": "In Madrid, home of Real. The game's Madrid table: Plaza Mayor."
@@ -1317,12 +1317,12 @@
    "uz": "🗾 Viktorina: Tokio 1868-yilgacha qanday nomda bo'lgan?",
    "en": "Quiz: what was Tokyo called before 1868?",
    "options": [
-    "Osaka",
     "Edo",
+    "Osaka",
     "Nagoya",
     "Kioto"
    ],
-   "correct": 1,
+   "correct": 0,
    "explanation": {
     "uz": "Edo. «Samurai Dojo» stoli shu ruhda.",
     "en": "Edo. The \"Samurai Dojo\" table has that spirit."
@@ -1397,12 +1397,12 @@
    "uz": "🍁 Viktorina: Kanada bayrog'idagi barg qaysi daraxtniki (Toronto stoli: «Maple Lounge»)?",
    "en": "Quiz: which tree's leaf is on Canada's flag (Toronto's table: \"Maple Lounge\")?",
    "options": [
-    "Birch (qayin)",
+    "Maple",
     "Oak (eman)",
     "Palm (palma)",
-    "Maple"
+    "Birch (qayin)"
    ],
-   "correct": 3,
+   "correct": 0,
    "explanation": {
     "uz": "Maple bargi: shuning uchun Toronto stoli «Maple Lounge».",
     "en": "A maple leaf: hence the Toronto table \"Maple Lounge\"."
@@ -1417,12 +1417,12 @@
    "uz": "🌋 Viktorina: Mexiko shahri qadimgi qaysi shahar o'rnida qurilgan?",
    "en": "Quiz: on the site of which ancient city was Mexico City built?",
    "options": [
-    "Tenochtitlan",
     "Teotihuacan",
     "Chichen Itza",
-    "Machu Picchu"
+    "Machu Picchu",
+    "Tenochtitlan"
    ],
-   "correct": 0,
+   "correct": 3,
    "explanation": {
     "uz": "Atsteklar poytaxti Tenochtitlan, ko'l ustidagi shahar.",
     "en": "Tenochtitlan, the Aztec capital built on a lake."
@@ -1437,12 +1437,12 @@
    "uz": "🔺 Viktorina: Giza piramidalari qaysi mamlakatda (Qohira stoli: «Pyramid Hall»)?",
    "en": "Quiz: in which country are the Giza pyramids (Cairo's table: \"Pyramid Hall\")?",
    "options": [
-    "Sudan",
     "Misr / Egypt",
+    "Sudan",
     "Marokash / Morocco",
     "Iordaniya / Jordan"
    ],
-   "correct": 1,
+   "correct": 0,
    "explanation": {
     "uz": "Misrda, Qohira yonida.",
     "en": "In Egypt, next to Cairo."
@@ -1458,11 +1458,11 @@
    "en": "Quiz: in which city is the 828-metre Burj Khalifa?",
    "options": [
     "Singapur",
-    "Dubay",
     "Shanxay",
-    "Nyu-York"
+    "Nyu-York",
+    "Dubay"
    ],
-   "correct": 1,
+   "correct": 3,
    "explanation": {
     "uz": "Dubayda. O'yinda Dubay stoli: «Golden Tower».",
     "en": "In Dubai. The game's Dubai table: \"Golden Tower\"."
@@ -1496,11 +1496,11 @@
    "en": "Quiz: in which city is the Oriental Pearl Tower?",
    "options": [
     "Bangkok",
+    "Shanxay",
     "Seul",
-    "Osaka",
-    "Shanxay"
+    "Osaka"
    ],
-   "correct": 3,
+   "correct": 1,
    "explanation": {
     "uz": "Shanxayda. O'yinda stol: «Pearl Club».",
     "en": "In Shanghai. The game's table: \"Pearl Club\"."
@@ -1515,12 +1515,12 @@
    "uz": "🗼 Viktorina: Eyfel minorasi qaysi shaharda?",
    "en": "Quiz: in which city is the Eiffel Tower?",
    "options": [
-    "Parij",
     "Rim",
+    "Parij",
     "Berlin",
     "Amsterdam"
    ],
-   "correct": 0,
+   "correct": 1,
    "explanation": {
     "uz": "Parijda. O'yinda stol: «Château Royal».",
     "en": "In Paris. The game's table there: \"Château Royal\"."
@@ -1596,11 +1596,11 @@
    "en": "Quiz: in which city are the famous Petronas Twin Towers?",
    "options": [
     "Singapur",
-    "Kuala-Lumpur",
     "Manila",
-    "Jakarta"
+    "Jakarta",
+    "Kuala-Lumpur"
    ],
-   "correct": 1,
+   "correct": 3,
    "explanation": {
     "uz": "Kuala-Lumpurda. O'yinda stol: «Twin Towers».",
     "en": "In Kuala Lumpur. The game's table: \"Twin Towers\"."
@@ -1615,12 +1615,12 @@
    "uz": "🇰🇷 Viktorina: Seul qaysi mamlakatning poytaxti?",
    "en": "Quiz: Seoul is the capital of which country?",
    "options": [
+    "Janubiy Koreya / South Korea",
     "Xitoy / China",
     "Yaponiya / Japan",
-    "Tailand / Thailand",
-    "Janubiy Koreya / South Korea"
+    "Tailand / Thailand"
    ],
-   "correct": 3,
+   "correct": 0,
    "explanation": {
     "uz": "Janubiy Koreya poytaxti. O'yinda stol: «Neon Tower».",
     "en": "South Korea's capital. In the game: \"Neon Tower\"."
@@ -1656,8 +1656,8 @@
    "en": "Quiz: in which city were the first modern Olympic Games held in 1896?",
    "options": [
     "Rim",
-    "Parij",
     "London",
+    "Parij",
     "Afina"
    ],
    "correct": 3,
@@ -1796,11 +1796,11 @@
    "en": "Quiz: what does the name \"Rio de Janeiro\" mean?",
    "options": [
     "Katta ko'l / Big Lake",
-    "Dengiz shamoli / Sea Wind",
+    "Yanvar daryosi / January River",
     "Oltin daryo / Golden River",
-    "Yanvar daryosi / January River"
+    "Dengiz shamoli / Sea Wind"
    ],
-   "correct": 3,
+   "correct": 1,
    "explanation": {
     "uz": "Portugalcha «Yanvar daryosi»: 1502-yil yanvarida shunday atalgan.",
     "en": "Portuguese for \"January River\", named in January 1502."
@@ -1816,11 +1816,11 @@
    "en": "Quiz: on which square does St Basil's Cathedral stand?",
    "options": [
     "Tayms-skver / Times Square",
-    "Qizil maydon / Red Square",
     "Taksim maydoni / Taksim Square",
-    "Mustaqillik maydoni / Independence Square"
+    "Mustaqillik maydoni / Independence Square",
+    "Qizil maydon / Red Square"
    ],
-   "correct": 1,
+   "correct": 3,
    "explanation": {
     "uz": "Moskvadagi Qizil maydonda. O'yinda eng yuqori stol: «Red Square».",
     "en": "On Red Square in Moscow, the game's highest table."
@@ -1835,12 +1835,12 @@
    "uz": "🌵 Viktorina: Las-Vegas AQShning qaysi shtatida joylashgan?",
    "en": "Quiz: in which US state is Las Vegas?",
    "options": [
-    "Nevada",
     "Texas",
+    "Nevada",
     "Florida",
     "Kaliforniya / California"
    ],
-   "correct": 0,
+   "correct": 1,
    "explanation": {
     "uz": "Nevada shtatida. O'yinda stol: «Royal Flush».",
     "en": "In Nevada. The game's table: \"Royal Flush\"."
@@ -1997,10 +1997,10 @@
    "options": [
     "Mashina / Car",
     "Olmos / Gem",
-    "Samolyot / Jet",
-    "Toj / Crown"
+    "Toj / Crown",
+    "Samolyot / Jet"
    ],
-   "correct": 2,
+   "correct": 3,
    "explanation": {
     "uz": "Samolyot ×7 000; mashina ×5 000, mototsikl ×3 000.",
     "en": "The jet ×7,000; the car ×5,000, the bike ×3,000."
@@ -2016,11 +2016,11 @@
    "en": "Quiz: which two gifts are free every day?",
    "options": [
     "Toj va olmos / Crown and gem",
+    "Yonca va shokolad / Clover and chocolate",
     "Mashina va samolyot / Car and jet",
-    "Tort va gul / Cake and bouquet",
-    "Yonca va shokolad / Clover and chocolate"
+    "Tort va gul / Cake and bouquet"
    ],
-   "correct": 3,
+   "correct": 1,
    "explanation": {
     "uz": "Har kuni 1 ta yonca va 1 ta shokolad bepul.",
     "en": "One clover and one chocolate are free every day."
@@ -2076,11 +2076,11 @@
    "en": "Quiz: how long does a daily cup stay open once it starts?",
    "options": [
     "Butun kun / All day",
-    "3 soat / 3 hours",
     "6 soat / 6 hours",
-    "1 soat / 1 hour"
+    "1 soat / 1 hour",
+    "3 soat / 3 hours"
    ],
-   "correct": 1,
+   "correct": 3,
    "explanation": {
     "uz": "3 soat. Birini o'tkazsangiz, keyingisi kutadi.",
     "en": "3 hours. Miss one and the next is waiting."
@@ -2275,12 +2275,12 @@
    "uz": "📅 Viktorina: haftalik reyting qachon yangilanadi (Toshkent vaqti bilan)?",
    "en": "Quiz: when does the weekly ranking reset (Tashkent time)?",
    "options": [
-    "Shanba, 20:00 / Saturday, 20:00",
     "Dushanba, 05:00 / Monday, 05:00",
+    "Shanba, 20:00 / Saturday, 20:00",
     "Juma, 00:00 / Friday, 00:00",
     "Seshanba, 12:00 / Tuesday, noon"
    ],
-   "correct": 1,
+   "correct": 0,
    "explanation": {
     "uz": "Hafta dushanba 00:00 UTC da yangilanadi: Toshkentda 05:00.",
     "en": "The week resets Monday 00:00 UTC: 05:00 in Tashkent."
@@ -2416,11 +2416,11 @@
    "en": "Quiz: what is the name of the game's Tashkent table?",
    "options": [
     "Harbour Bar",
-    "Golden Tower",
     "Silk Road",
+    "Golden Tower",
     "Red Square"
    ],
-   "correct": 2,
+   "correct": 1,
    "explanation": {
     "uz": "«Silk Road»: Buyuk Ipak yo'li ruhida.",
     "en": "\"Silk Road\", in the spirit of the Great Silk Road."
@@ -2435,12 +2435,12 @@
    "uz": "🎨 Viktorina: London stolining sukno rangi qanday?",
    "en": "Quiz: what colour is the cloth of the London table?",
    "options": [
-    "Qizil / Red",
     "Ko'k / Blue",
+    "Qizil / Red",
     "Qora / Black",
     "Sariq / Yellow"
    ],
-   "correct": 1,
+   "correct": 0,
    "explanation": {
     "uz": "London ko'k, Sidney yashil, Madrid qizil.",
     "en": "London is blue, Sydney green, Madrid red."
@@ -2457,10 +2457,10 @@
    "options": [
     "London",
     "Madrid",
-    "Las-Vegas",
-    "Sidney"
+    "Sidney",
+    "Las-Vegas"
    ],
-   "correct": 2,
+   "correct": 3,
    "explanation": {
     "uz": "Las-Vegas: «Royal Flush» zali qora sukno bilan.",
     "en": "Las Vegas: the \"Royal Flush\" room, with black cloth."
@@ -2616,11 +2616,11 @@
    "en": "Quiz: which is the biggest daily cup (a 400,000 🪙 prize)?",
    "options": [
     "Kechki / Evening",
+    "Tungi / Night",
     "Ertalabki / Morning",
-    "Tushki / Noon",
-    "Tungi / Night"
+    "Tushki / Noon"
    ],
-   "correct": 3,
+   "correct": 1,
    "explanation": {
     "uz": "Tungi Kubok: kirish 10 000 🪙, sovrin 400 000 🪙.",
     "en": "The Night Cup: entry 10,000 🪙, prize 400,000 🪙."
@@ -2704,6 +2704,766 @@
    "explanation": {
     "uz": "Yaxlit (1–7), yo'l-yo'l (9–15) va yagona qora 8-shar: uchta.",
     "en": "Solids (1–7), stripes (9–15) and the lone black 8-ball: three."
+   }
+  }
+ },
+ {
+  "id": "Q113",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "🏆 Viktorina: afsonaviy Willie Mosconi necha marta jahon chempioni bo'lgan?",
+   "en": "Quiz: how many times was the legend Willie Mosconi world champion?",
+   "options": [
+    "5",
+    "10",
+    "15",
+    "20"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "15 marta. U «Mister Pocket Billiards» deb atalgan.",
+    "en": "15 times. Called \"Mr. Pocket Billiards\"."
+   }
+  }
+ },
+ {
+  "id": "Q114",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "🎯 Viktorina: Mosconi 1953-yilda straight pool'da ketma-ket nechta shar kiritib rekord qo'ygan?",
+   "en": "Quiz: in 1953 Mosconi ran how many balls in a row at straight pool?",
+   "options": [
+    "126",
+    "256",
+    "526",
+    "1 000"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "526 ta shar, bir marta ham xato qilmagan holda.",
+    "en": "526 balls without a single miss."
+   }
+  }
+ },
+ {
+  "id": "Q115",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "🎬 Viktorina: «The Hustler» (1961) filmida Minnesota Fats rolini kim o'ynagan?",
+   "en": "Quiz: who played Minnesota Fats in the film \"The Hustler\" (1961)?",
+   "options": [
+    "Jackie Gleason",
+    "Paul Newman",
+    "Robert De Niro",
+    "Tom Cruise"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Jackie Gleason. Uning o'zi ham yaxshi bilyardchi bo'lgan.",
+    "en": "Jackie Gleason, himself a fine player."
+   }
+  }
+ },
+ {
+  "id": "Q116",
+  "cat": "quiz",
+  "tag": "cinema",
+  "quiz": {
+   "uz": "🎬 Viktorina: «The Hustler» filmida Paul Newman o'ynagan qahramonning laqabi qanday?",
+   "en": "Quiz: what is the nickname of the character Paul Newman played in \"The Hustler\"?",
+   "options": [
+    "Big Jim",
+    "Cool Hand",
+    "Lucky Pete",
+    "Fast Eddie"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "«Fast Eddie» (Tez Eddi). Keyinroq «The Color of Money»da qaytgan.",
+    "en": "\"Fast Eddie\". He returned in \"The Color of Money\"."
+   }
+  }
+ },
+ {
+  "id": "Q117",
+  "cat": "quiz",
+  "tag": "cinema",
+  "quiz": {
+   "uz": "🎱 Viktorina: filmlardagi zarbalarni Paul Newman uchun kim bajarib bergan va o'rgatgan?",
+   "en": "Quiz: which champion taught Paul Newman and played his trick shots in the films?",
+   "options": [
+    "Efren Reyes",
+    "Willie Mosconi",
+    "Steve Davis",
+    "Ronnie O'Sullivan"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Willie Mosconi filmlarda maslahatchi bo'lgan va murakkab zarbalarni o'zi urgan.",
+    "en": "Mosconi was the film's advisor and played the hard shots himself."
+   }
+  }
+ },
+ {
+  "id": "Q118",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "🚀 Viktorina: snooker yulduzi Ronnie O'Sullivan'ning laqabi qanday?",
+   "en": "Quiz: what is the nickname of snooker star Ronnie O'Sullivan?",
+   "options": [
+    "The Nugget",
+    "The Hurricane",
+    "The Rocket",
+    "The Whirlwind"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "«Rocket» (Raketa): tez o'ynagani uchun.",
+    "en": "\"The Rocket\", for his fast play."
+   }
+  }
+ },
+ {
+  "id": "Q119",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "🌪 Viktorina: snookerning yorqin yulduzi Alex Higgins qaysi laqab bilan mashhur?",
+   "en": "Quiz: which nickname is snooker's Alex Higgins known by?",
+   "options": [
+    "The Nugget",
+    "The Rocket",
+    "The Hurricane",
+    "The Wizard"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "«Hurricane» (Dovul): hayajonli, tezkor o'yini uchun.",
+    "en": "\"The Hurricane\", for his fast, thrilling play."
+   }
+  }
+ },
+ {
+  "id": "Q120",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "🌀 Viktorina: Jimmy White qaysi laqab bilan tanilgan?",
+   "en": "Quiz: which nickname is Jimmy White known by?",
+   "options": [
+    "The Magician",
+    "The Whirlwind",
+    "The Hurricane",
+    "The Rocket"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "«Whirlwind» (Quyun). U jahon finalida ko'p marta ishtirok etgan.",
+    "en": "\"The Whirlwind\". He reached many world finals."
+   }
+  }
+ },
+ {
+  "id": "Q121",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "🪙 Viktorina: ko'p karra jahon chempioni Steve Davis'ning laqabi?",
+   "en": "Quiz: what is the nickname of multiple world champion Steve Davis?",
+   "options": [
+    "The Nugget",
+    "The Hurricane",
+    "The Whirlwind",
+    "The Rocket"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "«The Nugget» (Oltin parcha). U 1980-yillar yulduzi edi.",
+    "en": "\"The Nugget\", the star of the 1980s."
+   }
+  }
+ },
+ {
+  "id": "Q122",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "🇵🇭 Viktorina: Efren Reyes'ning «Bata» laqabi Tagalog tilida nimani anglatadi?",
+   "en": "Quiz: what does Efren Reyes' nickname \"Bata\" mean in Tagalog?",
+   "options": [
+    "Sher",
+    "Chaqmoq",
+    "Usta",
+    "Bola"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "«Bata»: bola. «The Magician»: Sehrgar ham deyiladi.",
+    "en": "\"Bata\" means child. He is also \"The Magician\"."
+   }
+  }
+ },
+ {
+  "id": "Q123",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "💎 Viktorina: amerikalik Earl Strickland qaysi laqab bilan tanilgan?",
+   "en": "Quiz: which nickname is Earl Strickland known by?",
+   "options": [
+    "The Ghost",
+    "The Pearl",
+    "The Rock",
+    "The Eagle"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "«The Pearl» (Injuga o'xshash: marvarid). Jahon chempioni.",
+    "en": "\"The Pearl\", a former world champion."
+   }
+  }
+ },
+ {
+  "id": "Q124",
+  "cat": "quiz",
+  "tag": "stars",
+  "quiz": {
+   "uz": "🇺🇸 Viktorina: Shane Van Boening'ning laqabi nima?",
+   "en": "Quiz: what is Shane Van Boening's nickname?",
+   "options": [
+    "South Dakota Kid",
+    "Ohio Rocket",
+    "Kansas Hawk",
+    "Texas Kid"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "«South Dakota Kid», Janubiy Dakota shtatidan.",
+    "en": "\"South Dakota Kid\", from the state of South Dakota."
+   }
+  }
+ },
+ {
+  "id": "Q125",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "📖 Viktorina: Lev Tolstoy 1855-yilda qaysi o'yin haqida hikoya yozgan: «Bilyard markerining yozuvlari»?",
+   "en": "Quiz: Leo Tolstoy wrote the 1855 story \"A Billiard-Marker's Notes\". About which game?",
+   "options": [
+    "Karta / Cards",
+    "Shashka / Draughts",
+    "Shaxmat",
+    "Bilyard / Billiards"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Bilyard haqida. Hikoyada marker qimor o'ynovchi yosh zodagonni kuzatadi.",
+    "en": "About billiards: a marker watches a young nobleman gamble."
+   }
+  }
+ },
+ {
+  "id": "Q126",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "🎭 Viktorina: Shekspirning qaysi pyesasida bilyard tilga olinadi?",
+   "en": "Quiz: in which Shakespeare play is billiards mentioned?",
+   "options": [
+    "Macbeth",
+    "Romeo and Juliet",
+    "Antony and Cleopatra",
+    "Hamlet"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "«Antoniy va Kleopatra»da Kleopatra «Bilyardga boramiz» deydi.",
+    "en": "In \"Antony and Cleopatra\", Cleopatra says \"Let us to billiards\"."
+   }
+  }
+ },
+ {
+  "id": "Q127",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "👑 Viktorina: qaysi qirol shifokorlar maslahati bilan bilyardni mashq sifatida o'ynab, uni saroyda mashhur qilgan?",
+   "en": "Quiz: which king, on his doctors' advice, played billiards for exercise and made it fashionable at court?",
+   "options": [
+    "Amir Temur",
+    "Rossiyalik Pyotr I",
+    "Frantsiyalik Lyudovik XIV",
+    "Yuliy Sezar"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Lyudovik XIV. Shundan bilyard Yevropa saroylarida urf bo'lgan.",
+    "en": "Louis XIV. Billiards became fashionable in Europe's courts."
+   }
+  }
+ },
+ {
+  "id": "Q128",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "🎼 Viktorina: buyuk bastakor Volfgang Amadey Motsart'ning Vena uyida nima bo'lgan?",
+   "en": "Quiz: what did composer Wolfgang Amadeus Mozart have in his Vienna home?",
+   "options": [
+    "Otxona",
+    "Bilyard stoli",
+    "Kutubxona ichida hovuz",
+    "Boks xalqasi"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Motsart bilyardni sevgan va uyida stol bo'lgan.",
+    "en": "Mozart loved billiards and kept a table at home."
+   }
+  }
+ },
+ {
+  "id": "Q129",
+  "cat": "quiz",
+  "tag": "history",
+  "quiz": {
+   "uz": "🌿 Viktorina: bilyard qaysi o'yinlardan kelib chiqqan deyiladi?",
+   "en": "Quiz: billiards is said to have grown out of which kind of game?",
+   "options": [
+    "Maysazordagi to'p o'yinlari / Lawn ball games",
+    "Kurash / Wrestling",
+    "Suzish / Swimming",
+    "Shaxmat / Chess"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Maysada o'ynalgan o'yinlardan. Shuning uchun stol yashil mato bilan qoplanadi.",
+    "en": "From games played on grass, hence the green cloth."
+   }
+  }
+ },
+ {
+  "id": "Q130",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🇫🇷 Viktorina: «bilyard» so'zi qaysi tildan kelgan?",
+   "en": "Quiz: which language does the word \"billiards\" come from?",
+   "options": [
+    "Arab tili",
+    "Ispan tili",
+    "Nemis tili",
+    "Frantsuz tili"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Frantsuzcha «billart» (kiy) yoki «bille» (shar) so'zidan.",
+    "en": "From French \"billart\" (cue) or \"bille\" (ball)."
+   }
+  }
+ },
+ {
+  "id": "Q131",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "💰 Viktorina: inglizcha «pool» so'zi dastlab nimani bildirgan?",
+   "en": "Quiz: what did the word \"pool\" originally refer to?",
+   "options": [
+    "Stol matosi",
+    "Suv havzasi",
+    "Kiy turi",
+    "Umumiy garov puli"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Umumiy garov puli. «Poolroom»: garovli o'yin joyi.",
+    "en": "A shared betting pot. A \"poolroom\" was a betting parlour."
+   }
+  }
+ },
+ {
+  "id": "Q132",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "🦷 Viktorina: XIX asrgacha bilyard sharlari qanday materialdan yasalgan?",
+   "en": "Quiz: before the 19th century, what were billiard balls made of?",
+   "options": [
+    "Po'lat",
+    "Yog'och bo'yalgan",
+    "Fil suyagi",
+    "Shisha"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Fil suyagidan. Hozir fenol qatroni (bakelitga o'xshash) ishlatiladi.",
+    "en": "Ivory. Today phenolic resin is used."
+   }
+  }
+ },
+ {
+  "id": "Q133",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "🔬 Viktorina: zamonaviy professional pool sharlari asosan nimadan yasaladi?",
+   "en": "Quiz: what are modern professional pool balls mostly made of?",
+   "options": [
+    "Fenol qatroni",
+    "Rezina",
+    "Metall",
+    "Tabiiy tosh"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Fenol qatroni: bardoshli, yaxshi sakraydi va aylanadi.",
+    "en": "Phenolic resin: durable, rolls and bounces true."
+   }
+  }
+ },
+ {
+  "id": "Q134",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "🧵 Viktorina: kiyning uchi (tip) odatda nimadan yasaladi?",
+   "en": "Quiz: what is a cue tip usually made of?",
+   "options": [
+    "Metall",
+    "Teri",
+    "Plastik",
+    "Shisha"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Teridan. U bo'rni ushlab, sirpanmasdan urishga yordam beradi.",
+    "en": "Leather. It holds chalk so the cue does not slip."
+   }
+  }
+ },
+ {
+  "id": "Q135",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "🔷 Viktorina: kiy uchiga surtiladigan bo'r nima uchun kerak?",
+   "en": "Quiz: what is the chalk on the cue tip for?",
+   "options": [
+    "Chiroyli ko'rinish uchun",
+    "Ishqalanishni oshirish, kiy sirpanmasligi uchun",
+    "Shar rangini o'zgartirish uchun",
+    "Stolni tozalash uchun"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Ishqalanish uchun: kiy oq sharga sirpanib ketmaydi, miss kamayadi.",
+    "en": "For grip: the tip does not slip off the ball."
+   }
+  }
+ },
+ {
+  "id": "Q136",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "📏 Viktorina: pool sharining diametri taxminan qancha?",
+   "en": "Quiz: roughly how wide is a pool ball?",
+   "options": [
+    "68 mm",
+    "57 mm",
+    "48 mm",
+    "38 mm"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "57,15 mm (2¼ dyuym).",
+    "en": "57.15 mm (2¼ inches)."
+   }
+  }
+ },
+ {
+  "id": "Q137",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "🇷🇺 Viktorina: rus piramidasi (russkiy billiard) sharlarining diametri qancha?",
+   "en": "Quiz: how wide are the balls in Russian pyramid billiards?",
+   "options": [
+    "57 mm",
+    "62 mm",
+    "68 mm",
+    "75 mm"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "68 mm: pool sharlaridan sezilarli kattaroq.",
+    "en": "68 mm, clearly bigger than pool balls."
+   }
+  }
+ },
+ {
+  "id": "Q138",
+  "cat": "quiz",
+  "tag": "gear",
+  "quiz": {
+   "uz": "📐 Viktorina: professional 9 futlik pool stolining o'yin maydoni taxminan qanday?",
+   "en": "Quiz: roughly how big is the playing area of a 9-foot pool table?",
+   "options": [
+    "1,5 × 0,75 m",
+    "2,54 × 1,27 m",
+    "3,5 × 1,75 m",
+    "4 × 2 m"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Taxminan 254 × 127 sm (ikki marta uzun, bir marta keng).",
+    "en": "About 254 × 127 cm: twice as long as wide."
+   }
+  }
+ },
+ {
+  "id": "Q139",
+  "cat": "quiz",
+  "tag": "snooker",
+  "quiz": {
+   "uz": "💙 Viktorina: snookerda ko'k shar necha ball beradi?",
+   "en": "Quiz: how many points is the blue ball worth in snooker?",
+   "options": [
+    "6",
+    "5",
+    "4",
+    "3"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Sariq 2, yashil 3, jigarrang 4, ko'k 5, pushti 6, qora 7.",
+    "en": "Yellow 2, green 3, brown 4, blue 5, pink 6, black 7."
+   }
+  }
+ },
+ {
+  "id": "Q140",
+  "cat": "quiz",
+  "tag": "snooker",
+  "quiz": {
+   "uz": "🌸 Viktorina: snookerda pushti shar necha ball beradi?",
+   "en": "Quiz: how many points is the pink ball worth in snooker?",
+   "options": [
+    "4",
+    "5",
+    "6",
+    "7"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Pushti 6 ball, qora 7 ball.",
+    "en": "Pink is 6, black is 7."
+   }
+  }
+ },
+ {
+  "id": "Q141",
+  "cat": "quiz",
+  "tag": "snooker",
+  "quiz": {
+   "uz": "🔴 Viktorina: snookerda stolda nechta qizil shar bo'ladi?",
+   "en": "Quiz: how many red balls are on a snooker table?",
+   "options": [
+    "6",
+    "10",
+    "15",
+    "22"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "15 qizil, 6 rangli va oq: jami 22 shar.",
+    "en": "15 reds, 6 colours and the cue ball: 22 in all."
+   }
+  }
+ },
+ {
+  "id": "Q142",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "🔶 Viktorina: 9-ball o'yinida sharlar qanday shaklda terib qo'yiladi?",
+   "en": "Quiz: in what shape are the balls racked in 9-ball?",
+   "options": [
+    "Uchburchak",
+    "Kvadrat",
+    "Doira",
+    "Romb (olmos)"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Romb: 9-shar o'rtada, 1-shar tepada.",
+    "en": "A diamond, with the 9 in the middle and the 1 on top."
+   }
+  }
+ },
+ {
+  "id": "Q143",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "⚫ Viktorina: 8-ball'da 8-sharni o'z vaqtidan oldin kiritsangiz nima bo'ladi?",
+   "en": "Quiz: in 8-ball, what happens if you pocket the 8 ball too early?",
+   "options": [
+    "Odatda yutqazasiz",
+    "Qo'shimcha ochko olasiz",
+    "Hech narsa",
+    "Navbat o'tmaydi"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Odatda o'yinni yutqazasiz. 8-shar eng oxirida kiritiladi.",
+    "en": "You usually lose. The 8 goes in last."
+   }
+  }
+ },
+ {
+  "id": "Q144",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "🔢 Viktorina: «14.1 straight pool» nomidagi 14 nimani bildiradi?",
+   "en": "Quiz: in \"14.1 straight pool\", what does the 14 stand for?",
+   "options": [
+    "Daqiqalar",
+    "Stol o'lchami",
+    "14 shar kiritilgach, qolganini qayta teriladi",
+    "O'yinchilar soni"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "14 shar kiritilgach, qolgan sharlar qayta terib qo'yiladi va o'yin davom etadi.",
+    "en": "After 14 balls are potted, the last one stays and the rest are re-racked."
+   }
+  }
+ },
+ {
+  "id": "Q145",
+  "cat": "quiz",
+  "tag": "rules",
+  "quiz": {
+   "uz": "🕳 Viktorina: karambol bilyardida stolda nechta cho'ntak bor?",
+   "en": "Quiz: how many pockets does a carom billiards table have?",
+   "options": [
+    "0",
+    "4",
+    "6",
+    "8"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Cho'ntak yo'q. Maqsad sharlarni bir-biriga urdirib ochko olish.",
+    "en": "None: you score by making your ball hit the others."
+   }
+  }
+ },
+ {
+  "id": "Q146",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🧱 Viktorina: «uch bortli» (3-cushion) karambolda oq shar nima qilishi kerak?",
+   "en": "Quiz: in three-cushion billiards, what must the cue ball do?",
+   "options": [
+    "Kamida 3 bortga tegib, ikkinchi sharni urishi",
+    "3 marta aylanishi",
+    "3 soniyada to'xtashi",
+    "3 ta sharni cho'ntakka kiritishi"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Kamida uch bortga tegib, ikkala nishon sharga ham tegishi kerak.",
+    "en": "It must touch three cushions and both object balls."
+   }
+  }
+ },
+ {
+  "id": "Q147",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🧗 Viktorina: «jump shot» nima?",
+   "en": "Quiz: what is a \"jump shot\"?",
+   "options": [
+    "O'yinchi sakraydi",
+    "Stol sakraydi",
+    "Kiy sakraydi",
+    "Oq shar sakrab boshqa sharning ustidan o'tadi"
+   ],
+   "correct": 3,
+   "explanation": {
+    "uz": "Kiyni tikroq tutib, oq sharni sakratib to'siq shar ustidan o'tkaziladi.",
+    "en": "The cue ball is made to jump over a blocking ball."
+   }
+  }
+ },
+ {
+  "id": "Q148",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🌀 Viktorina: «massé» zarbasida nima qilinadi?",
+   "en": "Quiz: what do you do in a \"masse\" shot?",
+   "options": [
+    "Faqat bortga uriladi",
+    "Kiy tashlanadi",
+    "Kiy deyarli tik tutiladi, oq shar egri yuradi",
+    "Shar to'g'ri uriladi"
+   ],
+   "correct": 2,
+   "explanation": {
+    "uz": "Kiy tik tutiladi va oq shar egri yo'l bilan yuradi. O'yinimizda «Kiy balandligi».",
+    "en": "The cue is held nearly upright and the ball curves. In our game: \"cue height\"."
+   }
+  }
+ },
+ {
+  "id": "Q149",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "🏦 Viktorina: «bank shot» nima?",
+   "en": "Quiz: what is a \"bank shot\"?",
+   "options": [
+    "Stolni almashtirish",
+    "Nishon sharni bortdan qaytarib kiritish",
+    "Oq sharni kiritish",
+    "Sharni ikki marta urish"
+   ],
+   "correct": 1,
+   "explanation": {
+    "uz": "Nishon shar avval bortga tegib, keyin cho'ntakka tushadi.",
+    "en": "The object ball hits a cushion first, then drops in."
+   }
+  }
+ },
+ {
+  "id": "Q150",
+  "cat": "quiz",
+  "tag": "terms",
+  "quiz": {
+   "uz": "💋 Viktorina: bilyardda «kiss» (o'pish) nima?",
+   "en": "Quiz: in billiards, what is a \"kiss\"?",
+   "options": [
+    "Sharlarning bir-biriga yengil tegib o'tishi",
+    "Shar kiritilishi",
+    "Qoidabuzarlik",
+    "O'yin oxiri"
+   ],
+   "correct": 0,
+   "explanation": {
+    "uz": "Ikki shar yengil tegib, yo'nalishi o'zgaradi. Ba'zan foyda, ba'zan muammo.",
+    "en": "Balls touch lightly and change direction."
    }
   }
  },

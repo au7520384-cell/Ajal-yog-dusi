@@ -1,0 +1,305 @@
+// Quizzes, part 4: billiard stars, famous people who loved the game, films, history, gear and rules. Only facts that are well documented.
+
+## quiz stars
+uz: 🏆 Viktorina: afsonaviy Willie Mosconi necha marta jahon chempioni bo'lgan?
+en: Quiz: how many times was the legend Willie Mosconi world champion?
+o: 5 | 10 | 15 | 20
+c: 2
+xu: 15 marta. U «Mister Pocket Billiards» deb atalgan.
+xe: 15 times. Called "Mr. Pocket Billiards".
+
+## quiz stars
+uz: 🎯 Viktorina: Mosconi 1953-yilda straight pool'da ketma-ket nechta shar kiritib rekord qo'ygan?
+en: Quiz: in 1953 Mosconi ran how many balls in a row at straight pool?
+o: 126 | 256 | 526 | 1 000
+c: 2
+xu: 526 ta shar, bir marta ham xato qilmagan holda.
+xe: 526 balls without a single miss.
+
+## quiz stars
+uz: 🎬 Viktorina: «The Hustler» (1961) filmida Minnesota Fats rolini kim o'ynagan?
+en: Quiz: who played Minnesota Fats in the film "The Hustler" (1961)?
+o: Paul Newman | Jackie Gleason | Tom Cruise | Robert De Niro
+c: 1
+xu: Jackie Gleason. Uning o'zi ham yaxshi bilyardchi bo'lgan.
+xe: Jackie Gleason, himself a fine player.
+
+## quiz cinema
+uz: 🎬 Viktorina: «The Hustler» filmida Paul Newman o'ynagan qahramonning laqabi qanday?
+en: Quiz: what is the nickname of the character Paul Newman played in "The Hustler"?
+o: Fast Eddie | Big Jim | Cool Hand | Lucky Pete
+c: 0
+xu: «Fast Eddie» (Tez Eddi). Keyinroq «The Color of Money»da qaytgan.
+xe: "Fast Eddie". He returned in "The Color of Money".
+
+## quiz cinema
+uz: 🎱 Viktorina: filmlardagi zarbalarni Paul Newman uchun kim bajarib bergan va o'rgatgan?
+en: Quiz: which champion taught Paul Newman and played his trick shots in the films?
+o: Efren Reyes | Willie Mosconi | Steve Davis | Ronnie O'Sullivan
+c: 1
+xu: Willie Mosconi filmlarda maslahatchi bo'lgan va murakkab zarbalarni o'zi urgan.
+xe: Mosconi was the film's advisor and played the hard shots himself.
+
+## quiz stars
+uz: 🚀 Viktorina: snooker yulduzi Ronnie O'Sullivan'ning laqabi qanday?
+en: Quiz: what is the nickname of snooker star Ronnie O'Sullivan?
+o: The Rocket | The Hurricane | The Whirlwind | The Nugget
+c: 0
+xu: «Rocket» (Raketa): tez o'ynagani uchun.
+xe: "The Rocket", for his fast play.
+
+## quiz stars
+uz: 🌪 Viktorina: snookerning yorqin yulduzi Alex Higgins qaysi laqab bilan mashhur?
+en: Quiz: which nickname is snooker's Alex Higgins known by?
+o: The Rocket | The Hurricane | The Wizard | The Nugget
+c: 1
+xu: «Hurricane» (Dovul): hayajonli, tezkor o'yini uchun.
+xe: "The Hurricane", for his fast, thrilling play.
+
+## quiz stars
+uz: 🌀 Viktorina: Jimmy White qaysi laqab bilan tanilgan?
+en: Quiz: which nickname is Jimmy White known by?
+o: The Whirlwind | The Rocket | The Hurricane | The Magician
+c: 0
+xu: «Whirlwind» (Quyun). U jahon finalida ko'p marta ishtirok etgan.
+xe: "The Whirlwind". He reached many world finals.
+
+## quiz stars
+uz: 🪙 Viktorina: ko'p karra jahon chempioni Steve Davis'ning laqabi?
+en: Quiz: what is the nickname of multiple world champion Steve Davis?
+o: The Rocket | The Nugget | The Hurricane | The Whirlwind
+c: 1
+xu: «The Nugget» (Oltin parcha). U 1980-yillar yulduzi edi.
+xe: "The Nugget", the star of the 1980s.
+
+## quiz stars
+uz: 🇵🇭 Viktorina: Efren Reyes'ning «Bata» laqabi Tagalog tilida nimani anglatadi?
+en: Quiz: what does Efren Reyes' nickname "Bata" mean in Tagalog?
+o: Bola | Usta | Sher | Chaqmoq
+c: 0
+xu: «Bata»: bola. «The Magician»: Sehrgar ham deyiladi.
+xe: "Bata" means child. He is also "The Magician".
+
+## quiz stars
+uz: 💎 Viktorina: amerikalik Earl Strickland qaysi laqab bilan tanilgan?
+en: Quiz: which nickname is Earl Strickland known by?
+o: The Pearl | The Rock | The Eagle | The Ghost
+c: 0
+xu: «The Pearl» (Injuga o'xshash: marvarid). Jahon chempioni.
+xe: "The Pearl", a former world champion.
+
+## quiz stars
+uz: 🇺🇸 Viktorina: Shane Van Boening'ning laqabi nima?
+en: Quiz: what is Shane Van Boening's nickname?
+o: Texas Kid | South Dakota Kid | Ohio Rocket | Kansas Hawk
+c: 1
+xu: «South Dakota Kid», Janubiy Dakota shtatidan.
+xe: "South Dakota Kid", from the state of South Dakota.
+
+## quiz history
+uz: 📖 Viktorina: Lev Tolstoy 1855-yilda qaysi o'yin haqida hikoya yozgan: «Bilyard markerining yozuvlari»?
+en: Quiz: Leo Tolstoy wrote the 1855 story "A Billiard-Marker's Notes". About which game?
+o: Shaxmat | Bilyard / Billiards | Shashka / Draughts | Karta / Cards
+c: 1
+xu: Bilyard haqida. Hikoyada marker qimor o'ynovchi yosh zodagonni kuzatadi.
+xe: About billiards: a marker watches a young nobleman gamble.
+
+## quiz history
+uz: 🎭 Viktorina: Shekspirning qaysi pyesasida bilyard tilga olinadi?
+en: Quiz: in which Shakespeare play is billiards mentioned?
+o: Hamlet | Macbeth | Antony and Cleopatra | Romeo and Juliet
+c: 2
+xu: «Antoniy va Kleopatra»da Kleopatra «Bilyardga boramiz» deydi.
+xe: In "Antony and Cleopatra", Cleopatra says "Let us to billiards".
+
+## quiz history
+uz: 👑 Viktorina: qaysi qirol shifokorlar maslahati bilan bilyardni mashq sifatida o'ynab, uni saroyda mashhur qilgan?
+en: Quiz: which king, on his doctors' advice, played billiards for exercise and made it fashionable at court?
+o: Frantsiyalik Lyudovik XIV | Amir Temur | Rossiyalik Pyotr I | Yuliy Sezar
+c: 0
+xu: Lyudovik XIV. Shundan bilyard Yevropa saroylarida urf bo'lgan.
+xe: Louis XIV. Billiards became fashionable in Europe's courts.
+
+## quiz history
+uz: 🎼 Viktorina: buyuk bastakor Volfgang Amadey Motsart'ning Vena uyida nima bo'lgan?
+en: Quiz: what did composer Wolfgang Amadeus Mozart have in his Vienna home?
+o: Bilyard stoli | Boks xalqasi | Otxona | Kutubxona ichida hovuz
+c: 0
+xu: Motsart bilyardni sevgan va uyida stol bo'lgan.
+xe: Mozart loved billiards and kept a table at home.
+
+## quiz history
+uz: 🌿 Viktorina: bilyard qaysi o'yinlardan kelib chiqqan deyiladi?
+en: Quiz: billiards is said to have grown out of which kind of game?
+o: Maysazordagi to'p o'yinlari / Lawn ball games | Shaxmat / Chess | Kurash / Wrestling | Suzish / Swimming
+c: 0
+xu: Maysada o'ynalgan o'yinlardan. Shuning uchun stol yashil mato bilan qoplanadi.
+xe: From games played on grass, hence the green cloth.
+
+## quiz terms
+uz: 🇫🇷 Viktorina: «bilyard» so'zi qaysi tildan kelgan?
+en: Quiz: which language does the word "billiards" come from?
+o: Frantsuz tili | Nemis tili | Ispan tili | Arab tili
+c: 0
+xu: Frantsuzcha «billart» (kiy) yoki «bille» (shar) so'zidan.
+xe: From French "billart" (cue) or "bille" (ball).
+
+## quiz terms
+uz: 💰 Viktorina: inglizcha «pool» so'zi dastlab nimani bildirgan?
+en: Quiz: what did the word "pool" originally refer to?
+o: Umumiy garov puli | Suv havzasi | Stol matosi | Kiy turi
+c: 0
+xu: Umumiy garov puli. «Poolroom»: garovli o'yin joyi.
+xe: A shared betting pot. A "poolroom" was a betting parlour.
+
+## quiz gear
+uz: 🦷 Viktorina: XIX asrgacha bilyard sharlari qanday materialdan yasalgan?
+en: Quiz: before the 19th century, what were billiard balls made of?
+o: Fil suyagi | Shisha | Yog'och bo'yalgan | Po'lat
+c: 0
+xu: Fil suyagidan. Hozir fenol qatroni (bakelitga o'xshash) ishlatiladi.
+xe: Ivory. Today phenolic resin is used.
+
+## quiz gear
+uz: 🔬 Viktorina: zamonaviy professional pool sharlari asosan nimadan yasaladi?
+en: Quiz: what are modern professional pool balls mostly made of?
+o: Fenol qatroni | Metall | Tabiiy tosh | Rezina
+c: 0
+xu: Fenol qatroni: bardoshli, yaxshi sakraydi va aylanadi.
+xe: Phenolic resin: durable, rolls and bounces true.
+
+## quiz gear
+uz: 🧵 Viktorina: kiyning uchi (tip) odatda nimadan yasaladi?
+en: Quiz: what is a cue tip usually made of?
+o: Teri | Metall | Plastik | Shisha
+c: 0
+xu: Teridan. U bo'rni ushlab, sirpanmasdan urishga yordam beradi.
+xe: Leather. It holds chalk so the cue does not slip.
+
+## quiz gear
+uz: 🔷 Viktorina: kiy uchiga surtiladigan bo'r nima uchun kerak?
+en: Quiz: what is the chalk on the cue tip for?
+o: Ishqalanishni oshirish, kiy sirpanmasligi uchun | Chiroyli ko'rinish uchun | Shar rangini o'zgartirish uchun | Stolni tozalash uchun
+c: 0
+xu: Ishqalanish uchun: kiy oq sharga sirpanib ketmaydi, miss kamayadi.
+xe: For grip: the tip does not slip off the ball.
+
+## quiz gear
+uz: 📏 Viktorina: pool sharining diametri taxminan qancha?
+en: Quiz: roughly how wide is a pool ball?
+o: 38 mm | 48 mm | 57 mm | 68 mm
+c: 2
+xu: 57,15 mm (2¼ dyuym).
+xe: 57.15 mm (2¼ inches).
+
+## quiz gear
+uz: 🇷🇺 Viktorina: rus piramidasi (russkiy billiard) sharlarining diametri qancha?
+en: Quiz: how wide are the balls in Russian pyramid billiards?
+o: 57 mm | 62 mm | 68 mm | 75 mm
+c: 2
+xu: 68 mm: pool sharlaridan sezilarli kattaroq.
+xe: 68 mm, clearly bigger than pool balls.
+
+## quiz gear
+uz: 📐 Viktorina: professional 9 futlik pool stolining o'yin maydoni taxminan qanday?
+en: Quiz: roughly how big is the playing area of a 9-foot pool table?
+o: 1,5 × 0,75 m | 2,54 × 1,27 m | 3,5 × 1,75 m | 4 × 2 m
+c: 1
+xu: Taxminan 254 × 127 sm (ikki marta uzun, bir marta keng).
+xe: About 254 × 127 cm: twice as long as wide.
+
+## quiz snooker
+uz: 💙 Viktorina: snookerda ko'k shar necha ball beradi?
+en: Quiz: how many points is the blue ball worth in snooker?
+o: 3 | 4 | 5 | 6
+c: 2
+xu: Sariq 2, yashil 3, jigarrang 4, ko'k 5, pushti 6, qora 7.
+xe: Yellow 2, green 3, brown 4, blue 5, pink 6, black 7.
+
+## quiz snooker
+uz: 🌸 Viktorina: snookerda pushti shar necha ball beradi?
+en: Quiz: how many points is the pink ball worth in snooker?
+o: 4 | 5 | 6 | 7
+c: 2
+xu: Pushti 6 ball, qora 7 ball.
+xe: Pink is 6, black is 7.
+
+## quiz snooker
+uz: 🔴 Viktorina: snookerda stolda nechta qizil shar bo'ladi?
+en: Quiz: how many red balls are on a snooker table?
+o: 6 | 10 | 15 | 22
+c: 2
+xu: 15 qizil, 6 rangli va oq: jami 22 shar.
+xe: 15 reds, 6 colours and the cue ball: 22 in all.
+
+## quiz rules
+uz: 🔶 Viktorina: 9-ball o'yinida sharlar qanday shaklda terib qo'yiladi?
+en: Quiz: in what shape are the balls racked in 9-ball?
+o: Uchburchak | Romb (olmos) | Kvadrat | Doira
+c: 1
+xu: Romb: 9-shar o'rtada, 1-shar tepada.
+xe: A diamond, with the 9 in the middle and the 1 on top.
+
+## quiz rules
+uz: ⚫ Viktorina: 8-ball'da 8-sharni o'z vaqtidan oldin kiritsangiz nima bo'ladi?
+en: Quiz: in 8-ball, what happens if you pocket the 8 ball too early?
+o: Odatda yutqazasiz | Qo'shimcha ochko olasiz | Navbat o'tmaydi | Hech narsa
+c: 0
+xu: Odatda o'yinni yutqazasiz. 8-shar eng oxirida kiritiladi.
+xe: You usually lose. The 8 goes in last.
+
+## quiz rules
+uz: 🔢 Viktorina: «14.1 straight pool» nomidagi 14 nimani bildiradi?
+en: Quiz: in "14.1 straight pool", what does the 14 stand for?
+o: 14 shar kiritilgach, qolganini qayta teriladi | O'yinchilar soni | Daqiqalar | Stol o'lchami
+c: 0
+xu: 14 shar kiritilgach, qolgan sharlar qayta terib qo'yiladi va o'yin davom etadi.
+xe: After 14 balls are potted, the last one stays and the rest are re-racked.
+
+## quiz rules
+uz: 🕳 Viktorina: karambol bilyardida stolda nechta cho'ntak bor?
+en: Quiz: how many pockets does a carom billiards table have?
+o: 0 | 4 | 6 | 8
+c: 0
+xu: Cho'ntak yo'q. Maqsad sharlarni bir-biriga urdirib ochko olish.
+xe: None: you score by making your ball hit the others.
+
+## quiz terms
+uz: 🧱 Viktorina: «uch bortli» (3-cushion) karambolda oq shar nima qilishi kerak?
+en: Quiz: in three-cushion billiards, what must the cue ball do?
+o: Kamida 3 bortga tegib, ikkinchi sharni urishi | 3 ta sharni cho'ntakka kiritishi | 3 marta aylanishi | 3 soniyada to'xtashi
+c: 0
+xu: Kamida uch bortga tegib, ikkala nishon sharga ham tegishi kerak.
+xe: It must touch three cushions and both object balls.
+
+## quiz terms
+uz: 🧗 Viktorina: «jump shot» nima?
+en: Quiz: what is a "jump shot"?
+o: Oq shar sakrab boshqa sharning ustidan o'tadi | Kiy sakraydi | O'yinchi sakraydi | Stol sakraydi
+c: 0
+xu: Kiyni tikroq tutib, oq sharni sakratib to'siq shar ustidan o'tkaziladi.
+xe: The cue ball is made to jump over a blocking ball.
+
+## quiz terms
+uz: 🌀 Viktorina: «massé» zarbasida nima qilinadi?
+en: Quiz: what do you do in a "masse" shot?
+o: Kiy deyarli tik tutiladi, oq shar egri yuradi | Shar to'g'ri uriladi | Kiy tashlanadi | Faqat bortga uriladi
+c: 0
+xu: Kiy tik tutiladi va oq shar egri yo'l bilan yuradi. O'yinimizda «Kiy balandligi».
+xe: The cue is held nearly upright and the ball curves. In our game: "cue height".
+
+## quiz terms
+uz: 🏦 Viktorina: «bank shot» nima?
+en: Quiz: what is a "bank shot"?
+o: Nishon sharni bortdan qaytarib kiritish | Sharni ikki marta urish | Oq sharni kiritish | Stolni almashtirish
+c: 0
+xu: Nishon shar avval bortga tegib, keyin cho'ntakka tushadi.
+xe: The object ball hits a cushion first, then drops in.
+
+## quiz terms
+uz: 💋 Viktorina: bilyardda «kiss» (o'pish) nima?
+en: Quiz: in billiards, what is a "kiss"?
+o: Sharlarning bir-biriga yengil tegib o'tishi | Shar kiritilishi | Qoidabuzarlik | O'yin oxiri
+c: 0
+xu: Ikki shar yengil tegib, yo'nalishi o'zgaradi. Ba'zan foyda, ba'zan muammo.
+xe: Balls touch lightly and change direction.
