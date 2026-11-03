@@ -1,0 +1,151 @@
+// French (questions and options; the explanation in English is shown after the answer)
+Q001|Combien de billes y a-t-il sur la table au billard à 9 billes, blanche comprise ?|=;=;=;=|
+Q002|Au billard à 9 billes, quelle bille la blanche doit-elle toucher en premier ?|N'importe laquelle;Celle au numéro le plus élevé;La bille 9;Celle au numéro le plus bas|
+Q003|Au billard à 9 billes, quelle bille fait gagner la partie quand elle est empochée légalement ?|La bille 8;La bille 1;La blanche;La bille 9|
+Q004|En quelle forme dispose-t-on les billes au billard à 9 billes ?|Cercle;Triangle;Carré;Losange|
+Q005|En combien de rangées dispose-t-on les 15 billes dans le triangle ?|=;=;=;=|
+Q006|Quelle est la somme des numéros des billes de 1 à 15 ?|=;=;=;=|
+Q007|Combien y a-t-il de billes rouges au snooker ?|=;=;=;=|
+Q008|Quelle est la série (break) maximale possible au snooker ?|=;=;=;=|
+Q009|Combien de points vaut la bille noire au snooker ?|=;=;=;=|
+Q010|Quelle est la longueur d'une table de snooker de taille réelle ?|15 pieds;12 pieds;9 pieds;7 pieds|
+Q011|Combien de poches a une table de billard carambole ?|=;=;=;=|
+Q012|Qu'est-ce qu'un coup « massé » ?|Faire sauter la blanche;Un coup par la bande;La casse;Queue presque verticale, la bille fait une courbe|
+Q013|Comment appelle-t-on le coup où la blanche saute par-dessus une bille gênante ?|=;Coup par la bande (bank shot);Défense (safety);Casse (break)|
+Q014|La blanche touche d'abord une bande, puis la bille cible. Quel est ce coup ?|=;=;=;=|
+Q015|La bille cible touche une bande puis tombe dans une poche. Qu'est-ce que c'est ?|Combinaison;Kick shot;Scratch;=|
+Q016|La blanche frappe une bille, qui empoche une autre. C'est une...|Combinaison;Faute;Défense;Kick shot|
+Q017|Comment appelle-t-on en anglais la main (ou l'accessoire) qui soutient la queue ?|=;=;=;=|
+Q018|Comment appelle-t-on en anglais le triangle qui sert à ranger les billes avant la casse ?|=;=;=;=|
+Q019|Comment appelle-t-on en anglais le bord rembourré de la table ?|=;=;=;Cushion (rail) : la bande|
+Q020|Comment appelle-t-on le tissu doux qui recouvre la table ?|=;=;=;=|
+Q021|Comment appelle-t-on le coup où la blanche s'arrête net après le contact ?|=;=;=;=|
+Q022|Vous frappez au-dessus du centre pour que la blanche continue de rouler en avant. Comment ça s'appelle ?|Follow (effet avant);Stop shot;Draw (effet rétro);=|
+Q023|Comment appelle-t-on le premier coup de la partie, qui disperse les billes rangées ?|=;=;=;=|
+Q024|À quoi sert la méthode de la « bille fantôme » (ghost ball) ?|À craider la queue;À sauter une bille;À ranger les billes;À imaginer où la blanche doit arriver|
+Q025|Dans des conditions idéales, sous quel angle une bille quitte-t-elle la bande ?|Égal à l'angle d'arrivée;Au hasard;Le double;Toujours 90°|
+Q026|En quoi le procédé (tip) d'une queue est-il généralement fait ?|Verre;Bois;Métal;Cuir|
+Q027|En quoi les billes de billard modernes sont-elles surtout faites ?|Résine (plastique);Verre;Ivoire;Bois|
+Q028|Quelle est, à peu près, la longueur d'une queue de billard standard ?|90 cm;120 cm;147 cm;200 cm|
+Q029|Quel est, à peu près, le diamètre d'une bille de billard standard ?|3 cm;5,7 cm;8 cm;10 cm|
+Q030|Quelle est, à peu près, la taille de la zone de jeu d'une table de billard de 9 pieds ?|=;=;=;=|
+Q031|De quelle couleur est la bille numéro 1 dans un jeu standard à 8 billes ?|Jaune;Verte;Bleue;Rouge|
+Q032|De quelle couleur est la bille numéro 5 dans un jeu standard ?|Verte;Noire;Violette;Orange|
+Q033|Efren « Le Magicien » Reyes, légende du billard, vient de quel pays ?|Japon;Chine;États-Unis;Philippines|
+Q034|Combien de billes d'affilée Willie Mosconi a-t-il empochées lors d'une exhibition de straight pool ?|=;=;=;=|
+Q035|Qui jouait le joueur « Fast Eddie » dans le film « L'Arnaqueur » (1961) ?|=;Robert De Niro;Tom Cruise;Brad Pitt|
+Q036|Qui joue aux côtés de Paul Newman dans « La Couleur de l'argent » (1986) ?|Tom Cruise;Tom Hanks;Keanu Reeves;Al Pacino|
+Q037|Quel est le surnom de la légende du snooker Ronnie O'Sullivan ?|=;=;=;=|
+Q038|Le mot anglais « cue » vient de quel mot français ?|cube (cube);clé (clef);cible (cible);queue (queue)|
+Q039|Dans quelle ville se trouve Big Ben ? C'est aussi la première table du jeu !|Londres;Paris;Madrid;Rome|
+Q040|Sydney, célèbre pour son Opéra aux toits en voiles, est dans quel pays ?|Canada;Afrique du Sud;Nouvelle-Zélande;Australie|
+Q041|De quel pays vient le « pastel de nata », la tartelette à la crème ?|Portugal;Espagne;France;Italie|
+Q042|Dans quelle ville se trouve le stade Santiago Bernabéu ?|Lisbonne;Barcelone;Rome;Madrid|
+Q043|Comment s'appelait Tokyo avant 1868 ?|=;Osaka;Nagoya;Kyoto|
+Q044|Qu'est-ce qu'un « dojo » en japonais ?|Une salle d'entraînement aux arts martiaux;Un jardin;Une maison de thé;Un temple|
+Q045|À quel pays la danse du tango est-elle liée (table de Buenos Aires : « Tango Salon ») ?|Espagne;Brésil;Mexique;Argentine|
+Q046|L'Indonésie, où se trouve Jakarta, compte à peu près combien d'îles ?|=;=;=;=|
+Q047|La feuille de quel arbre figure sur le drapeau du Canada (table de Toronto : « Maple Lounge ») ?|Érable;Chêne;Palmier;Bouleau|
+Q048|Mexico a été bâtie sur l'emplacement de quelle ville antique ?|Teotihuacan;Chichén Itzá;Machu Picchu;Tenochtitlan|
+Q049|Dans quel pays se trouvent les pyramides de Gizeh (table du Caire : « Pyramid Hall ») ?|Égypte;Soudan;Maroc;Jordanie|
+Q050|Dans quelle ville se trouve le Burj Khalifa de 828 mètres ?|Singapour;Shanghai;New York;Dubaï|
+Q051|Le nom « Singapour » signifie « Ville du Lion ». Vrai ou faux ?|Vrai;Faux|
+Q052|Dans quelle ville se trouve la tour Perle de l'Orient ?|Bangkok;Shanghai;Séoul;Osaka|
+Q053|Dans quelle ville se trouve la tour Eiffel ?|Rome;Paris;Berlin;Amsterdam|
+Q054|Quel était le nom d'origine de New York ?|Nouvelle-Amsterdam;Nouvelle-Paris;Nouvelle-Rome;Nouvelle-Londres|
+Q055|Dans quelle ville se trouve le Colisée ?|Le Caire;Istanbul;Athènes;Rome|
+Q056|Bangkok est la capitale de quel pays ?|Cambodge;Thaïlande;Malaisie;Vietnam|
+Q057|Dans quelle ville se trouvent les célèbres tours Petronas ?|Singapour;Manille;Jakarta;Kuala Lumpur|
+Q058|Séoul est la capitale de quel pays ?|Corée du Sud;Chine;Japon;Thaïlande|
+Q059|Comment s'appelait Mumbai jusqu'en 1995 ?|Bombay;Madras;Delhi;Calcutta|
+Q060|Dans quelle ville ont eu lieu les premiers Jeux olympiques modernes en 1896 ?|Rome;Londres;Paris;Athènes|
+Q061|En quelle année le mur de Berlin est-il tombé ?|=;=;=;=|
+Q062|Sur quels deux continents Istanbul se trouve-t-elle ?|Asie et Amérique;Europe et Asie;Europe et Afrique;Asie et Afrique|
+Q063|Que signifie le nom « Casablanca » ?|Maison blanche;Ville nouvelle;Mer Noire;Grand marché|
+Q064|Combien des 30 villes du jeu se trouvent au Japon ?|=;=;=;=|
+Q065|En quelle année le métro de Tachkent, le premier d'Asie centrale, a-t-il ouvert ?|=;=;=;=|
+Q066|En quelle année Tachkent a-t-elle fêté ses 2 200 ans ?|=;=;=;=|
+Q067|Que signifie le nom « Rio de Janeiro » ?|Grand lac;Rivière de janvier;Rivière d'or;Vent de mer|
+Q068|Sur quelle place se dresse la cathédrale Basile-le-Bienheureux ?|Times Square;Place Taksim;Place de l'Indépendance;Place Rouge|
+Q069|Dans quel État américain se trouve Las Vegas ?|Texas;Nevada;Floride;Californie|
+Q070|Amsterdam est la capitale de quel pays ?|Pays-Bas;Danemark;Suède;Belgique|
+Q071|Il y a à peu près combien de queues dans le jeu ?|=;=;=;=|
+Q072|Combien de queues de pays y a-t-il dans le jeu ?|=;=;=;=|
+Q073|Combien d'avatars portraits sont gratuits ?|=;=;=;=|
+Q074|Combien de packs de stickers y a-t-il ?|=;=;=;=|
+Q075|Combien de 💎 coûte un pack de stickers ?|=;=;=;=|
+Q076|Combien de types de cadeaux peut-on envoyer à son adversaire pendant une partie ?|=;=;=;=|
+Q077|Quel cadeau est le plus gros (👍 ×7 000) ?|Voiture;Gemme;Couronne;Jet|
+Q078|Quels deux cadeaux sont gratuits chaque jour ?|Couronne et gemme;Trèfle et chocolat;Voiture et jet;Gâteau et bouquet|
+Q079|Combien de niveaux compte le Pass de saison ?|=;=;=;=|
+Q080|À quelles heures de Tachkent s'ouvrent les coupes quotidiennes ?|=;=;=;=|
+Q081|Combien de temps une coupe quotidienne reste-t-elle ouverte une fois lancée ?|Toute la journée;6 heures;1 heure;3 heures|
+Q082|Combien de joueurs participent à la Coupe du monde ?|=;=;=;=|
+Q083|Combien de joueurs y a-t-il dans la Coupe d'Europe ?|=;=;=;=|
+Q084|À combien de trophées la Table du grand maître s'ouvre-t-elle ?|=;=;=;=|
+Q085|De combien de morceaux la légendaire queue du grand maître est-elle assemblée ?|=;=;=;=|
+Q086|Combien de morceaux forment une queue de la Victoire ?|=;=;=;=|
+Q087|À partir de quel niveau peut-on créer un club ou en rejoindre un ?|=;=;=;=|
+Q088|Quel est le nombre maximal de membres d'un club ?|=;=;=;=|
+Q089|Combien de 💵 reçoit la 1re place du classement mondial hebdomadaire ?|=;=;=;=|
+Q090|Combien de 💵 reçoit la 1re place du classement d'un pays ?|=;=;=;=|
+Q091|Quand le classement hebdomadaire est-il réinitialisé (heure de Tachkent) ?|Lundi, 05:00;Samedi, 20:00;Vendredi, 00:00;Mardi, 12:00|
+Q092|Quelle part d'une ligue monte d'un niveau chaque semaine, à peu près ?|=;=;=;=|
+Q093|Quelle réduction porte la « Table de la semaine » ?|=;=;=;=|
+Q094|Combien d'exemplaires existe-t-il de l'édition limitée la plus rare, l'Opale Arc-en-ciel ?|=;=;=;=|
+Q095|Combien d'exemplaires y a-t-il du niveau limité le plus courant, le Bronze ?|=;=;=;=|
+Q096|Quelle ville a la table la moins chère (la première) du jeu ?|Tachkent;Dubaï;Moscou;Londres|
+Q097|Quelle ville a la table la plus haute (la dernière) du jeu ?|Moscou;New York;Tachkent;Rio|
+Q098|Comment s'appelle la table de Tachkent du jeu ?|=;=;=;=|
+Q099|De quelle couleur est le tapis de la table de Londres ?|Bleu;Rouge;Noir;Jaune|
+Q100|La table de quelle ville a un tapis noir ?|Londres;Madrid;Sydney;Las Vegas|
+Q101|Quel jour de la route des récompenses se trouve le « gros lot » ?|Jour 8;Jour 7;Jour 5;Jour 3|
+Q102|Combien y a-t-il de médailles (succès) ?|=;=;=;=|
+Q103|Lequel de ces éléments n'est PAS un filtre de la liste « Salons ouverts » ?|Places libres;Salon vocal;Amis;Prix de la queue|
+Q104|Combien les anneaux de ville ajoutent-ils à vos points Showdown ?|=;=;=;=|
+Q105|Combien de victoires donnent l'anneau de la table de Londres (+4 par victoire, objectif 15 trophées) ?|=;=;=;=|
+Q106|Combien d'étapes de récompense le Showdown compte-t-il ?|=;=;=;=|
+Q107|Combien de joueurs y a-t-il dans la coupe de championnat de chaque ville ?|=;=;=;=|
+Q108|Quelle est la plus grande coupe quotidienne (prix de 400 000 🪙) ?|Du soir;De la nuit;Du matin;De midi|
+Q109|Combien de joueurs au maximum peuvent parler dans le salon vocal d'un lobby ?|=;=;=;=|
+Q110|Combien de billes compte le groupe d'un joueur au billard à 8 billes (sans la 8) ?|=;=;=;=|
+Q111|Avec 15 billes cibles et une blanche, combien de billes sont rayées ?|=;=;=;=|
+Q112|Sans compter la blanche, en combien de groupes les billes du billard à 8 billes se divisent-elles ?|=;=;=;=|
+Q113|Combien de fois la légende Willie Mosconi a-t-il été champion du monde ?|=;=;=;=|
+Q114|En 1953, combien de billes d'affilée Mosconi a-t-il empochées au straight pool ?|=;=;=;=|
+Q115|Qui jouait Minnesota Fats dans le film « L'Arnaqueur » (1961) ?|Jackie Gleason;Paul Newman;Robert De Niro;Tom Cruise|
+Q116|Quel est le surnom du personnage de Paul Newman dans « L'Arnaqueur » ?|=;=;=;=|
+Q117|Quel champion a appris à Paul Newman et exécuté ses coups difficiles dans les films ?|Efren Reyes;Willie Mosconi;Steve Davis;Ronnie O'Sullivan|
+Q118|Quel est le surnom de la star du snooker Ronnie O'Sullivan ?|=;=;=;=|
+Q119|Sous quel surnom Alex Higgins, du snooker, est-il connu ?|=;=;=;=|
+Q120|Sous quel surnom Jimmy White est-il connu ?|=;=;=;=|
+Q121|Quel est le surnom du multiple champion du monde Steve Davis ?|=;=;=;=|
+Q122|Que signifie en tagalog le surnom « Bata » d'Efren Reyes ?|Lion;Éclair;Maître;Enfant|
+Q123|Sous quel surnom Earl Strickland est-il connu ?|=;=;=;=|
+Q124|Quel est le surnom de Shane Van Boening ?|=;=;=;=|
+Q125|Léon Tolstoï a écrit en 1855 la nouvelle « Souvenirs d'un marqueur ». De quel jeu parle-t-elle ?|Cartes;Dames;Échecs;Billard|
+Q126|Dans quelle pièce de Shakespeare le billard est-il mentionné ?|Macbeth;Roméo et Juliette;Antoine et Cléopâtre;Hamlet|
+Q127|Quel roi, sur conseil de ses médecins, jouait au billard pour s'exercer et l'a mis à la mode à la cour ?|Amir Timour;Pierre Ier de Russie;Louis XIV de France;Jules César|
+Q128|Qu'avait le compositeur Wolfgang Amadeus Mozart dans sa maison de Vienne ?|Une écurie;Une table de billard;Une piscine dans la bibliothèque;Un ring de boxe|
+Q129|On dit que le billard est né de quel type de jeux ?|Jeux de balle sur l'herbe;Lutte;Natation;Échecs|
+Q130|De quelle langue vient le mot « billard » ?|Arabe;Espagnol;Allemand;Français|
+Q131|À quoi le mot « pool » faisait-il d'abord référence ?|Le tapis de la table;La piscine;Un type de queue;Une cagnotte de paris|
+Q132|Avant le XIXe siècle, en quoi les billes de billard étaient-elles faites ?|Acier;Bois peint;Ivoire;Verre|
+Q133|En quoi les billes de billard professionnelles modernes sont-elles surtout faites ?|Résine phénolique;Caoutchouc;Métal;Pierre naturelle|
+Q134|En quoi le procédé d'une queue est-il généralement fait ?|Métal;Cuir;Plastique;Verre|
+Q135|À quoi sert la craie sur le procédé de la queue ?|À faire joli;À donner de l'adhérence pour que la queue ne glisse pas;À changer la couleur de la bille;À nettoyer la table|
+Q136|Quel est, à peu près, le diamètre d'une bille de billard ?|=;=;=;=|
+Q137|Quel est le diamètre des billes du billard russe (pyramide) ?|=;=;=;=|
+Q138|Quelle est, à peu près, la taille de la zone de jeu d'une table de billard de 9 pieds ?|=;=;=;=|
+Q139|Combien de points vaut la bille bleue au snooker ?|=;=;=;=|
+Q140|Combien de points vaut la bille rose au snooker ?|=;=;=;=|
+Q141|Combien de billes rouges y a-t-il sur une table de snooker ?|=;=;=;=|
+Q142|En quelle forme dispose-t-on les billes au billard à 9 billes ?|Triangle;Carré;Cercle;Losange|
+Q143|Au billard à 8 billes, que se passe-t-il si vous empochez la bille 8 trop tôt ?|On perd généralement;On gagne des points en plus;Rien;Le tour ne change pas|
+Q144|Dans le « straight pool 14.1 », que signifie le 14 ?|Les minutes;La taille de la table;Après 14 billes empochées, les autres sont réarrangées;Le nombre de joueurs|
+Q145|Combien de poches a une table de billard carambole ?|=;=;=;=|
+Q146|Au billard à trois bandes, que doit faire la blanche ?|Toucher au moins 3 bandes et frapper la deuxième bille;Tourner 3 fois;S'arrêter en 3 secondes;Empocher 3 billes|
+Q147|Qu'est-ce qu'un « jump shot » (coup sauté) ?|Le joueur saute;La table saute;La queue saute;La blanche saute par-dessus une autre bille|
+Q148|Que fait-on dans un coup « massé » ?|On frappe seulement la bande;On lance la queue;Queue presque verticale, la bille fait une courbe;On frappe la bille droit|
+Q149|Qu'est-ce qu'un « bank shot » ?|Changer de table;Empocher la bille cible en la faisant rebondir sur la bande;Empocher la blanche;Frapper la bille deux fois|
+Q150|Au billard, qu'est-ce qu'un « kiss » (baiser) ?|Les billes se touchent légèrement;Une bille est empochée;Une faute;La fin de la partie|
