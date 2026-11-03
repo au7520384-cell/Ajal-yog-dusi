@@ -2531,7 +2531,10 @@ const DICT = {
 "Sizning navbatingiz": ["Your turn", "Ваш ход"], "Siz sindirasiz — omad!": ["You are breaking, good luck!", "Вы разбиваете, удачи!"],
 "QOIDA BUZILDI!": ["FOUL!", "ФОЛ!"], "VAQT TUGADI!": ["TIME'S UP!", "ВРЕМЯ ВЫШЛО!"], "Raqib javob bermadi": ["Opponent is not responding", "Соперник не отвечает"], "Navbat sizda": ["It's your turn", "Ваш ход"], "G'ALABA!": ["VICTORY!", "ПОБЕДА!"], "MAG'LUBIYAT": ["DEFEAT", "ПОРАЖЕНИЕ"],
 "ZO'R!": ["NICE!", "КЛАСС!"], "AJOYIB!": ["AMAZING!", "ПОТРЯСАЮЩЕ!"], "MASHQ": ["PRACTICE", "ТРЕНИРОВКА"],
-"Yana o'ynash": ["Play again", "Ещё раз"], "Keyingi stol": ["Next table", "Следующий стол"], "Menyu": ["Menu", "Меню"], "Davom etish": ["Continue", "Продолжить"], "Pauza": ["Paused", "Пауза"],
+"Yana o'ynash": ["Play again", "Ещё раз"], "Keyingi stol": ["Next table", "Следующий стол"], "Kunlik viktorina": ["Daily quiz", "Викторина дня"], "Boshlash": ["Start", "Начать"], "Keyingisi": ["Next", "Дальше"], "Savol": ["Question", "Вопрос"],
+"To'g'ri!": ["Correct!", "Верно!"], "Noto'g'ri": ["Wrong", "Неверно"], "Viktorina": ["Quiz", "Викторина"], "To'g'ri javob": ["Right answer", "Правильный ответ"], "Kanal viktorinasi": ["Channel quiz", "Викторина из канала"], "Bu savolga avval javob bergansiz": ["You have already answered this one", "Вы уже отвечали на этот вопрос"],
+"Bugungi viktorina tugadi": ["Today's quiz is done", "Викторина на сегодня пройдена"], "Natija": ["Result", "Результат"], "Viktorinani yuklab bo'lmadi. Internetni tekshiring.": ["Could not load the quiz. Check your connection.", "Не удалось загрузить викторину. Проверьте интернет."],
+"Billiard haqida 5 ta savol": ["5 questions about billiards", "5 вопросов о бильярде"], "har bir to'g'ri javobga": ["for every right answer", "за каждый верный ответ"], "Menyu": ["Menu", "Меню"], "Davom etish": ["Continue", "Продолжить"], "Pauza": ["Paused", "Пауза"],
 "Taslim bo'lish": ["Resign", "Сдаться"], "Chiqish": ["Exit", "Выход"], "Keyingi o'yin": ["Next game", "Следующая игра"], "Qayta o'ynash": ["Rematch", "Реванш"],
 "Onlayn raqib qidirilmoqda…": ["Looking for an online opponent…", "Ищем соперника онлайн…"], "Raqib topildi!": ["Opponent found!", "Соперник найден!"],
 "Raqib o'yinni tark etdi": ["Your opponent left the game", "Соперник покинул игру"],
@@ -10255,7 +10258,7 @@ if (k === "avs") for (const id of [].concat(v)) if (!profile.avs.includes(+id)) 
 }
 save(); if (g.items && $("mini").classList.contains("on")) buildMini();
 const why = {purchase: T("Xarid uchun rahmat!"), referral: T("Taklif bonusi"), invited: T("Do'stingiz qo'shildi"), gift: T("Sovg'a"),
-weekly: T("Haftalik reyting sovrini"), country: T("Davlat reytingi sovrini"), league: T("Liga sovrini"), club: T("Klub mukofoti")}[g.kind] || "";
+weekly: T("Haftalik reyting sovrini"), country: T("Davlat reytingi sovrini"), league: T("Liga sovrini"), club: T("Klub mukofoti"), quiz: T("Viktorina")}[g.kind] || "";
 toast(g.kind === "gift" ? "🎁" : "💰", `${g.cash ? "+" + fmt(g.cash) + " 💵 " : ""}${g.coins ? "+" + fmt(g.coins) + " 🪙 " : ""}${g.gems ? "+" + fmt(g.gems) + " 💎" : ""}`, `${why}${g.from ? " · " + g.from : ""}`);
 Snd.coin(6);
 }
@@ -11551,6 +11554,39 @@ save(); updateNav(); Snd.coin(6); gambitShop();
 });
 }
 const FREE_EVERY = 4 * 3600e3;
+// ---- billiard quizzes with a gift: the daily five (Free rewards) and the one question a channel post links to (startapp=q_<id>). The server holds the right answers and pays (a server grant: the coins arrive
+// by themselves at the next sync); here only the questions are shown. Texts: Uzbek in Uzbek, English for every other language.
+const quizTxt = o => (LANG === "uz" ? o.uz : o.en) || o.uz;
+function quizSyncSoon() { setTimeout(() => { try { Net.sync(); } catch (e) {} }, 400); }
+function quizAsk(it, head, after) {   // it: {id, q, o, done}; head: "Savol 2/5"; after(result): called when the player goes on
+const btns = it.o.map((t, i) => ({label: String(t), cls: "blue", fn: async () => {
+let r; try { r = await Net.api("/api/quiz/answer", {id: it.id, c: i}); } catch (e) { return toast("⚠️", T("Viktorinani yuklab bo'lmadi. Internetni tekshiring."), T("Viktorina")); }
+const d = r.done || {}, right = it.o[d.correct], won = r.coins || 0, cash = r.cash || 0;
+if (d.ok) { try { Snd.win(); } catch (e) {} } else { try { Snd.lose(); } catch (e) {} }
+openModal({icon: d.ok ? "✅" : "❌", title: d.ok ? T("To'g'ri!") : T("Noto'g'ri"),
+text: `${d.ok ? "" : T("To'g'ri javob") + ": " + right + "\n"}${d.x ? quizTxt(d.x) : ""}${won ? `\n+${fmt(won)} 🪙` : ""}${cash ? `\n+${fmt(cash)} 💵 (5/5)` : ""}`,
+buttons: [{label: after ? T("Keyingisi") : T("Yopish"), cls: "green", fn: () => { if (won || cash) quizSyncSoon(); after ? after(d.ok) : 0; }}]});
+}}));
+btns.push({label: T("Yopish"), cls: "gray", fn: () => {}});
+openModal({icon: "🧠", title: `${T("Savol")}${head ? " " + head : ""}`, text: quizTxt(it.q), buttons: btns});
+}
+async function quizDaily() {
+let r; try { r = await Net.api("/api/quiz/day", {}); } catch (e) { return toast("⚠️", T("Viktorinani yuklab bo'lmadi. Internetni tekshiring."), T("Viktorina")); }
+const items = r.items || [], todo = items.filter(x => !x.done);
+if (!todo.length) { const ok = items.filter(x => x.done && x.done.ok).length; return openModal({icon: "🧠", title: T("Bugungi viktorina tugadi"), text: `${T("Natija")}: ${ok}/${items.length}`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]}); }
+let good = items.filter(x => x.done && x.done.ok).length;
+const step = k => {
+if (k >= todo.length) return openModal({icon: "🏆", title: T("Natija"), text: `${good}/${items.length}`, buttons: [{label: T("Yopish"), cls: "green", fn: () => { try { buildFree(); } catch (e) {} }}]});
+quizAsk(todo[k], `${items.indexOf(todo[k]) + 1}/${items.length}`, ok => { if (ok) good++; step(k + 1); });
+};
+step(0);
+}
+async function quizOne(id) {   // a channel post's question
+let r; try { r = await Net.api("/api/quiz/one", {id}); } catch (e) { return; }
+if (!r || !r.item) return;
+if (r.item.done) return openModal({icon: "🧠", title: T("Kanal viktorinasi"), text: T("Bu savolga avval javob bergansiz"), buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
+quizAsk(r.item, "", null);
+}
 function buildFree() {
 const box = $("freeBody"), left = Math.max(0, (profile.freeAt || 0) + FREE_EVERY - Date.now()), p = passState(), ad = Y8.sdk && Y8.adsReady;
 box.innerHTML = `<div class="freetop">
@@ -11558,12 +11594,14 @@ box.innerHTML = `<div class="freetop">
 ${left ? `<button class="btn gray" disabled>⏱ ${hms(left)}</button>` : `<button class="btn green" id="frCoins">${T("Olish")}</button>`}</div>
 ${ad ? `<div class="card fr1"><div style="font-size:40px">📺</div><b>${T("Bepul tanga")}</b><small>+15 · ${T("video")}</small><button class="btn green" id="frVid">${T("Ko'rish")}</button></div>
 <div class="card fr1"><div style="font-size:40px">💵</div><b>${T("Bepul pul")}</b><small>+1 · ${T("video")}</small><button class="btn green" id="frCash">${T("Ko'rish")}</button></div>` : ""}
+<div class="card fr1"><div style="font-size:40px">🧠</div><b>${T("Kunlik viktorina")}</b><small>+300 🪙 · ${T("Billiard haqida 5 ta savol")}</small><button class="btn purple" id="frQuiz">${T("Boshlash")}</button></div>
 <div class="card fr1"><img src="${IMG.chest}" alt="" style="height:52px;object-fit:contain"><b>${T("Sovg'alar yo'li")}</b><small>${profile.lastClaim !== today() ? T("Kunlik sovg'a tayyor!") : "⏱ " + hms(nextMidnight())}</small><button class="btn orange" data-go="rewards">${T("Ochish")}</button></div>
 </div>
 <div class="setsec">🎯 ${T("Kunlik missiyalar")}</div>
 ${p.ms.map((m, k) => { const d = MISSIONS[m.i]; return `<div class="mission msn2"><div class="mt"><b>${k + 1}. ${T(d.d)}</b><div class="mbar"><i style="width:${m.c / d.n * 100}%"></i></div><small class="muted">${m.c}/${d.n}</small></div>
 <span class="rchip"><i class="ric">♞</i>+${d.pts}</span><span class="rchip"><span class="coin"></span>+${fmtS(d.pts * 4)}</span>
 ${m.done ? `<div class="dmd">✅</div>` : `<button class="btn green" data-mplay="${d.k}" style="padding:6px 16px">${T("O'ynash")}</button>`}</div>`; }).join("")}`;
+if ($("frQuiz")) $("frQuiz").onclick = () => quizDaily();
 if ($("frCoins")) $("frCoins").onclick = () => { profile.freeAt = Date.now(); addCoins(50); Snd.coin(6); toast("🪙", "+50", T("Bepul tanga")); buildFree(); updateHomeDots(); };
 if ($("frVid")) $("frVid").onclick = () => y8Rewarded("free-coins", () => { addCoins(15); toast("🪙", "+15", T("Rahmat!")); });
 if ($("frCash")) $("frCash").onclick = () => y8Rewarded("bank-cash", () => { profile.cash += 1; save(); updateNav(); toast("💵", "+1", T("Rahmat!")); });
@@ -13299,6 +13337,8 @@ store.set("b8finv", fm[1].toUpperCase()); let tries = 0;
 const wait = setInterval(() => { if (++tries > 24) return clearInterval(wait); if (Net.acct && profile.prov && profile.prov.telegram) { clearInterval(wait); friendInviteRun(); } }, 1500);
 } else if (/^c_[A-Za-z0-9_-]{1,24}$/.test(spRaw)) {   // an ad link (startapp=c_NAME): once signed in, the server counts it (new players per ad)
 let tries = 0; const wait = setInterval(() => { if (++tries > 24) return clearInterval(wait); if (Net.acct && profile.prov && profile.prov.telegram) { clearInterval(wait); Net.api("/api/src", {src: spRaw.slice(2)}).catch(() => {}); } }, 1500);
+} else if (/^q_[A-Za-z0-9]{2,12}$/.test(spRaw)) {   // a channel quiz post (startapp=q_<id>): the same question here, a right answer pays coins; also counted as the ad link "ch_quiz"
+let tries = 0; const wait = setInterval(() => { if (++tries > 24) return clearInterval(wait); if (Net.acct && profile.prov && profile.prov.telegram) { clearInterval(wait); Net.api("/api/src", {src: "ch_quiz"}).catch(() => {}); setTimeout(() => quizOne(spRaw.slice(2)), 1500); } }, 1500);
 } else if (spRaw === "fr" || /^m_[A-Za-z0-9]{8,32}$/.test(spRaw)) {   // a tap on one of the bot's messages: the Friends screen, or the chat with that friend
 setTimeout(() => { go("friendsScr"); if (spRaw !== "fr") setTimeout(() => openDm(spRaw.slice(2)), 800); }, 1600);
 } else { const sp = parseLobbyCode(spRaw); if (sp.length >= 3) setTimeout(() => lobbyJoin(sp), 1200); }
