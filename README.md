@@ -140,7 +140,7 @@ The game's public channel is `https://t.me/Royalbilliard8` (button in Settings a
 | slot | kind | what it is |
 |---|---|---|
 | morning | `feat` | a feature of the game (voice room, open lobbies, gifts, stickers, cues, tables, frames, avatars, ranking, cups, pass...) with a banner |
-| afternoon | `quiz` | a Telegram **quiz poll** (billiards rules and history, geography of the 30 city tables, facts of the game) with the right answer and a short explanation |
+| afternoon | `quiz` | a Telegram **quiz poll** (billiards rules, history and stars (Mosconi, Reyes, O'Sullivan, films, famous people who loved the game), geography of the 30 city tables, facts of the game) with the right answer and a short explanation |
 | evening | rotates `city` / `shop` / `tip` / `poll` / `story` | one of the 30 city tables with its real numbers and its banner; a shop showcase (cues, tables, frames, avatars, stickers, gifts, the season pass); a playing tip; a poll; a short scene or challenge |
 | any | `dated` | tied to a weekday or a date and takes that day's slot: Monday morning "a new week" (ranking, Showdown and the Table of the week reset on Monday 00:00 UTC = 05:00 Tashkent), Sunday evening "the week closes", some Fridays, the start and the last day of every Season Pass month, 8 Dec, New Year, 14 Jan, 14 Feb, 8 and 21 March |
 | evening | data | news made from real data (the weekly top three, player-count milestones, see below), when there is any |
