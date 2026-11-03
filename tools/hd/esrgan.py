@@ -79,7 +79,7 @@ class Upscaler:
         """rgb: PIL RGB image -> PIL RGB image, `scale` times bigger (big pictures are cut into overlapping tiles)."""
         a = np.asarray(rgb.convert("RGB"), dtype=np.float32).transpose(2, 0, 1)[None] / 255.0
         _, _, H, W = a.shape; S = self.scale
-        if H <= tile and W <= tile:
+        if (H <= tile and W <= tile) or H * W <= 400_000:   # one pass for anything up to 400 kpx (a 1160 x 60 strip is one pass, not five tiles); bigger pictures are cut into overlapping tiles
             y = self.s.run(None, {"x": a})[0]
         else:
             y = np.zeros((1, 3, H * S, W * S), dtype=np.float32)
