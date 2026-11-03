@@ -72,7 +72,7 @@ const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webma
 const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript", ".webp": "image/webp", ".jpg": "image/jpeg", ".gif": "image/gif", ".wav": "audio/wav", ".mp4": "video/mp4"};
 // The light build (./web, made by tools/build_web.py): a 4 MB page and the pictures / sounds as files. A visitor downloads the page, the pictures only when a screen shows them, and keeps them
 // (their names are hashes, so a file never changes: cached for a year); after an update only the changed page is downloaded again. A build older than index.html is ignored (the single-file page is served).
-const WEB = path.join(ROOT, "web"), WEBFILE = /^\/(img|a)\/[A-Za-z0-9._-]+$/;
+const WEB = path.join(ROOT, "web"), WEBFILE = /^\/(img|a|hd)\/[A-Za-z0-9._-]+$/;
 let WEB_OK = false, WEB_ETAG = "";
 try {
   const h = crypto.createHash("sha1").update(fs.readFileSync(path.join(ROOT, "index.html"))).digest("hex");
