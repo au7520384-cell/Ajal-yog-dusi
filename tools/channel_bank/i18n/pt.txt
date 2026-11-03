@@ -1,0 +1,151 @@
+// Portuguese (Brazil). Questions and options; the explanation in English is shown after the answer.
+Q001|Quantas bolas há na mesa no bilhar de 9 bolas, contando a branca?|=;=;=;=|
+Q002|No bilhar de 9 bolas, em qual bola a branca deve tocar primeiro?|Em qualquer uma;Na de número mais alto;Na bola 9;Na de número mais baixo|
+Q003|No bilhar de 9 bolas, qual bola dá a vitória quando é encaçapada legalmente?|A bola 8;A bola 1;A branca;A bola 9|
+Q004|Em que formato as bolas são arrumadas no bilhar de 9 bolas?|Círculo;Triângulo;Quadrado;Losango|
+Q005|Em quantas fileiras as 15 bolas são arrumadas no triângulo?|=;=;=;=|
+Q006|Qual é a soma dos números das bolas de 1 a 15?|=;=;=;=|
+Q007|Quantas bolas vermelhas há no sinuca (snooker)?|=;=;=;=|
+Q008|Qual é o break máximo possível no snooker?|=;=;=;=|
+Q009|Quantos pontos vale a bola preta no snooker?|=;=;=;=|
+Q010|Qual é o comprimento de uma mesa de snooker oficial?|15 pés;12 pés;9 pés;7 pés|
+Q011|Quantas caçapas tem uma mesa de bilhar carambola?|=;=;=;=|
+Q012|O que é uma tacada «massé»?|Saltar com a bola branca;Uma tacada de banda;A abertura;Taco quase vertical e a bola faz curva|
+Q013|Como se chama a tacada em que a branca pula sobre uma bola que atrapalha?|=;Tacada de banda (bank shot);Defesa (safety);Abertura (break)|
+Q014|A branca toca primeiro a tabela e depois a bola-alvo. Que tacada é essa?|=;=;=;=|
+Q015|A bola-alvo bate na tabela e depois cai na caçapa. O que é?|Combinação;Kick shot;Scratch;=|
+Q016|A branca bate em uma bola, que encaçapa outra. Isso é uma...|Combinação;Falta;Defesa;Kick shot|
+Q017|Como se chama em inglês a mão (ou acessório) que apoia o taco?|=;=;=;=|
+Q018|Como se chama em inglês o triângulo usado para arrumar as bolas antes da abertura?|=;=;=;=|
+Q019|Como se chama em inglês a borda acolchoada da mesa?|=;=;=;Cushion (rail): a tabela|
+Q020|Como se chama o tecido macio que cobre a mesa?|=;=;=;=|
+Q021|Como se chama a tacada em que a branca para no lugar depois do contato?|=;=;=;=|
+Q022|Você bate acima do centro para a branca continuar rolando para frente. Como se chama?|Follow (efeito de avanço);Stop shot;Draw (efeito de retrocesso);=|
+Q023|Como se chama a primeira tacada do jogo, que espalha as bolas arrumadas?|=;=;=;=|
+Q024|Para que serve o método da «bola fantasma» (ghost ball)?|Passar giz no taco;Pular uma bola;Arrumar as bolas;Imaginar onde a branca deve chegar|
+Q025|Em condições ideais, com que ângulo uma bola sai da tabela?|Igual ao ângulo de chegada;Aleatório;O dobro;Sempre 90°|
+Q026|De que costuma ser feita a ponta (sola) do taco?|Vidro;Madeira;Metal;Couro|
+Q027|De que são feitas, em geral, as bolas de bilhar modernas?|Resina (plástico);Vidro;Marfim;Madeira|
+Q028|Qual é, mais ou menos, o comprimento de um taco de bilhar padrão?|90 cm;120 cm;147 cm;200 cm|
+Q029|Qual é, mais ou menos, o diâmetro de uma bola de bilhar padrão?|3 cm;5,7 cm;8 cm;10 cm|
+Q030|Qual é, mais ou menos, o tamanho da área de jogo de uma mesa de 9 pés?|=;=;=;=|
+Q031|De que cor é a bola número 1 em um jogo padrão de 8 bolas?|Amarela;Verde;Azul;Vermelha|
+Q032|De que cor é a bola número 5 em um jogo padrão?|Verde;Preta;Roxa;Laranja|
+Q033|Efren «O Mágico» Reyes, lenda do bilhar, é de que país?|Japão;China;EUA;Filipinas|
+Q034|Quantas bolas seguidas Willie Mosconi encaçapou em uma exibição de bola reta (straight pool)?|=;=;=;=|
+Q035|Quem fez o jogador «Fast Eddie» no filme «Desafio à Corrupção» (The Hustler, 1961)?|=;Robert De Niro;Tom Cruise;Brad Pitt|
+Q036|Quem atuou ao lado de Paul Newman em «A Cor do Dinheiro» (1986)?|Tom Cruise;Tom Hanks;Keanu Reeves;Al Pacino|
+Q037|Qual é o apelido da lenda do snooker Ronnie O'Sullivan?|=;=;=;=|
+Q038|A palavra inglesa «cue» vem de qual palavra francesa?|cube (cubo);clé (chave);cible (alvo);queue (cauda)|
+Q039|Em que cidade fica o Big Ben? E é também a primeira mesa do jogo!|Londres;Paris;Madri;Roma|
+Q040|Sydney, famosa pela Ópera com telhado de velas, fica em que país?|Canadá;África do Sul;Nova Zelândia;Austrália|
+Q041|De que país é o «pastel de nata», a tortinha de creme?|Portugal;Espanha;França;Itália|
+Q042|Em que cidade fica o estádio Santiago Bernabéu?|Lisboa;Barcelona;Roma;Madri|
+Q043|Como Tóquio se chamava antes de 1868?|=;Osaka;Nagoia;Quioto|
+Q044|O que é um «dojo» em japonês?|Um salão de treino de artes marciais;Um jardim;Uma casa de chá;Um templo|
+Q045|A qual país está ligada a dança do tango (mesa de Buenos Aires: «Tango Salon»)?|Espanha;Brasil;México;Argentina|
+Q046|A Indonésia, onde fica Jacarta, tem aproximadamente quantas ilhas?|=;=;=;=|
+Q047|A folha de qual árvore está na bandeira do Canadá (mesa de Toronto: «Maple Lounge»)?|Bordo;Carvalho;Palmeira;Bétula|
+Q048|Sobre qual cidade antiga foi construída a Cidade do México?|Teotihuacan;Chichén Itzá;Machu Picchu;Tenochtitlán|
+Q049|Em que país ficam as pirâmides de Gizé (mesa do Cairo: «Pyramid Hall»)?|Egito;Sudão;Marrocos;Jordânia|
+Q050|Em que cidade fica o Burj Khalifa, de 828 metros?|Singapura;Xangai;Nova York;Dubai|
+Q051|O nome «Singapura» significa «Cidade do Leão». Verdadeiro ou falso?|Verdadeiro;Falso|
+Q052|Em que cidade fica a Torre Pérola do Oriente?|Bangcoc;Xangai;Seul;Osaka|
+Q053|Em que cidade fica a Torre Eiffel?|Roma;Paris;Berlim;Amsterdã|
+Q054|Qual era o nome original de Nova York?|Nova Amsterdã;Nova Paris;Nova Roma;Nova Londres|
+Q055|Em que cidade fica o Coliseu?|Cairo;Istambul;Atenas;Roma|
+Q056|Bangcoc é a capital de qual país?|Camboja;Tailândia;Malásia;Vietnã|
+Q057|Em que cidade ficam as famosas Torres Petronas?|Singapura;Manila;Jacarta;Kuala Lumpur|
+Q058|Seul é a capital de qual país?|Coreia do Sul;China;Japão;Tailândia|
+Q059|Como Mumbai se chamava até 1995?|Bombaim;Madras;Délhi;Calcutá|
+Q060|Em que cidade foram realizados, em 1896, os primeiros Jogos Olímpicos modernos?|Roma;Londres;Paris;Atenas|
+Q061|Em que ano caiu o Muro de Berlim?|=;=;=;=|
+Q062|Em quais dois continentes fica Istambul?|Ásia e América;Europa e Ásia;Europa e África;Ásia e África|
+Q063|O que significa o nome «Casablanca»?|Casa branca;Cidade nova;Mar Negro;Grande mercado|
+Q064|Quantas das 30 cidades do jogo ficam no Japão?|=;=;=;=|
+Q065|Em que ano foi inaugurado o metrô de Tashkent, o primeiro da Ásia Central?|=;=;=;=|
+Q066|Em que ano Tashkent comemorou 2.200 anos?|=;=;=;=|
+Q067|O que significa o nome «Rio de Janeiro»?|Grande lago;Rio de janeiro (o mês);Rio de ouro;Vento do mar|
+Q068|Em qual praça fica a Catedral de São Basílio?|Times Square;Praça Taksim;Praça da Independência;Praça Vermelha|
+Q069|Em que estado dos EUA fica Las Vegas?|Texas;Nevada;Flórida;Califórnia|
+Q070|Amsterdã é a capital de qual país?|Países Baixos;Dinamarca;Suécia;Bélgica|
+Q071|Mais ou menos quantos tacos há no jogo?|=;=;=;=|
+Q072|Quantos tacos de países há no jogo?|=;=;=;=|
+Q073|Quantos avatares de retrato são grátis?|=;=;=;=|
+Q074|Quantos pacotes de figurinhas existem?|=;=;=;=|
+Q075|Quantos 💎 custa um pacote de figurinhas?|=;=;=;=|
+Q076|Quantos tipos de presentes você pode enviar ao adversário em uma partida?|=;=;=;=|
+Q077|Qual presente é o maior (👍 ×7.000)?|Carro;Gema;Coroa;Jato|
+Q078|Quais dois presentes são grátis todo dia?|Coroa e gema;Trevo e chocolate;Carro e jato;Bolo e buquê|
+Q079|Quantos níveis tem o Passe de Temporada?|=;=;=;=|
+Q080|Em quais horários de Tashkent abrem as copas diárias?|=;=;=;=|
+Q081|Por quanto tempo uma copa diária fica aberta depois de começar?|O dia todo;6 horas;1 hora;3 horas|
+Q082|Quantos jogadores participam da Copa do Mundo?|=;=;=;=|
+Q083|Quantos jogadores há na Copa da Europa?|=;=;=;=|
+Q084|Com quantos troféus abre a Mesa do Grande Mestre?|=;=;=;=|
+Q085|De quantas peças é montado o lendário taco do Grande Mestre?|=;=;=;=|
+Q086|Quantas peças formam um taco da Vitória?|=;=;=;=|
+Q087|A partir de que nível é possível criar ou entrar em um clube?|=;=;=;=|
+Q088|Qual é o número máximo de membros em um clube?|=;=;=;=|
+Q089|Quantos 💵 recebe o 1º lugar no ranking mundial semanal?|=;=;=;=|
+Q090|Quantos 💵 recebe o 1º lugar no ranking de um país?|=;=;=;=|
+Q091|Quando o ranking semanal reinicia (horário de Tashkent)?|Segunda, 05:00;Sábado, 20:00;Sexta, 00:00;Terça, 12:00|
+Q092|Aproximadamente que parte de uma liga sobe a cada semana?|=;=;=;=|
+Q093|Qual desconto a «Mesa da semana» tem?|=;=;=;=|
+Q094|Quantas cópias existem da edição limitada mais rara, Opala Arco-íris?|=;=;=;=|
+Q095|Quantas cópias existem do nível limitado mais comum, Bronze?|=;=;=;=|
+Q096|Qual cidade tem a mesa mais barata (a primeira) do jogo?|Tashkent;Dubai;Moscou;Londres|
+Q097|Qual cidade tem a mesa mais alta (a última) do jogo?|Moscou;Nova York;Tashkent;Rio|
+Q098|Qual é o nome da mesa de Tashkent do jogo?|=;=;=;=|
+Q099|De que cor é o feltro da mesa de Londres?|Azul;Vermelho;Preto;Amarelo|
+Q100|A mesa de qual cidade tem feltro preto?|Londres;Madri;Sydney;Las Vegas|
+Q101|Em que dia da rota de recompensas está o «grande prêmio»?|Dia 8;Dia 7;Dia 5;Dia 3|
+Q102|Quantas medalhas (conquistas) existem?|=;=;=;=|
+Q103|Qual destes NÃO é um filtro da lista «Salas abertas»?|Vagas livres;Sala de voz;Amigos;Preço do taco|
+Q104|Quanto os anéis das cidades somam aos seus pontos do Showdown?|=;=;=;=|
+Q105|Quantas vitórias dão o anel da mesa de Londres (+4 por vitória, meta de 15 troféus)?|=;=;=;=|
+Q106|Quantas etapas de prêmio tem o Showdown?|=;=;=;=|
+Q107|Quantos jogadores há na copa de campeonato de cada cidade?|=;=;=;=|
+Q108|Qual é a maior copa diária (prêmio de 400.000 🪙)?|Da noite;Da madrugada;Da manhã;Do meio-dia|
+Q109|Quantos jogadores, no máximo, podem falar na sala de voz de uma sala?|=;=;=;=|
+Q110|Quantas bolas tem o grupo de um jogador no bilhar de 8 bolas (sem contar a 8)?|=;=;=;=|
+Q111|Com 15 bolas-alvo e uma branca, quantas bolas são listradas?|=;=;=;=|
+Q112|Sem contar a branca, em quantos grupos se dividem as bolas do bilhar de 8 bolas?|=;=;=;=|
+Q113|Quantas vezes o lendário Willie Mosconi foi campeão mundial?|=;=;=;=|
+Q114|Em 1953, quantas bolas seguidas Mosconi encaçapou na bola reta (straight pool)?|=;=;=;=|
+Q115|Quem fez Minnesota Fats no filme «Desafio à Corrupção» (1961)?|Jackie Gleason;Paul Newman;Robert De Niro;Tom Cruise|
+Q116|Qual é o apelido do personagem de Paul Newman em «Desafio à Corrupção»?|=;=;=;=|
+Q117|Qual campeão ensinou Paul Newman e executou suas tacadas difíceis nos filmes?|Efren Reyes;Willie Mosconi;Steve Davis;Ronnie O'Sullivan|
+Q118|Qual é o apelido da estrela do snooker Ronnie O'Sullivan?|=;=;=;=|
+Q119|Com qual apelido Alex Higgins, do snooker, é conhecido?|=;=;=;=|
+Q120|Com qual apelido Jimmy White é conhecido?|=;=;=;=|
+Q121|Qual é o apelido do multicampeão mundial Steve Davis?|=;=;=;=|
+Q122|O que significa em tagalo o apelido «Bata» de Efren Reyes?|Leão;Relâmpago;Mestre;Criança|
+Q123|Com qual apelido Earl Strickland é conhecido?|=;=;=;=|
+Q124|Qual é o apelido de Shane Van Boening?|=;=;=;=|
+Q125|Leon Tolstói escreveu em 1855 o conto «Memórias de um marcador». Sobre qual jogo?|Cartas;Damas;Xadrez;Bilhar|
+Q126|Em qual peça de Shakespeare o bilhar é mencionado?|Macbeth;Romeu e Julieta;Antônio e Cleópatra;Hamlet|
+Q127|Qual rei, por conselho dos médicos, jogava bilhar como exercício e o pôs na moda na corte?|Amir Temur;Pedro I da Rússia;Luís XIV da França;Júlio César|
+Q128|O que o compositor Wolfgang Amadeus Mozart tinha em sua casa em Viena?|Um estábulo;Uma mesa de bilhar;Uma piscina na biblioteca;Um ringue de boxe|
+Q129|Diz-se que o bilhar nasceu de que tipo de jogo?|Jogos de bola na grama;Luta;Natação;Xadrez|
+Q130|De qual língua vem a palavra «bilhar»?|Árabe;Espanhol;Alemão;Francês|
+Q131|A que a palavra «pool» se referia originalmente?|O feltro da mesa;A piscina;Um tipo de taco;Um bolo comum de apostas|
+Q132|Antes do século XIX, de que eram feitas as bolas de bilhar?|Aço;Madeira pintada;Marfim;Vidro|
+Q133|De que são feitas, em geral, as bolas de bilhar profissionais modernas?|Resina fenólica;Borracha;Metal;Pedra natural|
+Q134|De que costuma ser feita a ponta do taco?|Metal;Couro;Plástico;Vidro|
+Q135|Para que serve o giz na ponta do taco?|Para ficar bonito;Para dar aderência e o taco não escorregar;Para mudar a cor da bola;Para limpar a mesa|
+Q136|Qual é, mais ou menos, o diâmetro de uma bola de bilhar?|=;=;=;=|
+Q137|Qual é o diâmetro das bolas do bilhar russo (pirâmide)?|=;=;=;=|
+Q138|Qual é, mais ou menos, o tamanho da área de jogo de uma mesa de 9 pés?|=;=;=;=|
+Q139|Quantos pontos vale a bola azul no snooker?|=;=;=;=|
+Q140|Quantos pontos vale a bola rosa no snooker?|=;=;=;=|
+Q141|Quantas bolas vermelhas há em uma mesa de snooker?|=;=;=;=|
+Q142|Em que formato as bolas são arrumadas no bilhar de 9 bolas?|Triângulo;Quadrado;Círculo;Losango|
+Q143|No bilhar de 8 bolas, o que acontece se você encaçapar a bola 8 cedo demais?|Normalmente você perde;Ganha pontos extras;Nada;A vez não passa|
+Q144|No «14.1 bola reta» (straight pool), o que significa o 14?|Minutos;Tamanho da mesa;Depois de 14 bolas encaçapadas, as demais são rearrumadas;Número de jogadores|
+Q145|Quantas caçapas tem uma mesa de bilhar carambola?|=;=;=;=|
+Q146|No bilhar a três bandas, o que a bola branca precisa fazer?|Tocar ao menos 3 tabelas e acertar a segunda bola;Girar 3 vezes;Parar em 3 segundos;Encaçapar 3 bolas|
+Q147|O que é um «jump shot» (tacada de salto)?|O jogador pula;A mesa pula;O taco pula;A bola branca salta por cima de outra bola|
+Q148|O que se faz em uma tacada «massé»?|Só se bate na tabela;Joga-se o taco;Taco quase vertical e a bola faz curva;Bate-se reto na bola|
+Q149|O que é um «bank shot»?|Trocar de mesa;Encaçapar a bola-alvo rebatendo na tabela;Encaçapar a branca;Bater na bola duas vezes|
+Q150|No bilhar, o que é um «kiss» (beijo)?|As bolas se tocam de leve;Uma bola é encaçapada;Uma falta;O fim da partida|
