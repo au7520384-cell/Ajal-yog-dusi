@@ -14,6 +14,7 @@ const CPUS = (process.env.CPUS || "1,4").split(",").map(Number), GFX = (process.
     for (const hd of [false, true]) {
       const ctx = await b.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: DPR, hasTouch: true, isMobile: true, locale: "en-US" });
       const p = await ctx.newPage(); p.on("pageerror", e => console.log("pageerror", e.message.slice(0, 100)));
+      if (process.env.NOQ) await p.route("**/", async r => { const resp = await r.fetch(); let body = await resp.text(); body = body.split('imageSmoothingQuality = "medium"').join('imageSmoothingQuality = "low"'); r.fulfill({ response: resp, body }); });   // NOQ=1: A/B test, the "medium" mip-map filter of the HD pictures replaced by the plain one
       await p.addInitScript(([off]) => { if (off) localStorage.setItem("b8_hd", "off"); localStorage.setItem("b8_assets", localStorage.getItem("b8_assets") || "x"); if (!localStorage.getItem("billiard8v2")) localStorage.setItem("billiard8v2", JSON.stringify({ name: "Alex", tutDone: true, games: 60, lang: "en", genderAsked: true, gender: "m" })); }, [!hd]);
       await p.goto(base + "/?perf=1", { waitUntil: "commit" });
       if (hd) await p.waitForFunction(() => window.__hd && window.__hd.state === "on" && typeof profile !== "undefined" && !document.getElementById("boot"), null, { timeout: 900000 });
