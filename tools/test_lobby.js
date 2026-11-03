@@ -74,6 +74,22 @@ const STATE = () => { const G = typeof game !== "undefined" ? game : null; retur
         await Promise.all([A.evaluate(() => lbAfterMatch()), B.evaluate(() => lbAfterMatch())]); await sleep(800);
       }
     }
+    // an invitation to ANOTHER lobby while this player still sits in the old one (the pop-up used to be only an un-pressable toast): the pop-up shows and "Join" takes him there
+    const idB = await B.evaluate(() => Net.acct.id);
+    await B.evaluate(() => go("home")); await sleep(500);
+    await A.evaluate(() => lbLeave(true)); await sleep(600);
+    await A.evaluate(() => lobbyCreate(CITIES[0].id, [])); await A.waitForFunction(() => LB && !LB.pending && LB.code, null, { timeout: 60000 });
+    const code2 = await A.evaluate(() => LB.code);
+    const bOld = await B.evaluate(() => LB && LB.code); ok(!!bOld && bOld !== code2, "the guest still has the old lobby", { bOld, code2 });
+    await A.evaluate(id => lbInvite(id), idB);
+    const pop = await B.waitForFunction(() => document.getElementById("modal").classList.contains("on") && /[A-Z0-9]{6}/.test(document.getElementById("modal").textContent), null, { timeout: 15000 }).then(() => true, () => false);
+    ok(pop, "the invitation pop-up shows although the guest sits in an old lobby");
+    if (pop) {
+      await B.evaluate(() => { const b = [...document.querySelectorAll("#modal button")].find(x => /green/.test(x.className)); b.click(); });
+      await A.waitForFunction(() => LB && LB.players.length === 2, null, { timeout: 20000 }).catch(() => {});
+      const r = await B.evaluate(() => ({ code: LB && LB.code, scr: document.getElementById("lbScr").classList.contains("on"), n: LB ? LB.players.length : 0 }));
+      ok(r.code === code2 && r.scr && r.n === 2, "\"Join\" takes the guest into the new lobby and shows it", r);
+    }
     ok(errs.length === 0, "no page errors", errs.slice(0, 4));
     await b.close();
   } finally { srv.kill(); try { fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 5 }); } catch (e) {} }

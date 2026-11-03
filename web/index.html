@@ -4059,7 +4059,7 @@ if (type === "tour") { const cup = cupOf(tour.cup); G.skill = cup.skill * Math.p
 if (type === "watch") G.skill = 0.004;
 if (type === "ai" || type === "tour" || type === "watch") G.cur = Math.random() < 0.5 ? 0 : 1;
 if (net) {
-G.net = {seat: net.seat, lastAim: 0, sentA: null};
+G.net = {seat: net.seat, room: net.room ? String(net.room) : "", lastAim: 0, sentA: null};
 G.balls = rack(net.seed);
 G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
 G.cur = net.first === net.seat ? 0 : 1;
@@ -4078,6 +4078,7 @@ else if (isHuman(G.cur) && !curP().remote) setPill(type === "pvp" ? TT("{0} sind
 if (type === "ai" && city.id && TROPHY[city.id]) setTimeout(() => { if (game === G && !G.over) setPill(ringOf(city) ? `💍 ${T(city.name)}: ${T("Uzuk sizda! +50% ♞")}` : `💍 ${T(city.name)}: ${cityTro(city)}/${trophyOf(city)[2]} 🏆 · ${T("G'alaba")} +${trophyOf(city)[0]} · ${T("Mag'lubiyat")} −${trophyOf(city)[1]}`, 3500); }, 3200);
 else setPill(TT("{0} sindiradi", curP().name), 3000);
 if ((type === "ai" || type === "tour") && !net) setTimeout(() => { if (game === G && !G.over) bubble(1, pick(["Salom! 👋", "Omad! 🍀", "😎", "Boshladik!"])); }, 1500);
+if (net) netReplay(G); else earlyNet.length = 0;
 }
 function startDemo() {
 const G = baseGame("watch", CITIES[Math.random() * 3 | 0], [botPlayer(5, 20), botPlayer(5, 20)]);
@@ -8594,6 +8595,7 @@ function update() {
 const G = game; if (!G) return;
 if ((G.moving || G.strike || G.over) && $("giftPanel").classList.contains("in")) closeGifts();
 if (input.charging) { if (canControl()) input.power = Math.min(1, input.power + 0.012); else { input.charging = false; input.power = 0; } }
+if (G.replayQ && G.replayQ.length && !G.strike && !G.moving && !G.over && G.net && !G.net.spec) { const q = G.replayQ.shift(); try { if (q.t === "shot") remoteShot(q); else applyState(q); } catch (e) { onFrameError(e); } }   // the opponent's shots from before this phone started the match, in order
 if (G.strike) {
 G.strike.t++;
 if (G.strike.t >= 5) { const s = G.strike; G.strike = null; try { doShoot(s.power, s.remote); } catch (e) { onFrameError(e); if (!G.moving) { G.moving = true; G.shot = G.shot || {firstHit: null, potted: [], ownBefore: -1, rails: 0, power: s.power}; } } }
@@ -10522,15 +10524,36 @@ const t = setTimeout(() => { reject(new Error("timeout")); try { sock.close(); }
 sock.onopen = () => { clearTimeout(t); ws = sock; resolve(sock); };
 sock.onerror = () => { clearTimeout(t); reject(new Error("ws")); };
 sock.onclose = () => { if (ws === sock) ws = null; if (handlers.close) handlers.close(); };
-sock.onmessage = ev => { let m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (handlers[m.t]) handlers[m.t](m); };
+sock.onmessage = ev => { let m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.t === "match" && m.room) matchRoom = String(m.room); if (handlers[m.t]) handlers[m.t](m); };
 });
 }
+let matchRoom = "";   // the id of the match the server told this phone to play last (the opponent's shots of that match may arrive before this phone has started it)
 const send = m => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); };
 const setAcct = a => { acct = a; store.set("b8acct", a); if (ws) try { ws.close(); } catch (e) {} };
 return {applyGrant, api, ensure, sync, checkout, cardPay: cardChoice, connect, send, setAcct, on: (t, f) => { handlers[t] = f; },
-get acct() { return acct; }, get online() { return online; }, get open() { return !!(ws && ws.readyState === 1); }, get base() { return BASE; }, inbox: [], me: null, friends: [], notify: null};
+get acct() { return acct; }, get matchRoom() { return matchRoom; }, get online() { return online; }, get open() { return !!(ws && ws.readyState === 1); }, get base() { return BASE; }, inbox: [], me: null, friends: [], notify: null};
 })();
+// A shot or a position of the opponent belongs to one match (m.room). The opponent's phone may be ready before this one (this phone still shows the result of the last match, or its "VS" screen):
+// his first shots are kept (earlyNet) and replayed, in order, when this phone starts that match; a message of an older match is dropped. Without this the break was lost: both phones then thought it was
+// the OTHER one's turn (or both thought it was theirs) and the match froze.
+const earlyNet = [];
+function netGate(m) {   // true: this message is not applied now (kept for the match that is about to start, or dropped)
+const G = game;
+if (G && G.net && G.net.spec) return false;
+const live = !!(G && G.net && !G.over);
+if (live && (!m.room || !G.net.room || m.room === G.net.room)) {
+if (G.replayQ && G.replayQ.length && (m.t === "shot" || m.t === "state")) { G.replayQ.push(m); return true; }   // the replay is not finished: stay in order
+return false;
+}
+if (m.room && m.room === Net.matchRoom && (m.t === "shot" || m.t === "state")) { earlyNet.push(m); if (earlyNet.length > 60) earlyNet.shift(); return true; }
+return !live ? true : !!(m.room && G.net.room && m.room !== G.net.room);
+}
+function netReplay(G) {   // called when a match of this phone starts: the messages that came before it
+if (!G || !G.net || G.net.spec || !G.net.room) { earlyNet.length = 0; return; }
+G.replayQ = earlyNet.filter(m => m.room === G.net.room); earlyNet.length = 0;
+}
 Net.on("aim", m => {
+if (netGate(m)) return;
 const G = game; if (G && G.net) G.net.lastRx = performance.now();
 if (G && G.net && G.net.spec) { if (G.cur === m.from && !G.moving) { G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; } } return; }
 if (!G || !G.net || G.cur !== 1 || G.moving) return;
@@ -10538,6 +10561,7 @@ G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1);
 if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; }
 });
 Net.on("shot", m => {
+if (netGate(m)) return;
 const G = game; if (G && G.net && G.net.spec) { if (G.moving || G.strike) return; G.cur = m.from === 1 ? 1 : 0; G.angle = +m.a || G.angle; requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0}); return; }
 if (!G || !G.net || G.over) return;
 G.net.lastRx = performance.now();
@@ -10553,6 +10577,7 @@ G.angle = +m.a || G.angle;
 requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0});
 }
 Net.on("state", m => {
+if (netGate(m)) return;
 const G = game; if (!G || !G.net) return;
 G.net.lastRx = performance.now();
 if (G.moving || G.strike) G.pendingState = m; else applyState(m);
@@ -11810,7 +11835,7 @@ box.innerHTML = `<div class="ibm"><img class="ibmbg" src="${IMG.ibm_bg}" alt="">
 ${SOCIAL.filter(x => x.url).map((x, k) => { const bx = {facebook: [358, 220], telegram: [596, 216], instagram: [831, 221], tiktok: [1072, 200]}[x.n.toLowerCase()]; return `<button class="ibms" data-url="${esc(x.url)}" title="${x.n}" style="${pc(bx[0], 790, bx[1], 76)}"></button>`; }).join("")}</div>`;
 box.querySelectorAll("[data-sel]").forEach(b => b.onclick = () => { newsSel = b.dataset.sel; buildInbox(); });
 box.querySelectorAll("[data-url]").forEach(b => b.onclick = () => { try { window.open(b.dataset.url, "_blank", "noopener"); } catch (e) {} });
-box.querySelectorAll("[data-acc]").forEach(b => b.onclick = () => { Net.api("/api/inbox/clear", {kind: "challenge"}).catch(() => {}); Net.inbox = (Net.inbox || []).filter(m => m.kind !== "challenge"); lobbyJoin(b.dataset.acc, b.dataset.city); });
+box.querySelectorAll("[data-acc]").forEach(b => b.onclick = () => { Net.api("/api/inbox/clear", {kind: "challenge"}).catch(() => {}); Net.inbox = (Net.inbox || []).filter(m => m.kind !== "challenge"); lbJoinFrom(b.dataset.acc); });
 box.querySelectorAll("[data-go]").forEach(b => b.onclick = () => go(b.dataset.go));
 loadNews2();
 }
@@ -11936,6 +11961,8 @@ try { Net.send({t: "cancel"}); } catch (e) {}
 const back = LB && LB.opt && LB.opt.from === "open" ? "openScr" : "withFrScr";
 LB = null; lhook("leave"); go(back);
 }
+function lbDrop() { if (!LB) return; LobbyVoice.stop(); try { Net.send({t: "cancel"}); } catch (e) {} LB = null; lbChip(false); lhook("leave"); }   // leave the lobby I am in (e.g. to take an invitation to another one) without moving to another screen
+const lbJoinFrom = code => { code = parseLobbyCode(code); if (LB && LB.code === code && !LB.pending) return lbShow(); lbDrop(); lobbyJoin(code); };   // an invitation: the lobby I may be sitting in is left first
 function lbInvite(id) { if (!LB || LB.invited[id]) return; LB.invited[id] = 1; Net.api("/api/challenge", {to: id, code: LB.code, city: LB.city}).catch(() => {}); }
 function lbFriends(cb) { if (LB && LB.friends) return cb(LB.friends); Net.api("/api/friends").then(r => { const f = (r.friends || []).slice().sort((x, y) => (y.online | 0) - (x.online | 0)).slice(0, 30); if (LB) LB.friends = f; cb(f); }).catch(() => cb([])); }
 function lbInviteAll() { lbFriends(f => { f.forEach(x => lbInvite(x.id)); if (f.length) toast("📨", T("Taklifnomalar hammaga yuborildi"), T("Lobbi")); if ($("lbScr").classList.contains("on")) lbRender(); }); }
@@ -12322,7 +12349,7 @@ buttons: [{label: T("Qabul qilish"), cls: "green", fn: () => frRespond(r.id, tru
 }
 function challengeModal(m) {   // a friend opened a private table and asked me to join
 openModal({icon: "🏆", title: T("Turnirga taklif"), text: `${m.from}: ${T("sizni o'yinga chaqirdi!")}`, extra: `<div style="font-size:36px;font-weight:900;letter-spacing:6px;color:#ffe27a;text-align:center">${esc(m.code)}</div>`,
-buttons: [{label: T("Qo'shilish"), cls: "green", fn: () => { Net.api("/api/inbox/clear", {kind: "challenge"}).catch(() => {}); Net.inbox = (Net.inbox || []).filter(x => x.kind !== "challenge"); lobbyJoin(m.code); }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+buttons: [{label: T("Qo'shilish"), cls: "green", fn: () => { Net.api("/api/inbox/clear", {kind: "challenge"}).catch(() => {}); Net.inbox = (Net.inbox || []).filter(x => x.kind !== "challenge"); lbJoinFrom(m.code); }}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 }
 // what the server says is waiting for me (new friend requests, answers to mine, unread messages, play invitations); the menu asks every 30 s and every sync brings it too
 function applyNotify(n) {
@@ -12339,7 +12366,7 @@ notifySig = sig;
 if ($("friendsScr").classList.contains("on") && $("frList")) loadFriends();
 if ($("inbox") && $("inbox").classList.contains("on")) buildInbox();
 }
-if (mode !== "menu" || LB || $("modal").classList.contains("on")) return;
+if (mode !== "menu" || (LB && LB.state === "running") || $("modal").classList.contains("on")) return;
 const rq = n.frIn.find(r => !frShown.has(r.id));
 if (rq) { frShown.add(rq.id); return frAskModal(rq); }
 const ch = n.ch.find(c => !frShown.has("c" + c.code));
@@ -12497,7 +12524,7 @@ Net.on("frok", () => pollNotify(true));
 Net.on("dm", m => { if (dmOpenId && dmOpenId === m.from && dmPullNow) dmPullNow(); else pollNotify(true); });
 Net.on("challenge", m => {
 frShown.add("c" + m.code);
-if (mode === "menu" && !LB) challengeModal(m);
+if (mode === "menu" && !(LB && LB.state === "running") && !$("modal").classList.contains("on")) challengeModal(m);
 else toast("⚔️", `${m.from}: ${T("sizni o'yinga chaqirdi!")}`, T("Xat qutisi"));
 });
 let CP_CACHE = null;
