@@ -1,5 +1,9 @@
 /img/*
   Cache-Control: public, max-age=31536000, immutable
+/hd/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets.json
+  Cache-Control: no-store
 /a/*
   Cache-Control: public, max-age=31536000, immutable
 /index.html

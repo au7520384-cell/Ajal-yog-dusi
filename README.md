@@ -228,3 +228,17 @@ On the first visit the page shows a progress screen ("Downloading game resources
 The next visits find everything in the cache and open at once; after an update only the new files are downloaded (the list version is kept in `localStorage.b8_assets`).
 "Later" lets the player in at once, the download goes on in the background; a stalled connection (20 s with no progress) lets the player in as well. The text is in all 14 languages (small table inside the page's first script).
 Nothing changes in the single-file build, in portal frames, or in browsers without cache storage. Test: `node tools/test_preload.js`.
+
+## HD pack (sharp balls, avatars, frames, cues, badges, icons)
+The pictures are drawn for a 1340×720 screen; a 2400×1080 phone or a 4K tablet shows them 2–3 times bigger, so small ones looked soft. The fix is a second download, like the "HD resource pack" of big mobile games:
+- `tools/build_hd.py` makes a sharper copy of every small picture (about 2000 of them: avatars 100 → 400 px, frames, cues 1160 → 2320 px, badges, medals, icons, ball textures 320 → 640 px) with Real-ESRGAN running on the CPU
+  (`tools/hd/esrgan.py`, onnxruntime, no torch, no GPU, no credits; `pip install onnx onnxruntime pillow numpy`). The copies are `web/hd/<hash>.webp` (the hash is the one of `img/<hash>.<ext>`), made once and kept in git; the script skips what exists.
+  Big pictures (halls, backgrounds, tables, > 1300 px) are left alone, they are already 2–3K.
+- `tools/build_web.py` lists them in `web/assets.json` (`hd`: `[base name, size of the HD copy]`) and keeps every picture that has an HD copy as a file (never inline), so it can be swapped. Rebuild the light build after `build_hd.py`.
+- The start-up script at the top of `index.html` downloads the standard pack first, then the HD pack (its own progress: "Downloading HD graphics (x MB / y MB)") into the cache `billiard8-hd`, and reloads the page once. `sw.js` answers a request for `img/<hash>.<ext>` with the copy kept in `billiard8-hd` when there is one,
+  so no page code asks for HD files: avatars become 400 px, cues 2320 px and so on.
+- A slow or metered connection (saveData, 2g/3g) and a very weak phone (< 2 GB) keep the standard pictures; Settings → Graphics → "HD graphics pack" downloads, applies or switches it off (`window.__hd`).
+- Settings → Graphics has a new level "4K" (the screen's own pixels). The default level is 2K on strong devices (6 GB+, 8+ cores) and Full HD on the others; balls are painted up to 96 / 72 px, from mip-mapped textures (HD ones on big screens).
+- Tests: `node tools/test_hd.js` (first visit → HD → reload → HD pictures, second visit, Settings off/on), `node tools/hd_diff_capture.js out/ && python3 tools/hd_diff_compare.py out/` (every screen with HD off / on: nothing may move).
+- Hosting: the pack is ~80–100 MB per new player, so it must come from a host with free traffic. The static build that Cloudflare publishes after every push (`wrangler.jsonc`: `python3 tools/build_web.py web_site`) includes `web_site/hd/` (copied from `web/hd/`, which is committed), so the Telegram Mini App / web version gets it from Cloudflare.
+  The game server on Render also serves `web/` (`/hd/<hash>.webp`), but a free Render plan has a monthly traffic limit: use the Cloudflare address in ads and in the bot.

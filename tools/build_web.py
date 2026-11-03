@@ -19,20 +19,25 @@ def sub(old, new):
 if not os.environ.get("SAME_ORIGIN"): sub('const sameOrigin = location.protocol.startsWith("http") && !ON_PORTAL;', 'const sameOrigin = false;   // static build: the game server is CONFIG.server')
 SRC_HASH = hashlib.sha1(open(os.path.join(root, "index.html"), "rb").read()).hexdigest()
 INLINE_UNDER = int(os.environ.get("INLINE_UNDER", "0"))
+# HD pack (tools/build_hd.py): web/hd/<hash>.webp is the sharper copy of img/<hash>.<ext> (the store always lives in ./web/hd, whatever out_dir is). A picture that has one is always a file
+# (never left inside the page), so the service worker can swap it.
+HD_STORE = os.path.join(root, "web", "hd"); HD_SET = {f[:-5] for f in os.listdir(HD_STORE) if f.endswith(".webp")} if os.path.isdir(HD_STORE) else set()
 IMGS = {}
 EXT = {"webp": "webp", "png": "png", "jpeg": "jpg", "jpg": "jpg", "gif": "gif"}
 def _file(m):
     mt, raw = m.group(1), base64.b64decode(m.group(2))
-    if len(raw) < INLINE_UNDER: return m.group(0)
-    name = "img/" + hashlib.sha1(raw).hexdigest()[:14] + "." + EXT[mt]
+    hh = hashlib.sha1(raw).hexdigest()[:14]
+    if len(raw) < INLINE_UNDER and hh not in HD_SET: return m.group(0)
+    name = "img/" + hh + "." + EXT[mt]
     IMGS[name] = raw
     return name
 src = re.sub(r"data:image/(webp|png|jpeg|jpg|gif);base64,([A-Za-z0-9+/=]+)", _file, src)
 # the table-rail / cue-art tables hold bare base64 WebP strings ("UklGR..."): files as well (the page turns a path or base64 into a source with W64())
 def _bare(m):
     raw = base64.b64decode(m.group(1))
-    if len(raw) < INLINE_UNDER: return m.group(0)
-    name = "img/" + hashlib.sha1(raw).hexdigest()[:14] + ".webp"
+    hh = hashlib.sha1(raw).hexdigest()[:14]
+    if len(raw) < INLINE_UNDER and hh not in HD_SET: return m.group(0)
+    name = "img/" + hh + ".webp"
     IMGS[name] = raw
     return '"' + name + '"'
 src = re.sub(r'"(UklGR[A-Za-z0-9+/=]{300,})"', _bare, src)
@@ -43,19 +48,36 @@ def _media(m):
     AUD[name] = raw
     return name
 src = re.sub(r"data:(audio/wav|video/mp4);base64,([A-Za-z0-9+/=]+)", _media, src)
+KEEP = out.rstrip("/") + ".hd_keep"; HD_DIR = os.path.join(out, "hd")
+if os.path.abspath(HD_STORE).startswith(out.rstrip("/") + os.sep) and os.path.isdir(HD_STORE):   # the store is inside the folder that is about to be rebuilt: set it aside
+    if os.path.isdir(KEEP): shutil.rmtree(KEEP)
+    shutil.move(HD_STORE, KEEP); HD_FROM = KEEP
+else: HD_FROM = HD_STORE
 if os.path.isdir(out): shutil.rmtree(out)
 os.makedirs(os.path.join(out, "img")); os.makedirs(os.path.join(out, "a"))
 open(os.path.join(out, "index.html"), "w", encoding="utf-8").write(src)
 open(os.path.join(out, ".src"), "w").write(SRC_HASH)
 for n, raw in list(IMGS.items()) + list(AUD.items()): open(os.path.join(out, n), "wb").write(raw)
+HASHES = {n[4:].rsplit(".", 1)[0] for n in IMGS}
+if os.path.isdir(HD_FROM):
+    os.makedirs(HD_DIR, exist_ok=True); stale = 0
+    for f in os.listdir(HD_FROM):   # an HD copy whose picture is not in the page any more is dropped
+        if f[:-5] in HASHES:
+            (shutil.move if HD_FROM == KEEP else shutil.copy)(os.path.join(HD_FROM, f), os.path.join(HD_DIR, f))
+        else: stale += 1
+    if HD_FROM == KEEP: shutil.rmtree(KEEP)
+    if stale: print("dropped", stale, "HD copies of pictures that are not in the page any more")
 for f in ["sw.js", "manifest.webmanifest", "icon.svg", "favicon-48.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png"]:
     shutil.copy(os.path.join(root, f), os.path.join(out, f))
 # Cloudflare Pages / Netlify header rules: the hashed pictures never change
-open(os.path.join(out, "_headers"), "w").write("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n/a/*\n  Cache-Control: public, max-age=31536000, immutable\n/index.html\n  Cache-Control: no-cache\n/\n  Cache-Control: no-cache\n")
+open(os.path.join(out, "_headers"), "w").write("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n/hd/*\n  Cache-Control: public, max-age=31536000, immutable\n/assets.json\n  Cache-Control: no-store\n/a/*\n  Cache-Control: public, max-age=31536000, immutable\n/index.html\n  Cache-Control: no-cache\n/\n  Cache-Control: no-cache\n")
 # the list of every picture / sound with its size: the page downloads them with a progress bar on the first visit (and only the new ones after an update)
 import json
 files = sorted((n, len(raw)) for n, raw in list(IMGS.items()) + list(AUD.items()))
-open(os.path.join(out, "assets.json"), "w").write(json.dumps({"v": hashlib.sha1("".join(n for n, _ in files).encode()).hexdigest()[:12], "files": files}, separators=(",", ":")))
+hd = sorted((n, os.path.getsize(os.path.join(HD_DIR, n[4:].rsplit(".", 1)[0] + ".webp"))) for n in IMGS if os.path.exists(os.path.join(HD_DIR, n[4:].rsplit(".", 1)[0] + ".webp")))   # [base name, size of its HD copy]
+man = {"v": hashlib.sha1("".join(n for n, _ in files).encode()).hexdigest()[:12], "files": files}
+if hd: man["hd"] = {"v": hashlib.sha1("".join(n + str(sz) for n, sz in hd).encode()).hexdigest()[:12], "files": hd}   # [base name, size of its HD copy]: the HD copy of img/<h>.<ext> is hd/<h>.webp
+open(os.path.join(out, "assets.json"), "w").write(json.dumps(man, separators=(",", ":")))
 size = os.path.getsize(os.path.join(out, "index.html"))
 assert size < 25 * 1024 * 1024, "index.html is over the 25 MiB per-file limit of Cloudflare Pages"
 z = out.rstrip("/") + ".zip"
