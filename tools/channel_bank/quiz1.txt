@@ -266,8 +266,8 @@ xu: Reyes filippinlik; 1999-yilda 9-ball bo'yicha jahon chempioni bo'lgan.
 xe: Reyes is Filipino and won the 9-ball world title in 1999.
 
 ## quiz history
-uz: 🏅 Viktorina: Villi Mosko 1956-yilda ko'rgazmali o'yinda ketma-ket nechta sharni tushirgan (straight pool rekordi)?
-en: Quiz: how many balls in a row did Willie Mosconi pocket in a 1956 straight-pool exhibition?
+uz: 🏅 Viktorina: Villi Mosko ko'rgazmali o'yinda ketma-ket nechta sharni tushirgan (straight pool rekordi)?
+en: Quiz: how many balls in a row did Willie Mosconi pocket in a straight-pool exhibition?
 o: 126 | 256 | 526 | 1 000
 c: 2
 xu: 526 ta: bilyard tarixidagi eng mashhur rekordlardan biri.
