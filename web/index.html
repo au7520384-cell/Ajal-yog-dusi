@@ -9221,7 +9221,6 @@ return `<div class="city lounge"><div class="cban" style="background:radial-grad
 ${ok ? "" : `<div class="lock"><div><div>🔒</div>${T("Ochiladi")}: ${UNLOCK_TP.lng} 🏆</div></div>`}</div>`;
 }
 function playLounge(stake) {
-if (LB && LB.state === "running" && !LB.results) return toast("🏆", T("Turnir boshlangan"), T("Lobbi"));
 if (roadTP() < UNLOCK_TP.lng) return toast("🔒", `${T("Ochiladi")}: ${UNLOCK_TP.lng} 🏆`, LOUNGE.name);
 if (profile.coins < stake) return toast("😕", T("Tanga yetmaydi"), LOUNGE.name);
 const c = {...LOUNGE, fee: stake, prize: stake * 2};
@@ -9229,7 +9228,6 @@ profile.coins -= stake; save(); updateNav();
 vsScreen(c, c.prize, () => findOpponent({...c, lvl: 8}), f => startMatch("ai", c, f.opp, f.net));
 }
 function playCity(c) {
-if (LB && LB.state === "running" && !LB.results) return toast("🏆", T("Turnir boshlangan"), T("Lobbi"));   // (an online search takes the player out of the lobby: not in the middle of a tournament)
 if (cityLock(c)) return toast("🔒", cityLock(c), c.name);
 if (profile.coins < c.fee) {
 return openModal({icon: "😕", title: "Tanga yetmaydi", text: TT("{0} stoli uchun {1} tanga kerak. Sovg'alar yoki mini o'yinlardan tanga yig'ing.", T(c.name), fmt(c.fee)),
@@ -12078,7 +12076,7 @@ const o = m.opp || {}, c = lbCityOf(LB.city), city = {...c, prize: 0, fee: 0};
 const opp = {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
 level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0};
 lbChip(false);
-vsScreen(city, LB.fee * 2, () => Promise.resolve({net: m, opp}), f => { startMatch("ai", city, f.opp, f.net); if (game) game.tourLobby = true; });
+vsScreen(city, LB.fee * 2, () => Promise.resolve({net: m, opp}), f => { startMatch("ai", city, f.opp, f.net); if (game) { game.tourLobby = true; game.pot = LB ? LB.fee * 2 : 0; } });   // (the result screen shows the pot of the match; the tournament prize itself is paid at the end)
 }
 function lbAfterMatch() {   // the "Continue" of a bracket match's result screen
 const q = LB && LB.queued; if (q) return lbPlay(q);
