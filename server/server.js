@@ -670,7 +670,7 @@ async function chanPoll(f, common, kb) {   // a poll or a quiz poll (the right a
   return tgApi("sendPoll", body);
 }
 async function chanSendItem(it, cat, quiet) {   // it: a post of the bank, or {html: {uz, en}} (the data posts, already escaped)
-  const qz = it.quiz && it.id && /^[A-Za-z0-9]{2,12}$/.test(it.id) && /^https:\/\/t\.me\//.test(TG_APP_LINK);   // a quiz post: the button opens the SAME question in the game, a right answer there pays coins (the channel cannot tell who voted)
+  const qz = it.quiz && it.id && /^Q[0-9]+$/.test(it.id) && /^https:\/\/t\.me\//.test(TG_APP_LINK);   // a quiz post: the button opens the SAME question in the game, a right answer there pays coins (the channel cannot tell who voted)
   const link = qz ? TG_APP_LINK.split("?")[0] + "?startapp=q_" + it.id : chanLink(cat), kb = link ? {inline_keyboard: [[{text: qz ? "🎁 Sovg'ani olish · Get your gift" : "🎮 O'ynash · Play", url: link}]]} : undefined, common = {chat_id: CHAN_ID, disable_notification: !!quiet};
   if (it.html) return tgApi("sendMessage", {...common, text: `${it.html.uz}\n\n${it.html.en}${link ? `\n\n▶ <a href="${plan.esc(link)}">O'ynash · Play</a>` : ""}`, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: kb});
   const f0 = plan.format(it, {link});
