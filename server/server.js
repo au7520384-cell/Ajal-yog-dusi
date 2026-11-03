@@ -382,9 +382,11 @@ function quizOrder(day) {   // all quiz ids in an order that only depends on the
   const a = _quizIds.slice(); for (let i = a.length - 1; i > 0; i--) { h = (Math.imul(h, 1664525) + 1013904223) >>> 0; const j = h % (i + 1); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 }
-function quizView(id, qz) {   // what the page may see: the question and the options; the right answer and the explanation only after this player has answered it
-  const it = CHAN_BANK.byId[id], q = it.quiz, d = qz.done[id];
-  return {id, q: {uz: q.uz, en: q.en}, o: q.options, done: d ? {c: d.c, ok: d.ok, correct: q.correct | 0, x: {uz: q.explanation.uz, en: q.explanation.en}} : null};
+let _quizI18n = null;
+const quizI18n = () => _quizI18n || (_quizI18n = readJson("quiz_i18n.json", {}));   // built by tools/build_quiz_i18n.py: the quizzes in the game's other languages {lang: {Q001: {q, o, x}}}
+function quizView(id, qz, lang) {   // what the page may see: the question and the options (in the player's language when there is a translation); the right answer and the explanation only after this player has answered it
+  const it = CHAN_BANK.byId[id], q = it.quiz, d = qz.done[id], t = (quizI18n()[String(lang || "").slice(0, 2)] || {})[id];
+  return {id, q: {uz: q.uz, en: q.en}, o: q.options, ...(t ? {t: {q: t.q, o: t.o}} : {}), done: d ? {c: d.c, ok: d.ok, correct: q.correct | 0, x: {uz: q.explanation.uz, en: q.explanation.en}, ...(t && t.x ? {tx: t.x} : {})} : null};
 }
 const CLUB_MAX = 50, CLUB_LEVEL = 6, CLUB_PRIZES = [20, 10, 5];
 function clubScore(c) { const w = curWeek(); return c.members.reduce((a, id) => a + (db.users[id] && db.users[id].week === w ? db.users[id].weekWon || 0 : 0), 0); }
@@ -863,31 +865,31 @@ const routes = {
   // ---- billiard quizzes with a gift: the daily set of 5 and the question a channel post links to. The server knows the right answers (the page never gets them before the player answers), pays each question
   // once per player (coins arrive as a server grant: the game adds them by itself the next time it syncs) and stops at QUIZ_DAY_CAP paid answers a day.
   async "POST /api/quiz/day"(req, u) {
-    const day = plan.localDay(Date.now()).key, qz = quizState(u, day);
+    const b = await jsonBody(req), day = plan.localDay(Date.now()).key, qz = quizState(u, day);
     if (qz.set.day !== day) {   // today's five: the same order for everybody on a given day, but questions this player has already answered (for instance from a channel post) are left out
       const ids = quizOrder(day).filter(id => !qz.done[id]).slice(0, QUIZ_SET), all = quizOrder(day);
       for (const id of all) { if (ids.length >= QUIZ_SET) break; if (!ids.includes(id)) ids.push(id); }
       qz.set = {day, ids, bonus: false}; markDirty();
     }
-    return {day, coins: QUIZ_COINS, bonusCash: QUIZ_BONUS_CASH, bonus: !!qz.set.bonus, items: qz.set.ids.map(id => quizView(id, qz))};
+    return {day, coins: QUIZ_COINS, bonusCash: QUIZ_BONUS_CASH, bonus: !!qz.set.bonus, items: qz.set.ids.map(id => quizView(id, qz, b.lang))};
   },
   async "POST /api/quiz/one"(req, u) {   // the question a channel post sends to (startapp=q_<id>)
     const b = await jsonBody(req), id = String(b.id || ""), it = CHAN_BANK.byId[id];
     if (!it || !it.quiz || !/^Q\d+$/.test(id)) return [404, {error: "no_quiz"}];
-    return {coins: QUIZ_COINS, item: quizView(id, quizState(u, plan.localDay(Date.now()).key))};
+    return {coins: QUIZ_COINS, item: quizView(id, quizState(u, plan.localDay(Date.now()).key), b.lang)};
   },
   async "POST /api/quiz/answer"(req, u) {
     if (limited(req, "quizans", 60)) return [429, {error: "slow down"}];
     const b = await jsonBody(req), id = String(b.id || ""), it = CHAN_BANK.byId[id];
     if (!it || !it.quiz || !/^Q\d+$/.test(id)) return [404, {error: "no_quiz"}];
     const day = plan.localDay(Date.now()).key, qz = quizState(u, day), q = it.quiz, c = Math.floor(+b.c);
-    if (qz.done[id]) return {again: true, coins: 0, ...quizView(id, qz)};   // answered before: shown again, nothing more is paid
+    if (qz.done[id]) return {again: true, coins: 0, ...quizView(id, qz, b.lang)};   // answered before: shown again, nothing more is paid
     if (!(c >= 0 && c < q.options.length)) return [400, {error: "bad_choice"}];
     const ok = c === (q.correct | 0); qz.done[id] = {c, ok, d: day};
     let coins = 0, cash = 0;
     if (ok && (qz.paid | 0) < QUIZ_DAY_CAP) { coins = QUIZ_COINS; qz.paid = (qz.paid | 0) + 1; grant(u, {coins, cash: 0, kind: "quiz", from: id}); }
     if (qz.set.day === day && !qz.set.bonus && qz.set.ids.every(x => qz.done[x] && qz.done[x].ok)) { qz.set.bonus = true; cash = QUIZ_BONUS_CASH; grant(u, {coins: 0, cash, kind: "quiz", from: "5/5"}); }
-    markDirty(); return {again: false, coins, cash, ...quizView(id, qz)};
+    markDirty(); return {again: false, coins, cash, ...quizView(id, qz, b.lang)};
   },
   "POST /api/src"(req, u) {   // the page reports the ad link it was opened from (startapp=c_NAME): opens, and new players (account made in the last 6 h, counted once)
     return jsonBody(req).then(b => {

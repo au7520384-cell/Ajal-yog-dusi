@@ -18,6 +18,14 @@ const mk = async name => { const r = await call(null, "/api/register", { name })
   ok(items.every(x => x.done === null && !("correct" in x) && Array.isArray(x.o) && x.q.uz && x.q.en && byId[x.id]), "no right answer is sent before the answer", items[0]);
   const again = await call(A, "/api/quiz/day"); ok(JSON.stringify(again.j.items.map(x => x.id)) === JSON.stringify(items.map(x => x.id)), "asked again: the same five");
   const other = await call(Bo, "/api/quiz/day"); ok(JSON.stringify(other.j.items.map(x => x.id)) === JSON.stringify(items.map(x => x.id)), "another player gets the same five on the same day");
+  // languages: a translation comes with the question, the same number of options (the right answer keeps its place); other languages and unknown ones get no `t` (the page shows English)
+  const i18n = JSON.parse(fs.readFileSync(path.join(ROOT, "server", "quiz_i18n.json"), "utf8")), langs = Object.keys(i18n);
+  ok(langs.includes("ru"), "quiz_i18n.json has Russian", langs);
+  for (const lg of langs) {
+    const v = (await call(A, "/api/quiz/day", { lang: lg })).j.items; ok(v.length === 5 && v.every(x => x.t && x.t.q && x.t.o.length === x.o.length && x.t.o.every(Boolean)), "the daily set comes in " + lg, v[0]);
+  }
+  const vx = (await call(A, "/api/quiz/day", { lang: "xx" })).j.items; ok(vx.every(x => !x.t), "an unknown language gets no translation");
+  const vu = (await call(A, "/api/quiz/day", { lang: "uz" })).j.items; ok(vu.every(x => !x.t), "Uzbek and English come from the bank itself");
   // a wrong answer
   const q0 = byId[items[0].id], right0 = q0.quiz.correct, wrong0 = (right0 + 1) % q0.quiz.options.length;
   r = await call(A, "/api/quiz/answer", { id: items[0].id, c: wrong0 }); ok(r.s === 200 && r.j.coins === 0 && r.j.done && r.j.done.ok === false && r.j.done.correct === right0 && r.j.done.x.uz, "wrong: nothing paid, the right answer and the explanation are shown", r.j);
@@ -25,6 +33,7 @@ const mk = async name => { const r = await call(null, "/api/register", { name })
   // right answers
   let paid = 0, cash = 0;
   for (let k = 1; k < 5; k++) { const q = byId[items[k].id]; r = await call(A, "/api/quiz/answer", { id: items[k].id, c: q.quiz.correct }); paid += r.j.coins || 0; cash += r.j.cash || 0; ok(r.j.done && r.j.done.ok === true, "right answer " + k, r.j); }
+  { const Cc = await mk("Chingiz"), q1 = byId[items[1].id], ans = await call(Cc, "/api/quiz/answer", { id: items[1].id, c: q1.quiz.correct, lang: "ru" }); ok(ans.j.done && ans.j.done.tx && ans.j.done.tx === i18n.ru[items[1].id].x, "the explanation comes in the player's language after the answer", ans.j.done); }
   ok(paid === 4 * 300 && cash === 0, "4 right answers pay 4 x 300 coins and no bonus (one was wrong)", [paid, cash]);
   let sy = await call(A, "/api/sync", { name: "Alisher" }); const g = (sy.j.grants || []).filter(x => x.kind === "quiz");
   ok(g.length === 4 && g.reduce((a, x) => a + (x.coins || 0), 0) === 1200, "the coins arrive as grants at the next sync", g);

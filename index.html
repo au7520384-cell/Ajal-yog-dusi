@@ -11557,21 +11557,22 @@ const FREE_EVERY = 4 * 3600e3;
 // ---- billiard quizzes with a gift: the daily five (Free rewards) and the one question a channel post links to (startapp=q_<id>). The server holds the right answers and pays (a server grant: the coins arrive
 // by themselves at the next sync); here only the questions are shown. Texts: Uzbek in Uzbek, English for every other language.
 const quizTxt = o => (LANG === "uz" ? o.uz : o.en) || o.uz;
+const quizQ = it => (it.t && it.t.q) || quizTxt(it.q), quizO = it => (it.t && it.t.o) || it.o;   // the server sends a translation (it.t) when it has one for the game's language
 function quizSyncSoon() { setTimeout(() => { try { Net.sync(); } catch (e) {} }, 400); }
 function quizAsk(it, head, after) {   // it: {id, q, o, done}; head: "Savol 2/5"; after(result): called when the player goes on
-const btns = it.o.map((t, i) => ({label: String(t), cls: "blue", fn: async () => {
-let r; try { r = await Net.api("/api/quiz/answer", {id: it.id, c: i}); } catch (e) { return toast("⚠️", T("Viktorinani yuklab bo'lmadi. Internetni tekshiring."), T("Viktorina")); }
-const d = r.done || {}, right = it.o[d.correct], won = r.coins || 0, cash = r.cash || 0;
+const opts = quizO(it), btns = opts.map((t, i) => ({label: String(t), cls: "blue", fn: async () => {
+let r; try { r = await Net.api("/api/quiz/answer", {id: it.id, c: i, lang: LANG}); } catch (e) { return toast("⚠️", T("Viktorinani yuklab bo'lmadi. Internetni tekshiring."), T("Viktorina")); }
+const d = r.done || {}, right = opts[d.correct], won = r.coins || 0, cash = r.cash || 0;
 if (d.ok) { try { Snd.win(); } catch (e) {} } else { try { Snd.lose(); } catch (e) {} }
 openModal({icon: d.ok ? "✅" : "❌", title: d.ok ? T("To'g'ri!") : T("Noto'g'ri"),
-text: `${d.ok ? "" : T("To'g'ri javob") + ": " + right + "\n"}${d.x ? quizTxt(d.x) : ""}${won ? `\n+${fmt(won)} 🪙` : ""}${cash ? `\n+${fmt(cash)} 💵 (5/5)` : ""}`,
+text: `${d.ok ? "" : T("To'g'ri javob") + ": " + right + "\n"}${d.tx || (d.x ? quizTxt(d.x) : "")}${won ? `\n+${fmt(won)} 🪙` : ""}${cash ? `\n+${fmt(cash)} 💵 (5/5)` : ""}`,
 buttons: [{label: after ? T("Keyingisi") : T("Yopish"), cls: "green", fn: () => { if (won || cash) quizSyncSoon(); after ? after(d.ok) : 0; }}]});
 }}));
 btns.push({label: T("Yopish"), cls: "gray", fn: () => {}});
-openModal({icon: "🧠", title: `${T("Savol")}${head ? " " + head : ""}`, text: quizTxt(it.q), buttons: btns});
+openModal({icon: "🧠", title: `${T("Savol")}${head ? " " + head : ""}`, text: quizQ(it), buttons: btns});
 }
 async function quizDaily() {
-let r; try { r = await Net.api("/api/quiz/day", {}); } catch (e) { return toast("⚠️", T("Viktorinani yuklab bo'lmadi. Internetni tekshiring."), T("Viktorina")); }
+let r; try { r = await Net.api("/api/quiz/day", {lang: LANG}); } catch (e) { return toast("⚠️", T("Viktorinani yuklab bo'lmadi. Internetni tekshiring."), T("Viktorina")); }
 const items = r.items || [], todo = items.filter(x => !x.done);
 if (!todo.length) { const ok = items.filter(x => x.done && x.done.ok).length; return openModal({icon: "🧠", title: T("Bugungi viktorina tugadi"), text: `${T("Natija")}: ${ok}/${items.length}`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]}); }
 let good = items.filter(x => x.done && x.done.ok).length;
@@ -11582,7 +11583,7 @@ quizAsk(todo[k], `${items.indexOf(todo[k]) + 1}/${items.length}`, ok => { if (ok
 step(0);
 }
 async function quizOne(id) {   // a channel post's question
-let r; try { r = await Net.api("/api/quiz/one", {id}); } catch (e) { return; }
+let r; try { r = await Net.api("/api/quiz/one", {id, lang: LANG}); } catch (e) { return; }
 if (!r || !r.item) return;
 if (r.item.done) return openModal({icon: "🧠", title: T("Kanal viktorinasi"), text: T("Bu savolga avval javob bergansiz"), buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
 quizAsk(r.item, "", null);
