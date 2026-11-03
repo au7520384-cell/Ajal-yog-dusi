@@ -1658,6 +1658,7 @@ function startRoom(a, b, city, T, match) {   // a sits in seat 0, b in seat 1
   const first = crypto.randomInt(2);
   const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null, tour: T || null, tourMatch: match || null};
   rooms.set(room.id, room);
+  for (const s of [a, b]) if (s && s.spec) { const r = s.spec; r.specs.delete(s); s.spec = null; specCount(r); }   // a player who was watching another match of the lobby now plays his own
   room.p.forEach((s, seat) => { s.room = room; s.seat = seat; });
   room.p.forEach((s, seat) => wsSend(s, {t: "match", room: room.id, seat, first, seed: room.seed, city, opp: room.p[1 - seat].profile, tour: T ? {round: T.round, rounds: T.rounds} : undefined}));
   return room;
@@ -1684,7 +1685,7 @@ function startTournament(L, ps) {
 const tourPlayer = (p, T) => p ? {uid: p.uid, name: (p.profile || {}).name, avatar: (p.profile || {}).avatar, frame: (p.profile || {}).frame || 0, level: (p.profile || {}).level} : null;
 function tourBroadcast(L) {
   const T = L.T; if (!T) return;
-  const m = {t: "tourstate", round: T.round, rounds: T.rounds, n: T.n, matches: T.matches.map(x => ({a: tourPlayer(x.a), b: tourPlayer(x.b), w: x.w ? x.w.uid : null, live: !!x.room && !x.done})), results: T.results};
+  const m = {t: "tourstate", round: T.round, rounds: T.rounds, n: T.n, matches: T.matches.map(x => ({a: tourPlayer(x.a), b: tourPlayer(x.b), w: x.w ? x.w.uid : null, live: !!x.room && !x.done, room: x.room && !x.done ? x.room.id : undefined})), results: T.results};   // room: lets the lobby show a "watch" button for a live match
   for (const p of T.players) wsSend(p, m);
 }
 function eliminate(L, ws, round) {
