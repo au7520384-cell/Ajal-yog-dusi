@@ -1,0 +1,151 @@
+// Turkish (questions and options; the explanation in English is shown after the answer)
+Q001|9 top bilardosunda, beyaz top dahil masada kaç top vardır?|=;=;=;=|
+Q002|9 top bilardosunda beyaz top önce hangi topa çarpmalıdır?|Herhangi bir topa;En yüksek numaralı topa;9 numaralı topa;En düşük numaralı topa|
+Q003|9 top bilardosunda kurallara uygun atılınca oyunu kazandıran top hangisidir?|8 numaralı top;1 numaralı top;Beyaz top;9 numaralı top|
+Q004|9 top bilardosunda toplar hangi şekilde dizilir?|Daire;Üçgen;Kare;Baklava (eşkenar dörtgen)|
+Q005|15 top üçgen içinde kaç sıra halinde dizilir?|=;=;=;=|
+Q006|1'den 15'e kadar olan topların numaralarının toplamı kaçtır?|=;=;=;=|
+Q007|Snookerda kaç tane kırmızı top vardır?|=;=;=;=|
+Q008|Snookerda mümkün olan en yüksek seri (break) kaçtır?|=;=;=;=|
+Q009|Snookerda siyah top kaç puandır?|=;=;=;=|
+Q010|Tam boy bir snooker masası ne kadar uzundur?|15 fit;12 fit;9 fit;7 fit|
+Q011|Karambol bilardosu masasında kaç delik vardır?|=;=;=;=|
+Q012|«Masse» vuruşu nedir?|Beyaz topu zıplatmak;Bantlı vuruş;Açılış vuruşu;Isteka neredeyse dik tutulur, top kavis çizer|
+Q013|Beyaz topun engel olan bir topun üzerinden zıplatıldığı vuruşa ne denir?|=;Bantlı vuruş (bank shot);Savunma (safety);Açılış (break)|
+Q014|Beyaz top önce bantlara, sonra hedef topa çarpıyor. Bu hangi vuruştur?|=;=;=;=|
+Q015|Hedef top banta çarpıp sonra deliğe giriyor. Bu nedir?|Kombinasyon;Kick shot;Scratch;=|
+Q016|Beyaz top bir topa çarpar, o da başka bir topu deliğe sokar. Buna ne denir?|Kombinasyon;Faul;Savunma;Kick shot|
+Q017|İstekayı destekleyen el (veya aparat) İngilizcede ne denir?|=;=;=;=|
+Q018|Açılıştan önce topları dizmeye yarayan üçgene İngilizcede ne denir?|=;=;=;=|
+Q019|Masanın yumuşak kenarına İngilizcede ne denir?|=;=;=;Cushion (rail): bant|
+Q020|Masayı kaplayan yumuşak kumaşa ne denir?|=;=;=;=|
+Q021|Beyaz topun temastan sonra olduğu yerde durduğu vuruşa ne denir?|=;=;=;=|
+Q022|Beyaz top ileri yuvarlanmaya devam etsin diye merkezin üstüne vuruyorsunuz. Buna ne denir?|Follow (ileri efekt);Stop shot;Draw (geri efekt);=|
+Q023|Dizili topları dağıtan oyunun ilk vuruşuna ne denir?|=;=;=;=|
+Q024|«Hayalet top» (ghost ball) yöntemi ne işe yarar?|Istekayı tebeşirlemeye;Topun üzerinden zıplamaya;Topları dizmeye;Beyaz topun varması gereken yeri hayal etmeye|
+Q025|İdeal koşullarda bir top banttan hangi açıyla çıkar?|Geliş açısına eşit;Rastgele;İki katı;Her zaman 90°|
+Q026|Isteka ucu (tip) genellikle neyden yapılır?|Cam;Ahşap;Metal;Deri|
+Q027|Modern bilardo topları çoğunlukla neyden yapılır?|Reçine (plastik);Cam;Fildişi;Ahşap|
+Q028|Standart bir bilardo istekası yaklaşık ne kadar uzundur?|90 cm;120 cm;147 cm;200 cm|
+Q029|Standart bir bilardo topunun çapı yaklaşık kaçtır?|3 cm;5,7 cm;8 cm;10 cm|
+Q030|9 fitlik bir bilardo masasının oyun alanı yaklaşık ne kadardır?|=;=;=;=|
+Q031|Standart bir 8 top setinde 1 numaralı top hangi renktir?|Sarı;Yeşil;Mavi;Kırmızı|
+Q032|Standart bir sette 5 numaralı top hangi renktir?|Yeşil;Siyah;Mor;Turuncu|
+Q033|Bilardo efsanesi Efren «Sihirbaz» Reyes hangi ülkeden?|Japonya;Çin;ABD;Filipinler|
+Q034|Willie Mosconi bir düz bilardo (straight pool) gösterisinde art arda kaç top soktu?|=;=;=;=|
+Q035|«The Hustler» (1961) filminde bilardo dolandırıcısı «Fast Eddie»yi kim canlandırdı?|=;Robert De Niro;Tom Cruise;Brad Pitt|
+Q036|«Paranın Rengi» (1986) filminde Paul Newman'la birlikte kim oynadı?|Tom Cruise;Tom Hanks;Keanu Reeves;Al Pacino|
+Q037|Snooker efsanesi Ronnie O'Sullivan'ın lakabı nedir?|=;=;=;=|
+Q038|İngilizce «cue» sözcüğü hangi Fransızca sözcükten gelir?|cube (küp);clé (anahtar);cible (hedef);queue (kuyruk)|
+Q039|Big Ben hangi şehirde? Aynı zamanda oyunun ilk masası!|Londra;Paris;Madrid;Roma|
+Q040|Yelken çatılı Opera Binasıyla ünlü Sidney hangi ülkede?|Kanada;Güney Afrika;Yeni Zelanda;Avustralya|
+Q041|«Pastel de nata» adlı muhallebili tatlı hangi ülkeye ait?|Portekiz;İspanya;Fransa;İtalya|
+Q042|Santiago Bernabéu stadyumu hangi şehirde?|Lizbon;Barselona;Roma;Madrid|
+Q043|Tokyo 1868'den önce ne olarak adlandırılırdı?|=;Osaka;Nagoya;Kyoto|
+Q044|Japoncada «dojo» ne demektir?|Dövüş sanatları antrenman salonu;Bahçe;Çay evi;Tapınak|
+Q045|Tango dansı hangi ülkeyle özdeşleşmiştir (Buenos Aires masası: «Tango Salon»)?|İspanya;Brezilya;Meksika;Arjantin|
+Q046|Cakarta'nın bulunduğu Endonezya'da yaklaşık kaç ada vardır?|=;=;=;=|
+Q047|Kanada bayrağındaki yaprak hangi ağaca aittir (Toronto masası: «Maple Lounge»)?|Akçaağaç;Meşe;Palmiye;Huş|
+Q048|Meksiko hangi eski şehrin üzerine kurulmuştur?|Teotihuacan;Chichén Itzá;Machu Picchu;Tenochtitlan|
+Q049|Giza piramitleri hangi ülkede (Kahire masası: «Pyramid Hall»)?|Mısır;Sudan;Fas;Ürdün|
+Q050|828 metrelik Burj Khalifa hangi şehirde?|Singapur;Şanghay;New York;Dubai|
+Q051|«Singapur» adı «Aslan Şehri» anlamına gelir. Doğru mu yanlış mı?|Doğru;Yanlış|
+Q052|Doğu İnci Kulesi hangi şehirde?|Bangkok;Şanghay;Seul;Osaka|
+Q053|Eyfel Kulesi hangi şehirde?|Roma;Paris;Berlin;Amsterdam|
+Q054|New York'un ilk adı neydi?|Yeni Amsterdam;Yeni Paris;Yeni Roma;Yeni Londra|
+Q055|Kolezyum hangi şehirde?|Kahire;İstanbul;Atina;Roma|
+Q056|Bangkok hangi ülkenin başkentidir?|Kamboçya;Tayland;Malezya;Vietnam|
+Q057|Ünlü Petronas İkiz Kuleleri hangi şehirde?|Singapur;Manila;Cakarta;Kuala Lumpur|
+Q058|Seul hangi ülkenin başkentidir?|Güney Kore;Çin;Japonya;Tayland|
+Q059|Mumbai 1995'e kadar ne olarak adlandırılırdı?|Bombay;Madras;Delhi;Kalküta|
+Q060|1896'da ilk modern Olimpiyat Oyunları hangi şehirde yapıldı?|Roma;Londra;Paris;Atina|
+Q061|Berlin Duvarı hangi yıl yıkıldı?|=;=;=;=|
+Q062|İstanbul hangi iki kıtada yer alır?|Asya ve Amerika;Avrupa ve Asya;Avrupa ve Afrika;Asya ve Afrika|
+Q063|«Casablanca» adı ne anlama gelir?|Beyaz ev;Yeni şehir;Kara deniz;Büyük pazar|
+Q064|Oyundaki 30 şehrin kaçı Japonya'dadır?|=;=;=;=|
+Q065|Orta Asya'nın ilk metrosu olan Taşkent metrosu hangi yıl açıldı?|=;=;=;=|
+Q066|Taşkent hangi yıl 2200. yıldönümünü kutladı?|=;=;=;=|
+Q067|«Rio de Janeiro» adı ne anlama gelir?|Büyük göl;Ocak nehri;Altın nehir;Deniz rüzgârı|
+Q068|Aziz Vasil Katedrali hangi meydandadır?|Times Meydanı;Taksim Meydanı;Bağımsızlık Meydanı;Kızıl Meydan|
+Q069|Las Vegas ABD'nin hangi eyaletindedir?|Teksas;Nevada;Florida;Kaliforniya|
+Q070|Amsterdam hangi ülkenin başkentidir?|Hollanda;Danimarka;İsveç;Belçika|
+Q071|Oyunda yaklaşık kaç ıstaka vardır?|=;=;=;=|
+Q072|Oyunda kaç ülke ıstakası var?|=;=;=;=|
+Q073|Kaç portre avatar ücretsizdir?|=;=;=;=|
+Q074|Kaç çıkartma paketi var?|=;=;=;=|
+Q075|Bir çıkartma paketi kaç 💎 tutar?|=;=;=;=|
+Q076|Bir maçta rakibinize kaç çeşit hediye gönderebilirsiniz?|=;=;=;=|
+Q077|Hangi hediye en büyüğüdür (👍 ×7.000)?|Araba;Mücevher;Taç;Jet|
+Q078|Hangi iki hediye her gün ücretsizdir?|Taç ve mücevher;Yonca ve çikolata;Araba ve jet;Pasta ve buket|
+Q079|Sezon Geçişi'nin kaç seviyesi var?|=;=;=;=|
+Q080|Günlük kupalar Taşkent saatiyle kaçta açılır?|=;=;=;=|
+Q081|Bir günlük kupa başladıktan sonra ne kadar açık kalır?|Bütün gün;6 saat;1 saat;3 saat|
+Q082|Dünya Kupası'na kaç oyuncu katılır?|=;=;=;=|
+Q083|Avrupa Kupası'nda kaç oyuncu var?|=;=;=;=|
+Q084|Büyük Usta Masası kaç kupada açılır?|=;=;=;=|
+Q085|Efsanevi Büyük Usta ıstakası kaç parçadan oluşur?|=;=;=;=|
+Q086|Bir Zafer ıstakasını kaç parça oluşturur?|=;=;=;=|
+Q087|Kaçıncı seviyeden itibaren kulüp kurabilir veya katılabilirsiniz?|=;=;=;=|
+Q088|Bir kulüpte en fazla kaç üye olabilir?|=;=;=;=|
+Q089|Haftalık dünya sıralamasında 1. olan kaç 💵 alır?|=;=;=;=|
+Q090|Bir ülke sıralamasında 1. olan kaç 💵 alır?|=;=;=;=|
+Q091|Haftalık sıralama ne zaman sıfırlanır (Taşkent saati)?|Pazartesi, 05:00;Cumartesi, 20:00;Cuma, 00:00;Salı, 12:00|
+Q092|Bir ligin yaklaşık ne kadarı her hafta yükselir?|=;=;=;=|
+Q093|«Haftanın Masası» ne kadar indirimlidir?|=;=;=;=|
+Q094|En nadir sınırlı sürüm olan Gökkuşağı Opali'nden kaç adet vardır?|=;=;=;=|
+Q095|En yaygın sınırlı sürüm seviyesi olan Bronz'dan kaç adet vardır?|=;=;=;=|
+Q096|Oyunun en ucuz (ilk) masası hangi şehirdedir?|Taşkent;Dubai;Moskova;Londra|
+Q097|Oyunun en yüksek (son) masası hangi şehirdedir?|Moskova;New York;Taşkent;Rio|
+Q098|Oyundaki Taşkent masasının adı nedir?|=;=;=;=|
+Q099|Londra masasının çuhası hangi renktir?|Mavi;Kırmızı;Siyah;Sarı|
+Q100|Hangi şehrin masasında siyah çuha vardır?|Londra;Madrid;Sidney;Las Vegas|
+Q101|Ödül yolunda «büyük ödül» kaçıncı gündedir?|8. gün;7. gün;5. gün;3. gün|
+Q102|Kaç madalya (başarım) vardır?|=;=;=;=|
+Q103|Bunlardan hangisi «Açık lobiler» listesinde filtre DEĞİLDİR?|Boş yerler;Sesli oda;Arkadaşlar;Istaka fiyatı|
+Q104|Şehir yüzükleri Showdown puanınıza ne kadar ekler?|=;=;=;=|
+Q105|Londra masasındaki yüzük için kaç galibiyet gerekir (galibiyet başına +4, hedef 15 kupa)?|=;=;=;=|
+Q106|Showdown'da kaç ödül aşaması vardır?|=;=;=;=|
+Q107|Her şehrin kendi şampiyona kupasında kaç oyuncu var?|=;=;=;=|
+Q108|En büyük günlük kupa hangisidir (400.000 🪙 ödül)?|Akşam;Gece;Sabah;Öğle|
+Q109|Bir lobinin sesli odasında en fazla kaç oyuncu konuşabilir?|=;=;=;=|
+Q110|8 top bilardosunda bir oyuncunun grubunda kaç top vardır (8 hariç)?|=;=;=;=|
+Q111|15 hedef top ve bir beyaz topla, kaç top çizgilidir?|=;=;=;=|
+Q112|Beyaz top hariç, 8 top bilardosunun topları kaç gruba ayrılır?|=;=;=;=|
+Q113|Efsane Willie Mosconi kaç kez dünya şampiyonu oldu?|=;=;=;=|
+Q114|1953'te Mosconi düz bilardoda (straight pool) art arda kaç top soktu?|=;=;=;=|
+Q115|«The Hustler» (1961) filminde Minnesota Fats'i kim oynadı?|Jackie Gleason;Paul Newman;Robert De Niro;Tom Cruise|
+Q116|Paul Newman'ın «The Hustler»daki karakterinin lakabı nedir?|=;=;=;=|
+Q117|Paul Newman'a öğretmen olan ve filmlerdeki zor vuruşları yapan şampiyon kimdir?|Efren Reyes;Willie Mosconi;Steve Davis;Ronnie O'Sullivan|
+Q118|Snooker yıldızı Ronnie O'Sullivan'ın lakabı nedir?|=;=;=;=|
+Q119|Snooker'ın Alex Higgins'i hangi lakapla bilinir?|=;=;=;=|
+Q120|Jimmy White hangi lakapla bilinir?|=;=;=;=|
+Q121|Çok kez dünya şampiyonu Steve Davis'in lakabı nedir?|=;=;=;=|
+Q122|Efren Reyes'in «Bata» lakabı Tagalogca'da ne demektir?|Aslan;Yıldırım;Usta;Çocuk|
+Q123|Earl Strickland hangi lakapla bilinir?|=;=;=;=|
+Q124|Shane Van Boening'in lakabı nedir?|=;=;=;=|
+Q125|Lev Tolstoy 1855'te «Marker'in Notları» öyküsünü yazdı. Hangi oyun hakkında?|Kağıt oyunu;Dama;Satranç;Bilardo|
+Q126|Shakespeare'in hangi oyununda bilardodan söz edilir?|Macbeth;Romeo ve Juliet;Antonius ve Kleopatra;Hamlet|
+Q127|Hangi kral doktorlarının tavsiyesiyle egzersiz için bilardo oynadı ve onu sarayda moda yaptı?|Emir Timur;Rusya'nın I. Petro'su;Fransa'nın XIV. Louis'si;Jül Sezar|
+Q128|Besteci Wolfgang Amadeus Mozart'ın Viyana'daki evinde ne vardı?|Ahır;Bilardo masası;Kütüphanede havuz;Boks ringi|
+Q129|Bilardonun hangi tür oyunlardan doğduğu söylenir?|Çimde oynanan top oyunları;Güreş;Yüzme;Satranç|
+Q130|«Bilardo» sözcüğü hangi dilden gelir?|Arapça;İspanyolca;Almanca;Fransızca|
+Q131|«Pool» sözcüğü aslen neyi ifade ederdi?|Masa çuhasını;Havuzu;Bir ıstaka türünü;Ortak bahis havuzunu|
+Q132|19. yüzyıldan önce bilardo topları neyden yapılırdı?|Çelik;Boyalı ahşap;Fildişi;Cam|
+Q133|Modern profesyonel bilardo topları çoğunlukla neyden yapılır?|Fenolik reçine;Kauçuk;Metal;Doğal taş|
+Q134|Istaka ucu genellikle neyden yapılır?|Metal;Deri;Plastik;Cam|
+Q135|Istaka ucundaki tebeşir ne işe yarar?|Güzel görünsün diye;Tutuş sağlamak, ıstaka kaymasın diye;Topun rengini değiştirmek için;Masayı temizlemek için|
+Q136|Bir bilardo topunun çapı yaklaşık kaçtır?|=;=;=;=|
+Q137|Rus bilardosunda (piramit) topların çapı ne kadardır?|=;=;=;=|
+Q138|9 fitlik bir bilardo masasının oyun alanı yaklaşık ne kadardır?|=;=;=;=|
+Q139|Snookerda mavi top kaç puandır?|=;=;=;=|
+Q140|Snookerda pembe top kaç puandır?|=;=;=;=|
+Q141|Bir snooker masasında kaç kırmızı top vardır?|=;=;=;=|
+Q142|9 top bilardosunda toplar hangi şekilde dizilir?|Üçgen;Kare;Daire;Baklava|
+Q143|8 top bilardosunda 8 numaralı topu erken sokarsanız ne olur?|Genellikle kaybedersiniz;Fazladan puan alırsınız;Hiçbir şey;Sıra geçmez|
+Q144|«14.1 düz bilardo»daki 14 neyi ifade eder?|Dakikayı;Masa boyutunu;14 top sokulunca kalanların yeniden dizilmesini;Oyuncu sayısını|
+Q145|Karambol bilardosu masasında kaç delik vardır?|=;=;=;=|
+Q146|Üç bantlı bilardoda beyaz top ne yapmalıdır?|En az 3 banta çarpıp ikinci topa vurmalı;3 kez dönmeli;3 saniyede durmalı;3 topu deliğe sokmalı|
+Q147|«Jump shot» (zıplatma vuruşu) nedir?|Oyuncu zıplar;Masa zıplar;Isteka zıplar;Beyaz top başka bir topun üzerinden zıplar|
+Q148|«Masse» vuruşunda ne yapılır?|Sadece banta vurulur;Isteka fırlatılır;Isteka neredeyse dik tutulur, top kavis çizer;Top dümdüz vurulur|
+Q149|«Bank shot» nedir?|Masa değiştirmek;Hedef topu banttan döndürüp sokmak;Beyaz topu sokmak;Topa iki kez vurmak|
+Q150|Bilardoda «kiss» (öpücük) nedir?|Topların hafifçe birbirine değmesi;Bir topun sokulması;Bir faul;Oyunun sonu|
