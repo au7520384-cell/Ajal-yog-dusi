@@ -1,0 +1,151 @@
+// German (questions and options; the explanation in English is shown after the answer)
+Q001|Wie viele Kugeln liegen beim 9-Ball auf dem Tisch, die weiße mitgezählt?|=;=;=;=|
+Q002|Welche Kugel muss die weiße Kugel beim 9-Ball zuerst berühren?|Irgendeine;Die mit der höchsten Nummer;Die 9;Die mit der niedrigsten Nummer|
+Q003|Welche Kugel gewinnt beim 9-Ball das Spiel, wenn sie regulär versenkt wird?|Die 8;Die 1;Die weiße Kugel;Die 9|
+Q004|In welcher Form werden die Kugeln beim 9-Ball aufgebaut?|Kreis;Dreieck;Quadrat;Raute|
+Q005|In wie vielen Reihen werden die 15 Kugeln im Dreieck aufgebaut?|=;=;=;=|
+Q006|Wie groß ist die Summe der Nummern der Kugeln 1 bis 15?|=;=;=;=|
+Q007|Wie viele rote Kugeln gibt es beim Snooker?|=;=;=;=|
+Q008|Was ist das höchstmögliche Break beim Snooker?|=;=;=;=|
+Q009|Wie viele Punkte ist die schwarze Kugel beim Snooker wert?|=;=;=;=|
+Q010|Wie lang ist ein Snookertisch in voller Größe?|15 Fuß;12 Fuß;9 Fuß;7 Fuß|
+Q011|Wie viele Taschen hat ein Karambol-Billardtisch?|=;=;=;=|
+Q012|Was ist ein «Masse»-Stoß?|Die weiße Kugel springen lassen;Ein Bandenstoß;Der Anstoß;Queue fast senkrecht, die Kugel läuft in einer Kurve|
+Q013|Wie heißt der Stoß, bei dem die weiße Kugel über eine störende Kugel springt?|=;Bandenstoß (Bank Shot);Sicherheitsspiel (Safety);Anstoß (Break)|
+Q014|Die weiße Kugel berührt zuerst die Bande, dann die Zielkugel. Was für ein Stoß ist das?|=;=;=;=|
+Q015|Die Zielkugel berührt die Bande und fällt dann in die Tasche. Was ist das?|Kombination;Kick Shot;Scratch;=|
+Q016|Die weiße Kugel trifft eine Kugel, die eine andere versenkt. Das ist eine...|Kombination;Foul;Sicherheitsspiel;Kick Shot|
+Q017|Wie heißt die Hand (oder das Hilfsmittel), die den Queue stützt, auf Englisch?|=;=;=;=|
+Q018|Wie heißt das Dreieck, mit dem die Kugeln vor dem Anstoß geordnet werden, auf Englisch?|=;=;=;=|
+Q019|Wie heißt der gepolsterte Tischrand auf Englisch?|=;=;=;Cushion (rail): die Bande|
+Q020|Wie heißt das weiche Tuch, das den Tisch bedeckt?|=;=;=;=|
+Q021|Wie heißt der Stoß, bei dem die weiße Kugel nach dem Kontakt stehen bleibt?|=;=;=;=|
+Q022|Sie treffen über der Mitte, damit die weiße Kugel nach vorn weiterrollt. Wie heißt das?|Follow (Nachläufer);Stop Shot;Draw (Rückzieher);=|
+Q023|Wie heißt der erste Stoß des Spiels, der die aufgebauten Kugeln auseinandertreibt?|=;=;=;=|
+Q024|Wozu dient die «Geisterball»-Methode (Ghost Ball)?|Den Queue kreiden;Über eine Kugel springen;Kugeln aufbauen;Sich vorstellen, wohin die weiße Kugel muss|
+Q025|Unter idealen Bedingungen: In welchem Winkel verlässt eine Kugel die Bande?|Gleich dem Einfallswinkel;Zufällig;Doppelt so groß;Immer 90°|
+Q026|Woraus besteht die Queue-Spitze (Tip) meist?|Glas;Holz;Metall;Leder|
+Q027|Woraus bestehen moderne Billardkugeln meist?|Harz (Kunststoff);Glas;Elfenbein;Holz|
+Q028|Wie lang ist ein Standard-Billardqueue ungefähr?|90 cm;120 cm;147 cm;200 cm|
+Q029|Welchen Durchmesser hat eine Standard-Billardkugel ungefähr?|3 cm;5,7 cm;8 cm;10 cm|
+Q030|Wie groß ist die Spielfläche eines 9-Fuß-Billardtisches ungefähr?|=;=;=;=|
+Q031|Welche Farbe hat die Kugel Nummer 1 in einem Standard-8-Ball-Set?|Gelb;Grün;Blau;Rot|
+Q032|Welche Farbe hat die Kugel Nummer 5 in einem Standard-Set?|Grün;Schwarz;Lila;Orange|
+Q033|Efren «Der Magier» Reyes, eine Billardlegende, kommt aus welchem Land?|Japan;China;USA;Philippinen|
+Q034|Wie viele Kugeln hintereinander versenkte Willie Mosconi bei einer Straight-Pool-Vorführung?|=;=;=;=|
+Q035|Wer spielte den Billardspieler «Fast Eddie» im Film «Haie der Großstadt» (The Hustler, 1961)?|=;Robert De Niro;Tom Cruise;Brad Pitt|
+Q036|Wer spielte in «Die Farbe des Geldes» (1986) neben Paul Newman?|Tom Cruise;Tom Hanks;Keanu Reeves;Al Pacino|
+Q037|Wie lautet der Spitzname der Snooker-Legende Ronnie O'Sullivan?|=;=;=;=|
+Q038|Das englische Wort «cue» stammt von welchem französischen Wort?|cube (Würfel);clé (Schlüssel);cible (Ziel);queue (Schwanz)|
+Q039|In welcher Stadt steht Big Ben? Es ist auch der erste Tisch im Spiel!|London;Paris;Madrid;Rom|
+Q040|Sydney, berühmt für sein Opernhaus mit Segeldach, liegt in welchem Land?|Kanada;Südafrika;Neuseeland;Australien|
+Q041|Aus welchem Land stammt das Puddingtörtchen «Pastel de Nata»?|Portugal;Spanien;Frankreich;Italien|
+Q042|In welcher Stadt steht das Stadion Santiago Bernabéu?|Lissabon;Barcelona;Rom;Madrid|
+Q043|Wie hieß Tokio vor 1868?|=;Osaka;Nagoya;Kyoto|
+Q044|Was ist ein «Dojo» auf Japanisch?|Eine Trainingshalle für Kampfkünste;Ein Garten;Ein Teehaus;Ein Tempel|
+Q045|Mit welchem Land ist der Tango verbunden (Tisch von Buenos Aires: «Tango Salon»)?|Spanien;Brasilien;Mexiko;Argentinien|
+Q046|Indonesien, wo Jakarta liegt, hat ungefähr wie viele Inseln?|=;=;=;=|
+Q047|Das Blatt welches Baumes ist auf der Flagge Kanadas (Tisch von Toronto: «Maple Lounge»)?|Ahorn;Eiche;Palme;Birke|
+Q048|Auf den Ruinen welcher antiken Stadt wurde Mexiko-Stadt gebaut?|Teotihuacán;Chichén Itzá;Machu Picchu;Tenochtitlán|
+Q049|In welchem Land stehen die Pyramiden von Gizeh (Tisch von Kairo: «Pyramid Hall»)?|Ägypten;Sudan;Marokko;Jordanien|
+Q050|In welcher Stadt steht der 828 Meter hohe Burj Khalifa?|Singapur;Schanghai;New York;Dubai|
+Q051|Der Name «Singapur» bedeutet «Löwenstadt». Richtig oder falsch?|Richtig;Falsch|
+Q052|In welcher Stadt steht der Oriental Pearl Tower?|Bangkok;Schanghai;Seoul;Osaka|
+Q053|In welcher Stadt steht der Eiffelturm?|Rom;Paris;Berlin;Amsterdam|
+Q054|Wie hieß New York ursprünglich?|Neu-Amsterdam;Neu-Paris;Neu-Rom;Neu-London|
+Q055|In welcher Stadt steht das Kolosseum?|Kairo;Istanbul;Athen;Rom|
+Q056|Bangkok ist die Hauptstadt welches Landes?|Kambodscha;Thailand;Malaysia;Vietnam|
+Q057|In welcher Stadt stehen die berühmten Petronas Twin Towers?|Singapur;Manila;Jakarta;Kuala Lumpur|
+Q058|Seoul ist die Hauptstadt welches Landes?|Südkorea;China;Japan;Thailand|
+Q059|Wie hieß Mumbai bis 1995?|Bombay;Madras;Delhi;Kalkutta|
+Q060|In welcher Stadt fanden 1896 die ersten modernen Olympischen Spiele statt?|Rom;London;Paris;Athen|
+Q061|In welchem Jahr fiel die Berliner Mauer?|=;=;=;=|
+Q062|Auf welchen zwei Kontinenten liegt Istanbul?|Asien und Amerika;Europa und Asien;Europa und Afrika;Asien und Afrika|
+Q063|Was bedeutet der Name «Casablanca»?|Weißes Haus;Neue Stadt;Schwarzes Meer;Großer Markt|
+Q064|Wie viele der 30 Städte des Spiels liegen in Japan?|=;=;=;=|
+Q065|In welchem Jahr wurde die U-Bahn von Taschkent, die erste in Zentralasien, eröffnet?|=;=;=;=|
+Q066|In welchem Jahr feierte Taschkent sein 2200-jähriges Bestehen?|=;=;=;=|
+Q067|Was bedeutet der Name «Rio de Janeiro»?|Großer See;Januarfluss;Goldfluss;Meereswind|
+Q068|Auf welchem Platz steht die Basilius-Kathedrale?|Times Square;Taksim-Platz;Platz der Unabhängigkeit;Roter Platz|
+Q069|In welchem US-Bundesstaat liegt Las Vegas?|Texas;Nevada;Florida;Kalifornien|
+Q070|Amsterdam ist die Hauptstadt welches Landes?|Niederlande;Dänemark;Schweden;Belgien|
+Q071|Wie viele Queues gibt es im Spiel ungefähr?|=;=;=;=|
+Q072|Wie viele Länder-Queues gibt es im Spiel?|=;=;=;=|
+Q073|Wie viele Porträt-Avatare sind kostenlos?|=;=;=;=|
+Q074|Wie viele Sticker-Pakete gibt es?|=;=;=;=|
+Q075|Wie viele 💎 kostet ein Sticker-Paket?|=;=;=;=|
+Q076|Wie viele Arten von Geschenken kann man dem Gegner in einem Spiel schicken?|=;=;=;=|
+Q077|Welches Geschenk ist das größte (👍 ×7.000)?|Auto;Edelstein;Krone;Jet|
+Q078|Welche zwei Geschenke sind jeden Tag kostenlos?|Krone und Edelstein;Kleeblatt und Schokolade;Auto und Jet;Torte und Blumenstrauß|
+Q079|Wie viele Stufen hat der Season Pass?|=;=;=;=|
+Q080|Zu welchen Taschkent-Zeiten öffnen die Tagespokale?|=;=;=;=|
+Q081|Wie lange bleibt ein Tagespokal nach dem Start geöffnet?|Den ganzen Tag;6 Stunden;1 Stunde;3 Stunden|
+Q082|Wie viele Spieler nehmen am Weltpokal teil?|=;=;=;=|
+Q083|Wie viele Spieler sind im Europapokal?|=;=;=;=|
+Q084|Bei wie vielen Pokalen öffnet sich der Großmeistertisch?|=;=;=;=|
+Q085|Aus wie vielen Teilen wird der legendäre Großmeister-Queue zusammengesetzt?|=;=;=;=|
+Q086|Wie viele Teile ergeben einen Sieges-Queue?|=;=;=;=|
+Q087|Ab welcher Stufe kann man einen Club gründen oder beitreten?|=;=;=;=|
+Q088|Wie viele Mitglieder hat ein Club höchstens?|=;=;=;=|
+Q089|Wie viele 💵 bekommt Platz 1 der wöchentlichen Weltrangliste?|=;=;=;=|
+Q090|Wie viele 💵 bekommt Platz 1 der Länderrangliste?|=;=;=;=|
+Q091|Wann wird die Wochenrangliste zurückgesetzt (Taschkent-Zeit)?|Montag, 05:00;Samstag, 20:00;Freitag, 00:00;Dienstag, 12:00|
+Q092|Welcher Anteil einer Liga steigt ungefähr jede Woche auf?|=;=;=;=|
+Q093|Welchen Rabatt hat der «Tisch der Woche»?|=;=;=;=|
+Q094|Wie viele Exemplare gibt es von der seltensten limitierten Edition, dem Regenbogen-Opal?|=;=;=;=|
+Q095|Wie viele Exemplare gibt es von der häufigsten limitierten Stufe, Bronze?|=;=;=;=|
+Q096|In welcher Stadt steht der günstigste (erste) Tisch des Spiels?|Taschkent;Dubai;Moskau;London|
+Q097|In welcher Stadt steht der höchste (letzte) Tisch des Spiels?|Moskau;New York;Taschkent;Rio|
+Q098|Wie heißt der Taschkent-Tisch im Spiel?|=;=;=;=|
+Q099|Welche Farbe hat das Tuch des London-Tisches?|Blau;Rot;Schwarz;Gelb|
+Q100|Der Tisch welcher Stadt hat schwarzes Tuch?|London;Madrid;Sydney;Las Vegas|
+Q101|An welchem Tag der Belohnungsroute gibt es den «großen Preis»?|Tag 8;Tag 7;Tag 5;Tag 3|
+Q102|Wie viele Medaillen (Erfolge) gibt es?|=;=;=;=|
+Q103|Was ist KEIN Filter in der Liste «Offene Lobbys»?|Freie Plätze;Sprachraum;Freunde;Queue-Preis|
+Q104|Wie viel fügen Stadtringe Ihren Showdown-Punkten hinzu?|=;=;=;=|
+Q105|Wie viele Siege brauchen Sie für den Ring am London-Tisch (+4 pro Sieg, Ziel 15 Pokale)?|=;=;=;=|
+Q106|Wie viele Belohnungsstufen hat Showdown?|=;=;=;=|
+Q107|Wie viele Spieler sind im Meisterschaftspokal jeder Stadt?|=;=;=;=|
+Q108|Welcher ist der größte Tagespokal (Preis 400.000 🪙)?|Abend;Nacht;Morgen;Mittag|
+Q109|Wie viele Spieler können im Sprachraum einer Lobby höchstens sprechen?|=;=;=;=|
+Q110|Wie viele Kugeln hat die Gruppe eines Spielers beim 8-Ball (ohne die 8)?|=;=;=;=|
+Q111|Bei 15 Zielkugeln und einer weißen Kugel: Wie viele Kugeln sind gestreift?|=;=;=;=|
+Q112|In wie viele Gruppen teilen sich die Kugeln beim 8-Ball, ohne die weiße Kugel?|=;=;=;=|
+Q113|Wie oft war die Legende Willie Mosconi Weltmeister?|=;=;=;=|
+Q114|Wie viele Kugeln hintereinander versenkte Mosconi 1953 beim Straight Pool?|=;=;=;=|
+Q115|Wer spielte Minnesota Fats im Film «Haie der Großstadt» (1961)?|Jackie Gleason;Paul Newman;Robert De Niro;Tom Cruise|
+Q116|Wie lautet der Spitzname von Paul Newmans Figur in «The Hustler»?|=;=;=;=|
+Q117|Welcher Champion brachte Paul Newman das Spiel bei und spielte seine Trickstöße in den Filmen?|Efren Reyes;Willie Mosconi;Steve Davis;Ronnie O'Sullivan|
+Q118|Wie lautet der Spitzname des Snooker-Stars Ronnie O'Sullivan?|=;=;=;=|
+Q119|Unter welchem Spitznamen ist Alex Higgins im Snooker bekannt?|=;=;=;=|
+Q120|Unter welchem Spitznamen ist Jimmy White bekannt?|=;=;=;=|
+Q121|Wie lautet der Spitzname des mehrfachen Weltmeisters Steve Davis?|=;=;=;=|
+Q122|Was bedeutet Efren Reyes' Spitzname «Bata» auf Tagalog?|Löwe;Blitz;Meister;Kind|
+Q123|Unter welchem Spitznamen ist Earl Strickland bekannt?|=;=;=;=|
+Q124|Wie lautet der Spitzname von Shane Van Boening?|=;=;=;=|
+Q125|Leo Tolstoi schrieb 1855 die Erzählung «Aufzeichnungen eines Billardmarkeurs». Über welches Spiel?|Karten;Dame;Schach;Billard|
+Q126|In welchem Stück von Shakespeare wird Billard erwähnt?|Macbeth;Romeo und Julia;Antonius und Kleopatra;Hamlet|
+Q127|Welcher König spielte auf Rat seiner Ärzte zur Bewegung Billard und machte es am Hof modern?|Amir Timur;Peter I. von Russland;Ludwig XIV. von Frankreich;Julius Cäsar|
+Q128|Was hatte der Komponist Wolfgang Amadeus Mozart in seinem Haus in Wien?|Einen Pferdestall;Einen Billardtisch;Ein Becken in der Bibliothek;Einen Boxring|
+Q129|Aus welcher Art von Spielen soll sich das Billard entwickelt haben?|Ballspielen auf dem Rasen;Ringen;Schwimmen;Schach|
+Q130|Aus welcher Sprache stammt das Wort «Billard»?|Arabisch;Spanisch;Deutsch;Französisch|
+Q131|Worauf bezog sich das Wort «Pool» ursprünglich?|Das Tischtuch;Das Schwimmbecken;Eine Queue-Art;Einen gemeinsamen Wetttopf|
+Q132|Woraus waren Billardkugeln vor dem 19. Jahrhundert?|Stahl;Bemaltes Holz;Elfenbein;Glas|
+Q133|Woraus bestehen moderne Profi-Billardkugeln meist?|Phenolharz;Gummi;Metall;Naturstein|
+Q134|Woraus besteht die Queue-Spitze meist?|Metall;Leder;Kunststoff;Glas|
+Q135|Wozu dient die Kreide auf der Queue-Spitze?|Damit es schön aussieht;Für Haftung, damit der Queue nicht abrutscht;Um die Kugelfarbe zu ändern;Um den Tisch zu reinigen|
+Q136|Welchen Durchmesser hat eine Billardkugel ungefähr?|=;=;=;=|
+Q137|Welchen Durchmesser haben die Kugeln beim russischen Billard (Pyramide)?|=;=;=;=|
+Q138|Wie groß ist die Spielfläche eines 9-Fuß-Billardtisches ungefähr?|=;=;=;=|
+Q139|Wie viele Punkte ist die blaue Kugel beim Snooker wert?|=;=;=;=|
+Q140|Wie viele Punkte ist die rosa Kugel beim Snooker wert?|=;=;=;=|
+Q141|Wie viele rote Kugeln liegen auf einem Snookertisch?|=;=;=;=|
+Q142|In welcher Form werden die Kugeln beim 9-Ball aufgebaut?|Dreieck;Quadrat;Kreis;Raute|
+Q143|Was passiert beim 8-Ball, wenn Sie die 8 zu früh versenken?|Meist verliert man;Man bekommt Extrapunkte;Nichts;Der Zug wechselt nicht|
+Q144|Was bedeutet die 14 bei «14.1 Straight Pool»?|Minuten;Tischgröße;Nach 14 versenkten Kugeln werden die übrigen neu aufgebaut;Spieleranzahl|
+Q145|Wie viele Taschen hat ein Karambol-Billardtisch?|=;=;=;=|
+Q146|Was muss die weiße Kugel beim Dreibandenbillard tun?|Mindestens 3 Banden berühren und die zweite Kugel treffen;3-mal rotieren;In 3 Sekunden stehen bleiben;3 Kugeln versenken|
+Q147|Was ist ein «Jump Shot» (Sprungstoß)?|Der Spieler springt;Der Tisch springt;Der Queue springt;Die weiße Kugel springt über eine andere Kugel|
+Q148|Was macht man bei einem «Masse»-Stoß?|Man trifft nur die Bande;Man wirft den Queue;Queue fast senkrecht, die Kugel läuft in einer Kurve;Man trifft die Kugel geradeaus|
+Q149|Was ist ein «Bank Shot»?|Den Tisch wechseln;Die Zielkugel über die Bande versenken;Die weiße Kugel versenken;Die Kugel zweimal treffen|
+Q150|Was ist ein «Kiss» (Kuss) beim Billard?|Kugeln berühren sich leicht;Eine Kugel wird versenkt;Ein Foul;Das Spielende|
