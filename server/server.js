@@ -1630,7 +1630,9 @@ const seatKept = (p, now) => p.readyState === 1 || (p.away && (now || Date.now()
 function sweepLobby(code) {   // drop the players who stayed away too long; an empty lobby goes away
   const L = lobbies.get(code); if (!L) return;
   clearTimeout(L.gc); L.gc = null;
-  L.players = L.players.filter(p => seatKept(p));
+  const kept = L.players.filter(p => seatKept(p));
+  if (L.T) for (const p of L.players) if (!kept.includes(p)) L.T.gone.add(p.uid);   // stayed away too long in a running tournament: he forfeits his next match
+  L.players = kept;
   if (!L.players.length) { lobbies.delete(code); return; }
   if (!L.players.includes(L.host)) L.host = L.players.find(p => p.readyState === 1) || L.players[0];
   lobbyBroadcast(L);
@@ -1641,7 +1643,7 @@ function lobbyBroadcast(L) { const m = lobbyState(L); for (const p of L.players)
 function leaveLobby(ws, dropped) {   // dropped: the socket just died (not a deliberate leave): while the lobby is open the seat is kept for a while
   const code = ws.lobby; if (!code) return; ws.lobby = null; ws.lvOn = false;
   const L = lobbies.get(code); if (!L) return;
-  if (dropped && !L.T && L.state === "open" && L.players.includes(ws)) {
+  if (dropped && L.players.includes(ws) && (L.T ? !L.T.gone.has(ws.uid) : L.state === "open")) {   // (a running tournament keeps the seat too: the phone usually comes back within seconds)
     ws.away = Date.now(); lobbyBroadcast(L);
     if (!L.gc) L.gc = setTimeout(() => sweepLobby(code), LOBBY_GRACE + 1000);
     return;
@@ -1654,13 +1656,38 @@ function leaveLobby(ws, dropped) {   // dropped: the socket just died (not a del
   lobbyBroadcast(L);
 }
 function leaveQueue(ws) { leaveLobby(ws); for (const q of queues.values()) { const i = q.indexOf(ws); if (i >= 0) q.splice(i, 1); } }
+const MATCH_GRACE = +process.env.MATCH_GRACE_MS || 30e3;   // a phone whose connection drops in a match (network change, the app in the background) has this long to come back before it forfeits
+const recentEnd = new Map();   // room id -> {winner, reason, at}: a phone that comes back after its match was decided is told how it ended
+const matchMsg = (room, seat) => ({t: "match", room: room.id, seat, first: room.first, seed: room.seed, city: room.city, opp: room.p[1 - seat].profile, tour: room.tour ? {round: room.tour.round, rounds: room.tour.rounds} : undefined});
+function dropSeat(room, seat) {   // the phone of this seat lost its connection: the match waits for it
+  if (room.over || room.away[seat]) return;
+  room.away[seat] = Date.now();
+  wsSend(room.p[1 - seat], {t: "oppAway", room: room.id, grace: MATCH_GRACE});
+  room.timers[seat] = setTimeout(() => { room.timers[seat] = null; if (!room.over && room.away[seat]) finish(room, 1 - seat, "left"); }, MATCH_GRACE);
+}
+function adoptRoom(old, ws) {   // the same player on a new socket takes over the live match of the old one
+  const room = old.room; if (!room || room.over) return;
+  const seat = room.p.indexOf(old); if (seat < 0) return;
+  room.p[seat] = ws; ws.room = room; ws.seat = seat; old.room = null;
+  clearTimeout(room.timers[seat]); room.timers[seat] = null;
+  if (room.away[seat]) { room.away[seat] = 0; wsSend(room.p[1 - seat], {t: "oppBack", room: room.id}); }
+}
+function swapSocket(L, old, ws) {   // ... and his seat in the lobby / the bracket
+  const sw = a => { const i = a.indexOf(old); if (i >= 0) a[i] = ws; };
+  sw(L.players); if (L.host === old) L.host = ws;
+  if (L.T) { sw(L.T.players); sw(L.T.entries); for (const x of L.T.matches) { if (x.a === old) x.a = ws; if (x.b === old) x.b = ws; if (x.w === old) x.w = ws; } }
+  ws.lobby = L.code; old.lobby = null; old.away = 0; ws.away = 0; ws.profile = ws.profile || old.profile;
+  adoptRoom(old, ws);
+}
 function startRoom(a, b, city, T, match) {   // a sits in seat 0, b in seat 1
   const first = crypto.randomInt(2);
-  const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null, tour: T || null, tourMatch: match || null};
+  const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null, tour: T || null, tourMatch: match || null,
+    rx: [0, 0], sn: [0, 0], log: [[], []], away: [0, 0], timers: [null, null]};   // rx: shot / state / result / resign messages taken from each seat; sn + log: the shots and positions relayed from each seat (numbered, so a phone that was away gets the ones it missed)
   rooms.set(room.id, room);
   for (const s of [a, b]) if (s && s.spec) { const r = s.spec; r.specs.delete(s); s.spec = null; specCount(r); }   // a player who was watching another match of the lobby now plays his own
   room.p.forEach((s, seat) => { s.room = room; s.seat = seat; });
-  room.p.forEach((s, seat) => wsSend(s, {t: "match", room: room.id, seat, first, seed: room.seed, city, opp: room.p[1 - seat].profile, tour: T ? {round: T.round, rounds: T.rounds} : undefined}));
+  room.p.forEach((s, seat) => wsSend(s, matchMsg(room, seat)));
+  room.p.forEach((s, seat) => { if (s.readyState !== 1) dropSeat(room, seat); });   // (a player of the bracket whose phone is just reconnecting gets his match when he is back)
   return room;
 }
 const FEE_OF = city => Math.max(1, Math.floor((CITY_PRIZE[city] || 100) / 2));   // a table's entry fee (its prize is twice the fee)
@@ -1697,7 +1724,7 @@ function eliminate(L, ws, round) {
   const u = db.users[ws.uid]; if (u && prize && ws.readyState === 1) { u.won += prize; addWeekly(u, prize); markDirty(); }
 }
 function runRound(L) {
-  const T = L.T, alive = p => p && p.readyState === 1 && !T.gone.has(p.uid);
+  const T = L.T, alive = p => p && !T.gone.has(p.uid) && (p.readyState === 1 || (p.away && Date.now() - p.away < MATCH_GRACE));
   T.matches = [];
   for (let i = 0; i < T.entries.length; i += 2) {
     const a = T.entries[i], b = T.entries[i + 1], m = {a, b, w: null, room: null, done: false};
@@ -1735,10 +1762,13 @@ function finishTournament(L, champ) {
 }
 setInterval(() => {   // a tournament match nobody finishes does not block the bracket forever
   for (const room of [...rooms.values()]) if (room.tour && !room.over && Date.now() - room.startedAt > 45 * 60000) finish(room, crypto.randomInt(2), "timeout");
+  for (const [id, r] of recentEnd) if (Date.now() - r.at > 10 * 60000) recentEnd.delete(id);
 }, 60000);
 function finish(room, winnerSeat, reason) {
   if (room.over) return;
   room.over = true;
+  for (const t of room.timers) clearTimeout(t);
+  recentEnd.set(room.id, {winner: winnerSeat, reason, at: Date.now()});
   const [a, b] = room.p, w = room.p[winnerSeat], l = room.p[1 - winnerSeat];
   const wu = w && db.users[w.uid], lu = l && db.users[l.uid];
   if (wu) { wu.wins++; wu.games++; if (!room.tour) { wu.won += CITY_PRIZE[room.city] || 0; addWeekly(wu, CITY_PRIZE[room.city] || 0); } }
@@ -1760,7 +1790,13 @@ wss.on("connection", (ws, req) => {
   ws.on("pong", () => { ws.alive = true; });
   ws.on("message", data => {
     let m; try { m = JSON.parse(data); } catch (e) { return; }
+    if (m.t === "ping") return wsSend(ws, {t: "pong"});   // the phone checks that the connection is alive (a dead one often looks open for minutes)
+    { const rm = ws.room; if (rm && !rm.over && (m.t === "shot" || m.t === "state" || m.t === "result" || m.t === "resign")) rm.rx[ws.seat]++; }   // counted, so a phone that comes back knows which of its messages never arrived
     if (m.t === "queue") {
+      if (m.lobby && m.code) {   // already seated in this lobby (the phone reconnected in two ways at once): nothing to do
+        const c0 = String(m.code).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8), L0 = lobbies.get(c0);
+        if (L0 && ws.lobby === c0 && L0.players.includes(ws)) return lobbyBroadcast(L0);
+      }
       leaveQueue(ws);
       if (ws.room) return;
       const city = String(m.city || "lon").slice(0, 8);
@@ -1775,8 +1811,16 @@ wss.on("connection", (ws, req) => {
           return lobbyBroadcast(L);
         }
         if (L.players.includes(ws)) return lobbyBroadcast(L);
-        const seat = L.state === "open" ? L.players.findIndex(p => p.uid === ws.uid) : -1;   // the same player comes back (new socket): he gets his seat back
-        if (seat >= 0) { const old = L.players[seat]; L.players[seat] = ws; if (L.host === old) L.host = ws; old.lobby = null; old.away = 0; ws.lobby = code; return lobbyBroadcast(L); }
+        const seat = L.players.findIndex(p => p.uid === ws.uid);   // the same player comes back (new socket): he gets his seat back - in a running tournament his live match too
+        if (seat >= 0) {
+          const old = L.players[seat]; swapSocket(L, old, ws); lobbyBroadcast(L);
+          if (L.T) {
+            tourBroadcast(L);
+            const rm = ws.room;
+            if (rm && !rm.over) { wsSend(ws, matchMsg(rm, ws.seat)); for (const o of rm.log[1 - ws.seat]) wsSend(ws, o); }   // his match (the phone may have missed its start) + what the opponent has played so far (numbered: a message the phone already has is dropped there)
+          }
+          return;
+        }
         if (m.rejoin) return wsSend(ws, {t: "nocode"});
         if (L.state !== "open") return wsSend(ws, {t: "lobbybusy"});
         if (L.players.length >= L.max) return wsSend(ws, {t: "lobbyfull"});
@@ -1845,6 +1889,16 @@ wss.on("connection", (ws, req) => {
       const out = {t: "lvoice", from: ws.uid, k, d, re: m.re ? 1 : 0};
       if (m.to) { const tp = L.players.find(p => p.uid === String(m.to).slice(0, 40)); if (tp && tp !== ws) wsSend(tp, out); }   // to one member
       else for (const p of L.players) if (p !== ws) wsSend(p, out);                                                            // to everybody else
+    } else if (m.t === "resume") {   // the phone lost its connection in a match and has a new one: it takes its seat back and gets the shots / positions it missed
+      if (!bucket(ws, "resume", 8, 10000)) return;
+      const id = String(m.room || "").slice(0, 40), room = rooms.get(id);
+      if (!room || room.over) { const r = recentEnd.get(id); return wsSend(ws, r ? {t: "end", winner: r.winner, reason: r.reason, room: id} : {t: "noresume", room: id}); }
+      const seat = room.p.findIndex(s => s && s.uid === ws.uid);
+      if (seat < 0) return wsSend(ws, {t: "noresume", room: id});
+      const old = room.p[seat];
+      if (old !== ws) { const L = [...lobbies.values()].find(l => l.players.includes(old)); if (L) { swapSocket(L, old, ws); lobbyBroadcast(L); } else { ws.profile = ws.profile || old.profile; adoptRoom(old, ws); } }
+      wsSend(ws, {t: "resumed", room: id, seat, rx: room.rx[seat]});
+      const got = m.got | 0; for (const o of room.log[1 - seat]) if (o.n > got) wsSend(ws, o);
     } else if (RELAY.has(m.t) && ws.room && !ws.room.over) {
       const room = ws.room, other = room.p[1 - ws.seat];
       if (m.t === "chat") {
@@ -1855,6 +1909,8 @@ wss.on("connection", (ws, req) => {
         m = {t: "rtc", k: String(m.k || "").slice(0, 12), d: m.d && typeof m.d === "object" ? m.d : null};
       }
       const out = {...m, from: ws.seat, room: room.id};   // the match id: a phone that has not started this match yet keeps the message, one that is in another match drops it
+      delete out.n;
+      if (m.t === "shot" || m.t === "state") { out.n = ++room.sn[ws.seat]; const lg = room.log[ws.seat]; lg.push(out); if (lg.length > 80) lg.shift(); }   // numbered + kept: replayed to a phone that was away
       if (m.t === "state") room.last = out;
       wsSend(other, out);
       if (SPEC_FWD.has(m.t) && room.specs.size) for (const sp of room.specs) wsSend(sp, out);
@@ -1875,7 +1931,7 @@ wss.on("connection", (ws, req) => {
     if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
     if (clients.get(u.id) === ws) clients.delete(u.id);
     const room = ws.room;
-    if (room && !room.over) { wsSend(room.p[1 - ws.seat], {t: "oppLeft"}); finish(room, 1 - ws.seat, "left"); }
+    if (room && !room.over && room.p[ws.seat] === ws) dropSeat(room, ws.seat);   // it has MATCH_GRACE to come back (resume / rejoin); then the opponent wins
   });
   wsSend(ws, {t: "hello", online: clients.size});
 });

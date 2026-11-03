@@ -9195,17 +9195,18 @@ function findOpponent(c) {
 return new Promise(resolve => {
 let done = false;
 const bot = () => { if (!done) { done = true; toast("🤖", T("Hozir onlayn o'yinchi topilmadi — AI bilan o'ynaysiz"), T("Reyting hisobiga kirmaydi")); resolve({opp: botPlayer(c.lvl, c.lvl + 4)}); } };
-const timer = setTimeout(() => { Net.send({t: "cancel"}); bot(); }, 15000);
+const timer = setTimeout(() => { searchWait = null; Net.send({t: "cancel"}); bot(); }, 15000);
+if (LB) lbDrop();   // the search takes this player out of the lobby on the server (one place at a time): the client must forget the lobby too
 Net.ensure().then(() => Net.connect()).then(() => {
-Net.on("match", m => {
+searchWait = m => {
 if (done) { Net.send({t: "resign"}); return; }
-done = true; clearTimeout(timer);
+done = true; clearTimeout(timer); searchWait = null;
 const o = m.opp || {};
 resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
 level: o.level | 0 || 1, club: String(o.club || "").slice(0, 20), cb: Array.isArray(o.cb) ? [o.cb[0] | 0, o.cb[1] | 0] : null, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0}});
-});
+};
 Net.send({t: "queue", city: c.id, cue: profile.cue, tbl: profile.tableSkin || ""});
-}).catch(() => { clearTimeout(timer); bot(); });
+}).catch(() => { clearTimeout(timer); searchWait = null; bot(); });
 });
 }
 
@@ -9220,6 +9221,7 @@ return `<div class="city lounge"><div class="cban" style="background:radial-grad
 ${ok ? "" : `<div class="lock"><div><div>🔒</div>${T("Ochiladi")}: ${UNLOCK_TP.lng} 🏆</div></div>`}</div>`;
 }
 function playLounge(stake) {
+if (LB && LB.state === "running" && !LB.results) return toast("🏆", T("Turnir boshlangan"), T("Lobbi"));
 if (roadTP() < UNLOCK_TP.lng) return toast("🔒", `${T("Ochiladi")}: ${UNLOCK_TP.lng} 🏆`, LOUNGE.name);
 if (profile.coins < stake) return toast("😕", T("Tanga yetmaydi"), LOUNGE.name);
 const c = {...LOUNGE, fee: stake, prize: stake * 2};
@@ -9227,6 +9229,7 @@ profile.coins -= stake; save(); updateNav();
 vsScreen(c, c.prize, () => findOpponent({...c, lvl: 8}), f => startMatch("ai", c, f.opp, f.net));
 }
 function playCity(c) {
+if (LB && LB.state === "running" && !LB.results) return toast("🏆", T("Turnir boshlangan"), T("Lobbi"));   // (an online search takes the player out of the lobby: not in the middle of a tournament)
 if (cityLock(c)) return toast("🔒", cityLock(c), c.name);
 if (profile.coins < c.fee) {
 return openModal({icon: "😕", title: "Tanga yetmaydi", text: TT("{0} stoli uchun {1} tanga kerak. Sovg'alar yoki mini o'yinlardan tanga yig'ing.", T(c.name), fmt(c.fee)),
@@ -10522,16 +10525,42 @@ if (ws && ws.readyState === 1) return resolve(ws);
 if (!BASE || !acct) return reject(new Error("offline"));
 const sock = new WebSocket(BASE.replace(/^http/, "ws") + `/ws?id=${encodeURIComponent(acct.id)}&token=${encodeURIComponent(acct.token)}`);
 const t = setTimeout(() => { reject(new Error("timeout")); try { sock.close(); } catch (e) {} }, 6000);
-sock.onopen = () => { clearTimeout(t); ws = sock; resolve(sock); };
+sock.onopen = () => { clearTimeout(t); ws = sock; lastRx = Date.now(); probeAt = 0; resolve(sock); };
 sock.onerror = () => { clearTimeout(t); reject(new Error("ws")); };
-sock.onclose = () => { if (ws === sock) ws = null; if (handlers.close) handlers.close(); };
-sock.onmessage = ev => { let m; try { m = JSON.parse(ev.data); } catch (e) { return; } if (m.t === "match" && m.room) matchRoom = String(m.room); if (handlers[m.t]) handlers[m.t](m); };
+sock.onclose = () => { if (sock._gone) return; sock._gone = true; if (ws === sock) { ws = null; if (handlers.close) handlers.close(); } };
+sock.onmessage = ev => {
+if (ws !== sock) return;   // (a connection we have already given up)
+let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+lastRx = Date.now(); if (m.t === "pong") return;
+if (m.n && m.room && (m.t === "shot" || m.t === "state")) { if (m.n <= (rxN[m.room] | 0)) return; rxN[m.room] = m.n; const ks = Object.keys(rxN); if (ks.length > 6) delete rxN[ks[0]]; }   // numbered by the server: a message that came twice (replay after a reconnect) is dropped
+if (m.t === "match" && m.room) matchRoom = String(m.room); if (handlers[m.t]) handlers[m.t](m);
+};
 });
 }
 let matchRoom = "";   // the id of the match the server told this phone to play last (the opponent's shots of that match may arrive before this phone has started it)
-const send = m => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); };
+// A phone that changes network or comes back from the background often keeps a connection that LOOKS open but is dead (nothing arrives, nothing is sent): the match then froze for the other player.
+// So the phone pings the server every few seconds; if nothing at all has come back for a while the connection is dropped on purpose and the game / lobby reconnects (see netLost, lbResume).
+let lastRx = Date.now(), probeAt = 0, lastPing = 0;
+function dead(sock) { if (!sock || sock._gone) return; sock._gone = true; if (ws === sock) ws = null; try { sock.close(); } catch (e) {} if (handlers.close) handlers.close(); }
+function ping() { const s = ws; if (s && s.readyState === 1) { lastPing = Date.now(); try { s.send('{"t":"ping"}'); } catch (e) {} } }
+setInterval(() => {
+const s = ws; if (!s || s.readyState !== 1 || document.hidden) return;
+const now = Date.now();
+if (now - lastRx > 15000 || (probeAt && lastRx < probeAt && now - probeAt > 5000)) return dead(s);
+if (now - lastPing > 4500) ping();
+}, 1500);
+document.addEventListener("visibilitychange", () => { if (!document.hidden && ws) { probeAt = Date.now(); ping(); } });   // back from the background: is the connection still alive? (answer within 5 s or it is dropped)
+window.addEventListener("online", () => { if (ws) { probeAt = Date.now(); ping(); } });
+// what this phone sent in the match it plays (shots, positions, result): if the connection was dead for a moment the server says how many it received and the rest is sent again
+const SEQ = new Set(["shot", "state", "result", "resign"]);
+let sent = {room: "", list: []}; const rxN = {};
+const send = m => {
+if (SEQ.has(m.t) && matchRoom) { if (sent.room !== matchRoom) sent = {room: matchRoom, list: []}; sent.list.push(m); }
+if (ws && ws.readyState === 1) ws.send(JSON.stringify(m));
+};
+const resent = (room, rx) => { if (sent.room !== room) return; for (const m of sent.list.slice(rx)) if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); };
 const setAcct = a => { acct = a; store.set("b8acct", a); if (ws) try { ws.close(); } catch (e) {} };
-return {applyGrant, api, ensure, sync, checkout, cardPay: cardChoice, connect, send, setAcct, on: (t, f) => { handlers[t] = f; },
+return {applyGrant, api, ensure, sync, checkout, cardPay: cardChoice, connect, send, resent, got: room => rxN[room] | 0, setAcct, on: (t, f) => { handlers[t] = f; },
 get acct() { return acct; }, get matchRoom() { return matchRoom; }, get online() { return online; }, get open() { return !!(ws && ws.readyState === 1); }, get base() { return BASE; }, inbox: [], me: null, friends: [], notify: null};
 })();
 // A shot or a position of the opponent belongs to one match (m.room). The opponent's phone may be ready before this one (this phone still shows the result of the last match, or its "VS" screen):
@@ -10604,10 +10633,41 @@ row.appendChild(document.createTextNode(": " + String(m.msg || "").slice(0, 60))
 feed.appendChild(row); while (feed.children.length > 5) feed.firstChild.remove();
 setTimeout(() => row.remove(), 9000); try { Snd.pop(); } catch (e) {}
 });
+let recov = null;   // set while this phone is cut off in an online match and reconnecting
 Net.on("end", m => {
-const G = game; if (!G || !G.net || G.over || m.reason === "normal") return;
+const G = game; if (!G || !G.net || G.net.spec || G.over) return;
+const cut = !!(recov && recov.G === G && (!m.room || m.room === G.net.room));   // this phone was cut off and the match was decided while it was away
+if (m.reason === "normal" && !cut) return;
+recov = null;
 const w = localOf(m.winner);
-endGame(w, w === 0 ? T("Raqib o'yinni tark etdi") : T("MAG'LUBIYAT"));
+endGame(w, m.reason === "normal" ? (w === 0 ? T("G'ALABA!") : T("MAG'LUBIYAT")) : w === 0 ? T("Raqib o'yinni tark etdi") : T("MAG'LUBIYAT"));
+});
+// The connection of this phone dropped (or went silent) in an online match. The server keeps the match for ~30 s: the phone reconnects, takes its seat back ("resume"), receives the shots and positions
+// of the opponent it missed, and sends again whatever the server did not get. Before this the match was ended for the cut-off player at once and he kept shooting alone while the other phone sat in the lobby.
+function netLost(G) {
+if (!G || !G.net || G.net.spec || G.over || !G.net.room || (recov && recov.G === G)) return;
+const r = recov = {G, t0: Date.now(), asked: 0};
+const step = () => {
+if (recov !== r) return;
+if (game !== G || G.over) { recov = null; return; }
+if (Date.now() - r.t0 > 34000) { recov = null; endGame(1, T("MAG'LUBIYAT")); return; }   // the server has given the match to the opponent by now
+setPill("Aloqa uzildi — qayta ulanmoqda…", 3000);
+Net.ensure().then(() => Net.connect()).then(() => { if (recov === r && Date.now() - r.asked > 4000) { r.asked = Date.now(); Net.send({t: "resume", room: G.net.room, got: Net.got(G.net.room)}); } }).catch(() => {}).then(() => { if (recov === r) setTimeout(step, 1200); });
+};
+step();
+}
+Net.on("close", () => { const G = game; if (G && G.net && !G.net.spec && !G.over) netLost(G); });
+Net.on("resumed", m => { const G = game; if (!recov || !G || !G.net || G.net.room !== m.room) return; recov = null; Net.resent(m.room, m.rx | 0); setPill("Qayta ulandi ✓", 2000); });
+Net.on("noresume", m => { const G = game; if (!recov || !G || !G.net || G.over || G.net.room !== m.room) return; recov = null; endGame(1, T("MAG'LUBIYAT")); });   // the server does not know this match any more (it was restarted)
+Net.on("oppAway", m => { const G = game; if (G && G.net && !G.net.spec && !G.over && (!m.room || m.room === G.net.room)) setPill("Raqib ulanishini yo'qotdi — kutilmoqda…", 9000); });
+Net.on("oppBack", m => { const G = game; if (G && G.net && !G.net.spec && !G.over && (!m.room || m.room === G.net.room)) setPill("Raqib qaytdi ✓", 2000); });
+// The ONE handler of "match" (Net keeps a single handler per message type: the search used to replace the lobby's, and the lobby's matches were then answered with "resign" - the player "left the lobby by itself").
+// A tournament match belongs to the lobby; the others belong to the quick-match search that is waiting for one. A match nobody waits for is given up at once, so the opponent does not wait for a ghost.
+let searchWait = null;
+Net.on("match", m => {
+if (m.tour) { if (LB) lbMatch(m); else Net.send({t: "resign"}); return; }
+if (searchWait) return searchWait(m);
+Net.send({t: "resign"});
 });
 Net.on("oppLeft", () => {
 const G = game; if (!G || !G.net || G.over) return;
@@ -11928,19 +11988,18 @@ setTimeout(() => { if (LB === mine && mine.pending) lbFail(T("Bunday lobbi topil
 lbShow();
 }
 function lbResume() {   // the phone went to the background (share sheet, another app) and the socket died: take the seat back
-const mine = LB; if (!mine || mine.pending || mine.resuming || mine.state !== "open" || Net.open) return;
+const mine = LB; if (!mine || mine.pending || mine.resuming || Net.open) return;
 mine.resuming = true;
 Net.ensure().then(() => Net.connect()).then(() => { if (LB !== mine) return; lbBind(); Net.send({t: "queue", city: mine.city, code: mine.code, join: false, rejoin: true, lobby: true, cue: profile.cue, tbl: profile.tableSkin || ""}); }).catch(() => {}).then(() => { mine.resuming = false; });
 }
 setInterval(() => { if (LB && !document.hidden) lbResume(); }, 3000);
 function lbBind() {
 Net.on("lobbystate", m => lbState(m));
-Net.on("nocode", () => LB && lbFail(T("Bunday lobbi topilmadi")));
+Net.on("nocode", () => { if (!LB) return; if (mode === "game" && game && game.net && !game.net.spec && !game.over) { LobbyVoice.stop(); LB = null; lbChip(false); return; } lbFail(T("Bunday lobbi topilmadi")); });   // (not in the middle of a live match: that one goes on, the lobby is left quietly)
 Net.on("lobbyfull", () => LB && lbFail(T("Lobbi to'lgan")));
 Net.on("lobbybusy", () => LB && lbFail(T("Turnir boshlangan")));
 Net.on("lobbyerr", () => toast("😕", T("Kamida 2 o'yinchi kerak"), T("Lobbi")));
 Net.on("tourstart", m => lbTourStart(m));
-Net.on("match", m => lbMatch(m));
 Net.on("tourstate", m => { if (!LB) return; LB.tour = Object.assign(LB.tour || {}, m); if ($("lbScr").classList.contains("on")) lbRender(); });
 Net.on("tourresult", m => lbResult(m));
 Net.on("tourdone", m => { if (!LB) return; LB.standings = m.standings; if ($("lbScr").classList.contains("on")) lbRender(); });
@@ -12007,13 +12066,14 @@ if ($("lbScr").classList.contains("on")) lbRender();
 }
 function lbMatch(m) {   // a bracket match: the opponent is known, play it
 if (!LB) return;
+if (m.room && ((game && game.net && !game.net.spec && game.net.room === m.room && !game.over && mode === "game") || (LB.queued && LB.queued.room === m.room) || LB.playing === m.room)) return;   // (the server sends the match again when this phone reconnects: it is the same one)
 if (game && game.net && game.net.spec && mode === "game") { try { Net.send({t: "unspec"}); } catch (e) {} specMicOff(); lbPlay(m); return; }   // I was watching another match: my own begins
 if (mode === "game" || $("res").classList.contains("on")) { LB.queued = m; return; }   // wait until the player has seen the previous result
 lbPlay(m);
 }
 function lbPlay(m) {
 if (!LB) return;
-LB.queued = null;
+LB.queued = null; LB.playing = m.room || "";
 const o = m.opp || {}, c = lbCityOf(LB.city), city = {...c, prize: 0, fee: 0};
 const opp = {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
 level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0};
@@ -12040,6 +12100,9 @@ if (!el) { el = document.createElement("div"); el.id = "lobbyChip"; el.style.css
 { const h = `🔑 ${LB.code} · ${LB.players.length}/${LB.max}${LobbyVoice.on() ? " · " + MIC_SPAN() : ""}`; if (el.dataset.h !== h) { el.dataset.h = h; el.innerHTML = h; } }
 }
 setInterval(() => lbChip(!!LB && mode === "menu" && !$("lbScr").classList.contains("on") && !$("res").classList.contains("on") && !$("vs").classList.contains("on")), 900);
+// A match of the bracket that came while the player looked at a result screen waits (LB.queued) and used to start only from that screen's "Continue": a player who left it any other way never started it,
+// and the opponent played alone. Now it starts by itself as soon as the player is back on a menu screen with nothing in front of it.
+setInterval(() => { const q = LB && LB.queued; if (q && mode === "menu" && !$("res").classList.contains("on") && !$("vs").classList.contains("on") && !$("modal").classList.contains("on")) lbPlay(q); }, 1000);
 function lbRender() {
 const body = $("lbBody"), title = $("lbTitle");
 if (!LB) {   // 1) choose a table
