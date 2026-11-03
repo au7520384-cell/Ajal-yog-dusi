@@ -213,3 +213,11 @@ Portrait pictures and a 3-month plan made from the same specs and texts as the c
 - **Small pages are scaled, not cut:** the menus zoom down to at most 80% when the page is smaller than ~700x340 (`uiz`), instead of overlapping or dropping pieces.
 - **Top bar:** the profile card used to lose its name / XP bar (only the avatar stayed) on a narrow page. Now the order is: language, cue banner, "+" buttons, sound / info, then the name (level star and XP bar stay), then the full-screen button, and only as the very last resort the whole profile text (`nf1`-`nf9` in `fitNav`).
 - Checked by emulating phones held upright at 392x733, 392x640, 360x600 and landscape 915x412 / 1280x720 (screens compared before / after).
+
+## Quiz translations (14 languages)
+Quizzes are shown to every player in their own game language. `uz` and `en` come from the bank itself
+(`tools/channel_bank/*.txt`). The other 12 languages live in `tools/channel_bank/i18n/<lang>.txt`
+(`Q001|question|opt1;opt2;opt3;opt4|explanation`, `=` keeps the bank option). Run
+`python3 tools/build_quiz_i18n.py` to validate them and regenerate `server/quiz_i18n.json`.
+`ru` has full explanations; the others have questions and options only, and show the English explanation.
+A native-speaker review of the less common languages is recommended. The Telegram channel stays uz + en.
