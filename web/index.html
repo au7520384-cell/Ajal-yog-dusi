@@ -2663,7 +2663,7 @@ const DICT = {
 "Sizning navbatingiz": ["Your turn", "Ваш ход"], "Siz sindirasiz — omad!": ["You are breaking, good luck!", "Вы разбиваете, удачи!"],
 "QOIDA BUZILDI!": ["FOUL!", "ФОЛ!"], "VAQT TUGADI!": ["TIME'S UP!", "ВРЕМЯ ВЫШЛО!"], "Raqib javob bermadi": ["Opponent is not responding", "Соперник не отвечает"], "Navbat sizda": ["It's your turn", "Ваш ход"], "G'ALABA!": ["VICTORY!", "ПОБЕДА!"], "MAG'LUBIYAT": ["DEFEAT", "ПОРАЖЕНИЕ"],
 "ZO'R!": ["NICE!", "КЛАСС!"], "AJOYIB!": ["AMAZING!", "ПОТРЯСАЮЩЕ!"], "MASHQ": ["PRACTICE", "ТРЕНИРОВКА"],
-"Yana o'ynash": ["Play again", "Ещё раз"], "HD grafika paketi": ["HD graphics pack", "HD-пакет графики"], "Tomosha qilish": ["Watch", "Смотреть"], "Sharlar, avatarlar va kiyalar aniq ko'rinadi": ["Balls, avatars and cues look crisp", "Шары, аватары и кии выглядят чётко"], "Yuklab olish": ["Download", "Скачать"], "Yuklanmoqda": ["Downloading", "Загрузка"], "Tayyor": ["Ready", "Готово"], "O'chirish": ["Turn off", "Выключить"], "Qo'llash": ["Apply", "Применить"], "Yoqilgan": ["On", "Включено"], "Keyingi stol": ["Next table", "Следующий стол"], "Kunlik viktorina": ["Daily quiz", "Викторина дня"], "Boshlash": ["Start", "Начать"], "Keyingisi": ["Next", "Дальше"], "Savol": ["Question", "Вопрос"],
+"Yana o'ynash": ["Play again", "Ещё раз"], "HD grafika paketi": ["HD graphics pack", "HD-пакет графики"], "Tomosha qilish": ["Watch", "Смотреть"], "Hisobni o'chirish": ["Delete my account", "Удалить аккаунт"], "Hisobingiz va unga bog'langan hamma narsa (profil, do'stlar, klub, yutuqlar) butunlay o'chiriladi. Buni qaytarib bo'lmaydi.": ["Your account and everything linked to it (profile, friends, club, progress) will be deleted for good. This cannot be undone.", "Ваш аккаунт и всё, что с ним связано (профиль, друзья, клуб, прогресс), будет удалено навсегда. Это нельзя отменить."], "Ha, o'chirish": ["Yes, delete", "Да, удалить"], "Hisob o'chirilmadi. Internetni tekshiring.": ["Could not delete the account. Check your internet.", "Не удалось удалить аккаунт. Проверьте интернет."], "Sharlar, avatarlar va kiyalar aniq ko'rinadi": ["Balls, avatars and cues look crisp", "Шары, аватары и кии выглядят чётко"], "Yuklab olish": ["Download", "Скачать"], "Yuklanmoqda": ["Downloading", "Загрузка"], "Tayyor": ["Ready", "Готово"], "O'chirish": ["Turn off", "Выключить"], "Qo'llash": ["Apply", "Применить"], "Yoqilgan": ["On", "Включено"], "Keyingi stol": ["Next table", "Следующий стол"], "Kunlik viktorina": ["Daily quiz", "Викторина дня"], "Boshlash": ["Start", "Начать"], "Keyingisi": ["Next", "Дальше"], "Savol": ["Question", "Вопрос"],
 "To'g'ri!": ["Correct!", "Верно!"], "Noto'g'ri": ["Wrong", "Неверно"], "Viktorina": ["Quiz", "Викторина"], "To'g'ri javob": ["Right answer", "Правильный ответ"], "Kanal viktorinasi": ["Channel quiz", "Викторина из канала"], "Bu savolga avval javob bergansiz": ["You have already answered this one", "Вы уже отвечали на этот вопрос"],
 "Bugungi viktorina tugadi": ["Today's quiz is done", "Викторина на сегодня пройдена"], "Natija": ["Result", "Результат"], "Viktorinani yuklab bo'lmadi. Internetni tekshiring.": ["Could not load the quiz. Check your connection.", "Не удалось загрузить викторину. Проверьте интернет."],
 "Billiard haqida 5 ta savol": ["5 questions about billiards", "5 вопросов о бильярде"], "har bir to'g'ri javobga": ["for every right answer", "за каждый верный ответ"], "Menyu": ["Menu", "Меню"], "Davom etish": ["Continue", "Продолжить"], "Pauza": ["Paused", "Пауза"],
@@ -13737,6 +13737,11 @@ else if (st === "downloading") ctl = `<span class="muted" id="hdPct">${T("Yuklan
 else ctl = `<button class="btn green" data-hd="on" style="padding:6px 14px">${T("Yuklab olish")} · ${mbs} MB</button>`;
 return `<div class="setrow"><span class="sri"></span><b>${T("HD grafika paketi")}</b>${ctl}</div><div class="muted" style="margin:-2px 0 8px;font-size:13px">${T("Sharlar, avatarlar va kiyalar aniq ko'rinadi")}</div>`;
 }
+function deleteAccount() {   // the server forgets the player; then this phone forgets him too and starts as a new player
+const wipe = () => { try { localStorage.clear(); sessionStorage.clear(); } catch (e) {} try { if (window.caches) caches.keys().then(ks => ks.filter(k => k === "billiard8-hd").forEach(k => caches.delete(k))); } catch (e) {} setTimeout(() => location.reload(), 300); };
+if (!Net.acct) return wipe();   // never signed in on a server: only this phone holds the data
+Net.api("/api/account/delete", {confirm: "DELETE"}).then(wipe).catch(e => { if (e && e.status === 401) return wipe(); toast("⚠️", T("Hisob o'chirilmadi. Internetni tekshiring."), ""); });
+}
 function buildSettings() {
 const tg = (k, on) => `<button class="tgl${on ? " on" : ""}" data-t="${k}"></button>`;
 const seg = (k, opts) => `<div class="seg">${opts.map(([v, n]) => `<button class="${opt(k) === v ? "on" : ""}" data-s="${k}" data-v="${JSON.stringify(v).replace(/"/g, "&quot;")}">${T(n)}</button>`).join("")}</div>`;
@@ -13773,6 +13778,7 @@ ${row("Hisobni ulash (Google / Facebook)", `<button class="btn blue" id="setLogi
 <div class="setrow"><b>${T("Boshqa hisob bilan kirish (alohida o'yin)")}</b><button class="btn orange" id="setSwitch" style="padding:6px 14px">↔ ${T("Kirish")}</button></div>
 ${row("Yangi telefonga o'tish uchun kalit", `<button class="btn orange" id="setKey" style="padding:6px 14px">🔑 ${T("Kalit olish")}</button>`)}
 ${row("Boshqa qurilmadagi hisobga kirish", `<button class="btn blue" id="setRecover" style="padding:6px 14px">📲 ${T("Tiklash")}</button>`)}
+<div class="setrow"><b>${T("Hisobni o'chirish")}</b><button class="btn red" id="setDelete" style="padding:6px 14px">🗑 ${T("Hisobni o'chirish")}</button></div>
 <div class="setsec">${T("Boshqa")}</div>
 ${row("Til", `<button class="btn blue" id="setLang" style="padding:6px 14px">🌐 ${LANGS[LANG]}</button>`)}
 <div class="setrow chanonly"><b>📢 ${T("Rasmiy kanal")}</b><button class="btn blue" id="setChan" style="padding:6px 14px">${T("Ochish")}</button></div>
@@ -13797,6 +13803,7 @@ if (a === "on") { h.on(); h.state = h.state === "none" || h.state === "off" || h
 else if (a === "off") { Promise.resolve(h.off()).then(() => location.reload()); }
 else if (a === "apply") h.apply();
 });
+{ const db = $("setDelete"); if (db) db.onclick = () => openModal({icon: "🗑", title: T("Hisobni o'chirish"), text: T("Hisobingiz va unga bog'langan hamma narsa (profil, do'stlar, klub, yutuqlar) butunlay o'chiriladi. Buni qaytarib bo'lmaydi."), buttons: [{label: T("Bekor qilish"), cls: "gray", fn: () => {}}, {label: T("Ha, o'chirish"), cls: "red", fn: deleteAccount}]}); }   // (Google Play: the player can delete his account inside the app)
 $("setLang").onclick = () => $("langBtn").click();
 $("setLogin").onclick = () => loginUI(false); $("setSwitch").onclick = () => openModal({icon: "↔️", title: T("Boshqa hisob bilan kirish"), text: T("Google yoki Facebook bilan alohida yangi o'yin ochiladi. Hozirgi o'yiningiz serverda saqlanadi va keyin shu hisob bilan qaytib kirsangiz tiklanadi."), buttons: [{label: T("Davom etish"), cls: "green", fn: () => loginUI(false, null, "switch")}, {label: T("Bekor qilish"), cls: "gray", fn: () => {}}]}); $("setKey").onclick = recoveryKey; $("setRecover").onclick = recoverAccount;
 }
