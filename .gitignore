@@ -17,3 +17,5 @@ web/hd/*.tmp
 android/www/
 android/node_modules/
 android/android/
+upload.jks
+upload.jks.b64
