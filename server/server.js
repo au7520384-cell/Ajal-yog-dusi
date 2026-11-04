@@ -133,7 +133,8 @@ function legalPage(res, which) {
 <h2>Virtual items</h2><p>Virtual items have no real-world monetary value and cannot be exchanged for money. See the <a href="/terms">Terms of Service</a>.</p>`;
   const del = `<h1>Delete your data — Royal Billiard 8</h1><p class="u">Last updated: October 2026</p>
 <p>You can ask us to delete your Royal Billiard 8 account and everything linked to it (player ID, profile, progress, friends, club membership, leaderboard entries and the Google / Facebook sign-in link).</p>
-<h2>How to ask</h2><ol><li>Write to ${contact} from any address.</li><li>Include your <b>player ID</b> (Settings in the game) or the name you play under, and say "delete my data".</li><li>We delete the account within 30 days and confirm by reply.</li></ol>
+<h2>Delete it yourself, in the game</h2><p>Open the game &rarr; <b>Settings</b> &rarr; <b>Delete my account</b> &rarr; confirm. The account and everything linked to it is deleted at once.</p>
+<h2>Or ask us</h2><ol><li>Write to ${contact} from any address.</li><li>Include your <b>player ID</b> (Settings in the game) or the name you play under, and say "delete my data".</li><li>We delete the account within 30 days and confirm by reply.</li></ol>
 <h2>Facebook / Google</h2><p>You can also remove the game from your Facebook (Settings &rarr; Business Integrations) or Google (Security &rarr; Third-party access) account at any time; after that, ask us to delete the game account using the steps above.</p>
 <h2>What we keep</h2><p>Purchase records may be kept for the time the law requires (tax and accounting); they are not linked to your profile after deletion. Paddle, our payment provider, keeps its own payment records under its own policy.</p>`;
   const body = which === "/terms" ? terms : which === "/refund" ? refund : which === "/data-deletion" ? del : privacy;
@@ -951,6 +952,29 @@ const routes = {
       country: geoCountry(req) || cleanCountry(b.country), league: 0, week: curWeek(), weekWon: 0};
     db.users[id] = u; db.codes[code] = id; markDirty();
     return {id, token, code};
+  },
+
+  // Delete my account (Google Play requires it inside the app): everything linked to the player goes - the profile and its sign-in links, friends / requests / messages, club seat, invite links;
+  // purchase and payment-order records stay for the accounting but lose the link to the player.
+  async "POST /api/account/delete"(req, u) {
+    const b = await jsonBody(req); if (b.confirm !== "DELETE") return [400, {error: "confirm"}];
+    for (const x of Object.values(db.users)) {
+      if (x.id === u.id) continue;
+      if ((x.friends || []).includes(u.id)) x.friends = x.friends.filter(id => id !== u.id);
+      if (x.frIn) x.frIn = x.frIn.filter(r => r.id !== u.id);
+      if (x.frOut) x.frOut = x.frOut.filter(id => id !== u.id);
+      if (x.gifted) delete x.gifted[u.id];
+      if (x.referrals) x.referrals = x.referrals.filter(id => id !== u.id);
+      if (x.referredBy === u.id) x.referredBy = null;
+    }
+    for (const k of Object.keys(db.dms || {})) if (k.split("_").includes(u.id)) delete db.dms[k];
+    const c = u.club && db.clubs[u.club];
+    if (c) { c.members = c.members.filter(id => id !== u.id); if (!c.members.length) delete db.clubs[c.id]; else if (c.owner === u.id) c.owner = c.members[0]; }
+    for (const pu of Object.values(db.purchases || {})) if (pu.user === u.id) pu.user = null;
+    for (const o of Object.values(db.p2p || {})) if (o.u === u.id) o.u = null;
+    delete db.codes[u.code]; delete db.users[u.id]; markDirty();
+    const w = clients.get(u.id); if (w) { clients.delete(u.id); try { w.close(4002, "deleted"); } catch (e) {} }
+    return {ok: true};
   },
 
   async "POST /api/sync"(req, u) {
