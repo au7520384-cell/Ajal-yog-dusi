@@ -14,3 +14,6 @@ web_site.zip
 __pycache__/
 *.pyc
 web/hd/*.tmp
+android/www/
+android/node_modules/
+android/android/

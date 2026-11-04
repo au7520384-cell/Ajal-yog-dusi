@@ -1,0 +1,13 @@
+{
+  "appId": "com.royalbilliard8.app",
+  "appName": "Royal Billiard 8",
+  "webDir": "www",
+  "backgroundColor": "#0b1030",
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": ["billiard8.onrender.com"]
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
