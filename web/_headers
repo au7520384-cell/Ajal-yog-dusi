@@ -2,8 +2,10 @@
   Cache-Control: public, max-age=31536000, immutable
 /hd/*
   Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
 /assets.json
   Cache-Control: no-store
+  Access-Control-Allow-Origin: *
 /a/*
   Cache-Control: public, max-age=31536000, immutable
 /index.html
