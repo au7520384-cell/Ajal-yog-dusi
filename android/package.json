@@ -1,0 +1,14 @@
+{
+  "name": "royal-billiard-8-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Android shell (Capacitor) of Royal Billiard 8: the light web build (www/) inside a WebView",
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
+}

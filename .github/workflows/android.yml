@@ -1,0 +1,72 @@
+name: Android app (Play Market)
+
+# Builds the Android App Bundle (.aab) of the game: Actions tab -> "Android app (Play Market)" -> Run workflow.
+# The file appears at the bottom of the finished run (Artifacts -> royal-billiard-8-aab) - upload it in Google Play Console.
+# Signing: add the 4 repository secrets below (Settings -> Secrets and variables -> Actions). Without them a debug-signed bundle is made (fine for testing, NOT accepted by Play).
+#   ANDROID_KEYSTORE_BASE64  the upload keystore (.jks) as base64      ANDROID_KEYSTORE_PASSWORD
+#   ANDROID_KEY_ALIAS                                                   ANDROID_KEY_PASSWORD
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: "versionCode (a whole number, bigger than the one uploaded before: 1, 2, 3 ...)"
+        default: "1"
+      version_name:
+        description: "versionName shown to players"
+        default: "1.0.0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Game files (light build, no HD pack, no card buttons)
+        run: bash tools/build_android.sh
+      - name: Capacitor + Android project
+        working-directory: android
+        run: |
+          npm install
+          npx cap add android
+          npx capacitor-assets generate --android --iconBackgroundColor '#0b1030' --iconBackgroundColorDark '#0b1030'
+          npx cap sync android
+      - name: Version + release signing
+        working-directory: android/android
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          sed -i "s/versionCode [0-9]*/versionCode ${{ inputs.version_code }}/; s/versionName \"[^\"]*\"/versionName \"${{ inputs.version_name }}\"/" app/build.gradle
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > app/upload.jks
+            cat >> app/build.gradle <<GRADLE
+
+          android {
+              signingConfigs { release { storeFile file("upload.jks"); storePassword System.getenv("KS_PASS"); keyAlias System.getenv("KS_ALIAS"); keyPassword System.getenv("KEY_PASS") } }
+              buildTypes { release { signingConfig signingConfigs.release } }
+          }
+          GRADLE
+            echo "SIGNED=1" >> "$GITHUB_ENV"
+          else
+            echo "No keystore secrets: the bundle is built unsigned (testing only)"
+          fi
+      - name: Build the bundle
+        working-directory: android/android
+        env:
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KS_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: ./gradlew bundleRelease --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: royal-billiard-8-aab
+          path: android/android/app/build/outputs/bundle/release/*.aab
