@@ -70,7 +70,7 @@ if os.path.isdir(HD_FROM):
 for f in ["sw.js", "manifest.webmanifest", "icon.svg", "favicon-48.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png"]:
     shutil.copy(os.path.join(root, f), os.path.join(out, f))
 # Cloudflare Pages / Netlify header rules: the hashed pictures never change
-open(os.path.join(out, "_headers"), "w").write("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n/hd/*\n  Cache-Control: public, max-age=31536000, immutable\n/assets.json\n  Cache-Control: no-store\n/a/*\n  Cache-Control: public, max-age=31536000, immutable\n/index.html\n  Cache-Control: no-cache\n/\n  Cache-Control: no-cache\n")
+open(os.path.join(out, "_headers"), "w").write("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n/hd/*\n  Cache-Control: public, max-age=31536000, immutable\n  Access-Control-Allow-Origin: *\n/assets.json\n  Cache-Control: no-store\n  Access-Control-Allow-Origin: *\n/a/*\n  Cache-Control: public, max-age=31536000, immutable\n/index.html\n  Cache-Control: no-cache\n/\n  Cache-Control: no-cache\n")
 # the list of every picture / sound with its size: the page downloads them with a progress bar on the first visit (and only the new ones after an update)
 import json
 files = sorted((n, len(raw)) for n, raw in list(IMGS.items()) + list(AUD.items()))
