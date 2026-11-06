@@ -770,6 +770,14 @@ async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the
     }
     return tgApi("sendMessage", {chat_id: m.chat.id, text: note + chanReport()});
   }
+  if (cmd === "/orders") {   // the owner only: the open card payments, each with Confirm / Reject (a payment whose SMS never came is confirmed here)
+    if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
+    p2pSweep(); const now = Date.now();
+    const list = Object.values(db.p2p).filter(o => o.st === "pending" || (o.st === "exp" && o.mode === "auto" && now - o.exp < P2P_LATE)).sort((a, b) => b.at - a.at).slice(0, 10);
+    if (!list.length) return tgApi("sendMessage", {chat_id: m.chat.id, text: "Ochiq to'lov yo'q."});
+    for (const o of list) await tgApi("sendMessage", {chat_id: m.chat.id, text: `🧾 #${o.id} ${o.st === "exp" ? "(muddati tugagan)" : ""}\n👤 ${String((db.users[o.u] || {}).name || "").slice(0, 30)}\n🛒 ${SKUS[o.sku] ? SKUS[o.sku].name : o.sku}\n💵 ${o.amt} so'm (${o.mode})\n⏱ ${Math.round((now - o.at) / 60000)} daqiqa oldin`, reply_markup: {inline_keyboard: [[{text: "✅ Tasdiqlash", callback_data: "p2p:ok:" + o.id}, {text: "❌ Rad etish", callback_data: "p2p:no:" + o.id}]]}}).catch(() => {});
+    return;
+  }
   if (cmd === "/id") return tgApi("sendMessage", {chat_id: m.chat.id, text: "Telegram ID: " + m.from.id});   // the number for ADMIN_TG_ID
   const u = userByTg(m.from.id), lc = pushLang(u, m.from.language_code), L = PUSH_LANGS[lc];
   if (cmd === "/stop") {
@@ -786,7 +794,8 @@ async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the
 
 // ---------------------------------------------------------------- routes
 const routes = {
-  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, web: WEB_OK, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err}),
+  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, web: WEB_OK, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err,
+    p2p: {cards: P2P_CARDS.length, auto: p2pModes(true).auto, atm: p2pModes(true).atm, key: !!P2P_KEY, admin: P2P_ADMIN, smsCount: ((db.meta || {}).p2pn || {}).n | 0, lastSms: ((db.meta || {}).p2pn || {}).last || 0, open: Object.values(db.p2p || {}).filter(o => o.st === "pending").length}}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
   "GET /api/ice": () => {
     const iceServers = [{urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}];
@@ -1313,11 +1322,11 @@ const routes = {
     if (mine.length >= 3) return [429, {error: "too_many_open"}];
     const base = p2pBase(sku); let amt = base;
     if (mode === "auto") {   // a unique, not round amount: it is how the incoming transfer is recognised
-      const used = new Set(Object.values(db.p2p).filter(o => o.st === "pending" && o.mode === "auto").map(o => o.amt)), span = used.size < 40 ? 99 : 999; let found = false;
+      const used = new Set(Object.values(db.p2p).filter(o => o.mode === "auto" && (o.st === "pending" || (o.st === "exp" && now - o.exp < P2P_LATE))).map(o => o.amt)), span = used.size < 40 ? 99 : 999; let found = false;
       for (let i = 0; i < 80 && !found; i++) { const a = base + 1 + crypto.randomInt(0, span); if (a % 10 && !used.has(a)) { amt = a; found = true; } }
       if (!found) return [503, {error: "busy"}];
     }
-    const o = {id: crypto.randomBytes(4).toString("hex"), u: u.id, sku: b.sku, amt, base, mode, f: uz ? 0 : 1, at: now, exp: now + (mode === "auto" ? 30 * 60e3 : 3 * 864e5), st: "pending", rc: 0};
+    const o = {id: crypto.randomBytes(4).toString("hex"), u: u.id, sku: b.sku, amt, base, mode, f: uz ? 0 : 1, at: now, exp: now + (mode === "auto" ? (+process.env.P2P_TTL_MS || 30 * 60e3) : 3 * 864e5), st: "pending", rc: 0};
     db.p2p[o.id] = o; markDirty();
     return p2pView(o);
   },
@@ -1325,6 +1334,24 @@ const routes = {
     const b = await jsonBody(req), o = db.p2p[String(b.id || "")];
     if (!o || o.u !== u.id) return [404, {error: "not_found"}];
     p2pSweep(); return {st: o.st};
+  },
+  // "I paid - check": the SMS list is searched again; if the money is not seen yet the admin gets a Telegram message with Confirm / Reject for this order (so a paid order never waits for nobody)
+  async "POST /api/p2p/check"(req, u) {
+    if (limited(req, "p2pck", 30)) return [429, {error: "slow_down"}];
+    const b = await jsonBody(req), now = Date.now(); p2pSweep(now);
+    const list = Object.values(db.p2p).filter(o => o.u === u.id && (b.id ? o.id === String(b.id) : true) && (o.st === "pending" || (o.st === "exp" && o.mode === "auto" && now - o.exp < P2P_LATE)));
+    const paid = [], asked = []; let waiting = 0;
+    for (const o of list) {
+      if (o.mode === "auto" && p2pSeen(o)) { if (o.st === "exp") { o.st = "pending"; o.late = true; } if (await p2pDecide(o.id, true, "check") === "paid") { paid.push(o.id); continue; } }
+      waiting++;
+      if (P2P_ADMIN && (!o.askAt || now - o.askAt > 120e3) && (o.chk | 0) < 6) {
+        o.askAt = now; o.chk = (o.chk | 0) + 1; markDirty();
+        tgApi("sendMessage", {chat_id: ADMIN_TG, text: `💳 To'ladim deyapti #${o.id}\n👤 ${String(u.name || "").slice(0, 30)} (${u.id.slice(0, 6)})\n🛒 ${SKUS[o.sku] ? SKUS[o.sku].name : o.sku}\n💵 ${o.f ? "$" + SKUS[o.sku].usd + " (" + o.amt + " so'm)" : o.amt + " so'm"}\n⏱ ${Math.round((now - o.at) / 60000)} daqiqa oldin\nBank SMS hali kelmagan. Pul kartaga tushgan bo'lsa tasdiqlang:`, reply_markup: {inline_keyboard: [[{text: "✅ Tasdiqlash", callback_data: "p2p:ok:" + o.id}, {text: "❌ Rad etish", callback_data: "p2p:no:" + o.id}]]}}).catch(e => console.error("p2p ask admin:", e.message));
+        asked.push(o.id);
+      }
+    }
+    const L = db.meta.p2pn || {};
+    return {paid, waiting, asked: asked.length, st: b.id && list[0] ? list[0].st : undefined, orders: list.length, sms: !!L.n};
   },
   async "POST /api/p2p/receipt"(req, u) {   // the ATM receipt photo goes to the admin's Telegram chat with Confirm / Reject buttons
     if (!P2P_ADMIN || !P2P_CARDS.length) return [503, {error: "not_configured"}];
@@ -1351,8 +1378,12 @@ const routes = {
     const strs = []; (function walk(v, d) { if (typeof v === "string") strs.push(v); else if (v && typeof v === "object" && d < 5) for (const k of Object.keys(v)) if (k !== "key") walk(v[k], d + 1); })(b, 0);   // the SMS text wherever the forwarder app puts it: {"text"}, {"message"}, {"payload": {"message"}}, {"data": {"content"}} ...
     const nums = new Set(p2pAmounts(strs.join(" ")));
     if (b.amount != null && isFinite(+b.amount)) nums.add(Math.round(+b.amount));
+    p2pNote(nums);   // what arrived is written down (amounts and time only, never the text): a player who presses "Check" later is matched against it, /api/health shows that SMS do arrive
     p2pSweep(); const paid = [];
-    for (const o of Object.values(db.p2p)) if (o.st === "pending" && o.mode === "auto" && nums.has(o.amt)) { if (await p2pDecide(o.id, true, "sms") === "paid") paid.push(o.id); }
+    for (const o of Object.values(db.p2p)) if (o.mode === "auto" && nums.has(o.amt) && (o.st === "pending" || (o.st === "exp" && Date.now() - o.exp < P2P_LATE))) {   // (a transfer that arrives after the 30 minutes is still the player's money: it is accepted for 24 h)
+      if (o.st === "exp") { o.st = "pending"; o.late = true; }
+      if (await p2pDecide(o.id, true, "sms") === "paid") paid.push(o.id);
+    }
     return {ok: true, matched: paid.length};
   },
   "GET /api/p2p/pending"(req) {   // open orders for the admin (to confirm one by hand):  curl $SERVER/api/p2p/pending -H "x-admin-key: $ADMIN_KEY"
@@ -1429,6 +1460,16 @@ function starsRefuse(u, skuId) {   // the same checks as the card checkout; retu
   if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return "sold_out";
   return "";
 }
+const P2P_LATE = 24 * 3600e3;   // a transfer that arrives up to 24 h after the order expired is still accepted
+function p2pNote(nums) {   // writes down an incoming SMS: only the amounts in it and the time
+  const L = db.meta.p2pn = db.meta.p2pn || {n: 0, last: 0, buf: []}, now = Date.now();
+  L.n = (L.n | 0) + 1; L.last = now;
+  L.buf.push({at: now, a: [...nums].filter(x => x >= 1000 && x < 1e10).slice(0, 12)});
+  L.buf = L.buf.filter(x => now - x.at < 3 * 864e5).slice(-300); markDirty();
+}
+function p2pSeen(o) {   // an SMS with this order's exact amount arrived after the order was made
+  const L = db.meta.p2pn; return !!(L && L.buf.some(x => x.at >= o.at - 60e3 && x.a.includes(o.amt)));
+}
 function p2pView(o) {
   const cards = p2pCards(!o.f, o.mode);
   return {id: o.id, amount: o.amt, base: o.base, foreign: !!o.f, usd: o.f ? SKUS[o.sku].usd : undefined, cards, card: (cards[0] || {}).number, holder: (cards[0] || {}).holder, mode: o.mode, exp: o.exp};
@@ -1448,6 +1489,7 @@ function p2pAmounts(text) {   // every amount in an SMS: "+12 803.00 UZS", "12,8
 }
 async function p2pDecide(id, yes, by) {   // "paid" | "no" | "exp" | "none" | "error": the state after the decision
   const o = db.p2p[id]; if (!o) return "none";
+  if (o.st === "exp" && yes && by === "admin") { o.st = "pending"; o.late = true; }   // the admin saw the money: an expired order is paid too
   if (o.st !== "pending") return o.st;
   o.by = by;
   if (!yes) { o.st = "no"; markDirty(); return "no"; }
@@ -1497,7 +1539,7 @@ async function tgWebhook(req, res) {
     const m = up.message;
     if (m && typeof m.text === "string" && m.from && m.chat && m.chat.type === "private") {
       const cmd = m.text.trim().split(/[\s@]/)[0].toLowerCase(), arg = m.text.trim().split(/\s+/)[1] || "";
-      if (cmd === "/start" || cmd === "/stop" || cmd === "/id" || cmd === "/src" || cmd === "/chan") await botCommand(cmd, m, arg);
+      if (cmd === "/start" || cmd === "/stop" || cmd === "/id" || cmd === "/src" || cmd === "/chan" || cmd === "/orders") await botCommand(cmd, m, arg);
     }
     const mc = up.my_chat_member;   // the player blocked or unblocked the bot
     if (mc && mc.chat && mc.chat.type === "private" && mc.from && mc.new_chat_member) {
