@@ -42,6 +42,11 @@ jobs:
           # Play's automatic protection needs minSdk 24 (Android 7+); Capacitor 8 already uses 24 (and target / compile SDK 36, which Play now asks for) - kept as a guard
           sed -i 's/minSdkVersion = 22/minSdkVersion = 24/' android/variables.gradle
           grep -c "minSdkVersion = 24" android/variables.gradle
+          # a game: always landscape, full screen (status + navigation bars hidden, see SystemBars in capacitor.config.json), drawn into the camera cut-out, dark window behind the page
+          sed -i 's#android:launchMode="singleTask"#&\n            android:screenOrientation="sensorLandscape"#' android/app/src/main/AndroidManifest.xml
+          sed -i 's#<item name="android:background">@null</item>#&\n        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>\n        <item name="android:windowBackground">\#0b1030</item>#' android/app/src/main/res/values/styles.xml
+          grep -c "sensorLandscape" android/app/src/main/AndroidManifest.xml
+          grep -c "shortEdges" android/app/src/main/res/values/styles.xml
           npx cap sync android
       - name: Version + release signing
         working-directory: android/android

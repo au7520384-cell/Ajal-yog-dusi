@@ -5,9 +5,18 @@
   "backgroundColor": "#0b1030",
   "server": {
     "androidScheme": "https",
-    "allowNavigation": ["billiard8.onrender.com"]
+    "allowNavigation": [
+      "billiard8.onrender.com"
+    ]
   },
   "android": {
     "allowMixedContent": false
+  },
+  "plugins": {
+    "SystemBars": {
+      "hidden": true,
+      "style": "DARK",
+      "initialViewportFitValueHint": "cover"
+    }
   }
 }
