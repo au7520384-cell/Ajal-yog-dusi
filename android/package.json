@@ -5,6 +5,7 @@
   "description": "Android shell (Capacitor) of Royal Billiard 8: the light web build (www/) inside a WebView",
   "dependencies": {
     "@capacitor/android": "^8.6.0",
+    "@capacitor/browser": "^8.0.5",
     "@capacitor/cli": "^8.6.0",
     "@capacitor/core": "^8.6.0"
   },

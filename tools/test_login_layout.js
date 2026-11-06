@@ -7,10 +7,12 @@
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), SHOTS = process.env.SHOTS || "";
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 600) : ""); } };
-const SIZES = [   // [name, width, height, phone?]  (CSS pixels)
+const QUICK = !!process.env.QUICK;   // QUICK=1: five sizes and one other language (about 3 minutes instead of 12)
+const ALL_SIZES = [   // [name, width, height, phone?]  (CSS pixels)
   ["owner 20:9 phone", 870, 393, 1], ["Pixel 20:9", 915, 412, 1], ["iPhone Pro Max", 932, 430, 1], ["844x390", 844, 390, 1], ["740x360", 740, 360, 1], ["iPhone 8", 667, 375, 1], ["640x360", 640, 360, 1], ["iPhone SE", 568, 320, 1], ["800x360", 800, 360, 1],
   ["1200x540 (DPR 2 hi-res)", 1200, 540, 1], ["2200x990 (extreme wide)", 2200, 990, 0], ["tablet landscape", 1024, 768, 0], ["desktop 1280x720", 1280, 720, 0], ["desktop 1920x1080", 1920, 1080, 0],
   ["portrait phone", 390, 844, 1], ["portrait small", 360, 640, 1], ["portrait 20:9", 412, 915, 1], ["tablet portrait", 768, 1024, 0]];
+const SIZES = ALL_SIZES.filter((_, i) => !QUICK || [0, 4, 7, 12, 14].includes(i));
 const STUB_G = `window.google={accounts:{id:{initialize(){},renderButton(el,o){el.innerHTML='<div role="button" id="fakeG" style="width:'+o.width+'px;height:40px;background:#fff;box-sizing:border-box">G</div>'}}}}`, STUB_F = `window.FB={init(){},login(){}}`;
 (async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8ll-")), P = +process.env.TEST_PORT || 8607, base = `http://localhost:${P}`, errs = [];
@@ -65,7 +67,7 @@ const STUB_G = `window.google={accounts:{id:{initialize(){},renderButton(el,o){e
       await ctx.close();
     }
     // 2) the other languages (longer words) on a very wide phone, a small one and a portrait one
-    for (const lang of ["ru", "en"]) for (const [name, w, h, ph] of [SIZES[0], SIZES[4], SIZES[7], SIZES[14]]) {
+    for (const lang of QUICK ? ["ru"] : ["ru", "en"]) for (const [name, w, h, ph] of QUICK ? [ALL_SIZES[0], ALL_SIZES[7]] : [ALL_SIZES[0], ALL_SIZES[4], ALL_SIZES[7], ALL_SIZES[14]]) {
       const [p, ctx] = await open(w, h, ph, lang, null);
       await p.waitForFunction(() => document.querySelector("#lsGw.on") && document.getElementById("gBtn").style.transform, null, { timeout: 30000 }).catch(() => {});
       await sleep(300); const m = await measure(p); await shot(p, `${lang}_${name}`);
