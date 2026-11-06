@@ -47,6 +47,42 @@ jobs:
           sed -i 's#<item name="android:background">@null</item>#&\n        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>\n        <item name="android:windowBackground">\#0b1030</item>#' android/app/src/main/res/values/styles.xml
           grep -c "sensorLandscape" android/app/src/main/AndroidManifest.xml
           grep -c "shortEdges" android/app/src/main/res/values/styles.xml
+          # the bars STAY hidden: Capacitor hides them once at start, but a swipe from the screen edge (or a dialog, the microphone question ...) brought the navigation bar back and it stayed on screen.
+          # MainActivity hides them again every time the window gets focus, and a swipe from the edge shows them only for a moment
+          MA=$(find android/app/src/main/java -name MainActivity.java | head -1)
+          PKG=$(grep -m1 '^package ' "$MA")
+          cat > "$MA" <<JAVA
+          $PKG
+
+          import android.view.Window;
+          import androidx.core.view.WindowCompat;
+          import androidx.core.view.WindowInsetsCompat;
+          import androidx.core.view.WindowInsetsControllerCompat;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              private void hideBars() {
+                  Window w = getWindow();
+                  WindowInsetsControllerCompat c = WindowCompat.getInsetsController(w, w.getDecorView());
+                  c.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                  c.hide(WindowInsetsCompat.Type.systemBars());
+              }
+
+              @Override
+              public void onResume() {
+                  super.onResume();
+                  hideBars();
+              }
+
+              @Override
+              public void onWindowFocusChanged(boolean hasFocus) {
+                  super.onWindowFocusChanged(hasFocus);
+                  if (hasFocus) hideBars();
+              }
+          }
+          JAVA
+          cat "$MA"
+          grep -c "hideBars" "$MA"
           npx cap sync android
       - name: Version + release signing
         working-directory: android/android

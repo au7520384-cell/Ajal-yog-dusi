@@ -39,7 +39,8 @@ const get = async (u, h) => { const r = await fetch(u, { headers: h || {} }); re
   };
   const v1 = await visit();
   await v1.p.evaluate(() => { startMatch("ai", CITIES[0]); }); await sleep(2500);
-  const m = await v1.p.evaluate(() => ({ mode, sheet: !!floorSheet(FLOOR_FOR.lon[0]), snd: typeof Snd !== "undefined" }));
+  // floorSheet() is null until the sheet has loaded (the first ask starts the download); the first table is no longer London, so nobody has asked for London's sheet yet: ask, then wait for the file
+  const m = await v1.p.evaluate(async () => { const t0 = Date.now(); let sh = floorSheet(FLOOR_FOR.lon[0]); while (!sh && Date.now() - t0 < 20000) { await new Promise(r => setTimeout(r, 200)); sh = floorSheet(FLOOR_FOR.lon[0]); } return { mode, sheet: !!sh, snd: typeof Snd !== "undefined" }; });
   ok(m.mode === "game" && m.sheet, "a match starts and its floor sheet has loaded from a file", m);
   const wav = (page.buf.toString().match(/a\/[0-9a-f]{14}\.wav/) || [])[0];
   if (wav) { const d = await v1.p.evaluate(async u => { const ac = new (window.AudioContext || window.webkitAudioContext)(), b = await ac.decodeAudioData(await (await fetch(u)).arrayBuffer()); return b.duration; }, wav); ok(d > 0.01, "a sound file of the light build decodes", d); }
