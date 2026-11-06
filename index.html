@@ -2974,6 +2974,7 @@ const DICT = {
 "{0} kishi ovozli xonada": ["{0} in the voice room", "В голосовой комнате: {0}"],
 "Lobbida mikrofonni yoqib gaplashing": ["Switch the mic on and talk in the lobby", "Включите микрофон и говорите в лобби"],
 "Ovozli xonadan chiqdingiz": ["You left the voice room", "Вы вышли из голосовой комнаты"],
+"Eshitish uchun 🔊 tugmasini bosing": ["Tap 🔊 to hear them", "Нажмите 🔊, чтобы слышать"],
 "Boshqalarni eshitasiz. Gapirish uchun 🎤 ni bosing": ["You can hear the others. Tap 🎤 to speak", "Вы слышите остальных. Нажмите 🎤, чтобы говорить"],
 "lobbiga taklif qilamiz. Lobbida 🎤 ovozli xona bilan gaplashasiz.": ["we invite them to a lobby. In the lobby you can talk in the 🎤 voice room.", "приглашаем в лобби. В лобби можно говорить в 🎤 голосовой комнате."],
 "Ulanmadi": ["Not connected", "Не удалось подключиться"],
@@ -10814,8 +10815,43 @@ list.forEach(wrapText);
 const go_ = () => { wrapTree(document.body); new MutationObserver(ms => { for (const m of ms) { if (m.type === "characterData") wrapTree(m.target); else m.addedNodes.forEach(wrapTree); } }).observe(document.body, {childList: true, subtree: true, characterData: true}); };
 if (document.body) go_(); else document.addEventListener("DOMContentLoaded", go_);
 }
+// ---- ONE microphone for the whole app. The browser is asked once; the stream is then kept (switched off with track.enabled, never stopped) while the player is in a lobby or an online match,
+// so lobby -> match -> lobby never asks again. What the player chose is remembered (b8_voice): microphone on / muted / speaker off - it stays so until the player changes it.
+const MicHub = (() => {
+const KEY = "b8_voice";
+let pref = {}; try { pref = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(pref)); } catch (e) {} };
+let stream = null, pending = null, calls = 0, idle = 0;
+const alive = s => !!s && s.getAudioTracks().some(t => t.readyState === "live");
+const apply = () => { if (stream) stream.getAudioTracks().forEach(t => { t.enabled = !pref.mute; }); };
+function get() {   // the open microphone; the browser is asked only when there is none (one question at a time, however many places ask)
+if (alive(stream)) { apply(); return Promise.resolve(stream); }
+stream = null;
+if (!pending) {
+calls++;
+pending = (async () => {
+if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("unsupported");
+const s = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}});
+stream = s; s.getAudioTracks().forEach(t => { t.onended = () => { if (stream === s && !alive(s)) stream = null; }; }); apply();
+return s;
+})();
+const done = () => { pending = null; }; pending.then(done, done);
+}
+return pending;
+}
+function release() { const s = stream; stream = null; if (s) s.getTracks().forEach(t => { t.onended = null; try { t.stop(); } catch (e) {} }); }
+setInterval(() => {   // not kept for ever: some time after the player has left every lobby and online match, the microphone is let go (it is taken again, silently, the next time voice starts)
+if (!stream) { idle = 0; return; }
+const used = (typeof LB !== "undefined" && LB) || (typeof game !== "undefined" && game && game.net && !game.net.spec && !game.over && mode === "game");
+if (used) idle = 0; else if (!idle) idle = Date.now(); else if (Date.now() - idle > 90000) { release(); idle = 0; }
+}, 5000);
+const wait = (pr, ms) => Promise.race([pr, new Promise((_, rej) => setTimeout(() => rej(new Error("slow")), ms))]);   // "slow" = the question is still open (nobody answered yet)
+return {get, wait, release, live: () => (alive(stream) ? stream : null), calls: () => calls,
+mic: () => !!pref.mic, muted: () => !!pref.mute, spkOff: () => !!pref.spkOff,
+setMic(v) { pref.mic = !!v; save(); }, setMute(v) { pref.mute = !!v; save(); apply(); }, setSpk(v) { pref.spkOff = !!v; save(); }};
+})();
 const Voice = (() => {
-let pc = null, mic = null, on = false, muted = false, remoteReady = false, spkOff = false, ice = null, audioEl = null, queued = [], stat = "", tries = 0, readyTick = 0, listenOnly = false;
+let pc = null, mic = null, on = false, remoteReady = false, ice = null, audioEl = null, queued = [], stat = "", tries = 0, readyTick = 0, listenOnly = false, joining = false, negotiating = false, autoJoin = false, failAt = 0, offerAt = 0, chain = Promise.resolve();
 const btn = () => $("gVoice"), spk = () => $("gSpk");
 const online = () => { const G = game; return !!(G && G.net && !G.net.spec && !G.over && mode === "game"); };
 const shown = () => { const G = game; return online() || !!(G && !G.net && !G.over && mode === "game" && (G.type === "ai" || G.type === "tour")); };
@@ -10828,52 +10864,77 @@ function ui() {
 const on_ = online(), show = shown();
 btn().style.display = spk().style.display = show ? "" : "none";
 if (!show) return;
-const st = !on_ || !on ? "" : muted && !listenOnly ? "mute" : pc && pc.connectionState === "connected" ? "on" : "wait";
-btn().className = "gbtn gv " + st; spk().className = "gbtn gv" + (spkOff ? " off" : "");
-const mi = muted || listenOnly || !on ? IC.micOff : IC.mic, si = spkOff ? IC.spkOff : IC.spk;
+const mu = MicHub.muted(), so = MicHub.spkOff();
+const st = !on_ || !on ? "" : mu && !listenOnly ? "mute" : pc && pc.connectionState === "connected" ? "on" : "wait";
+btn().className = "gbtn gv " + st; spk().className = "gbtn gv" + (so ? " off" : "");
+const mi = mu || listenOnly || !on ? IC.micOff : IC.mic, si = so ? IC.spkOff : IC.spk;
 if (btn().dataset.i !== mi) { btn().dataset.i = mi; btn().innerHTML = mi; }
 if (spk().dataset.i !== si) { spk().dataset.i = si; spk().innerHTML = si; }
-btn().title = T(!on ? "Ovozli suhbat" : listenOnly ? "Faqat eshitish rejimi" : muted ? "Mikrofon o'chiq" : st === "on" ? "Ovozli suhbat ulandi" : stat === "failed" ? "Ulanmadi" : stat === "connecting" ? "Ulanmoqda…" : "Raqib kutilmoqda…");
+btn().title = T(!on ? "Ovozli suhbat" : listenOnly ? "Faqat eshitish rejimi" : mu ? "Mikrofon o'chiq" : st === "on" ? "Ovozli suhbat ulandi" : stat === "failed" ? "Ulanmadi" : stat === "connecting" ? "Ulanmoqda…" : "Raqib kutilmoqda…");
 }
-async function iceServers() {
+async function iceServers() {   // STUN + the TURN relay from the server; a slow / failed answer gives plain STUN for this call only (it is NOT remembered, so the next call asks again: one bad moment must not take the relay away for the whole session)
 if (ice) return ice;
-try { const r = await Net.api("/api/ice"); ice = r.iceServers; } catch (e) { ice = [{urls: "stun:stun.l.google.com:19302"}]; }
-return ice;
+try { const r = await Promise.race([Net.api("/api/ice"), new Promise((_, rej) => setTimeout(() => rej(new Error("slow")), 6000))]); if (r && Array.isArray(r.iceServers) && r.iceServers.length) ice = r.iceServers; } catch (e) {}
+return ice || [{urls: "stun:stun.l.google.com:19302"}];
 }
 function send(k, d) { Net.send({t: "rtc", k, d}); }
 async function makePC() {
-pc = new RTCPeerConnection({iceServers: await iceServers()});
-if (mic) mic.getTracks().forEach(t => pc.addTrack(t, mic));
-else pc.addTransceiver("audio", {direction: "recvonly"});   // no microphone (blocked / missing): still join, so the opponent can be heard and can hear us the moment a mic is switched on
-pc.onicecandidate = e => { if (e.candidate) send("ice", e.candidate.toJSON()); };
-pc.ontrack = e => { primeAudio(); audioEl.srcObject = e.streams[0] || new MediaStream([e.track]); audioEl.muted = spkOff; audioEl.play().catch(() => {}); };
+const servers = await iceServers();
+const c = new RTCPeerConnection({iceServers: servers}); pc = c;
+if (mic) mic.getTracks().forEach(t => c.addTrack(t, mic));
+else c.addTransceiver("audio", {direction: "recvonly"});   // no microphone (blocked / missing / not wanted): still join, so the opponent can be heard and can hear us the moment a mic is switched on
+c.onicecandidate = e => { if (e.candidate && pc === c) send("ice", e.candidate.toJSON()); };
+c.ontrack = e => { if (pc !== c) return; primeAudio(); audioEl.srcObject = e.streams[0] || new MediaStream([e.track]); audioEl.muted = MicHub.spkOff(); audioEl.play().catch(() => {}); };
 // connection status shown to the player: connecting / connected / failed (with a hint when no TURN relay is configured)
 const hasTurn = () => (ice || []).some(x => [].concat(x.urls).some(u => String(u).startsWith("turn")));
-const setStat = (k, title, msg) => { if (stat === k) return; stat = k; ui(); toast("🎤", T(title), T(msg)); };
-pc.oniceconnectionstatechange = () => {
-const st = pc && pc.iceConnectionState;
+const setStat = (k, title, msg) => { if (stat === k) return; stat = k; ui(); if (!(autoJoin && k === "connecting")) toast("🎤", T(title), T(msg)); };
+c.oniceconnectionstatechange = () => {
+if (pc !== c) return;
+const st = c.iceConnectionState;
 if (st === "checking") setStat("connecting", "Ulanmoqda…", "Raqib bilan aloqa o'rnatilmoqda");
 else if (st === "connected" || st === "completed") setStat("connected", "Ulandi", "Endi bir-biringizni eshitasiz");
 else if (st === "failed") { setStat("failed", "Ulanmadi", hasTurn() ? "Tarmoq to'sdi, qayta urinib ko'ring" : "TURN kerak: mobil internetda ulanish uchun TURN relay sozlanmagan"); retry(); }
 };
-pc.onconnectionstatechange = () => { ui(); if (pc && (pc.connectionState === "failed")) toast("🎤", T("Ovozli aloqa uzildi"), ""); };
-return pc;
+c.onconnectionstatechange = () => { if (pc !== c) return; ui(); if (c.connectionState === "failed") toast("🎤", T("Ovozli aloqa uzildi"), ""); };
+return c;
 }
+function closePC() { const c = pc; pc = null; queued = []; if (c) { try { c.onicecandidate = c.ontrack = c.oniceconnectionstatechange = c.onconnectionstatechange = null; c.close(); } catch (e) {} } }
 function retry() {   // the call did not connect: the caller (seat 0) builds a fresh connection and offers again, up to 3 times
 if (!on || !game || !game.net || game.net.seat !== 0 || tries >= 3) return;
-tries++; const old = pc; pc = null; stat = ""; try { old && old.close(); } catch (e) {}
+tries++; closePC(); stat = "";
 setTimeout(() => { if (on && !pc) negotiate().catch(() => {}); }, 1500);
 }
 async function negotiate() {
-if (!on || !remoteReady || pc || game.net.seat !== 0) return;
-await makePC(); const o = await pc.createOffer(); await pc.setLocalDescription(o); send("offer", {type: o.type, sdp: o.sdp});
+if (!on || !remoteReady || pc || negotiating || !game || !game.net || game.net.seat !== 0) return;
+negotiating = true;   // (one offer at a time: "ready" and the end of enable() can both ask for it in the same moment)
+try { await makePC(); if (!on) return closePC(); const o = await pc.createOffer(); await pc.setLocalDescription(o); offerAt = Date.now(); send("offer", {type: o.type, sdp: o.sdp, f: 1}); }
+catch (e) { closePC(); } finally { negotiating = false; }
 }
-async function onSignal(m) {
+function onSignal(m) { chain = chain.then(() => Promise.race([signal(m), new Promise(r => setTimeout(r, 15000))])).catch(() => {}); return chain; }   // the messages are handled one after another (an offer is answered before the next ice candidate is looked at); one that hangs blocks the others for 15 s at most
+async function signal(m) {
 if (!game || !game.net || game.net.spec) return;
-if (m.k === "ready") { const first = !remoteReady; remoteReady = true; if (!on) { if (first) toast("🎤", T("Raqib mikrofonni yoqdi"), T("🎤 tugmasini bosing")); } else negotiate(); ui(); }
-else if (m.k === "bye") { hang(false); }
-else if (m.k === "offer" && on) { if (pc && ["failed", "closed", "disconnected"].includes(pc.connectionState)) { try { pc.close(); } catch (e) {} pc = null; queued = []; } if (!pc) await makePC(); await pc.setRemoteDescription(m.d); for (const c of queued.splice(0)) pc.addIceCandidate(c).catch(() => {}); const a = await pc.createAnswer(); await pc.setLocalDescription(a); send("answer", {type: a.type, sdp: a.sdp}); }
-else if (m.k === "answer" && pc) { await pc.setRemoteDescription(m.d); for (const c of queued.splice(0)) pc.addIceCandidate(c).catch(() => {}); }
+if (m.k === "ready") {
+const first = !remoteReady; remoteReady = true;
+if (!on) {
+if (first && !joining && online()) {   // the opponent started talking
+if (!MicHub.spkOff()) { toast("🎧", T("Faqat eshitish rejimi"), T("Raqibni eshitasiz. Gapirish uchun 🎤 ni bosing")); enable("listen"); }   // my speaker is on: I hear him without tapping anything
+else toast("🎤", T("Raqib mikrofonni yoqdi"), T("Eshitish uchun 🔊 tugmasini bosing"));
+}
+} else negotiate();
+ui();
+}
+else if (m.k === "bye") {
+remoteReady = false; closePC(); stat = "";
+if (on && (listenOnly || !mic)) { on = false; listenOnly = false; mic = null; if (audioEl) audioEl.srcObject = null; }   // a listener has nothing left to listen to; one with a microphone stays in and waits for the opponent to come back
+ui();
+}
+else if (m.k === "offer" && on && m.d) {
+if (m.d.f || (pc && ["failed", "closed", "disconnected"].includes(pc.connectionState))) closePC();   // a fresh call from his side (or ours is dead): a fresh one on our side as well
+if (!pc) await makePC();
+await pc.setRemoteDescription(m.d); for (const c of queued.splice(0)) pc.addIceCandidate(c).catch(() => {});
+const a = await pc.createAnswer(); await pc.setLocalDescription(a); send("answer", {type: a.type, sdp: a.sdp});
+}
+else if (m.k === "answer" && pc && m.d && pc.signalingState === "have-local-offer") { await pc.setRemoteDescription(m.d); for (const c of queued.splice(0)) pc.addIceCandidate(c).catch(() => {}); }
 else if (m.k === "ice" && m.d) { if (pc && pc.remoteDescription) pc.addIceCandidate(m.d).catch(() => {}); else queued.push(m.d); }
 }
 function primeAudio() {   // the audio element is created (and "unlocked") inside the player's tap, so remote sound can start later without another tap (iOS / Safari)
@@ -10881,11 +10942,7 @@ if (!audioEl) {
 audioEl = document.createElement("audio"); audioEl.autoplay = true; audioEl.playsInline = true; document.body.appendChild(audioEl);
 try { const AC = window.AudioContext || window.webkitAudioContext, ctx = new AC(), dst = ctx.createMediaStreamDestination(); audioEl.srcObject = dst.stream; ctx.resume && ctx.resume(); } catch (e) {}
 }
-audioEl.muted = spkOff; audioEl.play().catch(() => {});
-}
-async function getMic() {
-if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error("unsupported");
-return navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}});
+audioEl.muted = MicHub.spkOff(); audioEl.play().catch(() => {});
 }
 async function micFail(e, lobby) {   // say WHY the microphone is not available and what to do about it
 const n = (e && e.name) || "", ua = navigator.userAgent || "", inFrame = window.top !== window.self;
@@ -10902,49 +10959,71 @@ else sub = "Ruxsat so'rovida «Ruxsat berish» ni bosing";
 toast("🎤", T(title), sub ? T(sub) : "");
 setTimeout(() => toast("🎧", T("Faqat eshitish rejimi"), T(lobby ? "Boshqalarni eshitasiz. Gapirish uchun 🎤 ni bosing" : "Raqibni eshitasiz. Gapirish uchun 🎤 ni bosing")), 700);
 }
-async function enable() {
-if (!window.RTCPeerConnection) return toast("🎤", T("Bu qurilmada ovozli suhbat ishlamaydi"), "");
+async function enable(how = "") {   // how: "" the player tapped 🎤 · "auto" the saved "microphone on" (an online match starts with the voice on, nothing is tapped or asked) · "listen" the opponent talks and my speaker is on: I only listen
+if (on || joining) return;
+if (how === "listen" && MicHub.mic()) how = "auto";   // the saved "microphone on" wins: the opponent's "ready" can come before my own start, and I must not end up as a mere listener
+if (!window.RTCPeerConnection) { if (!how) toast("🎤", T("Bu qurilmada ovozli suhbat ishlamaydi"), ""); return; }
+joining = true; autoJoin = !!how;
+try {
 primeAudio();
-try { mic = await getMic(); listenOnly = false; }
-catch (e) { mic = null; listenOnly = true; micFail(e); }   // no microphone: join anyway as a listener, so the opponent is heard and our side of the call still connects
-on = true; muted = false; tries = 0; send("ready"); ui(); negotiate();
+if (how === "listen") { mic = null; listenOnly = true; }
+else {
+const got = MicHub.get();
+try { mic = how === "auto" ? await MicHub.wait(got, 4000) : await got; listenOnly = false; MicHub.setMic(true); if (!how) MicHub.setMute(false); }
+catch (e) {   // no microphone: join anyway as a listener, so the opponent is heard and our side of the call still connects
+mic = null; listenOnly = true;
+if (e && e.message === "slow") got.then(() => { if (on && listenOnly && !mic && online()) upgradeMic(); }, x => { if (Date.now() - failAt > 600000) { failAt = Date.now(); micFail(x); } });   // the question is still open: listen now, the microphone is added when it is answered
+else if (!how || Date.now() - failAt > 600000) { failAt = Date.now(); micFail(e); }                                                                                                              // (the explanation is not repeated every match)
 }
-async function upgradeMic() {   // listen-only -> the player fixed the permission and taps 🎤 again: add the microphone to the running call
-try { mic = await getMic(); } catch (e) { mic = null; return micFail(e); }
-listenOnly = false; muted = false;
+}
+if (!online()) { mic = null; return; }   // the match ended while the question was open
+on = true; tries = 0; readyTick = 0; send("ready"); ui(); negotiate();
+} finally { joining = false; }
+}
+async function upgradeMic() {   // listen-only -> the player taps 🎤 (fixed the permission, or wants to talk): add the microphone to the running call
+let s; try { s = await MicHub.get(); } catch (e) { mic = null; return micFail(e); }
+mic = s; listenOnly = false; MicHub.setMic(true); MicHub.setMute(false);
 for (let i = 0; i < 8 && pc && pc.signalingState !== "stable"; i++) await new Promise(r => setTimeout(r, 800));
 if (pc && pc.signalingState === "stable") {
 const tr = pc.getTransceivers().find(t => t.receiver && t.receiver.track && t.receiver.track.kind === "audio");
 if (tr) { await tr.sender.replaceTrack(mic.getAudioTracks()[0]); tr.direction = "sendrecv"; } else mic.getTracks().forEach(t => pc.addTrack(t, mic));
-const o = await pc.createOffer(); await pc.setLocalDescription(o); send("offer", {type: o.type, sdp: o.sdp});
+const o = await pc.createOffer(); await pc.setLocalDescription(o); offerAt = Date.now(); send("offer", {type: o.type, sdp: o.sdp});
 }
 toast("🎤", T("Mikrofon yoqildi"), ""); ui();
 }
-function hang(tell = true) {
+function hang(tell = true, byUser = false) {   // byUser: the player switched the microphone off himself - only then it is forgotten (a match that simply ends keeps the "microphone on" for the next one)
 if (tell && on) send("bye");
-if (pc) { try { pc.close(); } catch (e) {} pc = null; }
-if (mic) { mic.getTracks().forEach(t => t.stop()); mic = null; }
-if (audioEl) { audioEl.srcObject = null; }
-on = false; muted = false; listenOnly = false; remoteReady = false; queued = []; stat = ""; ui();
+closePC();
+if (audioEl) audioEl.srcObject = null;
+on = false; listenOnly = false; remoteReady = false; mic = null; stat = ""; negotiating = false; ui();
+if (byUser) { MicHub.setMic(false); MicHub.release(); }
 }
 btn().onclick = () => {
 if (!online()) return toast("🎤", T("Ovozli suhbat faqat haqiqiy o'yinchi bilan ishlaydi"), T("Onlayn raqib topilganda yoqiladi"));
-if (!on) return enable();
+if (!on) return enable("");
 if (listenOnly) return upgradeMic();
-if (pc && pc.connectionState === "connected") { muted = !muted; mic.getAudioTracks().forEach(t => { t.enabled = !muted; }); ui(); }
-else hang();
+if (pc && pc.connectionState === "connected") { MicHub.setMute(!MicHub.muted()); ui(); }   // connected: the button mutes / unmutes (the choice is remembered)
+else hang(true, true);                                                                       // not connected: the button hangs up = microphone off
 };
-btn().oncontextmenu = e => { e.preventDefault(); hang(); };
-spk().onclick = () => { spkOff = !spkOff; if (audioEl) audioEl.muted = spkOff; ui(); };
+btn().oncontextmenu = e => { e.preventDefault(); hang(true, true); };
+spk().onclick = () => {
+const off = !MicHub.spkOff(); MicHub.setSpk(off);
+if (audioEl) audioEl.muted = off;
+if (!off && online()) { primeAudio(); if (!on && remoteReady && !joining) enable("listen"); }   // the speaker is switched on while the opponent is already talking: I join as a listener
+ui();
+};
 setInterval(() => {
 if (on && !online()) hang(); else ui();
-if (on && online() && (!pc || pc.connectionState !== "connected") && ++readyTick % 4 === 0) send("ready");   // "ready" is sent again while not connected, so one lost message can never leave both phones waiting
-if (audioEl && audioEl.srcObject && audioEl.paused && !spkOff) audioEl.play().catch(() => {});
+if (!on && !joining && online() && MicHub.mic()) enable("auto");   // the saved "microphone on": every online match starts with the voice on
+if (on && online() && (!pc || pc.connectionState !== "connected")) { readyTick++; if (readyTick <= 3 || readyTick % 4 === 0) send("ready"); }   // "ready" is sent again while not connected, so one lost message can never leave both phones waiting
+if (on && pc && game && game.net && game.net.seat === 0 && pc.signalingState === "have-local-offer" && Date.now() - offerAt > 10000) { closePC(); negotiate().catch(() => {}); }   // the answer never came: offer again from scratch
+if (audioEl && audioEl.srcObject && audioEl.paused && !MicHub.spkOff()) audioEl.play().catch(() => {});
 }, 1000);
-document.addEventListener("pointerdown", () => { if (audioEl && audioEl.srcObject && audioEl.paused && !spkOff) audioEl.play().catch(() => {}); }, true);   // any tap resumes remote sound the browser had held back
-const state = () => ({on, listenOnly, muted, remoteReady, stat, pcs: pc ? pc.connectionState : "", ice: pc ? pc.iceConnectionState : "", audio: !!(audioEl && audioEl.srcObject && audioEl.srcObject.getAudioTracks && audioEl.srcObject.getAudioTracks().length), paused: !!(audioEl && audioEl.paused)});
+document.addEventListener("pointerdown", () => { if (!audioEl && online()) primeAudio();   // (the sound output is unlocked by a real tap, so a call that starts by itself can be heard on iOS too)
+if (audioEl && audioEl.srcObject && audioEl.paused && !MicHub.spkOff()) audioEl.play().catch(() => {}); }, true);   // any tap resumes remote sound the browser had held back
+const state = () => ({on, listenOnly, muted: MicHub.muted(), mic: !!mic, spkOff: MicHub.spkOff(), remoteReady, stat, pcs: pc ? pc.connectionState : "", ice: pc ? pc.iceConnectionState : "", audio: !!(audioEl && audioEl.srcObject && audioEl.srcObject.getAudioTracks && audioEl.srcObject.getAudioTracks().length), paused: !!(audioEl && audioEl.paused), elMuted: !!(audioEl && audioEl.muted)});
 const stats = async () => { const o = {inPackets: 0, outPackets: 0}; if (!pc) return o; (await pc.getStats()).forEach(r => { if (r.type === "inbound-rtp" && r.kind === "audio") o.inPackets += r.packetsReceived | 0; if (r.type === "outbound-rtp" && r.kind === "audio") o.outPackets += r.packetsSent | 0; }); return o; };
-return {onSignal, hang, ui, state, stats, getMic, micFail, iceServers, IC};
+return {onSignal, hang, ui, state, stats, getMic: MicHub.get, micFail, iceServers, IC};
 })();
 Net.on("rtc", m => Voice.onSignal(m));
 async function turnTest() {   // does the TURN relay really hand out a relay address with the configured login? (tap the version line at the bottom of Settings)
@@ -12238,7 +12317,7 @@ $("opBack").onclick = () => go("withFrScr");
 // ---- lobby voice room (like the voice room of a MOBA lobby): everybody in the lobby can talk to everybody. A mesh of WebRTC calls (<= 8 players, Opus audio is tiny);
 // the server only relays the signalling ("lvoice"), the sound goes phone to phone. The in-match 🎤 (Voice) takes over while a match is on screen; this room pauses and comes back.
 const LobbyVoice = (() => {
-let want = false, susp = false, mic = null, muted = false, listenOnly = false, spkOff = false, ctx = null, tk = 0, myAn = null, myBuf = null, myTalk = false, myUntil = 0, hinted = false;
+let want = false, susp = false, mic = null, listenOnly = false, ctx = null, tk = 0, myAn = null, myBuf = null, mySrc = null, myTalk = false, myUntil = 0, hinted = false, starting = false, left = false, failAt = 0;
 const peers = {}, els = [], IC = Voice.IC;
 const me = () => String(lbMe());
 const active = () => want && !susp && !!LB;
@@ -12246,10 +12325,11 @@ const initiator = uid => me() < String(uid);                                   /
 const member = uid => !!LB && LB.players.some(x => String(x.uid) === String(uid));
 const here = uid => !!LB && LB.players.some(x => String(x.uid) === String(uid) && !x.away);
 const send = (k, to, d, re) => Net.send({t: "lvoice", k, to: to || undefined, d: d || undefined, re: re ? 1 : undefined});
-const peer = uid => peers[uid] || (peers[uid] = {uid, pc: null, el: null, q: [], ready: false, mute: false, tries: 0, bad: 0, gen: 0, busy: false, an: null, buf: null, src: null, talk: false, until: 0});
+const peer = uid => peers[uid] || (peers[uid] = {uid, pc: null, el: null, q: [], ready: false, mute: false, tries: 0, bad: 0, gen: 0, busy: false, an: null, buf: null, src: null, talk: false, until: 0, since: 0});
 const live = p => !!(p && p.pc && p.pc.connectionState === "connected");
-const myState = () => muted || listenOnly;
-const sm = () => spkOff || !!window.__B8_MUTE;   // speaker switched off by the player, or the portal (Playgama etc.) muted the game
+const myState = () => MicHub.muted() || listenOnly;
+const sm = () => MicHub.spkOff() || !!window.__B8_MUTE;   // speaker switched off by the player, or the portal (Playgama etc.) muted the game
+const matchOn = () => mode === "game" && !(game && game.net && game.net.spec && LB);   // a match is on screen (watching a match of the lobby does not count: the room goes on)
 function prime() {   // runs inside the player's tap: audio output is unlocked (iOS / Safari) and one <audio> per possible friend is ready for their voice
 try { if (!ctx) { const AC = window.AudioContext || window.webkitAudioContext; ctx = new AC(); } if (ctx.state === "suspended") ctx.resume(); } catch (e) { ctx = null; }
 while (els.length < 7) {
@@ -12263,6 +12343,12 @@ if (!ctx) return null;
 try { const src = ctx.createMediaStreamSource(stream), an = ctx.createAnalyser(); an.fftSize = 256; src.connect(an); return {src, an, buf: new Uint8Array(an.fftSize)}; } catch (e) { return null; }
 }
 const level = (an, buf) => { if (!an) return 0; an.getByteTimeDomainData(buf); let s = 0; for (let i = 0; i < buf.length; i++) { const v = (buf[i] - 128) / 128; s += v * v; } return Math.sqrt(s / buf.length); };
+function setMic(s) {   // my microphone (the one stream of the app) and its level meter; the old meter is taken off the audio graph
+if (s === mic && (!s || myAn)) return;
+if (mySrc) { try { mySrc.disconnect(); } catch (e) {} mySrc = null; }
+mic = s || null; myAn = myBuf = null; myTalk = false;
+if (mic) { const t = tap(mic); if (t) { mySrc = t.src; myAn = t.an; myBuf = t.buf; } }
+}
 function attach(p, stream) {
 if (!p.el) { p.el = els.find(a => !a._uid) || null; if (!p.el) { prime(); p.el = els.find(a => !a._uid) || null; } if (!p.el) return; p.el._uid = p.uid; }
 p.el.srcObject = stream; p.el.muted = sm(); p.el.play().catch(() => {});
@@ -12292,6 +12378,10 @@ p.busy = true;
 try { if (p.pc) drop(p); const pc = await makePC(p); if (!pc) return; const o = await pc.createOffer(); await pc.setLocalDescription(o); send("offer", p.uid, {type: o.type, sdp: o.sdp}); }
 catch (e) {} finally { p.busy = false; }
 }
+function autoListen() {   // somebody in the room has an open microphone and my speaker is on: I listen too, without a tap (just like in a match)
+if (want || starting || left || !LB || LB.pub || sm() || matchOn()) return;   // (an open lobby is full of strangers: there the room is joined by tapping, as before)
+if (Object.values(peers).some(p => p.ready && !p.mute && member(p.uid) && here(p.uid))) start("listen");
+}
 async function onSignal(m) {
 if (!LB || !m || !m.from || String(m.from) === me() || !member(m.from)) return;
 const p = peer(String(m.from)), k = m.k, d = m.d && typeof m.d === "object" ? m.d : null;
@@ -12302,9 +12392,9 @@ if (active()) {
 if (d && d.r) { drop(p); p.tries = 0; }                                 // that player (re)started his voice from scratch: our old call with him is void
 if (!m.re) send("hello", p.uid, {m: myState()}, 1);                      // answer, so he learns we are here too
 if (!(d && d.q)) negotiate(p);
-}
+} else if (!(d && d.q)) autoListen();
 } else if (k === "bye") { p.ready = false; drop(p); }
-else if (k === "mute") p.mute = !!(d && d.m);
+else if (k === "mute") { p.mute = !!(d && d.m); if (!p.mute) autoListen(); }
 else if (!active()) return;
 else if (k === "offer" && d) {
 p.ready = true; drop(p);                                                   // every offer comes from a fresh connection of his: build a fresh one as well
@@ -12321,97 +12411,121 @@ function announce() {   // "I am in the voice room": every old call is dropped, 
 for (const p of Object.values(peers)) { drop(p); p.tries = 0; }
 send("hello", null, {m: myState(), r: 1}); paint();
 }
-async function start() {   // the player taps the 🎤 button of the lobby
-if (!LB) return;
-if (!window.RTCPeerConnection) return toast("🎤", T("Bu qurilmada ovozli suhbat ishlamaydi"), "");
-prime();
-let err = null;
-try { mic = await Voice.getMic(); listenOnly = false; } catch (e) { mic = null; listenOnly = true; err = e; }   // no microphone: the room works as a listener
-if (!LB) { if (mic) { mic.getTracks().forEach(t => t.stop()); mic = null; } return; }
-if (mic) { const t = tap(mic); myAn = t && t.an; myBuf = t && t.buf; }
-muted = false; want = true; susp = false;
-if (err) Voice.micFail(err, true); else toast("🎤", T("Ovozli xona yoqildi"), T("Lobbidagilar sizni eshitadi"));
-announce();
+function heal(p) {   // one call is dead and does not come back by itself: start it again from scratch (the other phone is told to do the same)
+drop(p); p.tries = 0; send("hello", p.uid, {m: myState(), r: 1});
 }
-async function upgrade() {   // listener -> the player fixed the permission and taps again
-try { mic = await Voice.getMic(); } catch (e) { mic = null; return Voice.micFail(e, true); }
-const t = tap(mic); myAn = t && t.an; myBuf = t && t.buf;
-listenOnly = false; muted = false; toast("🎤", T("Mikrofon yoqildi"), "");
+async function start(how = "") {   // "" the player taps the 🎤 button of the lobby · "auto" the saved "microphone on" · "listen" somebody talks and my speaker is on: I only listen
+if (!LB || starting) return;
+if (how === "listen" && MicHub.mic()) how = "auto";   // (the saved "microphone on" wins, as in a match)
+if (!window.RTCPeerConnection) { if (!how) toast("🎤", T("Bu qurilmada ovozli suhbat ishlamaydi"), ""); return; }
+starting = true;
+try {
+prime();
+let err = null, s = null, late = null;
+if (how === "listen") listenOnly = true;
+else {
+const got = MicHub.get();
+try { s = how === "auto" ? await MicHub.wait(got, 4000) : await got; listenOnly = false; MicHub.setMic(true); if (!how) MicHub.setMute(false); }
+catch (e) { s = null; listenOnly = true; if (e && e.message === "slow") late = got; else err = e; }   // no microphone: the room works as a listener (a question that is still open: listener now, the microphone joins when it is answered)
+}
+if (!LB) return;
+setMic(s); want = true; left = false; susp = matchOn();
+if (late) late.then(st => { if (want && LB && !mic) { setMic(st); listenOnly = false; if (!susp) announce(); } }, x => { if (Date.now() - failAt > 600000) { failAt = Date.now(); Voice.micFail(x, true); } });
+if (err) { if (!how || Date.now() - failAt > 600000) { failAt = Date.now(); Voice.micFail(err, true); } }
+else if (how === "listen") toast("🎧", T("Faqat eshitish rejimi"), T("Boshqalarni eshitasiz. Gapirish uchun 🎤 ni bosing"));
+else if (!how) toast("🎤", T("Ovozli xona yoqildi"), T("Lobbidagilar sizni eshitadi"));
+if (!susp) announce(); else paint();   // (a match is on screen: the room comes back when it is over)
+} finally { starting = false; }
+}
+async function upgrade() {   // listener -> the player taps again (fixed the permission, or wants to talk)
+let s; try { s = await MicHub.get(); } catch (e) { return Voice.micFail(e, true); }
+MicHub.setMic(true); MicHub.setMute(false); setMic(s); listenOnly = false; toast("🎤", T("Mikrofon yoqildi"), "");
 announce();                                                                  // the calls are built again, now with the microphone in them
 }
 function toggleMute() {
 if (!mic) return;
-muted = !muted; mic.getAudioTracks().forEach(t => { t.enabled = !muted; });
-send("mute", null, {m: muted}); paint();
+const m = !MicHub.muted(); MicHub.setMute(m);                                // the tracks of the shared stream are switched; the choice is remembered
+send("mute", null, {m}); paint();
 }
-function release() { if (mic) { mic.getTracks().forEach(t => t.stop()); mic = null; } myAn = myBuf = null; myTalk = false; }
-function stop(tell = true) {
+function stop(tell = true) {   // out of the voice room (the microphone itself stays open for the next lobby / match; MicHub lets it go when it is not needed any more)
 if (tell && want && !susp) send("bye");
 for (const p of Object.values(peers)) drop(p);
 for (const k of Object.keys(peers)) delete peers[k];
-release(); want = false; susp = false; muted = false; listenOnly = false; paint();
+setMic(null); want = false; susp = false; listenOnly = false; paint();
 }
-function suspend() { send("bye"); susp = true; for (const p of Object.values(peers)) { drop(p); p.ready = false; } release(); paint(); }   // a match is on screen: the in-match 🎤 owns the microphone now
-async function resume() {
+function leave() {   // the ✕ button: the player switches the voice off himself - it stays off (no automatic return) until he taps 🎤 again
+stop(true); left = true; MicHub.setMic(false); MicHub.release();
+}
+function suspend() { send("bye"); susp = true; for (const p of Object.values(peers)) { drop(p); p.ready = false; } paint(); }   // a match is on screen: the in-match 🎤 uses the same, still open, microphone
+function resume() {   // the match is over: the same microphone is still open, so the room comes back at once (nothing is asked, nothing is waited for)
 susp = false;
-try { mic = await Voice.getMic(); listenOnly = false; const t = tap(mic); myAn = t && t.an; myBuf = t && t.buf; if (muted) mic.getAudioTracks().forEach(t => { t.enabled = false; }); } catch (e) { mic = null; listenOnly = true; }
+const s = MicHub.live(); setMic(s); listenOnly = !s;
 announce();
+if (!s && MicHub.mic()) MicHub.get().then(st => { if (want && !susp && LB && !mic) { setMic(st); listenOnly = false; announce(); } }, () => {});   // the saved "microphone on" but the stream was let go: taken again in the background, the room is rebuilt with it when it comes
 }
 function sync(first) {   // the lobby's player list changed
 for (const uid of Object.keys(peers)) {
 const p = peers[uid];
 if (!member(uid)) { drop(p); delete peers[uid]; } else if (!here(uid)) drop(p);
 }
-if (first && !want) send("hello", null, {q: 1});                             // "who is already in the voice room?"
+if (first) left = false;
+if (first && !want && MicHub.mic()) start("auto");                           // the saved "microphone on": the voice room is joined at once, no tap, no new question
+else if (first && !want) send("hello", null, {q: 1});                        // "who is already in the voice room?"
 if (!want && !hinted && LB && LB.players.length > 1) { hinted = true; toast("🎤", T("Ovozli xona"), T("Lobbida mikrofonni yoqib gaplashing")); }
+if (!want) autoListen();
 paint();
 }
 const count = () => (active() ? 1 : 0) + Object.values(peers).filter(p => p.ready && member(p.uid)).length;
-function barHTML() { return `<div class="lbvc"><button class="btn blue main" id="lbVoice"></button><button class="btn gray sq" id="lbSpk" style="display:none"></button><button class="btn red sq" id="lbVoff" style="display:none">✕</button></div><div class="lbvn" id="lbVn"></div>`; }
+function barHTML() { return `<div class="lbvc"><button class="btn blue main" id="lbVoice"></button><button class="btn gray sq" id="lbSpk"></button><button class="btn red sq" id="lbVoff" style="display:none">✕</button></div><div class="lbvn" id="lbVn"></div>`; }
 function bind() {
 const b = $("lbVoice"); if (!b) return;
-b.onclick = () => { if (!want) start(); else if (susp) return; else if (listenOnly) upgrade(); else toggleMute(); };
-$("lbSpk").onclick = () => { spkOff = !spkOff; els.forEach(a => { a.muted = sm(); }); paint(); };
-$("lbVoff").onclick = () => { stop(true); toast("🎤", T("Ovozli xonadan chiqdingiz"), ""); };
+b.onclick = () => { if (!want) start(""); else if (susp) return; else if (listenOnly) upgrade(); else toggleMute(); };
+$("lbSpk").onclick = () => { const off = !MicHub.spkOff(); MicHub.setSpk(off); els.forEach(a => { a.muted = sm(); }); if (!off) { prime(); autoListen(); } paint(); };   // the speaker is the "hear the others" switch; it is remembered
+$("lbVoff").onclick = () => { leave(); toast("🎤", T("Ovozli xonadan chiqdingiz"), ""); };
 paint();
 }
 function paint() {
 const root = $("lbBody"); if (!root) return;
-const on = active();
+const on = active(), mu = MicHub.muted();
 root.querySelectorAll(".lbslot[data-uid]").forEach(el => {
 const uid = el.dataset.uid, b = el.querySelector(".lbvb"); let txt = "", talk = false;   // txt: "" nothing, "on" in the room, "off" muted, "wait" connecting
-if (uid === me()) { if (on) { txt = myState() ? "off" : "on"; talk = myTalk && !muted; } }
+if (uid === me()) { if (on) { txt = myState() ? "off" : "on"; talk = myTalk && !mu; } }
 else { const p = peers[uid]; if (p && p.ready) { txt = p.mute ? "off" : on && !live(p) ? "wait" : "on"; talk = !!p.talk && !p.mute; } }
 if (b && b.dataset.v !== txt) { b.dataset.v = txt; b.innerHTML = txt ? MIC_SPAN(txt === "on" ? "" : txt) : ""; }
 el.classList.toggle("talk", talk);
 });
 const bt = $("lbVoice"); if (!bt) return;
-const key = !want ? "off" : susp ? "susp" : listenOnly ? "listen" : muted ? "mute" : "on";
+const key = !want ? "off" : susp ? "susp" : listenOnly ? "listen" : mu ? "mute" : "on";
 if (bt.dataset.k !== key) {
 bt.dataset.k = key;
 bt.className = "btn main " + ({off: "blue", susp: "gray", listen: "gray", mute: "gray", on: "green"})[key];
 bt.innerHTML = (key === "on" ? IC.mic : IC.micOff) + `<span>${esc(T({off: "Ovozli xona", susp: "Ovozli xona", listen: "Faqat eshitish rejimi", mute: "Mikrofon o'chiq", on: "Mikrofon yoqiq"}[key]))}</span>`;
 }
 const sp = $("lbSpk"), off = $("lbVoff");
-sp.style.display = off.style.display = want ? "" : "none";
-const si = spkOff ? IC.spkOff : IC.spk; if (sp.dataset.i !== si) { sp.dataset.i = si; sp.innerHTML = si; }
+off.style.display = want ? "" : "none";
+const si = MicHub.spkOff() ? IC.spkOff : IC.spk; if (sp.dataset.i !== si) { sp.dataset.i = si; sp.innerHTML = si; }
 const n = count(), vn = $("lbVn"), tx = n ? TT("{0} kishi ovozli xonada", n) : "";
 if (vn && vn.textContent !== tx) vn.textContent = tx;
 }
 setInterval(() => {   // once a second: pause / resume around matches, health of every call, keep-alive hello
 if (want && !LB) return stop(false);
 if (!want) return;
-const g = mode === "game" && !(game && game.net && game.net.spec && LB);   // watching a match of the lobby does not pause the lobby voice room
+const g = matchOn();
 if (g && !susp) return suspend();
 if (!g && susp) return void resume();
 if (!active()) return;
 tk++;
+const now = Date.now();
 for (const p of Object.values(peers)) {
-if (!p.pc) { if (p.ready && here(p.uid) && initiator(p.uid) && !p.busy && p.tries < 5) { p.tries++; negotiate(p); } continue; }
+if (!p.pc) { if (p.ready && here(p.uid) && initiator(p.uid) && !p.busy && p.tries < 5) { p.tries++; negotiate(p); } }
+else {
 const st = p.pc.connectionState;
-if (st === "connected") { p.bad = 0; continue; }
-if (st === "failed" || st === "closed" || ++p.bad > 25) { drop(p); if (initiator(p.uid) && p.tries < 5) { p.tries++; negotiate(p); } }
+if (st === "connected") p.bad = 0;
+else if (st === "failed" || st === "closed" || ++p.bad > 25) { drop(p); if (initiator(p.uid) && p.tries < 5) { p.tries++; negotiate(p); } }
 }
+if (p.ready && here(p.uid) && !live(p)) { if (!p.since) p.since = now; else if (now - p.since > 30000) { p.since = now; heal(p); } } else p.since = 0;   // not connected for 30 s although we both want it: start that call again from scratch (the retries above may have run out, a message may have been lost)
+}
+if (tk % 30 === 0) for (const p of Object.values(peers)) p.tries = 0;   // the retries start over every 30 s (the cause may be gone: the network is back)
 if (tk % 8 === 0 && LB.players.some(x => String(x.uid) !== me() && here(x.uid) && !live(peers[String(x.uid)]))) send("hello", null, {m: myState()});   // "ready" is repeated while somebody is not connected, so one lost message can never leave two phones waiting
 els.forEach(a => { a.muted = sm(); if (a.srcObject && a.paused && !sm()) a.play().catch(() => {}); });
 paint();
@@ -12419,14 +12533,16 @@ paint();
 setInterval(() => {   // the speaking ring
 if (!active()) return;
 const now = Date.now();
-if (myAn && !muted) { if (level(myAn, myBuf) > 0.035) myUntil = now + 350; myTalk = now < myUntil; } else myTalk = false;
+if (myAn && !MicHub.muted()) { if (level(myAn, myBuf) > 0.035) myUntil = now + 350; myTalk = now < myUntil; } else myTalk = false;
 for (const p of Object.values(peers)) { if (p.an) { if (level(p.an, p.buf) > 0.035) p.until = now + 350; p.talk = now < p.until; } }
 paint();
 }, 180);
-document.addEventListener("pointerdown", () => { if (want && ctx && ctx.state === "suspended") ctx.resume(); els.forEach(a => { if (a.srcObject && a.paused && !spkOff) a.play().catch(() => {}); }); }, true);
-const state = () => ({want, susp, muted, listenOnly, spkOff, mic: !!mic, count: count(), peers: Object.fromEntries(Object.entries(peers).map(([k, p]) => [k, {ready: p.ready, mute: p.mute, pc: p.pc ? p.pc.connectionState : "", el: !!p.el, talk: p.talk}]))});
+document.addEventListener("pointerdown", () => { if (LB && !els.length) prime();   // (unlocked by a real tap: a room joined by itself can be heard on iOS too)
+if (want && ctx && ctx.state === "suspended") ctx.resume(); els.forEach(a => { if (a.srcObject && a.paused && !sm()) a.play().catch(() => {}); }); }, true);
+document.addEventListener("visibilitychange", () => { if (!document.hidden && want && !susp && LB) setTimeout(() => { for (const p of Object.values(peers)) if (p.ready && here(p.uid) && !live(p)) heal(p); }, 700); });   // back from another app: the calls that did not survive are started again at once
+const state = () => ({want, susp, muted: MicHub.muted(), listenOnly, spkOff: MicHub.spkOff(), mic: !!mic, count: count(), peers: Object.fromEntries(Object.entries(peers).map(([k, p]) => [k, {ready: p.ready, mute: p.mute, pc: p.pc ? p.pc.connectionState : "", el: !!p.el, talk: p.talk, elMuted: !!(p.el && p.el.muted)}]))});
 const stats = async () => { const o = {}; for (const [k, p] of Object.entries(peers)) { o[k] = {in: 0, out: 0}; if (!p.pc) continue; (await p.pc.getStats()).forEach(r => { if (r.type === "inbound-rtp" && r.kind === "audio") o[k].in += r.packetsReceived | 0; if (r.type === "outbound-rtp" && r.kind === "audio") o[k].out += r.packetsSent | 0; }); } return o; };   // for the self-test of the TURN / connection check
-const micTap = () => { if (!want) start(); else if (susp) return; else if (listenOnly) upgrade(); else toggleMute(); };   // the mic button
+const micTap = () => { if (!want) start(""); else if (susp) return; else if (listenOnly) upgrade(); else toggleMute(); };   // the mic button
 return {onSignal, start, stop, sync, bind, paint, barHTML, state, stats, micTap, on: () => active()};
 })();
 Net.on("lvoice", m => LobbyVoice.onSignal(m));
