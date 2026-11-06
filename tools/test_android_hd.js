@@ -36,6 +36,20 @@ const serve = (dir, port, cors) => new Promise(res => { const s = http.createSer
     ok(loads === 2, "the page reloaded once", loads);
     const w = await p.evaluate(async () => { const im = new Image(); im.src = IMG.ga0; await im.decode(); return im.naturalWidth; });
     ok(w === 400, "the avatar is the 400 px HD copy", w);
+    // who skips the HD pack in the app: only a 2G / 3G connection - a weak phone or data saver on 4G still downloads it
+    const fresh = async (conn, mem) => {
+      const c2 = await b.newContext({ viewport: { width: 915, height: 412 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true, locale: "uz-UZ" }), q = await c2.newPage();
+      await q.addInitScript(([cn, mm]) => { if (!localStorage.getItem("billiard8v2")) localStorage.setItem("billiard8v2", JSON.stringify({ name: "Alex", tutDone: true, games: 60, lang: "uz", genderAsked: true, gender: "m" }));
+        Object.defineProperty(navigator, "connection", { value: cn, configurable: true }); if (mm) Object.defineProperty(navigator, "deviceMemory", { value: mm, configurable: true }); }, [conn, mem]);
+      await q.goto(`http://localhost:${A}/`, { waitUntil: "commit" }); return [q, c2];
+    };
+    { const [q, c2] = await fresh({ effectiveType: "3g", saveData: false }, 0);
+      await q.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 120000 });
+      const r = await q.evaluate(() => ({ state: __hd.state, avail: __hd.avail })); ok(r.state === "skipped", "3G: the HD pack is skipped", r); await c2.close(); }
+    { const [q, c2] = await fresh({ effectiveType: "4g", saveData: true }, 1);
+      let saw = false, later = false; const t1 = Date.now();
+      while (Date.now() - t1 < 60000 && !saw) { const t = await q.evaluate(() => { const b = document.querySelector("#bootDl b"), bt = document.querySelector("#bootDl button"); return { t: b ? b.textContent : "", v: !!bt && getComputedStyle(bt).display !== "none" }; }).catch(() => ({ t: "", v: false })); if (/HD grafika/.test(t.t)) { saw = true; later = t.v; } else await sleep(250); }
+      ok(saw, "4G (weak phone, data saver on): the HD pack is downloaded, not skipped"); ok(!later, "and there is no \"Later\" for it"); await c2.close(); }
     ok(errs.length === 0, "no page errors", errs.slice(0, 3));
     await b.close();
   } finally { app.close(); site.close(); }

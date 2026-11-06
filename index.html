@@ -1866,22 +1866,27 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
         el[4].style.display = hd && HB ? "none" : "";   /* the Android app: the HD pack is NOT optional - no "Later" while it downloads (a connection that stalls for 20 s still lets the player in, below) */
         el[1].textContent = "(" + mb(g) + " / " + mb(total) + ")  " + api.pct + "%"; el[2].firstChild.style.width = (100 * g / (total || 1)) + "%";
       };
+      var must = hd && !!HB;   /* the HD pack of the Android app is not optional: patient retries, and a stalled connection does not let the player in */
       var one = function (f, tries) {
-        return fetch(urlOf(f)).then(function (res) {
+        var ac = must && window.AbortController ? new AbortController() : null, to = 0, arm = function () { if (ac) { clearTimeout(to); to = setTimeout(function () { ac.abort(); }, 30000); } };   /* 30 s without a byte: this try is dropped and made again */
+        arm();
+        return fetch(urlOf(f), ac ? {signal: ac.signal} : undefined).then(function (res) {
           if (!res.ok) throw 0;
           var cl = res.clone(), rd = cl.body && cl.body.getReader(), pump = Promise.resolve();
-          if (rd) pump = (function p() { return rd.read().then(function (x) { if (x.done) return; got += x.value.length; paint(); return p(); }); })();
-          return Promise.all([cache.put(f[0], res), pump]).then(function () { if (!rd) { got += f[1]; paint(); } });
-        }).catch(function () { if (tries > 0) return one(f, tries - 1); bad++; });
+          if (rd) pump = (function p() { return rd.read().then(function (x) { if (x.done) return; got += x.value.length; arm(); paint(); return p(); }); })();
+          return Promise.all([cache.put(f[0], res), pump]).then(function () { clearTimeout(to); if (!rd) { got += f[1]; paint(); } });
+        }).catch(function () { clearTimeout(to); if (tries > 0) return new Promise(function (r) { setTimeout(r, must ? 2000 : 0); }).then(function () { return one(f, tries - 1); }); bad++; });
       };
-      var q = files.slice(), worker = function () { var f = q.shift(); return f ? one(f, 1).then(worker) : 0; };
-      var dog = setInterval(function () { if (Date.now() - idle > 20000) { idle = Date.now(); leave(); } }, 2000);   /* a stalled connection never keeps the player out */
+      var q = files.slice(), worker = function () { var f = q.shift(); return f ? one(f, must ? 5 : 1).then(worker) : 0; };
+      var dog = setInterval(function () { if (Date.now() - idle > 20000) { idle = Date.now(); if (!must || navigator.onLine === false) leave(); } }, 2000);   /* a stalled connection never keeps the player out - except the app's HD pack, which waits (and retries) while the phone is online; with no network at all the player is let in and it is tried again at the next start */
       paint();
       var ws = []; for (var w = 0; w < 8; w++) ws.push(worker());   /* 8 at a time: the host speaks HTTP/2, many small files go over one connection */
       return Promise.all(ws).then(function () { clearInterval(dog); got = total; paint(); return bad; });
     };
     var eligible = function () {   /* a weak phone or a slow / metered connection keeps the standard pictures (HD can still be switched on in Settings) */
-      var c = navigator.connection || {}; if (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || "")) return false;
+      var c = navigator.connection || {};
+      if (HB) return !/^(slow-2g|2g|3g)$/.test(c.effectiveType || "");   /* the Android app: only a 2G / 3G connection skips the HD pack; on 4G / Wi-Fi it is always downloaded (a weak phone or data saver does not skip it) */
+      if (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || "")) return false;
       return !(navigator.deviceMemory && navigator.deviceMemory < 2);
     };
     var finish = function () { if (over) return; if (el) { el[2].firstChild.style.width = "100%"; setTimeout(leave, 350); } else leave(); };
