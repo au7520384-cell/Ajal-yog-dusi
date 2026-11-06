@@ -1815,7 +1815,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 <div id="boot" style="background-image:url(img/055f2df1078b8e.webp)"><div id="bootDl"></div></div>
 <script>
 /* First visit, like a big mobile game: the pictures and sounds (the light build's img/ and a/ files) are downloaded ONCE with a progress bar, kept in the browser's cache, and the game opens when they are here.
-   Next visits find everything in the cache and open at once; after an update only the new files are downloaded. "Later" lets the player in at once (the download goes on in the background).
+   Next visits find everything in the cache and open at once; after an update only the new files are downloaded. "Later" lets the player in at once (the download goes on in the background) - except for the HD pack in the Android app (window.__HD_BASE), where it is a must.
    Second pack, "HD" (assets.json "hd": sharper copies of the small pictures: avatars, frames, cues, badges, ball textures ...): downloaded right after the first one into its own cache; sw.js then answers a request for
    img/<hash>.<ext> with the HD copy, and the page is reloaded once so the game starts with it. A slow / metered connection or a very weak phone gets the standard pictures; Settings can switch HD on or off (window.__hd).
    Nothing happens in the single-file build, inside a portal frame, or when the browser has no cache storage. window.__pre is the promise the start-up waits for (the boot picture stays until it is done). */
@@ -1863,6 +1863,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
       var paint = function () {
         var g = Math.min(got, total); if (g !== last) { last = g; idle = Date.now(); } api.pct = total ? Math.floor(100 * g / total) : 100;
         if (over) return; build(); el[0].textContent = hd ? tx[3] : tx[0]; el[3].textContent = hd ? tx[4] : tx[1];
+        el[4].style.display = hd && HB ? "none" : "";   /* the Android app: the HD pack is NOT optional - no "Later" while it downloads (a connection that stalls for 20 s still lets the player in, below) */
         el[1].textContent = "(" + mb(g) + " / " + mb(total) + ")  " + api.pct + "%"; el[2].firstChild.style.width = (100 * g / (total || 1)) + "%";
       };
       var one = function (f, tries) {

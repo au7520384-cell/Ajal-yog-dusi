@@ -20,10 +20,10 @@ const serve = (dir, port, cors) => new Promise(res => { const s = http.createSer
     await p.addInitScript(() => { if (!localStorage.getItem("billiard8v2")) localStorage.setItem("billiard8v2", JSON.stringify({ name: "Alex", tutDone: true, games: 60, lang: "uz", genderAsked: true, gender: "m" })); });
     let loads = 0; p.on("load", () => { loads++; });
     await p.goto(`http://localhost:${A}/`, { waitUntil: "commit" });
-    const t0 = Date.now(); let sawHd = false;
+    const t0 = Date.now(); let sawHd = false, laterShown = false;
     while (Date.now() - t0 < 240000) {
       const t = await p.evaluate(() => { const b = document.querySelector("#bootDl b"); return b ? b.textContent : ""; }).catch(() => "");
-      if (/HD grafika/.test(t)) sawHd = true;
+      if (/HD grafika/.test(t)) { sawHd = true; const vis = await p.evaluate(() => { const b = document.querySelector("#bootDl button"); return !!b && getComputedStyle(b).display !== "none"; }).catch(() => null); if (vis === true) laterShown = true; }   // the HD pack is a must in the app: no "Later" button while it downloads
       if (loads >= 2 && await p.evaluate(() => typeof profile !== "undefined" && !document.getElementById("boot")).catch(() => false)) break;
       await sleep(250);
     }
@@ -31,6 +31,7 @@ const serve = (dir, port, cors) => new Promise(res => { const s = http.createSer
     const st = await p.evaluate(async () => ({ state: __hd.state, n: (await (await caches.open("billiard8-hd")).keys()).length, avail: __hd.avail }));
     const hdN = JSON.parse(fs.readFileSync(path.join(ROOT, "web", "assets.json"), "utf8")).hd.files.length;
     ok(sawHd, "the HD download screen was shown (the standard pack is already in the app)");
+    ok(!laterShown, "no \"Later\" button while the HD pack downloads (it is not optional in the app)");
     ok(st.state === "on" && st.n >= hdN, "the HD pictures are in their own cache, downloaded from the other address", { st, hdN });
     ok(loads === 2, "the page reloaded once", loads);
     const w = await p.evaluate(async () => { const im = new Image(); im.src = IMG.ga0; await im.decode(); return im.naturalWidth; });
