@@ -18,6 +18,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     const g = await p.$("#lsGuest"); if (g) await g.click().catch(() => {}); await sleep(600);
     await p.waitForFunction(() => Net.acct, null, { timeout: 30000 });
     const sku = await p.evaluate(async () => { const r = await Net.api("/api/skus"); return Object.keys(r.skus).find(k => r.skus[k].usd && r.skus[k].coins && !r.skus[k].once && !r.skus[k].items) || Object.keys(r.skus).find(k => r.skus[k].usd); });
+    // the price on the shop's card button is the price of the transfer window (the flat-priced items used to show twice the amount: 25 300 on the button, 12 619 in the window)
+    const pr = await p.evaluate(async () => { const r = await Net.api("/api/skus"), out = {}; for (const [k, u] of [["try_lucky", TRY_USD], ["try_wheel", TRY_USD], ["try_scratch", TRY_USD], ["golden_3", GOLD_USD], ["sbox_1", BOX_USD], ["coins_20k", 1.99]]) out[k] = { server: r.skus[k] && r.skus[k].usd, client: cardUsdOf(u, k), txt: cardPriceTxt(cardUsdOf(u, k)) }; return out; });
+    ok(Object.values(pr).every(x => x.server === x.client), "every card button shows the price the server really charges (flat items and the others)", pr);
+    ok(/^12 ?600 /.test(pr.try_wheel.txt) || /^12.?600/.test(pr.try_wheel.txt), "a +1 try costs 12 600 so'm on the button (not 25 300)", pr.try_wheel.txt);
     // the card way: the shop calls this with an sku (one way only -> the window opens at once; two -> a chooser)
     await p.evaluate(s => { window.__cashBefore = profile.cash; Net.cardPay(s); }, sku); await sleep(1500);
     if (await p.evaluate(() => !!document.getElementById("pcA") && !document.getElementById("p2pChk"))) await p.evaluate(() => document.getElementById("pcA").click());
@@ -28,6 +32,14 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     const txt = await p.evaluate(() => document.getElementById("p2pWait").textContent);
     ok(/Not found yet/.test(txt), "pressing it before the SMS says the money is not found yet", txt);
     ok(got.some(x => /p2p:ok:/.test(JSON.stringify(x.reply_markup || {}))), "and the admin got a Confirm message");
+    // the admin says "not confirmed": the window tells the player so, the button works again, and the next press asks the admin again
+    const askedN = () => got.filter(x => /p2p:ok:/.test(JSON.stringify(x.reply_markup || {}))).length, n1 = askedN(), cbd = got.filter(x => /p2p:ok:/.test(JSON.stringify(x.reply_markup || {}))).pop().reply_markup.inline_keyboard[0][0].callback_data;
+    await fetch(base + "/api/tg/webhook", { method: "POST", headers: { "Content-Type": "application/json", "x-telegram-bot-api-secret-token": require("crypto").createHash("sha256").update("b8hook:123:testtoken").digest("hex").slice(0, 40) }, body: JSON.stringify({ callback_query: { id: "cbx", data: "p2p:no:" + cbd.split(":")[2], from: { id: 555 }, message: { chat: { id: 555 }, message_id: 5 } } }) });
+    await p.waitForFunction(() => /Payment not confirmed/.test((document.getElementById("p2pWait") || {}).textContent || ""), null, { timeout: 15000 }).catch(() => {});
+    ok(await p.evaluate(() => /Payment not confirmed/.test(document.getElementById("p2pWait").textContent)), "after the admin's Reject the window says \"Payment not confirmed\"", await p.evaluate(() => document.getElementById("p2pWait").textContent));
+    ok(await p.evaluate(() => !document.getElementById("p2pChk").disabled), "and the button can be pressed again");
+    await sleep(3300); await p.evaluate(() => document.getElementById("p2pChk").click()); await sleep(1500);
+    ok(askedN() === n1 + 1, "pressing it again asks the admin again (every press reaches the admin)", { before: n1, after: askedN() });
     const r = await fetch(base + "/api/p2p/notify?key=secretkey1234567", { method: "POST", body: JSON.stringify({ text: `+${amount} UZS` }), headers: { "Content-Type": "application/json" } }); ok((await r.json()).matched === 1, "the bank SMS arrives and matches");
     await p.waitForFunction(() => !document.getElementById("modal").classList.contains("on"), null, { timeout: 20000 }).catch(() => {});
     await sleep(2500);

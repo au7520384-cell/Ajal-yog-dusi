@@ -2981,6 +2981,9 @@ const DICT = {
 "Lobbida mikrofonni yoqib gaplashing": ["Switch the mic on and talk in the lobby", "Включите микрофон и говорите в лобби"],
 "Ovozli xonadan chiqdingiz": ["You left the voice room", "Вы вышли из голосовой комнаты"],
 "Eshitish uchun 🔊 tugmasini bosing": ["Tap 🔊 to hear them", "Нажмите 🔊, чтобы слышать"],
+"To'lov tasdiqlanmadi": ["Payment not confirmed", "Платёж не подтверждён"],
+"Pul o'tkazmagan bo'lsangiz, to'lamang. Rostan to'lagan bo'lsangiz, birozdan keyin «To'ladim — tekshirish» ni yana bosing.": ["If you have not sent the money, do not pay. If you really paid, press “I paid — check” again in a moment.", "Если вы не переводили деньги, не оплачивайте. Если действительно оплатили, через минуту снова нажмите «Я оплатил — проверить»."],
+"Narx {0} so'm + {1} so'm — to'lovingizni aniqlash uchun": ["Price {0} so'm + {1} so'm — to recognise your payment", "Цена {0} сум + {1} сум — чтобы опознать ваш платёж"],
 "Boshqalarni eshitasiz. Gapirish uchun 🎤 ni bosing": ["You can hear the others. Tap 🎤 to speak", "Вы слышите остальных. Нажмите 🎤, чтобы говорить"],
 "lobbiga taklif qilamiz. Lobbida 🎤 ovozli xona bilan gaplashasiz.": ["we invite them to a lobby. In the lobby you can talk in the 🎤 voice room.", "приглашаем в лобби. В лобби можно говорить в 🎤 голосовой комнате."],
 "Ulanmadi": ["Not connected", "Не удалось подключиться"],
@@ -4643,7 +4646,7 @@ setTimeout(() => openModal({
 icon, title, text: ring ? "Oltin shar nishonga tushdi!" : "Tasalli sovg'asi",
 extra: `<div class="reward">${ring && ring.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(amount)}</div>`,
 buttons: [
-goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : NO_CARD ? `💎 ${GOLD_GEMS}` : `3 × ${usdTxt(cardUsd(1.99))}`, cls: "orange", fn: goldenShot}
+goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : NO_CARD ? `💎 ${GOLD_GEMS}` : `3 × ${usdTxt(GOLD_USD)}`, cls: "orange", fn: goldenShot}
 : {label: hasTry("lucky") ? T("Yana (bepul)") : `⏳ ${fmtDur(freeLeftMs("lucky"))}`, cls: "orange", fn: () => startLucky()},
 {label: "Menyu", cls: "gray", fn: () => toMenu("mini")}],
 }), 900);
@@ -9477,8 +9480,10 @@ return m && (m.auto || m.atm) ? m : null;
 }
 function cardWays() { const pm = p2pModes(); return TG_LAUNCH && (TG_PAY || pm) ? {pm, world: !!(pm && TG_P2P && TG_P2P.world === pm)} : null; }
 function cardPriceTxt(u) { const w = cardWays(); return w && w.world ? "$" + (+u).toFixed(2) : String(Math.round(u * ((TG_P2P && TG_P2P.k) || (TG_PAY && TG_PAY.k) || 12700) / 100) * 100).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " " + T("so'm"); }
-const cardBtnHTML = (usd, sku, cls = "orange", pre = "", post = "") => cardWays() && sku ? `<button class="btn ${cls}" data-card-sku="${sku}">💳 ${pre}${cardPriceTxt(cardUsd(usd))}${post}</button>` : "";   // the separate card button (clicks are handled by one listener, see Net.cardPay)
-const cardSpec = (usd, sku, pre = "", post = "", cls = "orange") => cardWays() ? [{label: `💳 ${pre}${cardPriceTxt(cardUsd(usd))}${post}`, cls, fn: () => Net.cardPay(sku)}] : [];   // the same for modal button lists
+const FLAT_CARD_SKUS = new Set(["try_lucky", "try_wheel", "try_scratch", "golden_3", "sbox_1"]);   // sold at their plain price (server: FLAT_USD) - the card price rule below does NOT apply, or the button would show another amount than the transfer window
+const cardUsdOf = (usd, sku) => FLAT_CARD_SKUS.has(sku) ? +usd : cardUsd(usd);
+const cardBtnHTML = (usd, sku, cls = "orange", pre = "", post = "") => cardWays() && sku ? `<button class="btn ${cls}" data-card-sku="${sku}">💳 ${pre}${cardPriceTxt(cardUsdOf(usd, sku))}${post}</button>` : "";   // the separate card button (clicks are handled by one listener, see Net.cardPay)
+const cardSpec = (usd, sku, pre = "", post = "", cls = "orange") => cardWays() ? [{label: `💳 ${pre}${cardPriceTxt(cardUsdOf(usd, sku))}${post}`, cls, fn: () => Net.cardPay(sku)}] : [];   // the same for modal button lists
 document.addEventListener("click", e => { const b = e.target && e.target.closest && e.target.closest("[data-card-sku]"); if (!b) return; e.stopPropagation(); e.preventDefault(); Net.cardPay(b.dataset.cardSku, b); }, true);
 const usdTxt = u => TG_LAUNCH ? "⭐ " + Math.max(1, Math.round(u * STARS_K)) : "$" + (+u).toFixed(2);   // in Telegram the price is Stars
 const PAYI = TG_LAUNCH ? "" : "💳 ";
@@ -10495,6 +10500,7 @@ const copy = txt => { const ok = () => toast("📋", T("Nusxa olindi"), T("Do'ko
 const warn = atm ? T(r.foreign ? "Kartaga to'lov qilib, chekni rasmini yuboring. Admin tasdiqlagach xarid qo'shiladi." : "Bankamat orqali to'lov qilib, chekni rasmini yuboring. Admin tasdiqlagach xarid qo'shiladi.") : TT("Kartaga aynan {0} so'm yuboring. Agar 1 so'm kam yoki ko'p yuborsangiz ham to'lov o'tmaydi!", sp(r.amount));
 openModal({icon: "", title: T(atm ? (r.foreign ? "Chek orqali" : "Bankamat orqali") : "Kartaga o'tkazma"), text: "", extra: `<div class="p2p"><div class="p2pw">⚠️ ${esc(warn)}</div>
 <div class="p2pl">${T("Summa")}</div><div class="p2pr"><b>${r.foreign ? "$" + (+r.usd).toFixed(2) : sp(r.amount) + " " + T("so'm")}</b><button class="btn orange" id="p2pCA">${T("Nusxa")}</button></div>
+${!atm && !r.foreign && r.base && r.amount > r.base ? `<div class="p2ph">${esc(TT("Narx {0} so'm + {1} so'm — to'lovingizni aniqlash uchun", sp(r.base), r.amount - r.base))}</div>` : ""}
 ${cards.map((c, i) => `<div class="p2pl">${T("Karta raqami")}${c.label ? " · " + esc(c.label) : ""}</div><div class="p2pr"><b>${esc(c.number)}</b><button class="btn orange" id="p2pCC${i}">${T("Nusxa")}</button></div>${c.holder ? `<div class="p2ph">${esc(c.holder)}</div>` : ""}`).join("")}
 ${atm ? `<button class="btn green" id="p2pRc" style="margin-top:8px">🧾 ${T("Chek rasmini yuboring")}</button><input type="file" accept="image/*" id="p2pFile" hidden><div class="p2pwait" id="p2pWait"></div>` : `<div class="p2pwait" id="p2pWait"><i class="p2pspin"></i>${T("To'lov kutilmoqda — avtomatik tasdiqlanadi")}</div>`}
 <button class="btn blue" id="p2pChk" style="margin-top:8px">✅ ${T("To'ladim — tekshirish")}</button></div>`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
@@ -10503,7 +10509,7 @@ ck.disabled = true; const w = $("p2pWait");
 try {
 const x = await payCheck(r.id);
 if (x.paid && x.paid.length) { if ($("modal").classList.contains("on")) $("modal").classList.remove("on"); toast("✅", T("To'lov tasdiqlandi!"), T("Do'kon")); }
-else if (w) w.innerHTML = `<i class="p2pspin"></i>${T("Hali topilmadi")} · ${T(x.asked ? "Adminga xabar yuborildi — tasdiqlansa xarid o'zi qo'shiladi" : "Bank xabari 1–2 daqiqada keladi. Keyin yana bosing.")}`;
+else if (w) w.innerHTML = `<i class="p2pspin"></i>${T("Hali topilmadi")} · ${T(x.asked || x.waiting ? "Adminga xabar yuborildi — tasdiqlansa xarid o'zi qo'shiladi" : "Bank xabari 1–2 daqiqada keladi. Keyin yana bosing.")}`;
 } catch (e) { toast("⚠️", T("Server bilan aloqa yo'q. Internetni tekshiring."), T("Do'kon")); }
 setTimeout(() => { if (ck) ck.disabled = false; }, 6000);
 }; }
@@ -10522,11 +10528,15 @@ toast("🧾", T("Chek yuborildi. Admin tasdiqlashini kuting."), T("Do'kon"));
 };
 }
 const t0 = Date.now(), limit = atm ? 6 * 3600e3 : 3 * 3600e3;   // while the page is open: wait for the payment to be recognised / confirmed (a transfer that comes late is accepted for 24 h)
-let expTold = false;
+let expTold = false, rejSeen = r.rej | 0;
 const poll = async () => {
 if (Date.now() - t0 > limit) return;
 if (!document.hidden) { try {
-const st = (await api("/api/p2p/status", {id: r.id})).st;
+const sr = await api("/api/p2p/status", {id: r.id}), st = sr.st;
+if ((sr.rej | 0) > rejSeen) {   // the admin looked and the money is not there: "not confirmed" (the order stays open - if the player really pays later, or presses again, it is looked at again)
+rejSeen = sr.rej | 0; const w = $("p2pWait"); if (w) w.innerHTML = `⚠️ ${T("To'lov tasdiqlanmadi")} · ${T("Pul o'tkazmagan bo'lsangiz, to'lamang. Rostan to'lagan bo'lsangiz, birozdan keyin «To'ladim — tekshirish» ni yana bosing.")}`;
+toast("⚠️", T("To'lov tasdiqlanmadi"), T("Do'kon")); const ck2 = $("p2pChk"); if (ck2) ck2.disabled = false;
+}
 if (st === "paid") { if ($("p2pWait") && $("modal").classList.contains("on")) $("modal").classList.remove("on"); toast("✅", T("To'lov tasdiqlandi!"), T("Do'kon")); let n = 0; const sy = () => { sync(); if (++n < 6) setTimeout(sy, 1500); }; sy(); return; }
 if (st === "exp" && !expTold) { expTold = true; toast("⏳", T("Buyurtma muddati tugadi"), T("Pul o'tkazgan bo'lsangiz «To'ladim — tekshirish» ni bosing")); }
 if (st === "no") return toast("⚠️", T("Chek rad etildi"), T("Do'kon"));

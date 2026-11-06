@@ -57,6 +57,7 @@ const P2P_ADMIN = !!(TG_BOT_TOKEN && ADMIN_TG);
 const p2pUz = u => { const c = String(u && u.country || "").toUpperCase(); return !c || c === "UZ"; };   // Uzbekistan, or a country we do not know
 const p2pCards = (uz, mode) => P2P_CARDS.filter(c => c.aud === "all" || c.aud === (uz ? "uz" : "world")).filter(c => mode === "atm" || c.aud !== "world");
 const p2pModes = uz => ({auto: !!(P2P_KEY && p2pCards(uz, "auto").length), atm: !!(P2P_ADMIN && p2pCards(uz, "atm").length)});
+const P2P_ASK_GAP = process.env.P2P_ASK_GAP_MS !== undefined ? +process.env.P2P_ASK_GAP_MS : 3000;   // ms between two admin messages for one order (a double tap); 0 in tests
 const p2pBase = sku => Math.max(1000, Math.round(sku.usd * PAY_PER_USD / 100) * 100);   // so'm, rounded to whole 100
 const safeEq = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && crypto.timingSafeEqual(x, y); };
 const ROOT = path.join(__dirname, "..");
@@ -1333,7 +1334,7 @@ const routes = {
   async "POST /api/p2p/status"(req, u) {
     const b = await jsonBody(req), o = db.p2p[String(b.id || "")];
     if (!o || o.u !== u.id) return [404, {error: "not_found"}];
-    p2pSweep(); return {st: o.st};
+    p2pSweep(); return {st: o.st, rej: o.rej | 0, rejAt: o.rejAt | 0};   // rej: how many times the admin said "not confirmed" (the order stays open: a real payment may still come)
   },
   // "I paid - check": the SMS list is searched again; if the money is not seen yet the admin gets a Telegram message with Confirm / Reject for this order (so a paid order never waits for nobody)
   async "POST /api/p2p/check"(req, u) {
@@ -1344,14 +1345,14 @@ const routes = {
     for (const o of list) {
       if (o.mode === "auto" && p2pSeen(o)) { if (o.st === "exp") { o.st = "pending"; o.late = true; } if (await p2pDecide(o.id, true, "check") === "paid") { paid.push(o.id); continue; } }
       waiting++;
-      if (P2P_ADMIN && (!o.askAt || now - o.askAt > 120e3) && (o.chk | 0) < 6) {
+      if (P2P_ADMIN && (!o.askAt || now - o.askAt >= P2P_ASK_GAP)) {   // EVERY press of "I paid - check" reaches the admin (only a double tap within a couple of seconds is one message)
         o.askAt = now; o.chk = (o.chk | 0) + 1; markDirty();
-        tgApi("sendMessage", {chat_id: ADMIN_TG, text: `💳 To'ladim deyapti #${o.id}\n👤 ${String(u.name || "").slice(0, 30)} (${u.id.slice(0, 6)})\n🛒 ${SKUS[o.sku] ? SKUS[o.sku].name : o.sku}\n💵 ${o.f ? "$" + SKUS[o.sku].usd + " (" + o.amt + " so'm)" : o.amt + " so'm"}\n⏱ ${Math.round((now - o.at) / 60000)} daqiqa oldin\nBank SMS hali kelmagan. Pul kartaga tushgan bo'lsa tasdiqlang:`, reply_markup: {inline_keyboard: [[{text: "✅ Tasdiqlash", callback_data: "p2p:ok:" + o.id}, {text: "❌ Rad etish", callback_data: "p2p:no:" + o.id}]]}}).catch(e => console.error("p2p ask admin:", e.message));
+        tgApi("sendMessage", {chat_id: ADMIN_TG, text: `💳 To'ladim deyapti #${o.id}${o.chk > 1 ? " — " + o.chk + "-marta bosdi" : ""}\n👤 ${String(u.name || "").slice(0, 30)} (${u.id.slice(0, 6)})\n🛒 ${SKUS[o.sku] ? SKUS[o.sku].name : o.sku}\n💵 ${o.f ? "$" + SKUS[o.sku].usd + " (" + o.amt + " so'm)" : o.amt + " so'm"}\n⏱ ${Math.round((now - o.at) / 60000)} daqiqa oldin${o.rej ? "\n❌ Oldin " + o.rej + " marta rad etilgan" : ""}\nBank SMS hali kelmagan. Pul kartaga tushgan bo'lsa tasdiqlang:`, reply_markup: {inline_keyboard: [[{text: "✅ Tasdiqlash", callback_data: "p2p:ok:" + o.id}, {text: "❌ Rad etish", callback_data: "p2p:no:" + o.id}]]}}).catch(e => console.error("p2p ask admin:", e.message));
         asked.push(o.id);
       }
     }
     const L = db.meta.p2pn || {};
-    return {paid, waiting, asked: asked.length, st: b.id && list[0] ? list[0].st : undefined, orders: list.length, sms: !!L.n};
+    return {paid, waiting, asked: asked.length, st: b.id && list[0] ? list[0].st : undefined, orders: list.length, sms: !!L.n, rej: b.id && list[0] ? list[0].rej | 0 : undefined};
   },
   async "POST /api/p2p/receipt"(req, u) {   // the ATM receipt photo goes to the admin's Telegram chat with Confirm / Reject buttons
     if (!P2P_ADMIN || !P2P_CARDS.length) return [503, {error: "not_configured"}];
@@ -1472,7 +1473,7 @@ function p2pSeen(o) {   // an SMS with this order's exact amount arrived after t
 }
 function p2pView(o) {
   const cards = p2pCards(!o.f, o.mode);
-  return {id: o.id, amount: o.amt, base: o.base, foreign: !!o.f, usd: o.f ? SKUS[o.sku].usd : undefined, cards, card: (cards[0] || {}).number, holder: (cards[0] || {}).holder, mode: o.mode, exp: o.exp};
+  return {id: o.id, amount: o.amt, base: o.base, foreign: !!o.f, usd: o.f ? SKUS[o.sku].usd : undefined, cards, card: (cards[0] || {}).number, holder: (cards[0] || {}).holder, mode: o.mode, exp: o.exp, rej: o.rej | 0};
 }
 function p2pSweep(now = Date.now()) {
   for (const [id, o] of Object.entries(db.p2p || {})) {
@@ -1487,8 +1488,10 @@ function p2pAmounts(text) {   // every amount in an SMS: "+12 803.00 UZS", "12,8
   }
   return out;
 }
-async function p2pDecide(id, yes, by) {   // "paid" | "no" | "exp" | "none" | "error": the state after the decision
+async function p2pDecide(id, yes, by) {   // "paid" | "no" | "rejected" | "exp" | "none" | "error": the state after the decision
   const o = db.p2p[id]; if (!o) return "none";
+  // the admin's "Reject" on a card-transfer (SMS) order only means "not confirmed THIS time": the player is told so, the order stays open (a liar pressing "I paid" is refused, and when he really pays later the SMS or the next press still finds the order)
+  if (!yes && by === "admin" && o.mode === "auto" && (o.st === "pending" || o.st === "exp")) { o.rej = (o.rej | 0) + 1; o.rejAt = Date.now(); markDirty(); return "rejected"; }
   if (o.st === "exp" && yes && by === "admin") { o.st = "pending"; o.late = true; }   // the admin saw the money: an expired order is paid too
   if (o.st !== "pending") return o.st;
   o.by = by;
@@ -1531,7 +1534,7 @@ async function tgWebhook(req, res) {
       if (!ADMIN_TG || String(cq.from && cq.from.id) !== ADMIN_TG) await tgApi("answerCallbackQuery", {callback_query_id: cq.id, text: "No access"});
       else {
         const r = await p2pDecide(oid, act === "ok", "admin");
-        const txt = act === "ok" ? (r === "paid" ? "✅ Tasdiqlandi" : r === "no" ? "Allaqachon rad etilgan" : r === "exp" ? "Muddati tugagan" : r === "none" ? "Topilmadi" : "Xato, qayta bosing") : (r === "no" ? "❌ Rad etildi" : r === "paid" ? "Allaqachon tasdiqlangan" : r === "none" ? "Topilmadi" : "Muddati tugagan");
+        const txt = act === "ok" ? (r === "paid" ? "✅ Tasdiqlandi" : r === "no" ? "Allaqachon rad etilgan" : r === "exp" ? "Muddati tugagan" : r === "none" ? "Topilmadi" : "Xato, qayta bosing") : ((r === "no" || r === "rejected") ? (r === "rejected" ? "❌ Rad etildi — o'yinchiga «tasdiqlanmadi» deyiladi" : "❌ Rad etildi") : r === "paid" ? "Allaqachon tasdiqlangan" : r === "none" ? "Topilmadi" : "Muddati tugagan");
         await tgApi("answerCallbackQuery", {callback_query_id: cq.id, text: txt});
         if (r !== "error" && cq.message) await tgApi("editMessageReplyMarkup", {chat_id: cq.message.chat.id, message_id: cq.message.message_id, reply_markup: {inline_keyboard: [[{text: txt, callback_data: "p2p:done"}]]}}).catch(() => {});
       }
