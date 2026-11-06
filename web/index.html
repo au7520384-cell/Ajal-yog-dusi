@@ -1384,6 +1384,7 @@ box-shadow:0 0 12px rgba(255,190,70,.55),inset 0 2px 0 rgba(255,255,255,.6),inse
 #loginSplash .lsGw .lsBtn{position:absolute;inset:0;width:100%;min-width:0;background:linear-gradient(#fff,#e6e6ee);color:#2b2b33;text-shadow:none;gap:10px;padding:0 8px}
 #loginSplash .lsGw .lsBtn svg{flex:none;width:clamp(16px,5cqh,22px);height:clamp(16px,5cqh,22px)}
 #loginSplash .lsGw #gBtn{position:absolute;left:0;top:0;width:300px;height:40px;transform-origin:0 0;opacity:.012;overflow:hidden;z-index:2}   /* Google's own button (rendered 300x40) sits invisibly on top of the picture-matching one, scaled by fitGoogle() to cover it exactly, so the tap still goes to Google */
+#loginSplash .lsVer{position:absolute;right:max(8px,env(safe-area-inset-right,0px));bottom:max(3px,env(safe-area-inset-bottom,0px));font:600 10px/1 system-ui,sans-serif;color:rgba(255,255,255,.55);text-shadow:0 1px 2px #000;pointer-events:none}
 @container (max-aspect-ratio: 1/1){   /* a portrait screen: the buttons stack in one column */
 #loginSplash .lsBtns{--bw:min(86cqw,340px);flex-direction:column;flex-wrap:nowrap}
 }
@@ -2625,6 +2626,10 @@ const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 const LANGS = {uz: "O'zbekcha", en: "English", ru: "Русский", tr: "Türkçe", es: "Español", pt: "Português", fr: "Français", de: "Deutsch",
 id: "Bahasa Indonesia", ar: "العربية", hi: "हिन्दी", ko: "한국어", ja: "日本語", zh: "中文"};
 const DICT = {
+"Brauzerni ochib bo'lmadi": ["The browser could not be opened", "Не удалось открыть браузер"],
+"Kirish tugallanmadi": ["Sign-in was not completed", "Вход не завершён"],
+"Brauzer ochilmoqda…": ["Opening the browser…", "Открываю браузер…"],
+"Kirish tasdiqlanmadi": ["Sign-in was not confirmed", "Вход не подтверждён"],
 "Har bir g'alaba Showdown ochkosi va Gambit tokeni beradi. Haftalik reytingda ko'tariling!": ["Every win earns Showdown points and a Gambit token. Climb the weekly ranking!", "Каждая победа даёт очки Showdown и жетон Гамбита. Поднимайтесь в недельном рейтинге!"],
 "64 o'yinchi, 6 raund — bosh sovrin 7,5 mln tanga!": ["64 players, 6 rounds — grand prize 7.5M coins!", "64 игрока, 6 раундов — главный приз 7,5 млн монет!"],
 "Mini o'yinlarga yangi o'yin qo'shildi: har kuni bitta bepul qirish kartasi.": ["A new game joined Mini Games: one free scratch card every day.", "В мини-играх появилась новая игра: каждый день одна бесплатная стираемая карта."],
@@ -13783,13 +13788,42 @@ function fitGoogle() {   // Google renders its own button 300x40 px: it is scale
 const gw = $("lsGw"), gb = $("gBtn"); if (!gw || !gb) return;
 const w = gw.offsetWidth, h = gw.offsetHeight; if (w > 20 && h > 10) gb.style.transform = `scale(${w / 300},${h / 40})`;   // layout sizes, not getBoundingClientRect(): a portrait screen turns the whole page by 90 degrees and a turned rectangle would give swapped sizes
 }
+const isApp = () => !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform());   // running inside the Android app (Capacitor shell)
+let appLoginBusy = false;
+async function appLogin(provider, mode, tok) {   // Google and Facebook refuse to sign players in inside an app's embedded WebView (and their pop-up windows never come back to the app), so in the app the sign-in opens in the phone's own browser
+// app: POST /api/auth/begin {provider, s: state, c: sha256 of a secret v} -> Chrome tab SERVER/auth/<provider>/start?s=<state> -> Google / Facebook -> SERVER/auth/done (posts the token to the server, then opens royalbilliard8://auth = back to the app); meanwhile the app polls /api/auth/claim {s, v} and gets the token once, then logs in like the web page does
+if (appLoginBusy) return;
+const name = ({google: "Google", facebook: "Facebook"})[provider], Br = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser;
+if (!Br) return toast("⚠️", T("Brauzerni ochib bo'lmadi"), name);
+appLoginBusy = true; let lis = null;
+toast("🌐", T("Brauzer ochilmoqda…"), name);   // (a sleeping server can take a while to answer: the player sees that the tap was understood)
+try {
+const rnd = n => Array.from(crypto.getRandomValues(new Uint8Array(n)), x => "abcdefghijklmnopqrstuvwxyz0123456789"[x % 36]).join("");
+const s = rnd(40), v = rnd(48), c = btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(v))))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+let closedAt = 0; try { lis = await Br.addListener("browserFinished", () => { closedAt = Date.now(); }); } catch (e) {}
+await Net.api("/api/auth/begin", {provider, s, c});   // the server remembers the request first (it may have to wake up), then the tab opens
+await Br.open({url: `${Net.base}/auth/${provider}/start?s=${s}`});
+const t0 = Date.now();
+while (Date.now() - t0 < 5 * 60000) {
+await new Promise(r => setTimeout(r, 1500));
+let r = null; try { r = await Net.api("/api/auth/claim", {s, v}); } catch (e) {}
+if (r && r.token) { try { Promise.resolve(Br.close()).catch(() => {}); } catch (e) {} tok(); authLogin(r.provider, r.token, mode); return; }   // (a Chrome tab cannot be closed from the app on Android - close() may refuse - the jump back to the game covers it)
+if (r && r.error) return toast("⚠️", T("Kirish tasdiqlanmadi"), name);   // cancelled at Google / Facebook (or the server forgot the request)
+if (closedAt && Date.now() - closedAt > 8000) return toast("⚠️", T("Kirish tugallanmadi"), name);   // the tab was closed and nothing came: the player gave up (or the page could not hand the token over)
+}
+toast("⚠️", T("Kirish tugallanmadi"), name);
+} catch (e) { toast("⚠️", errText(e), name); }
+finally { appLoginBusy = false; try { lis && Promise.resolve(lis.remove()).catch(() => {}); } catch (e) {} }
+}
 function wireLogin(cfg, mode, onTok) {   // the Google / Facebook buttons (in the sign-in popup and on the full-screen sign-in)
-const tok = onTok || (() => {});
-if (cfg.google) { const gw = $("lsGw"); if (gw) { gw.classList.add("on"); const lb = gw.querySelector(".lsBtn"); if (lb) lb.onclick = () => toast("⚠️", "Google", T("Server bilan aloqa yo'q. Internetni tekshiring.")); fitGoogle(); try { new ResizeObserver(fitGoogle).observe(gw); } catch (e) {} } }
-else if ($("lsGw")) $("lsGw").classList.add("gone");   // (full-screen sign-in only) a sign-in the server has not set up is dropped, not left as a dead button
-if (!cfg.facebook && $("lsGw")) $("fbBtn").classList.add("gone");   // Google's own invisible button sits on top when it works; if it never loads the tap says so
-if (cfg.google) loadScript("https://accounts.google.com/gsi/client").then(() => { google.accounts.id.initialize({client_id: cfg.google, callback: x => { tok(); authLogin("google", x.credential, mode); }}); google.accounts.id.renderButton($("gBtn"), {theme: "filled_blue", size: "large", text: "signin_with", width: $("lsGw") ? 300 : 250}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Google"));
-if (cfg.facebook) { $("fbBtn").disabled = false; $("fbBtn").onclick = () => loadScript("https://connect.facebook.net/en_US/sdk.js").then(() => { FB.init({appId: cfg.facebook, version: "v19.0", cookie: false, xfbml: false}); FB.login(x => { if (x.authResponse) { tok(); authLogin("facebook", x.authResponse.accessToken, mode); } }, {scope: "public_profile"}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Facebook")); }
+const tok = onTok || (() => {}), app = isApp(), gw = $("lsGw");
+if (cfg.google) {
+if (gw) { gw.classList.add("on"); const lb = gw.querySelector(".lsBtn"); if (lb) lb.onclick = app ? () => appLogin("google", mode, tok) : () => toast("⚠️", "Google", T("Server bilan aloqa yo'q. Internetni tekshiring.")); if (app) $("gBtn").style.display = "none"; else { fitGoogle(); try { new ResizeObserver(fitGoogle).observe(gw); } catch (e) {} } }   // Google's own invisible button sits on top when it works; if it never loads the tap says so (in the app the picture-matching button itself opens the browser)
+else if (app) { $("gBtn").innerHTML = `<button class="btn" id="gAppBtn">${T("Google bilan kirish")}</button>`; $("gAppBtn").onclick = () => appLogin("google", mode, tok); }
+} else if (gw) gw.classList.add("gone");   // (full-screen sign-in only) a sign-in the server has not set up is dropped, not left as a dead button
+if (!cfg.facebook && gw) $("fbBtn").classList.add("gone");
+if (cfg.google && !app) loadScript("https://accounts.google.com/gsi/client").then(() => { google.accounts.id.initialize({client_id: cfg.google, callback: x => { tok(); authLogin("google", x.credential, mode); }}); google.accounts.id.renderButton($("gBtn"), {theme: "filled_blue", size: "large", text: "signin_with", width: gw ? 300 : 250}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Google"));
+if (cfg.facebook) { $("fbBtn").disabled = false; $("fbBtn").onclick = app ? () => appLogin("facebook", mode, tok) : () => loadScript("https://connect.facebook.net/en_US/sdk.js").then(() => { FB.init({appId: cfg.facebook, version: "v19.0", cookie: false, xfbml: false}); FB.login(x => { if (x.authResponse) { tok(); authLogin("facebook", x.authResponse.accessToken, mode); } }, {scope: "public_profile"}); }).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "Facebook")); }
 }
 function loginSplash(n = 0) {   // full-screen sign-in BEFORE the menu on a fresh install (like the big commercial pool games); only when the server offers Google / Facebook
 if (ON_PORTAL || TG_LAUNCH || !Net.base || store.get("b8guest") || (profile.prov && Object.keys(profile.prov).length)) return;
@@ -13798,8 +13832,9 @@ if (!d) {
 d = document.createElement("div"); d.id = "loginSplash";
 d.innerHTML = `<div class="lsStage"></div><div class="lsShade"></div><div class="lsUi"><img class="lsLogo" alt="Royal Billiard 8" draggable="false"><div class="lsBox"><div class="lsHead"><h2>${T("Do'stlar bilan o'ynang!")}</h2><p>${T("Bepul sovg'alar va mukofotlarni oling!")}</p></div>
 <div class="lsBtns"><div class="lsGw" id="lsGw"><span class="lsBtn"><svg width="22" height="22" viewBox="0 0 48 48"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11.9c-.5 2.8-2.1 5.1-4.5 6.7v5.5h7.3c4.3-3.9 6.4-9.7 6.4-16.2z"/><path fill="#34A853" d="M24 46c6.1 0 11.2-2 14.9-5.5l-7.3-5.5c-2 1.4-4.6 2.2-7.6 2.2-5.8 0-10.8-3.9-12.5-9.2H4v5.7C7.7 41.1 15.3 46 24 46z"/><path fill="#FBBC05" d="M11.5 28c-.5-1.4-.7-2.9-.7-4.5s.3-3.1.7-4.5v-5.7H4C2.4 16.5 1.5 20.1 1.5 24s.9 7.5 2.5 10.7l7.5-5.7z"/><path fill="#EA4335" d="M24 10.8c3.3 0 6.2 1.1 8.5 3.3l6.4-6.4C35.2 4.2 30.1 2 24 2 15.3 2 7.7 6.9 4 14.3l7.5 5.7c1.7-5.3 6.7-9.2 12.5-9.2z"/></svg>${T("Google bilan kirish")}</span><div id="gBtn"></div></div><button class="lgfb" id="fbBtn" disabled><b>f</b>${T("Facebook bilan kirish")}</button>
-<button class="orange" id="lsGuest">${T("Mehmon sifatida o'ynash")}</button></div><p class="muted">${T("Mehmon sifatida o'ynasangiz, o'yin faqat shu qurilmada saqlanadi.")}</p></div></div>`;
+<button class="orange" id="lsGuest">${T("Mehmon sifatida o'ynash")}</button></div><p class="muted">${T("Mehmon sifatida o'ynasangiz, o'yin faqat shu qurilmada saqlanadi.")}</p></div><span class="lsVer"></span></div>`;
 d.firstChild.style.backgroundImage = `url(${IMG.ls_bg})`;
+if (window.__APP_VER) d.querySelector(".lsVer").textContent = "v " + window.__APP_VER;   // the Android app: its version (injected by the build) in the corner
 const lg = d.querySelector(".lsLogo"); lg.onerror = () => { lg.style.visibility = "hidden"; }; lg.src = IMG.ls_logo;   // the small cut-out logo (if it ever fails to load the sign-in still works)
 document.body.appendChild(d);
 $("lsGuest").onclick = () => { store.set("b8guest", 1); d.remove(); };
@@ -13947,7 +13982,7 @@ ${row("Profil", `<button class="btn purple" data-go="profileScr" style="padding:
 { const lb = $("setLab"); if (lb) lb.onclick = openSoundLab; }
 { const cb = $("setChan"); if (cb) cb.onclick = () => { const u = "https://t.me/Royalbilliard8"; Snd.click(); if (TG && TG.openTelegramLink) { try { TG.openTelegramLink(u); return; } catch (e) {} } window.open(u, "_blank", "noopener"); }; }   // the game's public Telegram channel
 { const tb = $("setBuild"); if (tb) { tb.style.cssText = "cursor:pointer;text-decoration:underline dotted"; tb.onclick = runTurnTest; } }
-{ const bl = $("setBuild"), show = b => { if (bl) bl.textContent = b ? " · v " + b + (SRV_TURN === 1 ? " · TURN ✓" : SRV_TURN === 0 ? " · TURN ✗" : "") + (TG_LAUNCH ? (SRV_TG === 1 ? " · TG ✓" : SRV_TG === 0 ? " · TG ✗" : "") : "") : ""; }; if (SRV_BUILD) show(SRV_BUILD); else Net.api("/api/health").then(r => { SRV_BUILD = (r && r.build) || ""; SRV_TURN = r && typeof r.turn === "boolean" ? (r.turn ? 1 : 0) : -1; SRV_TG = r && typeof r.tg === "boolean" ? (r.tg ? 1 : 0) : -1; show(SRV_BUILD); }).catch(() => {}); }   // TURN ✗ = the voice-chat relay is not configured on the server (mobile networks may not connect)
+{ const bl = $("setBuild"), show = b => { if (bl) bl.textContent = (window.__APP_VER ? " · app " + window.__APP_VER : "") + (b ? " · v " + b + (SRV_TURN === 1 ? " · TURN ✓" : SRV_TURN === 0 ? " · TURN ✗" : "") + (TG_LAUNCH ? (SRV_TG === 1 ? " · TG ✓" : SRV_TG === 0 ? " · TG ✗" : "") : "") : ""); }; if (SRV_BUILD) show(SRV_BUILD); else { show(""); Net.api("/api/health").then(r => { SRV_BUILD = (r && r.build) || ""; SRV_TURN = r && typeof r.turn === "boolean" ? (r.turn ? 1 : 0) : -1; SRV_TG = r && typeof r.tg === "boolean" ? (r.tg ? 1 : 0) : -1; show(SRV_BUILD); }).catch(() => {}); } }   // TURN ✗ = the voice-chat relay is not configured on the server (mobile networks may not connect)
 $("setBody").querySelectorAll("[data-t]").forEach(b => b.onclick = () => {
 const k = b.dataset.t;
 if (k === "sound") toggleMute(); else setOpt(k, !opt(k));

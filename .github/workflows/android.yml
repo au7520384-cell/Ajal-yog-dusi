@@ -29,6 +29,8 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - name: Game files (light build, no HD pack, no card buttons)
+        env:
+          APP_VER: ${{ inputs.version_name }} (${{ inputs.version_code }})   # shown on the start screen and in Settings
         run: bash tools/build_android.sh
       - name: Capacitor + Android project
         working-directory: android
@@ -47,6 +49,9 @@ jobs:
           sed -i 's#<item name="android:background">@null</item>#&\n        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>\n        <item name="android:windowBackground">\#0b1030</item>#' android/app/src/main/res/values/styles.xml
           grep -c "sensorLandscape" android/app/src/main/AndroidManifest.xml
           grep -c "shortEdges" android/app/src/main/res/values/styles.xml
+          # sign-in with Google / Facebook goes through the phone's own browser (both refuse an app's embedded WebView, see android/README.md): the page the browser ends on opens royalbilliard8://auth, which brings the game back to the front (launchMode singleTask)
+          sed -i '0,/<\/intent-filter>/s##&\n            <intent-filter>\n                <action android:name="android.intent.action.VIEW" />\n                <category android:name="android.intent.category.DEFAULT" />\n                <category android:name="android.intent.category.BROWSABLE" />\n                <data android:scheme="royalbilliard8" android:host="auth" />\n            </intent-filter>#' android/app/src/main/AndroidManifest.xml
+          grep -c 'android:scheme="royalbilliard8"' android/app/src/main/AndroidManifest.xml
           # the bars STAY hidden: Capacitor hides them once at start, but a swipe from the screen edge (or a dialog, the microphone question ...) brought the navigation bar back and it stayed on screen.
           # MainActivity hides them again every time the window gets focus, and a swipe from the edge shows them only for a moment
           MA=$(find android/app/src/main/java -name MainActivity.java | head -1)

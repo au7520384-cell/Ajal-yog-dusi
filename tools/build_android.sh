@@ -15,8 +15,12 @@ n = s.count("const CARD_PAY = true,"); assert n == 1, n
 s = s.replace("const CARD_PAY = true,", "const CARD_PAY = false,")
 import os
 hb = os.environ.get("HD_BASE", "https://frosty-hill-615a.au7520384.workers.dev/")   # where the HD pack is downloaded from (the static site, with CORS); "" = no HD in the app
-if hb:
-    assert s.count("<head>") == 1; s = s.replace("<head>", "<head><script>window.__HD_BASE=" + json.dumps(hb) + ";</script>")
+inj = ""
+if hb: inj += "window.__HD_BASE=" + json.dumps(hb) + ";"
+av = os.environ.get("APP_VER", "").strip()   # "1.0.5 (14)" from the workflow's version inputs: shown on the start screen and in Settings so it is always clear which build is installed
+if av: inj += "window.__APP_VER=" + json.dumps(av) + ";"
+if inj:
+    assert s.count("<head>") == 1; s = s.replace("<head>", "<head><script>" + inj + "</script>")
 open(f, "w", encoding="utf-8").write(s)
 print("android/www ready: no HD pack, card buttons off")
 PY

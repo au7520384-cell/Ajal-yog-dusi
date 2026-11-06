@@ -31,6 +31,7 @@ const PADDLE_TOKEN = (PADDLE_SANDBOX ? process.env.PADDLE_CLIENT_TOKEN_SANDBOX :
 const PADDLE_API = PADDLE_SANDBOX ? "https://sandbox-api.paddle.com" : "https://api.paddle.com";
 const PAYMENTS = !!(PADDLE_KEY && PADDLE_TOKEN) || !!STRIPE_KEY;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "", FB_APP_ID = process.env.FACEBOOK_APP_ID || "", FB_APP_SECRET = process.env.FACEBOOK_APP_SECRET || "";
+const GOOGLE_INFO_URL = process.env.GOOGLE_TOKENINFO_URL || "https://oauth2.googleapis.com/tokeninfo", FB_GRAPH_URL = (process.env.FB_GRAPH_URL || "https://graph.facebook.com").replace(/\/$/, "");   // (the tests point these at fake servers)
 const envKey = name => {   // a secret key from the environment; when the whole URL it sits in (...?key=KEY&userid=[userId]) was pasted instead of the key alone, its key= part is used
   const v = (process.env[name] || "").trim();
   if (/^https?:\/\//i.test(v)) { try { const k = new URL(v).searchParams.get("key"); if (k) { console.log(`${name} holds a whole URL: using its key= part (put only the key there)`); return k; } } catch (e) {} }
@@ -432,9 +433,9 @@ async function verifyProvider(provider, token) {
   try {
     if (provider === "google") {
       if (!GOOGLE_CLIENT_ID) return null;
-      const r = await fetch("https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(token)), j = await r.json();
+      const r = await fetch(GOOGLE_INFO_URL + "?id_token=" + encodeURIComponent(token)), j = await r.json();
       if (!r.ok || j.aud !== GOOGLE_CLIENT_ID || !/^(https:\/\/)?accounts\.google\.com$/.test(j.iss || "") || (+j.exp || 0) * 1000 < Date.now() || !j.sub) return null;
-      return {sub: String(j.sub), name: j.given_name || j.name || ""};
+      return {sub: String(j.sub), name: j.given_name || j.name || "", nonce: String(j.nonce || "")};
     }
     if (provider === "telegram") {   // Mini App: token = Telegram.WebApp.initData, signed by the bot token (https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app)
       if (!TG_BOT_TOKEN) return null;
@@ -448,14 +449,55 @@ async function verifyProvider(provider, token) {
     }
     if (provider === "facebook") {
       if (!FB_APP_ID || !FB_APP_SECRET) return null;
-      const d = await (await fetch(`https://graph.facebook.com/debug_token?input_token=${encodeURIComponent(token)}&access_token=${FB_APP_ID}|${FB_APP_SECRET}`)).json();
+      const d = await (await fetch(`${FB_GRAPH_URL}/debug_token?input_token=${encodeURIComponent(token)}&access_token=${FB_APP_ID}|${FB_APP_SECRET}`)).json();
       if (!d.data || !d.data.is_valid || String(d.data.app_id) !== FB_APP_ID || !d.data.user_id) return null;
-      let name = ""; try { name = (await (await fetch("https://graph.facebook.com/me?fields=first_name&access_token=" + encodeURIComponent(token))).json()).first_name || ""; } catch (e) {}
+      let name = ""; try { name = (await (await fetch(FB_GRAPH_URL + "/me?fields=first_name&access_token=" + encodeURIComponent(token))).json()).first_name || ""; } catch (e) {}
       return {sub: String(d.data.user_id), name};
     }
   } catch (e) { console.error("auth verify failed:", e.message); }
   return null;
 }
+
+// ---------------------------------------------------------------- sign-in in the phone's own browser (the Android app)
+// Google and Facebook refuse to sign players in inside an app's embedded WebView (and their pop-up windows never reach the app), so the app opens a Chrome tab:
+//   app: POST /api/auth/begin {provider, s: <state>, c: <sha256 of a secret v the app keeps>} (the server remembers the request - so nothing depends on which arrives first, the app's polling or the browser's page load, even when the server has to wake up),
+//        then opens GET /auth/<google|facebook>/start?s=<state> in a Chrome tab  ->  302 to Google (id_token) / Facebook (token) with redirect_uri = <server>/auth/done
+//   /auth/done (a small page): reads the token from the URL fragment, POST /api/auth/stash {s, provider, token} (verified here at once), then sends the player back to the app (royalbilliard8://auth)
+//   app: polls POST /api/auth/claim {s, v}: the token is handed over ONCE, and only to whoever knows v (the deep link carries nothing). The app then logs in with it like the web page does (/api/auth/login).
+const authPend = new Map();   // state -> {c: challenge, t: created, provider, token, denied}
+const AUTH_STATE_RE = /^[A-Za-z0-9_-]{20,64}$/, AUTH_CH_RE = /^[A-Za-z0-9_-]{43}$/, AUTH_BASE = (process.env.RENDER_EXTERNAL_URL || APP_URL).replace(/\/$/, "");   // AUTH_BASE + "/auth/done" is the redirect address to register at Google and at Facebook
+function authPendGc() { const now = Date.now(); for (const [k, p] of authPend) if (now - p.t > 10 * 60000) authPend.delete(k); }
+setInterval(authPendGc, 60000).unref();
+function authStart(req, res, url) {
+  const provider = url.pathname.split("/")[2], s = url.searchParams.get("s") || "", p = AUTH_STATE_RE.test(s) && authPend.get(s);
+  const bad = (code, msg) => { res.writeHead(code, {"Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store"}); res.end(msg); };
+  if (limited(req, "authstart", 30)) return bad(429, "slow down");
+  if (!p || p.provider !== provider) return bad(400, "This sign-in request has expired. Go back to the game and try again.");
+  const ru = encodeURIComponent(AUTH_BASE + "/auth/done");
+  const loc = provider === "google"
+    ? `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}&redirect_uri=${ru}&response_type=id_token&scope=${encodeURIComponent("openid profile")}&nonce=${s}&state=${s}&prompt=select_account`
+    : `https://www.facebook.com/v19.0/dialog/oauth?client_id=${encodeURIComponent(FB_APP_ID)}&redirect_uri=${ru}&response_type=token&scope=public_profile&state=${s}`;
+  res.writeHead(302, {Location: loc, "Cache-Control": "no-store", "Referrer-Policy": "no-referrer"}); res.end();
+}
+const AUTH_DONE_PAGE = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Royal Billiard 8</title>
+<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#06122e;color:#fff;font:18px/1.4 system-ui,sans-serif;text-align:center}main{max-width:420px;padding:24px}#i{font-size:58px}h1{font-size:26px;margin:.2em 0;color:#ffe27a}a.b{display:inline-block;margin-top:18px;padding:14px 26px;border-radius:14px;background:linear-gradient(#ffc83e,#ee8200);color:#fff;font-weight:800;text-decoration:none}</style></head>
+<body><main><div id="i">⏳</div><h1 id="h">Royal Billiard 8</h1><p id="p"></p><a class="b" id="a" href="royalbilliard8://auth" hidden></a></main>
+<script>
+(function () {
+  var L = (navigator.language || "en").slice(0, 2), D = {
+    uz: ["Tayyor!", "Kirish tugadi. O'yinga qayting.", "O'yinga qaytish", "Kirish bekor qilindi.", "Xatolik. O'yinga qaytib, qaytadan urinib ko'ring."],
+    ru: ["Готово!", "Вход выполнен. Вернитесь в игру.", "Вернуться в игру", "Вход отменён.", "Ошибка. Вернитесь в игру и попробуйте ещё раз."],
+    en: ["Done!", "You are signed in. Go back to the game.", "Back to the game", "Sign-in cancelled.", "Something went wrong. Go back to the game and try again."]
+  }, T = D[L] || D.en, $ = function (id) { return document.getElementById(id); };
+  var q = new URLSearchParams((location.hash || "").slice(1) + "&" + (location.search || "").slice(1)), s = q.get("state") || "", tok = q.get("id_token") || q.get("access_token") || "", err = q.get("error") || "";
+  try { history.replaceState(null, "", location.pathname); } catch (e) {}   // the token does not stay in the browser's history
+  function show(icon, h, p, back) { $("i").textContent = icon; $("h").textContent = h; $("p").textContent = p || ""; if (back) { $("a").textContent = T[2]; $("a").hidden = false; setTimeout(function () { location.href = "royalbilliard8://auth"; }, 700); } }
+  if (!s || (!tok && !err)) return show("⚠️", "Royal Billiard 8", T[4], false);
+  fetch("/api/auth/stash", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({s: s, provider: q.get("id_token") ? "google" : "facebook", token: tok, error: err})})
+    .then(function (r) { if (!r.ok) throw 0; show(err ? "✖" : "✅", err ? T[3] : T[0], err ? "" : T[1], true); })
+    .catch(function () { show("⚠️", "Royal Billiard 8", T[4], true); });
+})();
+</script></body></html>`;
 
 function auth(req) {
   const h = req.headers.authorization || "";
@@ -930,6 +972,38 @@ const routes = {
     const c = adCred.get(u.id);
     if (!c || c.n < 1 || Date.now() - c.t > 10 * 60e3) return {ok: false};
     c.n--; console.log(`adsgram claim: reward given to ${u.id}`); return {ok: true};
+  },
+  "GET /auth/done": () => [200, {__html: AUTH_DONE_PAGE}],
+  async "POST /api/auth/begin"(req) {   // the app announces a browser sign-in before it opens the tab
+    if (limited(req, "authbegin", 30)) return [429, {error: "slow down"}];
+    const b = await jsonBody(req), s = String(b.s || ""), c = String(b.c || ""), provider = b.provider === "facebook" ? "facebook" : b.provider === "google" ? "google" : "";
+    if (!provider || !AUTH_STATE_RE.test(s) || !AUTH_CH_RE.test(c)) return [400, {error: "bad_request"}];
+    if (provider === "google" ? !GOOGLE_CLIENT_ID : !FB_APP_ID) return [404, {error: "not_set_up"}];
+    if (authPend.size > 5000) authPendGc();
+    if (authPend.size > 5000) return [503, {error: "busy"}];
+    if (authPend.has(s)) return [409, {error: "exists"}];
+    authPend.set(s, {c, t: Date.now(), provider, token: "", denied: false}); return {ok: true};
+  },
+  async "POST /api/auth/stash"(req) {   // the page the browser sign-in ends on hands the token over (see "sign-in in the phone's own browser")
+    if (limited(req, "authstash", 40)) return [429, {error: "slow down"}];
+    const b = await jsonBody(req), s = String(b.s || ""), p = AUTH_STATE_RE.test(s) && authPend.get(s);
+    if (!p || p.token || p.denied) return [404, {error: "unknown"}];
+    if (b.error) { p.denied = true; return {ok: true}; }   // the player pressed Cancel at Google / Facebook
+    const provider = b.provider === "facebook" ? "facebook" : "google";
+    if (provider !== p.provider) return [400, {error: "bad_provider"}];
+    const v = await verifyProvider(provider, b.token);
+    if (!v || (provider === "google" && v.nonce !== s)) return [401, {error: "bad_token"}];   // a Google token must have been asked for by THIS sign-in (nonce = state)
+    p.token = String(b.token).slice(0, 4096); return {ok: true};
+  },
+  async "POST /api/auth/claim"(req) {
+    if (limited(req, "authclaim", 240)) return [429, {error: "slow down"}];
+    const b = await jsonBody(req), s = String(b.s || ""), p = AUTH_STATE_RE.test(s) && authPend.get(s);
+    if (!p) return {error: "unknown"};
+    const v = String(b.v || ""), want = Buffer.from(p.c), got = Buffer.from(crypto.createHash("sha256").update(v).digest("base64url"));
+    if (v.length < 20 || v.length > 128 || want.length !== got.length || !crypto.timingSafeEqual(want, got)) return [403, {error: "bad_verifier"}];
+    if (p.denied) { authPend.delete(s); return {error: "denied"}; }
+    if (!p.token) return {wait: true};
+    authPend.delete(s); return {provider: p.provider, token: p.token};   // handed over once
   },
   async "POST /api/auth/login"(req) {
     if (limited(req, "authlogin", 20)) return [429, {error: "slow down"}];
@@ -1625,11 +1699,12 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/api/stripe/webhook") return stripeWebhook(req, res);
     if (req.method === "POST" && url.pathname === "/api/paddle/webhook") return paddleWebhook(req, res);
     if (req.method === "GET" && url.pathname === "/pay" && PADDLE_TOKEN) return payPage(res);
+    if (req.method === "GET" && (url.pathname === "/auth/google/start" || url.pathname === "/auth/facebook/start")) return authStart(req, res, url);
     if (req.method === "GET" && (url.pathname === "/privacy" || url.pathname === "/terms" || url.pathname === "/refund" || url.pathname === "/data-deletion")) return legalPage(res, url.pathname);
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /api/adsgram/reward", "GET /api/src/stats", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /auth/done", "POST /api/auth/begin", "POST /api/auth/stash", "POST /api/auth/claim", "GET /api/adsgram/reward", "GET /api/src/stats", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
