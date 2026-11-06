@@ -1745,7 +1745,9 @@ function swapSocket(L, old, ws) {   // ... and his seat in the lobby / the brack
   ws.lobby = L.code; old.lobby = null; old.away = 0; ws.away = 0; ws.profile = ws.profile || old.profile;
   adoptRoom(old, ws);
 }
+const mkProfile = (u, cue, tbl) => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(cue || "start").slice(0, 16), tbl: String(tbl || "").slice(0, 8), tblNo: (u.editions || {})[String(tbl || "")] || 0, code: u.code, club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "", cb: u.club && db.clubs[u.club] ? [db.clubs[u.club].badge | 0, db.clubs[u.club].color | 0] : null});
 function startRoom(a, b, city, T, match) {   // a sits in seat 0, b in seat 1
+  for (const s of [a, b]) if (s && s.pref && db.users[s.uid]) s.profile = mkProfile(db.users[s.uid], s.pref.cue, s.pref.tbl);   // the cue / table / avatar the player has NOW (he may have changed them while sitting in the lobby)
   const first = crypto.randomInt(2);
   const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null, tour: T || null, tourMatch: match || null,
     rx: [0, 0], sn: [0, 0], log: [[], []], away: [0, 0], timers: [null, null]};   // rx: shot / state / result / resign messages taken from each seat; sn + log: the shots and positions relayed from each seat (numbered, so a phone that was away gets the ones it missed)
@@ -1856,7 +1858,8 @@ wss.on("connection", (ws, req) => {
   ws.on("pong", () => { ws.alive = true; });
   ws.on("message", data => {
     let m; try { m = JSON.parse(data); } catch (e) { return; }
-    if (m.t === "ping") return wsSend(ws, {t: "pong"});   // the phone checks that the connection is alive (a dead one often looks open for minutes)
+    if (m.t === "ping") return wsSend(ws, {t: "pong"});
+    if (m.t === "prof") { if (db.users[ws.uid] && bucket(ws, "prof", 6, 10000)) { ws.pref = {cue: m.cue, tbl: m.tbl}; ws.profile = mkProfile(db.users[ws.uid], m.cue, m.tbl); } return; }   // the player equipped another cue / table: the opponent of his next match sees it   // the phone checks that the connection is alive (a dead one often looks open for minutes)
     { const rm = ws.room; if (rm && !rm.over && (m.t === "shot" || m.t === "state" || m.t === "result" || m.t === "resign")) rm.rx[ws.seat]++; }   // counted, so a phone that comes back knows which of its messages never arrived
     if (m.t === "queue") {
       if (m.lobby && m.code) {   // already seated in this lobby (the phone reconnected in two ways at once): nothing to do
@@ -1867,7 +1870,7 @@ wss.on("connection", (ws, req) => {
       if (ws.room) return;
       const city = String(m.city || "lon").slice(0, 8);
       const code = m.code ? String(m.code).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8) : "";
-      ws.profile = {name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(m.cue || "start").slice(0, 16), tbl: String(m.tbl || "").slice(0, 8), tblNo: (u.editions || {})[String(m.tbl || "")] || 0, code: u.code, club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "", cb: u.club && db.clubs[u.club] ? [db.clubs[u.club].badge | 0, db.clubs[u.club].color | 0] : null};
+      ws.pref = {cue: m.cue, tbl: m.tbl}; ws.profile = mkProfile(u, m.cue, m.tbl);
       if (code && m.lobby) {
         let L = lobbies.get(code);
         if (L && !L.players.some(p => seatKept(p))) { lobbies.delete(code); L = null; }
