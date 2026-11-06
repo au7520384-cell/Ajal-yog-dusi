@@ -36,6 +36,9 @@ jobs:
           npm install
           npx cap add android
           npx capacitor-assets generate --android --iconBackgroundColor '#0b1030' --iconBackgroundColorDark '#0b1030'
+          # voice chat (lobby room + in-match 🎤): the WebView may use the microphone - Android asks the player once, the game then keeps the microphone open
+          sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#&\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />#' android/app/src/main/AndroidManifest.xml
+          grep -c "RECORD_AUDIO" android/app/src/main/AndroidManifest.xml
           npx cap sync android
       - name: Version + release signing
         working-directory: android/android
