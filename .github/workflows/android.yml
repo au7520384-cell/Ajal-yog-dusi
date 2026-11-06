@@ -39,6 +39,9 @@ jobs:
           # voice chat (lobby room + in-match 🎤): the WebView may use the microphone - Android asks the player once, the game then keeps the microphone open
           sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#&\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />#' android/app/src/main/AndroidManifest.xml
           grep -c "RECORD_AUDIO" android/app/src/main/AndroidManifest.xml
+          # Play's automatic protection needs minSdk 24 (Android 7+); Capacitor's default is 22
+          sed -i 's/minSdkVersion = 22/minSdkVersion = 24/' android/variables.gradle
+          grep -c "minSdkVersion = 24" android/variables.gradle
           npx cap sync android
       - name: Version + release signing
         working-directory: android/android
