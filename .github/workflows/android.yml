@@ -23,9 +23,9 @@ jobs:
         with:
           ref: ${{ github.ref }}
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
+        with: { node-version: 22 }
       - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: 17 }
+        with: { distribution: temurin, java-version: 21 }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - name: Game files (light build, no HD pack, no card buttons)
@@ -39,7 +39,7 @@ jobs:
           # voice chat (lobby room + in-match 🎤): the WebView may use the microphone - Android asks the player once, the game then keeps the microphone open
           sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#&\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />#' android/app/src/main/AndroidManifest.xml
           grep -c "RECORD_AUDIO" android/app/src/main/AndroidManifest.xml
-          # Play's automatic protection needs minSdk 24 (Android 7+); Capacitor's default is 22
+          # Play's automatic protection needs minSdk 24 (Android 7+); Capacitor 8 already uses 24 (and target / compile SDK 36, which Play now asks for) - kept as a guard
           sed -i 's/minSdkVersion = 22/minSdkVersion = 24/' android/variables.gradle
           grep -c "minSdkVersion = 24" android/variables.gradle
           npx cap sync android
