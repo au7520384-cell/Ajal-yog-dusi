@@ -261,3 +261,11 @@ The owner's report: in a lobby match the game "left the lobby by itself", froze,
 ## Delete my account (Google Play requires it)
 
 Settings → "Hisob va saqlash" → red **Delete my account** → confirmation → `POST /api/account/delete {confirm: "DELETE"}`: the server removes the player (profile, sign-in links, friend links / requests in other players' lists, direct messages, club seat, invite links); purchase and payment-order records stay for the accounting but lose the link to the player; his socket is closed. The phone then wipes its local data and starts again as a new player. The public page `/data-deletion` (the URL for the Play Console "delete account" field) describes this and the e-mail way. Test: `node tools/test_account_delete.js`.
+
+## Card payments: "I paid - check", late transfers, the admin's /orders
+
+- **Check button.** The card-transfer window (and Settings → "To'lovni tekshirish") has "To'ladim — tekshirish": `POST /api/p2p/check {id?}` looks for the bank SMS again; if the money is not seen it sends the admin (`ADMIN_TG_ID`) a Telegram message with Confirm / Reject for that order (once per 2 minutes, at most 6 times per order). Without `ADMIN_TG_ID` + `TELEGRAM_BOT_TOKEN` there is nobody to ask: the player is told the SMS has not come yet.
+- **What arrived is written down** (amounts and time only, never the SMS text): `db.meta.p2pn`. `GET /api/health` shows `p2p: {cards, auto, atm, key, admin, smsCount, lastSms, open}`: open it in a browser - `smsCount: 0` after a real transfer means the phone's SMS forwarder never reached `/api/p2p/notify` (check the forwarder app, the URL and `P2P_NOTIFY_KEY`).
+- **Late money is accepted.** An auto order lives 30 minutes (`P2P_TTL_MS` in tests), but a transfer that arrives up to 24 hours later still pays it (also the admin's Confirm on an expired order); new amounts avoid the amounts of orders that expired in the last 24 h.
+- **The admin in the bot chat:** `/orders` lists the open orders (10 newest, expired ones of the last 24 h too), each with Confirm / Reject. Use it for a payment whose SMS never came.
+- Tests: `node server/test_p2p.js` (mock Telegram API), `node tools/test_p2p_ui.js`.
