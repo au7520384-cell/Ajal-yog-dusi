@@ -3888,7 +3888,7 @@ a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
 const rel = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
 if (rel > 0) {
 collideBalls(a, b, nx, ny);
-if (rel > 26 && !(a.z > 0) && !(b.z > 0) && Math.random() < 0.25) { const t = Math.random() < 0.5 ? a : b; if (t.n !== 0) { t.vz = Math.min(9, (rel - 22) * 0.24); t.z = 0.01; } }   // a hard break can pop a ball off the cloth
+if (rel > 26 && !(a.z > 0) && !(b.z > 0)) { const rd = seededRandom((G.simSeed || 1) ^ Math.imul((a.n | 0) + 1, 73856093) ^ Math.imul((b.n | 0) + 1, 19349663)); if (rd() < 0.25) { const t = rd() < 0.5 ? a : b; if (t.n !== 0) { t.vz = Math.min(9, (rel - 22) * 0.24); t.z = 0.01; } } }   // a hard break can pop a ball off the cloth. The roll depends on the match seed, the shot number and the two balls - NOT on Math.random: each phone used to roll its own, so the balls ended up in different places after a break and snapped to the shooter's positions
 if (rel > 14 && !G.demo) dustPuff(G, a.x + nx * R, a.y + ny * R, Math.min(4, (rel / 12) | 0), 0.7);
 onHit(G, a, b, rel, a.x + nx * R, a.y + ny * R);
 }
@@ -4066,7 +4066,7 @@ if (type === "watch") G.skill = 0.004;
 if (type === "ai" || type === "tour" || type === "watch") G.cur = Math.random() < 0.5 ? 0 : 1;
 if (net) {
 G.net = {seat: net.seat, room: net.room ? String(net.room) : "", lastAim: 0, sentA: null};
-G.balls = rack(net.seed);
+G.balls = rack(net.seed); G.simSeed0 = (net.seed | 0) || 1;   // the physics "dice" (a ball popping off the cloth in a hard break) come from this seed: both phones throw the same ones
 G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
 G.cur = net.first === net.seat ? 0 : 1;
 }
@@ -4108,7 +4108,10 @@ Net.send({t: "state", balls: G.balls.map(b => [b.x, b.y, b.out ? 1 : 0]), turn: 
 }
 function applyState(m) {
 const G = game; if (!G || !G.net) return;
-m.balls.forEach((s, i) => { const b = G.balls[i]; if (!b) return; b.x = s[0]; b.y = s[1]; b.vx = b.vy = 0; if (s[2] && !b.out) b.out = true; else if (!s[2]) b.out = false; });
+m.balls.forEach((s, i) => { const b = G.balls[i]; if (!b) return;
+const dx = b.x - s[0], dy = b.y - s[1], d = Math.hypot(dx, dy);
+if (!b.out && !s[2] && d > 0.6 && d < 400) { b.ox = dx; b.oy = dy; }   // the correction is drawn as a glide, not a jump
+b.x = s[0]; b.y = s[1]; b.vx = b.vy = 0; if (s[2] && !b.out) b.out = true; else if (!s[2]) b.out = false; });
 G.groups = [m.groups[seatOf(0)] || null, m.groups[seatOf(1)] || null];
 G.ballInHand = !!m.bih; G.isBreak = !!m.brk;
 const cur = localOf(m.turn);
@@ -4174,10 +4177,12 @@ let dev = -G.spin.x * k * 0.03;
 if (offS > 0.88 && power > 0.55 && !pl.isAI) { dev += (G.spin.x >= 0 ? 1 : -1) * 0.07 * power; cue.vx *= 0.92; cue.vy *= 0.92; if (!G.demo) setTimeout(() => toast("⚠️", T("Miskyu!"), ""), 0); }
 if (dev) { const c = Math.cos(dev), sn = Math.sin(dev), vx = cue.vx; cue.vx = vx * c - cue.vy * sn; cue.vy = vx * sn + cue.vy * c; }
 applyStrike(cue, G.spin.x, G.spin.y, k, el);
-if (G.net && G.cur === 0) Net.send({t: "shot", power, x: cue.x, y: cue.y, vx: cue.vx, vy: cue.vy, dir: cue.dir, w: [cue.wx, cue.wy, cue.wz], vz0: cue.vz0, a: G.angle});
+if (G.net && G.cur === 0) Net.send({t: "shot", power, x: cue.x, y: cue.y, vx: cue.vx, vy: cue.vy, dir: cue.dir, w: [cue.wx, cue.wy, cue.wz], vz0: cue.vz0, a: G.angle, e: +el.toFixed(2)});
 }
 cue.followDone = false; if (cue.vz0) { cue.vz = cue.vz0; cue.z = 0.01; } else { cue.vz = 0; cue.z = 0; }
 G.shotBy = G.cur;
+G.shotNo = (G.shotNo | 0) + 1; G.simSeed = ((G.simSeed0 || 1) ^ Math.imul(G.shotNo, 2654435761)) >>> 0;   // (this shot's dice: the same on the phone that plays it and on the opponent's)
+for (const b of G.balls) b.ox = b.oy = 0;
 if (G.isBreak && !G.demo && G.type !== "practice") {
 const ms = Math.hypot(cue.vx, cue.vy) * MS_PER_U;
 setTimeout(() => setBanner("BREAK ZARBASI", ms >= BRK_WORLD ? "#8dff9a" : "#ffe27a", `${kmh(ms)} km/h · ${ms.toFixed(1)} m/s`), 350);
@@ -8624,8 +8629,8 @@ if (G.ballInHand && !G.moving && (curP().remote || (G.net && G.net.spec))) { con
 else G.cueTo = null;
 }
 if (G.net && G.cur === 0 && performance.now() - G.net.lastAim > 90) {
-const c = G.balls[0], key = `${G.angle.toFixed(3)}|${c.x | 0}|${c.y | 0}|${input.power.toFixed(2)}`;
-if (key !== G.net.sentA) { G.net.sentA = key; G.net.lastAim = performance.now(); Net.send({t: "aim", a: G.angle, x: c.x, y: c.y, p: input.power}); }
+const c = G.balls[0], el = +(G.elev || 0).toFixed(2), sx = +((G.spin || {}).x || 0).toFixed(2), sy = +((G.spin || {}).y || 0).toFixed(2), key = `${G.angle.toFixed(3)}|${c.x | 0}|${c.y | 0}|${input.power.toFixed(2)}|${el}|${sx}|${sy}`;
+if (key !== G.net.sentA) { G.net.sentA = key; G.net.lastAim = performance.now(); Net.send({t: "aim", a: G.angle, x: c.x, y: c.y, p: input.power, e: el, sx, sy}); }   // (e: how high the butt is raised, sx / sy: where the cue hits the ball - the opponent sees the same cue)
 }
 tutMaybeStart();
 if (introOn(G)) {
@@ -8734,7 +8739,7 @@ if (!(dt > 0) || dt > 250) dt = STEP_MS;   // first frame / returning from anoth
 accum += dt;
 let n = 0;
 while (accum >= STEP_MS - 0.25 && n < 4) {
-const Gp = game; if (Gp && Gp.balls) for (const b of Gp.balls) { b.px = b.x; b.py = b.y; }
+const Gp = game; if (Gp && Gp.balls) for (const b of Gp.balls) { b.px = b.x; b.py = b.y; if (b.ox || b.oy) { b.ox *= 0.8; b.oy *= 0.8; if (Math.abs(b.ox) < 0.15 && Math.abs(b.oy) < 0.15) b.ox = b.oy = 0; } }
 try { update(); watchdog(); } catch (e) { onFrameError(e); }
 accum -= STEP_MS; n++;
 }
@@ -8749,8 +8754,9 @@ if (b.out || b.px === undefined) continue;
 const dx = b.x - b.px, dy = b.y - b.py;
 if (dx * dx + dy * dy < 1600) { swapped.push(b, b.x, b.y); b.x = b.px + dx * al; b.y = b.py + dy * al; }
 }
+if (G1 && G1.balls) for (const b of G1.balls) if (b.ox || b.oy) { swapped.push(b, b.x, b.y); b.x += b.ox; b.y += b.oy; }   // (the glide after a correction from the opponent)
 try { if (game && game.aiGen) aiStep(game); render(); } catch (e) { onFrameError(e); try { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; } catch (_) {} }
-for (let i = 0; i < swapped.length; i += 3) { swapped[i].x = swapped[i + 1]; swapped[i].y = swapped[i + 2]; }
+for (let i = swapped.length - 3; i >= 0; i -= 3) { swapped[i].x = swapped[i + 1]; swapped[i].y = swapped[i + 2]; }
 }
 if (PERF) { const d = performance.now() - pj0; perfJ.s += d; perfJ.n++; if (d > perfJ.m) perfJ.m = d; }
 requestAnimationFrame(frame);
@@ -10605,14 +10611,14 @@ G.replayQ = earlyNet.filter(m => m.room === G.net.room); earlyNet.length = 0;
 Net.on("aim", m => {
 if (netGate(m)) return;
 const G = game; if (G && G.net) G.net.lastRx = performance.now();
-if (G && G.net && G.net.spec) { if (G.cur === m.from && !G.moving) { G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; } } return; }
+if (G && G.net && G.net.spec) { if (G.cur === m.from && !G.moving) { G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); G.elev = clamp(+m.e || 0, 0, 1); G.spin = {x: clamp(+m.sx || 0, -1, 1), y: clamp(+m.sy || 0, -1, 1)}; if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; } } return; }
 if (!G || !G.net || G.cur !== 1 || G.moving) return;
-G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1);
+G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); G.elev = clamp(+m.e || 0, 0, 1); G.spin = {x: clamp(+m.sx || 0, -1, 1), y: clamp(+m.sy || 0, -1, 1)};   // the opponent's raised cue and hit point
 if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; }
 });
 Net.on("shot", m => {
 if (netGate(m)) return;
-const G = game; if (G && G.net && G.net.spec) { if (G.moving || G.strike) return; G.cur = m.from === 1 ? 1 : 0; G.angle = +m.a || G.angle; requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0}); return; }
+const G = game; if (G && G.net && G.net.spec) { if (G.moving || G.strike) return; G.cur = m.from === 1 ? 1 : 0; G.angle = +m.a || G.angle; if (m.e != null) G.elev = clamp(+m.e || 0, 0, 1); requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0}); return; }
 if (!G || !G.net || G.over) return;
 G.net.lastRx = performance.now();
 remoteShot(m);
@@ -10623,7 +10629,7 @@ function remoteShot(m) {
 const G = game; if (!G || !G.net || G.over) return;
 if (G.moving || G.strike) { G.pendingShot = m; return; }
 if (G.cur !== 1) { G.cur = 1; G.turnStart = performance.now(); }
-G.angle = +m.a || G.angle;
+G.angle = +m.a || G.angle; if (m.e != null) G.elev = clamp(+m.e || 0, 0, 1);
 requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0});
 }
 Net.on("state", m => {
@@ -10735,7 +10741,7 @@ const city = CITIES.find(c => c.id === m.city) || CITIES[0];
 const mk = o => ({name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length], level: o.level | 0 || 1,
 isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0, country: o.country || ""});
 const G = baseGame("spec", city, [mk(m.p[0] || {}), mk(m.p[1] || {})]);
-G.net = {seat: 0, spec: true, room: m.room, lastAim: 0, sentA: null}; G.viewers = m.specs | 0; G.giftTo = 0;
+G.net = {seat: 0, spec: true, room: m.room, lastAim: 0, sentA: null}; G.simSeed0 = (m.seed | 0) || 1; G.viewers = m.specs | 0; G.giftTo = 0;
 specInfo.list = Array.isArray(m.list) ? m.list : []; specInfo.log = (m.log || []).map(x => ({name: String(x.name || "").slice(0, 16), avatar: x.avatar | 0, frame: x.frame | 0, msg: String(x.msg || "").slice(0, 60), me: !!(profile && x.name === profile.name)}));
 G.balls = rack(m.seed); G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
 G.cur = m.first === 1 ? 1 : 0; G.tbl = G.players[0].tbl || ""; G.tblOwner = 0; G.demo = false;
@@ -12007,6 +12013,8 @@ Net.send({t: "queue", city: c.id, code, join: !!join, lobby: true, cue: profile.
 setTimeout(() => { if (LB === mine && mine.pending) lbFail(T("Bunday lobbi topilmadi")); }, 30000);   // a sleeping free server needs up to ~50 s to wake: the "no such lobby" answer itself comes at once
 lbShow();
 }
+let profSent = "";   // what the server knows of my cue / table: a change (bought, equipped) is sent at once, so the opponent of the next lobby match sees the cue I really hold
+setInterval(() => { if (!Net.open) { profSent = ""; return; } const k = (profile.cue || "start") + "|" + (profile.tableSkin || ""); if (k !== profSent) { profSent = k; Net.send({t: "prof", cue: profile.cue || "start", tbl: profile.tableSkin || ""}); } }, 1500);
 function lbResume() {   // the phone went to the background (share sheet, another app) and the socket died: take the seat back
 const mine = LB; if (!mine || mine.pending || mine.resuming || Net.open) return;
 mine.resuming = true;
