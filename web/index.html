@@ -257,7 +257,8 @@ transform:translateX(-120%);animation:luxsh 2.8s linear infinite;will-change:tra
 .pfcard{border-color:#ffcf3d;background:linear-gradient(#3a2e5e,#1b1433);gap:4px}.pfcard .tpay{width:100%}.pfcard .tedn{width:100%;font-size:11px}
 .pcrow{border-color:#ffcf3d!important;background:linear-gradient(90deg,#3a2e5e,#1b1433)!important;box-shadow:0 0 16px #ffcf3d44}
 .pcrow .tpay{margin-bottom:4px}
-.pcrow .tpay .btn{font-size:11px;padding:6px 2px;white-space:nowrap;letter-spacing:-.2px}   /* "Попробовать" / "Смотреть" fit the 150 px column in every language */
+.pcrow .tpay .btn{font-size:11px;padding:6px 2px;white-space:nowrap;letter-spacing:-.2px}
+.pcrow .tpay .btn{font-size:10px;letter-spacing:-.4px}   /* "Sinab ko'rish" (uz) was 4 px too wide for its half of the 150 px column */   /* "Попробовать" / "Смотреть" fit the 150 px column in every language */
 .tedn{position:relative;margin-top:3px;padding:2px 6px 4px;border-radius:6px;background:#0007;color:#ffe27a;font-weight:800;overflow:hidden}
 .tedn i{position:absolute;left:0;bottom:0;height:3px;background:linear-gradient(90deg,#ffcf3d,#ff6b5e)}
 .tpcv{width:100%;max-width:620px;border-radius:12px;display:block;margin:6px auto;box-shadow:0 8px 24px #000a}
@@ -593,8 +594,8 @@ padding:8px 6px;border-radius:12px;cursor:pointer}
 .pk{position:relative;overflow:hidden;border-radius:14px;background:radial-gradient(ellipse at 50% 35%,#1b4aa8,#0b1f55 70%);border:2px solid #2d56b0;
 padding:8px 8px 10px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .pk.hot{border-color:#ffcf3d;box-shadow:0 0 14px #ffcf3d55}
-.pkimg{height:92px;display:grid;place-items:center;width:100%}
-.pkimg img{max-height:100%;max-width:100%;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 55%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 55%,#000 62%,transparent 100%)}
+.pkimg{height:92px;display:grid;grid-template-rows:100%;place-items:center;width:100%}   /* (an explicit row: without it the picture's 100% max-height grew with the picture and ran over the amount) */
+.pkimg img{max-height:100%;max-width:100%;object-fit:contain;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 55%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 55%,#000 62%,transparent 100%)}
 .pk .amt{font-family:var(--fh);font-size:24px;color:#fff;text-shadow:0 2px 0 #000a;margin-top:2px}
 .pk .vp{font-size:11px;color:#fff;font-weight:700;white-space:nowrap}.pk .vp span{color:#ffcf3d}
 .pk .btn{width:100%;margin-top:6px;font-size:18px;padding:8px}
@@ -1131,7 +1132,7 @@ background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),color-mix(in srg
 .dsc [data-card-sku]{margin:0;border-radius:0;font-size:clamp(11px,2vh,15px);padding:5px}
 .dstag{position:absolute;right:-30px;top:10px;transform:rotate(35deg);width:120px;text-align:center;background:linear-gradient(#ff6a3c,#c2260f);color:#fff;font-weight:900;font-size:10px;padding:2px 0;z-index:2;box-shadow:0 2px 5px #0008}
 .dsfoot{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#a9b6dd;font-size:clamp(11px,1.9vh,14px);font-weight:700}
-@media (max-height:480px){.dsvip{display:none}.dsc [data-card-sku]{padding:2px;font-size:11px}}
+@media (max-height:480px){.dsvip{display:none}.dsc [data-card-sku]{padding:2px;font-size:11px}.dstore{height:min(84vh,720px)}.dstore .dspic{margin-top:16px}}   /* a phone held sideways: the gems no longer run over the amount */
 /* the same cards inside a shop page (first page + Coins & diamonds): the page has no fixed height, so every card gets its own */
 #shopBody .dsgrid{grid-template-rows:none;grid-auto-rows:clamp(176px,14vw,230px);flex:none;overflow:visible}
 #shopBody .dspic{font-size:clamp(8px,1.6vw,17px);margin-top:12px}
