@@ -1,4 +1,4 @@
-// Card (real-money) prices of every item that is sold in the game for cash/gems: node tools/build_prices.js
+// Card (real-money) prices of every item that is sold in the game for 💎 diamonds (the "cash" fields of the catalog are only the $0.05 price ladder): node tools/build_prices.js
 // Runs the game in a headless browser (playwright), reads the catalog + the dollar price the shop shows, and writes server/prices.json.
 // The server sells exactly these prices through Stripe (the client price is never trusted). Re-run after changing any price in index.html.
 const {chromium} = require(require("child_process").execSync("npm root -g").toString().trim() + "/playwright");

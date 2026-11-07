@@ -21,9 +21,9 @@ en: 🔥 Monday: three things refreshed
 ## dated rank
 when: {"dow": [1], "slot": 0, "dom": [15, 16, 17, 18, 19, 20, 21]}
 uz: 🏁 Dushanba: haftalik marafon boshlandi
-Dunyo va davlat reytingining 1-o'rni uchun 1 500 va 400 💵 beriladi. Ligangizda yuqoriga chiqish uchun eng yaxshi 20% ga kirish kerak. Hafta uzun: shoshilmang, lekin boshlang!
+Dunyo va davlat reytingining 1-o'rni uchun 1 500 000 va 400 000 🪙 beriladi. Ligangizda yuqoriga chiqish uchun eng yaxshi 20% ga kirish kerak. Hafta uzun: shoshilmang, lekin boshlang!
 en: 🏁 Monday: the weekly marathon has started
-1st place in the world and country rankings gets 1,500 and 400 💵. To move up in your league you need to be in the top 20%. The week is long: no rush, but do start!
+1st place in the world and country rankings gets 1,500,000 and 400,000 🪙. To move up in your league you need to be in the top 20%. The week is long: no rush, but do start!
 
 ## dated goals
 when: {"dow": [1], "slot": 0, "dom": [22, 23, 24, 25, 26, 27, 28]}
@@ -65,9 +65,9 @@ This week's discounted table is replaced on Monday morning (05:00). If you like 
 ## dated rank
 when: {"dow": [7], "dom": [1, 2, 3, 4, 5, 6, 7]}
 uz: ⏰ Hafta yopilishiga bir necha soat qoldi
-Dushanba ertalab soat 05:00 da hafta yopiladi. Reytingda o'rningizni tekshiring: dunyo top-3 ga 1 500 / 750 / 400 💵, davlat top-3 ga 400 / 200 / 100 💵 beriladi. Oxirgi g'alabalar sizni baland ko'tarishi mumkin!
+Dushanba ertalab soat 05:00 da hafta yopiladi. Reytingda o'rningizni tekshiring: dunyo top-3 ga 1 500 000 / 750 000 / 400 000 🪙, davlat top-3 ga 400 000 / 200 000 / 100 000 🪙 beriladi. Oxirgi g'alabalar sizni baland ko'tarishi mumkin!
 en: ⏰ A few hours until the week closes
-The week closes on Monday at 05:00. Check your place in the ranking: the world's top 3 get 1,500 / 750 / 400 💵 and each country's top 3 get 400 / 200 / 100 💵. A few last wins can lift you up!
+The week closes on Monday at 05:00. Check your place in the ranking: the world's top 3 get 1,500,000 / 750,000 / 400,000 🪙 and each country's top 3 get 400,000 / 200,000 / 100,000 🪙. A few last wins can lift you up!
 
 ## dated showdown x_showdown
 when: {"dow": [7], "dom": [8, 9, 10, 11, 12, 13, 14]}
@@ -178,9 +178,9 @@ February is here and the Season Pass is renewed: 400 levels and new rewards. Sta
 ## dated stickers s_stickers
 when: {"md": ["02-14"]}
 uz: 💘 14-fevral: «Mehr» stikerlari
-💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 ta iliq stiker do'stingizga iliq so'z yuborish uchun. Har to'plam 10 💵 yoki 100 💎. Yaxshi o'yindan keyin yurak sovg'asi ham yubora olasiz.
+💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 ta iliq stiker do'stingizga iliq so'z yuborish uchun. Har to'plam 25 💎. Yaxshi o'yindan keyin yurak sovg'asi ham yubora olasiz.
 en: 💘 14 February: the "Hearts" stickers
-💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 warm stickers for sending a kind word to a friend. Each pack costs 10 💵 or 100 💎. After a good game you can send a heart gift too.
+💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 warm stickers for sending a kind word to a friend. Each pack costs 25 💎. After a good game you can send a heart gift too.
 
 ## dated pass x_pass
 when: {"md": ["02-28"]}

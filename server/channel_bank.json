@@ -99,8 +99,8 @@
   "id": "F012",
   "cat": "feat",
   "tag": "stickers",
-  "uz": "🎭 Stikerlar: his-tuyg'ularingizni ko'rsating\n6 ta to'plam: Bilyard, Hayvonlar, Kulgi, Taom, Sehr va Mehr: jami 50 dan ortiq stiker. O'yin chatidagi 🎭 tugmasi bilan raqibga yuboriladi. Har to'plam 10 💵 yoki 100 💎.",
-  "en": "🎭 Stickers: show how you feel\n6 packs: Billiards, Animals, Funny, Food, Magic and Hearts, over 50 stickers. Send them with the 🎭 button in the match chat. A pack costs 10 💵 or 100 💎.",
+  "uz": "🎭 Stikerlar: his-tuyg'ularingizni ko'rsating\n6 ta to'plam: Bilyard, Hayvonlar, Kulgi, Taom, Sehr va Mehr: jami 50 dan ortiq stiker. O'yin chatidagi 🎭 tugmasi bilan raqibga yuboriladi. Har to'plam 25 💎.",
+  "en": "🎭 Stickers: show how you feel\n6 packs: Billiards, Animals, Funny, Food, Magic and Hearts, over 50 stickers. Send them with the 🎭 button in the match chat. A pack costs 25 💎.",
   "img": "s_stickers.jpg"
  },
  {
@@ -243,15 +243,15 @@
   "id": "F030",
   "cat": "feat",
   "tag": "rank",
-  "uz": "🌍 Dunyo reytingi: butun dunyo bilan bellashing\nReytingda 5 ta jadval bor: Ligam, Do'stlar, Davlat, Dunyo va Klub ligalari. O'rin hafta davomida yutgan tangalaringizga qarab belgilanadi. Hafta yopilganda dunyo top-3 ga 1 500 / 750 / 400 💵 beriladi.",
-  "en": "🌍 World ranking: compete with the whole world\nFive boards: My league, Friends, Country, World and Club leagues. Your place depends on the coins you win during the week. When the week closes, the world's top 3 get 1,500 / 750 / 400 💵."
+  "uz": "🌍 Dunyo reytingi: butun dunyo bilan bellashing\nReytingda 5 ta jadval bor: Ligam, Do'stlar, Davlat, Dunyo va Klub ligalari. O'rin hafta davomida yutgan tangalaringizga qarab belgilanadi. Hafta yopilganda dunyo top-3 ga 1 500 000 / 750 000 / 400 000 🪙 beriladi.",
+  "en": "🌍 World ranking: compete with the whole world\nFive boards: My league, Friends, Country, World and Club leagues. Your place depends on the coins you win during the week. When the week closes, the world's top 3 get 1,500,000 / 750,000 / 400,000 🪙."
  },
  {
   "id": "F031",
   "cat": "feat",
   "tag": "rank",
-  "uz": "🏳 Davlat reytingi: bayrog'ingiz uchun!\nHar davlatning o'z reytingi bor. Haftalik top-3 ga 400 / 200 / 100 💵 beriladi. Ismingiz bayrog'ingiz bilan birga hammaga ko'rinadi. O'zbekistonni reytingda baland ko'taring 🇺🇿",
-  "en": "🏳 Country ranking: play for your flag!\nEvery country has its own ranking, and its weekly top 3 receive 400 / 200 / 100 💵. Your name shows next to your flag. Raise it high!"
+  "uz": "🏳 Davlat reytingi: bayrog'ingiz uchun!\nHar davlatning o'z reytingi bor. Haftalik top-3 ga 400 000 / 200 000 / 100 000 🪙 beriladi. Ismingiz bayrog'ingiz bilan birga hammaga ko'rinadi. O'zbekistonni reytingda baland ko'taring 🇺🇿",
+  "en": "🏳 Country ranking: play for your flag!\nEvery country has its own ranking, and its weekly top 3 receive 400,000 / 200,000 / 100,000 🪙. Your name shows next to your flag. Raise it high!"
  },
  {
   "id": "F032",
@@ -272,15 +272,15 @@
   "id": "F034",
   "cat": "feat",
   "tag": "clubs",
-  "uz": "🛡 Klub: jamoa bilan g'alaba qozoning\n6-darajadan boshlab klub yaratish yoki qo'shilish mumkin. Klubda 50 kishigacha, chat, sovg'alar va haftalik klublar ligasi bor: eng yaxshi uchta klubning har bir a'zosi 20 / 10 / 5 💵 oladi.",
-  "en": "🛡 Club: win together as a team\nFrom level 6 you can create or join a club: up to 50 members, a chat, gifts and a weekly club league. Every member of the top three clubs receives 20 / 10 / 5 💵."
+  "uz": "🛡 Klub: jamoa bilan g'alaba qozoning\n6-darajadan boshlab klub yaratish yoki qo'shilish mumkin. Klubda 50 kishigacha, chat, sovg'alar va haftalik klublar ligasi bor: eng yaxshi uchta klubning har bir a'zosi 20 000 / 10 000 / 5 000 🪙 oladi.",
+  "en": "🛡 Club: win together as a team\nFrom level 6 you can create or join a club: up to 50 members, a chat, gifts and a weekly club league. Every member of the top three clubs receives 20,000 / 10,000 / 5,000 🪙."
  },
  {
   "id": "F035",
   "cat": "feat",
   "tag": "showdown",
-  "uz": "♞ Showdown: har g'alaba hisobga olinadi\nHar g'alaba Showdown ochkosi va Gambit tokenini beradi. Ochko ko'paygan sari 8 ta mukofot ochiladi: tanga, token, 💵, quti, kiy bo'lagi va 💎. Hafta dushanba kuni yangilanadi.",
-  "en": "♞ Showdown: every win counts\nEvery win earns Showdown points and a Gambit token. Eight rewards unlock as the points add up: coins, tokens, 💵, a box, a cue piece and 💎. It resets every Monday.",
+  "uz": "♞ Showdown: har g'alaba hisobga olinadi\nHar g'alaba Showdown ochkosi va Gambit tokenini beradi. Ochko ko'paygan sari 8 ta mukofot ochiladi: tanga, token, quti va kiy bo'lagi. Hafta dushanba kuni yangilanadi.",
+  "en": "♞ Showdown: every win counts\nEvery win earns Showdown points and a Gambit token. Eight rewards unlock as the points add up: coins, tokens, a box and a cue piece. It resets every Monday.",
   "img": "x_showdown.jpg"
  },
  {
@@ -396,8 +396,8 @@
   "id": "F050",
   "cat": "feat",
   "tag": "brand",
-  "uz": "❓ Bu pul o'yinimi?\nYo'q. Tanga, 💵 va 💎 faqat o'yin ichida ishlaydi, yutuqlar ham o'yin ichidagi sovg'alardir. Bu bilyard o'yini: maqsad zavq, mahorat va raqobat.",
-  "en": "❓ Is it a money game?\nNo. Coins, 💵 and 💎 work only inside the game, and prizes are in-game rewards. This is a pool game: the goal is fun, skill and competition."
+  "uz": "❓ Bu pul o'yinimi?\nYo'q. Tanga va 💎 faqat o'yin ichida ishlaydi, yutuqlar ham o'yin ichidagi sovg'alardir (tanga). 💎 yutuq sifatida berilmaydi: ular faqat do'kondan olinadi. Bu bilyard o'yini: maqsad zavq, mahorat va raqobat.",
+  "en": "❓ Is it a money game?\nNo. Coins and 💎 work only inside the game, and prizes are in-game rewards (coins). 💎 are never a prize: they are only sold in the shop. This is a pool game: the goal is fun, skill and competition."
  },
  {
   "id": "F051",
@@ -417,16 +417,16 @@
   "id": "F053",
   "cat": "feat",
   "tag": "route",
-  "uz": "🎁 Kunlik sovg'alar yo'li: 8 kunlik sovg'alar\n1-kun 100 🪙, 2-kun Omadli zarba, 3-kun 300 🪙, 4-kun 1 💵, 5-kun omad g'ildiragi, 6-kun 1 000 🪙, 7-kun 2 💵 va katta sovrin, 8-kun 2 500 🪙. Bugungi sovg'ani oldingizmi?",
-  "en": "🎁 The daily reward route: 8 days of gifts\nDay 1: 100 🪙, day 2: a Lucky Shot, day 3: 300 🪙, day 4: 1 💵, day 5: a wheel spin, day 6: 1,000 🪙, day 7: 2 💵 and a big prize, day 8: 2,500 🪙. Did you collect today's gift?",
+  "uz": "🎁 Kunlik sovg'alar yo'li: 8 kunlik sovg'alar\n1-kun 100 🪙, 2-kun Omadli zarba, 3-kun 300 🪙, 4-kun 1 000 🪙, 5-kun omad g'ildiragi, 6-kun 1 000 🪙, 7-kun 5 000 🪙 katta sovrin, 8-kun 2 500 🪙. Bugungi sovg'ani oldingizmi?",
+  "en": "🎁 The daily reward route: 8 days of gifts\nDay 1: 100 🪙, day 2: a Lucky Shot, day 3: 300 🪙, day 4: 1,000 🪙, day 5: a wheel spin, day 6: 1,000 🪙, day 7: 5,000 🪙 big prize, day 8: 2,500 🪙. Did you collect today's gift?",
   "img": "p06.jpg"
  },
  {
   "id": "F054",
   "cat": "feat",
   "tag": "wheel",
-  "uz": "🎡 Omad g'ildiragi: 8 ta sektor\n500, 1 000 yoki 2 000 🪙, 15, 25 yoki 35 💎, 1 yoki 5 💵. Har 24 soatda bitta aylantirish bepul. Bugun qaysi sektor tushadi?",
-  "en": "🎡 The lucky wheel: 8 sectors\n500, 1,000 or 2,000 🪙, 15, 25 or 35 💎, 1 or 5 💵. One spin is free every 24 hours. Which sector will you land on today?",
+  "uz": "🎡 Omad g'ildiragi: 8 ta sektor\n500 dan 5 000 🪙 gacha 8 xil sovrin. Har 24 soatda bitta aylantirish bepul. Bugun qaysi sektor tushadi?",
+  "en": "🎡 The lucky wheel: 8 sectors\n8 sectors from 500 up to 5,000 🪙. One spin is free every 24 hours. Which sector will you land on today?",
   "img": "p05.jpg"
  },
  {
@@ -1956,14 +1956,14 @@
    "en": "Quiz: how many 💎 does one sticker pack cost?",
    "options": [
     "10",
+    "25",
     "50",
-    "100",
-    "500"
+    "100"
    ],
-   "correct": 2,
+   "correct": 1,
    "explanation": {
-    "uz": "100 💎 yoki 10 💵.",
-    "en": "100 💎 or 10 💵."
+    "uz": "25 💎.",
+    "en": "25 💎."
    }
   }
  },
@@ -2232,18 +2232,18 @@
   "cat": "quiz",
   "tag": "rank",
   "quiz": {
-   "uz": "🥇 Viktorina: haftalik dunyo reytingida 1-o'rin uchun necha 💵 beriladi?",
-   "en": "Quiz: how many 💵 does 1st place in the weekly world ranking receive?",
+   "uz": "🥇 Viktorina: haftalik dunyo reytingida 1-o'rin uchun necha 🪙 beriladi?",
+   "en": "Quiz: how many 🪙 does 1st place in the weekly world ranking receive?",
    "options": [
-    "5 000",
-    "1 500",
-    "400",
-    "150"
+    "5 000 000",
+    "1 500 000",
+    "400 000",
+    "150 000"
    ],
    "correct": 1,
    "explanation": {
-    "uz": "1 500 💵; 2-o'rin 750, 3-o'rin 400.",
-    "en": "1,500 💵; 2nd gets 750 and 3rd gets 400."
+    "uz": "1 500 000 🪙; 2-o'rin 750 000, 3-o'rin 400 000.",
+    "en": "1,500,000 🪙; 2nd gets 750,000 and 3rd gets 400,000."
    }
   }
  },
@@ -2252,18 +2252,18 @@
   "cat": "quiz",
   "tag": "rank",
   "quiz": {
-   "uz": "🏳 Viktorina: davlat reytingida 1-o'rin uchun necha 💵 beriladi?",
-   "en": "Quiz: how many 💵 does 1st place in a country ranking receive?",
+   "uz": "🏳 Viktorina: davlat reytingida 1-o'rin uchun necha 🪙 beriladi?",
+   "en": "Quiz: how many 🪙 does 1st place in a country ranking receive?",
    "options": [
-    "100",
-    "200",
-    "400",
-    "1 500"
+    "100 000",
+    "200 000",
+    "400 000",
+    "1 500 000"
    ],
    "correct": 2,
    "explanation": {
-    "uz": "400 💵; 2-o'rin 200, 3-o'rin 100.",
-    "en": "400 💵; 2nd gets 200 and 3rd gets 100."
+    "uz": "400 000 🪙; 2-o'rin 200 000, 3-o'rin 100 000.",
+    "en": "400,000 🪙; 2nd gets 200,000 and 3rd gets 100,000."
    }
   }
  },
@@ -2482,8 +2482,8 @@
    ],
    "correct": 1,
    "explanation": {
-    "uz": "7-kun: 2 💵 va katta sovrin.",
-    "en": "Day 7: 2 💵 and a big prize."
+    "uz": "7-kun: 5 000 🪙 katta sovrin.",
+    "en": "Day 7: a big prize of 5,000 🪙."
    }
   }
  },
@@ -2582,8 +2582,8 @@
    ],
    "correct": 2,
    "explanation": {
-    "uz": "8 ta: tanga, token, 💵, quti, kiy bo'lagi va 💎.",
-    "en": "8: coins, tokens, 💵, a box, a cue piece and 💎."
+    "uz": "8 ta: tanga, token, quti va kiy bo'lagi.",
+    "en": "8: coins, tokens, a box and a cue piece."
    }
   }
  },
@@ -3719,8 +3719,8 @@
   "id": "S002",
   "cat": "shop",
   "tag": "cues",
-  "uz": "🇺🇿 O'zbekiston kiyi: bayrog'ingiz qo'lingizda\nKo'k rangda, yarim oy nishoni bilan. «Do'kon · Kiylar · Mamlakat» bo'limida: 40 💵 yoki 400 💎. Dunyoning boshqa 198 ta davlati kiyi ham shu yerda.",
-  "en": "🇺🇿 The Uzbekistan cue: your flag in your hands\nBlue, with a crescent. In \"Shop · Cues · Country\": 40 💵 or 400 💎. The cues of 198 other countries are there too.",
+  "uz": "🇺🇿 O'zbekiston kiyi: bayrog'ingiz qo'lingizda\nKo'k rangda, yarim oy nishoni bilan. «Do'kon · Kiylar · Mamlakat» bo'limida: 100 💎. Dunyoning boshqa 198 ta davlati kiyi ham shu yerda.",
+  "en": "🇺🇿 The Uzbekistan cue: your flag in your hands\nBlue, with a crescent. In \"Shop · Cues · Country\": 100 💎. The cues of 198 other countries are there too.",
   "img": "c_uz.jpg"
  },
  {
@@ -3775,8 +3775,8 @@
   "id": "S009",
   "cat": "shop",
   "tag": "avatars",
-  "uz": "🧑 Premium avatar: 20 000 🪙 dan\n70 ta premium avatar, 5 xil noyoblik: Oddiy, Noyob, Epik, Afsonaviy, Mifik. Eng arzoni 20 000 🪙, eng noyobi 💵 bilan. Rasmingiz sizning vizitkangiz.",
-  "en": "🧑 Premium avatars: from 20,000 🪙\n70 premium avatars in 5 rarities: Common, Rare, Epic, Legendary, Mythic. The cheapest is 20,000 🪙 and the rarest cost 💵. Your picture is your business card.",
+  "uz": "🧑 Premium avatar: 20 000 🪙 dan\n70 ta premium avatar, 5 xil noyoblik: Oddiy, Noyob, Epik, Afsonaviy, Mifik. Eng arzoni 20 000 🪙, eng noyobi 💎 bilan. Rasmingiz sizning vizitkangiz.",
+  "en": "🧑 Premium avatars: from 20,000 🪙\n70 premium avatars in 5 rarities: Common, Rare, Epic, Legendary, Mythic. The cheapest is 20,000 🪙 and the rarest cost 💎. Your picture is your business card.",
   "img": "s_avatars_all.jpg"
  },
  {
@@ -3791,32 +3791,32 @@
   "id": "S011",
   "cat": "shop",
   "tag": "stickers",
-  "uz": "🎭 Stiker to'plami: bir bosishda kayfiyat\nBilyard, Hayvonlar, Kulgi, Taom, Sehr, Mehr: 6 ta to'plam. Har biri 10 💵 yoki 100 💎. Raqibingizga zarba paytida kulgi, hayrat yoki rahmat yuboring.",
-  "en": "🎭 A sticker pack: a mood in one tap\nBilliards, Animals, Funny, Food, Magic, Hearts: 6 packs. Each costs 10 💵 or 100 💎. Send your opponent a laugh, a gasp or a thank-you in the middle of the match.",
+  "uz": "🎭 Stiker to'plami: bir bosishda kayfiyat\nBilyard, Hayvonlar, Kulgi, Taom, Sehr, Mehr: 6 ta to'plam. Har biri 25 💎. Raqibingizga zarba paytida kulgi, hayrat yoki rahmat yuboring.",
+  "en": "🎭 A sticker pack: a mood in one tap\nBilliards, Animals, Funny, Food, Magic, Hearts: 6 packs. Each costs 25 💎. Send your opponent a laugh, a gasp or a thank-you in the middle of the match.",
   "img": "s_stickers.jpg"
  },
  {
   "id": "S012",
   "cat": "shop",
   "tag": "stickers",
-  "uz": "😂 «Kulgi» stikerlari: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩\n9 ta stiker: g'alabada 🕶️, omadsizlikda 🤯, hazilda 🤡. O'yin chatidagi 🎭 tugmasi orqali yuboriladi. To'plam 10 💵 yoki 100 💎.",
-  "en": "😂 The \"Funny\" stickers: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩\n9 stickers: 🕶️ for a win, 🤯 for bad luck, 🤡 for a joke. Send them with the 🎭 button in the match chat. The pack costs 10 💵 or 100 💎.",
+  "uz": "😂 «Kulgi» stikerlari: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩\n9 ta stiker: g'alabada 🕶️, omadsizlikda 🤯, hazilda 🤡. O'yin chatidagi 🎭 tugmasi orqali yuboriladi. To'plam 25 💎.",
+  "en": "😂 The \"Funny\" stickers: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩\n9 stickers: 🕶️ for a win, 🤯 for bad luck, 🤡 for a joke. Send them with the 🎭 button in the match chat. The pack costs 25 💎.",
   "img": "s_stickers.jpg"
  },
  {
   "id": "S013",
   "cat": "shop",
   "tag": "stickers",
-  "uz": "💗 «Mehr» stikerlari: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘\n8 ta iliq stiker: do'stingizga yoqimli xabar yuboring. «Bilyard» to'plamida esa 🎱 🏆 👑 🎖️ bor. Har to'plam 10 💵 yoki 100 💎.",
-  "en": "💗 The \"Hearts\" stickers: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘\n8 warm stickers: send your friend a kind word. The \"Billiards\" pack has 🎱 🏆 👑 🎖️. Each pack costs 10 💵 or 100 💎.",
+  "uz": "💗 «Mehr» stikerlari: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘\n8 ta iliq stiker: do'stingizga yoqimli xabar yuboring. «Bilyard» to'plamida esa 🎱 🏆 👑 🎖️ bor. Har to'plam 25 💎.",
+  "en": "💗 The \"Hearts\" stickers: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘\n8 warm stickers: send your friend a kind word. The \"Billiards\" pack has 🎱 🏆 👑 🎖️. Each pack costs 25 💎.",
   "img": "s_stickers.jpg"
  },
  {
   "id": "S014",
   "cat": "shop",
   "tag": "gifts",
-  "uz": "✈️ Samolyot: eng katta sovg'a\nRaqibga uchib boradigan samolyot 👍 ×7 000 beradi va 100 💵 turadi. Mashina ×5 000, mototsikl ×3 000. Katta o'yindan keyin katta hurmat!",
-  "en": "✈️ The jet: the biggest gift\nThe jet that flies to your opponent is worth 👍 ×7,000 and costs 100 💵. The car is ×5,000, the bike ×3,000. Big respect after a big game!",
+  "uz": "✈️ Samolyot: eng katta sovg'a\nRaqibga uchib boradigan samolyot 👍 ×7 000 beradi va 250 💎 turadi. Mashina ×5 000, mototsikl ×3 000. Katta o'yindan keyin katta hurmat!",
+  "en": "✈️ The jet: the biggest gift\nThe jet that flies to your opponent is worth 👍 ×7,000 and costs 250 💎. The car is ×5,000, the bike ×3,000. Big respect after a big game!",
   "img": "m_gifts.jpg"
  },
  {
@@ -3855,8 +3855,8 @@
   "id": "S019",
   "cat": "shop",
   "tag": "pass",
-  "uz": "🩸 Premium Mavsum yo'li: 600 💵 yoki 2 800 💎\nOy tugaguncha ochiq: premium yo'l yana ko'p kiy, ramka, stol va avatar beradi. Bepul yo'l esa hammaga ochiq. Oy tugashiga qancha qoldi? Mavsum yo'lida taymer bor.",
-  "en": "🩸 The premium Season Pass: 600 💵 or 2,800 💎\nOpen until the month ends: the premium track gives many more cues, frames, tables and avatars. The free track is open to all. How long is left? The pass has a timer.",
+  "uz": "🩸 Premium Mavsum yo'li: 700 💎\nOy tugaguncha ochiq: premium yo'l yana ko'p kiy, ramka, stol va avatar beradi. Bepul yo'l esa hammaga ochiq. Oy tugashiga qancha qoldi? Mavsum yo'lida taymer bor.",
+  "en": "🩸 The premium Season Pass: 700 💎\nOpen until the month ends: the premium track gives many more cues, frames, tables and avatars. The free track is open to all. How long is left? The pass has a timer.",
   "img": "x_pass.jpg"
  },
  {
@@ -3895,8 +3895,8 @@
   "id": "S024",
   "cat": "shop",
   "tag": "cues",
-  "uz": "🌍 Davlat kiyi: 199 davlat, 199 bayroq\nHar bir davlatning kiyi o'z bayrog'i ranglarida. Do'kon · Kiylar · Mamlakat bo'limida o'z davlatingizni, yoki yoqqan boshqasini toping. Narxi: 40 💵 yoki 400 💎.",
-  "en": "🌍 A country cue: 199 countries, 199 flags\nEach country's cue wears its own flag colours. In Shop · Cues · Country find your own country or another you like. The price: 40 💵 or 400 💎.",
+  "uz": "🌍 Davlat kiyi: 199 davlat, 199 bayroq\nHar bir davlatning kiyi o'z bayrog'i ranglarida. Do'kon · Kiylar · Mamlakat bo'limida o'z davlatingizni, yoki yoqqan boshqasini toping. Narxi: 100 💎.",
+  "en": "🌍 A country cue: 199 countries, 199 flags\nEach country's cue wears its own flag colours. In Shop · Cues · Country find your own country or another you like. The price: 100 💎.",
   "img": "c_country.jpg"
  },
  {
@@ -4282,8 +4282,8 @@
   "id": "Y005",
   "cat": "story",
   "tag": "rank",
-  "uz": "🏳 Bayroqlar bellashadi\nDavlat reytingida har davlatning o'z jadvali bor, hafta oxirida eng yaxshi uchtasi 💵 oladi. Sizning bayrog'ingiz qaysi o'rinda bo'ladi? Birinchi g'alabadan boshlang.",
-  "en": "🏳 Flags compete\nEvery country has its own ranking board, and at the end of the week the best three receive 💵. Where will your flag be? Start with your first win."
+  "uz": "🏳 Bayroqlar bellashadi\nDavlat reytingida har davlatning o'z jadvali bor, hafta oxirida eng yaxshi uchtasi tanga sovrin oladi. Sizning bayrog'ingiz qaysi o'rinda bo'ladi? Birinchi g'alabadan boshlang.",
+  "en": "🏳 Flags compete\nEvery country has its own ranking board, and at the end of the week the best three receive coin prizes. Where will your flag be? Start with your first win."
  },
  {
   "id": "Y006",
@@ -4400,8 +4400,8 @@
   "id": "D003",
   "cat": "dated",
   "tag": "rank",
-  "uz": "🏁 Dushanba: haftalik marafon boshlandi\nDunyo va davlat reytingining 1-o'rni uchun 1 500 va 400 💵 beriladi. Ligangizda yuqoriga chiqish uchun eng yaxshi 20% ga kirish kerak. Hafta uzun: shoshilmang, lekin boshlang!",
-  "en": "🏁 Monday: the weekly marathon has started\n1st place in the world and country rankings gets 1,500 and 400 💵. To move up in your league you need to be in the top 20%. The week is long: no rush, but do start!",
+  "uz": "🏁 Dushanba: haftalik marafon boshlandi\nDunyo va davlat reytingining 1-o'rni uchun 1 500 000 va 400 000 🪙 beriladi. Ligangizda yuqoriga chiqish uchun eng yaxshi 20% ga kirish kerak. Hafta uzun: shoshilmang, lekin boshlang!",
+  "en": "🏁 Monday: the weekly marathon has started\n1st place in the world and country rankings gets 1,500,000 and 400,000 🪙. To move up in your league you need to be in the top 20%. The week is long: no rush, but do start!",
   "when": {
    "dow": [
     1
@@ -4529,8 +4529,8 @@
   "id": "D009",
   "cat": "dated",
   "tag": "rank",
-  "uz": "⏰ Hafta yopilishiga bir necha soat qoldi\nDushanba ertalab soat 05:00 da hafta yopiladi. Reytingda o'rningizni tekshiring: dunyo top-3 ga 1 500 / 750 / 400 💵, davlat top-3 ga 400 / 200 / 100 💵 beriladi. Oxirgi g'alabalar sizni baland ko'tarishi mumkin!",
-  "en": "⏰ A few hours until the week closes\nThe week closes on Monday at 05:00. Check your place in the ranking: the world's top 3 get 1,500 / 750 / 400 💵 and each country's top 3 get 400 / 200 / 100 💵. A few last wins can lift you up!",
+  "uz": "⏰ Hafta yopilishiga bir necha soat qoldi\nDushanba ertalab soat 05:00 da hafta yopiladi. Reytingda o'rningizni tekshiring: dunyo top-3 ga 1 500 000 / 750 000 / 400 000 🪙, davlat top-3 ga 400 000 / 200 000 / 100 000 🪙 beriladi. Oxirgi g'alabalar sizni baland ko'tarishi mumkin!",
+  "en": "⏰ A few hours until the week closes\nThe week closes on Monday at 05:00. Check your place in the ranking: the world's top 3 get 1,500,000 / 750,000 / 400,000 🪙 and each country's top 3 get 400,000 / 200,000 / 100,000 🪙. A few last wins can lift you up!",
   "when": {
    "dow": [
     7
@@ -4774,8 +4774,8 @@
   "id": "D025",
   "cat": "dated",
   "tag": "stickers",
-  "uz": "💘 14-fevral: «Mehr» stikerlari\n💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 ta iliq stiker do'stingizga iliq so'z yuborish uchun. Har to'plam 10 💵 yoki 100 💎. Yaxshi o'yindan keyin yurak sovg'asi ham yubora olasiz.",
-  "en": "💘 14 February: the \"Hearts\" stickers\n💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 warm stickers for sending a kind word to a friend. Each pack costs 10 💵 or 100 💎. After a good game you can send a heart gift too.",
+  "uz": "💘 14-fevral: «Mehr» stikerlari\n💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 ta iliq stiker do'stingizga iliq so'z yuborish uchun. Har to'plam 25 💎. Yaxshi o'yindan keyin yurak sovg'asi ham yubora olasiz.",
+  "en": "💘 14 February: the \"Hearts\" stickers\n💗 💙 💖 💔 ❤️ 🌹 🎁 💘: 8 warm stickers for sending a kind word to a friend. Each pack costs 25 💎. After a good game you can send a heart gift too.",
   "img": "s_stickers.jpg",
   "when": {
    "md": [

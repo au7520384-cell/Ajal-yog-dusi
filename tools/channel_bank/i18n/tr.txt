@@ -87,8 +87,8 @@ Q085|Efsanevi Büyük Usta ıstakası kaç parçadan oluşur?|=;=;=;=|
 Q086|Bir Zafer ıstakasını kaç parça oluşturur?|=;=;=;=|
 Q087|Kaçıncı seviyeden itibaren kulüp kurabilir veya katılabilirsiniz?|=;=;=;=|
 Q088|Bir kulüpte en fazla kaç üye olabilir?|=;=;=;=|
-Q089|Haftalık dünya sıralamasında 1. olan kaç 💵 alır?|=;=;=;=|
-Q090|Bir ülke sıralamasında 1. olan kaç 💵 alır?|=;=;=;=|
+Q089|Haftalık dünya sıralamasında 1. olan kaç 🪙 alır?|=;=;=;=|
+Q090|Bir ülke sıralamasında 1. olan kaç 🪙 alır?|=;=;=;=|
 Q091|Haftalık sıralama ne zaman sıfırlanır (Taşkent saati)?|Pazartesi, 05:00;Cumartesi, 20:00;Cuma, 00:00;Salı, 12:00|
 Q092|Bir ligin yaklaşık ne kadarı her hafta yükselir?|=;=;=;=|
 Q093|«Haftanın Masası» ne kadar indirimlidir?|=;=;=;=|
