@@ -257,6 +257,7 @@ transform:translateX(-120%);animation:luxsh 2.8s linear infinite;will-change:tra
 .pfcard{border-color:#ffcf3d;background:linear-gradient(#3a2e5e,#1b1433);gap:4px}.pfcard .tpay{width:100%}.pfcard .tedn{width:100%;font-size:11px}
 .pcrow{border-color:#ffcf3d!important;background:linear-gradient(90deg,#3a2e5e,#1b1433)!important;box-shadow:0 0 16px #ffcf3d44}
 .pcrow .tpay{margin-bottom:4px}
+.pcrow .tpay .btn{font-size:11px;padding:6px 2px;white-space:nowrap;letter-spacing:-.2px}   /* "Попробовать" / "Смотреть" fit the 150 px column in every language */
 .tedn{position:relative;margin-top:3px;padding:2px 6px 4px;border-radius:6px;background:#0007;color:#ffe27a;font-weight:800;overflow:hidden}
 .tedn i{position:absolute;left:0;bottom:0;height:3px;background:linear-gradient(90deg,#ffcf3d,#ff6b5e)}
 .tpcv{width:100%;max-width:620px;border-radius:12px;display:block;margin:6px auto;box-shadow:0 8px 24px #000a}
@@ -9752,15 +9753,15 @@ if (Date.now() - editionsAt > 60000) { editionsAt = Date.now(); Net.api("/api/ed
 body.insertAdjacentHTML("beforeend", `<p class="muted" style="margin:0 0 8px">${T("Har bir premium kiy — premium stolning jufti. Ikkalasi bo'lsa: to'plam bonusi +10%.")}</p>`);
 }
 list.forEach(c => {
-if (c.cat === "premium") {
+if (c.cat === "premium" || diaStd(c)) {   // one look for every cue of the Premium page (gold frame, crown, 💎 + money price, Try / View)
 const owned = owns(c), sel = profile.cue === c.id, no = (profile.editions || {})[c.id], so = soldOut(c.id);
 const el = document.createElement("div"); el.className = "cuerow pcrow" + (sel ? " sel" : "");
 el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">👑 ${esc(T(c.name))}</b><span style="color:#ffcf3d">${T("Premium")}${no ? ` · № ${fmt(no)} / ${fmt(EDITION_CAP[c.id])}` : ""}</span></div><div class="cuecvw"></div>
-${owned ? "" : edLine(c.id)}</div>
+${owned || !EDITION_CAP[c.id] ? "" : edLine(c.id)}</div>
 <div>${c.st.map((v, i) => `<div class="stat"><span>${T(STAT_NAMES[i])}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
 <div>${owned ? (sel ? `<button class="btn gray" disabled style="width:100%">✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use" style="width:100%">${T("TANLASH")}</button>`)
 : `<div class="tpay"><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💎 ${fmt(c.gems)}`}</button>${usdBtn(c.usd, "cue_" + c.id, so ? "disabled" : "", "green", true)}</div>
-<div class="tpay"><button class="btn orange" data-p="try">▶ ${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">👁 ${T("Ko'rish")}</button></div>`}
+<div class="tpay"><button class="btn orange" data-p="try">${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">${T("Ko'rish")}</button></div>`}
 <div class="cpts">+${cuePower(c)} ⚜</div></div>`;
 const cvw = el.querySelector(".cuecvw"); cvw._cue = c; if (io) io.observe(cvw); else cvw.appendChild(cueCanvas(c));
 const on = (k, f) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = f; };
@@ -9768,7 +9769,7 @@ on("use", () => { profile.cue = c.id; save(); updateNav(); Net.sync(); buildShop
 on("gems", () => buyCue(c, "gems", c.gems).then(ok => ok && buildShop("cues")));
 on("usd", () => Net.checkout("cue_" + c.id, el.querySelector('[data-p="usd"]')));
 on("try", () => tryCue(c));
-on("view", () => { openModal({icon: "👑", title: `${T(c.name)} · ${T("kiy")}`, text: `⚡ ${T("Zarba effekti")} · 🔢 ${T("Cheklangan nashr")}: ${fmt(EDITION_CAP[c.id])}`,
+on("view", () => { openModal({icon: "👑", title: `${T(c.name)} · ${T("kiy")}`, text: `⚡ ${T("Zarba effekti")}${EDITION_CAP[c.id] ? ` · 🔢 ${T("Cheklangan nashr")}: ${fmt(EDITION_CAP[c.id])}` : ""}`,
 extra: `<canvas class="tpcv cuepv" width="620" height="200"></canvas>`, buttons: [{label: `💎 ${fmt(c.gems)}`, cls: "blue", fn: () => buyCue(c, "gems", c.gems).then(ok => ok && buildShop("cues"))}, {label: `▶ ${T("Sinab ko'rish")}`, cls: "orange", fn: () => tryCue(c)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 previewCue(c, document.querySelector("#modal .cuepv")); });
 grid.appendChild(el); return;
