@@ -1132,6 +1132,9 @@ background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),color-mix(in srg
 .dstag{position:absolute;right:-30px;top:10px;transform:rotate(35deg);width:120px;text-align:center;background:linear-gradient(#ff6a3c,#c2260f);color:#fff;font-weight:900;font-size:10px;padding:2px 0;z-index:2;box-shadow:0 2px 5px #0008}
 .dsfoot{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#a9b6dd;font-size:clamp(11px,1.9vh,14px);font-weight:700}
 @media (max-height:480px){.dsvip{display:none}.dsc [data-card-sku]{padding:2px;font-size:11px}}
+/* the same cards inside a shop page (first page + Coins & diamonds): the page has no fixed height, so every card gets its own */
+#shopBody .dsgrid{grid-template-rows:none;grid-auto-rows:clamp(176px,14vw,230px);flex:none;overflow:visible}
+#shopBody .dspic{font-size:clamp(8px,1.6vw,17px);margin-top:12px}
 @media (max-width:640px){.dsgrid{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,minmax(0,1fr))}}
 /* the other cue pages (Horror, Standard, Victory, Surprise, Country) get the same gold-framed rows as Premium, each in its own colour */
 .cuerow[class*="cr-"]{box-shadow:0 0 14px var(--cc,#ffcf3d33);border-color:var(--cb,#3e4f7c)}
@@ -11596,7 +11599,6 @@ body.innerHTML = NO_CARD ? (playOn() ? `<div class="dsh"><h2>💎 ${T("Olmos to'
 <p class="muted" style="text-align:center;margin:8px 0 0">${T("To'lovlar xavfsiz Stripe orqali. Xarid qilingan olmos va tangalar hisobingizga avtomatik tushadi.")} · 50 💎 = $1 · VIP: ${fmt(profile.vip || 0)}</p>${exch}`;
 } else if (sec === "offers") {
 const st = SKUS.starter, left = Math.max(0, (profile.starterSeen || (profile.starterSeen = Date.now(), save(), profile.starterSeen)) + 48 * 3600e3 - Date.now());
-const gems = Object.entries(SKUS).filter(([, s]) => s.gems && !s.coins);
 body.innerHTML = `<div class="vipstrip">${VO().map(o => { const t = o.tiers[o.zodiac ? vipSel.zodiac : Math.min(1, o.tiers.length - 1)];
 return `<div class="vipcard" data-vo="${o.id}" style="background:${o.bg};--acc:${o.accent}"><span class="vipbadge">♛ VIP</span><b>${T(o.title)}</b><small>${T(o.sub)}</small><div class="vcv" data-cue="${t.cue}"></div><span class="btn green">${o.zodiac ? "$24.99" : "$" + o.tiers[0].usd + (o.tiers.length > 1 ? "+" : "")}</span></div>`; }).join("")}</div>
 <div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;cursor:pointer;background:linear-gradient(135deg,#3a1a7a,#10062a)" id="loopBtn"><div style="font-size:40px">${loopNow().o.id === "box" ? boxImg("epic", 50) : icoH(loopNow().o.ic, 46)}</div><div style="flex:1"><b style="font-size:20px;color:#ffe27a">${T("Keyingi daraja aksiyasi")}</b><div class="muted">${T("50-80% chegirmali 3 ta taklif")} · ⏱ ${Math.floor(loopNow().left / 36e5)}${T("s")}</div></div><span class="btn green">${T("Ochish")} ›</span></div>${NO_CARD || profile.adfree ? "" : `<div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;background:linear-gradient(135deg,#4a1a6a,#1a062a)"><div style="font-size:40px">🚫</div><div style="flex:1"><b style="font-size:20px">${T("Reklamasiz — abadiy")}</b><div class="muted">${T("Videolar ko'rmasdan bepul mukofotlarni oling")}</div></div><button class="btn green" data-sku="adfree">$4.99</button></div>`}
@@ -11608,8 +11610,7 @@ ${!NO_CARD && !bought.starter && left > 0 ? `<div class="starter"><span class="r
 <div class="stitems"><span><span class="coin" style="width:30px;height:30px"></span><b>${fmtS(st.coins)}</b></span><span><span class="gem" style="width:30px;height:30px"></span><b>${st.gems}</b></span></div>
 <div class="muted">⏱ <span id="stLeft"></span> · ${T("faqat bir marta")}</div>
 <button class="btn green" data-sku="starter" style="font-size:20px"><s style="opacity:.6;font-size:14px">$9.99</s> ${usd(st.usd)}</button></div>` : ""}
-${NO_CARD ? "" : `<div class="packhead"><span class="gem" style="width:38px;height:38px"></span><h3>${T("Olmos to'plamlari")}</h3></div>
-<div class="packgrid g3">${gems.map(([id, s]) => packCard(id, s)).join("")}</div>`}
+${NO_CARD ? "" : `<div class="dsh" style="margin:0 0 4px"><h2>💎 ${T("Olmos to'plamlari")}</h2></div><div class="dsgrid">${dsGrid()}</div>`}
 <div class="card" style="display:flex;align-items:center;gap:12px;margin-top:10px;cursor:pointer" id="eliteBtn"><span class="gem" style="width:44px;height:44px"></span>
 <div style="flex:1"><b>${T("Olmos nima uchun?")}</b><div class="muted">${T("Premium kiy, stol, avatar, ramka, pass va syurpriz qutilar uchun. 50 💎 = $1")}</div></div><span class="btn purple">${T("Elite do'kon")} ›</span></div>
 </div></div>${exch}`;

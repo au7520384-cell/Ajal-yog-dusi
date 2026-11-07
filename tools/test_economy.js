@@ -36,6 +36,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
       if (/class="cash"|💵|class="cash |Naqd pul|Cash/.test(h)) cashSeen.push(t);
     }
     ok(cashSeen.length === 0, "no cash icon / 💵 / 'Cash' on any shop page", cashSeen);
+    // the shop's first page (⭐ Special offers) shows the same six gold-framed 💎 cards as the big store, each with a height of its own (the art must not run over the amount)
+    await p.evaluate(() => buildShop("offers")); await sleep(500);
+    const off = await p.evaluate(() => ({ cards: [...document.querySelectorAll("#shopBody .dsc")].map(k => (k.querySelector("[data-sku]") || {}).dataset.sku), old: document.querySelectorAll("#shopBody .packgrid.g3").length, hs: [...document.querySelectorAll("#shopBody .dsc")].map(k => Math.round(k.getBoundingClientRect().height)) }));
+    ok(off.cards.length === 6 && off.cards.every(s => /^gems_/.test(s)) && off.old === 0 && off.hs.every(h => h >= 170), "the first shop page shows the six big 💎 cards (no old small packs), every card tall enough", off);
     await p.evaluate(() => buildShop("money")); await sleep(500);
     const packs = await p.evaluate(() => [[...document.querySelectorAll("#shopBody .packcol .pk")], [...document.querySelectorAll("#shopBody .dsc")].sort((a, b) => a.querySelector(".dsamt").textContent.replace(/\D/g, "") - b.querySelector(".dsamt").textContent.replace(/\D/g, ""))].map((c, i) => c.map(k => ({ sku: k.querySelector("[data-sku]").dataset.sku, amt: (i ? k.querySelector(".dsamt") : k.querySelector(".amt")).textContent.replace(/\D/g, ""), price: k.querySelector("[data-sku]").textContent.trim(), rib: !!k.querySelector(".rib") }))));
     ok(packs.length === 2 && packs[0].every(k => /^coins_/.test(k.sku)) && packs[1].every(k => /^gems_/.test(k.sku)), "the money page: coin packs | diamond packs (the cash column is gone)", packs.map(c => c.map(k => k.sku)));
