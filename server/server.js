@@ -16,6 +16,7 @@ const path = require("path");
 const crypto = require("crypto");
 const {WebSocketServer} = require("ws");
 const createStore = require("./storage");
+const PLAY = require("./play");   // Google Play Billing: checks the Android app's purchase tokens with the Google Play Developer API (see play.js)
 
 const PORT = +process.env.PORT || 8080;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
@@ -1370,6 +1371,35 @@ const routes = {
     } catch (e) { console.error("stars invoice:", e.message); return [502, {error: "stars_error", detail: String(e.message).slice(0, 120)}]; }   // Telegram's own reason goes to the page (shown in the toast) so a failing invoice can be diagnosed from a phone
   },
 
+  // Google Play Billing (the Android app, see play.js): the app buys a 💎 pack with Google Play and sends the purchase token here. The server asks Google whether it is a real, paid purchase of that pack,
+  // hands the 💎 over ONCE through fulfill() (the same grant as a card payment) and consumes the purchase so the pack can be bought again. The packs are the six gems_* SKUs: the Play Console product ids are the same.
+  "GET /api/play/status"(req, u) {   // before the Google window opens the app asks: can this server verify a purchase at all? (no - nobody should be charged) and which account tag to give Google
+    return {configured: PLAY.configured(), acct: PLAY.accountTag(u.id), skus: playSkus()};
+  },
+  async "POST /api/play/verify"(req, u) {
+    if (!PLAY.configured()) return [503, {error: "play_not_configured"}];
+    const b = await jsonBody(req), skuId = String(b.sku || ""), token = String(b.token || "");
+    if (!playSkus().includes(skuId) || !/^[A-Za-z0-9._-]{16,2000}$/.test(token)) return [400, {error: "bad_request"}];
+    if (limited(req, "playv", 60)) return [429, {error: "slow_down"}];
+    const sku = SKUS[skuId], payId = "gp_" + crypto.createHash("sha256").update(token).digest("hex").slice(0, 40);   // one purchase token = one payment id: the same token can never pay twice
+    let rec = db.purchases[payId], again = !!rec;
+    if (rec && rec.user !== u.id) return [403, {error: "other_account"}];   // already delivered to another player
+    if (!rec) {
+      let g; try { g = await PLAY.lookup(skuId, token); } catch (e) { console.error("play lookup:", e.message); return [502, {error: "play_down", detail: String(e.message).slice(0, 120)}]; }
+      if (!g.ok) { if (g.error !== "bad_token") console.error(`play lookup: ${g.error} ${g.status} ${g.detail}`); return [g.error === "bad_token" ? 400 : 502, {error: g.error, detail: g.detail}]; }
+      if (g.state === "pending") return [202, {pending: true}];   // paid with a slow method (cash at a shop ...): Google has not got the money yet, the app asks again later
+      if (g.state !== "purchased") return [402, {error: "canceled"}];
+      if (g.account && g.account !== PLAY.accountTag(u.id)) return [403, {error: "other_account"}];   // the purchase was made for another player's account
+      if (db.purchases[payId] && db.purchases[payId].user !== u.id) return [403, {error: "other_account"}];   // someone else's request for this token finished while we were asking Google
+      if (!await fulfill(payId, u.id, skuId, Math.round(sku.usd * 100))) return [500, {error: "save_failed"}];   // the app asks again
+      rec = db.purchases[payId]; again = false;
+      if (rec) { rec.gp = g.orderId; if (g.consumed) rec.fin = "consumed"; markDirty(); }
+      console.log(`google play: ${u.id} bought ${skuId} (${g.orderId}${g.test ? ", test purchase" : ""})`);
+    }
+    if (rec && rec.fin !== "consumed") { const f = await PLAY.finish(skuId, token); if (f) { rec.fin = f; markDirty(); } }   // consume (else acknowledge): a purchase that stays unconsumed blocks the next purchase of the pack, an unacknowledged one is refunded after 3 days
+    return {ok: true, sku: skuId, gems: sku.gems, again};
+  },
+
   // Telegram Payments with a card provider: same shape as the Stars invoice, paid in TG_PAY_CUR through the provider token
   async "POST /api/tgpay/invoice"(req, u) {
     if (!TG_BOT_TOKEN || !TG_PAY_TOKEN) return [503, {error: "payments_not_configured"}];
@@ -1526,6 +1556,7 @@ async function tgApi(method, body) {
   if (!j.ok) throw new Error(`${method}: ${j.description || r.status}`);
   return j.result;
 }
+const playSkus = () => Object.keys(SKUS).filter(k => /^gems_\d+$/.test(k) && SKUS[k].gems && !SKUS[k].coins && !SKUS[k].legacy);   // what Google Play sells: the six 💎 packs (not the old orders, not the coin packs)
 function starsRefuse(u, skuId) {   // the same checks as the card checkout; returns an error code or ""
   const sku = SKUS[skuId]; if (!u || !sku || sku.legacy) return "bad_sku";
   if (sku.once && (u.bought || {})[skuId]) return "already_bought";
