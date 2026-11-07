@@ -74,6 +74,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     // ---- 5) the 💎 cues are open at ⚜ 0
     await p.evaluate(() => { profile.cues = ["start"]; profile.cue = "start"; profile.gems = 5000; save(); });
     await openCues(p, "standard"); R = await rows(p);
+    const dia0 = await p.evaluate(() => CUES.filter(c => c.cat === "standard" && c.cur === "cash").map(c => c.id));
+    ok(dia0.every(id => !R[id]), "the 💎-priced 'standard' cues are NOT on the Standard page any more");
+    await openCues(p, "premium"); R = await rows(p);
+    ok(dia0.every(id => R[id]), "...they are on the Premium page");
     const dia = await p.evaluate(() => CUES.filter(c => c.cat === "standard" && c.cur === "cash").map(c => c.id));
     ok(dia.every(id => R[id] && !R[id].locked && !R[id].lock), "the 💎-priced standard cues have no padlock at ⚜ 0", dia.map(id => R[id]));
     const g0 = (await state(p)).gems, did = dia[0];

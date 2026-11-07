@@ -100,7 +100,7 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
     const g2 = await gems(p); await p.evaluate(() => playRestore(true)); await sleep(1500);
     ok(await gems(p) === g2, "restoring again pays nothing more");
     // ---- 5) no dead 'watch ads' button on a premium row in the app
-    await p.evaluate(() => { cueCat = "standard"; go("shop"); buildShop("cues"); }); await sleep(900);
+    await p.evaluate(() => go("shop")); await sleep(600); await p.evaluate(() => { cueCat = "premium"; buildShop("cues"); }); await sleep(900);
     const rowBtns = await p.evaluate(() => { const r = [...document.querySelectorAll("#shopBody .cuerow")].find(e => e.querySelector('[data-p="gems"]')); return r ? { gems: !!r.querySelector('[data-p="gems"]'), usd: !!r.querySelector('[data-p="usd"]'), ads: /📺/.test(r.innerText) } : null; });
     ok(rowBtns && rowBtns.gems && !rowBtns.usd && !rowBtns.ads, "a premium cue row in the app has the 💎 button and no dead 'watch ads' / card button", rowBtns);
     await p.context().close();

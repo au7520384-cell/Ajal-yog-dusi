@@ -9524,8 +9524,7 @@ return null;
 }
 const adKey = sku => "buy_" + sku;
 function usdBtn(usd, sku, attrs = "", cls = "green") {   // the card-price button; on Y8 it is the "watch N ads" button with its saved progress
-if (NO_CARD && isApp()) return "";   // the Android app has neither card payments nor ads: premium things cost 💎 there
-if (!NO_CARD) return `<button class="btn ${cls}" data-p="usd" ${attrs}>${usdTxt(cardUsd(usd))}</button>${cardBtnHTML(usd, sku)}`;
+if (!NO_CARD || isApp()) return "";   // premium things cost 💎 only (the owner's rule): the real money goes into diamond packs, never straight into an item. (Y8 keeps its "watch ads" button; the Android app has no ads.)
 return `<button class="btn ${cls}" data-p="usd" ${attrs}>📺 ${adProg(sku, usd)}/${adsFor(usd)}</button>`;
 }
 function adCheckout(sku) {
@@ -9724,7 +9723,8 @@ cards.forEach(c => { c[0]._c = c; io.observe(c[0]); });
 return;
 }
 const owns = c => profile.cues.includes(c.id);
-const list = CUES.filter(c => cueCat === "owned" ? owns(c) : (c.cat === cueCat || (cueCat === "surprise" && c.cat === "event")));   // the Grandmaster event cue is listed with the gift (surprise) cues
+const diaStd = c => c.cat === "standard" && c.cur === "cash";   // the 💎-priced "standard" cues (Fire, Dragon, Galaxy ...) are premium cues: they are listed on the Premium page, not on Standard
+const list = CUES.filter(c => cueCat === "owned" ? owns(c) : cueCat === "premium" ? (c.cat === "premium" || diaStd(c)) : cueCat === "standard" ? (c.cat === "standard" && !diaStd(c)) : (c.cat === cueCat || (cueCat === "surprise" && c.cat === "event")));   // the Grandmaster event cue is listed with the gift (surprise) cues
 if (cueCat === "country") list.sort((a, b) => (b.cc === profile.country) - (a.cc === profile.country) || cueName(a).localeCompare(cueName(b)));
 const power = CUES.filter(owns).reduce((a, c) => a + cuePower(c), 0);
 body.insertAdjacentHTML("beforeend", `<div class="cuehead">
@@ -14375,8 +14375,8 @@ function cuePicker() {
 const G = game; if (!G || G.moving) return;
 let cat = "owned";
 const render = () => {
-const pw = collectionPower(), list = CUES.filter(c => cat === "owned" ? profile.cues.includes(c.id) : (c.cat === cat || (cat === "surprise" && c.cat === "event")));
-$("mExtra").innerHTML = `<div class="tabs subtabs">${[["owned", "Meniki"], ["standard", "Standart"], ["country", "Davlat"], ["surprise", "Syurpriz"], ["victory", "G'alaba"]]
+const pw = collectionPower(), dstd = c => c.cat === "standard" && c.cur === "cash", list = CUES.filter(c => cat === "owned" ? profile.cues.includes(c.id) : cat === "premium" ? dstd(c) : cat === "standard" ? (c.cat === "standard" && !dstd(c)) : (c.cat === cat || (cat === "surprise" && c.cat === "event")));
+$("mExtra").innerHTML = `<div class="tabs subtabs">${[["owned", "Meniki"], ["premium", "Premium"], ["standard", "Standart"], ["country", "Davlat"], ["surprise", "Syurpriz"], ["victory", "G'alaba"]]
 .map(([k, n]) => `<button class="tab${k === cat ? " on" : ""}" data-pc="${k}" style="font-size:14px;padding:6px">${T(n)}</button>`).join("")}</div>
 <div id="pickList" style="max-height:48vh;overflow:auto;text-align:left">${list.map(c => {
 const own = profile.cues.includes(c.id);
