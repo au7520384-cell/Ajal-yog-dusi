@@ -9576,12 +9576,18 @@ return null;
 }
 const adKey = sku => "buy_" + sku;
 function usdBtn(usd, sku, attrs = "", cls = "green", noCard = false) {   // the card-price button (Stars in Telegram; noCard = without the card-transfer button); on Y8 it is the "watch N ads" button with its saved progress
-if (NO_CARD && isApp()) return "";   // the Android app has neither card payments nor ads: premium things cost 💎 there
+if (NO_CARD && isApp()) return Y8.sdk && Y8.adsReady && adBuyOk(sku) ? `<button class="btn ${cls}" data-p="usd" ${attrs}>📺 ${adProg(sku, usd)}/${adsFor(usd)}</button>` : "";   // the Android app has no card payments: premium things cost 💎; where 💵 works, "watch N ads" works too (once the AppLovin ads are on)
 if (!NO_CARD) return `<button class="btn ${cls}" data-p="usd" ${attrs}>${usdTxt(cardUsd(usd))}</button>${noCard ? "" : cardBtnHTML(usd, sku)}`;
 return `<button class="btn ${cls}" data-p="usd" ${attrs}>📺 ${adProg(sku, usd)}/${adsFor(usd)}</button>`;
 }
+const adBuyOk = sku => {   // which items the Android app lets you earn by watching ads: what 💵 buys (frames, stickers, ordinary / elite tables) - never premium / horror / country cues, premium tables or avatars (Y8 keeps its own rule: there ads are the only way)
+if (!isApp()) return true;
+const i = String(sku).indexOf("_"), kind = String(sku).slice(0, i), id = String(sku).slice(i + 1);
+if (kind === "tbl") { const t = EXTRA_TABLES.find(x => x.id === id); return !!t && cashOkT(t); }
+return kind === "frame" || kind === "stk";
+};
 function adCheckout(sku) {
-const o = skuInfo(sku); if (!o) return;
+const o = skuInfo(sku); if (!o || !adBuyOk(sku)) return;
 if (!profile.adfree && !(Y8.sdk && Y8.adsReady)) return toast("📺", T("Reklama hozir mavjud emas"), "");
 const need = adsFor(o.usd), cheap = adCheap(o.usd), again = () => { try { buildShop(o.shop); } catch (e) {} };
 y8Rewarded("unlock-" + adKey(sku), () => {
@@ -10425,7 +10431,7 @@ setTimeout(done, 90000);
 }
 function y8Break(then) {
 Y8.matches++;
-if (Y8.sdk && Y8.adsReady && Y8.matches % 2 === 0 && Date.now() - Y8.lastBreak > 90000) {
+if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {   // the Android app: every 4th game, not for new players
 Y8.lastBreak = Date.now(); y8Ad("next", "between-matches").then(then);
 } else then();
 }
@@ -10437,7 +10443,7 @@ if (profile.adfree) { if (name === "bank-cash") profile.adCash = (profile.adCash
 if (profile.adDay !== d) { profile.adDay = d; profile.adCount = 0; }
 if (profile.adCount >= 10 && !/^(unlock|try)-/.test(name)) return toast("📺", T("Bugungi reklamalar tugadi"), T("Ertaga qayting"));   // unlock chains (5/10 ads per game) are exempt from the daily 10-ad cap
 y8Ad("reward", name).then(ok => {
-if (!ok) return toast("📺", T("Reklama oxirigacha ko'rilmadi"), "");
+if (!ok) return toast("📺", Y8.noFill ? T("Reklama hozir mavjud emas") : T("Reklama oxirigacha ko'rilmadi"), "");
 profile.adCount++; if (name === "bank-cash") profile.adCash = (profile.adCash | 0) + 1; give(); save(); updateNav(); Snd.coin(6);
 });
 }
@@ -11461,6 +11467,35 @@ async function playBuy(sku, btn) {
 { const np = playNP();
   if (np) { try { np.isBillingSupported().then(r => { if (r && r.isBillingSupported === false) playOk = false; }).catch(() => {}); } catch (e) {}
     setTimeout(() => playRestore(), 7000); document.addEventListener("visibilitychange", () => { if (!document.hidden) playRestore(); }); } }
+
+// ---- Ads in the Android app: AppLovin MAX through our own Capacitor plugin "RbAds" (android/native/RbAdsPlugin.java). The SDK key / ad unit ids come from the server (GET /api/auth/config -> applovin, the APPLOVIN_* env vars on Render),
+// so the app needs no new build once the AppLovin account exists. It answers the same ad hooks the Y8 and Telegram builds use (Y8.sdk.showAd): rewarded video (y8Rewarded: free coins / 💵, ad-bought items, extra tries) and a short ad between games (y8Break, every 4th game).
+const adNP = () => { try { const c = window.Capacitor; return c && typeof c.isNativePlatform === "function" && c.isNativePlatform() && c.Plugins && c.Plugins.RbAds || null; } catch (e) { return null; } };
+let appAdsBusy = false;
+async function appAdsInit() {
+  const np = adNP(); if (!np || Y8.app || appAdsBusy) return; appAdsBusy = true;
+  try {
+    const c = await Net.api("/api/auth/config"), a = c && c.applovin; if (!a || !a.sdk || !a.rewarded) return;   // no AppLovin account set up (yet): no ads, no ad buttons
+    await np.init({sdkKey: a.sdk, rewardedId: a.rewarded, interstitialId: a.interstitial || "", privacyUrl: (Net.base || CONFIG.server || "") + "/privacy"});
+    Y8.sdk = {showAd(o) {
+      return new Promise(resolve => {
+        const reward = o.type === "reward", end = () => { try { if (o.adBreakDone) o.adBreakDone(); } catch (e) {} resolve(); };
+        (async () => {
+          Y8.noFill = false;
+          try {
+            const st = await np.ready();
+            if (reward ? st.rewarded : st.interstitial) { try { if (o.beforeAd) o.beforeAd(); } catch (e) {} }   // (the sound is muted only when an ad really comes)
+            const r = await (reward ? np.showRewarded() : np.showInterstitial());
+            if (r && r.reason === "not_ready") Y8.noFill = true;
+            if (r && (reward ? r.rewarded : r.shown)) { if (o.adViewed) o.adViewed(); } else if (o.adDismissed) o.adDismissed();
+          } catch (e) { if (o.adDismissed) o.adDismissed(); }
+        })().then(end);
+      });
+    }};
+    Y8.app = true; Y8.every = 4; Y8.startAds = 0; Y8.adsReady = true; updateY8Ui();
+  } catch (e) {} finally { appAdsBusy = false; }
+}
+if (adNP()) { setTimeout(appAdsInit, 5000); document.addEventListener("visibilitychange", () => { if (!document.hidden) appAdsInit(); }); }
 
 const DS_ART = [   // where the gems of a pack's picture sit ([x%, y%, px]): the bigger the pack the more gems, the biggest ones in a chest
 [[50, 48, 74]],
