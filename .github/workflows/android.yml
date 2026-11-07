@@ -62,6 +62,7 @@ jobs:
           cat > "$MA" <<JAVA
           $PKG
 
+          import android.os.Bundle;
           import android.view.Window;
           import androidx.core.view.WindowCompat;
           import androidx.core.view.WindowInsetsCompat;
@@ -69,6 +70,12 @@ jobs:
           import com.getcapacitor.BridgeActivity;
 
           public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  registerPlugin(RbAdsPlugin.class);   // the AppLovin MAX ads (android/native/RbAdsPlugin.java), must be registered before super.onCreate
+                  super.onCreate(savedInstanceState);
+              }
+
               private void hideBars() {
                   Window w = getWindow();
                   WindowInsetsControllerCompat c = WindowCompat.getInsetsController(w, w.getDecorView());
@@ -91,6 +98,12 @@ jobs:
           JAVA
           cat "$MA"
           grep -c "hideBars" "$MA"
+          # ads: rewarded video + a short break between games through AppLovin MAX (own small plugin, ids come from the game server). The SDK adds the AD_ID permission by itself
+          sed "1s/.*/$PKG/" native/RbAdsPlugin.java > "$(dirname "$MA")/RbAdsPlugin.java"
+          head -3 "$(dirname "$MA")/RbAdsPlugin.java"
+          sed -i "/^dependencies {/a\\    implementation 'com.applovin:applovin-sdk:13.7.0'" android/app/build.gradle
+          grep -c "applovin-sdk:13.7.0" android/app/build.gradle
+          grep -c "registerPlugin(RbAdsPlugin.class)" "$MA"
           npx cap sync android
           # the billing plugin must be in the project (without it the app says 'not open yet' instead of selling 💎)
           grep -c "NativePurchases" android/app/src/main/assets/capacitor.plugins.json
