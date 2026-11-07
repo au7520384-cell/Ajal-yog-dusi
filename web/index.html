@@ -9523,9 +9523,9 @@ if (kind === "stk") return {usd: STK_USD, shop: "stickers", give: async () => { 
 return null;
 }
 const adKey = sku => "buy_" + sku;
-function usdBtn(usd, sku, attrs = "", cls = "green") {   // the card-price button; on Y8 it is the "watch N ads" button with its saved progress
+function usdBtn(usd, sku, attrs = "", cls = "green", noCard = false) {   // the card-price button (Stars in Telegram; noCard = without the card-transfer button); on Y8 it is the "watch N ads" button with its saved progress
 if (NO_CARD && isApp()) return "";   // the Android app has neither card payments nor ads: premium things cost 💎 there
-if (!NO_CARD)
+if (!NO_CARD) return `<button class="btn ${cls}" data-p="usd" ${attrs}>${usdTxt(cardUsd(usd))}</button>${noCard ? "" : cardBtnHTML(usd, sku)}`;
 return `<button class="btn ${cls}" data-p="usd" ${attrs}>📺 ${adProg(sku, usd)}/${adsFor(usd)}</button>`;
 }
 function adCheckout(sku) {
@@ -9539,8 +9539,8 @@ if (n >= need) { delete profile.adBuy[sku]; save(); Promise.resolve(o.give()).th
 else { profile.adBuy[sku] = {n, s: e.s}; save(); toast("📺", n + " / " + need, cheap ? T("Bugun tugating") : T("7 kun ichida")); again(); }
 });
 }
-function payRow(gems, usd, sku, only) {   // only = 💎 only (no card / Stars / ads button)   // an item's price in the two ways left: 💎 diamonds (its dollar price x 50) or the real-money (card) price
-return `<div class="tpay"><button class="btn blue" data-p="gems">💎 ${fmt(gems)}</button>${only || NO_CARD && !sku ? "" : usdBtn(usd, sku)}</div>`;
+function payRow(gems, usd, sku, noCard) {   // noCard = no card-transfer button (the main price button - Stars in Telegram - stays)   // an item's price in the two ways left: 💎 diamonds (its dollar price x 50) or the real-money (card) price
+return `<div class="tpay"><button class="btn blue" data-p="gems">💎 ${fmt(gems)}</button>${NO_CARD && !sku ? "" : usdBtn(usd, sku, "", "green", noCard)}</div>`;
 }
 function wirePay(el, o) {   // o: {sku, buy(cur)}
 const on = (k, fn) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = e => { e.stopPropagation(); fn(b); }; };
@@ -9758,7 +9758,7 @@ el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">👑 ${esc
 ${owned ? "" : edLine(c.id)}</div>
 <div>${c.st.map((v, i) => `<div class="stat"><span>${T(STAT_NAMES[i])}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
 <div>${owned ? (sel ? `<button class="btn gray" disabled style="width:100%">✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use" style="width:100%">${T("TANLASH")}</button>`)
-: `<div class="tpay"><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💎 ${fmt(c.gems)}`}</button></div>
+: `<div class="tpay"><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💎 ${fmt(c.gems)}`}</button>${usdBtn(c.usd, "cue_" + c.id, so ? "disabled" : "", "green", true)}</div>
 <div class="tpay"><button class="btn orange" data-p="try">▶ ${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">👁 ${T("Ko'rish")}</button></div>`}
 <div class="cpts">+${cuePower(c)} ⚜</div></div>`;
 const cvw = el.querySelector(".cuecvw"); cvw._cue = c; if (io) io.observe(cvw); else cvw.appendChild(cueCanvas(c));
@@ -9781,7 +9781,7 @@ else if (c.cat === "victory") btn = `<button class="btn blue" data-city="${c.cit
 else if (c.cat === "surprise") btn = `<button class="btn purple" style="width:100%;font-size:15px">${icoH("🎁", 22)} ${T("Syurpriz qutisi")}</button>`;
 else if (c.cat === "vip") btn = `<button class="btn orange" style="width:100%;font-size:15px">♛ VIP</button>`;
 else if (c.cat === "event") btn = `<button class="btn orange" style="width:100%;font-size:15px">🏆 ${T("Kirish ›")}</button>`;
-else if (c.cur === "cash" && c.cash) btn = payRow(c.gems, c.usd, "cue_" + c.id, diaStd(c));   // the 💎-priced standard cues are premium cues: 💎 only
+else if (c.cur === "cash" && c.cash) btn = payRow(c.gems, c.usd, "cue_" + c.id, diaStd(c));   // the 💎-priced standard cues are premium cues: 💎 + Stars, no card transfer
 else if (gap) btn = `<button class="btn gray cplock" style="width:100%">🔒 +${fmt(gap)} ⚜</button><div class="cpts cpneed">⚜ ${fmt(power)} / ${fmt(c.needCP)}</div>`;
 else btn = c.cur === "cash" ? `<button class="btn blue" style="width:100%">💎 ${fmt(diaOfCash(c.price))}</button>` : `<button class="btn green" style="width:100%"><span class="coin"></span> ${fmtS(c.price)}</button>`;
 el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">${c.cc ? flagHTML(c.cc, 18) + " " : ""}${esc(cueName(c))}</b>
