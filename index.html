@@ -3439,6 +3439,7 @@ let cloudSaveHook = null;
 const save = () => { profile.savedAt = Date.now(); store.set("billiard8v2", profile); if (cloudSaveHook) cloudSaveHook(); if (typeof cloudQueue === "function") cloudQueue(); };
 const xpNeed = l => 100 + (l - 1) * 80;
 const cueDef = id => CUES.find(c => c.id === id) || CUES[0];
+const stickOf = (G, P) => P && !P.isAI && !P.remote && G.type !== "watch" ? (G.trialCue || profile.cue) : P && P.cue;   // the local player's stick is always the one he has on (or the one he is trying out), read live: the cue on the table, the one in the power bar and the one on the picker button can never disagree (a stale copy in the match's player record made the table show another cue)
 const cueMax = c => 50 + c.st[0] * 1.9;   // 1 u/frame = 0.132 m/s: 6.6 m/s (stat 0) to 9.1 m/s (stat 10) at full power: a better cue really hits harder
 const MS_PER_U = 0.132;
 // Break speed: 8.6 m/s (stat 0) to 11.3 m/s (stat 10) at full power; 12.0 m/s needs a rare crit (stat 8+ cue, perfect full power, ~2-4%); the 13.4 m/s world record needs a stat-10 cue and a ~0.2% crit
@@ -4213,7 +4214,7 @@ function nextTurn(first) {
 const G = game;
 G.turnStart = performance.now(); G.spin = {x: 0, y: 0}; G.elev = 0; G.lastTick = -1;
 const pl = curP();
-G.turnLimit = pl.isAI ? 0 : cueTime(cueDef(pl.cue));
+G.turnLimit = pl.isAI ? 0 : cueTime(cueDef(stickOf(G, pl)));
 if (!first && !G.over && G.type !== "practice") {
 if (G.type === "watch" || G.type === "pvp") setPill(TT("{0} navbati", pl.name), 1400);
 else { setPill(pl.isAI || pl.remote ? `${pname(pl.name)} …` : T("Sizning navbatingiz"), 1400); if (!pl.isAI && !pl.remote && !G.demo) Snd.turn(); }
@@ -4230,7 +4231,7 @@ const cx = -dep * hx * ca - sa * hy, cy = -dep * hy * ca + sa * hx, cz = dep * s
 cue.wx = kk * (cy * Jz - cz * cue.vy); cue.wy = kk * (cz * cue.vx - cx * Jz); cue.wz = kk * (cx * cue.vy - cy * cue.vx);
 }
 function doShoot(power, remote) {
-const G = game, cue = G.balls[0], pl = curP(), cd = cueDef(pl.cue);
+const G = game, cue = G.balls[0], pl = curP(), cd = cueDef(stickOf(G, pl));
 if (remote) {   // opponent's shot, reproduced with the exact numbers they used
 cue.x = remote.x; cue.y = remote.y; cue.vx = remote.vx; cue.vy = remote.vy; cue.dir = remote.dir;
 const rw = remote.w || [0, 0, 0]; cue.wx = +rw[0] || 0; cue.wy = +rw[1] || 0; cue.wz = +rw[2] || 0; cue.vz0 = +remote.vz0 || 0;
@@ -4263,7 +4264,7 @@ G.shot = {firstHit: null, potted: [], ownBefore: g ? remaining(g) : -1, rails: 0
 G.moving = true; G.ballInHand = false; input.power = 0; G.aiPull = 0;
 if (G.isBreak) G.shake = 10 * power;
 if (!G.demo) { Snd.cue(power, cue.x, cue.y, remote ? 0 : Math.hypot(G.spin.x, G.spin.y)); if (!remote) vib(12 + power * 25 | 0); dustPuff(G, cue.x, cue.y, 3 + (power * 5 | 0), 0.8); }
-try { const cd = cueDef(curP().cue); if (cd.lux && !G.demo) { spawnFx(G, cd.fx, G.balls[0].x, G.balls[0].y, 0.35 + power * 0.55); Snd.tableFx(tableFxKind(cd.fx), 0.35 + power * 0.4); } } catch (e) { console.error("cue fx", e); }
+try { const cd = cueDef(stickOf(G, curP())); if (cd.lux && !G.demo) { spawnFx(G, cd.fx, G.balls[0].x, G.balls[0].y, 0.35 + power * 0.55); Snd.tableFx(tableFxKind(cd.fx), 0.35 + power * 0.4); } } catch (e) { console.error("cue fx", e); }
 }
 function freeSpot(x, y) {
 const ok = (x, y) => game.balls.every(b => b.out || b.n === 0 || (b.x - x) ** 2 + (b.y - y) ** 2 > (2 * R + 1) ** 2);
@@ -7854,7 +7855,7 @@ ctx.restore();
 }
 function drawGuide(G) {
 const cue = G.balls[0], a = castAim(G.balls, cue.x, cue.y, G.angle);
-const aim = curP().isAI ? 4 : cueAim(cueDef(curP().cue));
+const aim = curP().isAI ? 4 : cueAim(cueDef(stickOf(G, curP())));
 ctx.save(); ctx.translate(FX, FY);
 ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 3;
 ctx.strokeStyle = "rgba(255,255,255,.92)"; ctx.lineWidth = 2;
@@ -7882,7 +7883,7 @@ ctx.beginPath(); ctx.moveTo(a.gx, a.gy); ctx.lineTo(a.gx + a.tx / tl * L2, a.gy 
 ctx.restore();
 }
 function drawCue(G, pull) {
-const cue = G.balls[0], cd = cueDef(curP().cue);
+const cue = G.balls[0], cd = cueDef(stickOf(G, curP()));
 const dx = Math.cos(G.angle), dy = Math.sin(G.angle), start = R + 3 + pull * 210, L = 540;
 const tx = FX + cue.x - dx * start, ty = FY + cue.y - dy * start, th = G.angle + Math.PI;
 const al = (G.elev || 0) * 1.2, ca = Math.max(0.5, Math.cos(al)), sa = Math.sin(al), cs = Math.cos(th), sn = Math.sin(th);
@@ -8451,7 +8452,7 @@ bg.addColorStop(0, "#5aa8ff"); bg.addColorStop(1, "#1a4fb0");
 ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 3;
 ctx.fillStyle = bg; rr(b.x - b.r, b.y - b.r, 2 * b.r, 2 * b.r, 10); ctx.fill(); ctx.restore();
 ctx.strokeStyle = "rgba(255,255,255,.45)"; ctx.lineWidth = 1.5; rr(b.x - b.r + 1, b.y - b.r + 1, 2 * b.r - 2, 2 * b.r - 2, 9); ctx.stroke();
-for (const [ox, cd] of [[-5, CUES[1]], [5, cueDef(profile.cue)]]) {
+for (const [ox, cd] of [[-5, CUES[1]], [5, cueDef(G.trialCue || profile.cue)]]) {
 ctx.save(); ctx.translate(b.x + 13 + ox * 0.7, b.y - 13 + ox * 0.7); ctx.rotate(Math.PI * 0.75); drawCueStick(ctx, 38, cd, 0.5); ctx.restore();
 }
 }
@@ -8485,7 +8486,7 @@ rr(x + 5, y + 5, w - 10, (h - 10) * power, 8); ctx.fill(); ctx.shadowBlur = 0;
 ctx.save(); rr(x, y, w, h, 12); ctx.clip();
 ctx.translate(x + w / 2, y + 12 + (h - 34) * power);
 ctx.rotate(Math.PI / 2); ctx.scale(1, -1);
-drawCueStick(ctx, 420, cueDef(profile.cue), 1.25);
+drawCueStick(ctx, 420, cueDef(G.trialCue || profile.cue), 1.25);
 ctx.restore();
 ctx.textAlign = "center";
 ctx.fillStyle = "#a7b2cc"; ctx.font = "10px Nunito,sans-serif"; ctx.fillText(show ? T("▼ torting") : "", x + w / 2, y + h + 10);
