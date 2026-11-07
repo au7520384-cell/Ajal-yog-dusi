@@ -3,7 +3,7 @@
 // The owner's rule: 💎 diamonds are the ONLY premium money, 50 per $1, NEVER given for free (only a purchase adds them); every premium cue / table / avatar / frame / box / pass is bought with 💎;
 // 💵 cash does not exist any more (an old save is converted once); every free reward pays coins.
 // Checks: an old save (cash + old gems) becomes 💎, there is no cash chip / cash button anywhere in the shop, the diamond packs are exactly 50 per $1 at their list price, every premium item costs its dollar price x 50 in 💎,
-// buying with 💎 works and a shortage opens the "Not enough diamonds" window, the exchange pays coins for 💎, no reward table / grant / prize adds 💎 (a purchase does), and the source has exactly the two places that may raise 💎.
+// buying with 💎 works and a shortage opens the "Not enough diamonds" window (with no packs where nothing can be bought: Android app / Y8), the exchange pays coins for 💎, no reward table / grant / prize adds 💎 (a purchase does), and the source has exactly the two places that may raise 💎.
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__dirname, ".."), P = 8631;
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 400) : ""); } };
@@ -115,6 +115,14 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(up.length === 3 && up.every(l => /gDia|GEM_TO_DIA|\* 14/.test(l)), "profile.gems is raised in exactly 3 places: a purchase grant (applyGrant) and the two one-time save conversions", up.map(l => l.slice(0, 100)));
     const cashUse = src.filter(l => /profile\.cash/.test(l)).map(l => l.trim());
     ok(cashUse.length === 1 && /GEM_TO_DIA/.test(cashUse[0]), "profile.cash appears in one place only: the one-time save conversion", cashUse.map(l => l.slice(0, 100)));
+    // ---- 8) the Android app / Y8 (no card payment): nothing sells 💎 there, so the shortage window says so instead of showing packs that do nothing
+    {
+      const q = await ctx.newPage(); q.on("pageerror", e => errs.push(e.message.slice(0, 160)));
+      await q.goto(`http://localhost:${P}/`, { waitUntil: "commit", referer: "https://www.y8.com/" });
+      await q.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 120000 }); await sleep(1500);
+      const nc = await q.evaluate(() => { document.getElementById("modal").classList.remove("on"); profile.gems = 0; gemShort(); return { no: NO_CARD, txt: (document.querySelector("#modal .panel") || {}).innerText || "", packs: document.querySelectorAll("#modal [data-sku]").length }; });
+      ok(nc.no === true && nc.packs === 0 && /Not enough diamonds/i.test(nc.txt) && /not open in this app yet/i.test(nc.txt), "without card payment (Android app / Y8) the shortage window has no packs that do nothing: it says buying diamonds is not open yet", nc);
+    }
     ok(errs.length === 0, "no script error in the page", errs.slice(0, 3));
   } finally { await b.close(); srv.kill(); try { fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 5 }); } catch (e) {} }
   console.log(`pass ${pass}, fail ${fail}`); process.exit(fail ? 1 : 0);
