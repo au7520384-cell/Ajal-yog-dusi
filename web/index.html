@@ -9786,7 +9786,7 @@ body.insertAdjacentHTML("beforeend", `<p class="muted" style="margin:0 0 8px">${
 list.forEach(c => {
 if (c.cat === "premium" || diaStd(c)) {   // one look for every cue of the Premium page (gold frame, crown, 💎 + money price, Try / View)
 const owned = owns(c), sel = profile.cue === c.id, no = (profile.editions || {})[c.id], so = soldOut(c.id);
-const el = document.createElement("div"); el.className = "cuerow pcrow" + (sel ? " sel" : "");
+const el = document.createElement("div"); el.className = "cuerow pcrow cr-premium" + (sel ? " sel" : "");
 el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">👑 ${esc(T(c.name))}</b><span style="color:#ffcf3d">${T("Premium")}${no ? ` · № ${fmt(no)} / ${fmt(EDITION_CAP[c.id])}` : ""}</span></div><div class="cuecvw"></div>
 ${owned || !EDITION_CAP[c.id] ? "" : edLine(c.id)}</div>
 <div>${c.st.map((v, i) => `<div class="stat"><span>${T(STAT_NAMES[i])}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
@@ -9806,7 +9806,7 @@ previewCue(c, document.querySelector("#modal .cuepv")); });
 grid.appendChild(el); return;
 }
 const owned = owns(c), sel = profile.cue === c.id, pcs = (profile.pieces || {})[c.id] | 0, gap = owned ? 0 : cueGap(c, power);   // gap = the ⚜ still missing before this coin cue can be bought
-const el = document.createElement("div"); el.className = "cuerow cr-" + c.cat + (sel ? " sel" : "") + (c.pieces && !owned ? " locked" : "") + (gap ? " cuelk" : "");
+const el = document.createElement("div"); el.className = "cuerow pcrow cr-" + c.cat + (sel ? " sel" : "") + (c.pieces && !owned ? " locked" : "") + (gap ? " cuelk" : "");
 let btn;
 if (sel) btn = `<button class="btn gray" disabled style="width:100%">✓ ${T("TANLANGAN")}</button>`;
 else if (owned) btn = `<button class="btn blue" style="width:100%">${T("TANLASH")}</button>`;
@@ -9820,10 +9820,11 @@ else btn = c.cur === "cash" ? `<button class="btn blue" style="width:100%">💎 
 el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">${c.cc ? flagHTML(c.cc, 18) + " " : ({standard: "🎱 ", horror: "💀 ", victory: "🏆 ", surprise: "🎁 ", event: "🏆 "})[c.cat] || ""}${esc(cueName(c))}</b>
 <span style="color:${tierCol[c.tier] || "#ffe27a"}">${T(c.tier)}${c.pieces && !owned ? ` <span class="pcs">${pcs}/${c.pieces} 🔒</span>` : ""}</span></div><div class="cuecvw"></div></div>
 <div>${c.st.map((v, i) => `<div class="stat"><span>${T(STAT_NAMES[i])}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
-<div>${btn}<div class="cpts">+${cuePower(c)} ⚜</div></div>`;
+<div>${btn}${owned ? "" : `<div class="tpay"><button class="btn orange" data-p="try">${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">${T("Ko'rish")}</button></div>`}<div class="cpts">+${cuePower(c)} ⚜</div></div>`;
 const cvw = el.querySelector(".cuecvw"); cvw._cue = c;
 if (io) io.observe(cvw); else cvw.appendChild(cueCanvas(c));
-const b = el.querySelector("button"), triple = !owned && c.cur === "cash" && c.cash && !["victory", "surprise", "vip", "event"].includes(c.cat);
+{ const tb = el.querySelector('[data-p="try"]'), vb = el.querySelector('[data-p="view"]'); if (tb) tb.onclick = e => { e.stopPropagation(); tryCue(c); }; if (vb) vb.onclick = e => { e.stopPropagation(); openModal({icon: "🎱", title: `${cueName(c)} · ${T("kiy")}`, text: "", extra: `<canvas class="tpcv cuepv" width="620" height="200"></canvas>`, buttons: [{label: `▶ ${T("Sinab ko'rish")}`, cls: "orange", fn: () => tryCue(c)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]}); previewCue(c, document.querySelector("#modal .cuepv")); }; }
+const b = el.querySelector("button:not([data-p=try]):not([data-p=view])"), triple = !owned && c.cur === "cash" && c.cash && !["victory", "surprise", "vip", "event"].includes(c.cat);
 if (triple) wirePay(el, {sku: "cue_" + c.id, buy: cur => buyCue(c, cur, c.gems).then(ok => ok && buildShop("cues"))});
 if (!sel && !triple) b.onclick = () => {
 const keep = $("shop").scrollTop;
