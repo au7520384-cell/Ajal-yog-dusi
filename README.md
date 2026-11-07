@@ -296,6 +296,7 @@ Settings → "Hisob va saqlash" → red **Delete my account** → confirmation �
 - **What arrived is written down** (amounts and time only, never the SMS text): `db.meta.p2pn`. `GET /api/health` shows `p2p: {cards, auto, atm, key, admin, smsCount, lastSms, open}`: open it in a browser - `smsCount: 0` after a real transfer means the phone's SMS forwarder never reached `/api/p2p/notify` (check the forwarder app, the URL and `P2P_NOTIFY_KEY`).
 - **Late money is accepted.** An auto order lives 30 minutes (`P2P_TTL_MS` in tests), but a transfer that arrives up to 24 hours later still pays it (also the admin's Confirm on an expired order); new amounts avoid the amounts of orders that expired in the last 24 h.
 - **The admin in the bot chat:** `/orders` lists the open orders (10 newest, expired ones of the last 24 h too), each with Confirm / Reject. Use it for a payment whose SMS never came.
+- **Telegram Stars balance:** `/stars` (only from `ADMIN_TG_ID`) shows the bot's Stars balance (Bot API `getMyStarBalance`) and the last 10 movements (`getStarTransactions`: who paid, payouts to Fragment).
 - Tests: `node server/test_p2p.js` (mock Telegram API), `node tools/test_p2p_ui.js`.
 
 ## Online match: the opponent sees my cue, and both phones throw the same dice
