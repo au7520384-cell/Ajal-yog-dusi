@@ -850,6 +850,7 @@ async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the
 // ---------------------------------------------------------------- routes
 const routes = {
   "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, web: WEB_OK, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err,
+    play: {on: PLAY.configured(), refundChecks: ((db.meta || {}).playvoid || {}).runs | 0, refunded: ((db.meta || {}).playvoid || {}).taken | 0, lastCheck: ((db.meta || {}).playvoid || {}).at || 0, err: ((db.meta || {}).playvoid || {}).err || ""},
     p2p: {cards: P2P_CARDS.length, auto: p2pModes(true).auto, atm: p2pModes(true).atm, key: !!P2P_KEY, admin: P2P_ADMIN, smsCount: ((db.meta || {}).p2pn || {}).n | 0, lastSms: ((db.meta || {}).p2pn || {}).last || 0, open: Object.values(db.p2p || {}).filter(o => o.st === "pending").length}}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
   "GET /api/ice": () => {
@@ -1571,6 +1572,45 @@ async function tgApi(method, body) {
   return j.result;
 }
 const playSkus = () => Object.keys(SKUS).filter(k => /^gems_\d+$/.test(k) && SKUS[k].gems && !SKUS[k].coins && !SKUS[k].legacy);   // what Google Play sells: the six 💎 packs (not the old orders, not the coin packs)
+// Google Play refunds: Google lists the purchases it refunded / charged back (purchases.voidedpurchases). The 💎 of such a purchase we delivered are taken back ONCE: a "refund" grant (the app subtracts them, never below 0)
+// and the admin is told in the bot chat. State in db.meta.playvoid: t = the newest voiding time handled, runs / taken / at / err for /api/health. Runs every PLAY_VOID_MS (30 min) and once shortly after the start.
+const PLAY_VOID_WHY = ["boshqa", "pushaymon", "olinmadi", "nosoz", "tasodifiy xarid", "firibgarlik", "firibgarlik", "chargeback", "o'z vaqtida tasdiqlanmagan"];
+let playVoidBusy = false, playVoidErrAt = 0;
+async function playVoidSweep() {
+  if (playVoidBusy || !PLAY.configured()) return;
+  playVoidBusy = true;
+  try {
+    const st = (db.meta.playvoid = db.meta.playvoid || {t: 0, runs: 0, taken: 0, at: 0, err: ""});
+    const from = Math.max(Date.now() - 29 * 864e5, (st.t || 0) - 3600e3);   // an hour of overlap; Google keeps 30 days
+    let page = "", newest = st.t || 0, n = 0;
+    for (let i = 0; i < 20; i++) {
+      const r = await PLAY.voided(from, page);
+      if (!r.ok) {
+        st.err = `${r.status} ${r.detail}`.slice(0, 120); st.at = Date.now(); markDirty();
+        if (Date.now() - playVoidErrAt > 6 * 3600e3) { playVoidErrAt = Date.now(); console.error("play refunds: " + st.err + " (the service account may need the permission to view financial data / orders in Play Console)"); }   // (said at most every 6 hours)
+        return;
+      }
+      for (const it of r.items) {
+        newest = Math.max(newest, it.at);
+        const rec = it.token && db.purchases["gp_" + crypto.createHash("sha256").update(it.token).digest("hex").slice(0, 40)];
+        if (!rec || rec.void) continue;   // not one of ours, or already handled
+        const u = db.users[rec.user], sku = SKUS[rec.sku];
+        rec.void = {at: Date.now(), g: it.at, src: it.source, why: it.reason};
+        n++;
+        if (u && sku) {
+          grant(u, {kind: "refund", take: sku.gems, from: sku.name});   // (take, not gems: nothing but fulfill() may hand 💎 out)
+          st.taken = (st.taken | 0) + 1;
+          console.log(`google play: refund of ${rec.sku} (${it.orderId}) from ${u.id}: ${sku.gems} 💎 taken back, reason ${PLAY_VOID_WHY[it.reason] || it.reason}`);
+          if (ADMIN_TG && TG_BOT_TOKEN) tgApi("sendMessage", {chat_id: ADMIN_TG, text: `↩️ Google Play pulni qaytardi\n👤 ${String(u.name || "").slice(0, 30)}\n🛒 ${sku.name} (${sku.gems} 💎 hisobdan olinadi)\n📝 ${PLAY_VOID_WHY[it.reason] || it.reason}\n🧾 ${it.orderId}`}).catch(() => {});
+        }
+      }
+      page = r.next; if (!page) break;
+    }
+    st.t = newest; st.runs = (st.runs | 0) + 1; st.at = Date.now(); st.err = "";
+    markDirty(); if (n) await flush();
+  } catch (e) { console.error("play refunds:", e.message); }
+  finally { playVoidBusy = false; }
+}
 function starsRefuse(u, skuId) {   // the same checks as the card checkout; returns an error code or ""
   const sku = SKUS[skuId]; if (!u || !sku || sku.legacy) return "bad_sku";
   if (sku.once && (u.bought || {})[skuId]) return "already_bought";
@@ -2134,6 +2174,7 @@ store.load().then(loaded => {
   if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}}, loaded);
   db.meta = db.meta || {}; db.clubs = db.clubs || {}; db.dms = db.dms || {}; db.p2p = db.p2p || {};
   setInterval(() => p2pSweep(), 5 * 60e3).unref();
+  setInterval(playVoidSweep, +process.env.PLAY_VOID_MS || 30 * 60e3).unref(); setTimeout(playVoidSweep, +process.env.PLAY_VOID_FIRST_MS || 90e3).unref();   // Google Play refunds
   rollWeek();
   if (TG_BOT_TOKEN) { tgCheck(); setInterval(tgCheck, 10 * 60e3).unref(); }
   if (TG_BOT_TOKEN) {   // tell Telegram where to send the payment updates (every start: it is idempotent)

@@ -6,7 +6,7 @@ const EMAIL = "billing@royal-test.iam.gserviceaccount.com", PKG = "com.royalbill
 module.exports = async function startFakePlay(port) {
   const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 });
   const saJson = JSON.stringify({ type: "service_account", client_email: EMAIL, private_key: privateKey.export({ type: "pkcs8", format: "pem" }), token_uri: "http://example.invalid/never-used" });
-  const orders = new Map(), st = { oauth: 0, jwtOk: 0, get: 0, consume: 0, ack: 0 }, opts = { failConsume: false, getStatus: 200 };
+  const orders = new Map(), voidedList = [], st = { oauth: 0, jwtOk: 0, get: 0, consume: 0, ack: 0, voided: 0 }, opts = { failConsume: false, getStatus: 200, voidedStatus: 200 };
   const server = http.createServer(async (req, res) => {
     const chunks = []; for await (const c of req) chunks.push(c); const body = Buffer.concat(chunks).toString(), u = new URL(req.url, "http://x");
     const send = (s, j) => { res.writeHead(s, { "content-type": "application/json" }); res.end(JSON.stringify(j)); };
@@ -21,6 +21,13 @@ module.exports = async function startFakePlay(port) {
       if (!good) return send(400, { error: "invalid_grant", error_description: "Invalid JWT" });
       st.jwtOk++; return send(200, { access_token: "tok-" + st.oauth, expires_in: 3600, token_type: "Bearer" });
     }
+    const vm = u.pathname.match(/^\/androidpublisher\/v3\/applications\/([^/]+)\/purchases\/voidedpurchases$/);
+    if (vm && req.method === "GET") {   // purchases.voidedpurchases.list: what was refunded since startTime
+      if (!/^Bearer tok-\d+$/.test(req.headers.authorization || "")) return send(401, { error: { code: 401, message: "Request is missing required authentication credential." } });
+      st.voided++; if (opts.voidedStatus !== 200) return send(opts.voidedStatus, { error: { code: opts.voidedStatus, message: "forced " + opts.voidedStatus } });
+      const from = +u.searchParams.get("startTime") || 0;
+      return send(200, { kind: "androidpublisher#voidedPurchasesListResponse", voidedPurchases: voidedList.filter(v => +v.voidedTimeMillis >= from), tokenPagination: {} });
+    }
     const m = u.pathname.match(/^\/androidpublisher\/v3\/applications\/([^/]+)\/purchases\/products\/([^/]+)\/tokens\/([^/:]+)(:consume|:acknowledge)?$/);
     if (!m) return send(404, { error: { code: 404, message: "no route" } });
     if (!/^Bearer tok-\d+$/.test(req.headers.authorization || "")) return send(401, { error: { code: 401, message: "Request is missing required authentication credential." } });
@@ -34,6 +41,7 @@ module.exports = async function startFakePlay(port) {
   });
   await new Promise(r => server.listen(port, r));
   const order = (token, productId, o = {}) => { const rec = { productId, state: 0, consumed: false, acked: false, orderId: "GPA." + token.slice(0, 4), account: "", ...o }; orders.set(token, rec); return rec; };
-  return { saJson, orders, st, opts, order, EMAIL, PKG, port, close: () => server.close() };
+  const voidOrder = (token, reason = 7, source = 2) => { const o = orders.get(token); o.state = 1; voidedList.push({ kind: "androidpublisher#voidedPurchase", purchaseToken: token, purchaseTimeMillis: "1", voidedTimeMillis: String(Date.now()), orderId: o.orderId, voidedSource: source, voidedReason: reason }); };   // Google refunds / charges back an order
+  return { saJson, orders, st, opts, order, voidOrder, voidedList, EMAIL, PKG, port, close: () => server.close() };
 };
 module.exports.EMAIL = EMAIL; module.exports.PKG = PKG;
