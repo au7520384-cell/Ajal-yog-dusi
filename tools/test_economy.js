@@ -25,7 +25,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(s1.g === 800 && s1.c === 0 && s1.dm === 1, "an old save (40 cash + 2 800 old gems) becomes 800 💎, no cash left", s1);
     await p.reload({ waitUntil: "commit" }); await p.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 120000 }); await sleep(1500);
     ok(await p.evaluate(() => profile.gems) === 800, "the conversion runs once (a reload does not change the balance)");
-    ok(await p.evaluate(() => document.querySelectorAll(".money .mchip").length === 2 && !document.getElementById("cashTxt") && !document.querySelector(".money .cash")), "the top bar has only 💎 and 🪙 (no cash chip)");
+    ok(await p.evaluate(() => document.querySelectorAll(".money .mchip").length === 3 && !document.getElementById("cashTxt") && document.querySelectorAll(".money .cash").length === 1), "the top bar: 💎, the money chip (a shortcut to the packs, no balance) and 🪙");
     ok(await p.evaluate(() => document.getElementById("gemTxt").textContent.replace(/\D/g, "")) === "800", "the 💎 chip shows 800");
     // ---- 2) the shop: no cash anywhere, the packs
     const tabs = ["offers", "money", "free", "cues", "tables", "avatars", "frames", "stickers", "boxes"], cashSeen = [];
