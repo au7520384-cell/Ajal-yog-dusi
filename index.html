@@ -9814,7 +9814,7 @@ else if (c.cat === "victory") btn = `<button class="btn blue" data-city="${c.cit
 else if (c.cat === "surprise") btn = `<button class="btn purple" style="width:100%;font-size:15px">${icoH("🎁", 22)} ${T("Syurpriz qutisi")}</button>`;
 else if (c.cat === "vip") btn = `<button class="btn orange" style="width:100%;font-size:15px">♛ VIP</button>`;
 else if (c.cat === "event") btn = `<button class="btn orange" style="width:100%;font-size:15px">🏆 ${T("Kirish ›")}</button>`;
-else if (c.cur === "cash" && c.cash) btn = payRow(c.gems, c.usd, "cue_" + c.id, diaStd(c));   // the 💎-priced standard cues are premium cues: 💎 + Stars, no card transfer
+else if (c.cur === "cash" && c.cash) btn = payRow(c.gems, c.usd, "cue_" + c.id, diaStd(c) || c.cat === "horror" || c.cat === "country");   // the 💎-priced standard cues are premium cues: 💎 + Stars, no card transfer
 else if (gap) btn = `<button class="btn gray cplock" style="width:100%">🔒 +${fmt(gap)} ⚜</button><div class="cpts cpneed">⚜ ${fmt(power)} / ${fmt(c.needCP)}</div>`;
 else btn = c.cur === "cash" ? `<button class="btn blue" style="width:100%">💎 ${fmt(diaOfCash(c.price))}</button>` : `<button class="btn green" style="width:100%"><span class="coin"></span> ${fmtS(c.price)}</button>`;
 el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">${c.cc ? flagHTML(c.cc, 18) + " " : ({standard: "🎱 ", horror: "💀 ", victory: "🏆 ", surprise: "🎁 ", event: "🏆 "})[c.cat] || ""}${esc(cueName(c))}</b>
