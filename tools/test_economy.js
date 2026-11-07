@@ -37,11 +37,18 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     }
     ok(cashSeen.length === 0, "no cash icon / 💵 / 'Cash' on any shop page", cashSeen);
     await p.evaluate(() => buildShop("money")); await sleep(500);
-    const packs = await p.evaluate(() => [...document.querySelectorAll("#shopBody .packcol")].map(c => [...c.querySelectorAll(".pk")].map(k => ({ sku: k.querySelector("[data-sku]").dataset.sku, amt: k.querySelector(".amt").textContent.replace(/\D/g, ""), price: k.querySelector("[data-sku]").textContent.trim(), rib: !!k.querySelector(".rib") }))));
+    const packs = await p.evaluate(() => [[...document.querySelectorAll("#shopBody .packcol .pk")], [...document.querySelectorAll("#shopBody .dsc")].sort((a, b) => a.querySelector(".dsamt").textContent.replace(/\D/g, "") - b.querySelector(".dsamt").textContent.replace(/\D/g, ""))].map((c, i) => c.map(k => ({ sku: k.querySelector("[data-sku]").dataset.sku, amt: (i ? k.querySelector(".dsamt") : k.querySelector(".amt")).textContent.replace(/\D/g, ""), price: k.querySelector("[data-sku]").textContent.trim(), rib: !!k.querySelector(".rib") }))));
     ok(packs.length === 2 && packs[0].every(k => /^coins_/.test(k.sku)) && packs[1].every(k => /^gems_/.test(k.sku)), "the money page: coin packs | diamond packs (the cash column is gone)", packs.map(c => c.map(k => k.sku)));
     const want = { gems_100: "$1.99", gems_250: "$4.99", gems_500: "$9.99", gems_1000: "$19.99", gems_2500: "$49.99", gems_5000: "$99.99" };
     ok(packs[1].length === 6 && packs[1].every(k => want[k.sku] === k.price && +k.amt === +k.sku.slice(5) && !k.rib), "six diamond packs, each at exactly its list price and without a bonus ribbon", packs[1]);
     ok(packs[1].every(k => Math.abs(k.amt / +k.price.slice(1) - 50) < 0.6), "every pack is 50 💎 per $1 (100/$1.99 ... 5000/$99.99)", packs[1].map(k => (k.amt / +k.price.slice(1)).toFixed(2)));
+    // the big diamond store (the 💎 chip and "Not enough diamonds"): six cards, the same list prices
+    await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); go("home"); document.querySelector(".gemchip").click(); }); await sleep(900);
+    const st1 = await p.evaluate(() => ({ cards: [...document.querySelectorAll("#modal .dstore .dsc")].map(k => k.querySelector("[data-sku]").dataset.sku + "=" + k.querySelector("[data-sku]").textContent.trim()), bal: document.querySelector("#modal .dsbal").textContent.replace(/\D/g, "") }));
+    ok(st1.cards.join() === "gems_100=$1.99,gems_250=$4.99,gems_500=$9.99,gems_1000=$19.99,gems_2500=$49.99,gems_5000=$99.99" && +st1.bal === 800, "the 💎 chip opens the big diamond store: six cards in order, list prices, the balance on top", st1);
+    await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); profile.gems = 0; gemShort(); }); await sleep(700);
+    ok(await p.evaluate(() => document.querySelectorAll("#modal .dstore .dsc").length === 6 && /Not enough diamonds/i.test(document.querySelector("#modal .dstore").innerText)), "'Not enough diamonds' opens the same store with the note");
+    await p.evaluate(() => { profile.gems = 800; document.getElementById("modal").classList.remove("on"); go("shop"); }); await sleep(600);
     // ---- 3) every premium item costs its dollar price x 50 in 💎
     const pr = await p.evaluate(() => {
       const bad = [], chk = (kind, id, usd, g) => { if (!(usd > 0) || Math.abs(g - usd * 50) > 2.51) bad.push([kind, id, usd, g]); }, n = { t: 0, c: 0, f: 0 };

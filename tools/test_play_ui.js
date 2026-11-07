@@ -55,17 +55,17 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
     let p = await phone(P);
     ok(await p.evaluate(() => NO_CARD && isApp() && playOn()), "the app build: no card payments, Google Play Billing on");
     await money(p);
-    const shop = await p.evaluate(() => ({ cols: document.querySelectorAll("#shopBody .packcol").length, pk: [...document.querySelectorAll("#shopBody .pk")].map(k => ({ sku: k.querySelector("[data-sku]").dataset.sku, price: k.querySelector("[data-sku]").textContent.trim(), amt: k.querySelector(".amt").textContent.replace(/\D/g, "") })), card: document.querySelectorAll("#shopBody [data-card-sku]").length, ex: document.querySelectorAll("#shopBody .xcard").length, txt: document.getElementById("shopBody").innerText }));
+    const shop = await p.evaluate(() => ({ cols: document.querySelectorAll("#shopBody .packcol").length + 1, pk: [...document.querySelectorAll("#shopBody .dsc")].map(k => ({ sku: k.querySelector("[data-sku]").dataset.sku, price: k.querySelector("[data-sku]").textContent.trim(), amt: k.querySelector(".dsamt").textContent.replace(/\D/g, "") })), card: document.querySelectorAll("#shopBody [data-card-sku]").length, ex: document.querySelectorAll("#shopBody .xcard").length, txt: document.getElementById("shopBody").innerText }));
     const byAmt = [...shop.pk].sort((a, c) => a.amt - c.amt);   // (the page lists the biggest pack first)
     ok(shop.cols === 1 && shop.pk.length === 6 && byAmt.map(k => k.sku).join() === "gems_100,gems_250,gems_500,gems_1000,gems_2500,gems_5000", "the Money page of the app: one column with the six diamond packs (no coin packs)", shop);
     ok(byAmt.map(k => k.price).join() === "€1,89,€4,69,€9,49,€18,99,€47,99,€94,99" && byAmt.map(k => k.amt).join() === "100,250,500,1000,2500,5000", "the buttons show Google's own prices, the packs 100 ... 5 000 💎", shop.pk);
     ok(shop.card === 0 && shop.ex === 4 && /Google Play/.test(shop.txt), "no card buttons, the 💎 → 🪙 exchange stays, the page says it is paid through Google Play");
     // the 💎 chip of the top bar leads here
     await p.evaluate(() => { go("home"); }); await sleep(500); await p.evaluate(() => document.querySelector(".gemchip").click()); await sleep(1000);
-    ok(await p.evaluate(() => document.querySelectorAll("#shopBody .pk").length) === 6, "the 💎 chip of the top bar opens the packs");
+    ok(await p.evaluate(() => document.querySelectorAll("#modal .dstore .dsc").length) === 6, "the 💎 chip of the top bar opens the big diamond store");
     // "Not enough diamonds" shows the packs, with Google's prices
     await p.evaluate(() => { go("home"); gemShort(); }); await sleep(900);
-    const gs = await p.evaluate(() => ({ pk: document.querySelectorAll("#modal .pk").length, price: (document.querySelector('#modal [data-sku="gems_100"]') || {}).textContent, txt: document.getElementById("modal").innerText }));
+    const gs = await p.evaluate(() => ({ pk: document.querySelectorAll("#modal .dsc").length, price: (document.querySelector('#modal [data-sku="gems_100"]') || {}).textContent, txt: document.getElementById("modal").innerText }));
     ok(gs.pk === 6 && gs.price === "€1,89" && !/not open in this app yet/i.test(gs.txt), "'Not enough diamonds' shows the six packs with Google's prices (not the 'not open yet' note)", gs);
     await p.evaluate(() => closeModal && closeModal()).catch(() => {}); await p.evaluate(() => { const m = document.getElementById("modal"); m.classList.remove("on"); });
     // ---- 2) a purchase
@@ -122,8 +122,8 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
       p = await phone(P, o); await sleep(800);
       ok(!(await p.evaluate(() => playOn())), label + ": Google Play Billing is off");
       await p.evaluate(() => { go("home"); gemShort(); }); await sleep(700);
-      ok(await p.evaluate(() => /not open in this app yet/i.test(document.getElementById("modal").innerText) && !document.querySelector("#modal .pk")), label + ": 'Not enough diamonds' says buying is not open yet (no packs that do nothing)");
-      await money(p); ok(await p.evaluate(() => document.querySelectorAll("#shopBody .pk").length === 0 && document.querySelectorAll("#shopBody .xcard").length === 4), label + ": the Money page has only the exchange");
+      ok(await p.evaluate(() => /not open in this app yet/i.test(document.getElementById("modal").innerText) && !document.querySelector("#modal .dsc")), label + ": 'Not enough diamonds' says buying is not open yet (no packs that do nothing)");
+      await money(p); ok(await p.evaluate(() => document.querySelectorAll("#shopBody .dsc").length === 0 && document.querySelectorAll("#shopBody .xcard").length === 4), label + ": the Money page has only the exchange");
       await p.context().close();
     }
     // ---- 9) the texts are translated
