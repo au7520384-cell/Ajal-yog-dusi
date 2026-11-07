@@ -22,6 +22,7 @@ services:
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
+      # Google Play Billing (the 💎 packs of the Android app): add PLAY_SERVICE_ACCOUNT (the service account's JSON key) by hand in the dashboard -> Environment; it is a secret, never commit it. See android/README.md.
       - key: TURN_URLS         # comma-separated turn:/turns: URLs of your TURN relay (voice chat on mobile networks)
         sync: false
       - key: TURN_USER
