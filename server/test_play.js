@@ -13,7 +13,7 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8play-")), tmp2 = fs.mkdtempSync(path.join(os.tmpdir(), "b8play2-"));
   const base = { ...process.env, PLAY_API_BASE: `http://localhost:${GP}`, PLAY_OAUTH_URL: `http://localhost:${GP}/token`, PLAY_PACKAGE: PKG };
   delete base.PLAY_SERVICE_ACCOUNT;
-  const srv = spawn("node", [path.join(__dirname, "server.js")], { env: { ...base, PORT: String(P), DATA_DIR: tmp, PLAY_SERVICE_ACCOUNT: Buffer.from(SA).toString("base64") }, stdio: "ignore" });   // the key as base64 (how it is easiest to paste into a Render env var)
+  const srv = spawn("node", [path.join(__dirname, "server.js")], { env: { ...base, PORT: String(P), DATA_DIR: tmp, PLAY_VOID_MS: "1500", PLAY_VOID_FIRST_MS: "500", PLAY_SERVICE_ACCOUNT: Buffer.from(SA).toString("base64") }, stdio: "ignore" });   // the key as base64 (how it is easiest to paste into a Render env var)
   const srv2 = spawn("node", [path.join(__dirname, "server.js")], { env: { ...base, PORT: String(P2), DATA_DIR: tmp2 }, stdio: "ignore" });   // a server without the key
   await sleep(2800);
   const api = async (port, acct, p, body) => { const r = await fetch(`http://localhost:${port}${p}`, { method: body ? "POST" : "GET", headers: { "Content-Type": "application/json", ...(acct ? { Authorization: `Bearer ${acct.id}:${acct.token}` } : {}) }, body: body ? JSON.stringify(body) : undefined }); return { s: r.status, j: await r.json().catch(() => ({})) }; };
@@ -96,6 +96,22 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
     ok(d2.s === 502 && d2.j.error === "play_auth" && (await grants(ann)).length === 0, "Google refusing the service account (403): 502 play_auth, nothing paid", d2);
     fake.opts.getStatus = 200; const d3 = await A(ann, "/api/play/verify", { sku: "gems_100", token: T(70) });
     ok(d3.s === 200 && (await grants(ann)).length === 1, "...and the retry pays", d3);
+    // ---- refunds: Google voids (refunds / charges back) a purchase that was delivered -> the 💎 are taken back ONCE (a "refund" grant; the app subtracts them, never below 0)
+    fake.voidOrder(T(10), 7);   // Ann's gems_250: charged back
+    await sleep(2600);   // the server asks Google for voided purchases every 1.5 s here (30 min for real)
+    const rf = await grants(ann);
+    ok(rf.length === 1 && rf[0].kind === "refund" && rf[0].take === 250 && !rf[0].gems && !rf[0].coins, "a refunded purchase: one 'refund' grant of the same 250 💎", rf);
+    await sleep(2200); ok((await grants(ann)).length === 0, "...taken back only once (the next checks add nothing)");
+    const rv = await A(ann, "/api/play/verify", { sku: "gems_250", token: T(10) });
+    ok(rv.s === 200 && rv.j.again === true && (await grants(ann)).length === 0, "the refunded token cannot be claimed again for more 💎", rv);
+    order(T(80), "gems_100", { account: tag(ann.id) }); fake.voidOrder(T(80), 1);   // refunded before the app ever sent it to the server: nothing was delivered, nothing to take back
+    order(T(81), "gems_100", { account: tag(bob.id) }); fake.voidOrder(T(81), 5);
+    await sleep(2200); ok((await grants(ann)).length === 0 && (await grants(bob)).length === 0, "a refund of a purchase the server never delivered takes nothing back");
+    const hp = (await A(null, "/api/health")).j.play;
+    ok(hp && hp.on === true && hp.refunded === 1 && hp.refundChecks >= 3 && hp.err === "", "/api/health shows the refund checks (1 refund taken back, no error)", hp);
+    fake.opts.voidedStatus = 403; await sleep(2200);
+    const he = (await A(null, "/api/health")).j.play; ok(/^403/.test(he.err) && srv.exitCode === null, "Google refusing the refund list (403): shown in /api/health, the server keeps running", he);
+    fake.opts.voidedStatus = 200; await sleep(2200); ok(((await A(null, "/api/health")).j.play || {}).err === "", "...and the error clears when Google answers again");
     // ---- the key never leaves the server
     const pub = JSON.stringify([(await A(ann, "/api/play/status")).j, (await A(null, "/api/skus")).j]);
     ok(!/PRIVATE KEY|private_key|royal-test\.iam/.test(pub), "no key material in the public answers");

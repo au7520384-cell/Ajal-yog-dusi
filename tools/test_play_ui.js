@@ -93,12 +93,19 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
     // ---- 4) the verification fails (Google refuses the server): the 💎 are not paid, the purchase stays at Google, the retry pays exactly once
     fake.opts.getStatus = 500; await p.evaluate(() => { toastQ.length = 0; document.getElementById("toasts").innerHTML = ""; document.querySelector('#shopBody [data-sku="gems_1000"]').click(); }); await sleep(2500);
     const left = [...fake.orders.values()].filter(r => !r.consumed && r.productId === "gems_1000");
-    ok(await gems(p) === 350 && left.length === 1 && /⚠|connection|internet/i.test(await toasts(p)), "Google/server trouble after paying: no 💎 yet, an error is shown, the purchase stays unconsumed at Google", { g: await gems(p), left: left.length, t: await toasts(p) });
+    ok(await gems(p) === 350 && left.length === 1 && /Purchase received/i.test(await toasts(p)) && /arrive shortly/i.test(await toasts(p)) && !/no connection|check the internet/i.test(await toasts(p)), "Google/server trouble after paying: no 💎 yet, the player is told the purchase was received and the 💎 follow (not \"no connection\"), the purchase stays unconsumed at Google", { g: await gems(p), left: left.length, t: await toasts(p) });
     fake.opts.getStatus = 200; await p.evaluate(() => playRestore(true)); await sleep(2500);
     const sku2 = left[0] && left[0].productId, want2 = +String(sku2).slice(5);
     ok(await gems(p) === 350 + want2 && left[0].consumed === true, "the next restore (start / resume / shop open) delivers it: +" + want2 + " 💎, consumed", { g: await gems(p), sku2 });
     const g2 = await gems(p); await p.evaluate(() => playRestore(true)); await sleep(1500);
     ok(await gems(p) === g2, "restoring again pays nothing more");
+    // ---- 4b) Google refunded a purchase: the server sends a "refund" grant, the app takes those 💎 back (what was spent stays spent: never below 0)
+    const gKeep = await gems(p);
+    await p.evaluate(() => { toastQ.length = 0; document.getElementById("toasts").innerHTML = ""; Net.applyGrant({ kind: "refund", take: 250, from: "250 💎" }); });
+    ok(await gems(p) === gKeep - 250 && /−250/.test(await toasts(p)) && /refunded/i.test(await toasts(p)), "a refund grant takes the 250 💎 back and says so", [await gems(p), gKeep, await toasts(p)]);
+    await p.evaluate(() => Net.applyGrant({ kind: "refund", take: 99999 }));
+    ok(await gems(p) === 0, "a refund bigger than the balance leaves 0 💎, never a negative number", await gems(p));
+    await p.evaluate(k => { profile.gems = k; save(); }, gKeep);
     // ---- 5) no dead 'watch ads' button on a premium row in the app
     await p.evaluate(() => go("shop")); await sleep(600); await p.evaluate(() => { cueCat = "premium"; buildShop("cues"); }); await sleep(900);
     const rowBtns = await p.evaluate(() => { const r = [...document.querySelectorAll("#shopBody .cuerow")].find(e => e.querySelector('[data-p="gems"]')); return r ? { gems: !!r.querySelector('[data-p="gems"]'), usd: !!r.querySelector('[data-p="usd"]'), ads: /📺/.test(r.innerText) } : null; });

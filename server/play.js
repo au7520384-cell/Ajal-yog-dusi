@@ -74,7 +74,18 @@ async function finish(productId, token) {
   return "";
 }
 
+// purchases.voidedpurchases.list: the in-app purchases Google refunded / charged back since startMs (it keeps 30 days). -> {ok, items: [{token, orderId, at, source, reason}], next} or {ok: false, status, detail}
+// voidedSource: 0 the player, 1 the developer, 2 Google.  voidedReason: 0 other, 1 remorse, 2 not received, 3 defective, 4 accidental, 5 fraud, 6 friendly fraud, 7 chargeback, 8 not acknowledged in time
+async function voided(startMs, page = "") {
+  const url = `${API_BASE()}/androidpublisher/v3/applications/${encodeURIComponent(PACKAGE())}/purchases/voidedpurchases?type=0&maxResults=200&startTime=${Math.max(0, Math.floor(startMs))}${page ? "&token=" + encodeURIComponent(page) : ""}`;
+  const r = await fetch(url, {headers: {Authorization: "Bearer " + await accessToken()}, signal: AbortSignal.timeout(15000)});
+  const j = await r.json().catch(() => ({}));
+  if (r.status === 401) cache = null;
+  if (!r.ok) return {ok: false, status: r.status, detail: String(j.error && j.error.message || "").slice(0, 140)};
+  return {ok: true, items: (j.voidedPurchases || []).map(x => ({token: String(x.purchaseToken || ""), orderId: String(x.orderId || ""), at: +x.voidedTimeMillis || 0, source: x.voidedSource | 0, reason: x.voidedReason | 0})), next: String(j.tokenPagination && j.tokenPagination.nextPageToken || "")};
+}
+
 // the id the app gives Google with the purchase (BillingFlowParams.setObfuscatedAccountId): a one-way hash of the player's id, so a purchase token cannot be handed over to another player's account
 const accountTag = userId => crypto.createHash("sha256").update("rb8-play:" + String(userId)).digest("hex").slice(0, 32);
 
-module.exports = {configured, lookup, finish, accountTag, signedJwt, serviceAccount, PACKAGE};
+module.exports = {configured, lookup, finish, voided, accountTag, signedJwt, serviceAccount, PACKAGE};
