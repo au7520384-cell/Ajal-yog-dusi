@@ -9517,11 +9517,12 @@ openModal({icon: "✅", title: T("Raund yutildi!"), text: `${T("Keyingi bosqich"
 // one price in three currencies: cash, gems and the real-money (card) price. Every item sold for cash shows all three (cash 20 per $, gems 200 per $, the packs' own rates).
 const usdOfCash = cash => Math.round(cash * 5 - 1) / 100;   // 40 cash = $1.99, 100 = $4.99, 400 = $19.99
 // Telegram: Stars is the default price button (⭐ N). When card ways are set up on the server (Telegram Payments card, card transfer, ATM / receipt) every price spot gets a second, separate button with the card price (so'm; dollars abroad); the card chooser holds only the card ways.
-function p2pModes() {   // which card-to-card ways this player is offered: Uzbekistan (or no country) sees the local cards, every other country the foreign (Visa) card, by receipt
-const cc = String(profile.country || "").toUpperCase(), m = TG_P2P && TG_P2P[!cc || cc === "UZ" ? "uz" : "world"];
+function isUzPlayer() { const cc = String(profile.country || "").toUpperCase(); return cc ? cc === "UZ" : (LANG === "uz" || LANG === "ru"); }   // Uzbekistan; a country we do not know counts as Uzbekistan only for an Uzbek / Russian interface (the same rule as p2pUz on the server)
+function p2pModes() {   // which card-to-card ways this player is offered: Uzbekistan sees the local cards (so'm), every other country the foreign (Visa) card, by receipt (dollars)
+const m = TG_P2P && TG_P2P[isUzPlayer() ? "uz" : "world"];
 return m && (m.auto || m.atm) ? m : null;
 }
-function cardWays() { const pm = p2pModes(); return TG_LAUNCH && (TG_PAY || pm) ? {pm, world: !!(pm && TG_P2P && TG_P2P.world === pm)} : null; }
+function cardWays() { const pm = p2pModes(), tg = !!TG_PAY && isUzPlayer(); return TG_LAUNCH && (tg || pm) ? {pm, tg, world: !!(pm && TG_P2P && TG_P2P.world === pm)} : null; }   // Telegram Payments card (so'm) only for Uzbekistan: nobody abroad is shown so'm
 function cardPriceTxt(u) { const w = cardWays(); return w && w.world ? "$" + (+u).toFixed(2) : String(Math.round(u * ((TG_P2P && TG_P2P.k) || (TG_PAY && TG_PAY.k) || 12700) / 100) * 100).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " " + T("so'm"); }
 const FLAT_CARD_SKUS = new Set(["try_lucky", "try_wheel", "try_scratch", "golden_3", "sbox_1", ...Object.keys(SKUS).filter(k => /^gems_/.test(k))]);   // sold at their plain price (server: FLAT_USD) - the card price rule below does NOT apply, or the button would show another amount than the transfer window
 const cardUsdOf = (usd, sku) => FLAT_CARD_SKUS.has(sku) ? +usd : cardUsd(usd);
@@ -10524,7 +10525,7 @@ toast("⚠️", e.status === 503 ? T("To'lov tizimi hali ulanmagan") : e.status 
 }
 function cardChoice(sku, btn) {   // card mode: the card ways only (Stars has its own mode, see the switch in the shop)
 const w = cardWays(), pm = w && w.pm, world = !!(w && w.world), ways = [];
-if (TG_PAY) ways.push(["pcT", "💳 Telegram Payments", "blue", () => tgPayCheckout(sku, btn)]);
+if (w && w.tg) ways.push(["pcT", "💳 Telegram Payments", "blue", () => tgPayCheckout(sku, btn)]);
 if (pm && pm.auto) ways.push(["pcA", "💸 " + T("Kartaga o'tkazma"), "orange", () => p2pCheckout(sku, "auto")]);
 if (pm && pm.atm) ways.push(["pcB", world ? "🧾 " + T("Chek orqali") : "🏧 " + T("Bankamat orqali"), "blue", () => p2pCheckout(sku, "atm")]);
 if (!ways.length) return starsCheckout(sku, btn);
