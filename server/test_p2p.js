@@ -6,7 +6,7 @@ const { spawn } = require("child_process"), http = require("http"), path = requi
 const sleep = ms => new Promise(r => setTimeout(r, ms)); let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 300) : ""); } };
 (async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8p2p-")), P = 8591, base = `http://localhost:${P}`, TOKEN = "123:testtoken", sent = [];
-  const mock = http.createServer((q, r) => { let b = ""; q.on("data", d => b += d); q.on("end", () => { try { sent.push({ url: q.url, body: JSON.parse(b || "{}") }); } catch (e) { sent.push({ url: q.url, body: {} }); } r.writeHead(200, { "content-type": "application/json" }); r.end(JSON.stringify({ ok: true, result: { id: 1, username: "bot" } })); }); });
+  const mock = http.createServer((q, r) => { let b = ""; q.on("data", d => b += d); q.on("end", () => { try { sent.push({ url: q.url, body: JSON.parse(b || "{}") }); } catch (e) { sent.push({ url: q.url, body: {} }); } r.writeHead(200, { "content-type": "application/json" }); r.end(JSON.stringify({ ok: true, result: /getMyStarBalance$/.test(q.url) ? { amount: 1234 } : /getStarTransactions$/.test(q.url) ? { transactions: [{ id: "t1", amount: 110, date: 1760000000, source: { type: "user", user: { id: 7, first_name: "Ann", username: "ann_x" } } }, { id: "t2", amount: 1000, date: 1760100000, receiver: { type: "fragment" } }] } : { id: 1, username: "bot" } })); }); });
   await new Promise(r => mock.listen(8590, r));
   const srv = spawn("node", [path.join(__dirname, "server.js")], { env: { ...process.env, PORT: String(P), DATA_DIR: tmp, TG_API_BASE: "http://localhost:8590", TELEGRAM_BOT_TOKEN: TOKEN, ADMIN_TG_ID: "555", P2P_CARD: "8600 1111 2222 3333|Test", P2P_NOTIFY_KEY: "secretkey1234567", P2P_TTL_MS: "2500", APP_URL: base }, stdio: "ignore" }); await sleep(2500);
   const api = async (acct, p, body, hdr) => { const r = await fetch(base + p, { method: body ? "POST" : "GET", headers: { "Content-Type": "application/json", ...(hdr || {}), ...(acct ? { Authorization: `Bearer ${acct.id}:${acct.token}` } : {}) }, body: body ? JSON.stringify(body) : undefined }); return { s: r.status, j: await r.json().catch(() => ({})) }; };
@@ -54,6 +54,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms)); let pass = 0, fail = 0;
     await api(E, "/api/p2p/check", { id: o5.id }); await hook({ callback_query: { id: "cb4", data: "p2p:no:" + o5.id, from: { id: 555 }, message: { chat: { id: 555 }, message_id: 10 } } }); await sleep(400);
     const n5 = (await api(null, "/api/p2p/notify?key=secretkey1234567", { text: `+${o5.amount} UZS` })).j; ok(n5.matched === 1 && (await api(E, "/api/p2p/status", { id: o5.id })).j.st === "paid", "an order the admin refused is still paid by the bank SMS", n5);
     ok((await api(null, "/api/p2p/notify?key=wrongkey", { text: "+1000" })).s === 403, "a wrong key is refused");
+    // /stars: the owner sees the bot's Stars balance and the last movements; anybody else gets nothing
+    const sb = adminMsgs().length; await hook({ message: { text: "/stars", from: { id: 555 }, chat: { id: 555, type: "private" } } }); await sleep(600);
+    const st = adminMsgs().slice(sb).pop(); ok(st && /Bot balansi: 1234 Stars/.test(st.body.text) && /\+110 ⭐\s+Ann @ann_x/.test(st.body.text) && /−1000 ⭐\s+Fragment/.test(st.body.text), "/stars shows the balance, an incoming payment and a payout", st && st.body.text);
+    const so = sent.length; await hook({ message: { text: "/stars", from: { id: 999 }, chat: { id: 999, type: "private" } } }); await sleep(500);
+    ok(!sent.slice(so).some(x => /getMyStarBalance|getStarTransactions/.test(x.url) || String(x.body.chat_id) === "999"), "/stars from anybody but the owner does nothing", sent.slice(so).map(x => x.url));
   } finally { srv.kill(); mock.close(); try { fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 5 }); } catch (e) {} }
   console.log(`pass ${pass}, fail ${fail}`); process.exit(fail ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

@@ -794,7 +794,7 @@ function chanReport() {   // the owner's /chan: today, the bank, the next days
   if (c.err) lines.push("Oxirgi xato: " + c.err);
   return lines.join("\n");
 }
-async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the bot chat
+async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the bot chat (the owner also: /src, /chan, /orders, /stars)
   if (cmd === "/src") {   // the owner only: new players per ad link
     if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
     const rows = srcStats();
@@ -819,6 +819,19 @@ async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the
     if (!list.length) return tgApi("sendMessage", {chat_id: m.chat.id, text: "Ochiq to'lov yo'q."});
     for (const o of list) await tgApi("sendMessage", {chat_id: m.chat.id, text: `🧾 #${o.id} ${o.st === "exp" ? "(muddati tugagan)" : ""}\n👤 ${String((db.users[o.u] || {}).name || "").slice(0, 30)}\n🛒 ${SKUS[o.sku] ? SKUS[o.sku].name : o.sku}\n💵 ${o.amt} so'm (${o.mode})\n⏱ ${Math.round((now - o.at) / 60000)} daqiqa oldin`, reply_markup: {inline_keyboard: [[{text: "✅ Tasdiqlash", callback_data: "p2p:ok:" + o.id}, {text: "❌ Rad etish", callback_data: "p2p:no:" + o.id}]]}}).catch(() => {});
     return;
+  }
+  if (cmd === "/stars") {   // the owner only: the bot's Telegram Stars balance + the last Stars movements (a payout to Fragment is asked for in the bot's own profile, not here)
+    if (!ADMIN_TG || String(m.from.id) !== ADMIN_TG) return;
+    const out = [], cut = (e, n) => String(e && e.message || e).slice(0, n);
+    try { const b = await tgApi("getMyStarBalance"); out.push(`⭐ Bot balansi: ${(b && +b.amount) | 0} Stars`); } catch (e) { out.push("⭐ Balansni olib bo'lmadi: " + cut(e, 100)); }
+    try {
+      const t = await tgApi("getStarTransactions", {offset: 0, limit: 10}), rows = ((t && t.transactions) || []).slice(0, 10).map(x => {
+        const src = x.source || {}, rcv = x.receiver || {}, who = src.type === "user" && src.user ? String(src.user.first_name || "").slice(0, 20) + (src.user.username ? " @" + src.user.username : "") : rcv.type === "fragment" ? "Fragment (yechib olish)" : String((x.receiver ? rcv : src).type || "").slice(0, 20);
+        return `${new Date((+x.date || 0) * 1000).toISOString().slice(0, 16).replace("T", " ")}  ${x.receiver ? "−" : "+"}${Math.abs(x.amount | 0)} ⭐  ${who}`;
+      });
+      out.push(rows.length ? "🧾 Oxirgi harakatlar (UTC):\n" + rows.join("\n") : "Hali Stars to'lovi yo'q.");
+    } catch (e) { out.push("🧾 Harakatlar ro'yxatini olib bo'lmadi: " + cut(e, 100)); }
+    return tgApi("sendMessage", {chat_id: m.chat.id, text: out.join("\n\n")});
   }
   if (cmd === "/id") return tgApi("sendMessage", {chat_id: m.chat.id, text: "Telegram ID: " + m.from.id});   // the number for ADMIN_TG_ID
   const u = userByTg(m.from.id), lc = pushLang(u, m.from.language_code), L = PUSH_LANGS[lc];
@@ -1646,7 +1659,7 @@ async function tgWebhook(req, res) {
     const m = up.message;
     if (m && typeof m.text === "string" && m.from && m.chat && m.chat.type === "private") {
       const cmd = m.text.trim().split(/[\s@]/)[0].toLowerCase(), arg = m.text.trim().split(/\s+/)[1] || "";
-      if (cmd === "/start" || cmd === "/stop" || cmd === "/id" || cmd === "/src" || cmd === "/chan" || cmd === "/orders") await botCommand(cmd, m, arg);
+      if (cmd === "/start" || cmd === "/stop" || cmd === "/id" || cmd === "/src" || cmd === "/chan" || cmd === "/orders" || cmd === "/stars") await botCommand(cmd, m, arg);
     }
     const mc = up.my_chat_member;   // the player blocked or unblocked the bot
     if (mc && mc.chat && mc.chat.type === "private" && mc.from && mc.new_chat_member) {
