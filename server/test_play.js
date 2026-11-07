@@ -28,7 +28,7 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
     ok((await api(P2, bob2, "/api/play/verify", { sku: "gems_100", token: T(0) })).s === 503, "...and verify answers 503 (nothing is asked from Google)");
     ok((await A(null, "/api/play/verify", { sku: "gems_100", token: T(1) })).s === 401 && (await A(null, "/api/play/status")).s === 401, "verify and status need a signed-in player (401)");
     const s0 = await A(ann, "/api/play/status");
-    ok(s0.s === 200 && s0.j.configured === true && s0.j.acct === tag(ann.id) && s0.j.skus.join() === "gems_100,gems_250,gems_500,gems_1000,gems_2500,gems_5000", "status: configured, the account tag of this player, the six pack ids", s0.j);
+    ok(s0.s === 200 && s0.j.configured === true && s0.j.acct === tag(ann.id) && s0.j.skus.join() === "cash_15,cash_50,cash_110,cash_256,cash_800,cash_2000,gems_100,gems_250,gems_500,gems_1000,gems_2500,gems_5000", "status: configured, the account tag of this player, the twelve pack ids (6 cash + 6 diamond)", s0.j);
     // ---- a good purchase: paid once, consumed
     order(T(10), "gems_250", { account: tag(ann.id) });
     const v1 = await A(ann, "/api/play/verify", { sku: "gems_250", token: T(10) });

@@ -30,7 +30,7 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
       const calls = window.__np = { purchase: [], consume: [], getProducts: 0, getPurchases: 0 };
       const np = o2.plugin === false ? undefined : {
         async isBillingSupported() { return { isBillingSupported: o2.billing !== false }; },
-        async getProducts({ productIdentifiers }) { calls.getProducts++; return { products: productIdentifiers.map(id => ({ identifier: id, priceString: "€" + (id === "gems_100" ? "1,89" : id === "gems_250" ? "4,69" : id === "gems_500" ? "9,49" : id === "gems_1000" ? "18,99" : id === "gems_2500" ? "47,99" : "94,99"), price: 1 })) }; },
+        async getProducts({ productIdentifiers }) { calls.getProducts++; return { products: productIdentifiers.map(id => ({ identifier: id, priceString: "€" + (id === "cash_15" ? "1,89" : id === "cash_50" ? "4,69" : id === "cash_110" ? "9,49" : id === "cash_256" ? "18,99" : id === "cash_800" ? "47,99" : id === "cash_2000" ? "94,99" : id === "gems_100" ? "1,89" : id === "gems_250" ? "4,69" : id === "gems_500" ? "9,49" : id === "gems_1000" ? "18,99" : id === "gems_2500" ? "47,99" : "94,99"), price: 1 })) }; },
         async purchaseProduct(opt) { calls.purchase.push(opt); if (window.__mode === "cancel") throw Object.assign(new Error("Purchase is not purchased"), { code: "USER_CANCELED" }); if (window.__mode === "pending") throw new Error("Purchase is pending"); await new Promise(r => setTimeout(r, 150)); return await window.__gpBuy(opt); },
         async consumePurchase(opt) { calls.consume.push(opt.purchaseToken); await window.__gpConsume(opt.purchaseToken); },
         async getPurchases() { calls.getPurchases++; return { purchases: await window.__gpOwned() }; },
@@ -55,11 +55,12 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
     let p = await phone(P);
     ok(await p.evaluate(() => NO_CARD && isApp() && playOn()), "the app build: no card payments, Google Play Billing on");
     await money(p);
-    const shop = await p.evaluate(() => ({ cols: document.querySelectorAll("#shopBody .packcol").length + 1, pk: [...document.querySelectorAll("#shopBody .dsc")].map(k => ({ sku: k.querySelector("[data-sku]").dataset.sku, price: k.querySelector("[data-sku]").textContent.trim(), amt: k.querySelector(".dsamt").textContent.replace(/\D/g, "") })), card: document.querySelectorAll("#shopBody [data-card-sku]").length, ex: document.querySelectorAll("#shopBody .xcard").length, txt: document.getElementById("shopBody").innerText }));
+    const shop = await p.evaluate(() => ({ cols: document.querySelectorAll("#shopBody .packcol").length, cash: [...document.querySelectorAll("#shopBody .packcol .pk [data-sku]")].map(k => k.dataset.sku + "=" + k.textContent.trim()), pk: [...document.querySelectorAll("#shopBody .dsc")].map(k => ({ sku: k.querySelector("[data-sku]").dataset.sku, price: k.querySelector("[data-sku]").textContent.trim(), amt: k.querySelector(".dsamt").textContent.replace(/\D/g, "") })), card: document.querySelectorAll("#shopBody [data-card-sku]").length, ex: document.querySelectorAll("#shopBody .xcard").length, txt: document.getElementById("shopBody").innerText }));
     const byAmt = [...shop.pk].sort((a, c) => a.amt - c.amt);   // (the page lists the biggest pack first)
-    ok(shop.cols === 1 && shop.pk.length === 6 && byAmt.map(k => k.sku).join() === "gems_100,gems_250,gems_500,gems_1000,gems_2500,gems_5000", "the Money page of the app: one column with the six diamond packs (no coin packs)", shop);
+    ok(shop.cols === 1 && shop.cash.length === 6 && shop.pk.length === 6 && byAmt.map(k => k.sku).join() === "gems_100,gems_250,gems_500,gems_1000,gems_2500,gems_5000", "the Money page of the app: one column with the six 💵 cash packs, then the six diamond packs (no coin packs)", shop);
+    ok([...shop.cash].sort((a, c) => parseFloat(a.split("€")[1].replace(",", ".")) - parseFloat(c.split("€")[1].replace(",", "."))).join() === "cash_15=€1,89,cash_50=€4,69,cash_110=€9,49,cash_256=€18,99,cash_800=€47,99,cash_2000=€94,99", "the cash packs show Google's own prices too", shop.cash);
     ok(byAmt.map(k => k.price).join() === "€1,89,€4,69,€9,49,€18,99,€47,99,€94,99" && byAmt.map(k => k.amt).join() === "100,250,500,1000,2500,5000", "the buttons show Google's own prices, the packs 100 ... 5 000 💎", shop.pk);
-    ok(shop.card === 0 && shop.ex === 4 && /Google Play/.test(shop.txt), "no card buttons, the 💎 → 🪙 exchange stays, the page says it is paid through Google Play");
+    ok(shop.card === 0 && shop.ex === 10 && /Google Play/.test(shop.txt), "no card buttons, the 💎 → 🪙 exchange stays, the page says it is paid through Google Play");
     // the 💎 chip of the top bar leads here
     await p.evaluate(() => { go("home"); }); await sleep(500); await p.evaluate(() => document.querySelector(".gemchip").click()); await sleep(1000);
     ok(await p.evaluate(() => document.querySelectorAll("#modal .dstore .dsc").length) === 6, "the 💎 chip of the top bar opens the big diamond store");
@@ -84,6 +85,12 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
     await p.evaluate(() => { const b = document.querySelector('#shopBody [data-sku="gems_100"]'); b.click(); b.click(); });
     await p.waitForFunction(() => (profile.gems | 0) >= 350, null, { timeout: 15000 }).catch(() => {}); await sleep(400);
     ok(await gems(p) === 350 && (await p.evaluate(() => window.__np.purchase.length)) === 2, "a second purchase works, a double tap opens the Google window only once", [await gems(p), await p.evaluate(() => window.__np.purchase.length)]);
+    // a 💵 cash pack goes the same way: the server pays the cash (no 💎), consumes it, the price is Google's
+    const cash0 = await p.evaluate(() => profile.cash | 0), gemsB = await gems(p);
+    await p.evaluate(() => { toastQ.length = 0; document.getElementById("toasts").innerHTML = ""; document.querySelector('#shopBody [data-sku="cash_50"]').click(); });
+    await p.waitForFunction(c => (profile.cash | 0) >= c + 50, cash0, { timeout: 15000 }).catch(() => {}); await sleep(500);
+    const recC = [...fake.orders.values()].find(r => r.productId === "cash_50");
+    ok((await p.evaluate(() => profile.cash | 0)) === cash0 + 50 && await gems(p) === gemsB && recC && recC.consumed === true, "a 💵 cash pack (cash_50) pays exactly 50 💵, no 💎, and is consumed", { cash: await p.evaluate(() => profile.cash), g: await gems(p), recC });
     // ---- 3) the Google window closed / a payment pending: nothing changes
     await p.evaluate(() => { toastQ.length = 0; document.getElementById("toasts").innerHTML = ""; window.__mode = "cancel"; document.querySelector('#shopBody [data-sku="gems_500"]').click(); }); await sleep(1200);
     ok(await gems(p) === 350 && !/⚠|failed|Purchase failed/i.test(await toasts(p)), "closing the Google window changes nothing and shows no error", await toasts(p));
@@ -130,7 +137,7 @@ const tag = id => crypto.createHash("sha256").update("rb8-play:" + id).digest("h
       ok(!(await p.evaluate(() => playOn())), label + ": Google Play Billing is off");
       await p.evaluate(() => { go("home"); gemShort(); }); await sleep(700);
       ok(await p.evaluate(() => /not open in this app yet/i.test(document.getElementById("modal").innerText) && !document.querySelector("#modal .dsc")), label + ": 'Not enough diamonds' says buying is not open yet (no packs that do nothing)");
-      await money(p); ok(await p.evaluate(() => document.querySelectorAll("#shopBody .dsc").length === 0 && document.querySelectorAll("#shopBody .xcard").length === 4), label + ": the Money page has only the exchange");
+      await money(p); ok(await p.evaluate(() => document.querySelectorAll("#shopBody .dsc").length === 0 && document.querySelectorAll("#shopBody .xcard").length === 10 && document.querySelectorAll("#shopBody .packcol").length === 0), label + ": the Money page has only the exchange");
       await p.context().close();
     }
     // ---- 9) the texts are translated

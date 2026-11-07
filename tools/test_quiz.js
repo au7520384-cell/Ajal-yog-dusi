@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Billiard quizzes with a gift (server side, real server on a temp data folder):  node tools/test_quiz.js
 // - the daily set: 5 questions, no right answer in what the page gets before it has answered, the same set when asked again
-// - a right answer pays 300 coins once (a server grant the game adds at its next sync), a wrong one nothing, answering again nothing; 5/5 adds 1 000 coins
+// - a right answer pays 300 coins once (a server grant the game adds at its next sync), a wrong one nothing, answering again nothing; 5/5 adds 1 cash
 // - a question linked from a channel post (/api/quiz/one) pays the same way; at most 10 paid answers a day; bad ids / choices are refused
 // - the channel's quiz posts point the button at the game question (startapp=q_<id>)
 const { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
@@ -14,7 +14,7 @@ const mk = async name => { const r = await call(null, "/api/register", { name })
   const bank = JSON.parse(fs.readFileSync(path.join(ROOT, "server", "channel_bank.json"), "utf8")).filter(x => x.cat === "quiz"), byId = Object.fromEntries(bank.map(x => [x.id, x]));
   const A = await mk("Alisher"), Bo = await mk("Bobur");
   let r = await call(A, "/api/quiz/day"); const items = r.j.items;
-  ok(r.s === 200 && items.length === 5 && r.j.coins === 300 && r.j.bonusCoins === 1000, "the daily set has 5 questions", r.j);
+  ok(r.s === 200 && items.length === 5 && r.j.coins === 300 && r.j.bonusCash === 1, "the daily set has 5 questions", r.j);
   ok(items.every(x => x.done === null && !("correct" in x) && Array.isArray(x.o) && x.q.uz && x.q.en && byId[x.id]), "no right answer is sent before the answer", items[0]);
   const again = await call(A, "/api/quiz/day"); ok(JSON.stringify(again.j.items.map(x => x.id)) === JSON.stringify(items.map(x => x.id)), "asked again: the same five");
   const other = await call(Bo, "/api/quiz/day"); ok(JSON.stringify(other.j.items.map(x => x.id)) === JSON.stringify(items.map(x => x.id)), "another player gets the same five on the same day");
@@ -32,16 +32,16 @@ const mk = async name => { const r = await call(null, "/api/register", { name })
   r = await call(A, "/api/quiz/answer", { id: items[0].id, c: right0 }); ok(r.j.again === true && r.j.coins === 0, "the same question again: nothing more is paid", r.j);
   // right answers
   let paid = 0, bonus = 0;
-  for (let k = 1; k < 5; k++) { const q = byId[items[k].id]; r = await call(A, "/api/quiz/answer", { id: items[k].id, c: q.quiz.correct }); paid += r.j.coins || 0; bonus += r.j.bonusCoins || 0; ok(r.j.done && r.j.done.ok === true, "right answer " + k, r.j); }
+  for (let k = 1; k < 5; k++) { const q = byId[items[k].id]; r = await call(A, "/api/quiz/answer", { id: items[k].id, c: q.quiz.correct }); paid += r.j.coins || 0; bonus += r.j.cash || 0; ok(r.j.done && r.j.done.ok === true, "right answer " + k, r.j); }
   { const Cc = await mk("Chingiz"), q1 = byId[items[1].id], ans = await call(Cc, "/api/quiz/answer", { id: items[1].id, c: q1.quiz.correct, lang: "ru" }); ok(ans.j.done && ans.j.done.tx && ans.j.done.tx === i18n.ru[items[1].id].x, "the explanation comes in the player's language after the answer", ans.j.done); }
   ok(paid === 4 * 300 && bonus === 0, "4 right answers pay 4 x 300 coins and no bonus (one was wrong)", [paid, bonus]);
   let sy = await call(A, "/api/sync", { name: "Alisher" }); const g = (sy.j.grants || []).filter(x => x.kind === "quiz");
   ok(g.length === 4 && g.reduce((a, x) => a + (x.coins || 0), 0) === 1200, "the coins arrive as grants at the next sync", g);
   sy = await call(A, "/api/sync", { name: "Alisher" }); ok((sy.j.grants || []).length === 0, "grants are delivered once");
-  // 5 of 5 -> +1 000 coins
+  // 5 of 5 -> +1 cash
   const bday = (await call(Bo, "/api/quiz/day")).j.items; let bbonus = 0, bcoins = 0;
-  for (const it of bday) { const rr = await call(Bo, "/api/quiz/answer", { id: it.id, c: byId[it.id].quiz.correct }); bbonus += rr.j.bonusCoins || 0; bcoins += rr.j.coins || 0; }
-  ok(bcoins === 1500 && bbonus === 1000, "5 of 5: 5 x 300 coins and +1 000 coins", [bcoins, bbonus]);
+  for (const it of bday) { const rr = await call(Bo, "/api/quiz/answer", { id: it.id, c: byId[it.id].quiz.correct }); bbonus += rr.j.cash || 0; bcoins += rr.j.coins || 0; }
+  ok(bcoins === 1500 && bbonus === 1, "5 of 5: 5 x 300 coins and +1 cash", [bcoins, bbonus]);
   r = await call(Bo, "/api/quiz/day"); ok(r.j.bonus === true && r.j.items.every(x => x.done && x.done.ok), "the day shows the bonus is paid");
   // a channel question: pays the same; the cap of 10 paid answers a day
   const used = new Set(bday.map(x => x.id)), rest = bank.map(x => x.id).filter(id => !used.has(id));
