@@ -56,7 +56,7 @@ const cardKind = n => { const d = n.replace(/\s/g, ""); return /^8600/.test(d) ?
 // by default Uzbekistan players (and players with no country) see Humo / Uzcard, players of every other country see Visa / Mastercard. A "world" card works with the receipt (ATM) flow only: money from abroad never arrives as one exact so'm amount.
 const P2P_CARDS = (process.env.P2P_CARD || "").split(/[,;\n]/).map(x => { const [n, h, au] = x.split("|"); const number = String(n || "").replace(/[^\d ]/g, "").replace(/\s+/g, " ").trim(), label = cardKind(number), a = String(au || "").trim().toLowerCase(); return {number, holder: String(h || P2P_HOLDER).trim().slice(0, 40), label, aud: /^(uz|world|all)$/.test(a) ? a : label === "Visa" || label === "Mastercard" ? "world" : "uz"}; }).filter(c => c.number.replace(/\s/g, "").length >= 13 && c.number.replace(/\s/g, "").length <= 19).slice(0, 4);
 const P2P_ADMIN = !!(TG_BOT_TOKEN && ADMIN_TG);
-const p2pUz = u => { const c = String(u && u.country || "").toUpperCase(); return !c || c === "UZ"; };   // Uzbekistan, or a country we do not know
+const p2pUz = u => { const c = String(u && u.country || "").toUpperCase(); return c ? c === "UZ" : (!u || !u.lang || u.lang === "uz" || u.lang === "ru"); };   // Uzbekistan; a country we do not know counts as Uzbekistan only for an Uzbek / Russian interface (the same rule as isUzPlayer in the page)
 const p2pCards = (uz, mode) => P2P_CARDS.filter(c => c.aud === "all" || c.aud === (uz ? "uz" : "world")).filter(c => mode === "atm" || c.aud !== "world");
 const p2pModes = uz => ({auto: !!(P2P_KEY && p2pCards(uz, "auto").length), atm: !!(P2P_ADMIN && p2pCards(uz, "atm").length)});
 const P2P_ASK_GAP = process.env.P2P_ASK_GAP_MS !== undefined ? +process.env.P2P_ASK_GAP_MS : 3000;   // ms between two admin messages for one order (a double tap); 0 in tests
@@ -1403,6 +1403,7 @@ const routes = {
   // Telegram Payments with a card provider: same shape as the Stars invoice, paid in TG_PAY_CUR through the provider token
   async "POST /api/tgpay/invoice"(req, u) {
     if (!TG_BOT_TOKEN || !TG_PAY_TOKEN) return [503, {error: "payments_not_configured"}];
+    if (!p2pUz(u)) return [403, {error: "not_available"}];   // the card provider charges so'm: only for Uzbekistan
     const b = await jsonBody(req), sku = SKUS[b.sku];
     if (!sku || !sku.usd) return [400, {error: "bad_sku"}];
     const bad = starsRefuse(u, b.sku); if (bad) return [bad === "sold_out" ? 409 : 400, {error: bad}];

@@ -20,6 +20,11 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     const sku = await p.evaluate(async () => { const r = await Net.api("/api/skus"); return Object.keys(r.skus).find(k => r.skus[k].usd && r.skus[k].coins && !r.skus[k].once && !r.skus[k].items) || Object.keys(r.skus).find(k => r.skus[k].usd); });
     // the price on the shop's card button is the price of the transfer window (the flat-priced items used to show twice the amount: 25 300 on the button, 12 619 in the window)
     const pr = await p.evaluate(async () => { const r = await Net.api("/api/skus"), out = {}; for (const [k, u] of [["try_lucky", TRY_USD], ["try_wheel", TRY_USD], ["try_scratch", TRY_USD], ["golden_3", GOLD_USD], ["sbox_1", BOX_USD], ["coins_20k", 1.99]]) out[k] = { server: r.skus[k] && r.skus[k].usd, client: cardUsdOf(u, k), txt: cardPriceTxt(cardUsdOf(u, k)) }; return out; });
+    // so'm is for Uzbekistan only: abroad (or an unknown country with a non-Uzbek / non-Russian interface) nobody is shown so'm or the Telegram card provider
+    const rule = await p.evaluate(() => { const c0 = profile.country, l0 = LANG, o = {}; TG_PAY = {cur: "UZS", k: 12700};
+      for (const [cc, l] of [["UZ", "en"], ["US", "en"], ["RU", "ru"], ["", "en"], ["", "uz"], ["", "ru"]]) { profile.country = cc; LANG = l; const w = cardWays(); o[cc + "/" + l] = { uz: isUzPlayer(), tg: !!(w && w.tg) }; }
+      profile.country = c0; LANG = l0; TG_PAY = null; return o; });
+    ok(rule["UZ/en"].uz && rule["UZ/en"].tg && !rule["US/en"].uz && !rule["US/en"].tg && !rule["RU/ru"].tg && !rule["/en"].uz && rule["/uz"].uz && rule["/ru"].uz, "so'm / the Telegram card provider are offered to Uzbekistan only (unknown country: only with an Uzbek or Russian interface)", rule);
     ok(Object.values(pr).every(x => x.server === x.client), "every card button shows the price the server really charges (flat items and the others)", pr);
     ok(/^12 ?600 /.test(pr.try_wheel.txt) || /^12.?600/.test(pr.try_wheel.txt), "a +1 try costs 12 600 so'm on the button (not 25 300)", pr.try_wheel.txt);
     // the card way: the shop calls this with an sku (one way only -> the window opens at once; two -> a chooser)
