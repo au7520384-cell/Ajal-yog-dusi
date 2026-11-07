@@ -1,4 +1,4 @@
-// Shop showcase posts: honest status / collector appeal. Prices are the in-game ones (coins, 💵, 💎), taken from the game's data. Scarcity only where it is real (limited editions, the weekly table, the monthly pass).
+// Shop showcase posts: honest status / collector appeal. Prices are the in-game ones (coins, 💎), taken from the game's data. Scarcity only where it is real (limited editions, the weekly table, the monthly pass).
 
 ## shop cues c_premium2
 uz: 🎱 Kiy: sizning imzoyingiz
@@ -8,9 +8,9 @@ Everyone at the table sees your cue. From a simple one to a legendary one: find 
 
 ## shop cues c_uz
 uz: 🇺🇿 O'zbekiston kiyi: bayrog'ingiz qo'lingizda
-Ko'k rangda, yarim oy nishoni bilan. «Do'kon · Kiylar · Mamlakat» bo'limida: 40 💵 yoki 400 💎. Dunyoning boshqa 198 ta davlati kiyi ham shu yerda.
+Ko'k rangda, yarim oy nishoni bilan. «Do'kon · Kiylar · Mamlakat» bo'limida: 100 💎. Dunyoning boshqa 198 ta davlati kiyi ham shu yerda.
 en: 🇺🇿 The Uzbekistan cue: your flag in your hands
-Blue, with a crescent. In "Shop · Cues · Country": 40 💵 or 400 💎. The cues of 198 other countries are there too.
+Blue, with a crescent. In "Shop · Cues · Country": 100 💎. The cues of 198 other countries are there too.
 
 ## shop limited c_premium3
 uz: 🌈 Kamalak opal: dunyoda atigi 300 ta
@@ -50,9 +50,9 @@ en: 💎 Limited frames: who is first?
 
 ## shop avatars s_avatars_all
 uz: 🧑 Premium avatar: 20 000 🪙 dan
-70 ta premium avatar, 5 xil noyoblik: Oddiy, Noyob, Epik, Afsonaviy, Mifik. Eng arzoni 20 000 🪙, eng noyobi 💵 bilan. Rasmingiz sizning vizitkangiz.
+70 ta premium avatar, 5 xil noyoblik: Oddiy, Noyob, Epik, Afsonaviy, Mifik. Eng arzoni 20 000 🪙, eng noyobi 💎 bilan. Rasmingiz sizning vizitkangiz.
 en: 🧑 Premium avatars: from 20,000 🪙
-70 premium avatars in 5 rarities: Common, Rare, Epic, Legendary, Mythic. The cheapest is 20,000 🪙 and the rarest cost 💵. Your picture is your business card.
+70 premium avatars in 5 rarities: Common, Rare, Epic, Legendary, Mythic. The cheapest is 20,000 🪙 and the rarest cost 💎. Your picture is your business card.
 
 ## shop avatars s_avatars
 uz: 🙂 Avatarni o'zingizga mos tanlang
@@ -62,27 +62,27 @@ en: 🙂 Pick the avatar that fits you
 
 ## shop stickers s_stickers
 uz: 🎭 Stiker to'plami: bir bosishda kayfiyat
-Bilyard, Hayvonlar, Kulgi, Taom, Sehr, Mehr: 6 ta to'plam. Har biri 10 💵 yoki 100 💎. Raqibingizga zarba paytida kulgi, hayrat yoki rahmat yuboring.
+Bilyard, Hayvonlar, Kulgi, Taom, Sehr, Mehr: 6 ta to'plam. Har biri 25 💎. Raqibingizga zarba paytida kulgi, hayrat yoki rahmat yuboring.
 en: 🎭 A sticker pack: a mood in one tap
-Billiards, Animals, Funny, Food, Magic, Hearts: 6 packs. Each costs 10 💵 or 100 💎. Send your opponent a laugh, a gasp or a thank-you in the middle of the match.
+Billiards, Animals, Funny, Food, Magic, Hearts: 6 packs. Each costs 25 💎. Send your opponent a laugh, a gasp or a thank-you in the middle of the match.
 
 ## shop stickers s_stickers
 uz: 😂 «Kulgi» stikerlari: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩
-9 ta stiker: g'alabada 🕶️, omadsizlikda 🤯, hazilda 🤡. O'yin chatidagi 🎭 tugmasi orqali yuboriladi. To'plam 10 💵 yoki 100 💎.
+9 ta stiker: g'alabada 🕶️, omadsizlikda 🤯, hazilda 🤡. O'yin chatidagi 🎭 tugmasi orqali yuboriladi. To'plam 25 💎.
 en: 😂 The "Funny" stickers: 🤣 😜 🥰 🕶️ 🤯 🥶 😈 🤡 🤩
-9 stickers: 🕶️ for a win, 🤯 for bad luck, 🤡 for a joke. Send them with the 🎭 button in the match chat. The pack costs 10 💵 or 100 💎.
+9 stickers: 🕶️ for a win, 🤯 for bad luck, 🤡 for a joke. Send them with the 🎭 button in the match chat. The pack costs 25 💎.
 
 ## shop stickers s_stickers
 uz: 💗 «Mehr» stikerlari: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘
-8 ta iliq stiker: do'stingizga yoqimli xabar yuboring. «Bilyard» to'plamida esa 🎱 🏆 👑 🎖️ bor. Har to'plam 10 💵 yoki 100 💎.
+8 ta iliq stiker: do'stingizga yoqimli xabar yuboring. «Bilyard» to'plamida esa 🎱 🏆 👑 🎖️ bor. Har to'plam 25 💎.
 en: 💗 The "Hearts" stickers: 💗 💙 💖 💔 ❤️ 🌹 🎁 💘
-8 warm stickers: send your friend a kind word. The "Billiards" pack has 🎱 🏆 👑 🎖️. Each pack costs 10 💵 or 100 💎.
+8 warm stickers: send your friend a kind word. The "Billiards" pack has 🎱 🏆 👑 🎖️. Each pack costs 25 💎.
 
 ## shop gifts m_gifts
 uz: ✈️ Samolyot: eng katta sovg'a
-Raqibga uchib boradigan samolyot 👍 ×7 000 beradi va 100 💵 turadi. Mashina ×5 000, mototsikl ×3 000. Katta o'yindan keyin katta hurmat!
+Raqibga uchib boradigan samolyot 👍 ×7 000 beradi va 250 💎 turadi. Mashina ×5 000, mototsikl ×3 000. Katta o'yindan keyin katta hurmat!
 en: ✈️ The jet: the biggest gift
-The jet that flies to your opponent is worth 👍 ×7,000 and costs 100 💵. The car is ×5,000, the bike ×3,000. Big respect after a big game!
+The jet that flies to your opponent is worth 👍 ×7,000 and costs 250 💎. The car is ×5,000, the bike ×3,000. Big respect after a big game!
 
 ## shop gifts m_gifts
 uz: 🍫 Arzon sovg'alar: yurak, yonca, shokolad
@@ -109,9 +109,9 @@ en: 🎁 The surprise box: what will it be?
 Legendary cues such as Axiom or Crystal Blade come out of surprise boxes. The best part: you never know what you will get.
 
 ## shop pass x_pass
-uz: 🩸 Premium Mavsum yo'li: 600 💵 yoki 2 800 💎
+uz: 🩸 Premium Mavsum yo'li: 700 💎
 Oy tugaguncha ochiq: premium yo'l yana ko'p kiy, ramka, stol va avatar beradi. Bepul yo'l esa hammaga ochiq. Oy tugashiga qancha qoldi? Mavsum yo'lida taymer bor.
-en: 🩸 The premium Season Pass: 600 💵 or 2,800 💎
+en: 🩸 The premium Season Pass: 700 💎
 Open until the month ends: the premium track gives many more cues, frames, tables and avatars. The free track is open to all. How long is left? The pass has a timer.
 
 ## shop tables s_tables
@@ -140,6 +140,6 @@ Premium cues are limited: every owner gets a serial number such as "№ 17 / 300
 
 ## shop cues c_country
 uz: 🌍 Davlat kiyi: 199 davlat, 199 bayroq
-Har bir davlatning kiyi o'z bayrog'i ranglarida. Do'kon · Kiylar · Mamlakat bo'limida o'z davlatingizni, yoki yoqqan boshqasini toping. Narxi: 40 💵 yoki 400 💎.
+Har bir davlatning kiyi o'z bayrog'i ranglarida. Do'kon · Kiylar · Mamlakat bo'limida o'z davlatingizni, yoki yoqqan boshqasini toping. Narxi: 100 💎.
 en: 🌍 A country cue: 199 countries, 199 flags
-Each country's cue wears its own flag colours. In Shop · Cues · Country find your own country or another you like. The price: 40 💵 or 400 💎.
+Each country's cue wears its own flag colours. In Shop · Cues · Country find your own country or another you like. The price: 100 💎.

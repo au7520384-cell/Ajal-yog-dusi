@@ -87,8 +87,8 @@ Q085|¿De cuántas piezas se arma el legendario taco del Gran Maestro?|=;=;=;=|
 Q086|¿Cuántas piezas forman un taco de la Victoria?|=;=;=;=|
 Q087|¿Desde qué nivel puedes crear un club o unirte a uno?|=;=;=;=|
 Q088|¿Cuál es el máximo de miembros en un club?|=;=;=;=|
-Q089|¿Cuántos 💵 recibe el 1.er puesto del ranking mundial semanal?|=;=;=;=|
-Q090|¿Cuántos 💵 recibe el 1.er puesto del ranking de un país?|=;=;=;=|
+Q089|¿Cuántos 🪙 recibe el 1.er puesto del ranking mundial semanal?|=;=;=;=|
+Q090|¿Cuántos 🪙 recibe el 1.er puesto del ranking de un país?|=;=;=;=|
 Q091|¿Cuándo se reinicia el ranking semanal (hora de Taskent)?|Lunes, 05:00;Sábado, 20:00;Viernes, 00:00;Martes, 12:00|
 Q092|¿Qué parte de una liga sube de nivel cada semana, más o menos?|=;=;=;=|
 Q093|¿Qué descuento lleva la «Mesa de la semana»?|=;=;=;=|

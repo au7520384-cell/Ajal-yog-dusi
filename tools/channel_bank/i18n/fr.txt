@@ -87,8 +87,8 @@ Q085|De combien de morceaux la légendaire queue du grand maître est-elle assem
 Q086|Combien de morceaux forment une queue de la Victoire ?|=;=;=;=|
 Q087|À partir de quel niveau peut-on créer un club ou en rejoindre un ?|=;=;=;=|
 Q088|Quel est le nombre maximal de membres d'un club ?|=;=;=;=|
-Q089|Combien de 💵 reçoit la 1re place du classement mondial hebdomadaire ?|=;=;=;=|
-Q090|Combien de 💵 reçoit la 1re place du classement d'un pays ?|=;=;=;=|
+Q089|Combien de 🪙 reçoit la 1re place du classement mondial hebdomadaire ?|=;=;=;=|
+Q090|Combien de 🪙 reçoit la 1re place du classement d'un pays ?|=;=;=;=|
 Q091|Quand le classement hebdomadaire est-il réinitialisé (heure de Tachkent) ?|Lundi, 05:00;Samedi, 20:00;Vendredi, 00:00;Mardi, 12:00|
 Q092|Quelle part d'une ligue monte d'un niveau chaque semaine, à peu près ?|=;=;=;=|
 Q093|Quelle réduction porte la « Table de la semaine » ?|=;=;=;=|

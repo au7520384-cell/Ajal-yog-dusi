@@ -74,9 +74,9 @@ Each gift has its own 👍 value: heart ×1, clover ×20, chocolate ×50... up t
 
 ## feat stickers s_stickers
 uz: 🎭 Stikerlar: his-tuyg'ularingizni ko'rsating
-6 ta to'plam: Bilyard, Hayvonlar, Kulgi, Taom, Sehr va Mehr: jami 50 dan ortiq stiker. O'yin chatidagi 🎭 tugmasi bilan raqibga yuboriladi. Har to'plam 10 💵 yoki 100 💎.
+6 ta to'plam: Bilyard, Hayvonlar, Kulgi, Taom, Sehr va Mehr: jami 50 dan ortiq stiker. O'yin chatidagi 🎭 tugmasi bilan raqibga yuboriladi. Har to'plam 25 💎.
 en: 🎭 Stickers: show how you feel
-6 packs: Billiards, Animals, Funny, Food, Magic and Hearts, over 50 stickers. Send them with the 🎭 button in the match chat. A pack costs 10 💵 or 100 💎.
+6 packs: Billiards, Animals, Funny, Food, Magic and Hearts, over 50 stickers. Send them with the 🎭 button in the match chat. A pack costs 25 💎.
 
 ## feat cues c_premium2
 uz: 🎱 Kiylar: 470 dan ortiq, har birining o'z xarakteri

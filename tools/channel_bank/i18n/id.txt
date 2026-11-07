@@ -87,8 +87,8 @@ Q085|Dari berapa potongan stik Grandmaster legendaris dirakit?|=;=;=;=|
 Q086|Berapa potongan yang membentuk satu stik Kemenangan?|=;=;=;=|
 Q087|Mulai level berapa Anda bisa membuat atau bergabung dengan klub?|=;=;=;=|
 Q088|Berapa jumlah maksimum anggota dalam satu klub?|=;=;=;=|
-Q089|Berapa 💵 yang diterima peringkat 1 dalam peringkat dunia mingguan?|=;=;=;=|
-Q090|Berapa 💵 yang diterima peringkat 1 dalam peringkat negara?|=;=;=;=|
+Q089|Berapa 🪙 yang diterima peringkat 1 dalam peringkat dunia mingguan?|=;=;=;=|
+Q090|Berapa 🪙 yang diterima peringkat 1 dalam peringkat negara?|=;=;=;=|
 Q091|Kapan peringkat mingguan direset (waktu Tashkent)?|Senin, 05:00;Sabtu, 20:00;Jumat, 00:00;Selasa, 12:00|
 Q092|Kira-kira berapa bagian liga yang naik setiap minggu?|=;=;=;=|
 Q093|Berapa diskon «Meja Minggu Ini»?|=;=;=;=|

@@ -106,6 +106,8 @@ function migrate(bank, c) {   // the old one-by-one list (channel_posts.json, id
 
 // ---- the bank
 const BAD = /haqiqiy pul|real money|pulga almashtir|yechib ol|withdraw|pul ishla|daromad|earn money|cash out|kafolat|guarantee|100% yut|garant/i;   // virtual items only: no promise that sounds like money
+const GONE = /💵/;   // the game has no cash any more: 💎 diamonds are only bought (never a prize), prizes are coins
+const wording = t => BAD.test(t) ? "money wording" : GONE.test(t) ? "cash (💵) does not exist any more" : "";
 function lint(it) {   // problems of one post (empty list = fine)
   const p = [], len = s => [...String(s == null ? "" : s)].length;
   if (!it || typeof it !== "object") return ["not an object"];
@@ -120,15 +122,15 @@ function lint(it) {   // problems of one post (empty list = fine)
       if (!Number.isInteger(q.correct) || q.correct < 0 || q.correct >= q.options.length) p.push("quiz correct index");
     }
     const e = q.explanation || {}; if (!e.uz || !e.en || len(`${e.uz} / ${e.en}`) > 200) p.push("quiz explanation missing or > 200");
-    if (BAD.test(txt(q.uz, q.en, e.uz, e.en, ...(q.options || [])))) p.push("money wording");
+    { const w = wording(txt(q.uz, q.en, e.uz, e.en, ...(q.options || []))); if (w) p.push(w); }
   } else if (it.poll) {
     const q = it.poll; if (len(`${q.uz} / ${q.en}`) > 300) p.push("poll question > 300");
     if (!Array.isArray(q.options) || q.options.length < 2 || q.options.length > 10 || q.options.some(o => !len(o) || len(o) > 100)) p.push("poll options");
-    if (BAD.test(txt(q.uz, q.en, ...(q.options || [])))) p.push("money wording");
+    { const w = wording(txt(q.uz, q.en, ...(q.options || []))); if (w) p.push(w); }
   } else {
     if (!it.uz || !it.en) p.push("text needs uz and en");
     if (len(it.uz) + len(it.en) > (it.img ? 820 : 3000)) p.push("text too long");
-    if (BAD.test(txt(it.uz, it.en))) p.push("money wording");
+    { const w = wording(txt(it.uz, it.en)); if (w) p.push(w); }
   }
   return p;
 }

@@ -35,10 +35,10 @@ xe: 6: Billiards, Animals, Funny, Food, Magic, Hearts.
 ## quiz game
 uz: 🎭 Viktorina: bitta stiker to'plami necha 💎 turadi?
 en: Quiz: how many 💎 does one sticker pack cost?
-o: 10 | 50 | 100 | 500
-c: 2
-xu: 100 💎 yoki 10 💵.
-xe: 100 💎 or 10 💵.
+o: 10 | 25 | 50 | 100
+c: 1
+xu: 25 💎.
+xe: 25 💎.
 
 ## quiz game
 uz: 🎁 Viktorina: o'yin vaqtida raqibga nechta xil sovg'a yuborish mumkin?
@@ -145,20 +145,20 @@ xu: 50 kishigacha.
 xe: Up to 50 members.
 
 ## quiz rank
-uz: 🥇 Viktorina: haftalik dunyo reytingida 1-o'rin uchun necha 💵 beriladi?
-en: Quiz: how many 💵 does 1st place in the weekly world ranking receive?
-o: 150 | 400 | 1 500 | 5 000
+uz: 🥇 Viktorina: haftalik dunyo reytingida 1-o'rin uchun necha 🪙 beriladi?
+en: Quiz: how many 🪙 does 1st place in the weekly world ranking receive?
+o: 150 000 | 400 000 | 1 500 000 | 5 000 000
 c: 2
-xu: 1 500 💵; 2-o'rin 750, 3-o'rin 400.
-xe: 1,500 💵; 2nd gets 750 and 3rd gets 400.
+xu: 1 500 000 🪙; 2-o'rin 750 000, 3-o'rin 400 000.
+xe: 1,500,000 🪙; 2nd gets 750,000 and 3rd gets 400,000.
 
 ## quiz rank
-uz: 🏳 Viktorina: davlat reytingida 1-o'rin uchun necha 💵 beriladi?
-en: Quiz: how many 💵 does 1st place in a country ranking receive?
-o: 100 | 200 | 400 | 1 500
+uz: 🏳 Viktorina: davlat reytingida 1-o'rin uchun necha 🪙 beriladi?
+en: Quiz: how many 🪙 does 1st place in a country ranking receive?
+o: 100 000 | 200 000 | 400 000 | 1 500 000
 c: 2
-xu: 400 💵; 2-o'rin 200, 3-o'rin 100.
-xe: 400 💵; 2nd gets 200 and 3rd gets 100.
+xu: 400 000 🪙; 2-o'rin 200 000, 3-o'rin 100 000.
+xe: 400,000 🪙; 2nd gets 200,000 and 3rd gets 100,000.
 
 ## quiz rank
 uz: 📅 Viktorina: haftalik reyting qachon yangilanadi (Toshkent vaqti bilan)?
@@ -245,8 +245,8 @@ uz: 📆 Viktorina: kunlik sovg'alar yo'lining nechanchi kunida «katta sovrin»
 en: Quiz: on which day of the reward route is the "big prize"?
 o: 3-kun / Day 3 | 5-kun / Day 5 | 7-kun / Day 7 | 8-kun / Day 8
 c: 2
-xu: 7-kun: 2 💵 va katta sovrin.
-xe: Day 7: 2 💵 and a big prize.
+xu: 7-kun: 5 000 🪙 katta sovrin.
+xe: Day 7: a big prize of 5,000 🪙.
 
 ## quiz game
 uz: 🏅 Viktorina: o'yinda nechta medal (yutuq nishoni) bor?
@@ -285,8 +285,8 @@ uz: ♞ Viktorina: Showdown'da nechta mukofot bosqichi bor?
 en: Quiz: how many reward stages does Showdown have?
 o: 3 | 5 | 8 | 12
 c: 2
-xu: 8 ta: tanga, token, 💵, quti, kiy bo'lagi va 💎.
-xe: 8: coins, tokens, 💵, a box, a cue piece and 💎.
+xu: 8 ta: tanga, token, quti va kiy bo'lagi.
+xe: 8: coins, tokens, a box and a cue piece.
 
 ## quiz game
 uz: 🏙 Viktorina: har shaharning o'z chempionat kubogida nechta o'yinchi bor?

@@ -87,8 +87,8 @@ Q085|Aus wie vielen Teilen wird der legendäre Großmeister-Queue zusammengesetz
 Q086|Wie viele Teile ergeben einen Sieges-Queue?|=;=;=;=|
 Q087|Ab welcher Stufe kann man einen Club gründen oder beitreten?|=;=;=;=|
 Q088|Wie viele Mitglieder hat ein Club höchstens?|=;=;=;=|
-Q089|Wie viele 💵 bekommt Platz 1 der wöchentlichen Weltrangliste?|=;=;=;=|
-Q090|Wie viele 💵 bekommt Platz 1 der Länderrangliste?|=;=;=;=|
+Q089|Wie viele 🪙 bekommt Platz 1 der wöchentlichen Weltrangliste?|=;=;=;=|
+Q090|Wie viele 🪙 bekommt Platz 1 der Länderrangliste?|=;=;=;=|
 Q091|Wann wird die Wochenrangliste zurückgesetzt (Taschkent-Zeit)?|Montag, 05:00;Samstag, 20:00;Freitag, 00:00;Dienstag, 12:00|
 Q092|Welcher Anteil einer Liga steigt ungefähr jede Woche auf?|=;=;=;=|
 Q093|Welchen Rabatt hat der «Tisch der Woche»?|=;=;=;=|

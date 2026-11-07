@@ -120,13 +120,13 @@ function legalPage(res, which) {
   const terms = `<h1>Terms of Service — Royal Billiard 8</h1><p class="u">Last updated: October 2026</p>
 <p>By playing Royal Billiard 8 you agree to these terms.</p>
 <h2>Fair play</h2><p>Do not cheat, use bots or exploits, harass other players or post offensive names, avatars or messages. We may mute, suspend or delete accounts that break these rules.</p>
-<h2>Virtual items</h2><p>Coins, cash, gems, cues, tables, gifts and other items are virtual, have no real-world monetary value and cannot be exchanged for money. Refunds are described in the <a href="/refund">Refund Policy</a>. Winnings and rewards in the game are virtual items only; nothing in the game can be cashed out.</p>
+<h2>Virtual items</h2><p>Coins, diamonds, cues, tables, gifts and other items are virtual, have no real-world monetary value and cannot be exchanged for money. Refunds are described in the <a href="/refund">Refund Policy</a>. Winnings and rewards in the game are virtual items only; nothing in the game can be cashed out.</p>
 <h2>Your account</h2><p>You are responsible for keeping your account key safe. We may change or remove features, prices and rewards.</p>
 <h2>No warranty</h2><p>The game is provided "as is" without warranties. To the extent allowed by law we are not liable for losses caused by using the game or by downtime.</p>
 <h2>Privacy and contact</h2><p>See the <a href="/privacy">Privacy Policy</a> and the <a href="/refund">Refund Policy</a>. Contact: ${contact}.</p>
 <hr><p class="u"><b>Shartlar (qisqacha):</b> aldamang, boshqalarni haqorat qilmang. O'yindagi tanga va buyumlar haqiqiy pul qiymatiga ega emas. O'yin "borligicha" taqdim etiladi.</p>`;
   const refund = `<h1>Refund Policy — Royal Billiard 8</h1><p class="u">Last updated: October 2026</p>
-<p>Royal Billiard 8 sells digital items (coins, cash, gems, cues, avatars, frames, tables and similar). They are delivered to your account immediately after payment.</p>
+<p>Royal Billiard 8 sells digital items (coins, diamonds, cues, avatars, frames, tables and similar). They are delivered to your account immediately after payment.</p>
 <h2>Refunds</h2><ul>
 <li>If you were charged but the item did not arrive, or you were charged twice, contact us and we will deliver the item or refund the payment.</li>
 <li>You may ask for a refund within 14 days of the purchase if the purchased item has not been used or spent. Items that have already been used or spent are not refundable, except where the law of your country says otherwise.</li>
@@ -152,23 +152,15 @@ const SKUS = {
   coins_256k:  {coins: 256000,  vip: 1920,  usd: 19.99, name: "256 000 Coins"},
   coins_800k:  {coins: 800000,  vip: 5590,  usd: 49.99, name: "800 000 Coins"},
   coins_2m:    {coins: 2000000, vip: 13000, usd: 99.99, name: "2 000 000 Coins"},
-  cash_15:     {cash: 20,       vip: 130,   usd: 1.99,  name: "20 Cash"},
-  cash_50:     {cash: 50,       vip: 364,   usd: 4.99,  name: "50 Cash"},
-  cash_110:    {cash: 110,      vip: 832,   usd: 9.99,  name: "110 Cash"},
-  cash_256:    {cash: 250,      vip: 1920,  usd: 19.99, name: "250 Cash"},
-  cash_800:    {cash: 800,      vip: 5590,  usd: 49.99, name: "800 Cash"},
-  cash_2000:   {cash: 2000,     vip: 13000, usd: 99.99, name: "2 000 Cash"},
-  gems_290:    {gems: 290,      vip: 130,   usd: 1.99,  name: "290 Gems"},
-  gems_780:    {gems: 780,      vip: 364,   usd: 4.99,  name: "780 Gems"},
-  gems_1650:   {gems: 1650,     vip: 832,   usd: 9.99,  name: "1 650 Gems"},
-  gems_3500:   {gems: 3500,     vip: 1924,  usd: 19.99, name: "3 500 Gems"},
-  gems_9200:   {gems: 9200,     vip: 5590,  usd: 49.99, name: "9 200 Gems"},
-  gems_20000:  {gems: 20000,    vip: 13000, usd: 99.99, name: "20 000 Gems"},
+  // 💎 diamonds: the ONLY premium money, 50 per $1, flat prices (FLAT_USD: no card surcharge), no bonus. They are never given for free - a purchase is the only way to get them.
+  gems_100:    {gems: 100,      vip: 130,   usd: 1.99,  name: "100 Diamonds"},
+  gems_250:    {gems: 250,      vip: 364,   usd: 4.99,  name: "250 Diamonds"},
+  gems_500:    {gems: 500,      vip: 832,   usd: 9.99,  name: "500 Diamonds"},
+  gems_1000:   {gems: 1000,     vip: 1924,  usd: 19.99, name: "1 000 Diamonds"},
+  gems_2500:   {gems: 2500,     vip: 5590,  usd: 49.99, name: "2 500 Diamonds"},
+  gems_5000:   {gems: 5000,     vip: 13000, usd: 99.99, name: "5 000 Diamonds"},
   elite_30:    {items: {elite: 30}, vip: 650, usd: 9.99, name: "Go Elite (30 days)"},
   adfree:      {items: {adfree: 1}, vip: 325, usd: 4.99, name: "Ad-Free Forever", once: true},
-  loop_cash_1: {cash: 100, vip: 324, usd: 4.99, name: "Next-Level Loop cash 1"},
-  loop_cash_2: {cash: 240, vip: 649, usd: 9.99, name: "Next-Level Loop cash 2"},
-  loop_cash_3: {cash: 360, vip: 974, usd: 14.99, name: "Next-Level Loop cash 3"},
   loop_gold_1: {items: {goldShots: 6}, vip: 324, usd: 4.99, name: "Next-Level Loop gold 1"},
   loop_gold_2: {items: {goldShots: 10}, vip: 649, usd: 9.99, name: "Next-Level Loop gold 2"},
   loop_gold_3: {items: {goldShots: 15}, vip: 974, usd: 14.99, name: "Next-Level Loop gold 3"},
@@ -181,7 +173,7 @@ const SKUS = {
   loop_box_1: {items: {rbox: 4}, vip: 324, usd: 4.99, name: "Next-Level Loop box 1"},
   loop_box_2: {items: {rbox: 8}, vip: 649, usd: 9.99, name: "Next-Level Loop box 2"},
   loop_box_3: {items: {rbox: 20}, vip: 974, usd: 14.99, name: "Next-Level Loop box 3"},
-  starter:     {cash: 50, coins: 100000, gems: 280, vip: 200, usd: 2.99, name: "Starter Pack", once: true},
+  starter:     {coins: 100000, gems: 200, vip: 200, usd: 2.99, name: "Starter Pack", once: true},
   try_lucky:   {items: {luckyTries: 1},   vip: 60,  usd: 0.99, name: "Lucky Shot +1"},
   try_wheel:   {items: {wheelTries: 1},   vip: 60,  usd: 0.99, name: "Spin & Win +1"},
   try_scratch: {items: {scratchTries: 1}, vip: 60,  usd: 0.99, name: "Scratch & Win +1"},
@@ -189,33 +181,40 @@ const SKUS = {
   sbox_1:      {items: {sboxes: 1},       vip: 130, usd: 1.99, name: "Surprise Box"},
   sbox_5:      {items: {sboxes: 5},       vip: 260, usd: 3.99, name: "Surprise Box x5"},
   // VIP bundles: exclusive cues that are never sold in the cue shop
-  sport_1:     {coins: 27000,  cash: 15,   vip: 332,  items: {cues: ["vip_under"], sboxes: 2},    usd: 3.99,  name: "Sports Madness: Underdog"},
-  sport_2:     {coins: 52000,  cash: 20,   vip: 582,  items: {cues: ["vip_champ"], sboxes: 2},    usd: 6.99,  name: "Sports Madness: Champion"},
-  sport_3:     {coins: 138000,  cash: 110,  vip: 2708, items: {cues: ["vip_mvp"], sboxes: 4},      usd: 24.99, name: "Sports Madness: M.V.P."},
-  atom_1:      {coins: 25000,  cash: 25,  vip: 400,  items: {cues: ["vip_geiger"], goldShots: 4},  usd: 4.99,  name: "Atomic Blast: Geiger"},
-  atom_2:      {coins: 50000,  cash: 50,  vip: 832,  items: {cues: ["vip_kaboom"], goldShots: 9},  usd: 9.99,  name: "Atomic Blast: Kaboom"},
-  atom_3:      {coins: 200000, cash: 200, vip: 5000, items: {cues: ["vip_nemesis"], goldShots: 36}, usd: 39.99, name: "Atomic Blast: Nuclear Nemesis"},
-  zod_0:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z0"], avs: [200], sboxes: 5}, usd: 24.99, name: "Zodiac: Aries"},
-  zod_1:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z1"], avs: [201], sboxes: 5}, usd: 24.99, name: "Zodiac: Taurus"},
-  zod_2:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z2"], avs: [202], sboxes: 5}, usd: 24.99, name: "Zodiac: Gemini"},
-  zod_3:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z3"], avs: [203], sboxes: 5}, usd: 24.99, name: "Zodiac: Cancer"},
-  zod_4:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z4"], avs: [204], sboxes: 5}, usd: 24.99, name: "Zodiac: Leo"},
-  zod_5:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z5"], avs: [205], sboxes: 5}, usd: 24.99, name: "Zodiac: Virgo"},
-  zod_6:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z6"], avs: [206], sboxes: 5}, usd: 24.99, name: "Zodiac: Libra"},
-  zod_7:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z7"], avs: [207], sboxes: 5}, usd: 24.99, name: "Zodiac: Scorpio"},
-  zod_8:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z8"], avs: [208], sboxes: 5}, usd: 24.99, name: "Zodiac: Sagittarius"},
-  zod_9:      {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z9"], avs: [209], sboxes: 5}, usd: 24.99, name: "Zodiac: Capricorn"},
-  zod_10:     {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z10"], avs: [210], sboxes: 5}, usd: 24.99, name: "Zodiac: Aquarius"},
-  zod_11:     {coins: 62000,  cash: 185, vip: 2708, items: {cues: ["vip_z11"], avs: [211], sboxes: 5}, usd: 24.99, name: "Zodiac: Pisces"},
+  sport_1:     {coins: 27000,  gems: 40,   vip: 332,  items: {cues: ["vip_under"], sboxes: 2},    usd: 3.99,  name: "Sports Madness: Underdog"},
+  sport_2:     {coins: 52000,  gems: 50,   vip: 582,  items: {cues: ["vip_champ"], sboxes: 2},    usd: 6.99,  name: "Sports Madness: Champion"},
+  sport_3:     {coins: 138000,  gems: 275,  vip: 2708, items: {cues: ["vip_mvp"], sboxes: 4},      usd: 24.99, name: "Sports Madness: M.V.P."},
+  atom_1:      {coins: 25000,  gems: 65,  vip: 400,  items: {cues: ["vip_geiger"], goldShots: 4},  usd: 4.99,  name: "Atomic Blast: Geiger"},
+  atom_2:      {coins: 50000,  gems: 125,  vip: 832,  items: {cues: ["vip_kaboom"], goldShots: 9},  usd: 9.99,  name: "Atomic Blast: Kaboom"},
+  atom_3:      {coins: 200000, gems: 500, vip: 5000, items: {cues: ["vip_nemesis"], goldShots: 36}, usd: 39.99, name: "Atomic Blast: Nuclear Nemesis"},
+  zod_0:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z0"], avs: [200], sboxes: 5}, usd: 24.99, name: "Zodiac: Aries"},
+  zod_1:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z1"], avs: [201], sboxes: 5}, usd: 24.99, name: "Zodiac: Taurus"},
+  zod_2:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z2"], avs: [202], sboxes: 5}, usd: 24.99, name: "Zodiac: Gemini"},
+  zod_3:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z3"], avs: [203], sboxes: 5}, usd: 24.99, name: "Zodiac: Cancer"},
+  zod_4:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z4"], avs: [204], sboxes: 5}, usd: 24.99, name: "Zodiac: Leo"},
+  zod_5:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z5"], avs: [205], sboxes: 5}, usd: 24.99, name: "Zodiac: Virgo"},
+  zod_6:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z6"], avs: [206], sboxes: 5}, usd: 24.99, name: "Zodiac: Libra"},
+  zod_7:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z7"], avs: [207], sboxes: 5}, usd: 24.99, name: "Zodiac: Scorpio"},
+  zod_8:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z8"], avs: [208], sboxes: 5}, usd: 24.99, name: "Zodiac: Sagittarius"},
+  zod_9:      {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z9"], avs: [209], sboxes: 5}, usd: 24.99, name: "Zodiac: Capricorn"},
+  zod_10:     {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z10"], avs: [210], sboxes: 5}, usd: 24.99, name: "Zodiac: Aquarius"},
+  zod_11:     {coins: 62000,  gems: 465, vip: 2708, items: {cues: ["vip_z11"], avs: [211], sboxes: 5}, usd: 24.99, name: "Zodiac: Pisces"},
 };
+// Orders made before the economy change (cash packs, the old gem packs) can still be paid after it: they are delivered as 💎 diamonds at their old dollar value
+// (an old cash was $0.05 = 2.5 💎, an old gem $0.005 = 0.25 💎), they are not in the shop any more (legacy) and nobody can start a new one.
+for (const [k, v] of Object.entries({
+  cash_15: {cash: 20, vip: 130, usd: 1.99}, cash_50: {cash: 50, vip: 364, usd: 4.99}, cash_110: {cash: 110, vip: 832, usd: 9.99}, cash_256: {cash: 250, vip: 1920, usd: 19.99}, cash_800: {cash: 800, vip: 5590, usd: 49.99}, cash_2000: {cash: 2000, vip: 13000, usd: 99.99},
+  gems_290: {gems: 290, vip: 130, usd: 1.99}, gems_780: {gems: 780, vip: 364, usd: 4.99}, gems_1650: {gems: 1650, vip: 832, usd: 9.99}, gems_3500: {gems: 3500, vip: 1924, usd: 19.99}, gems_9200: {gems: 9200, vip: 5590, usd: 49.99}, gems_20000: {gems: 20000, vip: 13000, usd: 99.99},
+  loop_cash_1: {cash: 100, vip: 324, usd: 4.99}, loop_cash_2: {cash: 240, vip: 649, usd: 9.99}, loop_cash_3: {cash: 360, vip: 974, usd: 14.99},
+})) SKUS[k] = {...v, legacy: true, name: "Earlier order " + k};
 const TABLE_NAMES = {"l_brz": "Bronze", "l_slv": "Silver", "l_gld": "Gold", "l_rgd": "Rose Gold", "l_plt": "Platinum", "l_sap": "Sapphire", "l_emr": "Emerald", "l_rby": "Ruby", "l_ame": "Amethyst", "l_dia": "Brilliant", "l_bdi": "Black Diamond", "l_opl": "Rainbow Opal", "e_sak": "Sakura Garden", "e_ros": "Rose", "e_lol": "Tulip", "e_lot": "Lotus", "e_pax": "Cotton (Rishtan)", "e_orx": "Orchid", "e_kun": "Sunflower", "e_atl": "Atlas Silk", "e_smq": "Samarkand", "e_mal": "Malachite", "e_laz": "Lapis Lazuli", "e_prl": "Pearl", "e_muz": "Ice Crystal", "e_drg": "Dragon Scale", "e_olv": "Fire", "e_kos": "Cosmos", "e_qah": "Amber", "e_tov": "Peacock"};
-// Premium table frames (real-money option; the same tables can also be bought in-game with cash or gems)
+// Premium table frames (real-money option; the same tables can also be bought in-game with 💎 diamonds)
 // VIP horror collection (sold only in the VIP window, rotated weekly in the client): 64 cues, 24 of them with a matching table, every one with a scary avatar frame
 const HOR_NAMES = ["Vampire", "Zombie", "Skeleton", "Ghost", "Witch", "Werewolf", "Mummy", "Frankenstein", "Black Cat", "Graveyard", "Devil", "Raven", "Blood Moon", "Devil's Eye", "Wild Spirit", "Skull", "Scream", "Dark Forest", "Queen of Darkness", "Nightmare", "Gargoyle", "Storm Ghost", "Night Hunter", "Curse", "Ashes", "Venom", "Executioner", "Necromancer", "Serpent", "Spider", "Beast", "Fog",
   "Dracula", "Coffin", "Ghoul", "Pumpkin King", "Banshee", "Candle Spirit", "Black Knight", "Head Hunter", "Zombie Hand", "Bloodthirst", "Rotten", "Bone King", "Shadow Hunter", "Witch Cauldron", "Genie", "Alvasti", "Poison Potion", "Wolf King", "Bat King", "Witch Hat", "Angel of Death", "Blood Fangs", "Mountain Ghost", "Ship Ghost", "Deep Horror", "Lantern Spirit", "Black Bonfire", "Executioner Axe", "Mystery Mask", "The Noose", "Weeping Spirit", "Last Nightmare"];
 const HOR_USD = [9.99, 12.99, 14.99, 19.99, 24.99, 29.99, 39.99, 49.99], HOR_TABLES = {has: () => true};
 HOR_NAMES.forEach((nm, i) => { const usd = HOR_USD[i % 8], items = {cues: ["vh_" + i], pframes: ["vf_" + i], goldShots: 2 + (i % 4), sboxes: 1 + (i % 3)}; if (HOR_TABLES.has(i)) items.tables = ["vt_" + i];
-  SKUS["hor_" + i] = {coins: Math.round(usd * 2000), cash: Math.round(usd * 2), vip: Math.round(usd * 66), items, usd, name: "VIP Horror: " + nm}; });
+  SKUS["hor_" + i] = {coins: Math.round(usd * 2000), gems: Math.max(5, Math.round(usd)) * 5, vip: Math.round(usd * 66), items, usd, name: "VIP Horror: " + nm}; });
 // the 18 sport / atom / zodiac VIP cues also come with their own table (vs_N) and avatar frame (vz_N)
 ["sport_1", "sport_2", "sport_3", "atom_1", "atom_2", "atom_3", ...Array.from({length: 12}, (_, i) => "zod_" + i)].forEach((k, n) => { const it = SKUS[k].items; it.tables = ["vs_" + n]; it.pframes = ["vz_" + n]; if (!it.goldShots) it.goldShots = 3 + (n % 4); });
 const TABLE_SKUS = {l_brz: 4.99, l_slv: 6.99, l_gld: 9.99, l_rgd: 11.99, l_plt: 14.99, l_sap: 17.99, l_emr: 19.99, l_rby: 21.99, l_ame: 22.99, l_dia: 34.99, l_bdi: 39.99, l_opl: 49.99, e_sak: 2.99, e_ros: 3.49, e_lol: 3.79, e_lot: 3.99, e_pax: 4.19, e_orx: 4.49, e_kun: 2.99, e_atl: 4.79, e_smq: 4.99, e_mal: 5.49, e_laz: 5.79, e_prl: 5.99, e_muz: 5.99, e_drg: 6.49, e_olv: 6.49, e_kos: 6.99, e_qah: 6.99, e_tov: 7.49};
@@ -227,10 +226,10 @@ const EDITION_CAP = {l_brz: 5000, l_slv: 4000, l_gld: 3000, l_rgd: 2500, l_plt: 
 const FRAME_USD = {pf_brz: 2.49, pf_slv: 3.49, pf_gld: 4.99, pf_rgd: 5.99, pf_plt: 6.99, pf_sap: 8.49, pf_emr: 9.49, pf_rby: 10.49, pf_ame: 11.49, pf_dia: 15.99, pf_bdi: 18.99, pf_opl: 22.99};
 for (const i of [4, 10, 19, 29, 33, 37, 47, 49]) SKUS["emb_" + i] = {items: {emblems: [i]}, vip: Math.round(1.99 * 65), usd: 1.99, name: "Legendary club emblem " + (i + 1)};   // CLUB_TIER 2 emblems
 for (const [id, usd] of Object.entries(FRAME_USD)) SKUS["frame_" + id] = {items: {pframes: [id]}, vip: Math.round(usd * 65), usd, name: "Premium frame " + id.slice(3)};
-// Premium cues (real-money option; also sold in-game for cash or gems)
+// Premium cues (real-money option; also sold in-game for 💎 diamonds)
 const CUE_USD = {pc_brz: 3.99, pc_slv: 5.99, pc_gld: 8.99, pc_rgd: 10.99, pc_plt: 12.99, pc_sap: 15.99, pc_emr: 17.99, pc_rby: 19.99, pc_ame: 21.99, pc_dia: 29.99, pc_bdi: 36.99, pc_opl: 44.99};
 for (const [id, usd] of Object.entries(CUE_USD)) SKUS["cue_" + id] = {items: {cues: [id]}, vip: Math.round(usd * 65), usd, name: "Premium cue " + id.slice(3)};
-// Card prices of everything sold in the game for cash / gems (cues, avatars, frames, tables). Generated from the game's own catalog by
+// Card prices of everything sold in the game for 💎 diamonds (cues, avatars, frames, tables). Generated from the game's own catalog by
 // `node tools/build_prices.js` (server/prices.json): the client's price is never trusted, Stripe is charged exactly this. It replaces the
 // hand-written CUE_USD above, so cue power / price changes made in index.html only need the script to be re-run.
 let ITEM_PRICES = {};
@@ -244,7 +243,7 @@ for (const [sku, usd] of Object.entries(ITEM_PRICES)) {
 // order of the prices stays. The game shows the same number (cardUsd in index.html).
 const cardUsd = u => u < 1.99 ? 1.99 : Math.round((u + 0.5) * 100) / 100;
 // These are charged exactly as listed (extra try $0.99, Golden Shot x3 and a Surprise Box $1.99) — the game shows the same numbers.
-const FLAT_USD = new Set(["try_lucky", "try_wheel", "try_scratch", "golden_3", "sbox_1"]);
+const FLAT_USD = new Set(["try_lucky", "try_wheel", "try_scratch", "golden_3", "sbox_1", "gems_100", "gems_250", "gems_500", "gems_1000", "gems_2500", "gems_5000"]);
 for (const k of Object.keys(SKUS)) if (SKUS[k].usd && !FLAT_USD.has(k)) SKUS[k].usd = cardUsd(SKUS[k].usd);
 function claimEdition(u, id) {
   const cap = EDITION_CAP[id]; if (!cap) return {serial: 0};
@@ -255,9 +254,8 @@ function claimEdition(u, id) {
   ed[id] = sold + 1; u.editions[id] = sold + 1; markDirty();
   return {serial: sold + 1, cap};
 }
-const TABLE_REFUND_CASH = 1000;
 const editionsLeft = () => Object.fromEntries(Object.entries(EDITION_CAP).map(([id, cap]) => [id, {cap, sold: (db.meta.editions || {})[id] | 0}]));
-const REFERRAL = {invitee: {cash: 3, coins: 5000}, inviter: {cash: 5, coins: 15000}};
+const REFERRAL = {invitee: {coins: 8000}, inviter: {coins: 20000}};   // coins only: free premium money (💎) does not exist
 const GIFT = {coins: 500};
 const CITY_PRIZE = {mad: 2000, bue: 50000, mex: 320000, sin: 1400000, ams: 6000000, kul: 14000000, ath: 40000000, cas: 90000000, lon: 100, syd: 200, lis: 1000, tok: 5000, veg: 20000, jak: 100000, tor: 200000, cai: 500000, dub: 1000000,
   sha: 2000000, par: 5000000, rom: 8000000, bkk: 10000000, seo: 20000000, mum: 30000000, ber: 50000000, ist: 70000000, osa: 110000000,
@@ -305,19 +303,19 @@ function publicUser(u) {
 const cleanCountry = c => /^[A-Za-z]{2}$/.test(String(c || "")) ? String(c).toUpperCase() : "";
 
 // ---------------------------------------------------------------- weekly leaderboards & leagues
-// Weeks start Monday 00:00 UTC. Every player earns "weekly winnings"; at the end of the week the world top 3 get cash,
+// Weeks start Monday 00:00 UTC. Every player earns "weekly winnings"; at the end of the week the world top 3 get coins,
 // and inside each league the top 20% move up, the bottom 20% move down.
 const LEAGUES = ["bronze", "silver", "gold", "platinum", "lightning", "billiard", "diamond", "comet", "legend", "nine"];
-const WEEK_PRIZES = [1500, 750, 400];      // world top 3 (cash)
-const COUNTRY_PRIZES = [400, 200, 100];    // top 3 inside each country (cash)
-const LEAGUE_PRIZE_1ST = [10000, 15000, 25000, 40000, 60000, 90000, 130000, 190000, 270000, 400000];   // My League: top 3 of every league win COINS (not cash): 1st / 70% / 40%, rising with the league
+const WEEK_PRIZES = [1500000, 750000, 400000];      // world top 3 (coins)
+const COUNTRY_PRIZES = [400000, 200000, 100000];    // top 3 inside each country (coins)
+const LEAGUE_PRIZE_1ST = [10000, 15000, 25000, 40000, 60000, 90000, 130000, 190000, 270000, 400000];   // My League: top 3 of every league win COINS: 1st / 70% / 40%, rising with the league
 const LEAGUE_SPLIT = [1, 0.7, 0.4];
 const LEAGUE_INSTANT = t => 250000 * (t + 1);   // weekly winnings that promote you at once (Silver = 500k) and pay the league's top prize
 function instantPromote(u) {
   const w = curWeek(), t = u.league || 0;
   if (t >= LEAGUES.length - 1 || u.instantWeek === w || (u.weekWon || 0) < LEAGUE_INSTANT(t)) return;
   u.instantWeek = w; u.league = t + 1;
-  grant(u, {cash: 0, coins: LEAGUE_PRIZE_1ST[t], kind: "league", from: "\u2191 " + LEAGUES[t + 1]});
+  grant(u, {coins: LEAGUE_PRIZE_1ST[t], kind: "league", from: "\u2191 " + LEAGUES[t + 1]});
 }
 function weekStart(t = Date.now()) {
   const d = new Date(t), day = (d.getUTCDay() + 6) % 7;
@@ -340,18 +338,18 @@ function rollWeek() {
   const played = all.filter(u => u.week === prev && u.weekWon > 0).sort((a, b) => b.weekWon - a.weekWon);
   played.forEach((u, i) => {
     u.lastWeek = {week: prev, won: u.weekWon, rank: i + 1, league: u.league || 0, move: 0};
-    if (i < WEEK_PRIZES.length) grant(u, {cash: WEEK_PRIZES[i], coins: 0, kind: "weekly", from: `#${i + 1}`});
+    if (i < WEEK_PRIZES.length) grant(u, {coins: WEEK_PRIZES[i], kind: "weekly", from: `#${i + 1}`});
   });
-  const byCountry = {};   // country top 3: cash as well, on top of any world prize
+  const byCountry = {};   // country top 3: coins as well, on top of any world prize
   played.forEach(u => { const cc = u.country || ""; if (cc) (byCountry[cc] = byCountry[cc] || []).push(u); });
   const countries = {};
   for (const [cc, list] of Object.entries(byCountry)) {
-    list.slice(0, COUNTRY_PRIZES.length).forEach((u, i) => grant(u, {cash: COUNTRY_PRIZES[i], coins: 0, kind: "country", from: `#${i + 1} ${cc}`}));
+    list.slice(0, COUNTRY_PRIZES.length).forEach((u, i) => grant(u, {coins: COUNTRY_PRIZES[i], kind: "country", from: `#${i + 1} ${cc}`}));
     countries[cc] = list.slice(0, 3).map(u => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: cc, level: u.level, won: u.weekWon}));
   }
   for (let t = 0; t < LEAGUES.length; t++) {
     const tier = played.filter(u => u.lastWeek.league === t && u.instantWeek !== prev), n = tier.length;   // those already promoted instantly this week keep their new league   // league at the start of the week: move at most one step
-    tier.slice(0, LEAGUE_SPLIT.length).forEach((u, i) => grant(u, {cash: 0, coins: Math.round(LEAGUE_PRIZE_1ST[t] * LEAGUE_SPLIT[i] / 100) * 100, kind: "league", from: `#${i + 1}`}));
+    tier.slice(0, LEAGUE_SPLIT.length).forEach((u, i) => grant(u, {coins: Math.round(LEAGUE_PRIZE_1ST[t] * LEAGUE_SPLIT[i] / 100) * 100, kind: "league", from: `#${i + 1}`}));
     const up = t < LEAGUES.length - 1 ? Math.max(1, Math.ceil(n * 0.2)) : 0;
     const down = t > 0 && n >= 5 ? Math.floor(n * 0.2) : 0;
     tier.forEach((u, i) => {
@@ -359,10 +357,10 @@ function rollWeek() {
       else if (i >= n - down) { u.league = t - 1; u.lastWeek.move = -1; }
     });
   }
-  // clubs: members of the three best clubs of the week get cash
+  // clubs: members of the three best clubs of the week get coins
   const clubRank = Object.values(db.clubs).map(c => ({c, score: c.members.reduce((a, id) => a + (db.users[id] && db.users[id].week === prev ? db.users[id].weekWon || 0 : 0), 0)}))
     .filter(x => x.score > 0).sort((a, b) => b.score - a.score);
-  clubRank.slice(0, CLUB_PRIZES.length).forEach((x, i) => x.c.members.forEach(id => db.users[id] && grant(db.users[id], {cash: CLUB_PRIZES[i], coins: 0, kind: "club", from: x.c.name})));
+  clubRank.slice(0, CLUB_PRIZES.length).forEach((x, i) => x.c.members.forEach(id => db.users[id] && grant(db.users[id], {coins: CLUB_PRIZES[i], kind: "club", from: x.c.name})));
   clubRank.forEach((x, i) => { x.c.lastWeek = {rank: i + 1, score: x.score}; x.c.league = Math.min(6, Math.floor(Math.log10(x.score + 1) / 1.4)); });
   state.lastWeek = {week: prev, countries, top: played.slice(0, 20).map(u => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, won: u.weekWon}))};
   state.week = curWeek();
@@ -372,7 +370,7 @@ function rollWeek() {
 }
 setInterval(rollWeek, 60000);
 function grant(u, g) { (u.grants = u.grants || []).push({...g, at: Date.now()}); markDirty(); }
-const QUIZ_COINS = 300, QUIZ_BONUS_CASH = 1, QUIZ_SET = 5, QUIZ_DAY_CAP = 10;   // a right answer = 300 coins, all five of the day right = +1 cash, at most 10 paid answers a day
+const QUIZ_COINS = 300, QUIZ_BONUS_COINS = 1000, QUIZ_SET = 5, QUIZ_DAY_CAP = 10;   // a right answer = 300 coins, all five of the day right = +1 000 coins, at most 10 paid answers a day
 const quizState = (u, day) => {
   const q = u.qz = u.qz || {done: {}, set: {day: "", ids: [], bonus: false}, paid: 0, pd: ""};
   if (q.pd !== day) { q.pd = day; q.paid = 0; }
@@ -391,7 +389,7 @@ function quizView(id, qz, lang) {   // what the page may see: the question and t
   const it = CHAN_BANK.byId[id], q = it.quiz, d = qz.done[id], t = (quizI18n()[String(lang || "").slice(0, 2)] || {})[id];
   return {id, q: {uz: q.uz, en: q.en}, o: q.options, ...(t ? {t: {q: t.q, o: t.o}} : {}), done: d ? {c: d.c, ok: d.ok, correct: q.correct | 0, x: {uz: q.explanation.uz, en: q.explanation.en}, ...(t && t.x ? {tx: t.x} : {})} : null};
 }
-const CLUB_MAX = 50, CLUB_LEVEL = 6, CLUB_PRIZES = [20, 10, 5];
+const CLUB_MAX = 50, CLUB_LEVEL = 6, CLUB_PRIZES = [20000, 10000, 5000];   // coins
 function clubScore(c) { const w = curWeek(); return c.members.reduce((a, id) => a + (db.users[id] && db.users[id].week === w ? db.users[id].weekWon || 0 : 0), 0); }
 function clubInfo(c) { return {id: c.id, name: c.name, badge: c.badge || 0, color: c.color || 0, members: c.members.length, score: clubScore(c), league: c.league || 0}; }
 function clubSay(c, u, text) {
@@ -845,7 +843,7 @@ const routes = {
     if (process.env.TURN_URLS) iceServers.push({urls: process.env.TURN_URLS.split(",").map(x => x.trim()), username: process.env.TURN_USER || "", credential: process.env.TURN_PASS || ""});
     return {iceServers};
   },
-  "GET /api/skus": () => ({skus: SKUS, payments: PAYMENTS, referral: REFERRAL}),
+  "GET /api/skus": () => ({skus: Object.fromEntries(Object.entries(SKUS).filter(([, s]) => !s.legacy)), payments: PAYMENTS, referral: REFERRAL}),
   // game announcements shown in the in-game Inbox (public read; posting needs the ADMIN_KEY env var)
   "GET /api/news": () => {
     db.meta = db.meta || {};
@@ -924,7 +922,7 @@ const routes = {
       for (const id of all) { if (ids.length >= QUIZ_SET) break; if (!ids.includes(id)) ids.push(id); }
       qz.set = {day, ids, bonus: false}; markDirty();
     }
-    return {day, coins: QUIZ_COINS, bonusCash: QUIZ_BONUS_CASH, bonus: !!qz.set.bonus, items: qz.set.ids.map(id => quizView(id, qz, b.lang))};
+    return {day, coins: QUIZ_COINS, bonusCoins: QUIZ_BONUS_COINS, bonus: !!qz.set.bonus, items: qz.set.ids.map(id => quizView(id, qz, b.lang))};
   },
   async "POST /api/quiz/one"(req, u) {   // the question a channel post sends to (startapp=q_<id>)
     const b = await jsonBody(req), id = String(b.id || ""), it = CHAN_BANK.byId[id];
@@ -939,10 +937,10 @@ const routes = {
     if (qz.done[id]) return {again: true, coins: 0, ...quizView(id, qz, b.lang)};   // answered before: shown again, nothing more is paid
     if (!(c >= 0 && c < q.options.length)) return [400, {error: "bad_choice"}];
     const ok = c === (q.correct | 0); qz.done[id] = {c, ok, d: day};
-    let coins = 0, cash = 0;
-    if (ok && (qz.paid | 0) < QUIZ_DAY_CAP) { coins = QUIZ_COINS; qz.paid = (qz.paid | 0) + 1; grant(u, {coins, cash: 0, kind: "quiz", from: id}); }
-    if (qz.set.day === day && !qz.set.bonus && qz.set.ids.every(x => qz.done[x] && qz.done[x].ok)) { qz.set.bonus = true; cash = QUIZ_BONUS_CASH; grant(u, {coins: 0, cash, kind: "quiz", from: "5/5"}); }
-    markDirty(); return {again: false, coins, cash, ...quizView(id, qz, b.lang)};
+    let coins = 0, bonusCoins = 0;
+    if (ok && (qz.paid | 0) < QUIZ_DAY_CAP) { coins = QUIZ_COINS; qz.paid = (qz.paid | 0) + 1; grant(u, {coins, kind: "quiz", from: id}); }
+    if (qz.set.day === day && !qz.set.bonus && qz.set.ids.every(x => qz.done[x] && qz.done[x].ok)) { qz.set.bonus = true; bonusCoins = QUIZ_BONUS_COINS; grant(u, {coins: bonusCoins, kind: "quiz", from: "5/5"}); }
+    markDirty(); return {again: false, coins, bonusCoins, ...quizView(id, qz, b.lang)};
   },
   "POST /api/src"(req, u) {   // the page reports the ad link it was opened from (startapp=c_NAME): opens, and new players (account made in the last 6 h, counted once)
     return jsonBody(req).then(b => {
@@ -1239,7 +1237,7 @@ const routes = {
     u.champAt = now;
     const ids = new Set(u.friends || []); if (u.club && db.clubs[u.club]) for (const id of db.clubs[u.club].members) ids.add(id);
     ids.delete(u.id); let sent = 0;
-    for (const id of ids) if (db.users[id]) { grant(db.users[id], {cash: 0, coins: 0, kind: "champ", from: u.name, cup}); sent++; }
+    for (const id of ids) if (db.users[id]) { grant(db.users[id], {coins: 0, kind: "champ", from: u.name, cup}); sent++; }
     return {sent};
   },
   async "POST /api/gift/request"(req, u) {
@@ -1281,7 +1279,7 @@ const routes = {
     const c = db.clubs[u.club]; if (!c) return {club: null};
     const members = c.members.map(id => db.users[id]).filter(Boolean).map(m => ({...publicUser(m), role: m.id === c.owner ? "owner" : "member"}))
       .sort((a, b) => b.weekWon - a.weekWon);
-    return {club: {...clubInfo(c), desc: c.desc || "", owner: c.owner, lastWeek: c.lastWeek || null}, members, chat: (c.chat || []).slice(-50), prizes: CLUB_PRIZES};
+    return {club: {...clubInfo(c), desc: c.desc || "", owner: c.owner, lastWeek: c.lastWeek || null}, members, chat: (c.chat || []).slice(-50), prizes: CLUB_PRIZES, pc: 1};
   },
   async "POST /api/clubs/create"(req, u) {
     const b = await jsonBody(req);
@@ -1338,7 +1336,7 @@ const routes = {
     }
     if (scope === "clubs") {
       const list = Object.values(db.clubs).map(clubInfo).sort((x, y) => y.score - x.score || y.members - x.members), mi = list.findIndex(c => c.id === u.club);
-      return {scope, week: curWeek(), endsAt: weekEndsAt(), prizes: CLUB_PRIZES, clubs: list.slice(0, 100), mine: mi < 0 ? null : {...list[mi], rank: mi + 1}, total: list.length};
+      return {scope, week: curWeek(), endsAt: weekEndsAt(), prizes: CLUB_PRIZES, pc: 1, clubs: list.slice(0, 100), mine: mi < 0 ? null : {...list[mi], rank: mi + 1}, total: list.length};
     }
     const all = scope === "country" ? board("c:" + cc, x => (x.country || "") === cc)
       : scope === "league" ? board("l:" + lg, x => (x.league || 0) === lg)
@@ -1347,7 +1345,7 @@ const routes = {
       : board("world", () => true);
     const rank = all.findIndex(x => x.id === u.id);
     const n = all.length;
-    return {scope, week: curWeek(), endsAt: weekEndsAt(), prizes: scope === "country" ? COUNTRY_PRIZES : WEEK_PRIZES, leagues: LEAGUES, country: cc, league: lg,
+    return {scope, week: curWeek(), endsAt: weekEndsAt(), prizes: scope === "country" ? COUNTRY_PRIZES : WEEK_PRIZES, pc: 1, leagues: LEAGUES, country: cc, league: lg,
       promote: scope === "league" && lg < LEAGUES.length - 1 ? Math.max(1, Math.ceil(n * 0.2)) : 0,
       demote: scope === "league" && lg > 0 && n >= 5 ? Math.floor(n * 0.2) : 0,
       instant: LEAGUE_INSTANT(lg), lgPrize: LEAGUE_PRIZE_1ST[Math.min(lg, LEAGUE_PRIZE_1ST.length - 1)],
@@ -1356,7 +1354,7 @@ const routes = {
   "GET /api/leaderboard/lastweek"(req, u) {
     const s = (db.meta && db.meta.state) || {};
     const lw = s.lastWeek ? {...s.lastWeek, countries: undefined} : null;
-    return {lastWeek: lw, me: u.lastWeek || null, prizes: WEEK_PRIZES, countryPrizes: COUNTRY_PRIZES, countryTop: ((s.lastWeek && s.lastWeek.countries) || {})[u.country || ""] || []};
+    return {lastWeek: lw, me: u.lastWeek || null, prizes: WEEK_PRIZES, countryPrizes: COUNTRY_PRIZES, pc: 1, countryTop: ((s.lastWeek && s.lastWeek.countries) || {})[u.country || ""] || []};
   },
 
   // Telegram Stars: the page asks for an invoice link, opens it with Telegram.WebApp.openInvoice, Telegram calls the webhook (pre_checkout_query, then successful_payment) and the purchase is handed over through fulfill() like any other payment.
@@ -1473,7 +1471,7 @@ const routes = {
 
   async "POST /api/checkout"(req, u) {
     const b = await jsonBody(req), sku = SKUS[b.sku];
-    if (!sku) return [400, {error: "bad_sku"}];
+    if (!sku || sku.legacy) return [400, {error: "bad_sku"}];
     if (sku.once && (u.bought || {})[b.sku]) return [400, {error: "already_bought"}];
     const tid = sku.items && ((sku.items.tables || sku.items.cues || sku.items.pframes || [])[0]);
     if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return [409, {error: "sold_out"}];
@@ -1529,7 +1527,7 @@ async function tgApi(method, body) {
   return j.result;
 }
 function starsRefuse(u, skuId) {   // the same checks as the card checkout; returns an error code or ""
-  const sku = SKUS[skuId]; if (!u || !sku) return "bad_sku";
+  const sku = SKUS[skuId]; if (!u || !sku || sku.legacy) return "bad_sku";
   if (sku.once && (u.bought || {})[skuId]) return "already_bought";
   const tid = sku.items && ((sku.items.tables || sku.items.cues || sku.items.pframes || [])[0]);
   if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return "sold_out";
@@ -1632,13 +1630,14 @@ async function fulfill(payId, userId, skuId, amount) {
   if (!u || !sku || db.purchases[payId]) return true;
   db.purchases[payId] = {user: u.id, sku: skuId, at: Date.now(), amount};
   let items = sku.items || null, refund = 0;
+  const dia = sku.legacy ? Math.round((sku.cash || 0) * 2.5 + (sku.gems || 0) * 0.25) : (sku.gems || 0);   // 💎 of this order (an order made before the change: cash x 2.5, old gems x 0.25)
   const tid = items && ((items.tables || items.cues || items.pframes || [])[0]);
   if (tid && EDITION_CAP[tid]) {               // the serial is handed out when the payment arrives
     const r = claimEdition(u, tid);
-    if (r.error) { items = null; refund = TABLE_REFUND_CASH; }   // sold out between checkout and payment: cash instead
+    if (r.error) { items = null; refund = Math.max(5, Math.round((sku.usd || 0) * 50 / 5) * 5); }   // sold out between checkout and payment: the same value in 💎 instead
     else items = {...items, serials: {[tid]: r.serial}};
   }
-  grant(u, {cash: (sku.cash || 0) + refund, coins: sku.coins || 0, gems: sku.gems || 0, vip: sku.vip || 0, items, kind: "purchase", from: sku.name});
+  grant(u, {coins: sku.coins || 0, gems: dia + refund, dm: 1, vip: sku.vip || 0, items, kind: "purchase", from: sku.name});   // dm:1 = the gems are today's 💎 diamonds (the game scales an older grant)
   u.bought = {...(u.bought || {}), [skuId]: (u.bought && u.bought[skuId] || 0) + 1};
   if (saving) await saving;
   await flush();   // money: write it down before telling the provider we got it

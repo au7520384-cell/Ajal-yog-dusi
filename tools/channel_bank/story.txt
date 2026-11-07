@@ -26,9 +26,9 @@ The first table is London: entry just 50 🪙. The 27th is Tashkent: entry 65,00
 
 ## story rank
 uz: 🏳 Bayroqlar bellashadi
-Davlat reytingida har davlatning o'z jadvali bor, hafta oxirida eng yaxshi uchtasi 💵 oladi. Sizning bayrog'ingiz qaysi o'rinda bo'ladi? Birinchi g'alabadan boshlang.
+Davlat reytingida har davlatning o'z jadvali bor, hafta oxirida eng yaxshi uchtasi tanga sovrin oladi. Sizning bayrog'ingiz qaysi o'rinda bo'ladi? Birinchi g'alabadan boshlang.
 en: 🏳 Flags compete
-Every country has its own ranking board, and at the end of the week the best three receive 💵. Where will your flag be? Start with your first win.
+Every country has its own ranking board, and at the end of the week the best three receive coin prizes. Where will your flag be? Start with your first win.
 
 ## story voice l_voice
 uz: 🎙 Ovoz bilan boshqacha

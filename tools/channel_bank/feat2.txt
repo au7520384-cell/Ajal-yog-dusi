@@ -1,17 +1,17 @@
 // Promo posts, part 2: ranking, clubs, events, cups, rings, medals, friends, questions people ask.
-// Money wording: the game uses virtual coins / 💵 / 💎 only. The lint (server/chan_plan.js) rejects phrases that sound like real-money promises.
+// Money wording: the game uses virtual coins and 💎 only (💎 are bought in the shop, never given as a prize). The lint (server/chan_plan.js) rejects phrases that sound like real-money promises.
 
 ## feat rank
 uz: 🌍 Dunyo reytingi: butun dunyo bilan bellashing
-Reytingda 5 ta jadval bor: Ligam, Do'stlar, Davlat, Dunyo va Klub ligalari. O'rin hafta davomida yutgan tangalaringizga qarab belgilanadi. Hafta yopilganda dunyo top-3 ga 1 500 / 750 / 400 💵 beriladi.
+Reytingda 5 ta jadval bor: Ligam, Do'stlar, Davlat, Dunyo va Klub ligalari. O'rin hafta davomida yutgan tangalaringizga qarab belgilanadi. Hafta yopilganda dunyo top-3 ga 1 500 000 / 750 000 / 400 000 🪙 beriladi.
 en: 🌍 World ranking: compete with the whole world
-Five boards: My league, Friends, Country, World and Club leagues. Your place depends on the coins you win during the week. When the week closes, the world's top 3 get 1,500 / 750 / 400 💵.
+Five boards: My league, Friends, Country, World and Club leagues. Your place depends on the coins you win during the week. When the week closes, the world's top 3 get 1,500,000 / 750,000 / 400,000 🪙.
 
 ## feat rank
 uz: 🏳 Davlat reytingi: bayrog'ingiz uchun!
-Har davlatning o'z reytingi bor. Haftalik top-3 ga 400 / 200 / 100 💵 beriladi. Ismingiz bayrog'ingiz bilan birga hammaga ko'rinadi. O'zbekistonni reytingda baland ko'taring 🇺🇿
+Har davlatning o'z reytingi bor. Haftalik top-3 ga 400 000 / 200 000 / 100 000 🪙 beriladi. Ismingiz bayrog'ingiz bilan birga hammaga ko'rinadi. O'zbekistonni reytingda baland ko'taring 🇺🇿
 en: 🏳 Country ranking: play for your flag!
-Every country has its own ranking, and its weekly top 3 receive 400 / 200 / 100 💵. Your name shows next to your flag. Raise it high!
+Every country has its own ranking, and its weekly top 3 receive 400,000 / 200,000 / 100,000 🪙. Your name shows next to your flag. Raise it high!
 
 ## feat league
 uz: ⭐ 10 ta liga: eng yuqorisi «To'qqiz ball championi»
@@ -27,15 +27,15 @@ Next to your name the ranking shows your avatar and frame, your country flag, le
 
 ## feat clubs
 uz: 🛡 Klub: jamoa bilan g'alaba qozoning
-6-darajadan boshlab klub yaratish yoki qo'shilish mumkin. Klubda 50 kishigacha, chat, sovg'alar va haftalik klublar ligasi bor: eng yaxshi uchta klubning har bir a'zosi 20 / 10 / 5 💵 oladi.
+6-darajadan boshlab klub yaratish yoki qo'shilish mumkin. Klubda 50 kishigacha, chat, sovg'alar va haftalik klublar ligasi bor: eng yaxshi uchta klubning har bir a'zosi 20 000 / 10 000 / 5 000 🪙 oladi.
 en: 🛡 Club: win together as a team
-From level 6 you can create or join a club: up to 50 members, a chat, gifts and a weekly club league. Every member of the top three clubs receives 20 / 10 / 5 💵.
+From level 6 you can create or join a club: up to 50 members, a chat, gifts and a weekly club league. Every member of the top three clubs receives 20,000 / 10,000 / 5,000 🪙.
 
 ## feat showdown x_showdown
 uz: ♞ Showdown: har g'alaba hisobga olinadi
-Har g'alaba Showdown ochkosi va Gambit tokenini beradi. Ochko ko'paygan sari 8 ta mukofot ochiladi: tanga, token, 💵, quti, kiy bo'lagi va 💎. Hafta dushanba kuni yangilanadi.
+Har g'alaba Showdown ochkosi va Gambit tokenini beradi. Ochko ko'paygan sari 8 ta mukofot ochiladi: tanga, token, quti va kiy bo'lagi. Hafta dushanba kuni yangilanadi.
 en: ♞ Showdown: every win counts
-Every win earns Showdown points and a Gambit token. Eight rewards unlock as the points add up: coins, tokens, 💵, a box, a cue piece and 💎. It resets every Monday.
+Every win earns Showdown points and a Gambit token. Eight rewards unlock as the points add up: coins, tokens, a box and a cue piece. It resets every Monday.
 
 ## feat showdown p09
 uz: 🛍 Gambit do'koni: tokenlarga nimalar bor
@@ -123,9 +123,9 @@ Yes, starting is free. The daily gift, the lucky wheel, missions and tournaments
 
 ## feat brand
 uz: ❓ Bu pul o'yinimi?
-Yo'q. Tanga, 💵 va 💎 faqat o'yin ichida ishlaydi, yutuqlar ham o'yin ichidagi sovg'alardir. Bu bilyard o'yini: maqsad zavq, mahorat va raqobat.
+Yo'q. Tanga va 💎 faqat o'yin ichida ishlaydi, yutuqlar ham o'yin ichidagi sovg'alardir (tanga). 💎 yutuq sifatida berilmaydi: ular faqat do'kondan olinadi. Bu bilyard o'yini: maqsad zavq, mahorat va raqobat.
 en: ❓ Is it a money game?
-No. Coins, 💵 and 💎 work only inside the game, and prizes are in-game rewards. This is a pool game: the goal is fun, skill and competition.
+No. Coins and 💎 work only inside the game, and prizes are in-game rewards (coins). 💎 are never a prize: they are only sold in the shop. This is a pool game: the goal is fun, skill and competition.
 
 ## feat brand
 uz: ❓ Qanday boshlayman?
@@ -141,15 +141,15 @@ If no online opponent is found, the game lets you play a bot instead of waiting.
 
 ## feat route p06
 uz: 🎁 Kunlik sovg'alar yo'li: 8 kunlik sovg'alar
-1-kun 100 🪙, 2-kun Omadli zarba, 3-kun 300 🪙, 4-kun 1 💵, 5-kun omad g'ildiragi, 6-kun 1 000 🪙, 7-kun 2 💵 va katta sovrin, 8-kun 2 500 🪙. Bugungi sovg'ani oldingizmi?
+1-kun 100 🪙, 2-kun Omadli zarba, 3-kun 300 🪙, 4-kun 1 000 🪙, 5-kun omad g'ildiragi, 6-kun 1 000 🪙, 7-kun 5 000 🪙 katta sovrin, 8-kun 2 500 🪙. Bugungi sovg'ani oldingizmi?
 en: 🎁 The daily reward route: 8 days of gifts
-Day 1: 100 🪙, day 2: a Lucky Shot, day 3: 300 🪙, day 4: 1 💵, day 5: a wheel spin, day 6: 1,000 🪙, day 7: 2 💵 and a big prize, day 8: 2,500 🪙. Did you collect today's gift?
+Day 1: 100 🪙, day 2: a Lucky Shot, day 3: 300 🪙, day 4: 1,000 🪙, day 5: a wheel spin, day 6: 1,000 🪙, day 7: 5,000 🪙 big prize, day 8: 2,500 🪙. Did you collect today's gift?
 
 ## feat wheel p05
 uz: 🎡 Omad g'ildiragi: 8 ta sektor
-500, 1 000 yoki 2 000 🪙, 15, 25 yoki 35 💎, 1 yoki 5 💵. Har 24 soatda bitta aylantirish bepul. Bugun qaysi sektor tushadi?
+500 dan 5 000 🪙 gacha 8 xil sovrin. Har 24 soatda bitta aylantirish bepul. Bugun qaysi sektor tushadi?
 en: 🎡 The lucky wheel: 8 sectors
-500, 1,000 or 2,000 🪙, 15, 25 or 35 💎, 1 or 5 💵. One spin is free every 24 hours. Which sector will you land on today?
+8 sectors from 500 up to 5,000 🪙. One spin is free every 24 hours. Which sector will you land on today?
 
 ## feat profile x_profile
 uz: 📊 Profil: o'yin tarixingiz bir joyda
