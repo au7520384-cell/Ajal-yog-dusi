@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // The quiz in the game, end to end (real server + the page in a browser):  node tools/test_quiz_ui.js
-// Free rewards -> "Kunlik viktorina" -> five questions answered right -> the coins (5 x 300) and the +1 000 coin bonus arrive by themselves; a question opened as from a channel post (quizOne) pays once.
+// Free rewards -> "Kunlik viktorina" -> five questions answered right -> the coins (5 x 300) and the +1 cash bonus arrive by themselves; a question opened as from a channel post (quizOne) pays once.
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__dirname, ".."), P = 8314;
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 300) : ""); } };
@@ -15,7 +15,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   await p.evaluate(() => { const g = document.getElementById("lsGuest"); if (g) g.click(); }); await sleep(1500);
   await p.evaluate(() => go("freeScr")); await sleep(1200);
   ok(await p.$("#frQuiz") !== null, "the Free rewards screen has the daily quiz card");
-  const before = await p.evaluate(() => [profile.coins, profile.gems || 0]);
+  const before = await p.evaluate(() => [profile.coins, profile.gems || 0, profile.cash || 0]);
   await p.click("#frQuiz"); await sleep(1200);
   const answerRight = async () => {
     const q = await p.evaluate(() => document.querySelector("#modal .panel").innerText), en = Object.keys(byText).find(k => q.includes(k));
@@ -36,8 +36,8 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   ok(/5\/5/.test(txt) || /5\/5/.test(last), "the result shows 5/5", [txt.slice(0, 80), last.slice(0, 80)]);
   await p.evaluate(() => { const bs = [...document.querySelectorAll("#mBtns button")]; if (bs[0]) bs[0].click(); }); await sleep(400);
   await p.evaluate(() => Net.sync()); await sleep(1800);
-  const after = await p.evaluate(() => [profile.coins, profile.gems || 0]);
-  ok(after[0] - before[0] === 2500 && after[1] - before[1] === 0, "the coins (5 x 300 + 1 000 bonus) were added by themselves and no 💎 came with them", [before, after]);
+  const after = await p.evaluate(() => [profile.coins, profile.gems || 0, profile.cash || 0]);
+  ok(after[0] - before[0] === 1500 && after[1] - before[1] === 0 && after[2] - before[2] === 1, "the coins (5 x 300) and the 5/5 bonus (+1 💵) were added by themselves and no 💎 came with them", [before, after]);
   // the question a channel post links to: another one, once
   const day = await p.evaluate(async () => (await Net.api("/api/quiz/day", {})).items.map(x => x.id)), extra = bank.map(x => x.id).find(id => !day.includes(id));
   await p.evaluate(id => quizOne(id), extra); await sleep(1300);
