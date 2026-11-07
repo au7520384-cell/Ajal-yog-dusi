@@ -1112,6 +1112,37 @@ background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),color-mix(in srg
 .cpb{background:#1a1030;border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-family:var(--fh);font-size:14px;color:#9a8ac8}.cpb.done{background:linear-gradient(#ffd24d,#c88a0a);color:#2a1a00}.cpb.half i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#ffd24d,#c88a0a)}.cpb span{position:relative}
 .sbox{filter:drop-shadow(0 6px 10px #000a)}
 #modal .panel:has(.hwin){max-width:none;width:auto;padding:0;background:none;border:0;box-shadow:none}#modal .panel:has(.hwin) #mIcon,#modal .panel:has(.hwin) #mTitle,#modal .panel:has(.hwin) #mText,#modal .panel:has(.hwin) #mBtns{display:none}
+
+/* the diamond store: a big window that fills the screen (like the "Recharge" page of Mobile Legends), six big pack cards */
+#modal .panel:has(.dstore){max-width:none;width:auto;padding:0;background:none;border:0;box-shadow:none}#modal .panel:has(.dstore) #mIcon,#modal .panel:has(.dstore) #mTitle,#modal .panel:has(.dstore) #mText,#modal .panel:has(.dstore) #mBtns,#modal .panel:has(.dstore) .mx{display:none}
+.dstore{width:min(1100px,98vw);height:min(82vh,720px);display:flex;flex-direction:column;gap:8px;text-align:left;border-radius:20px;padding:10px 14px 12px;background:radial-gradient(ellipse at 50% -25%,#2c4aa8,#0b1236 62%,#050818);border:3px solid #e2b13a;box-shadow:0 0 0 2px #5a3a08,0 0 40px #ffb30055,inset 0 0 0 3px #08102e;animation:pop .35s cubic-bezier(.2,1.5,.4,1)}
+.dsh{display:flex;align-items:center;gap:10px}.dsh h2{margin:0;flex:1;font-family:var(--fh);font-weight:400;font-size:clamp(20px,3.4vh,30px);color:#ffe27a;text-shadow:0 2px 0 #000a}
+.dsx{width:40px;height:40px;border-radius:12px;border:2px solid #c9951e;background:linear-gradient(#5a1d1d,#2a0a0a);color:#fff;font-size:20px;font-weight:900;cursor:pointer}
+.dsbal{display:flex;align-items:center;gap:6px;background:#0c1222;border:1px solid #3a4a7a;border-radius:12px;padding:4px 12px;font-family:var(--fh);font-size:clamp(16px,2.8vh,24px);color:#fff}.dsbal .gem{width:26px;height:26px}
+.dsnote{display:block;margin:2px 0 0;color:#ffb3a8;font-weight:800;font-family:var(--fb,inherit);font-size:clamp(11px,2vh,15px)}
+.dsgrid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(6px,1.6vh,14px);overflow:auto;padding:4px 2px;flex:1;min-height:0}
+.dsc{position:relative;display:flex;flex-direction:column;align-items:stretch;border-radius:16px;overflow:hidden;border:2px solid #c9951e;background:linear-gradient(#4b4496,#1b1752 62%,#12123a);box-shadow:0 4px 14px #0009,inset 0 0 0 1px #ffffff18;min-height:0}
+.dsc.hot{border-color:#ffe27a;box-shadow:0 0 18px #ffcf3d88,0 4px 14px #0009}
+.dsamt{display:flex;align-items:center;gap:6px;padding:6px 10px 0;font-family:var(--fh);font-size:clamp(20px,4vh,32px);color:#fff;text-shadow:0 2px 0 #000b;line-height:1}.dsamt .gem{width:clamp(18px,3.2vh,26px);height:clamp(18px,3.2vh,26px)}
+.dspic{position:relative;flex:1;min-height:0;font-size:clamp(7px,2.3vh,17px)}.dspic i{position:absolute;transform:translate(-50%,-50%);background:var(--i-gem) center/contain no-repeat;filter:drop-shadow(0 4px 4px #000a) saturate(1.15)}
+.dspic .dschest{position:absolute;left:50%;bottom:2%;transform:translateX(-50%);filter:drop-shadow(0 5px 5px #000a)}
+.dsvip{text-align:center;color:#c8d2f5;font-weight:800;font-size:clamp(10px,1.8vh,13px);margin-bottom:3px}.dsvip span{color:#ffcf3d}
+.dsbuy{margin:0;border:0;border-top:2px solid #0006;padding:clamp(6px,1.6vh,11px) 6px;font-family:var(--fh);font-size:clamp(16px,3vh,24px);color:#fff;text-shadow:0 2px 0 #0008;cursor:pointer;background:linear-gradient(#55e063,#16a82e 55%,#0e7c20)}.dsbuy:active{filter:brightness(1.15)}.dsbuy:disabled{filter:grayscale(.7)}
+.dsc [data-card-sku]{margin:0;border-radius:0;font-size:clamp(11px,2vh,15px);padding:5px}
+.dstag{position:absolute;right:-30px;top:10px;transform:rotate(35deg);width:120px;text-align:center;background:linear-gradient(#ff6a3c,#c2260f);color:#fff;font-weight:900;font-size:10px;padding:2px 0;z-index:2;box-shadow:0 2px 5px #0008}
+.dsfoot{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#a9b6dd;font-size:clamp(11px,1.9vh,14px);font-weight:700}
+@media (max-height:480px){.dsvip{display:none}.dsc [data-card-sku]{padding:2px;font-size:11px}}
+@media (max-width:640px){.dsgrid{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,minmax(0,1fr))}}
+/* the other cue pages (Horror, Standard, Victory, Surprise, Country) get the same gold-framed rows as Premium, each in its own colour */
+.cuerow[class*="cr-"]{box-shadow:0 0 14px var(--cc,#ffcf3d33);border-color:var(--cb,#3e4f7c)}
+.cuerow.cr-standard{--cb:#7fa6ff;--cc:#4f7dff44;background:linear-gradient(90deg,#27407a,#141d46)}
+.cuerow.cr-horror{--cb:#ff5a5a;--cc:#ff3b3b44;background:linear-gradient(90deg,#4a1a28,#1c0a14)}
+.cuerow.cr-victory{--cb:#ffcf3d;--cc:#ffcf3d44;background:linear-gradient(90deg,#4a3b1c,#1c150a)}
+.cuerow.cr-surprise{--cb:#c78bff;--cc:#a45cff55;background:linear-gradient(90deg,#43296f,#1a1033)}
+.cuerow.cr-country{--cb:#4be39a;--cc:#2fd37f44;background:linear-gradient(90deg,#1b4a43,#0b1c22)}
+.cuerow.cr-event{--cb:#ffcf3d;--cc:#ffcf3d55;background:linear-gradient(90deg,#4a3b1c,#1c150a)}
+.cuerow[class*="cr-"] .btn{font-size:14px}
+.cuerow[class*="cr-"].sel{border-color:var(--gold)}
 .hwin{position:relative;border-radius:14px;border:4px solid #8a8aa0;box-shadow:0 0 0 2px #10131c,0 10px 50px #000;overflow:hidden;padding:10px 12px 8px;text-align:left}
 .hx{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;border:2px solid #fff;background:linear-gradient(#ff5a5a,#b01010);color:#fff;font-weight:900;font-size:18px;cursor:pointer;z-index:3}
 .hlogo{font-family:Philosopher,Georgia,"Times New Roman",serif;font-weight:900;font-style:italic;text-align:center;font-size:clamp(30px,6vw,54px);letter-spacing:2px;text-transform:uppercase;background:linear-gradient(#fff6c0,#e8b83a 50%,#7a4a08);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 #000) drop-shadow(0 0 14px var(--hg));line-height:1.05;margin:2px 40px 6px}
@@ -1959,7 +1990,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 <button class="nb nb-gold" data-go="mini"><img class="nbi" data-img="nv_mini" alt="">Mini<i class="dot" id="dotMini" style="display:none">!</i></button>
 </div>
 <div class="money">
-<div class="mchip gemchip" data-go="shop" data-tab="offers"><span class="gem"></span><span id="gemTxt">0</span><span class="plus">+</span></div>
+<div class="mchip gemchip" data-dstore="1"><span class="gem"></span><span id="gemTxt">0</span><span class="plus">+</span></div>
 <div class="mchip cashchip" data-go="shop" data-tab="money"><span class="cash"></span><span>$</span><span class="plus">+</span></div>
 <div class="mchip" data-go="shop" data-tab="money"><span class="coin"></span><span id="coinTxt">0</span><span class="plus">+</span></div>
 </div>
@@ -8988,7 +9019,7 @@ function openModal({icon = "", title, text = "", extra = "", buttons = [], scene
 fitSoon();
 try { if (!$("modal").classList.contains("on")) Snd.pop(); } catch (e) {}
   $("modal").classList.remove("cpm");
-  { const pn = document.querySelector("#modal .panel"); pn.classList.remove("achp", "wkp"); const f = pn.querySelector(".achfx"); if (f) f.remove(); if (!scene && !extra.includes("hwin")) skinModal(pn); }
+  { const pn = document.querySelector("#modal .panel"); pn.classList.remove("achp", "wkp"); const f = pn.querySelector(".achfx"); if (f) f.remove(); if (!scene && !extra.includes("hwin") && !extra.includes("dstore")) skinModal(pn); }
   { const pn = document.querySelector("#modal .panel"); pn.classList.toggle("scened", !!scene); if (scene) { pn.style.setProperty("--scene", `url(${modalScene(scene)})`); pn.style.setProperty("--shd", (MODAL_SH[scene] || 120) + "px"); } }
 if (icon.startsWith("img:")) $("mIcon").innerHTML = `<img class="mic" src="${UI_SPR["ic_" + icon.slice(4)]}" alt="">`; else if (icon.startsWith("box:")) $("mIcon").innerHTML = boxImg(icon.slice(4), 72); else if (icon === "🎁" && IMG.chest) $("mIcon").innerHTML = `<img class="mic" src="${IMG.chest}" alt="">`; else $("mIcon").textContent = icon; $("mTitle").textContent = T(title); $("mText").textContent = T(text); $("mExtra").innerHTML = extra;
 const box = $("mBtns"); box.innerHTML = "";
@@ -9775,7 +9806,7 @@ previewCue(c, document.querySelector("#modal .cuepv")); });
 grid.appendChild(el); return;
 }
 const owned = owns(c), sel = profile.cue === c.id, pcs = (profile.pieces || {})[c.id] | 0, gap = owned ? 0 : cueGap(c, power);   // gap = the ⚜ still missing before this coin cue can be bought
-const el = document.createElement("div"); el.className = "cuerow" + (sel ? " sel" : "") + (c.pieces && !owned ? " locked" : "") + (gap ? " cuelk" : "");
+const el = document.createElement("div"); el.className = "cuerow cr-" + c.cat + (sel ? " sel" : "") + (c.pieces && !owned ? " locked" : "") + (gap ? " cuelk" : "");
 let btn;
 if (sel) btn = `<button class="btn gray" disabled style="width:100%">✓ ${T("TANLANGAN")}</button>`;
 else if (owned) btn = `<button class="btn blue" style="width:100%">${T("TANLASH")}</button>`;
@@ -9786,7 +9817,7 @@ else if (c.cat === "event") btn = `<button class="btn orange" style="width:100%;
 else if (c.cur === "cash" && c.cash) btn = payRow(c.gems, c.usd, "cue_" + c.id, diaStd(c));   // the 💎-priced standard cues are premium cues: 💎 + Stars, no card transfer
 else if (gap) btn = `<button class="btn gray cplock" style="width:100%">🔒 +${fmt(gap)} ⚜</button><div class="cpts cpneed">⚜ ${fmt(power)} / ${fmt(c.needCP)}</div>`;
 else btn = c.cur === "cash" ? `<button class="btn blue" style="width:100%">💎 ${fmt(diaOfCash(c.price))}</button>` : `<button class="btn green" style="width:100%"><span class="coin"></span> ${fmtS(c.price)}</button>`;
-el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">${c.cc ? flagHTML(c.cc, 18) + " " : ""}${esc(cueName(c))}</b>
+el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">${c.cc ? flagHTML(c.cc, 18) + " " : ({standard: "🎱 ", horror: "💀 ", victory: "🏆 ", surprise: "🎁 ", event: "🏆 "})[c.cat] || ""}${esc(cueName(c))}</b>
 <span style="color:${tierCol[c.tier] || "#ffe27a"}">${T(c.tier)}${c.pieces && !owned ? ` <span class="pcs">${pcs}/${c.pieces} 🔒</span>` : ""}</span></div><div class="cuecvw"></div></div>
 <div>${c.st.map((v, i) => `<div class="stat"><span>${T(STAT_NAMES[i])}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
 <div>${btn}<div class="cpts">+${cuePower(c)} ⚜</div></div>`;
@@ -11290,6 +11321,7 @@ try { const r = document.createElement("i"), [lx, ly] = toLocal(e.clientX, e.cli
 document.addEventListener("click", e => {
 if (e.target.closest("button,.rw.now,.pchip2,.mchip")) Snd.click();
 const g = e.target.closest("[data-go]"); if (g) go(g.dataset.go, g.dataset.tab);
+if (e.target.closest("[data-dstore]")) openDiamondStore(false);
 });
 document.querySelectorAll("#cueTabs .tab, .shopnav button").forEach(t => t.addEventListener("click", () => buildShop(t.dataset.tab)));
 function decorateShopTabs() {   // art icons in the top shop tabs (cue, avatar, frame, table, chest, stickers)
@@ -11398,13 +11430,36 @@ async function playBuy(sku, btn) {
 { const np = playNP();
   if (np) { try { np.isBillingSupported().then(r => { if (r && r.isBillingSupported === false) playOk = false; }).catch(() => {}); } catch (e) {}
     setTimeout(() => playRestore(), 7000); document.addEventListener("visibilitychange", () => { if (!document.hidden) playRestore(); }); } }
-function gemShort() {   // "Not Enough Diamonds!" with the six diamond packs, like the reference
+
+const DS_ART = [   // where the gems of a pack's picture sit ([x%, y%, px]): the bigger the pack the more gems, the biggest ones in a chest
+[[50, 48, 74]],
+[[34, 56, 58], [64, 52, 66], [50, 26, 46]],
+[[24, 58, 52], [50, 54, 70], [76, 58, 52], [37, 28, 44], [63, 28, 44]],
+[[22, 30, 46], [78, 30, 46], [50, 14, 52]],
+[[18, 34, 46], [82, 34, 46], [34, 14, 44], [66, 14, 44], [50, 22, 54]],
+[[14, 40, 44], [86, 40, 44], [26, 16, 46], [74, 16, 46], [50, 10, 56], [38, 30, 40], [62, 30, 40]]];
+const DS_CHEST = [0, 0, 0, 96, 116, 138];
+function dsCard(id, s, k) {
+const chest = DS_CHEST[k] && IMG.chest ? `<img class="dschest" src="${IMG.chest}" style="height:${DS_CHEST[k] / 22}em" alt="">` : "";
+const price = playOn() ? esc(playPrice[id] || usdTxt(s.usd)) : usdTxt(cardUsdOf(s.usd, id));
+return `<div class="dsc${s.tag ? " hot" : ""}">${s.tag ? `<span class="dstag">♛ ${esc(T(s.tag))}</span>` : ""}
+<div class="dsamt"><span class="gem"></span>${fmt(s.gems)}</div>
+<div class="dspic">${chest}${DS_ART[k].map(([x, y, px]) => `<i style="left:${x}%;top:${y}%;width:${px / 18}em;height:${px / 18}em"></i>`).join("")}</div>
+<small class="dsvip">+${fmt(s.vip)} <span>VIP</span> ${T("ochko")}</small>
+<button class="dsbuy" data-sku="${id}">${price}</button>${playOn() ? "" : cardBtnHTML(s.usd, id)}</div>`;
+}
+const dsPacks = () => Object.entries(SKUS).filter(([id, s]) => s.gems && !s.coins && /^gems_/.test(id)).sort((a, b) => a[1].gems - b[1].gems);
+function dsGrid() { return dsPacks().map(([id, s], k) => dsCard(id, s, k)).join(""); }
+function openDiamondStore(short) {   // the 💎 chip and "Not enough diamonds" open this big window
 if (NO_CARD && !playOn()) return openModal({icon: "", title: T("Olmos yetmaydi!"), text: T("Olmos sotib olish bu ilovada hali ochilmagan. Tez orada!"), buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});   // an app without Google Play Billing (and Y8: no third-party payments) cannot sell 💎: say so instead of showing packs that do nothing
-const packs = Object.entries(SKUS).filter(([, s]) => s.gems && !s.coins);
-openModal({icon: "", title: T("Olmos yetmaydi!"), text: T("Pastdagi paketlardan birini tanlang"), extra: `<div class="packgrid g3" style="margin:6px 0">${packs.map(([id, s]) => packCard(id, s)).join("")}</div><div class="muted" style="text-align:center">${T("Olmos faqat pulga sotib olinadi: 50 💎 = $1")}</div>`, buttons: [{label: T("Elite do'kon"), cls: "purple", fn: () => setTimeout(eliteShop, 60)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+openModal({icon: "", title: "", text: "", extra: `<div class="dstore"><div class="dsh"><h2>💎 ${T("Olmos to'plamlari")}${short ? `<small class="dsnote">${T("Olmos yetmaydi!")} ${T("Pastdagi paketlardan birini tanlang")}</small>` : ""}</h2><div class="dsbal"><span class="gem"></span>${fmt(profile.gems || 0)}</div><button class="dsx" id="dsClose">✕</button></div>
+<div class="dsgrid">${dsGrid()}</div>
+<div class="dsfoot"><span>${T("Olmos faqat pulga sotib olinadi: 50 💎 = $1")}</span>${NO_CARD ? "" : `<button class="btn purple" id="dsElite" style="padding:3px 12px;font-size:15px">${T("Elite do'kon")}</button>`}</div></div>`, buttons: []});
 document.querySelectorAll("#modal [data-sku]").forEach(b => b.onclick = () => Net.checkout(b.dataset.sku, b));
+$("dsClose").onclick = () => $("modal").classList.remove("on"); if ($("dsElite")) $("dsElite").onclick = () => { $("modal").classList.remove("on"); setTimeout(eliteShop, 60); };
 if (playOn()) { playLoadPrices(); playRestore(); }
 }
+function gemShort() { openDiamondStore(true); }   // "Not Enough Diamonds!": the diamond store with the six packs
 const ELITE_ITEMS = [
 {id: "piece", ic: "🎱", n: "Kiy bo'lagi", d: "Tasodifiy kiy bo'lagi", gems: diaOfGems(350), lim: 3, give: () => giveReward2({k: "piece"})},
 {id: "sbox", ic: "🎁", n: "Syurpriz quti", d: "1 ta quti", gems: diaOfGems(140), lim: 5, give: () => { profile.sboxes = (profile.sboxes | 0) + 1; }},
@@ -11531,13 +11586,11 @@ ${[[25, 10000], [125, 60000], [625, 350000], [2500, 1600000]].map(([gems, coins]
 if (sec === "money") {
 const coins = Object.entries(SKUS).filter(([id, s]) => s.coins && !s.gems && /^coins_/.test(id)), dia = Object.entries(SKUS).filter(([id, s]) => s.gems && !s.coins && /^gems_/.test(id));
 if (sec === "money" && playOn()) { playLoadPrices(); playRestore(); }
-body.innerHTML = NO_CARD ? (playOn() ? `<div class="packs" style="grid-template-columns:1fr"><div class="packcol"><div class="packhead"><span class="gem" style="width:40px;height:40px"></span><h3>${T("Olmos to'plamlari")}</h3></div>
-<div class="packgrid">${dia.map(([id, s]) => packCard(id, s)).join("")}</div></div></div>
-<p class="muted" style="text-align:center;margin:8px 0 0">${T("To'lov Google Play orqali. Olmos hisobingizga avtomatik tushadi.")} · 50 💎 = $1</p>` : "") + exch : `<div class="packs">
+body.innerHTML = NO_CARD ? (playOn() ? `<div class="dsh"><h2>💎 ${T("Olmos to'plamlari")}</h2></div><div class="dsgrid">${dsGrid()}</div>
+<p class="muted" style="text-align:center;margin:8px 0 0">${T("To'lov Google Play orqali. Olmos hisobingizga avtomatik tushadi.")} · 50 💎 = $1</p>` : "") + exch : `<div class="packs" style="grid-template-columns:1fr">
 <div class="packcol"><div class="packhead"><span class="coin" style="width:40px;height:40px"></span><h3>${T("Tanga to'plamlari")}</h3>
-<span class="vipb" data-vclub="1" style="cursor:pointer"><b>x${vipTier()}</b><img src="${IMG.vip}" alt="VIP"></span></div><div class="packgrid">${coins.map(([id, s]) => packCard(id, s)).join("")}</div></div>
-<div class="packcol"><div class="packhead"><span class="gem" style="width:40px;height:40px"></span><h3>${T("Olmos to'plamlari")}</h3></div>
-<div class="packgrid">${dia.map(([id, s]) => packCard(id, s)).join("")}</div></div></div>
+<span class="vipb" data-vclub="1" style="cursor:pointer"><b>x${vipTier()}</b><img src="${IMG.vip}" alt="VIP"></span></div><div class="packgrid">${coins.map(([id, s]) => packCard(id, s)).join("")}</div></div></div>
+<div class="dsh" style="margin:12px 0 4px"><h2>💎 ${T("Olmos to'plamlari")}</h2></div><div class="dsgrid">${dsGrid()}</div>
 <p class="muted" style="text-align:center;margin:8px 0 0">${T("To'lovlar xavfsiz Stripe orqali. Xarid qilingan olmos va tangalar hisobingizga avtomatik tushadi.")} · 50 💎 = $1 · VIP: ${fmt(profile.vip || 0)}</p>${exch}`;
 } else if (sec === "offers") {
 const st = SKUS.starter, left = Math.max(0, (profile.starterSeen || (profile.starterSeen = Date.now(), save(), profile.starterSeen)) + 48 * 3600e3 - Date.now());
