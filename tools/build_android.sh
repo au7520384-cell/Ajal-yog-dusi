@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The game's files for the Android app (Capacitor WebView):  bash tools/build_android.sh   -> android/www/
 # The light build (pictures as files, API = CONFIG.server) WITHOUT the HD pack inside the app (the app downloads it on the first start from HD_BASE, default the Cloudflare site) and WITHOUT real-money card buttons
-# (Google Play wants Google Play Billing for coins / items: until it is added the shop offers only the ad-based unlocks).
+# (Google Play wants Google Play Billing for digital goods: the app sells the six 💎 packs through the Capacitor plugin @capgo/native-purchases - the page finds it by itself, see playOn() in index.html - and every premium thing costs 💎).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 OUT=android/www
@@ -22,6 +22,6 @@ if av: inj += "window.__APP_VER=" + json.dumps(av) + ";"
 if inj:
     assert s.count("<head>") == 1; s = s.replace("<head>", "<head><script>" + inj + "</script>")
 open(f, "w", encoding="utf-8").write(s)
-print("android/www ready: no HD pack, card buttons off")
+print("android/www ready: no HD pack, card buttons off (💎 packs: Google Play Billing)")
 PY
 du -sh "$OUT"

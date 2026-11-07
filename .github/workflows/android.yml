@@ -28,7 +28,7 @@ jobs:
         with: { distribution: temurin, java-version: 21 }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: Game files (light build, no HD pack, no card buttons)
+      - name: Game files (light build, no HD pack, no card buttons; the 💎 packs are bought with Google Play Billing)
         env:
           APP_VER: ${{ inputs.version_name }} (${{ inputs.version_code }})   # shown on the start screen and in Settings
         run: bash tools/build_android.sh
@@ -41,6 +41,9 @@ jobs:
           # voice chat (lobby room + in-match 🎤): the WebView may use the microphone - Android asks the player once, the game then keeps the microphone open
           sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#&\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />#' android/app/src/main/AndroidManifest.xml
           grep -c "RECORD_AUDIO" android/app/src/main/AndroidManifest.xml
+          # Google Play Billing (the 💎 packs, plugin @capgo/native-purchases in android/package.json): the billing library adds this permission by itself when the manifests merge; written here too so the check below can prove it
+          sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#&\n    <uses-permission android:name="com.android.vending.BILLING" />#' android/app/src/main/AndroidManifest.xml
+          grep -c "com.android.vending.BILLING" android/app/src/main/AndroidManifest.xml
           # Play's automatic protection needs minSdk 24 (Android 7+); Capacitor 8 already uses 24 (and target / compile SDK 36, which Play now asks for) - kept as a guard
           sed -i 's/minSdkVersion = 22/minSdkVersion = 24/' android/variables.gradle
           grep -c "minSdkVersion = 24" android/variables.gradle
@@ -89,6 +92,8 @@ jobs:
           cat "$MA"
           grep -c "hideBars" "$MA"
           npx cap sync android
+          # the billing plugin must be in the project (without it the app says 'not open yet' instead of selling 💎)
+          grep -c "NativePurchases" android/app/src/main/assets/capacitor.plugins.json
       - name: Version + release signing
         working-directory: android/android
         env:
