@@ -17,7 +17,9 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await p.evaluate(() => { window.__seen = { table: new Set(), bar: new Set(), btn: new Set() }; const o = window.drawCueStick; window.__o = o; window.drawCueStick = function (g, L, cd, wm) { const k = L === 540 ? "table" : L === 420 ? "bar" : L === 38 ? "btn" : null; if (k) window.__seen[k].add(cd.id); return o.apply(this, arguments); }; });
     const run = async (label, want) => {
       await p.evaluate(() => { for (const k of Object.keys(__seen)) __seen[k].clear(); });
-      await p.evaluate(() => { game.cur = game.players.findIndex(q => !q.isAI && !q.remote); }); await sleep(900);
+      await p.evaluate(() => { game.cur = game.players.findIndex(q => !q.isAI && !q.remote); });
+      for (let i = 0; i < 30; i++) { await sleep(250); if (await p.evaluate(() => __seen.table.size > 0 && __seen.bar.size > 0)) break; }   // (wait for a frame in which the stick is really drawn: not while balls roll)
+      await sleep(300);
       const s = await p.evaluate(() => ({ table: [...__seen.table], bar: [...__seen.bar], btn: [...__seen.btn] }));
       ok(s.table.length === 1 && s.table[0] === want && s.bar.length === 1 && s.bar[0] === want, label + ": the cue on the table and the one in the power bar are both " + want, s);
       ok(s.btn.includes(want), label + ": the picker button shows it too", s.btn);
@@ -31,7 +33,8 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await run("trial", ids.other);
     await p.evaluate(() => { game.trialCue = null; });
     // the bot keeps its own cue (never the player's)
-    await p.evaluate(() => { game.cur = game.players.findIndex(q => q.isAI); window.__seen.table.clear(); }); await sleep(800);
+    await p.evaluate(() => { game.cur = game.players.findIndex(q => q.isAI); window.__seen.table.clear(); });
+    for (let i = 0; i < 30; i++) { await sleep(250); if (await p.evaluate(() => __seen.table.size > 0)) break; }
     const bot = await p.evaluate(() => ({ seen: [...__seen.table], bot: game.players.find(q => q.isAI).cue }));
     ok(bot.seen.every(x => x === bot.bot), "the bot's turn draws the bot's own cue", bot);
     ok(errs.length === 0, "no page errors", errs);
