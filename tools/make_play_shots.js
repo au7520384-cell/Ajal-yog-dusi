@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Google Play listing pictures made from the real game:  node tools/make_play_shots.js
-//   store/play/shot_1..6.jpg  1920 x 1080 (16:9 phone screenshots)   store/play/feature.png  1024 x 500   store/play/icon-512.png  512 x 512
+//   store/play/shot_1..8.jpg  1920 x 1080 (16:9 phone screenshots)   store/play/feature.png  1024 x 500   store/play/icon-512.png  512 x 512
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__dirname, ".."), OUT = path.join(ROOT, "store", "play"), P = 8677;
 (async () => {
@@ -22,5 +22,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__d
     await p.evaluate(() => go("home")); await sleep(500);
     await p.evaluate(() => startMatch("ai", CITIES[0], botPlayer(1, 4))); await sleep(9000);
     await shot(6, null);
+    // 7 and 8: tables standing on marble-style floors (Kuala Lumpur, Athens)
+    for (const [n, ci] of [[7, 18], [8, 21]]) { await p.evaluate(() => go("home")); await sleep(800); await p.evaluate(i => startMatch("ai", CITIES[i], botPlayer(1, 4)), ci); await sleep(8500); await shot(n, null); }
   } finally { await b.close(); srv.kill(); }
 })().catch(e => { console.error(e); process.exit(1); });
