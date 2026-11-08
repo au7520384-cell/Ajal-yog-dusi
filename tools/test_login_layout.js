@@ -16,7 +16,7 @@ const SIZES = ALL_SIZES.filter((_, i) => !QUICK || [0, 4, 7, 12, 14].includes(i)
 const STUB_G = `window.google={accounts:{id:{initialize(){},renderButton(el,o){el.innerHTML='<div role="button" id="fakeG" style="width:'+o.width+'px;height:40px;background:#fff;box-sizing:border-box">G</div>'}}}}`, STUB_F = `window.FB={init(){},login(){}}`;
 (async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8ll-")), P = +process.env.TEST_PORT || 8607, base = `http://localhost:${P}`, errs = [];
-  const srv = spawn("node", [path.join(ROOT, "server", "server.js")], { env: { ...process.env, PORT: String(P), DATA_DIR: tmp, GOOGLE_CLIENT_ID: "test-google.apps.googleusercontent.com", FACEBOOK_APP_ID: "1234567890" }, stdio: "ignore" }); await sleep(2500);
+  const srv = spawn("node", [path.join(ROOT, "server", "server.js")], { env: { ...process.env, PORT: String(P), DATA_DIR: tmp, GOOGLE_CLIENT_ID: "test-google.apps.googleusercontent.com", FACEBOOK_BUTTON: "1", FACEBOOK_APP_ID: "1234567890" }, stdio: "ignore" }); await sleep(2500);
   try {
     const b = await chromium.launch();
     // opens the page as a fresh install; cfg = null -> the real server answers, else {google, facebook} is served instead (gate = a promise the answer waits for)

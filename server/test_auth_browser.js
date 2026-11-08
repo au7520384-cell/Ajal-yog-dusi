@@ -15,11 +15,16 @@ const chOf = v => crypto.createHash("sha256").update(v).digest("base64url"), rnd
   const fakeF = http.createServer((q, r) => { const u = new URL(q.url, "http://x"), t = u.searchParams.get("input_token") || u.searchParams.get("access_token") || ""; r.writeHead(200, { "content-type": "application/json" });
     r.end(JSON.stringify(u.pathname === "/debug_token" ? { data: { is_valid: t.startsWith("fb-good"), app_id: "fbid", user_id: "fbuser-" + t } } : { first_name: "Fiona" })); });
   await Promise.all([new Promise(r => fakeG.listen(PG, r)), new Promise(r => fakeF.listen(PF, r))]);
-  const env = { ...process.env, PORT: String(P), DATA_DIR: tmp, APP_URL: base, GOOGLE_CLIENT_ID: "gcid", FACEBOOK_APP_ID: "fbid", FACEBOOK_APP_SECRET: "fbsecret", GOOGLE_TOKENINFO_URL: `http://localhost:${PG}/tokeninfo`, FB_GRAPH_URL: `http://localhost:${PF}` };
+  const env = { ...process.env, PORT: String(P), DATA_DIR: tmp, APP_URL: base, GOOGLE_CLIENT_ID: "gcid", FACEBOOK_BUTTON: "1", FACEBOOK_APP_ID: "fbid", FACEBOOK_APP_SECRET: "fbsecret", GOOGLE_TOKENINFO_URL: `http://localhost:${PG}/tokeninfo`, FB_GRAPH_URL: `http://localhost:${PF}` };
   delete env.RENDER_EXTERNAL_URL;
   const srv = spawn("node", [path.join(__dirname, "server.js")], { env, stdio: "ignore" });
   const bare = spawn("node", [path.join(__dirname, "server.js")], { env: { ...env, PORT: String(P2), DATA_DIR: tmp2, GOOGLE_CLIENT_ID: "", FACEBOOK_APP_ID: "", FACEBOOK_APP_SECRET: "" }, stdio: "ignore" });
+  const tmp3 = fs.mkdtempSync(path.join(os.tmpdir(), "b8ab3-")), P3 = P2 + 7, envNoFb = { ...env, PORT: String(P3), DATA_DIR: tmp3 }; delete envNoFb.FACEBOOK_BUTTON;   // Facebook is set up on the server but its button is not switched on
+  const nofb = spawn("node", [path.join(__dirname, "server.js")], { env: envNoFb, stdio: "ignore" });
   await sleep(2800);
+  { const a = await (await fetch(base + "/api/auth/config")).json(), b = await (await fetch(`http://localhost:${P3}/api/auth/config`)).json();
+    ok(a.facebook === "fbid" && a.google === "gcid", "config: with FACEBOOK_BUTTON=1 the Facebook button is offered", a);
+    ok(b.facebook === "" && b.google === "gcid", "config: without FACEBOOK_BUTTON the Facebook button is hidden (Google stays), the Facebook sign-in itself stays set up", b); }
   const post = async (p, body) => { const r = await fetch(base + p, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); return { st: r.status, j: await r.json().catch(() => ({})) }; };
   const begin = async (prov, s, c, b = base) => { const r = await fetch(b + "/api/auth/begin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ provider: prov, s, c }) }); return { st: r.status, j: await r.json().catch(() => ({})) }; };
   const start = async (prov, s, c, b = base) => { const b0 = await begin(prov, s, c, b), r = await fetch(`${b}/auth/${prov}/start?s=${s}`, { redirect: "manual" }); r.begun = b0; return r; };   // the app announces the sign-in first, then the browser opens the start address (only the state is in it)
@@ -72,6 +77,6 @@ const chOf = v => crypto.createHash("sha256").update(v).digest("base64url"), rnd
       ok(r.status === 200 && /text\/html/.test(r.headers.get("content-type") || "") && t.includes("/api/auth/stash") && t.includes("royalbilliard8://auth") && /no-store/.test(r.headers.get("cache-control") || ""), "/auth/done: a page that posts to /api/auth/stash and opens the app (not cached)", { st: r.status }); }
     // 7) rate limit on the start address
     { let last = 0; for (let i = 0; i < 40; i++) last = (await start("google", rnd(40), chOf("v".repeat(30)))).status; ok(last === 429, "start: hammering it is slowed down", last); }
-  } finally { srv.kill(); bare.kill(); fakeG.close(); fakeF.close(); for (const d of [tmp, tmp2]) try { fs.rmSync(d, { recursive: true, force: true, maxRetries: 5 }); } catch (e) {} }
+  } finally { srv.kill(); bare.kill(); nofb.kill(); fakeG.close(); fakeF.close(); for (const d of [tmp, tmp2, tmp3]) try { fs.rmSync(d, { recursive: true, force: true, maxRetries: 5 }); } catch (e) {} }
   console.log(`pass ${pass}, fail ${fail}`); process.exit(fail ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

@@ -14,7 +14,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   const fakeF = http.createServer((q, r) => { const u = new URL(q.url, "http://x"), t = u.searchParams.get("input_token") || ""; r.writeHead(200, { "content-type": "application/json" });
     r.end(JSON.stringify(u.pathname === "/debug_token" ? { data: { is_valid: t.startsWith("fb-good"), app_id: "fbid", user_id: "fbuser-" + t } } : { first_name: "Fiona" })); });
   await Promise.all([new Promise(r => fakeG.listen(PG, r)), new Promise(r => fakeF.listen(PF, r))]);
-  const env = { ...process.env, PORT: String(P), DATA_DIR: tmp, APP_URL: base, GOOGLE_CLIENT_ID: "gcid", FACEBOOK_APP_ID: "fbid", FACEBOOK_APP_SECRET: "fbsecret", GOOGLE_TOKENINFO_URL: `http://localhost:${PG}/tokeninfo`, FB_GRAPH_URL: `http://localhost:${PF}` };
+  const env = { ...process.env, PORT: String(P), DATA_DIR: tmp, APP_URL: base, GOOGLE_CLIENT_ID: "gcid", FACEBOOK_BUTTON: "1", FACEBOOK_APP_ID: "fbid", FACEBOOK_APP_SECRET: "fbsecret", GOOGLE_TOKENINFO_URL: `http://localhost:${PG}/tokeninfo`, FB_GRAPH_URL: `http://localhost:${PF}` };
   delete env.RENDER_EXTERNAL_URL;
   const srv = spawn("node", [path.join(ROOT, "server", "server.js")], { env, stdio: "ignore" }); await sleep(2800);
   try {
