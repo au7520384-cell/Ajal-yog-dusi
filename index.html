@@ -9114,7 +9114,7 @@ buttons = buttons.map(b => ({...b, fn: () => y8Break(b.fn)}));
 const menuBtn = buttons.find(b => b.cls === "gray"), rest = buttons.filter(b => b !== menuBtn);
 if (menuBtn) mk("back", "❮", menuBtn.fn);
 {
-const url = /^https?:/.test(location.href) ? location.origin + location.pathname : "https://billiard8.onrender.com/";
+const url = /^https?:/.test(location.href) ? pubOrigin() + location.pathname : "https://billiard8.onrender.com/";
 const txt = humanWon ? `🎱 ${pname(me.name)} — ${T(city.name)} ${T(city.sub)}: +${fmt(prize || 0)} 🪙 | Royal Billiard 8` : `🎱 Royal Billiard 8 — ${T(city.name)} ${T(city.sub)}`;
 const open = u => { try { const w = window.open(u, "_blank", "noopener"); if (!w && navigator.share) navigator.share({text: txt, url}); } catch (e) {} };
 mk("share fb", `<svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M14 8V6.5c0-.7.2-1 1.2-1H17V2.2C16.600 2.100 15.500 2 14.300 2 11.700 2 10 3.600 10 6.400V8H7v3.600h3V22h4v-10.400h2.800L17.300 8z"/></svg>${T("Ulashish")}`, () => open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(txt)));
@@ -12288,7 +12288,7 @@ return (w.filter(x => x.length === 6).pop() || w[0] || "").slice(0, 8);
 };
 // ================= friend lobby: table -> lobby (up to 8 players) -> knockout tournament =================
 let lobbyLink = "", lobbyHook = null;   // lobbyHook: the CrazyGames build plugs its invite / room calls in here
-const lobbyDefaultLink = code => TG_LINK ? TG_LINK + (TG_LINK.includes("?") ? "&" : "?") + "startapp=" + code : (/^https?:/.test(location.protocol) && !ON_PORTAL ? location.origin + location.pathname : (Net.base || CONFIG.server) + "/") + "?join=" + code;
+const lobbyDefaultLink = code => TG_LINK ? TG_LINK + (TG_LINK.includes("?") ? "&" : "?") + "startapp=" + code : (/^https?:/.test(location.protocol) && !ON_PORTAL ? pubOrigin() + location.pathname : (Net.base || CONFIG.server) + "/") + "?join=" + code;
 const lhook = (ev, a, b) => { try { if (lobbyHook) lobbyHook(ev, a, b); } catch (e) {} };
 let LB = null;   // the lobby I am in: {code, role, city, fee, max, state, host, players, tour, results, standings, invited, friends}
 const lbCityOf = id => CITIES.find(c => c.id === id) || CITIES[0];
@@ -12905,7 +12905,7 @@ dmTimer = setInterval(() => { if (!$("fdmBox") || !$("modal").classList.contains
 // ---- sharing the invite: inside Telegram its own chat picker opens (the friend taps the link and lands in the game with your code), elsewhere the phone's share sheet, else the text is copied
 function inviteLinks() {
 const code = Net.acct ? Net.acct.code : "";
-const web = (/^https?:/.test(location.protocol) && !ON_PORTAL ? location.origin + location.pathname : (Net.base || CONFIG.server) + "/") + (code ? "?ref=" + code : "");
+const web = (/^https?:/.test(location.protocol) && !ON_PORTAL ? pubOrigin() + location.pathname : (Net.base || CONFIG.server) + "/") + (code ? "?ref=" + code : "");
 const tg = TG_LINK && code ? TG_LINK + (TG_LINK.includes("?") ? "&" : "?") + "startapp=f_" + code : "";
 return {code, web, tg};
 }
@@ -14014,6 +14014,10 @@ function fitGoogle() {   // Google renders its own button 300x40 px: it is scale
 const gw = $("lsGw"), gb = $("gBtn"); if (!gw || !gb) return;
 const w = gw.offsetWidth, h = gw.offsetHeight; if (w > 20 && h > 10) gb.style.transform = `scale(${w / 300},${h / 40})`;   // layout sizes, not getBoundingClientRect(): a portrait screen turns the whole page by 90 degrees and a turned rectangle would give swapped sizes
 }
+function pubOrigin() {   // the public address of the game for links people share: the Android app runs from https://localhost (inside the phone only, nobody else can open it), so there the game server's address is used
+  try { if (isApp()) return String(Net.base || CONFIG.server || "https://billiard8.onrender.com").replace(/\/$/, ""); } catch (e) {}
+  return location.origin;
+}
 const isApp = () => !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform());   // running inside the Android app (Capacitor shell)
 let appLoginBusy = false;
 async function appLogin(provider, mode, tok) {   // Google and Facebook refuse to sign players in inside an app's embedded WebView (and their pop-up windows never come back to the app), so in the app the sign-in opens in the phone's own browser
@@ -14139,7 +14143,7 @@ let deferredInstall = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredInstall = e; });
 function addInstallCard() {
 const body = $("setBody"); if (!body || body.querySelector(".instcard") || ON_PORTAL) return;   // not on portals (CrazyGames, Y8): the page address there is theirs, and sharing it is not allowed
-const url = location.origin + location.pathname;
+const url = pubOrigin() + location.pathname;
 const el = document.createElement("div"); el.className = "setrow instcard"; el.style.cssText = "flex-wrap:wrap";
 el.innerHTML = `<b>📲 ${T("Ilovani o'rnatish")}</b><div class="muted" style="width:100%;margin:4px 0 8px">${T("Ilovani telefon yoki kompyuteringizga o'rnating yoki do'stlaringizga ulashing.")}</div><code style="word-break:break-all;width:100%;font-size:13px">${esc(url)}</code><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn gray" id="instCopy">${T("Havolani nusxalash")}</button><button class="btn orange" id="instShare">${T("Ulashish")}</button>${deferredInstall ? `<button class="btn green" id="instGo">${T("O'rnatish")}</button>` : ""}</div>`;
 body.prepend(el);

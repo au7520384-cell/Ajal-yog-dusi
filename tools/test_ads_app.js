@@ -88,6 +88,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     // the guard also holds when the function is called directly
     const before = (await A(p)).rew; await p.evaluate(() => adCheckout("cue_fire")); await p.evaluate(() => adCheckout("av_3")); await sleep(300);
     ok((await A(p)).rew === before, "adCheckout refuses a premium cue and an avatar even when called directly");
+    // links the app shares use the game server's public address (the app itself runs from https://localhost, which nobody else can open)
+    await p.evaluate(() => { go("settingsScr"); }); await sleep(1000);
+    const shared = await p.evaluate(() => ({ base: Net.base, pub: pubOrigin(), card: (document.querySelector(".instcard code") || {}).textContent || "" }));
+    ok(shared.pub === shared.base && shared.card.startsWith(shared.base), "in the app the shared / install link is the game server's address, not the app's own https://localhost", shared);
     ok(errs.length === 0, "no page errors", errs);
     await p.context().close();
   } finally { srv.kill(); srv2.kill(); await b.close(); fs.rmSync(tmp, { recursive: true, force: true }); fs.rmSync(tmp2, { recursive: true, force: true }); }
