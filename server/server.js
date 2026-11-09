@@ -2085,7 +2085,8 @@ wss.on("connection", (ws, req) => {
     } else if (m.t === "cancel") {
       leaveQueue(ws);
     } else if (m.t === "spectate") {
-      if (ws.room) return;
+      if (ws.room && ws.room.over) ws.room = null;   // a finished match never keeps a player from watching
+      if (ws.room) return wsSend(ws, {t: "nospec", why: "busy"});   // a player of a running match cannot watch another one: say so (it used to stay silent and the game showed "no connection" after 5 s)
       if (ws.spec) { ws.spec.specs.delete(ws); ws.spec = null; }
       const room = rooms.get(String(m.room || ""));
       if (!room || room.over || room.specs.size >= 200) return wsSend(ws, {t: "nospec"});
