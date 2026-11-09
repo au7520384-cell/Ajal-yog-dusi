@@ -37,6 +37,19 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     for (let i = 0; i < 30; i++) { await sleep(250); if (await p.evaluate(() => __seen.table.size > 0)) break; }
     const bot = await p.evaluate(() => ({ seen: [...__seen.table], bot: game.players.find(q => q.isAI).cue }));
     ok(bot.seen.every(x => x === bot.bot), "the bot's turn draws the bot's own cue", bot);
+    // a SPECTATOR (live match of two other players): the table, the power bar and the picker button all show the cue of the player who is shooting, never the cue the spectator owns
+    await p.evaluate(() => { toMenu && toMenu(); }); await sleep(800);
+    const sp = await p.evaluate(() => { const own = profile.cue, c1 = CUES.find(c => c.id !== own && c.id !== "start"), c2 = CUES.find(c => c.id !== own && c.id !== c1.id && c.id !== "start"); return { own, c1: c1.id, c2: c2.id }; });
+    await p.evaluate(m => { startSpectate({ ...m, city: CITIES[0].id }); }, { room: "r1", seed: 7, first: 0, specs: 1, list: [], log: [], p: [{ name: "A", avatar: 1, cue: sp.c1 }, { name: "B", avatar: 2, cue: sp.c2 }] }); await sleep(2500);
+    await p.evaluate(() => { window.__seen = { table: new Set(), bar: new Set(), btn: new Set() }; });
+    for (const [cur, want] of [[0, sp.c1], [1, sp.c2]]) {
+      await p.evaluate(c => { game.cur = c; game.moving = false; for (const k of Object.keys(__seen)) __seen[k].clear(); }, cur);
+      for (let i = 0; i < 30; i++) { await sleep(250); if (await p.evaluate(() => __seen.table.size > 0 && __seen.bar.size > 0)) break; }
+      await sleep(300);
+      const t = await p.evaluate(() => ({ table: [...__seen.table], bar: [...__seen.bar], btn: [...__seen.btn] }));
+      ok(t.table.length === 1 && t.table[0] === want && t.bar.length === 1 && t.bar[0] === want, "spectator, player " + cur + " shoots: the table and the power bar both show his cue " + want + " (not the spectator's " + sp.own + ")", t);
+      ok(t.btn.includes(want) && !t.btn.includes(sp.own), "spectator: the picker button shows the shooter's cue, not the spectator's " + sp.own, t.btn);
+    }
     ok(errs.length === 0, "no page errors", errs);
   } finally { srv.kill(); await b.close(); fs.rmSync(tmp, { recursive: true, force: true }); }
   console.log("pass " + pass + ", fail " + fail); process.exit(fail ? 1 : 0);

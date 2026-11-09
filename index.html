@@ -3463,6 +3463,7 @@ const save = () => { profile.savedAt = Date.now(); store.set("billiard8v2", prof
 const xpNeed = l => 100 + (l - 1) * 80;
 const cueDef = id => CUES.find(c => c.id === id) || CUES[0];
 const stickOf = (G, P) => P && !P.isAI && !P.remote && G.type !== "watch" ? (G.trialCue || profile.cue) : P && P.cue;   // the local player's stick is always the one he has on (or the one he is trying out), read live: the cue on the table, the one in the power bar and the one on the picker button can never disagree (a stale copy in the match's player record made the table show another cue)
+const barCue = G => G.type === "spec" ? stickOf(G, G.players[G.cur]) : (G.trialCue || profile.cue);   // the cue in the power bar / on the picker button: my own (or the one I try) in my game; a SPECTATOR sees the cue of the player who is shooting, like the cue on the table
 const cueMax = c => 50 + c.st[0] * 1.9;   // 1 u/frame = 0.132 m/s: 6.6 m/s (stat 0) to 9.1 m/s (stat 10) at full power: a better cue really hits harder
 const MS_PER_U = 0.132;
 // Break speed: 8.6 m/s (stat 0) to 11.3 m/s (stat 10) at full power; 12.0 m/s needs a rare crit (stat 8+ cue, perfect full power, ~2-4%); the 13.4 m/s world record needs a stat-10 cue and a ~0.2% crit
@@ -8475,7 +8476,7 @@ bg.addColorStop(0, "#5aa8ff"); bg.addColorStop(1, "#1a4fb0");
 ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 3;
 ctx.fillStyle = bg; rr(b.x - b.r, b.y - b.r, 2 * b.r, 2 * b.r, 10); ctx.fill(); ctx.restore();
 ctx.strokeStyle = "rgba(255,255,255,.45)"; ctx.lineWidth = 1.5; rr(b.x - b.r + 1, b.y - b.r + 1, 2 * b.r - 2, 2 * b.r - 2, 9); ctx.stroke();
-for (const [ox, cd] of [[-5, CUES[1]], [5, cueDef(G.trialCue || profile.cue)]]) {
+for (const [ox, cd] of [[-5, CUES[1]], [5, cueDef(barCue(G))]]) {
 ctx.save(); ctx.translate(b.x + 13 + ox * 0.7, b.y - 13 + ox * 0.7); ctx.rotate(Math.PI * 0.75); drawCueStick(ctx, 38, cd, 0.5); ctx.restore();
 }
 }
@@ -8509,7 +8510,7 @@ rr(x + 5, y + 5, w - 10, (h - 10) * power, 8); ctx.fill(); ctx.shadowBlur = 0;
 ctx.save(); rr(x, y, w, h, 12); ctx.clip();
 ctx.translate(x + w / 2, y + 12 + (h - 34) * power);
 ctx.rotate(Math.PI / 2); ctx.scale(1, -1);
-drawCueStick(ctx, 420, cueDef(G.trialCue || profile.cue), 1.25);
+drawCueStick(ctx, 420, cueDef(barCue(G)), 1.25);
 ctx.restore();
 ctx.textAlign = "center";
 ctx.fillStyle = "#a7b2cc"; ctx.font = "10px Nunito,sans-serif"; ctx.fillText(show ? T("▼ torting") : "", x + w / 2, y + h + 10);
