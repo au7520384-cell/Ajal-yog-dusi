@@ -481,6 +481,7 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 #chatPanel{position:fixed;left:70px;top:10px;z-index:16;display:none;flex-direction:column;gap:8px;width:300px;
 background:#0d1426ee;border:2px solid #34436a;border-radius:14px;padding:8px}
 #chatPanel.on{display:flex}
+#chatPanel{max-height:calc(100vh - 20px);overflow:hidden}   /* vh here is already the page's own height in this box's (zoomed) px, see fixUnits() */#chatPanel>*{flex:none}#chatPanel>.citems{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 #chatPanel button{border:0;border-radius:10px;padding:8px 10px;background:#243052;color:#fff;cursor:pointer;font-size:14px}
 #chatPanel button:hover{background:#34457a}
 #chatPanel .ctabs{display:flex;gap:6px}
@@ -11319,8 +11320,8 @@ const specInfo = {list: [], log: []};
 function specLogAdd(m) { specInfo.log.push(m); if (specInfo.log.length > 60) specInfo.log.shift(); if ($("specChat").classList.contains("on")) specDrawLog(); }
 function specDrawLog() {
 const el = $("specLog"); if (!el) return;
-el.innerHTML = specInfo.log.map(m => m.sys ? `<div class="splsys">${m.msg}</div>` : m.me ? `<div class="splr me"><div class="splb${/^\p{Extended_Pictographic}+$/u.test(m.msg) ? " big" : ""}"><b>${T("Siz")}</b>${esc(m.msg)}</div>${avHTML(profile.avatar, profile.frame, 34)}</div>`
-: `<div class="splr">${avHTML(m.avatar, m.frame, 34)}<div class="splb${/^\p{Extended_Pictographic}+$/u.test(m.msg) ? " big" : ""}"><b>${esc(m.name)}</b>${esc(m.msg)}</div></div>`).join("");
+el.innerHTML = specInfo.log.map(m => m.sys ? `<div class="splsys">${m.msg}</div>` : m.me ? `<div class="splr me"><div class="splb${/^\p{Extended_Pictographic}+$/u.test(m.msg) ? " big" : ""}"><b>${T("Siz")}</b>${esc(qT(m.msg))}</div>${avHTML(profile.avatar, profile.frame, 34)}</div>`
+: `<div class="splr">${avHTML(m.avatar, m.frame, 34)}<div class="splb${/^\p{Extended_Pictographic}+$/u.test(m.msg) ? " big" : ""}"><b>${esc(m.name)}</b>${esc(qT(m.msg))}</div></div>`).join("");
 el.scrollTop = el.scrollHeight;
 }
 function specRefresh() {
@@ -12874,6 +12875,7 @@ return Net.api("/api/notify").then(applyNotify).catch(() => {});
 }
 // ---- the chat with one friend (a pop-up: messages, quick phrases, a text box, play together, remove from friends)
 const DM_QUICK = ["Salom! 👋", "O'ynaymizmi? 🎱", "Qani, bir o'yin!", "Yaxshi o'yin! 👍", "Rahmat!"];
+const qT = s => (CHAT.includes(s) || DM_QUICK.includes(s)) ? T(s) : s;   // a ready-made phrase travels as its source text and every reader sees it in his OWN language (14 languages); text typed by hand is shown exactly as written
 function dmClock(at) {
 const d = new Date(at), n = new Date(), hm = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
 return d.toDateString() === n.toDateString() ? hm : `${d.getDate()}.${d.getMonth() + 1} ${hm}`;
@@ -12890,7 +12892,7 @@ const box = $("fdmBox"); if (!box) return;
 const last = msgs[msgs.length - 1], s = msgs.length + ":" + (last ? last.at + last.t : "");
 if (!force && s === sig) return; sig = s;
 const stick = !box.dataset.ok || box.scrollTop + box.clientHeight > box.scrollHeight - 40; box.dataset.ok = "1";
-box.innerHTML = msgs.map(m => `<div class="chatmsg${m.me ? " me" : ""}">${esc(m.t)}<time>${dmClock(m.at)}</time></div>`).join("") || `<div class="chatmsg sys">${T("Hali xabar yo'q. Salomlashing! 👋")}</div>`;
+box.innerHTML = msgs.map(m => `<div class="chatmsg${m.me ? " me" : ""}">${esc(qT(m.t))}<time>${dmClock(m.at)}</time></div>`).join("") || `<div class="chatmsg sys">${T("Hali xabar yo'q. Salomlashing! 👋")}</div>`;
 if (stick) box.scrollTop = box.scrollHeight;
 };
 const head = () => { const t = $("mTitle"), x = $("mText"); if (!t || !$("fdmBox")) return; if (friend.name) t.textContent = pname(friend.name); x.textContent = friend.name ? (friend.online ? "🟢 " + T("onlayn") : T("oflayn")) : ""; };
@@ -12925,7 +12927,7 @@ openModal({icon: "💔", title: T("Do'stlikdan chiqarish"), text: T("Do'stni ro'
 {label: T("Bekor qilish"), cls: "gray", fn: () => {}}]});
 };
 $("fdmBox").style.height = Math.max(96, Math.min(260, Math.round(vh * 0.34))) + "px";   // vh = the page's own height (a phone held upright shows the page turned, so CSS vh would be wrong)
-document.querySelectorAll("#modal [data-q]").forEach(b => b.onclick = () => send(T(DM_QUICK[+b.dataset.q])));
+document.querySelectorAll("#modal [data-q]").forEach(b => b.onclick = () => send(DM_QUICK[+b.dataset.q]));
 $("fdmSend").onclick = sendTyped; $("fdmIn").onkeydown = e => { if (e.key === "Enter") sendTyped(); };
 clearInterval(dmTimer); dmPullNow = pull; pull();
 dmTimer = setInterval(() => { if (!$("fdmBox") || !$("modal").classList.contains("on")) { clearInterval(dmTimer); dmTimer = null; dmPullNow = null; if (dmOpenId === fid) dmOpenId = ""; return; } pull(); }, 4000);
