@@ -68,6 +68,8 @@ a 4 MB page plus the pictures (`img/<hash>.webp`) and sounds (`a/<hash>.wav|mp4`
 * `node tools/test_web_serve.js` checks it all: light page, immutable pictures, 304, Range for the video, the game boots and a match starts, a second visit downloads nothing, a stale build is ignored.
 
 ## Publish on Y8.com
+**Build the upload zip with `python3 tools/build_y8.py`** (-> `bilyard8-y8.zip`, ~34 MB: a 2.5 MB `index.html` + `img/` + `a/` + `icon.svg`). The old Y8 zip was one 40 MB page with every picture inside it, and the player saw a black screen for about a minute while the browser read it; the light page opens in seconds. On Y8 there is no service worker, no HD pack and no download screen (`index.html` skips them on y8.com / in a frame), the Y8 rules stay (no card buttons, prices are "watch N ads"), and **one start ad** (`y8Preroll()`, `Y8.showAd` type `start`) is shown when the menu is up: once per visit, not on the very first launch (tutorial first), not for ad-free players. Test: `node tools/test_y8_build.js` (a Y8-style frame with a stub SDK).
+
 The game has the Y8 SDK built in (login, cloud save, ads, leaderboard, achievements). It stays off until you fill in `CONFIG` at the top of the script in `index.html`:
 ```js
 const CONFIG = {

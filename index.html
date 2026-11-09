@@ -1860,7 +1860,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
   var fin, done = false; window.__pre = new Promise(function (r) { fin = function () { if (!done) { done = true; r(); } }; });
   var api = window.__hd = {avail: false, state: "none", size: 0, pct: 0, on: function () {}, off: function () {}, apply: function () { location.reload(); }};   /* state: none | off | skipped | downloading | partial | ready (applies on the next start) | on */
   try {
-    if (!/^https?:$/.test(location.protocol) || !("serviceWorker" in navigator) || !window.caches || window.top !== window.self) return fin();
+    if (!/^https?:$/.test(location.protocol) || !("serviceWorker" in navigator) || !window.caches || window.top !== window.self || /(^|\.)(y8\.com|id\.net|crazygames\.com)$/.test(location.hostname)) return fin();
     var boot = document.getElementById("boot"), box = document.getElementById("bootDl"); if (!boot || !box) return fin();
     var CN = "billiard8-v6", HN = "billiard8-hd";   /* the same caches as sw.js */
     var TX = {uz: ["Resurslar yuklab olinmoqda", "Faqat bir marta yuklanadi, keyin o'yin tez va yengil ishlaydi.", "Keyinroq", "HD grafika yuklab olinmoqda", "Bir marta yuklanadi: shar, avatar va kiyalar juda tiniq bo'ladi."],
@@ -10373,7 +10373,7 @@ window.addEventListener("y8sdk.ready", () => {
 try {
 Y8.sdk = window.y8.sdk();
 Y8.sdk.init({appId: CONFIG.y8AppId, autoLogin: true},
-{gameId: CONFIG.y8GameId, preloadAdBreaks: "on", sound: profile.muted ? "off" : "on", onReady: () => { Y8.adsReady = true; updateY8Ui(); }});
+{gameId: CONFIG.y8GameId, preloadAdBreaks: "on", sound: profile.muted ? "off" : "on", onReady: () => { Y8.adsReady = true; updateY8Ui(); if (window.__bootGone) setTimeout(y8Preroll, 800); }});
 Y8.sdk.onAuth((user, error) => {
 if (error) return;
 Y8.user = user || null;
@@ -10429,6 +10429,10 @@ adBreakDone: () => done(),
 }).catch(done);
 setTimeout(done, 90000);
 });
+}
+function y8Preroll() {   // ONE ad when the game opens on Y8 (the menu is up first, then the ad), once per visit; not on the very first launch (the tutorial comes first) and not for ad-free players
+if (!ON_PORTAL || Y8.pre || !Y8.sdk || !Y8.adsReady || profile.adfree || !profile.tutDone || Y8.busy) return;
+Y8.pre = true; Y8.lastBreak = Date.now(); y8Ad("start", "game-start");
 }
 function y8Break(then) {
 Y8.matches++;
@@ -14676,7 +14680,7 @@ if (/[?&]perf=1/.test(location.search)) {
 setTimeout(() => { try { (window.requestIdleCallback || setTimeout)(() => { try { Snd.init(); } catch (e) {} }); } catch (e) {} }, 2500);
 try { loginSplash(); } catch (e) {}
 requestAnimationFrame(frame);
-Promise.resolve(window.__pre).then(() => setTimeout(() => { const b = document.getElementById("boot"); if (b) { b.classList.add("off"); setTimeout(() => b.remove(), 700); } }, window.__preWaited ? 250 : 900));   // the logo shown while the page loads fades out once the game is running
+Promise.resolve(window.__pre).then(() => setTimeout(() => { const b = document.getElementById("boot"); if (b) { b.classList.add("off"); setTimeout(() => b.remove(), 700); } window.__bootGone = true; setTimeout(y8Preroll, 1200); }, window.__preWaited ? 250 : 900));   // the logo shown while the page loads fades out once the game is running
 setTimeout(bgStart, 3000);   // table / cue pictures load in the background once the menu is up
 </script>
 </body>
