@@ -1978,6 +1978,29 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
   } catch (e) { fin(); }
 })();
 </script>
+<script>
+/* Portal pages (Y8, CrazyGames, any frame): the page is light now, so instead of the download screen the logo carries a thin loading bar (stages are real events: page read, scripts run, page loaded, menu up; between them it creeps ahead, never past 95%). */
+(function () {
+  try {
+    var portal = window.top !== window.self || /(^|\.)(y8\.com|id\.net|crazygames\.com)$/.test(location.hostname);
+    if (!portal || !/^https?:$/.test(location.protocol)) return;
+    var boot = document.getElementById("boot"), box = document.getElementById("bootDl"); if (!boot || !box) return;
+    var W = {uz: "Yuklanmoqda", en: "Loading", ru: "Загрузка", tr: "Yükleniyor", es: "Cargando", pt: "Carregando", fr: "Chargement", de: "Wird geladen", ar: "جارٍ التحميل", id: "Memuat", hi: "लोड हो रहा है", ko: "로딩 중", ja: "読み込み中", zh: "加载中"}, ALIAS = {kk: "ru", ky: "ru", tg: "ru", be: "ru", uk: "ru", tk: "ru", az: "tr", ms: "id"}, lang = "";
+    try { lang = (JSON.parse(localStorage.getItem("billiard8v2") || "{}").lang) || ""; } catch (e) {}
+    if (!W[lang]) { var dv = (navigator.languages || [navigator.language || ""]).map(function (l) { return String(l).slice(0, 2).toLowerCase(); }); lang = ""; for (var i = 0; i < dv.length && !lang; i++) lang = W[dv[i]] ? dv[i] : (ALIAS[dv[i]] || ""); }
+    var word = W[lang] || W.en, p = 0, floor = 8, t = null;
+    box.innerHTML = '<div class="r"><span id="bootT"></span></div><div class="bar"><u id="bootU"></u></div>'; boot.classList.add("dl");
+    var T = document.getElementById("bootT"), U = document.getElementById("bootU");
+    function show() { T.textContent = word + "… " + Math.round(p) + "%"; U.style.width = p + "%"; }
+    function to(v) { if (v > floor) floor = v; if (floor > p) { p = floor; show(); } }
+    function done() { clearInterval(t); p = 100; show(); setTimeout(function () { boot.classList.remove("dl"); }, 300); }
+    show(); to(20);
+    t = setInterval(function () { if (!document.getElementById("boot")) return done(); if (p < 95) { p = Math.min(95, Math.max(p, floor) + (floor < 60 ? 0.6 : 0.25)); show(); } if (window.__bootGone) done(); }, 120);
+    document.addEventListener("DOMContentLoaded", function () { to(50); });
+    window.addEventListener("load", function () { to(75); });
+  } catch (e) {}
+})();
+</script>
 <noscript><p style="font:16px system-ui;padding:24px;color:#222;background:#fff">Royal Billiard 8 is a free online 8-ball pool game. Virtual items can be bought with in-game currency or by card. <a href="/terms">Terms of Service</a> · <a href="/privacy">Privacy Policy</a> · <a href="/refund">Refund Policy</a>. JavaScript is required to play.</p></noscript>
 <canvas id="c"></canvas>
 <div id="shade"></div>
