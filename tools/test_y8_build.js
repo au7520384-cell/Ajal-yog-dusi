@@ -23,13 +23,19 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await p.route(u => !/localhost|127\.0\.0\.1|cdn\.y8\.com/.test(String(u)), r => r.abort());
     const t0 = Date.now(); await p.goto(`http://localhost:${port}/`, { waitUntil: "commit" });
     const fr = () => p.frames().find(f => f.url().includes("/game/"));
-    for (let i = 0; i < 400 && !(fr() && await fr().evaluate(() => typeof profile !== "undefined" && !document.getElementById("boot")).catch(() => false)); i++) await sleep(100);
-    return { p, fr, ms: Date.now() - t0 };
+    const seen = []; let shot = false;
+    for (let i = 0; i < 400 && !(fr() && await fr().evaluate(() => typeof profile !== "undefined" && !document.getElementById("boot")).catch(() => false)); i++) {
+      const tx = fr() ? await fr().evaluate(() => (document.getElementById("bootT") || {}).textContent || "").catch(() => "") : ""; if (tx && seen[seen.length - 1] !== tx) seen.push(tx);
+      if (tx && !shot && process.env.SHOT) { shot = true; await p.screenshot({ path: process.env.SHOT }); }
+      await sleep(100); }
+    return { p, fr, ms: Date.now() - t0, seen };
   }
   const base = { name: "Alex", tutDone: true, games: 60, genderAsked: true, gender: "m", lang: "en" };
   // 1) a returning player
   let t = await open(base); await sleep(5000);
   ok(t.ms < 12000, "the menu is up within 12 s (it took " + t.ms + " ms)", t.ms);
+  ok(t.seen.length > 0 && t.seen.every(x => /^Loading… \d+%$/.test(x)), "the loading bar with a percent text is shown while the page loads", t.seen);
+  ok(t.seen.every((x, i) => i === 0 || parseInt(x.match(/\d+/)[0]) >= parseInt(t.seen[i - 1].match(/\d+/)[0])), "the percent never goes back", t.seen);
   const o = await t.fr().evaluate(() => ({ boot: !!document.getElementById("boot"), sw: !!(navigator.serviceWorker && navigator.serviceWorker.controller), dl: (document.getElementById("bootDl") || {}).className, ads: window.__ads, portal: ON_PORTAL, noCard: NO_CARD, y8: !!Y8.sdk && Y8.adsReady, htmlKB: document.documentElement.outerHTML.length / 1024 | 0 }));
   ok(o.portal && o.noCard, "Y8 mode: portal + no card payments", o); ok(!o.boot, "the black boot picture is gone", o); ok(o.y8, "Y8 SDK ready", o);
   ok(o.ads.length === 1 && o.ads[0] === "start:game-start", "exactly one start ad", o.ads);
