@@ -27,6 +27,9 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     const st = await Promise.all(all.map(p => p.evaluate(() => ({ g: !!(game && game.net && !game.net.spec && !game.over && mode === "game"), live: LB && LB.tour ? (LB.tour.matches || []).filter(x => x.live && x.room).length : 0 }))));
     const playing = all.filter((p, i) => st[i].g), waiting = all.filter((p, i) => !st[i].g);
     ok(playing.length === 2 && waiting.length === 1, "two players are in the match, the third waits (bye)", st);
+    // a player of a running match who asks to watch gets an ANSWER (why: busy), no more silence ("no connection" after 5 s)
+    const busy = await playing[0].evaluate(() => new Promise(res => { let t = setTimeout(() => res("silent"), 4000); Net.on("nospec", m => { clearTimeout(t); res(m && m.why || "nospec"); }); Net.send({ t: "spectate", room: game.net.room }); }));
+    ok(busy === "busy", "a player who is in a running match gets a clear 'busy' answer when he asks to watch", busy);
     const W = waiting[0];
     await W.waitForFunction(() => document.querySelector("#lbBody .lbw"), null, { timeout: 15000 }).catch(() => {});
     ok(await W.evaluate(() => !!document.querySelector("#lbBody .lbw")), "the waiting player sees an eye button next to the live match");
