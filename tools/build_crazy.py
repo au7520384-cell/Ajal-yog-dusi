@@ -135,9 +135,22 @@ function playgamaInit() {
 const B = window.bridge; if (!B || !B.platform) return;
 const P = B.platform, A = B.advertisement || {}, EV = B.EVENT_NAME || {};
 const bye = () => Promise.resolve();
+// ad journal: what Bridge really did (the sandbox target is ad shows per play). Hidden: 7 quick taps in the top-left corner of the page show it, 7 more hide it
+const AL = []; let alBox = null;
+const alPaint = () => { if (alBox) alBox.textContent = AL.join("\n"); };
+window.__adlog = m => { try { AL.push(((performance.now() / 1000) | 0) + "s " + m); if (AL.length > 45) AL.shift(); alPaint(); } catch (e) {} };
+try {
+let taps = [];
+addEventListener("pointerdown", e => {
+const now = Date.now(); if (e.clientX > 48 || e.clientY > 48) { taps = []; return; }
+taps = taps.filter(t => now - t < 4000); taps.push(now); if (taps.length < 7) return; taps = [];
+if (alBox) { alBox.remove(); alBox = null; return; }
+alBox = document.createElement("pre"); alBox.style.cssText = "position:fixed;left:0;top:0;right:0;max-height:70%;overflow:auto;margin:0;padding:6px 8px;z-index:2147483647;background:rgba(0,0,0,.88);color:#8f8;font:11px/1.35 monospace;white-space:pre-wrap;pointer-events:none"; document.body.appendChild(alBox); alPaint();
+}, true);
+} catch (e) {}
 let cur = null;   // the ad on screen: {kind, handle(state)}
 const achSent = new Set();
-const onState = kind => state => { try { if (cur && cur.kind === kind) cur.handle(String(state)); } catch (e) {} };
+const onState = kind => state => { try { window.__adlog(kind + " state: " + state + (cur && cur.kind === kind ? "" : " (nobody waits)")); if (cur && cur.kind === kind) cur.handle(String(state)); } catch (e) {} };
 try { A.on(EV.INTERSTITIAL_STATE_CHANGED, onState("interstitial")); A.on(EV.REWARDED_STATE_CHANGED, onState("rewarded")); } catch (e) {}
 Y8.sdk = {
 // the game's own ad hook: type "reward" = rewarded video (a reward only in the "rewarded" state), anything else = an interstitial at a natural pause (Bridge decides when one is really shown)
@@ -145,9 +158,11 @@ showAd(o) {
 return new Promise(resolve => {
 const kind = o.type === "reward" ? "rewarded" : "interstitial";
 let supported = false; try { supported = !!(kind === "rewarded" ? A.isRewardedSupported : A.isInterstitialSupported); } catch (e) {}
-const call = () => kind === "rewarded" ? A.showRewarded() : A.showInterstitial(o.name === "game-start" ? "game_start" : "between_matches");   // the ad when the game opens has its own placement
+const place = o.name === "game-start" ? "game_start" : "between_matches";
+const call = () => kind === "rewarded" ? A.showRewarded() : A.showInterstitial(place);
+window.__adlog("showAd " + o.type + "/" + (o.name || "") + " -> " + (kind === "rewarded" ? "rewarded" : place) + " supported=" + supported);   // the ad when the game opens has its own placement
 let over = false, guard = 0;
-const end = () => { if (over) return; over = true; cur = null; clearTimeout(guard); try { o.adBreakDone && o.adBreakDone(); } catch (e) {} resolve(); };
+const end = () => { if (over) return; over = true; cur = null; clearTimeout(guard); window.__adlog("ad call over"); try { o.adBreakDone && o.adBreakDone(); } catch (e) {} resolve(); };
 if (!supported) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return end(); }
 let rewarded = false;
 cur = {kind, handle: s => {
@@ -167,6 +182,7 @@ awardAchievement(o) { try { const k = String(o.achievementKey || ""); if (k && !
 saveLeaderboardScore(o) { try { const L = B.leaderboards; if (L && L.type && L.type !== "not_available") return Promise.resolve(L.setScore("main", Math.max(0, Math.floor(+o.points || 0)))).catch(() => {}); } catch (e) {} return bye(); },
 };
 let rewardedOk = false; try { rewardedOk = !!A.isRewardedSupported; } catch (e) {}
+try { window.__adlog("init platform=" + P.id + " interstitial=" + A.isInterstitialSupported + " rewarded=" + A.isRewardedSupported + " state=" + A.interstitialState + " minDelay=" + A.minimumDelayBetweenInterstitial); } catch (e) {}
 Y8.adsReady = rewardedOk;   // the reward buttons show only where rewarded video exists
 Y8.startAds = "bridge";   // an interstitial request before a solo match too (Bridge decides whether one really shows)
 Y8.user = {nickname: ""};
@@ -287,6 +303,8 @@ if PG:
     sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
     # the ad when the game opens (once per visit, not for ad-free players; unlike Y8 also for a brand new player: the Playgama sandbox plays are mostly new players and it wants ~0.3 ad shows per play) does not wait for rewarded video support: Bridge decides whether an interstitial really shows
     sub("if (!ON_PORTAL || Y8.pre || !Y8.sdk || !Y8.adsReady || profile.adfree || !profile.tutDone || Y8.busy) return;", "if (!ON_PORTAL || Y8.pre || !Y8.sdk || profile.adfree || Y8.busy) return;")
+    sub("function y8Preroll() {", "function y8Preroll() {\ntry { window.__adlog && window.__adlog('open-ad check: pre=' + !!Y8.pre + ' sdk=' + !!Y8.sdk + ' adfree=' + !!profile.adfree + ' busy=' + !!Y8.busy); } catch (e) {}")
+    sub("function y8Break(then) {\n", "function y8Break(then) {\ntry { window.__adlog && window.__adlog('match end: ad break asked (adfree=' + !!profile.adfree + ' busy=' + !!Y8.busy + ')'); } catch (e) {}\n")
     # the game code waits for bridge.initialize() + the stored keys: it sits in a text/plain block and a loader runs it afterwards
     OPEN = '<script>\n"use strict";'
     i = src.rfind(OPEN); assert i > 0, "main script not found"
@@ -307,7 +325,7 @@ var go = function () {
     src = src[:j] + LOADER + src[j:]
 PG_ACH = [("first_win", "First Win"), ("double", "Double Pot"), ("breakpot", "Power Break"), ("runout", "Clean Table"), ("champ", "Tournament Champion"), ("lucky", "Bullseye"), ("streak7", "Loyal Player"), ("rich", "Rich"), ("collector", "Collector")]   # the game's Y8_ACH table
 import json
-_cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "interstitial": {"placements": [{"id": "between_matches"}, {"id": "game_start"}]}},
+_cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "interstitial": {"preloadOnStart": "game_start", "placements": [{"id": "between_matches"}, {"id": "game_start"}]}},
         "leaderboards": [{"id": "main", "isMain": True}],
         "achievements": [{"id": k, "name": v, "y8": {"achievement": v, "achievementkey": k}} for k, v in PG_ACH]}
 if os.environ.get("PG_SAAS_TOKEN"):   # Playgama's own leaderboard service (Bridge SaaS): the public token from the developer dashboard (it is meant to sit in the game files)
