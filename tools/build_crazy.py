@@ -285,8 +285,8 @@ if PG:
     # ads: no own counters or timers, Bridge decides when an interstitial is really shown; the reward gate stays only for rewarded video
     sub("if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {", "if (Y8.sdk && !profile.adfree) {")
     sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
-    # the ad when the game opens (same as on Y8: once per visit, not on the very first launch, not for ad-free players) does not wait for rewarded video support: Bridge decides whether an interstitial really shows
-    sub("if (!ON_PORTAL || Y8.pre || !Y8.sdk || !Y8.adsReady || profile.adfree || !profile.tutDone || Y8.busy) return;", "if (!ON_PORTAL || Y8.pre || !Y8.sdk || profile.adfree || !profile.tutDone || Y8.busy) return;")
+    # the ad when the game opens (once per visit, not for ad-free players; unlike Y8 also for a brand new player: the Playgama sandbox plays are mostly new players and it wants ~0.3 ad shows per play) does not wait for rewarded video support: Bridge decides whether an interstitial really shows
+    sub("if (!ON_PORTAL || Y8.pre || !Y8.sdk || !Y8.adsReady || profile.adfree || !profile.tutDone || Y8.busy) return;", "if (!ON_PORTAL || Y8.pre || !Y8.sdk || profile.adfree || Y8.busy) return;")
     # the game code waits for bridge.initialize() + the stored keys: it sits in a text/plain block and a loader runs it afterwards
     OPEN = '<script>\n"use strict";'
     i = src.rfind(OPEN); assert i > 0, "main script not found"
