@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // The Playgama build (tools/build_crazy.py, PORTAL=playgama) on a mock Playgama Bridge: the ads the Playgama sandbox counts ("0.30 ad shows per play").
 //  - a returning player: ONE interstitial when the game opens (placement game_start), even where the platform has no rewarded video (the old gate needed rewarded support)
-//  - a brand new player: no ad before the tutorial
+//  - a brand new player: the same one entry ad (the sandbox plays are mostly new players)
 //  - a player who bought "no ads": no ad at all
 //  - the end of a match asks for an interstitial too (placement between_matches); Bridge itself decides whether it really shows
 //  - the page keeps off localStorage / sessionStorage (Playgama keeps the saves through bridge.storage) and has no page errors
@@ -58,8 +58,10 @@ const MIME = {".html": "text/html", ".js": "text/javascript", ".json": "applicat
     ok(await p.evaluate(() => !!document.getElementById("home") && !Y8.busy), "the game is back to normal after the ad (not stuck behind it)");
     ok(await p.evaluate(() => !("b8" in localStorage) && localStorage.length === 0), "nothing is written to localStorage");
     await p.context().close();
-    // 3. a brand new player: the tutorial comes first, no ad
-    p = await open({}, "new"); await sleep(4000); a = await ads(p); ok(a.length === 0, "a brand new player gets no ad before the tutorial", a); await p.context().close();
+    // 3. a brand new player (the Playgama sandbox plays are mostly new players): the same one entry ad, and the game still starts on the practice table
+    p = await open({}, "new"); await sleep(4000); a = await ads(p);
+    ok(a.length === 1 && a[0] === "int:game_start", "a brand new player gets the same one interstitial when the game opens", a);
+    ok(await p.evaluate(() => mode === "game" && !Y8.busy), "the new player's game goes on after the ad (the practice table)"); await p.context().close();
     // 4. a player who bought "no ads": nothing
     p = await open({ billiard8v2: JSON.stringify({ ...OLD, adfree: true }) }, "adfree"); await sleep(4000); a = await ads(p);
     await p.evaluate(() => { Y8.lastBreak = 0; return new Promise(r => y8Break(r)); }); await sleep(600); a = await ads(p);
