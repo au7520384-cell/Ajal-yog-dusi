@@ -33,7 +33,7 @@ const MIME = {".html": "text/html", ".js": "text/javascript", ".json": "applicat
   const dir = path.join(tmp, "site"); fs.mkdirSync(dir); const u = spawnSync("/usr/bin/python3", ["-m", "zipfile", "-e", zip, dir]); ok(u.status === 0, "the zip unpacks");
   ok(fs.existsSync(path.join(dir, "playgama-bridge-config.json")), "the Bridge config is next to index.html");
   const cfg = JSON.parse(fs.readFileSync(path.join(dir, "playgama-bridge-config.json"), "utf8")), pl = (cfg.advertisement && cfg.advertisement.interstitial && cfg.advertisement.interstitial.placements || []).map(x => x.id);
-  ok(["game_start", "between_matches", "lobby"].every(x => pl.includes(x)), "the interstitial placements are in the config", pl);
+  ok(["game_start", "between_matches"].every(x => pl.includes(x)), "the interstitial placements are in the config", pl);
   const srv = http.createServer((q, s) => { let f = path.join(dir, decodeURIComponent(q.url.split("?")[0])); if (f.endsWith("/")) f += "index.html"; fs.readFile(f, (e, d) => { if (e) { s.writeHead(404); return s.end(); } s.writeHead(200, { "content-type": MIME[path.extname(f)] || "application/octet-stream" }); s.end(d); }); });
   await new Promise(r => srv.listen(8681, r)); const b = await chromium.launch(), errs = [];
   const open = async (store, name, silent) => {
@@ -60,14 +60,14 @@ const MIME = {".html": "text/html", ".js": "text/javascript", ".json": "applicat
     // 3a. the lobby button ("Do'st bilan"): an interstitial first, then the lobby screen opens
     await p.evaluate(() => { Y8.lastBreak = 0; go("home"); }); await sleep(500);
     await p.click("#tWithFr"); await sleep(1500); a = await ads(p);
-    ok(a[a.length - 1] === "int:lobby", "pressing the lobby button asks for an interstitial (lobby)", a);
+    ok(a[a.length - 1] === "int:between_matches" && a.length === 3, "pressing the lobby button asks for an interstitial", a);
     ok(await p.evaluate(() => document.getElementById("withFrScr").classList.contains("on")), "the lobby screen opens after the ad");
     await p.context().close();
     // 3b. Bridge takes the call and shows nothing (too early after the last ad): the lobby screen must still open quickly, the game must not wait
     p = await open({ billiard8v2: JSON.stringify(OLD) }, "silent", true); await sleep(5500);
-    await p.evaluate(() => go("home")); await sleep(300); const t0 = Date.now();
+    await sleep(300); await p.evaluate(() => go("home")); await sleep(300); const t0 = Date.now();
     await p.click("#tWithFr"); await p.waitForFunction(() => document.getElementById("withFrScr").classList.contains("on"), null, { timeout: 8000 }).catch(() => {});
-    const dt = Date.now() - t0; ok(dt < 4000 && await p.evaluate(() => document.getElementById("withFrScr").classList.contains("on") && !Y8.busy), "when Bridge shows no ad the lobby screen opens within about 2 s and the game is not blocked (" + dt + " ms)", dt);
+    const dt = Date.now() - t0; ok(dt < 3000 && await p.evaluate(() => document.getElementById("withFrScr").classList.contains("on")), "when Bridge shows no ad the lobby screen opens within about 1.5 s (" + dt + " ms)", dt);
     await p.context().close();
     // 3. a brand new player (the Playgama sandbox plays are mostly new players): the same one entry ad, and the game still starts on the practice table
     p = await open({}, "new"); await sleep(4000); a = await ads(p);

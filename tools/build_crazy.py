@@ -145,22 +145,18 @@ showAd(o) {
 return new Promise(resolve => {
 const kind = o.type === "reward" ? "rewarded" : "interstitial";
 let supported = false; try { supported = !!(kind === "rewarded" ? A.isRewardedSupported : A.isInterstitialSupported); } catch (e) {}
-const place = o.name === "game-start" ? "game_start" : o.name === "lobby" ? "lobby" : "between_matches";   // the ad when the game opens and the one at the lobby button have their own placements
-const call = () => kind === "rewarded" ? A.showRewarded() : A.showInterstitial(place);
-let over = false, guard = 0, giveUp = 0, seen = false;
-const end = () => { if (over) return; over = true; cur = null; clearTimeout(guard); clearTimeout(giveUp); try { o.adBreakDone && o.adBreakDone(); } catch (e) {} resolve(); };
-// Bridge may skip an interstitial without a word (too early after the last ad): the game then must not wait for one - no "opened" within o.openWait ms and the call is over
-const wait = ms => { clearTimeout(giveUp); if (kind === "interstitial" && !seen) giveUp = setTimeout(() => { if (!over && !seen) { try { o.adDismissed && o.adDismissed(); } catch (e) {} end(); } }, ms); };
+const call = () => kind === "rewarded" ? A.showRewarded() : A.showInterstitial(o.name === "game-start" ? "game_start" : "between_matches");   // the ad when the game opens has its own placement
+let over = false, guard = 0;
+const end = () => { if (over) return; over = true; cur = null; clearTimeout(guard); try { o.adBreakDone && o.adBreakDone(); } catch (e) {} resolve(); };
 if (!supported) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return end(); }
 let rewarded = false;
 cur = {kind, handle: s => {
-if (s === "opened") { seen = true; clearTimeout(giveUp); try { o.beforeAd && o.beforeAd(); } catch (e) {} }
-else if (s === "loading") wait(4000);
+if (s === "opened") { try { o.beforeAd && o.beforeAd(); } catch (e) {} }
 else if (s === "rewarded") { rewarded = true; try { o.adViewed && o.adViewed(); } catch (e) {} }
 else if (s === "closed") end();
 else if (s === "failed") { if (!rewarded) { try { o.adDismissed && o.adDismissed(); } catch (e) {} } end(); }
 }};
-guard = setTimeout(end, 120000); wait(o.openWait || 4000);
+guard = setTimeout(end, 120000);
 try { call(); } catch (e) { end(); }
 });
 },
@@ -291,9 +287,8 @@ if PG:
     sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
     # the ad when the game opens (once per visit, not for ad-free players; unlike Y8 also for a brand new player: the Playgama sandbox plays are mostly new players and it wants ~0.3 ad shows per play) does not wait for rewarded video support: Bridge decides whether an interstitial really shows
     sub("if (!ON_PORTAL || Y8.pre || !Y8.sdk || !Y8.adsReady || profile.adfree || !profile.tutDone || Y8.busy) return;", "if (!ON_PORTAL || Y8.pre || !Y8.sdk || profile.adfree || Y8.busy) return;")
-    # an ad when the player presses the lobby button ("Do'st bilan"): shown first, then the screen opens; if Bridge shows none (1.5 s) the screen opens at once
-    sub("Y8.sdk.showAd({type, name,", 'Y8.sdk.showAd({type, name, openWait: name === "lobby" ? 1500 : 4000,')
-    sub('$("tWithFr").onclick = () => go("withFrScr");', '$("tWithFr").onclick = () => { if (Y8.sdk && !profile.adfree && !Y8.busy) y8Ad("next", "lobby").then(() => go("withFrScr")); else go("withFrScr"); };')
+    # an ad when the player presses the lobby button ("Do'st bilan"): the ad is asked for, the lobby screen opens when it is over or after 1.5 s at the latest (a skipped ad never keeps the player waiting)
+    sub('$("tWithFr").onclick = () => go("withFrScr");', '$("tWithFr").onclick = () => { let opened = false; const open = () => { if (!opened) { opened = true; go("withFrScr"); } }; if (Y8.sdk && !profile.adfree && !Y8.busy) { setTimeout(open, 1500); y8Ad("next", "lobby").then(open); } else open(); };')
     # the game code waits for bridge.initialize() + the stored keys: it sits in a text/plain block and a loader runs it afterwards
     OPEN = '<script>\n"use strict";'
     i = src.rfind(OPEN); assert i > 0, "main script not found"
@@ -314,7 +309,7 @@ var go = function () {
     src = src[:j] + LOADER + src[j:]
 PG_ACH = [("first_win", "First Win"), ("double", "Double Pot"), ("breakpot", "Power Break"), ("runout", "Clean Table"), ("champ", "Tournament Champion"), ("lucky", "Bullseye"), ("streak7", "Loyal Player"), ("rich", "Rich"), ("collector", "Collector")]   # the game's Y8_ACH table
 import json
-_cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "interstitial": {"placements": [{"id": "between_matches"}, {"id": "game_start"}, {"id": "lobby"}]}},
+_cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "interstitial": {"placements": [{"id": "between_matches"}, {"id": "game_start"}]}},
         "leaderboards": [{"id": "main", "isMain": True}],
         "achievements": [{"id": k, "name": v, "y8": {"achievement": v, "achievementkey": k}} for k, v in PG_ACH]}
 if os.environ.get("PG_SAAS_TOKEN"):   # Playgama's own leaderboard service (Bridge SaaS): the public token from the developer dashboard (it is meant to sit in the game files)
