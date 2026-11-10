@@ -1846,7 +1846,7 @@ const rooms = new Map();            // roomId -> room
 // swear filter for typed chat (English / Russian / Uzbek); bad words become ****
 const BAD_RE = /(f+u+c+k+|sh[i1]+t|b[i1]tch|a+ssh[o0]le|d[i1]ck|cunt|n[i1]gg|wh[o0]re|slut|bastard|х[уy]+[йяеёию]|п[и1]зд|бл[яa]+[дт]|[еe]б[аaуyлн]|[еe]бать|сук[аи]|муд[аа]к|гандон|п[и1]д[оа]р|\bsik\b|\bsikay|qo.?t[oa]q|jalab|onangni|ammangni|nomussiz|\bkot\b|\bharom[iy]\b)/gi;
 const cleanChat = s => String(s || "").replace(BAD_RE, m => "*".repeat(m.length));
-const RELAY = new Set(["aim", "shot", "state", "chat", "place", "spin", "rtc"]);
+const RELAY = new Set(["aim", "shot", "state", "chat", "place", "spin", "rtc", "hi"]);   // "hi": "this match is on my screen now" (the opponent stops showing "waiting for the opponent")
 const LVOICE_KINDS = new Set(["hello", "bye", "offer", "answer", "ice", "mute"]);   // lobby voice room signalling (see "lvoice" below)
 const specList = room => [...room.specs].slice(0, 40).map(s => { const d = db.users[s.uid] || {}; return {name: String(d.name || "Player").slice(0, 16), avatar: d.avatar | 0, frame: d.frame | 0, country: d.country || "", level: d.level | 0}; });
 const specCount = room => { const msg = {t: "specs", n: room.specs.size, list: specList(room)}; for (const p of room.p) wsSend(p, msg); for (const sp of room.specs) wsSend(sp, msg); };   // everyone in the room sees how many people are watching
@@ -1951,8 +1951,16 @@ function startTournament(L, ps) {
 const tourPlayer = (p, T) => p ? {uid: p.uid, name: (p.profile || {}).name, avatar: (p.profile || {}).avatar, frame: (p.profile || {}).frame || 0, level: (p.profile || {}).level} : null;
 function tourBroadcast(L) {
   const T = L.T; if (!T) return;
-  const m = {t: "tourstate", round: T.round, rounds: T.rounds, n: T.n, matches: T.matches.map(x => ({a: tourPlayer(x.a), b: tourPlayer(x.b), w: x.w ? x.w.uid : null, live: !!x.room && !x.done, room: x.room && !x.done ? x.room.id : undefined})), results: T.results};   // room: lets the lobby show a "watch" button for a live match
-  for (const p of T.players) wsSend(p, m);
+  const m = tourStateMsg(T);
+  for (const p of new Set([...T.players, ...L.players])) wsSend(p, m);   // the members who are not in the bracket (they came in while it runs) follow it too: they watch the live matches
+}
+function tourStateMsg(T) {   // room: lets the lobby show a "watch" button for a live match; ids: who plays in this tournament (a member who is not in it sees "watch" instead of "waiting for the next round")
+  return {t: "tourstate", round: T.round, rounds: T.rounds, n: T.n, prizes: T.prizes, pool: T.pool, fee: T.fee, ids: T.players.map(p => p.uid),
+    matches: T.matches.map(x => ({a: tourPlayer(x.a), b: tourPlayer(x.b), w: x.w ? x.w.uid : null, live: !!x.room && !x.done, room: x.room && !x.done ? x.room.id : undefined})), results: T.results};
+}
+function lobbyWelcome(L, ws) {   // a member took a seat (or took it back): what was written in the lobby chat so far, and the bracket of a running tournament
+  if (L.chat && L.chat.length) wsSend(ws, {t: "lchatlog", code: L.code, log: L.chat});
+  if (L.T) wsSend(ws, tourStateMsg(L.T));
 }
 function eliminate(L, ws, round) {
   const T = L.T; if (!ws || T.results[ws.uid]) return;
@@ -1995,7 +2003,7 @@ function finishTournament(L, champ) {
     const u = db.users[champ.uid]; if (u && champ.readyState === 1) { u.tours = (u.tours | 0) + 1; if (prize) { u.won += prize; addWeekly(u, prize); } markDirty(); }
   }
   const standings = T.players.map(p => ({uid: p.uid, name: (p.profile || {}).name, ...(T.results[p.uid] || {place: 5, prize: 0})})).sort((x, y) => x.place - y.place);
-  for (const p of T.players) wsSend(p, {t: "tourdone", standings});
+  for (const p of new Set([...T.players, ...L.players])) wsSend(p, {t: "tourdone", standings});
   for (const p of L.players) p.room = p.room || null;
   lobbyBroadcast(L);                                               // everybody stays in the lobby: play again with the same friends
 }
@@ -2035,7 +2043,7 @@ wss.on("connection", (ws, req) => {
     if (m.t === "queue") {
       if (m.lobby && m.code) {   // already seated in this lobby (the phone reconnected in two ways at once): nothing to do
         const c0 = String(m.code).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8), L0 = lobbies.get(c0);
-        if (L0 && ws.lobby === c0 && L0.players.includes(ws)) return lobbyBroadcast(L0);
+        if (L0 && ws.lobby === c0 && L0.players.includes(ws)) { lobbyBroadcast(L0); return lobbyWelcome(L0, ws); }
       }
       leaveQueue(ws);
       if (ws.room) return;
@@ -2050,10 +2058,10 @@ wss.on("connection", (ws, req) => {
           L = {code, host: ws, city, fee: FEE_OF(city), players: [ws], max: 8, state: "open", T: null, pub: !!m.pub && !m.join}; lobbies.set(code, L); ws.lobby = code;   // pub: listed in the open lobbies list (GET /api/lobbies)
           return lobbyBroadcast(L);
         }
-        if (L.players.includes(ws)) return lobbyBroadcast(L);
+        if (L.players.includes(ws)) { lobbyBroadcast(L); return lobbyWelcome(L, ws); }
         const seat = L.players.findIndex(p => p.uid === ws.uid);   // the same player comes back (new socket): he gets his seat back - in a running tournament his live match too
         if (seat >= 0) {
-          const old = L.players[seat]; swapSocket(L, old, ws); lobbyBroadcast(L);
+          const old = L.players[seat]; swapSocket(L, old, ws); lobbyBroadcast(L); lobbyWelcome(L, ws);
           if (L.T) {
             tourBroadcast(L);
             const rm = ws.room;
@@ -2062,9 +2070,8 @@ wss.on("connection", (ws, req) => {
           return;
         }
         if (m.rejoin) return wsSend(ws, {t: "nocode"});
-        if (L.state !== "open") return wsSend(ws, {t: "lobbybusy"});
         if (L.players.length >= L.max) return wsSend(ws, {t: "lobbyfull"});
-        L.players.push(ws); ws.lobby = code; return lobbyBroadcast(L);
+        L.players.push(ws); ws.lobby = code; lobbyBroadcast(L); return lobbyWelcome(L, ws);   // (also while a tournament runs: he watches it and plays in the next one)
       }
       const qk = code ? "code:" + code : city;
       const q = queues.get(qk) || []; queues.set(qk, q);
@@ -2120,6 +2127,13 @@ wss.on("connection", (ws, req) => {
       if (ou) { ou.cheer = ou.cheer || {got: {}, sent: 0}; ou.cheer.got[g] = (ou.cheer.got[g] | 0) + 1; }
       markDirty();
       wsSend(other, {t: "gift", g, name: String(u.name || "").slice(0, 16)}); wsSend(ws, {t: "giftok", g});
+    } else if (m.t === "lchat") {   // lobby text chat: a member writes to everybody in the lobby (in the lobby, in a match of it, or watching one); the last messages are kept for those who come in later
+      const L = ws.lobby && lobbies.get(ws.lobby);
+      if (!L || !L.players.includes(ws) || !bucket(ws, "lchat", 5, 2500)) return;
+      const msg = cleanChat(String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 120)); if (!msg) return;
+      const out = {t: "lchat", code: L.code, from: ws.uid, name: String(u.name || "Player").slice(0, 16), avatar: u.avatar | 0, frame: u.frame | 0, msg, at: Date.now()};
+      (L.chat = L.chat || []).push(out); if (L.chat.length > 40) L.chat.shift();
+      for (const p of L.players) wsSend(p, out);
     } else if (m.t === "lvoice") {   // lobby voice room: WebRTC signalling between the members of one lobby (a mesh of up to 8; the audio itself never touches the server)
       const L = ws.lobby && lobbies.get(ws.lobby);
       if (!L || !L.players.includes(ws) || !bucket(ws, "lvoice", 240, 100)) return;
@@ -2148,6 +2162,9 @@ wss.on("connection", (ws, req) => {
       } else if (m.t === "rtc") {
         if (!bucket(ws, "rtc", 60, 500)) return;
         m = {t: "rtc", k: String(m.k || "").slice(0, 12), d: m.d && typeof m.d === "object" ? m.d : null};
+      } else if (m.t === "hi") {
+        if (!bucket(ws, "hi", 6, 2000)) return;
+        m = {t: "hi", re: m.re ? 1 : 0};
       }
       const out = {...m, from: ws.seat, room: room.id};   // the match id: a phone that has not started this match yet keeps the message, one that is in another match drops it
       delete out.n;

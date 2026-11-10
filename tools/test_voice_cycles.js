@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-// Voice through many matches:  node tools/test_voice_cycles.js   (B8_ROOT=<repo copy>, CYCLES=16)
+// Voice through many matches of a LOBBY:  node tools/test_voice_cycles.js   (B8_ROOT=<repo copy>, CYCLES=16)
+// (A match of the lobby does not pause the lobby's voice room any more - all members, also the two at the table, stay in it - see test_lobby_room.js. The 1-to-1 call of an ordinary table is test_voice_table.js.)
 // The owner: "after ~15 games the voice in the lobby stopped coming", "the microphone asks for permission again and again" and
 // "if listening is on I must hear the opponent even without my own microphone; with listening off nothing is heard".
 // Real Chromium browsers with a fake microphone.
-//  Part 1 - listening: nobody has a microphone on; one player taps 🎤 in a match, the other one (speaker on) hears him at once, without a tap. Speaker off = muted, nothing joins. Speaker on again = joins and hears.
-//  Part 2 - the lobby voice room through CYCLES matches in a row (it pauses around every match and comes back): connected both ways with audio flowing after EVERY match, in the matches the voice is on by itself,
+//  Part 1 - listening: nobody has a microphone on; one player taps 🎤 at the table of a lobby match, the other one (speaker on) joins the room as a listener by himself and hears him, without a tap. Speaker off = muted. Speaker on again = heard.
+//  Part 2 - the lobby voice room through CYCLES matches in a row (it goes on at every table): connected both ways with audio flowing in EVERY match and after it,
 //           and the browser is asked for the microphone ONCE (every later question is made to hang, like a phone that does not answer): a room that depends on a new question dies after the first match.
 //  Part 3 - the choice is remembered: leave the lobby, open another one - the voice is on without a tap and without a new question.
-//  Part 4 - no microphone permission at all (the browser says no): tapping 🎤 does not break anything, the player joins as a listener, nothing is saved, nothing is asked again in the next match.
+//  Part 4 - no microphone permission at all (the browser says no): tapping 🎤 does not break anything, a window explains it, the player stays in the room as a listener, nothing is saved, nothing is asked again in the next match.
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), N = +process.env.CYCLES || 16;
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 500) : ""); } };
@@ -43,30 +44,31 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     };
     const until = async (fn, to = 25000) => { const t0 = Date.now(); while (Date.now() - t0 < to) { if (await fn()) return true; await sleep(400); } return false; };
     const vs = p => p.evaluate(() => Voice.state());
-    const inFlow = async p => { const a = await p.evaluate(async () => (await Voice.stats()).inPackets); await sleep(1300); const c = await p.evaluate(async () => (await Voice.stats()).inPackets); return c - a; };
+    const lvs = p => p.evaluate(() => { const s = LobbyVoice.state(), v = Object.values(s.peers); return { ...s, pcs: v.map(x => x.pc), ok: v.filter(x => x.pc === "connected").length, elMuted: v.length > 0 && v.every(x => x.elMuted), el: v.some(x => x.el) }; });
+    const inFlow = async p => { const a = await p.evaluate(async () => Object.values(await LobbyVoice.stats()).reduce((t, x) => t + x.in, 0)); await sleep(1300); const c = await p.evaluate(async () => Object.values(await LobbyVoice.stats()).reduce((t, x) => t + x.in, 0)); return c - a; };
     const click = (p, id) => p.evaluate(i => document.getElementById(i).click(), id);
 
     // ---------------------------------------------------------------- part 1: listening
     {
       const A = await mk("Host1"), B = await mk("Guest1"); await lobbyOf(A, B);
       if (await startMatch(A, B, "L1")) {
-        let [a, c] = [await vs(A), await vs(B)]; ok(!a.on && !c.on, "nobody has the voice on at the start (no saved microphone)", { a: a.on, b: c.on });
-        await click(B, "gVoice");                                                                                             // B taps 🎤
-        ok(await until(async () => { const s = await vs(A); return s.on && s.listenOnly && s.pcs === "connected"; }), "the opponent taps 🎤: my speaker is on, so I join as a listener by myself and the call connects", await vs(A));
-        a = await vs(A); c = await vs(B);
-        ok(a.on && a.listenOnly && !a.mic, "I am a listener: no microphone of my own", a); ok(c.on && !c.listenOnly && c.mic, "he talks with his microphone", c);
-        ok((await inFlow(A)) > 5, "I hear him: audio packets arrive", await vs(A)); ok(a.audio && !a.paused && !a.elMuted, "the player is playing the sound (speaker on)", a);
+        let [a, c] = [await lvs(A), await lvs(B)]; ok(!a.want && !c.want, "nobody is in the voice room at the start (no saved microphone)", { a: a.want, b: c.want });
+        await click(B, "gVoice");                                                                                             // B taps 🎤 at the table
+        ok(await until(async () => { const s = await lvs(A); return s.want && s.listenOnly && s.ok === 1; }), "the other member taps 🎤: my speaker is on, so I join the room as a listener by myself and the call connects", await lvs(A));
+        a = await lvs(A); c = await lvs(B);
+        ok(a.want && a.listenOnly && !a.mic && !a.susp, "I am a listener: no microphone of my own, the room is not paused by the match", a); ok(c.want && !c.listenOnly && c.mic && !c.susp, "he talks with his microphone", c);
+        ok((await inFlow(A)) > 5, "I hear him: audio packets arrive", await lvs(A)); ok(a.el && !a.elMuted, "the player is playing the sound (speaker on)", a);
         ok((await A.evaluate(() => window.__gum)) === 0, "I was never asked for a microphone", await A.evaluate(() => window.__gum));
-        await click(A, "gSpk"); a = await vs(A); ok(a.spkOff && a.elMuted, "speaker off: the sound is muted, nothing is heard", a);
-        await click(A, "gSpk"); a = await vs(A); ok(!a.spkOff && !a.elMuted, "speaker on again: heard again", a);
+        await click(A, "gSpk"); a = await lvs(A); ok(a.spkOff && a.elMuted, "speaker off: the sound is muted, nothing is heard", a);
+        await click(A, "gSpk"); a = await lvs(A); ok(!a.spkOff && !a.elMuted, "speaker on again: heard again", a);
         await click(A, "gSpk");                                                                                               // speaker off for the next match
         await endMatch(A, B);
-        if (await startMatch(A, B, "L2")) {                                                                                    // B's microphone is saved: his voice is on by itself
-          ok(await until(async () => { const s = await vs(B); return s.on && !s.listenOnly; }, 15000), "his saved microphone starts by itself in the next match, no tap", await vs(B));
-          await sleep(4000); a = await vs(A); ok(!a.on, "my speaker is off: I do not join, nothing is heard", a);
+        if (await startMatch(A, B, "L2")) {                                                                                    // B's microphone is saved: his voice is on in the next match too
+          ok(await until(async () => { const s = await lvs(B); return s.want && !s.susp && s.mic && !s.listenOnly; }, 15000), "his microphone is on at the next table, no tap", await lvs(B));
+          await sleep(3000); a = await lvs(A); ok(a.spkOff && a.elMuted, "my speaker is off: nothing is played", a);
           await click(A, "gSpk");
-          ok(await until(async () => { const s = await vs(A); return s.on && s.listenOnly && s.pcs === "connected"; }), "speaker on while he is talking: I join as a listener and the call connects", await vs(A));
-          ok((await inFlow(A)) > 5, "I hear him", await vs(A));
+          ok(await until(async () => { const s = await lvs(A); return s.want && !s.spkOff && !s.elMuted && s.ok === 1; }), "speaker on while he is talking: the sound plays and the call is connected", await lvs(A));
+          ok((await inFlow(A)) > 5, "I hear him", await lvs(A));
         }
         ok((await B.evaluate(() => window.__gum)) <= 1, "his microphone was asked for once for two matches", await B.evaluate(() => window.__gum));
       }
@@ -83,16 +85,16 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     let firstBad = 0, firstBadIn = 0, inMatch = 0;
     for (let m = 1; m <= N; m++) {
       if (!(await startMatch(A, B, m))) break;
-      // in the match the voice is on by itself (the saved "microphone on") and the two phones are connected
-      const live = await until(async () => { const s = await Promise.all(both.map(vs)); return s.every(x => x.on && !x.listenOnly && x.pcs === "connected"); }, 20000);
-      if (live) inMatch++; else { if (!firstBadIn) firstBadIn = m; if (firstBadIn === m) console.log(`match ${m}: the in-match voice is not up on both phones:`, JSON.stringify(await Promise.all(both.map(vs)))); }
+      // at the table the lobby room is still whole: both connected, audio flowing both ways
+      const live = await connected(20000) && (await flowing()).every(x => x > 5);
+      if (live) inMatch++; else { if (!firstBadIn) firstBadIn = m; if (firstBadIn === m) console.log(`match ${m}: the lobby room is not up on both phones at the table:`, JSON.stringify(await Promise.all(both.map(p => p.evaluate(() => LobbyVoice.state()))))); }
       await endMatch(A, B);
       const c = await connected(25000), f = c ? await flowing() : [0, 0];
       if (!(c && f.every(x => x > 5)) && !firstBad) firstBad = m;
       if (m % 4 === 0 || !c) console.log(`match ${m}: lobby room connected=${c}, audio packets in the last 1.2 s: ${f.join("/")}, voice on in the match: ${live}, microphone questions so far: ${(await Promise.all(both.map(p => p.evaluate(() => window.__gum)))).join("/")}`);
     }
     ok(!firstBad, "the lobby voice room is connected with audio flowing after every one of the matches", { firstBadMatch: firstBad });
-    ok(!firstBadIn, "in every match the voice is on by itself and connected (no tap)", { firstBadMatch: firstBadIn, ok: inMatch });
+    ok(!firstBadIn, "in every match the lobby room goes on, connected, audio flowing both ways (no tap)", { firstBadMatch: firstBadIn, ok: inMatch });
     const gum = await Promise.all(both.map(p => p.evaluate(() => window.__gum)));
     ok(gum.every(x => x <= 1), "the microphone is asked for once, not again after every match", gum);
 
@@ -120,11 +122,12 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
       const A4 = await mkWith(nb, "Host4"), B4 = await mkWith(nb, "Guest4"); await lobbyOf(A4, B4);
       if (await startMatch(A4, B4, "R1")) {
         await click(A4, "gVoice");
-        ok(await until(async () => { const s = await vs(A4); return s.on && s.listenOnly && !s.mic; }, 15000), "the microphone is refused: the player still joins, as a listener", await vs(A4));
-        ok(await until(async () => { const s = await Promise.all([A4, B4].map(vs)); return s.every(x => x.on && x.pcs === "connected"); }, 25000), "and the call between the two connects", await Promise.all([A4, B4].map(vs)));
+        ok(await until(async () => { const s = await lvs(A4); return s.want && s.listenOnly && !s.mic; }, 15000), "the microphone is refused: the player still joins the room, as a listener", await lvs(A4));
+        ok(await until(async () => await A4.evaluate(() => document.getElementById("modal").classList.contains("on") && document.getElementById("mText").textContent.length > 20), 8000), "and a window tells him why and what to do");
+        await A4.evaluate(() => document.querySelector("#mBtns button").click());
         ok(await A4.evaluate(() => MicHub.mic() === false), "a refused microphone is not saved as \"microphone on\"");
         await endMatch(A4, B4);
-        if (await startMatch(A4, B4, "R2")) { await sleep(3500); const q = await vs(A4); ok(!q.on || q.listenOnly, "next match: no automatic microphone, no new question", q); ok((await A4.evaluate(() => window.__gum)) <= 1, "the browser was asked once", await A4.evaluate(() => window.__gum)); }
+        if (await startMatch(A4, B4, "R2")) { await sleep(3500); const q = await lvs(A4); ok(!q.mic, "next match: no automatic microphone, no new question", q); ok((await A4.evaluate(() => window.__gum)) <= 1, "the browser was asked once", await A4.evaluate(() => window.__gum)); }
       }
       await nb.close();
     }
