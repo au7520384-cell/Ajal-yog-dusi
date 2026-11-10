@@ -2154,7 +2154,7 @@ wss.on("connection", (ws, req) => {
       if (m.t === "shot" || m.t === "state") { out.n = ++room.sn[ws.seat]; const lg = room.log[ws.seat]; lg.push(out); if (lg.length > 80) lg.shift(); }   // numbered + kept: replayed to a phone that was away
       if (m.t === "state") room.last = out;
       wsSend(other, out);
-      if (SPEC_FWD.has(m.t) && room.specs.size) for (const sp of room.specs) wsSend(sp, out);
+      if (SPEC_FWD.has(m.t) && room.specs.size) { const so = {...out}; delete so.n; for (const sp of room.specs) wsSend(sp, so); }   // a spectator gets messages of BOTH seats, and each seat numbers its own (1, 2, 3 ...): the page's duplicate filter keeps ONE counter per match and threw half of them away (the watcher missed shots and positions, the balls jumped). No number = no filter; a spectator never needs a replay
     } else if (m.t === "result" && ws.room) {
       const room = ws.room, w = +m.winner === 1 ? 1 : 0;
       room.reports[ws.seat] = w;
