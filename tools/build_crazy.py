@@ -145,7 +145,7 @@ showAd(o) {
 return new Promise(resolve => {
 const kind = o.type === "reward" ? "rewarded" : "interstitial";
 let supported = false; try { supported = !!(kind === "rewarded" ? A.isRewardedSupported : A.isInterstitialSupported); } catch (e) {}
-const call = () => kind === "rewarded" ? A.showRewarded() : A.showInterstitial("between_matches");
+const call = () => kind === "rewarded" ? A.showRewarded() : A.showInterstitial(o.name === "game-start" ? "game_start" : "between_matches");   // the ad when the game opens has its own placement
 let over = false, guard = 0;
 const end = () => { if (over) return; over = true; cur = null; clearTimeout(guard); try { o.adBreakDone && o.adBreakDone(); } catch (e) {} resolve(); };
 if (!supported) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return end(); }
@@ -252,21 +252,30 @@ sub("try { loginSplash(); } catch (e) {}\nrequestAnimationFrame(frame);", "try {
 
 # sharper picture on portals (reviewers judge the game in a small iframe on an ordinary 1x monitor): the canvas is drawn at about twice the page size (never above ~2560 px wide unless the screen itself is denser)
 # and shrunk by the browser, graphics level High by default, high-quality image smoothing
-sub('let gq = "mid"; try { gq = (profile.set && profile.set.gfx) || "mid"; } catch (e) {}', 'let gq = "high"; try { gq = (profile.set && profile.set.gfx) || "high"; } catch (e) {}')
-sub("dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5})[gq] || 2.5) * dprAuto);", "dpr = Math.max(1, Math.min(Math.max(window.devicePixelRatio || 1, Math.min(2, 2560 / Math.max(vw, 1))), ({low: 1.5, mid: 2, high: 2.5})[gq] || 2.5) * dprAuto);")
+sub('let gq = DEV_GFX; try { gq = (profile.set && profile.set.gfx) || DEV_GFX; } catch (e) {}', 'let gq = "high"; try { gq = (profile.set && profile.set.gfx) || "high"; } catch (e) {}')
+sub("dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5, ultra: 4})[gq] || 2.5) * dprAuto);", "dpr = Math.max(1, Math.min(Math.max(window.devicePixelRatio || 1, Math.min(2, 2560 / Math.max(vw, 1))), ({low: 1.5, mid: 2, high: 2.5, ultra: 4})[gq] || 2.5) * dprAuto);")
 sub("cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);", 'cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr); try { ctx.imageSmoothingQuality = "high"; } catch (e) {}')
-sub('const SET_DEF = { gfx: "mid", fps: "90"', 'const SET_DEF = { gfx: "high", fps: "90"')
+sub('const SET_DEF = { gfx: DEV_GFX, fps: "90"', 'const SET_DEF = { gfx: "high", fps: "90"')
 # Playgama-only patches
 sub('<head>', '<head>\n<style>.chanonly{display:none!important}</style>')   # the channel name switch and the channel row mean nothing on a portal
 if GM:   # the SDK's pause (an ad is on) silences the game; interstitials at natural pauses, no rewarded video
     sub("master = ac.createGain(); master.gain.value = profile.muted ? 0 : level();", "master = ac.createGain(); master.gain.value = (profile.muted || window.__B8_MUTE) ? 0 : level();")
     sub("setMuted(m) { if (master) master.gain.setTargetAtTime(m ? 0 : level(), ac.currentTime, 0.02); },", "setMuted(m) { if (master) master.gain.setTargetAtTime(m || window.__B8_MUTE ? 0 : level(), ac.currentTime, 0.02); },")
-    sub("if (Y8.sdk && Y8.adsReady && Y8.matches % 2 === 0 && Date.now() - Y8.lastBreak > 90000) {", "if (Y8.sdk && Y8.matches % 2 === 0 && Date.now() - Y8.lastBreak > 90000) {")
+    sub("if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {", "if (Y8.sdk && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree) {")
     sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
 if PG:
     # saving only through Bridge Storage: the game's one save point (store) reads a cache filled from bridge.storage BEFORE the game starts; writes go back in batches
     sub("const store = {\nget(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },\nset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },\n};",
         "const store = {\nget(k, d) { try { const v = window.__B8C[k]; return v ? JSON.parse(v) : d; } catch (e) { return d; } },\nset(k, v) { try { window.__b8Put(k, JSON.stringify(v)); } catch (e) {} },\ndel(k) { try { window.__b8Del(k); } catch (e) {} },\n};")
+    # the start-up download screen (the light site's cache + HD pack) uses localStorage / sessionStorage and a service worker: a portal page has none of it (the page is one light file set in a frame)
+    i = src.find('<script>\n/* First visit, like a big mobile game'); assert i > 0, "start-up download script not found"
+    j = src.find("</script>", i) + len("</script>"); src = src[:i] + src[j:]
+    # the logo loading bar reads the saved language: from the Bridge cache here
+    sub('try { lang = (JSON.parse(localStorage.getItem("billiard8v2") || "{}").lang) || ""; } catch (e) {}', 'try { lang = (JSON.parse((window.__B8C || {})["billiard8v2"] || "{}").lang) || ""; } catch (e) {}')
+    # the voice-chat preference (no voice chat on the portal) is not saved anywhere
+    sub('let pref = {}; try { pref = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}\nconst save = () => { try { localStorage.setItem(KEY, JSON.stringify(pref)); } catch (e) {} };', 'let pref = {};\nconst save = () => {};')
+    # "Delete my account": forget the Bridge-stored keys
+    sub('try { localStorage.clear(); sessionStorage.clear(); } catch (e) {}', 'try { Object.keys(window.__B8C || {}).forEach(k => window.__b8Del(k)); window.__b8Flush(); } catch (e) {}')
     src = src.replace("localStorage.removeItem(", "store.del(")
     for bad in ("localStorage", "sessionStorage", "indexedDB", "document.cookie"):
         assert bad not in src, "the Playgama build must not touch " + bad
@@ -274,8 +283,10 @@ if PG:
     sub("master = ac.createGain(); master.gain.value = profile.muted ? 0 : level();", "master = ac.createGain(); master.gain.value = (profile.muted || window.__B8_MUTE) ? 0 : level();")
     sub("setMuted(m) { if (master) master.gain.setTargetAtTime(m ? 0 : level(), ac.currentTime, 0.02); },", "setMuted(m) { if (master) master.gain.setTargetAtTime(m || window.__B8_MUTE ? 0 : level(), ac.currentTime, 0.02); },")
     # ads: no own counters or timers, Bridge decides when an interstitial is really shown; the reward gate stays only for rewarded video
-    sub("if (Y8.sdk && Y8.adsReady && Y8.matches % 2 === 0 && Date.now() - Y8.lastBreak > 90000) {", "if (Y8.sdk) {")
+    sub("if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {", "if (Y8.sdk && !profile.adfree) {")
     sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
+    # the ad when the game opens (same as on Y8: once per visit, not on the very first launch, not for ad-free players) does not wait for rewarded video support: Bridge decides whether an interstitial really shows
+    sub("if (!ON_PORTAL || Y8.pre || !Y8.sdk || !Y8.adsReady || profile.adfree || !profile.tutDone || Y8.busy) return;", "if (!ON_PORTAL || Y8.pre || !Y8.sdk || profile.adfree || !profile.tutDone || Y8.busy) return;")
     # the game code waits for bridge.initialize() + the stored keys: it sits in a text/plain block and a loader runs it afterwards
     OPEN = '<script>\n"use strict";'
     i = src.rfind(OPEN); assert i > 0, "main script not found"
@@ -296,7 +307,7 @@ var go = function () {
     src = src[:j] + LOADER + src[j:]
 PG_ACH = [("first_win", "First Win"), ("double", "Double Pot"), ("breakpot", "Power Break"), ("runout", "Clean Table"), ("champ", "Tournament Champion"), ("lucky", "Bullseye"), ("streak7", "Loyal Player"), ("rich", "Rich"), ("collector", "Collector")]   # the game's Y8_ACH table
 import json
-_cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "interstitial": {"placements": [{"id": "between_matches"}]}},
+_cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "interstitial": {"placements": [{"id": "between_matches"}, {"id": "game_start"}]}},
         "leaderboards": [{"id": "main", "isMain": True}],
         "achievements": [{"id": k, "name": v, "y8": {"achievement": v, "achievementkey": k}} for k, v in PG_ACH]}
 if os.environ.get("PG_SAAS_TOKEN"):   # Playgama's own leaderboard service (Bridge SaaS): the public token from the developer dashboard (it is meant to sit in the game files)
