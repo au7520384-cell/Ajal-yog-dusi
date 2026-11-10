@@ -3999,7 +3999,7 @@ const copy = {n: b.n, p: b.p.slice(), q: b.q.slice()};
 G.sinking.push({b: copy, x: b.x, y: b.y, px: p.x + p.dx, py: p.y + p.dy, t: 0});
 if (b.n !== 0) G.tray.push({b: {n: b.n, p: b.p.slice(), q: b.q.slice()}, s: 0, vy: 3, delay: 16});
 G.flashes.push({x: p.x + p.dx, y: p.y + p.dy, t: 0});
-if (!G.demo) { Snd.pocket(p.x + p.dx, p.y + p.dy, Math.hypot(b.vx || 0, b.vy || 0)); vib(30); if (b.n && isHuman(G.cur) && !G.players[G.cur].remote && G.type !== "watch") mission("pot"); profile.potted = (profile.potted | 0) + 1; }
+if (!G.demo) { Snd.pocket(p.x + p.dx, p.y + p.dy, Math.hypot(b.vx || 0, b.vy || 0)); vib(30); if (b.n && isHuman(G.cur) && !G.players[G.cur].remote && G.type !== "watch") mission("pot"); if (!(G.net && G.net.spec)) profile.potted = (profile.potted | 0) + 1; }
 }
 function onHit(G, a, b, rel, x, y) {
 if (G.shot && G.shot.firstHit === null) {
@@ -4273,7 +4273,7 @@ let dev = -G.spin.x * k * 0.03;
 if (offS > 0.88 && power > 0.55 && !pl.isAI) { dev += (G.spin.x >= 0 ? 1 : -1) * 0.07 * power; cue.vx *= 0.92; cue.vy *= 0.92; if (!G.demo) setTimeout(() => toast("⚠️", T("Miskyu!"), ""), 0); }
 if (dev) { const c = Math.cos(dev), sn = Math.sin(dev), vx = cue.vx; cue.vx = vx * c - cue.vy * sn; cue.vy = vx * sn + cue.vy * c; }
 applyStrike(cue, G.spin.x, G.spin.y, k, el);
-if (G.net && G.cur === 0) Net.send({t: "shot", power, x: cue.x, y: cue.y, vx: cue.vx, vy: cue.vy, dir: cue.dir, w: [cue.wx, cue.wy, cue.wz], vz0: cue.vz0, a: G.angle, e: +el.toFixed(2)});
+if (G.net && G.cur === 0) Net.send({t: "shot", power, x: cue.x, y: cue.y, vx: cue.vx, vy: cue.vy, dir: cue.dir, w: [cue.wx, cue.wy, cue.wz], vz0: cue.vz0, a: G.angle, e: +el.toFixed(2), no: (G.shotNo | 0) + 1});
 }
 cue.followDone = false; if (cue.vz0) { cue.vz = cue.vz0; cue.z = 0.01; } else { cue.vz = 0; cue.z = 0; }
 G.shotBy = G.cur;
@@ -4386,12 +4386,9 @@ nextTurn();
 if (G.net) sendState();
 }
 function endGame(winner, why) {
-const G = game; if (G.over) return; G.over = true; Snd.roll(0);
+const G = game; if (G.net && G.net.spec) return;   // a watcher never ends the match from his own simulation (it can differ a little): the server says when it is over (specEnd)
+if (G.over) return; G.over = true; Snd.roll(0);
 if (G.demo) { setTimeout(() => { if (game === G && mode === "menu") startDemo(); }, 2500); return; }
-if (G.net && G.net.spec) {
-burst(); Snd.win(); setBanner(TT("{0} YUTDI!", G.players[winner].name.toUpperCase()), "#ffe27a");
-setTimeout(() => { if (game === G && mode === "game") leaveSpectate(); }, 4500); return;
-}
 if (G.net) Net.send({t: "result", winner: seatOf(winner)});
 const humanWon = G.type === "ai" || G.type === "tour" ? winner === 0 : true;
 if (humanWon) { burst(); Snd.win(); } else Snd.lose();
@@ -8367,7 +8364,7 @@ function drawPanel(G, i, side) {
 const pl = G.players[i], active = G.cur === i && !G.over, s = 70;   // the shooter keeps the green frame through the stroke and the rolling, until the turn passes
 const ax = side < 0 ? W / 2 - 66 - s : W / 2 + 66, ay = 12;
 let frac = active ? 1 : undefined;
-if (active && !G.moving && !pl.isAI && timed() && G.turnLimit) frac = clamp(1 - (performance.now() - G.turnStart) / (G.turnLimit * 1000), 0, 1);
+if (active && !G.moving && !pl.isAI && (timed() || G.type === "spec") && G.turnLimit) frac = clamp(1 - (performance.now() - G.turnStart) / (G.turnLimit * 1000), 0, 1);
 drawAvatar(ax, ay, s, pl, active, frac);
 if (G.city && G.city.id && IMG["rg_" + G.city.id] && (G.type === "ai" || G.type === "tour")) {
 const mine = !pl.isAI && !pl.remote, c = G.city;
@@ -8714,7 +8711,7 @@ if (!anyMoving(G.balls)) {
 G.moving = false; if (!G.demo) Snd.roll(0);
 if (G.type === "lucky") luckyFinish(); else resolveShot();
 if (G.net) {
-if (G.net.spec) { if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; } }
+if (G.net.spec) { if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; } if (G.specQ && G.specQ.length) specShot(G, G.specQ.shift()); }
 else if (G.shotBy === 0) sendState();
 else if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; }
 if (G.pendingShot && !G.net.spec) { const ps = G.pendingShot; G.pendingShot = null; remoteShot(ps); }
@@ -8725,7 +8722,7 @@ if (G.cueTo) {   // the other player is carrying the cue ball: glide to the last
 if (G.ballInHand && !G.moving && (curP().remote || (G.net && G.net.spec))) { const c = G.balls[0]; c.x += (G.cueTo.x - c.x) * 0.3; c.y += (G.cueTo.y - c.y) * 0.3; if (Math.hypot(G.cueTo.x - c.x, G.cueTo.y - c.y) < 0.4) { c.x = G.cueTo.x; c.y = G.cueTo.y; } }
 else G.cueTo = null;
 }
-if (G.net && G.cur === 0 && performance.now() - G.net.lastAim > 90) {
+if (G.net && !G.net.spec && G.cur === 0 && performance.now() - G.net.lastAim > 90) {
 const c = G.balls[0], el = +(G.elev || 0).toFixed(2), sx = +((G.spin || {}).x || 0).toFixed(2), sy = +((G.spin || {}).y || 0).toFixed(2), key = `${G.angle.toFixed(3)}|${c.x | 0}|${c.y | 0}|${input.power.toFixed(2)}|${el}|${sx}|${sy}`;
 if (key !== G.net.sentA) { G.net.sentA = key; G.net.lastAim = performance.now(); Net.send({t: "aim", a: G.angle, x: c.x, y: c.y, p: input.power, e: el, sx, sy}); }   // (e: how high the butt is raised, sx / sy: where the cue hits the ball - the opponent sees the same cue)
 }
@@ -10685,7 +10682,7 @@ sock.onmessage = ev => {
 if (ws !== sock) return;   // (a connection we have already given up)
 let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
 lastRx = Date.now(); if (m.t === "pong") return;
-if (m.n && m.room && (m.t === "shot" || m.t === "state")) { if (m.n <= (rxN[m.room] | 0)) return; rxN[m.room] = m.n; const ks = Object.keys(rxN); if (ks.length > 6) delete rxN[ks[0]]; }   // numbered by the server: a message that came twice (replay after a reconnect) is dropped
+if (m.n && m.room && (m.t === "shot" || m.t === "state")) { const rk = m.room + ":" + (m.from === 1 ? 1 : 0); if (m.n <= (rxN[rk] | 0)) return; rxN[rk] = m.n; const ks = Object.keys(rxN); if (ks.length > 12) delete rxN[ks[0]]; }   // numbered by the server, ONE counter per sender seat (each seat numbers its own messages): a message that came twice (replay after a reconnect) is dropped
 if (m.t === "match" && m.room) matchRoom = String(m.room); if (handlers[m.t]) handlers[m.t](m);
 };
 });
@@ -10713,7 +10710,7 @@ if (ws && ws.readyState === 1) ws.send(JSON.stringify(m));
 };
 const resent = (room, rx) => { if (sent.room !== room) return; for (const m of sent.list.slice(rx)) if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); };
 const setAcct = a => { acct = a; store.set("b8acct", a); if (ws) try { ws.close(); } catch (e) {} };
-return {applyGrant, api, ensure, sync, checkout, payCheck, cardPay: cardChoice, connect, send, resent, got: room => rxN[room] | 0, setAcct, on: (t, f) => { handlers[t] = f; },
+return {applyGrant, api, ensure, sync, checkout, payCheck, cardPay: cardChoice, connect, send, resent, got: room => Math.max(rxN[room + ":0"] | 0, rxN[room + ":1"] | 0), setAcct, on: (t, f) => { handlers[t] = f; },
 get acct() { return acct; }, get matchRoom() { return matchRoom; }, get online() { return online; }, get open() { return !!(ws && ws.readyState === 1); }, get base() { return BASE; }, inbox: [], me: null, friends: [], notify: null};
 })();
 // A shot or a position of the opponent belongs to one match (m.room). The opponent's phone may be ready before this one (this phone still shows the result of the last match, or its "VS" screen):
@@ -10738,18 +10735,29 @@ G.replayQ = earlyNet.filter(m => m.room === G.net.room); earlyNet.length = 0;
 Net.on("aim", m => {
 if (netGate(m)) return;
 const G = game; if (G && G.net) G.net.lastRx = performance.now();
-if (G && G.net && G.net.spec) { if (G.cur === m.from && !G.moving) { G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); G.elev = clamp(+m.e || 0, 0, 1); G.spin = {x: clamp(+m.sx || 0, -1, 1), y: clamp(+m.sy || 0, -1, 1)}; if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; } } return; }
+if (G && G.net && G.net.spec) { if (!G.moving && !G.strike && G.cur !== (m.from === 1 ? 1 : 0)) { G.cur = m.from === 1 ? 1 : 0; nextTurn(); } if (G.cur === m.from && !G.moving) { G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); G.elev = clamp(+m.e || 0, 0, 1); G.spin = {x: clamp(+m.sx || 0, -1, 1), y: clamp(+m.sy || 0, -1, 1)}; if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; } } return; }
 if (!G || !G.net || G.cur !== 1 || G.moving) return;
 G.angle = +m.a || 0; G.aiPull = clamp(+m.p || 0, 0, 1); G.elev = clamp(+m.e || 0, 0, 1); G.spin = {x: clamp(+m.sx || 0, -1, 1), y: clamp(+m.sy || 0, -1, 1)};   // the opponent's raised cue and hit point
 if (G.ballInHand) { const t = {x: clamp(+m.x, R, FW - R), y: clamp(+m.y, R, FH - R)}; if (Math.hypot(t.x - G.balls[0].x, t.y - G.balls[0].y) > 1.5) G.handUntil = performance.now() + 260; G.cueTo = t; }
 });
 Net.on("shot", m => {
 if (netGate(m)) return;
-const G = game; if (G && G.net && G.net.spec) { if (G.moving || G.strike) return; G.cur = m.from === 1 ? 1 : 0; G.angle = +m.a || G.angle; if (m.e != null) G.elev = clamp(+m.e || 0, 0, 1); requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0}); return; }
+const G = game; if (G && G.net && G.net.spec) { specShot(G, m); return; }
 if (!G || !G.net || G.over) return;
 G.net.lastRx = performance.now();
 remoteShot(m);
 });
+// A SPECTATOR plays the shots of the two players on his own screen, in order. A shot is never dropped (it used to be when the previous one was still rolling here: the balls then jumped):
+// if the shooter's final positions of the previous shot are already here they are shown at once and the new shot goes on from them, otherwise the shot waits until the balls stop.
+function specShot(G, m) {
+if (G.moving || G.strike) {
+if (G.pendingState) { const ps = G.pendingState; G.pendingState = null; G.strike = null; G.moving = false; try { Snd.roll(0); } catch (e) {} for (const b of G.balls) b.vx = b.vy = 0; applyState(ps); }
+else { (G.specQ = G.specQ || []).push(m); if (G.specQ.length > 6) G.specQ.shift(); return; }
+}
+G.cur = m.from === 1 ? 1 : 0; G.angle = +m.a || G.angle; if (m.e != null) G.elev = clamp(+m.e || 0, 0, 1);
+if (m.no > 0) G.shotNo = (m.no | 0) - 1;   // (doShoot counts it up again: this shot's dice are the same as on the players' phones, also for a watcher who came in late)
+requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, follow: +m.follow || 0, side: +m.side || 0, mass: +m.mass || 0, vz0: +m.vz0 || 0});
+}
 // the opponent's shot. It is never dropped: if this phone is still busy with the previous shot it waits until the balls stop, and if the two phones disagree
 // about whose turn it is, the shooter wins (he is the one holding the cue) - otherwise the game froze for good ("it never becomes my turn").
 function remoteShot(m) {
