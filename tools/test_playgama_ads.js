@@ -15,7 +15,7 @@ const MOCK = store => `(function () {
   window.__ads = []; window.__lsTouched = 0;
   window.bridge = {EVENT_NAME: EV, initialize: function () { return Promise.resolve(); },
     storage: {get: function (ks) { return Promise.resolve(ks.map(function (k) { return k in S ? S[k] : null; })); }, set: function () { return Promise.resolve(); }, delete: function () { return Promise.resolve(); }},
-    platform: {language: "en", isAudioEnabled: true, on: on, sendMessage: function (m) { window.__ads.push("msg:" + m); return Promise.resolve(); }},
+    platform: {id: "mock", language: "en", isAudioEnabled: true, on: on, sendMessage: function (m) { window.__ads.push("msg:" + m); return Promise.resolve(); }},
     advertisement: {isInterstitialSupported: true, isRewardedSupported: false, on: on,
       showInterstitial: function (p) { window.__ads.push("int:" + p); setTimeout(function () { emit(EV.INTERSTITIAL_STATE_CHANGED, "opened"); }, 50); setTimeout(function () { emit(EV.INTERSTITIAL_STATE_CHANGED, "closed"); }, 400); }},
     achievements: {unlock: function () { return Promise.resolve(); }}, leaderboards: {type: "not_available"}};
@@ -57,6 +57,10 @@ const MIME = {".html": "text/html", ".js": "text/javascript", ".json": "applicat
     a = await ads(p); ok(a.length === 2 && a[1] === "int:between_matches", "the end of a match asks for an interstitial (between_matches)", a);
     ok(await p.evaluate(() => !!document.getElementById("home") && !Y8.busy), "the game is back to normal after the ad (not stuck behind it)");
     ok(await p.evaluate(() => !("b8" in localStorage) && localStorage.length === 0), "nothing is written to localStorage");
+    // the hidden ad journal: 7 quick taps in the top-left corner
+    for (let i = 0; i < 7; i++) { await p.mouse.click(10, 10); await sleep(80); }
+    const jr = await p.evaluate(() => { const e = [...document.querySelectorAll("pre")].find(x => /init platform=/.test(x.textContent)); return e ? e.textContent : ""; });
+    ok(/init platform=mock interstitial=true/.test(jr) && /showAd start\/game-start -> game_start supported=true/.test(jr) && /interstitial state: closed/.test(jr) && /open-ad check/.test(jr) && /match end: ad break asked/.test(jr), "the hidden ad journal shows what Bridge did", jr.slice(0, 600));
     await p.context().close();
     // 3. a brand new player (the Playgama sandbox plays are mostly new players): the same one entry ad, and the game still starts on the practice table
     p = await open({}, "new"); await sleep(4000); a = await ads(p);
