@@ -1856,6 +1856,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 /* the ×2 video button */
 .dblw{margin:10px 0 2px;text-align:center}.dblb{white-space:nowrap}.dblw .dblb{animation:dblpulse 1.8s ease-in-out infinite}.dblb:disabled{animation:none;filter:grayscale(.3) brightness(.85);cursor:default}
 @keyframes dblpulse{50%{transform:scale(1.06)}}
+.resBtns .dblb:not(:disabled){animation:pop .4s both 1.4s,dblpulse 1.8s ease-in-out 2.2s infinite;box-shadow:inset 0 2px 0 #fff5,0 4px 0 #0007,0 0 16px #ffb020b0}.resBtns .dblb:disabled{animation:none;filter:grayscale(.3) brightness(.85);cursor:default}   /* the ×2 of the match prize: it pulses and glows a little so that it is seen */
 #scrInfo .dblw{display:inline-block;margin:0 0 0 10px;vertical-align:middle}#scrInfo .dblb{min-height:0;padding:3px 12px;font-size:15px}
 #lvlFx .dblw{position:absolute;left:77%;top:77.6%;translate:0 -50%;margin:0;z-index:3;animation:lvtxt .5s 1.2s both}
 #lvlFx .dblb{display:block;min-height:0;height:auto;white-space:nowrap;padding:.8cqw 1.5cqw;font:900 3.3cqw/1.1 var(--fh);color:#fff;border:.25cqw solid #0006;border-radius:1.5cqw;background:linear-gradient(#ffb020,#d06a00);box-shadow:inset 0 .25cqw 0 #fff5,0 .5cqw 0 #0007;cursor:pointer;text-shadow:0 .25cqw 0 #0006}
@@ -9302,12 +9303,12 @@ for (const el of document.querySelectorAll("#res .vsL,#res .vsR,#res .vstxt,#res
 const rows = [], im = k => `<img alt="" src="${RWIC[k]}">`, sg = n => (n > 0 ? "+" : "-") + Math.abs(n);
 const HUE = BOX_HUE;
 if (rw.box) rows.push({c: rw.box.c, b1: "#4a230a", b2: "#1a0d05", ic: `<img alt="" src="${IMG["bi" + Math.max(0, BOX_TIERS.indexOf(rw.box))]}" style="filter:drop-shadow(0 3px 4px #000a)">`, t: T(rw.box.n)});
-if (rw.coins) rows.push({c: "#e0a41c", b1: "#3d2b06", b2: "#171004", ic: im("coin"), t: sg(rw.coins).replace(/(\d+)/, m => fmt(+m)), neg: rw.coins < 0});
+if (rw.coins) rows.push({k: "coins", c: "#e0a41c", b1: "#3d2b06", b2: "#171004", ic: im("coin"), t: sg(rw.coins).replace(/(\d+)/, m => fmt(+m)), neg: rw.coins < 0});
 if (rw.trophy) rows.push({c: "#a44be6", b1: "#2e0f45", b2: "#12061e", ic: im("trophy"), t: sg(rw.trophy), neg: rw.trophy < 0});
 if (rw.pass) rows.push({c: "#3b8cf2", b1: "#0d2547", b2: "#060f20", ic: im("shield"), t: sg(rw.pass)});
 if (rw.xp) rows.push({c: "#2fd251", b1: "#0a3a16", b2: "#04140a", ic: im("xp"), t: sg(rw.xp)});
 const list = $("resList"); list.innerHTML = `<div class="resHead"><b>${humanWon === false ? T("O'YIN NATIJASI") : T("SIZNING YUTUQLARINGIZ")}</b><i>${humanWon === false ? T("Keyingi safar omad!") : T("Tabriklaymiz!")}</i></div>`;
-rows.forEach((r, i) => { const d = document.createElement("div"); d.className = "rrow" + (r.neg ? " neg" : ""); d.style.cssText = `--c:${r.c};--b1:${r.b1};--b2:${r.b2};animation-delay:${1.05 + i * 0.32}s`; d.innerHTML = `${r.ic}<span>${r.t}</span>`; list.appendChild(d); });
+rows.forEach((r, i) => { const d = document.createElement("div"); d.className = "rrow" + (r.neg ? " neg" : ""); if (r.k) d.dataset.k = r.k; d.style.cssText = `--c:${r.c};--b1:${r.b1};--b2:${r.b2};animation-delay:${1.05 + i * 0.32}s`; d.innerHTML = `${r.ic}<span>${r.t}</span>`; list.appendChild(d); });
 if (humanWon !== false && potTotal > 0) setTimeout(() => { try { const pot = $("resPot"), tgt = $(humanWon ? "resA" : "resB"); if (!pot || !tgt || !$("res").classList.contains("on")) return;
 const pr = pot.getBoundingClientRect(), tr = tgt.getBoundingClientRect(), [sx, sy] = toLocal(pr.left + pr.width / 2, pr.top + pr.height / 2), [tx, ty] = toLocal(tr.left + tr.width / 2, tr.top + tr.height / 2), n = 14; let left = potTotal;
 for (let i = 0; i < n; i++) setTimeout(() => { const c = document.createElement("div"); c.className = "rwfly coin"; document.body.appendChild(c); const mx = (sx + tx) / 2 + (Math.random() - 0.5) * 120, my = Math.min(sy, ty) - 50 - Math.random() * 60;
@@ -10204,7 +10205,7 @@ if (r.t === "lucky") profile.luckyTries += r.v;
 if (r.t === "wheel") profile.wheelTries += r.v;
 if (profile.streak >= 7) unlock("streak7");
 save(); updateNav(); Snd.coin(8); burst();
-if (r.t === "coins" && dblOk(r.v)) { openModal({icon: "🎁", title: "Kunlik sovg'a", text: r.label, extra: `<div class="reward"><span class="coin"></span> +${fmt(r.v)}</div>${dblHTML(r.v, "daily")}`, buttons: [{label: "Ajoyib!", cls: "green", fn: () => {}}]}); dblWire($("mExtra")); }
+if (r.t === "coins" && dblOk(r.v, "daily")) { openModal({icon: "🎁", title: "Kunlik sovg'a", text: r.label, extra: `<div class="reward"><span class="coin"></span> +${fmt(r.v)}</div>${dblHTML(r.v, "daily")}`, buttons: [{label: "Ajoyib!", cls: "green", fn: () => {}}]}); dblWire($("mExtra")); }
 else toast(r.icon, T(r.label), "Kunlik sovg'a");
 buildRewards();
 }
@@ -10703,15 +10704,22 @@ profile.adCount++; if (name === "bank-cash") profile.adCash = (profile.adCash | 
 // ---- "×2": a rewarded video (about 30 s) that pays the same coins once more. Offered wherever a coin prize is given (a match won, a box, the daily gift, the minigames, a new level) and a rewarded video works
 // (Y8, Telegram, the app, the portals); ad-free players get it without a video. It uses y8Rewarded(), so it shares the 10-ads-a-day limit; the button works once per prize.
 const DBL_MIN = 100, DBL_DAY = 10;   // not offered for a prize smaller than DBL_MIN; at most DBL_DAY a day
+// WHERE it is offered. The owner: "you beat the opponent, and then a button to double the money you won": the match win only. The other places are built and tested (tools/test_double.js) but off: set one to 1 to switch it on.
+const DBL_PLACES = {win: 1, box: 0, daily: 0, wheel: 0, lucky: 0, scratch: 0, level: 0};
 const dblUsed = () => profile.dblDay === today() ? profile.dblN | 0 : 0;
-function dblOk(c) { return (c | 0) >= DBL_MIN && !!(Y8.sdk && Y8.adsReady) && dblUsed() < DBL_DAY && (profile.adfree || !(profile.adDay === today() && (profile.adCount | 0) >= 10)); }
+function dblOk(c, tag) { return !!DBL_PLACES[tag] && (c | 0) >= DBL_MIN && !!(Y8.sdk && Y8.adsReady) && dblUsed() < DBL_DAY && (profile.adfree || !(profile.adDay === today() && (profile.adCount | 0) >= 10)); }
 const dblTxt = c => `📺 ×2 +${fmt(c)} 🪙`;
-function dblHTML(c, tag, row) { return dblOk(c) ? (row ? `<button class="orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button>` : `<div class="dblw"><button class="btn orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button></div>`) : ""; }
+function dblHTML(c, tag, row) { return dblOk(c, tag) ? (row ? `<button class="orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button>` : `<div class="dblw"><button class="btn orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button></div>`) : ""; }
 function dblGo(c, tag, done) { y8Rewarded("double-" + tag, () => { if (profile.dblDay !== today()) { profile.dblDay = today(); profile.dblN = 0; } profile.dblN++; addCoins(c); toast("🪙", "+" + fmt(c), "×2"); try { coinShower(Math.min(28, 10 + Math.round(Math.log10(c + 1) * 3))); } catch (e) {} if (done) done(); }); }
+function dblRow(c) {   // the result screen shows the doubled prize where it shows the match prize: the coin row of the list ("+1 000" becomes "+2 000") and the chip under the winner
+const flash = el => { try { el.animate([{transform: "scale(1)", filter: "brightness(1)"}, {transform: "scale(1.12)", filter: "brightness(1.6)"}, {transform: "scale(1)", filter: "brightness(1)"}], {duration: 520, easing: "ease-out"}); } catch (e) {} };
+const sp = document.querySelector('#resList .rrow[data-k="coins"] span'); if (sp) { sp.textContent = "+" + fmt(c * 2); flash(sp.parentNode); }
+const chip = $("resAf"); if (chip && chip.textContent.replace(/\s/g, "") === "+" + c) { chip.innerHTML = `<span class="coin"></span>+${fmt(c * 2)}`; flash(chip); }
+}
 function dblWire(root) {   // the click of every ×2 button inside root: the video, then +the prize once more and the button is used up; no video / closed half way: the button works again
 (root || document).querySelectorAll(".dblb").forEach(b => { b.onclick = e => {
 e.stopPropagation(); if (b.disabled || Y8.busy) return; const [c, tag] = String(b.dataset.dbl).split("|"); b.disabled = true; let ok = false;
-dblGo(+c, tag, () => { ok = true; b.textContent = "✅ ×2"; });
+dblGo(+c, tag, () => { ok = true; b.textContent = "✅ ×2"; if (tag === "win") dblRow(+c); });
 setTimeout(function chk() { if (ok) return; if (Y8.busy) return setTimeout(chk, 700); b.disabled = false; }, 1200);
 }; });
 }
