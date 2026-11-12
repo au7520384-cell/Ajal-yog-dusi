@@ -44,13 +44,15 @@ const SIZES = [{ n: "phone 915x412", w: 915, h: 412, mobile: true }, { n: "small
       const slices = await p.evaluate(() => [".pc-plate", ".money"].map(s => getComputedStyle(document.querySelector(s)).borderImageSlice));
       ok(slices.every(s => /%/.test(s)), `${sz.n}: the 9-slice of the plates is in percentages (an HD copy cannot move it)`, slices);
       // ---- top bar
-      const nav = await p.evaluate(() => { const n = document.getElementById("nav"), items = []; const add = (name, e) => { if (getComputedStyle(e).display === "none") return; const r = e.getBoundingClientRect(); if (r.width < 2) return; items.push(rotated ? [name, r.top, r.bottom, r.left, r.right] : [name, r.left, r.right, r.top, r.bottom]); };
+      const measureNav = () => p.evaluate(() => { const n = document.getElementById("nav"), items = []; const add = (name, e) => { if (getComputedStyle(e).display === "none") return; const r = e.getBoundingClientRect(); if (r.width < 2) return; items.push(rotated ? [name, r.top, r.bottom, r.left, r.right] : [name, r.left, r.right, r.top, r.bottom]); };
         for (const c of n.children) { if (c.classList.contains("navbtns") || c.classList.contains("money")) for (const d of c.children) add(d.id || d.className, d); else add(c.id || c.className, c); }
         items.sort((a, b) => a[1] - b[1]); const bad = []; for (let i = 0; i < items.length - 1; i++) if (items[i][2] > items[i + 1][1] + 1.5) bad.push([items[i][0], items[i + 1][0]]);
         const nr = n.getBoundingClientRect(), uz = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--uiz")) || 1, lim = rotated ? nr.bottom : nr.right, gaps = [];
         for (let i = 0; i < items.length - 1; i++) gaps.push((items[i + 1][1] - items[i][2]) / uz);
         const fr = e => { const r = document.querySelector(e).getBoundingClientRect(); return rotated ? [r.top, r.bottom] : [r.left, r.right]; }, pc = fr(".pchip2"), nb = fr(".navbtns"), mo = fr(".money");
         return { bad, n: items.length, h: (rotated ? nr.width : nr.height) / uz, rot: rotated, maxGap: Math.max(...gaps), lm: items[0][1] / uz, rm: (lim - items[items.length - 1][2]) / uz, gapL: (nb[0] - pc[1]) / uz, gapR: (mo[0] - nb[1]) / uz, cssW: (rotated ? nr.height : nr.width) / uz }; });
+      let nav = await measureNav();
+      for (let t = 0; t < 4 && nav.bad.length; t++) { await sleep(600); nav = await measureNav(); }   // a money chip that is mid-bump (a late medal / coin landing, 0.2 s) overlaps its neighbour on purpose: only an overlap that STAYS is a defect
       ok(nav.n >= 10 && nav.bad.length === 0, `${sz.n}: the top bar does not overlap itself (${nav.n} pieces)`, nav);
       ok(nav.cssW > 1760 || (nav.lm <= 16 && nav.rm <= 16), `${sz.n}: the profile card stands in the LEFT corner and the keys in the RIGHT one (margins ${nav.lm.toFixed(0)} / ${nav.rm.toFixed(0)} px)`, nav);
       ok(Math.abs(nav.gapL - nav.gapR) <= 6, `${sz.n}: the icons stand in the middle between the profile plate and the money plate (gaps ${nav.gapL.toFixed(0)} / ${nav.gapR.toFixed(0)} px)`, nav);
