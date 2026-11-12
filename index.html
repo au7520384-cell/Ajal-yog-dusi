@@ -451,6 +451,7 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 @keyframes pop{from{transform:scale(0)}}
 .pot{background:#0b1020e6;border:2px solid #3b4a74;border-radius:14px;padding:10px 18px;text-align:center;font-family:var(--fh);font-size:24px;color:#ffe27a;min-width:120px}
 .pot .stack{font-size:40px;line-height:1}
+.vsc{display:flex;align-items:center;justify-content:center;gap:6px;min-height:18px;margin-top:2px;font-size:clamp(11px,2.8vh,16px);color:#dfe8ff;text-shadow:0 1px 3px #000;white-space:nowrap}.vsc .flag{height:15px}
 .vsfee{min-height:30px;font-family:var(--fh);font-size:20px;color:#ffe27a;background:#0b1020cc;border:2px solid #3b4a74;border-radius:12px;padding:2px 12px;display:flex;align-items:center;gap:6px;opacity:0;transition:opacity .3s}.vsfee.on{opacity:1}.vsfee .coin{width:20px;height:20px}
 .vsLogo{position:absolute;top:1.5vh;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;line-height:1;pointer-events:none;z-index:3;animation:pop .6s cubic-bezier(.2,1.8,.4,1) both .2s}
 .vsLogo .lg1{font-family:var(--fh);font-size:clamp(14px,3.4vh,24px);letter-spacing:3px;color:#7fd8ff;text-shadow:0 2px 0 #06203a,0 0 10px #0a4a8a}
@@ -1233,7 +1234,7 @@ background:linear-gradient(90deg,#1b2645 0,#1b2645 44%,#1b264500 76%),var(--art)
 .lvp{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.lvp b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}.lvp small{color:#9fb0d8;font-size:12px}
 .lvvs{font-family:var(--fh);color:#ffcf3d;font-size:18px;flex:none}.lvmeta{font-size:12px;color:#9fb0d8;text-align:center;flex:none;min-width:84px}.lvmeta em{display:block;font-style:normal;color:#ff6b5e;font-family:var(--fh);font-size:13px}
 .lvempty{text-align:center;padding:26px 10px;color:#b8c6ea}.lvempty p{margin:8px 0 14px}
-.gbtn.gv{width:34px;height:34px;border-radius:50%;padding:0;background:radial-gradient(circle at 35% 30%,#1f6b86,#0a2c40 70%);border:2px solid #2ad4ff;box-shadow:0 0 0 1.5px #06202e,0 2px 6px #000a,inset 0 1px 0 #ffffff55;display:grid;place-items:center}
+.gbtn.gv{width:34px;height:34px;border-radius:50%;padding:0;background:radial-gradient(circle at 35% 30%,#2b3a66,#0a1026 70%);border:2px solid #e9b838;box-shadow:0 0 0 1.5px #06202e,0 2px 6px #000a,inset 0 1px 0 #ffffff55;display:grid;place-items:center}
 .gbtn.gv svg{width:19px;height:19px;fill:#fff;filter:drop-shadow(0 1px 1px #0008)}
 .gbtn.gv.wait{border-color:#ffc94a;animation:vpulse 1.2s infinite}.gbtn.gv.on{border-color:#5dff7a;box-shadow:0 0 8px #5dff7a99,0 2px 6px #000a}.gbtn.gv.mute,.gbtn.gv.off{border-color:#7a8aa8;filter:saturate(.6)}
 @keyframes vpulse{50%{filter:brightness(1.35)}}
@@ -1905,6 +1906,15 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 .lvtabs button.on,.lvchips button.on{background:linear-gradient(#4a9bff,#1450c8 55%,#0b2f8a)!important;border-color:#ffd96a!important;color:#fff!important;box-shadow:inset 0 1px 0 #ffffff77,0 0 14px #3b8cffcc,0 2px 6px #000a!important}
 .lvr2{border:1.5px solid #3d4f96!important;border-radius:10px!important;background:linear-gradient(90deg,#101c52e6,#0a1340ee 40%,#0b1442ee)!important;box-shadow:inset 0 1px 0 #ffffff1a,0 2px 5px #0007!important}
 .lvn b{font-family:var(--fh);font-weight:400;color:#fff}
+/* the in-game buttons in the owner's mockup style: a gold rim, a glossy fill, crisp vector icons (they were glyphs and small pictures, blurry) */
+#gMenu,#gChat,#gFs,#zoomBox .gbtn{font-size:0!important;color:transparent!important;border:2.5px solid transparent!important;border-radius:11px!important;opacity:1!important;
+background:var(--gi) center/60% no-repeat padding-box,linear-gradient(var(--gb1),var(--gb2)) padding-box,linear-gradient(135deg,#fff3a8,#e9b838 45%,#8a5a0e) border-box!important;
+box-shadow:0 0 0 1px #3a2606,0 3px 6px #000a,inset 0 1px 0 #ffffffaa,inset 0 12px 10px -8px #ffffff66,inset 0 -6px 8px #0003!important}
+#gMenu{--gb1:#46dc3a;--gb2:#128a1a;--gi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23fff' stroke='%230a3a10' stroke-width='.6'%3E%3Crect x='4' y='5' width='16' height='3.2' rx='1.6'/%3E%3Crect x='4' y='10.4' width='16' height='3.2' rx='1.6'/%3E%3Crect x='4' y='15.8' width='16' height='3.2' rx='1.6'/%3E%3C/g%3E%3C/svg%3E")}
+#gChat{--gb1:#4aa0ff;--gb2:#1450c8;--gi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3C6.5 3 2.5 6.6 2.5 11c0 2.2 1 4.2 2.7 5.6L4.3 21l4.4-2.1c1 .3 2.2.5 3.3.5 5.5 0 9.5-3.6 9.5-8S17.5 3 12 3z' fill='%23fff' stroke='%230a2a7a' stroke-width='1.2'/%3E%3Cg fill='%230a2a7a'%3E%3Ccircle cx='8' cy='11.2' r='1.5'/%3E%3Ccircle cx='12' cy='11.2' r='1.5'/%3E%3Ccircle cx='16' cy='11.2' r='1.5'/%3E%3C/g%3E%3C/svg%3E")}
+#gFs{--gb1:#2b3552;--gb2:#0c1020;--gi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='3.5' y='6.5' width='17' height='11' rx='2.2' fill='none' stroke='%23fff' stroke-width='1.9'/%3E%3C/svg%3E")}
+#zIn,#zOut{--gb1:#2b3552;--gb2:#0c1020}#zIn{--gi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' stroke='%23fff' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E")}#zOut{--gi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12h14' stroke='%23fff' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E")}
+#gMenu:active,#gChat:active,#gFs:active,#zoomBox .gbtn:active{filter:brightness(1.15)}
 </style>
 </head>
 <body>
@@ -2237,18 +2247,18 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 <!-- ============ VS ============ -->
 <div class="screen full" id="vs">
 <div class="vsLogo" id="vsLogo"></div>
-<div class="vsp vsL"><div class="big" id="vsA"></div><div class="nm" id="vsAn"></div><div class="vsfee" id="vsAf"></div></div>
+<div class="vsp vsL"><div class="big" id="vsA"></div><div class="nm" id="vsAn"></div><div class="vsc" id="vsAc"></div><div class="vsfee" id="vsAf"></div></div>
 <div class="vsmid"><div class="h" id="vsCity" style="display:none"></div><div class="vstxt">VS</div>
 <div class="pot"><div class="stack">🪙</div><span id="vsPot">0</span></div></div>
-<div class="vsp vsR"><div class="big" id="vsB"></div><div class="nm" id="vsBn">Qidirilmoqda…</div><div class="vsfee" id="vsBf"></div></div>
+<div class="vsp vsR"><div class="big" id="vsB"></div><div class="nm" id="vsBn">Qidirilmoqda…</div><div class="vsc" id="vsBc"></div><div class="vsfee" id="vsBf"></div></div>
 </div>
 <!-- ============ RESULT ============ -->
 <div class="screen full" id="res">
 <div class="vsLogo" id="resLogo"></div>
 <div class="resList" id="resList"></div>
-<div class="vsp vsL" id="resAw"><div class="wtag" id="resAtag"></div><div class="big" id="resA"></div><div class="nm" id="resAn"></div><div class="vsfee on" id="resAf"></div></div>
+<div class="vsp vsL" id="resAw"><div class="wtag" id="resAtag"></div><div class="big" id="resA"></div><div class="nm" id="resAn"></div><div class="vsc" id="resAc"></div><div class="vsfee on" id="resAf"></div></div>
 <div class="vsmid"><div class="vstxt">VS</div><div class="pot"><div class="stack">🪙</div><span id="resPot">0</span></div></div>
-<div class="vsp vsR" id="resBw"><div class="wtag" id="resBtag"></div><div class="big" id="resB"></div><div class="nm" id="resBn"></div><div class="vsfee on" id="resBf"></div></div>
+<div class="vsp vsR" id="resBw"><div class="wtag" id="resBtag"></div><div class="big" id="resB"></div><div class="nm" id="resBn"></div><div class="vsc" id="resBc"></div><div class="vsfee on" id="resBf"></div></div>
 <div class="resBtns" id="resBtns"></div>
 </div>
 <!-- ============ IN-GAME DOM ============ -->
@@ -2573,6 +2583,10 @@ function countryName(cc) {
 for (const l of [LANG, "en"]) { try { const n = new Intl.DisplayNames([l], {type: "region", fallback: "none"}).of(cc); if (n && n !== cc) return n; } catch (e) {} }
 return cc;
 }
+const ctryCode = p => p && !p.isAI && /^[A-Za-z]{2}$/.test(p.country || "") ? String(p.country).toUpperCase() : "";   // the country a (human) player plays from
+const ctryHTML = p => { const c = ctryCode(p); return c ? `${flagHTML(c, 15)} <span>${esc(countryName(c))}</span>` : p && p.isAI ? "🤖 AI" : ""; };
+const flagImgs = {};
+function flagImg(cc) { let e = flagImgs[cc]; if (!e) { e = flagImgs[cc] = new Image(); e.onerror = () => { e.bad = 1; }; e.src = "https://flagcdn.com/h40/" + cc.toLowerCase() + ".png"; } return e; }
 const flagEmoji = cc => cc && cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 0x1F1A5 + c.charCodeAt(0))) : "🏳️";
 const flagHTML = (cc, h = 18) => cc ? `<img class="flag" src="https://flagcdn.com/h40/${cc.toLowerCase()}.png" alt="${flagEmoji(cc)}" style="height:${h}px" onerror="this.replaceWith(document.createTextNode(this.alt))">` : "";
 function countryOptions() {
@@ -4145,7 +4159,7 @@ let r = Math.random() * sum; for (let i = 0; i < ex.length; i++) if ((r -= w[i])
 return ex[0].id;
 }
 function mePlayer(name) {
-return {club: Net.me ? Net.me.club : "", cb: Net.me && Net.me.cb ? Net.me.cb : null, name: name || profile.name, avatar: profile.avatar, frame: profile.frame || 0, color: AV_COLORS[profile.avatar % AV_COLORS.length], level: profile.level, isAI: false, cue: trialCue || profile.cue, tbl: trialTable || profile.tableSkin || "", tblNo: trialTable ? 0 : (profile.editions || {})[profile.tableSkin] || 0};
+return {country: String(profile.country || "").toUpperCase().slice(0, 2), club: Net.me ? Net.me.club : "", cb: Net.me && Net.me.cb ? Net.me.cb : null, name: name || profile.name, avatar: profile.avatar, frame: profile.frame || 0, color: AV_COLORS[profile.avatar % AV_COLORS.length], level: profile.level, isAI: false, cue: trialCue || profile.cue, tbl: trialTable || profile.tableSkin || "", tblNo: trialTable ? 0 : (profile.editions || {})[profile.tableSkin] || 0};
 }
 function baseGame(type, city, players) {
 const G = {
@@ -4242,6 +4256,7 @@ if (type === "ai" && city.id && TROPHY[city.id]) setTimeout(() => { if (game ===
 else setPill(TT("{0} sindiradi", curP().name), 3000);
 if ((type === "ai" || type === "tour") && !net) setTimeout(() => { if (game === G && !G.over) bubble(1, pick(["Salom! 👋", "Omad! 🍀", "😎", "Boshladik!"])); }, 1500);
 if (net) netReplay(G); else earlyNet.length = 0;
+{ const oc = ctryCode(players[1]); if (net && oc) setTimeout(() => { if (game === G && !G.over && !G.moving) setPill(`${flagEmoji(oc)} ${countryName(oc)} · ${pname(players[1].name)}`, 3500); }, 3400); }   // "who am I playing with": his country and name, after the first pill
 }
 function startDemo() {
 const G = baseGame("watch", CITIES[Math.random() * 3 | 0], [botPlayer(5, 20), botPlayer(5, 20)]);
@@ -8455,25 +8470,35 @@ ctx.save();
 ctx.textAlign = side < 0 ? "right" : "left"; ctx.textBaseline = "middle";
 ctx.font = `24px ${FONT}`; ctx.fillStyle = active ? "#fff" : "#c3cbe0";
 ctx.shadowColor = "#000"; ctx.shadowBlur = 4;
-ctx.lineJoin = "round"; ctx.lineWidth = 5; ctx.strokeStyle = "rgba(0,0,0,.7)"; ctx.strokeText(pname(pl.name), nx, 30, 200);   // a dark outline: the name stays readable on a light floor
-ctx.fillText(pname(pl.name), nx, 30, 200);
+ctx.lineJoin = "round"; ctx.lineWidth = 5; ctx.strokeStyle = "rgba(0,0,0,.7)"; ctx.strokeText(pname(pl.name), nx, 27, 200);   // a dark outline: the name stays readable on a light floor
+ctx.fillText(pname(pl.name), nx, 27, 200);
 const tb = pl.tbl && EXTRA_TABLES.find(t => t.id === pl.tbl && t.tier);
-const nw = Math.min(200, ctx.measureText(pl.name).width);
+const nw = Math.min(200, ctx.measureText(pl.name).width), cc = ctryCode(pl);
+let off = 0;
+if (cc) {   // the country he plays from: the flag next to the name and the country's name under it ("who am I playing with")
+const fi = flagImg(cc), fw = 30, fh = 20, fx = side < 0 ? nx - nw - 10 - fw : nx + nw + 10, fy = 27 - fh / 2;
+ctx.shadowBlur = 0;
+if (fi.complete && fi.naturalWidth && !fi.bad) { ctx.drawImage(fi, fx, fy, fw, fh); ctx.lineWidth = 1; ctx.strokeStyle = "rgba(0,0,0,.55)"; ctx.strokeRect(fx + 0.5, fy + 0.5, fw - 1, fh - 1); }
+else { ctx.save(); ctx.font = "20px sans-serif"; ctx.textAlign = "center"; ctx.fillStyle = "#fff"; ctx.fillText(flagEmoji(cc), fx + fw / 2, 28); ctx.restore(); }
+off = fw + 10;
+const cn = pl._cn || (pl._cn = countryName(cc));
+ctx.save(); ctx.font = `15px ${FONT}`; ctx.fillStyle = active ? "#dfe8ff" : "#9fb0d0"; ctx.shadowColor = "#000"; ctx.shadowBlur = 3; ctx.lineWidth = 3.5; ctx.strokeStyle = "rgba(0,0,0,.6)"; ctx.strokeText(cn, nx, 47, 200); ctx.fillText(cn, nx, 47, 200); ctx.restore();
+}
 if (pl.cb) {   // club emblem next to the name
-const im = cbImage(pl.cb[0]), es = 30, ex = side < 0 ? nx - nw - 8 - es : nx + nw + 8;
-if (im.complete && im.naturalWidth) { ctx.shadowBlur = 0; ctx.drawImage(im, ex, 30 - es / 2, es, es * 81 / 88); }
+const im = cbImage(pl.cb[0]), es = 30, ex = side < 0 ? nx - nw - 8 - off - es : nx + nw + 8 + off;
+if (im.complete && im.naturalWidth) { ctx.shadowBlur = 0; ctx.drawImage(im, ex, 27 - es / 2, es, es * 81 / 88); }
 }
 if (tb) {
-const w = nw + (pl.cb ? 36 : 0), ix = side < 0 ? nx - w - 18 : nx + w + 18;
+const w = nw + off + (pl.cb ? 36 : 0), ix = side < 0 ? nx - w - 18 : nx + w + 18;
 ctx.shadowColor = tb.tier === "premium" ? "#ffcf3d" : "#40c8ff"; ctx.shadowBlur = 10 + Math.sin(performance.now() / 250) * 4;
-ctx.font = "20px sans-serif"; ctx.textAlign = "center"; ctx.fillText(tb.tier === "premium" ? "👑" : "✨", ix, 29);
+ctx.font = "20px sans-serif"; ctx.textAlign = "center"; ctx.fillText(tb.tier === "premium" ? "👑" : "✨", ix, 26);
 }
 ctx.restore();
 const g = G.groups[i];
 const nums = g === "solid" ? [1, 2, 3, 4, 5, 6, 7] : g === "stripe" ? [9, 10, 11, 12, 13, 14, 15] : [];
 const cleared = g && remaining(g) === 0;
 for (let k = 0; k < 7; k++) {
-const sx = side < 0 ? nx - 13 - k * 29 : nx + 13 + k * 29, sy = 64;
+const sx = side < 0 ? nx - 13 - k * 29 : nx + 13 + k * 29, sy = 69;
 ctx.fillStyle = "#0b1020"; ctx.beginPath(); ctx.arc(sx, sy, 13.5, 0, 7); ctx.fill();
 ctx.strokeStyle = "#2c3a60"; ctx.lineWidth = 1.5; ctx.stroke();
 let n = null;
@@ -8542,19 +8567,40 @@ ctx.fillText(`${T("Tushirilgan")}: ${G.balls.filter(b => b.out && b.n).length} /
 }
 ctx.restore();
 const sb = SPIN_BTN;
+{   // the cue ball (where the cue hits it): drawn as vectors at the screen's own resolution - a gold ring, a black ring, the ivory ball with its gloss and the red spin dot (the old one scaled a small ball picture up and was blurry)
+const x = sb.x, y = sb.y, r = sb.r;
 ctx.save();
-ctx.fillStyle = "#0d1426"; ctx.beginPath(); ctx.arc(sb.x, sb.y, sb.r + 6, 0, 7); ctx.fill();
-drawBall({n: 0, p: [0, 0, 1], plain: true}, sb.x, sb.y, sb.r / R);
-ctx.fillStyle = "#e11d1d"; ctx.beginPath(); ctx.arc(sb.x + G.spin.x * sb.r * 0.7, sb.y + G.spin.y * sb.r * 0.7, 5, 0, 7); ctx.fill();
+let g = ctx.createLinearGradient(x - r, y - r, x + r, y + r); g.addColorStop(0, "#fff3a8"); g.addColorStop(0.5, "#e9b838"); g.addColorStop(1, "#8a5a0e");
+ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
+ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r + 9, 0, 7); ctx.fill(); ctx.shadowColor = "transparent";
+ctx.fillStyle = "#06080f"; ctx.beginPath(); ctx.arc(x, y, r + 6.5, 0, 7); ctx.fill();
+g = ctx.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.08, x, y, r * 1.05); g.addColorStop(0, "#ffffff"); g.addColorStop(0.35, "#f4f0e2"); g.addColorStop(0.8, "#d3ccb6"); g.addColorStop(1, "#9d977f");
+ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill();
+ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.beginPath(); ctx.ellipse(x - r * 0.36, y - r * 0.44, r * 0.3, r * 0.17, -0.7, 0, 7); ctx.fill();
+const dx = x + G.spin.x * r * 0.7, dy = y + G.spin.y * r * 0.7;
+g = ctx.createRadialGradient(dx - 1.5, dy - 1.5, 0.5, dx, dy, 6); g.addColorStop(0, "#ff6a5a"); g.addColorStop(0.6, "#e11d1d"); g.addColorStop(1, "#8c0b0b");
+ctx.fillStyle = g; ctx.beginPath(); ctx.arc(dx, dy, 5.5, 0, 7); ctx.fill();
 ctx.restore();
-if (G.type !== "watch") {
-const b = CUE_BTN, bg = ctx.createLinearGradient(0, b.y - b.r, 0, b.y + b.r);
-bg.addColorStop(0, "#5aa8ff"); bg.addColorStop(1, "#1a4fb0");
-ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 3;
-ctx.fillStyle = bg; rr(b.x - b.r, b.y - b.r, 2 * b.r, 2 * b.r, 10); ctx.fill(); ctx.restore();
-ctx.strokeStyle = "rgba(255,255,255,.45)"; ctx.lineWidth = 1.5; rr(b.x - b.r + 1, b.y - b.r + 1, 2 * b.r - 2, 2 * b.r - 2, 9); ctx.stroke();
-for (const [ox, cd] of [[-5, CUES[1]], [5, cueDef(barCue(G))]]) {
-ctx.save(); ctx.translate(b.x + 13 + ox * 0.7, b.y - 13 + ox * 0.7); ctx.rotate(Math.PI * 0.75); drawCueStick(ctx, 38, cd, 0.5); ctx.restore();
+}
+if (G.type !== "watch") {   // the cue button: a gold-rimmed glossy blue key with two cues, drawn as vectors
+const b = CUE_BTN, x0 = b.x - b.r, y0 = b.y - b.r, w = 2 * b.r;
+ctx.save(); ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
+let g = ctx.createLinearGradient(x0, y0, x0 + w, y0 + w); g.addColorStop(0, "#fff3a8"); g.addColorStop(0.5, "#e9b838"); g.addColorStop(1, "#8a5a0e");
+ctx.fillStyle = g; rr(x0 - 3, y0 - 3, w + 6, w + 6, 13); ctx.fill(); ctx.restore();
+ctx.save(); rr(x0, y0, w, w, 10); ctx.clip();
+g = ctx.createLinearGradient(0, y0, 0, y0 + w); g.addColorStop(0, "#63b4ff"); g.addColorStop(1, "#1850c0"); ctx.fillStyle = g; ctx.fillRect(x0, y0, w, w);
+ctx.fillStyle = "rgba(255,255,255,.1)"; for (let k = 0; k < 8; k++) { const a0 = k * Math.PI / 4, a1 = a0 + Math.PI / 8; ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.arc(b.x, b.y, w, a0, a1); ctx.closePath(); ctx.fill(); }
+g = ctx.createLinearGradient(0, y0, 0, y0 + w * 0.5); g.addColorStop(0, "rgba(255,255,255,.5)"); g.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = g; ctx.fillRect(x0, y0, w, w * 0.5);
+ctx.restore();
+ctx.strokeStyle = "rgba(255,255,255,.4)"; ctx.lineWidth = 1.2; rr(x0 + 1, y0 + 1, w - 2, w - 2, 9); ctx.stroke();
+for (const o of [-0.17, 0.17]) {   // two cues lying across the key (butt dark with a gold ring, light shaft, white tip)
+ctx.save(); ctx.translate(b.x + o * w * 0.55, b.y - o * w * 0.55); ctx.rotate(Math.PI * 0.25); const L = w * 0.74;
+ctx.lineCap = "round"; ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = w * 0.17; ctx.beginPath(); ctx.moveTo(-L / 2, 1.5); ctx.lineTo(L / 2, 1.5); ctx.stroke();
+ctx.lineWidth = w * 0.15; ctx.strokeStyle = "#16161d"; ctx.beginPath(); ctx.moveTo(-L / 2, 0); ctx.lineTo(-L * 0.08, 0); ctx.stroke();
+ctx.lineCap = "butt"; ctx.lineWidth = w * 0.15; ctx.strokeStyle = "#f2c230"; ctx.beginPath(); ctx.moveTo(-L * 0.08, 0); ctx.lineTo(-L * 0.02, 0); ctx.stroke();
+ctx.lineWidth = w * 0.11; ctx.strokeStyle = "#f3dca4"; ctx.beginPath(); ctx.moveTo(-L * 0.02, 0); ctx.lineTo(L * 0.44, 0); ctx.stroke();
+ctx.lineCap = "round"; ctx.lineWidth = w * 0.11; ctx.strokeStyle = "#fff"; ctx.beginPath(); ctx.moveTo(L * 0.44, 0); ctx.lineTo(L * 0.5, 0); ctx.stroke();
+ctx.restore();
 }
 }
 }
@@ -9189,7 +9235,7 @@ if (!game || !game.demo) startDemo();
 showScreen("res");
 $("resLogo").innerHTML = cityLogoHTML(city);
 const me = pl[0], opp = pl[1];
-avatarHTML($("resA"), me); $("resAn").textContent = pname(me.name); avatarHTML($("resB"), opp); $("resBn").textContent = pname(opp.name);
+avatarHTML($("resA"), me); $("resAn").textContent = pname(me.name); avatarHTML($("resB"), opp); $("resBn").textContent = pname(opp.name); $("resAc").innerHTML = ctryHTML(me); $("resBc").innerHTML = ctryHTML(opp);
 const potTotal = (G && G.pot) || prize || 0, half = Math.round(potTotal / 2);
 $("resAtag").textContent = humanWon === false ? "" : T("G'OLIB"); $("resBtag").textContent = humanWon === false ? T("G'OLIB") : "";
 $("resPot").textContent = fmt(potTotal); $("resAf").innerHTML = ""; $("resBf").innerHTML = ""; $("resAf").style.opacity = $("resBf").style.opacity = 0;
@@ -9387,7 +9433,7 @@ if (done) { Net.send({t: "resign"}); return; }
 done = true; clearTimeout(timer); searchWait = null;
 const o = m.opp || {};
 resolve({net: m, opp: {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
-level: o.level | 0 || 1, club: String(o.club || "").slice(0, 20), cb: Array.isArray(o.cb) ? [o.cb[0] | 0, o.cb[1] | 0] : null, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0}});
+level: o.level | 0 || 1, country: String(o.country || "").toUpperCase().slice(0, 2), club: String(o.club || "").slice(0, 20), cb: Array.isArray(o.cb) ? [o.cb[0] | 0, o.cb[1] | 0] : null, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0}});
 };
 Net.send({t: "queue", city: c.id, cue: profile.cue, tbl: profile.tableSkin || ""});
 }).catch(() => { clearTimeout(timer); searchWait = null; bot(); });
@@ -9477,7 +9523,7 @@ $("shade").classList.add("on");
 if (!game || !game.demo) startDemo();
 showScreen("vs");
 const me = mePlayer();
-avatarHTML($("vsA"), me); $("vsAn").textContent = pname(me.name);
+avatarHTML($("vsA"), me); $("vsAn").textContent = pname(me.name); $("vsAc").innerHTML = ctryHTML(me); $("vsBc").innerHTML = "";
 $("vsCity").textContent = `${T(city.name)} ${T(city.sub)}`; $("vsLogo").innerHTML = cityLogoHTML(city);
 $("vsPot").textContent = "0"; const half = Math.round(pot / 2), fa = $("vsAf"), fb = $("vsBf");
 fa.innerHTML = `<span class="coin"></span>${fmt(half)}`; fa.classList.add("on"); fb.classList.remove("on"); fb.innerHTML = `<span class="coin"></span>${fmt(half)}`;
@@ -9492,7 +9538,7 @@ const iv = setInterval(() => {
 if (failed) { clearInterval(iv); Snd.search(false); return done(null); }
 if (found && performance.now() > minEnd) {
 clearInterval(iv); const o = found.opp;
-avatarHTML(b, o); bn.textContent = pname(o.name) + (o.isAI ? " 🤖" : ""); Snd.search(false); Snd.found();
+avatarHTML(b, o); bn.textContent = pname(o.name) + (o.isAI ? " 🤖" : ""); $("vsBc").innerHTML = ctryHTML(o); Snd.search(false); Snd.found();
 fb.classList.add("on");
 setTimeout(() => vsPotFly(half), 350);
 setTimeout(() => { Snd.whoosh(); done(found); }, 2200);
@@ -10990,7 +11036,7 @@ setTimeout(() => { if (!done) { done = true; toast("📡", T("Server bilan aloqa
 function startSpectate(m) {
 const city = CITIES.find(c => c.id === m.city) || CITIES[0];
 const mk = o => ({name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length], level: o.level | 0 || 1,
-isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0, country: o.country || ""});
+isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0, country: String(o.country || "").toUpperCase().slice(0, 2)});
 const G = baseGame("spec", city, [mk(m.p[0] || {}), mk(m.p[1] || {})]);
 G.net = {seat: 0, spec: true, room: m.room, lastAim: 0, sentA: null}; G.simSeed0 = (m.seed | 0) || 1; G.viewers = m.specs | 0; G.giftTo = 0;
 specInfo.list = Array.isArray(m.list) ? m.list : []; specInfo.log = (m.log || []).map(x => ({name: String(x.name || "").slice(0, 16), avatar: x.avatar | 0, frame: x.frame | 0, msg: String(x.msg || "").slice(0, 60), me: !!(profile && x.name === profile.name)}));
@@ -12593,7 +12639,7 @@ if (!LB) return;
 LB.queued = null; LB.qAt = 0; LB.playing = m.room || ""; LobbyChat.close();
 const o = m.opp || {}, c = lbCityOf(LB.city), city = {...c, prize: 0, fee: 0};
 const opp = {name: String(o.name || "Player").slice(0, 16), avatar: normAv(o.avatar | 0), frame: (o.frame | 0) % FRAMES.length, color: AV_COLORS[(o.avatar | 0) % AV_COLORS.length],
-level: o.level | 0 || 1, isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0};
+level: o.level | 0 || 1, country: String(o.country || "").toUpperCase().slice(0, 2), isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start", tbl: tableById(o.tbl) ? o.tbl : "", tblNo: o.tblNo | 0};
 lbChip(false);
 vsScreen(city, LB.fee * 2, () => Promise.resolve({net: m, opp}), f => { startMatch("ai", city, f.opp, f.net); if (game) { game.tourLobby = true; game.pot = LB ? LB.fee * 2 : 0; lbHi(game); } });   // (the result screen shows the pot of the match; the tournament prize itself is paid at the end)
 }
