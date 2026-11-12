@@ -1091,6 +1091,10 @@ const routes = {
       if (x.referredBy === u.id) x.referredBy = null;
     }
     for (const k of Object.keys(db.dms || {})) if (k.split("_").includes(u.id)) delete db.dms[k];
+    for (let i = WORLD.length - 1; i >= 0; i--) if (WORLD[i].uid === u.id) WORLD.splice(i, 1);   // the world chat: his lines, his lobby posts, the requests and the reports about / by him go too
+    for (const [k, w] of worldPosts) if (w.uid === u.id) worldPosts.delete(k);
+    for (const [k, r] of worldReq) if (r.uid === u.id || r.host === u.id) worldReq.delete(k);
+    if (db.meta.wreports) db.meta.wreports = db.meta.wreports.filter(x => x.uid !== u.id && x.by !== u.id);
     const c = u.club && db.clubs[u.club];
     if (c) { c.members = c.members.filter(id => id !== u.id); if (!c.members.length) delete db.clubs[c.id]; else if (c.owner === u.id) c.owner = c.members[0]; }
     for (const pu of Object.values(db.purchases || {})) if (pu.user === u.id) pu.user = null;
@@ -1814,7 +1818,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /auth/done", "POST /api/auth/begin", "POST /api/auth/stash", "POST /api/auth/claim", "GET /api/adsgram/reward", "GET /api/src/stats", "POST /api/adstat", "GET /api/adstat", "GET /admin/ads", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /auth/done", "POST /api/auth/begin", "POST /api/auth/stash", "POST /api/auth/claim", "GET /api/adsgram/reward", "GET /api/src/stats", "POST /api/adstat", "GET /api/adstat", "GET /admin/ads", "GET /admin/world", "GET /api/world/admin", "POST /api/world/mute", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
@@ -2213,6 +2217,135 @@ wss.on("connection", (ws, req) => {
 setInterval(() => {
   for (const ws of wss.clients) { if (!ws.alive) { ws.terminate(); continue; } ws.alive = false; ws.ping(); }
 }, 30000);
+
+// ---------------------------------------------------------------- the world chat: ONE room for every player (text, stickers, "my lobby" posts)
+// Like the world chat of Mobile Legends: the chat lines on the left, a list of "lobbies looking for players" on the right (the host's league, the table, the seats, a Join button). The lobby's code is NEVER in that list.
+// "Join" sends the host a request (a push on his lobby socket, an accept / decline pop-up); only when he accepts does the asking player get the code (GET /api/world/req) and join like with a typed code.
+// Plain HTTP for the chat itself (the page polls every 2-3 s while the window is open): no socket handlers to clash with the lobby's.
+const WORLD = []; let worldSeq = 0;                              // the last messages, kept in memory only (a restart empties the room)
+const worldPosts = new Map();                                    // lobby wid -> {wid, uid, name, avatar, frame, level, league, country, city, fee, at}: the lobbies posted to the room
+const WORLD_KEEP = 150, WORLD_LEN = 100, WORLD_REQ_MS = +process.env.WORLD_REQ_MS || 40e3, WORLD_PENDING_MAX = +process.env.WORLD_PENDING_MAX || 6;   // (most open join requests one host can have at a time)
+const WORLD_STK = new Set(["🎱", "🏆", "🏅", "👑", "🤴", "♨️", "🧊", "⚔️", "🎖️", "🦊", "🐯", "🐼", "🦅", "🐸", "🐺", "🐻", "🐰", "🦎", "🤣", "😜", "🥰", "🕶️", "🤯", "🥶", "😈", "🤡", "🤩", "🍕", "🍔", "🍉", "🍩", "☕", "🍿", "🍟", "🍣", "🥐", "🔮", "⚡", "🌟", "🌈", "🧿", "💎", "🚀", "💗", "💙", "💖", "💔", "❤️", "🌹", "🎁", "💘"]);                              // the sticker emojis of the game's packs
+const worldReq = new Map();                                      // request id -> {rid, uid, host, code, wid, at, state: "wait" | "yes" | "no" | "full"}
+const ubk = new Map();                                           // "uid|key" -> token bucket (per player, not per socket: the chat is plain HTTP)
+function ubucket(uid, key, max, perMs) {
+  const k = uid + "|" + key, now = Date.now(), x = ubk.get(k) || {n: max, t: now};
+  x.n = Math.min(max, x.n + (now - x.t) / perMs); x.t = now;
+  const ok = x.n >= 1; if (ok) x.n -= 1; ubk.set(k, x);
+  if (ubk.size > 20000) for (const [kk, v] of ubk) if (now - v.t > 600e3) ubk.delete(kk);
+  return ok;
+}
+const worldText = s => String(s || "").replace(/[\u0000-\u001f\u007f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, WORLD_LEN);
+const WORLD_CONTACT = /(https?:|www\.|\b[a-z0-9-]{2,}\.(com|net|org|uz|ru|io|me|gg|ly|xyz|info|tk|cc|co)\b|t\.me|telegram\.me|@[a-z0-9_]{4,}|(?:\d[\s().+-]*){9,})/i;   // links, user names, phone numbers: no advertising, no luring players away
+const lobbyByWid = wid => { if (!wid) return null; for (const L of lobbies.values()) if (L.wid === wid) return L; return null; };
+function worldAdd(u, kind, text, extra) {
+  const m = {id: ++worldSeq, at: Date.now(), uid: u.id, name: cleanChat(String(u.name || "Player").slice(0, 16)), avatar: u.avatar | 0, frame: u.frame | 0, level: u.level | 0, league: u.league | 0, country: String(u.country || "").slice(0, 3), kind, text, ...extra};
+  WORLD.push(m); if (WORLD.length > WORLD_KEEP) WORLD.shift();
+  return m;
+}
+function worldPub(m) {   // a chat line (text or sticker)
+  return {id: m.id, at: m.at, uid: m.uid, name: m.name, avatar: m.avatar, frame: m.frame, level: m.level, league: m.league, country: m.country, kind: m.kind, text: m.text};
+}
+function worldLobbies() {   // the posted lobbies as they are NOW: the seats, whether Join still works; a lobby that is gone or running leaves the list
+  const out = [], now = Date.now();
+  for (const [wid, w] of worldPosts) {
+    const L = lobbyByWid(wid), ps = L ? L.players.filter(p => seatKept(p)) : [];
+    if (!L || L.state !== "open" || !ps.length || !L.host || L.host.uid !== w.uid || now - w.at > 30 * 60e3) { worldPosts.delete(wid); continue; }   // (gone, running, empty, or its poster is not the host any more: the card is the host's)
+    out.push({wid, uid: w.uid, name: w.name, avatar: w.avatar, frame: w.frame, level: w.level, league: w.league, country: w.country, city: w.city, fee: w.fee, n: ps.length, max: L.max, open: ps.length < L.max && !!L.host && L.host.readyState === 1, at: w.at});
+  }
+  return out.sort((a, b) => (b.open - a.open) || b.at - a.at).slice(0, 30);
+}
+const muted = u => +u.wmute > Date.now();   // (a timestamp: never `| 0`, it does not fit 32 bits)
+Object.assign(routes, {
+  "GET /api/world"(req, u) {   // ?after=<id>: what came since (no id: the last 40)
+    if (!ubucket(u.id, "wpoll", 12, 6000)) return [429, {error: "slow down"}];
+    const after = int(new URL(req.url, "http://x").searchParams.get("after"), 1e12), list = after ? WORLD.filter(m => m.id > after) : WORLD.slice(-40);
+    return {msgs: list.slice(-60).map(worldPub), lobbies: worldLobbies(), last: worldSeq, online: clients.size, muted: muted(u)};
+  },
+  async "POST /api/world/send"(req, u) {   // {text} or {stk}
+    const b = await jsonBody(req);
+    if (muted(u)) return [403, {error: "muted"}];
+    if (!ubucket(u.id, "wsend", 3, 3000)) return [429, {error: "slow"}];
+    if (!ubucket("all", "wflood", 40, 1000)) return [429, {error: "busy"}];   // the whole room: no flood even from many accounts
+    let kind = "text", text;
+    if (b.stk != null) { kind = "sticker"; text = String(b.stk); if (!WORLD_STK.has(text)) return [400, {error: "bad"}]; }
+    else {
+      text = cleanChat(worldText(b.text)); if (!text) return [400, {error: "empty"}];
+      if (WORLD_CONTACT.test(text)) return [400, {error: "link"}];
+      if (u.wlast && u.wlast.t === text && Date.now() - u.wlast.at < 20e3) return {ok: true, dup: true};   // the same line again within 20 s is dropped
+      u.wlast = {t: text, at: Date.now()};
+    }
+    const m = worldAdd(u, kind, text, {});
+    return {ok: true, msg: worldPub(m)};
+  },
+  async "POST /api/world/lobby"(req, u) {   // the host posts his open lobby into the room (his phone must be in it: the lobby lives on his socket)
+    if (muted(u)) return [403, {error: "muted"}];
+    const ws = clients.get(u.id), L = ws && ws.lobby && lobbies.get(ws.lobby);
+    if (!L || L.host !== ws || L.state !== "open") return [409, {error: "nolobby"}];
+    if (L.players.filter(p => seatKept(p)).length >= L.max) return [409, {error: "full"}];
+    if (L.wpost && Date.now() - L.wpost < 45e3) return [429, {error: "wait", left: Math.ceil((45e3 - (Date.now() - L.wpost)) / 1000)}];
+    if (!ubucket(u.id, "wlobby", 3, 120e3)) return [429, {error: "slow"}];
+    L.wpost = Date.now(); L.wid = L.wid || crypto.randomBytes(5).toString("hex");
+    worldPosts.set(L.wid, {wid: L.wid, uid: u.id, name: cleanChat(String(u.name || "Player").slice(0, 16)), avatar: u.avatar | 0, frame: u.frame | 0, level: u.level | 0, league: u.league | 0, country: String(u.country || "").slice(0, 3), city: L.city, fee: L.fee, at: Date.now()});
+    return {ok: true, lobbies: worldLobbies()};
+  },
+  async "POST /api/world/join"(req, u) {   // {wid}: "I want into this lobby" -> a request to the host
+    const b = await jsonBody(req);
+    if (muted(u)) return [403, {error: "muted"}];
+    if (!ubucket(u.id, "wjoin", 3, 8000)) return [429, {error: "slow"}];
+    const wid = String(b.wid || "").slice(0, 16), L = worldPosts.has(wid) ? lobbyByWid(wid) : null;
+    if (!L || L.state !== "open" || !L.host || L.host.readyState !== 1) return {state: "gone"};
+    if (L.host.uid === u.id || L.players.some(p => p.uid === u.id)) return {state: "in", code: L.code};
+    if (L.players.filter(p => seatKept(p)).length >= L.max) return {state: "full"};
+    for (const r of worldReq.values()) if (r.uid === u.id && r.wid === wid && r.state === "wait" && Date.now() - r.at < WORLD_REQ_MS) return {state: "wait", rid: r.rid};   // already asked
+    if ([...worldReq.values()].filter(r => r.host === L.host.uid && r.state === "wait" && Date.now() - r.at < WORLD_REQ_MS).length >= WORLD_PENDING_MAX) return {state: "busy"};   // the host has enough pop-ups to answer already
+    const rid = crypto.randomBytes(6).toString("hex");
+    worldReq.set(rid, {rid, uid: u.id, host: L.host.uid, code: L.code, wid, at: Date.now(), state: "wait"});
+    wsSend(L.host, {t: "wreq", rid, ttl: WORLD_REQ_MS, from: {uid: u.id, name: cleanChat(String(u.name || "Player").slice(0, 16)), avatar: u.avatar | 0, frame: u.frame | 0, level: u.level | 0, league: u.league | 0, country: String(u.country || "").slice(0, 3)}});
+    return {state: "wait", rid};
+  },
+  "GET /api/world/req"(req, u) {   // ?rid=: the asking player's answer (the code only comes with "yes")
+    const r = worldReq.get(String(new URL(req.url, "http://x").searchParams.get("rid") || "")); if (!r || r.uid !== u.id) return {state: "gone"};
+    const L = lobbies.get(r.code);
+    if (r.state === "wait" && Date.now() - r.at > WORLD_REQ_MS) r.state = "timeout";   // the host did not answer in time (not the same as "no")
+    if (r.state === "yes" && (!L || L.state !== "open")) return {state: "gone"};
+    return r.state === "yes" ? {state: "yes", code: r.code} : {state: r.state};
+  },
+  async "POST /api/world/answer"(req, u) {   // the host: {rid, ok}
+    const b = await jsonBody(req), r = worldReq.get(String(b.rid || ""));
+    if (!r || r.host !== u.id) return [404, {error: "none"}];
+    if (r.state === "wait" && Date.now() - r.at > WORLD_REQ_MS) r.state = "timeout";
+    if (r.state !== "wait") return {ok: true, state: r.state};
+    const L = lobbies.get(r.code);
+    if (!b.ok) { r.state = "no"; return {ok: true, state: "no"}; }
+    if (!L || L.state !== "open") { r.state = "no"; return {ok: true, state: "gone"}; }
+    if (L.players.filter(p => seatKept(p)).length >= L.max) { r.state = "full"; return {ok: true, state: "full"}; }
+    r.state = "yes"; return {ok: true, state: "yes"};
+  },
+  async "POST /api/world/report"(req, u) {   // {mid}: a player reports a message; three different players within an hour mute its sender for 30 minutes
+    const b = await jsonBody(req), m = WORLD.find(x => x.id === int(b.mid, 1e12));
+    if (!m || m.uid === u.id || !ubucket(u.id, "wrep", 4, 30e3)) return {ok: true};
+    const rs = (db.meta.wreports = db.meta.wreports || []);
+    if (rs.some(x => x.mid === m.id && x.by === u.id)) return {ok: true};
+    rs.push({at: Date.now(), mid: m.id, uid: m.uid, name: m.name, text: m.kind === "text" ? m.text : "[" + m.kind + "]", by: u.id}); if (rs.length > 150) rs.shift();
+    const who = new Set(rs.filter(x => x.uid === m.uid && Date.now() - x.at < 3600e3).map(x => x.by));
+    const sender = db.users[m.uid]; if (sender && who.size >= 3 && !muted(sender)) { sender.wmute = Date.now() + 30 * 60e3; console.log(`world chat: ${m.uid} muted for 30 minutes (3 reports)`); }
+    markDirty(); return {ok: true};
+  },
+  "GET /api/world/admin"(req) {   // ?key=ADMIN_KEY (or x-admin-key): the room's last messages and the reports
+    const k = req.headers["x-admin-key"] || new URL(req.url, "http://x").searchParams.get("key") || "";
+    if (!ADMIN_KEY || !safeEq(String(k), ADMIN_KEY)) return [403, {error: "forbidden"}];
+    return {msgs: WORLD.slice(-100).reverse().map(m => ({...worldPub(m), muted: !!(db.users[m.uid] && muted(db.users[m.uid]))})), lobbies: worldLobbies(), reports: (db.meta.wreports || []).slice(-60).reverse()};
+  },
+  async "POST /api/world/mute"(req) {   // {key, uid, mins}: mins 0 = unmute
+    const b = await jsonBody(req), k = req.headers["x-admin-key"] || b.key || "";
+    if (!ADMIN_KEY || !safeEq(String(k), ADMIN_KEY)) return [403, {error: "forbidden"}];
+    const t = db.users[String(b.uid || "")]; if (!t) return [404, {error: "none"}];
+    t.wmute = int(b.mins, 60 * 24 * 365) ? Date.now() + int(b.mins, 60 * 24 * 365) * 60e3 : 0; markDirty(); return {ok: true};
+  },
+  "GET /admin/world": () => [200, {__html: `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Dunyo chati</title><style>body{font:15px system-ui;background:#0b1226;color:#e8eef7;max-width:820px;margin:16px auto;padding:0 12px}input,button{box-sizing:border-box;margin:4px 0;padding:9px;border-radius:10px;border:1px solid #3b4a74;background:#141d38;color:#fff;font:inherit}button{background:#1f9d4a;border:0;font-weight:700}table{border-collapse:collapse;width:100%;margin:6px 0 16px}td,th{border-bottom:1px solid #26335a;padding:5px 6px;text-align:left;vertical-align:top}small{opacity:.7}.x{background:#b3261e}</style><h2>Dunyo chati</h2><small>Oxirgi xabarlar va shikoyatlar. "Jim qilish" o'yinchini belgilangan vaqtga yozishdan to'xtatadi.</small><br><input id=k type=password placeholder="Admin kalit (ADMIN_KEY)"> <button onclick=go()>Ko'rsatish</button><div id=o></div><script>const H=s=>String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));async function go(){const r=await fetch('/api/world/admin',{headers:{'x-admin-key':k.value}});if(!r.ok){o.textContent='Xato: '+r.status;return}const j=await r.json();let h='<h3>Xabarlar</h3><table><tr><th>vaqt</th><th>kim</th><th>matn</th><th></th></tr>';for(const m of j.msgs)h+='<tr><td>'+new Date(m.at).toLocaleTimeString()+'</td><td>'+H(m.name)+'<br><small>'+H(m.uid)+(m.muted?' · jim':'')+'</small></td><td>'+(m.kind==='text'?H(m.text):'['+m.kind+']')+'</td><td><button class=x onclick="mute(\\''+H(m.uid)+'\\',1440)">Jim 1 kun</button><button onclick="mute(\\''+H(m.uid)+'\\',0)">Ochish</button></td></tr>';h+='</table><h3>Shikoyatlar</h3><table><tr><th>vaqt</th><th>kim haqida</th><th>matn</th></tr>';for(const x of j.reports)h+='<tr><td>'+new Date(x.at).toLocaleString()+'</td><td>'+H(x.name)+'<br><small>'+H(x.uid)+'</small></td><td>'+H(x.text)+'</td></tr>';o.innerHTML=h+'</table>'}async function mute(uid,mins){await fetch('/api/world/mute',{method:'POST',headers:{'x-admin-key':k.value,'Content-Type':'application/json'},body:JSON.stringify({uid,mins})});go()}</script>`}],
+});
+setInterval(() => { const now = Date.now(); for (const [k, r] of worldReq) if (now - r.at > 5 * 60e3) worldReq.delete(k); }, 60e3).unref();
 
 store.load().then(loaded => {
   if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}}, loaded);
