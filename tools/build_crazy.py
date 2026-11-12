@@ -221,7 +221,7 @@ const BAD_RE = /(f+u+c+k+|sh[i1]+t|b[i1]tch|a+ssh[o0]le|d[i1]ck|c[u]nt|n[i1]gg|w
 const cleanChat = s => String(s || "").replace(BAD_RE, m => "*".repeat(m.length));
 '''
 sub("function sendChat(msg) {", FILTER_JS + "function sendChat(msg) {\nif (CRAZY_BUILD) msg = cleanChat(msg);")
-sub('Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, String(m.msg || "").slice(0, 40)); });', 'Net.on("chat", m => { if (game && game.net && !game.net.spec) bubble(1, (CRAZY_BUILD ? cleanChat : String)(String(m.msg || "").slice(0, 40))); });')
+sub('const msg = String(m.msg || "").slice(0, 40); bubble(1, msg, 5000);', 'const msg = (CRAZY_BUILD ? cleanChat : String)(String(m.msg || "").slice(0, 40)); bubble(1, msg, 5000);')   # (the opponent's line is cleaned on the portals: the bubble, the chat log and the unread dot all get the cleaned text)
 sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,.nochat #cheerBar,.nochat #lbChat,.nochat #lbChatG,.nochat .lbchb{display:none!important}\n/* the portal has its own sign-in: no Google / Facebook / account switching / recovery-key rows in Settings */\n.setrow:has(#setLogin),.setrow:has(#setSwitch),.setrow:has(#setKey),.setrow:has(#setRecover){display:none!important}</style>')
 # default language: the device language (English stays English); the country-based guess is for the standalone game only
 sub('const cl = CC_LANG[profile.country || detectCountry()];', 'const cl = CRAZY_BUILD ? "" : CC_LANG[profile.country || detectCountry()];')
@@ -254,7 +254,7 @@ sub("try { loginSplash(); } catch (e) {}\nrequestAnimationFrame(frame);", "try {
 # and shrunk by the browser, graphics level High by default, high-quality image smoothing
 sub('let gq = DEV_GFX; try { gq = (profile.set && profile.set.gfx) || DEV_GFX; } catch (e) {}', 'let gq = "high"; try { gq = (profile.set && profile.set.gfx) || "high"; } catch (e) {}')
 sub("dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5, ultra: 4})[gq] || 2.5) * dprAuto);", "dpr = Math.max(1, Math.min(Math.max(window.devicePixelRatio || 1, Math.min(2, 2560 / Math.max(vw, 1))), ({low: 1.5, mid: 2, high: 2.5, ultra: 4})[gq] || 2.5) * dprAuto);")
-sub("cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);", 'cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr); try { ctx.imageSmoothingQuality = "high"; } catch (e) {}')
+sub("if (cv.width !== cw) cv.width = cw; if (cv.height !== ch) cv.height = ch; }", 'if (cv.width !== cw) cv.width = cw; if (cv.height !== ch) cv.height = ch; try { ctx.imageSmoothingQuality = "high"; } catch (e) {} }')
 sub('const SET_DEF = { gfx: DEV_GFX, fps: "90"', 'const SET_DEF = { gfx: "high", fps: "90"')
 # Playgama-only patches
 sub('<head>', '<head>\n<style>.chanonly{display:none!important}</style>')   # the channel name switch and the channel row mean nothing on a portal
