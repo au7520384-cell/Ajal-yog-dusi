@@ -1373,7 +1373,7 @@ h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 #modal .btn.green{border-image-source:var(--b-green2)!important}#modal .btn.purple{border-image-source:var(--b-purple)!important}
 #modal .btn.gray,#modal .btn.blue{border-image-source:var(--b-dark)!important}
 #modal .btn.orange{border-image-source:var(--b-green2)!important;filter:hue-rotate(-62deg)}#modal .btn.red{border-image-source:var(--b-green2)!important;filter:hue-rotate(-100deg)}
-#modal .btn:hover{filter:brightness(1.12)}#modal .btn:disabled{filter:grayscale(1) brightness(.7)}
+#modal .btn:hover{filter:brightness(1.12)}#modal .btn:disabled{filter:grayscale(1) brightness(.7)}#modal .btn.orange:hover:not(:disabled){filter:hue-rotate(-62deg) brightness(1.12)}#modal .btn.red:hover:not(:disabled){filter:hue-rotate(-100deg) brightness(1.12)}   /* (hover used to drop the hue turn: every orange / red popup button flashed green under the mouse) */
 .mic{height:62px;width:auto;filter:drop-shadow(0 0 10px #ffb30088)}
 #modal .panel:has(.dmlist) .mic{height:42px;vertical-align:middle}
 @media (max-height:460px){ #modal .btn{min-height:34px;padding:2px 10px!important;border-width:8px!important;border-image-width:16px!important} .mic{height:38px} #modal .panel:has(.dmlist) .mic{height:30px} }
@@ -1853,6 +1853,12 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 .prof2 .btn.purple,#passScr .btn.purple{background:linear-gradient(#5a4638,#2e2218)!important;border:2px solid #d8b878!important;box-shadow:inset 0 1px 0 #ffffff33,0 3px 6px #000a!important}
 @media (max-height:460px){#passScr .ptier,#mini .mgc,.prof2 .pcard,.prof2 .pbar2,.prof2 .pst,.prof2 .pbox{border-image-width:11px!important}.prof2 .pst,.prof2 .pbar2,.prof2 .pbox{padding:5px 8px}#passScr .ptier.prem,#mini .mgc{border-width:11px!important}}
 #hLegal{position:absolute;left:0;right:0;bottom:1px;z-index:6;text-align:center;font:11px/14px system-ui,sans-serif;color:#9fb4d8;text-shadow:0 1px 2px #000;pointer-events:none}#hLegal a{color:#bcd2ff;text-decoration:underline;pointer-events:auto;padding:2px 3px}
+/* the ×2 video button */
+.dblw{margin:10px 0 2px;text-align:center}.dblb{white-space:nowrap}.dblw .dblb{animation:dblpulse 1.8s ease-in-out infinite}.dblb:disabled{animation:none;filter:grayscale(.3) brightness(.85);cursor:default}
+@keyframes dblpulse{50%{transform:scale(1.06)}}
+#scrInfo .dblw{display:inline-block;margin:0 0 0 10px;vertical-align:middle}#scrInfo .dblb{min-height:0;padding:3px 12px;font-size:15px}
+#lvlFx .dblw{position:absolute;left:77%;top:77.6%;translate:0 -50%;margin:0;z-index:3;animation:lvtxt .5s 1.2s both}
+#lvlFx .dblb{display:block;min-height:0;height:auto;white-space:nowrap;padding:.8cqw 1.5cqw;font:900 3.3cqw/1.1 var(--fh);color:#fff;border:.25cqw solid #0006;border-radius:1.5cqw;background:linear-gradient(#ffb020,#d06a00);box-shadow:inset 0 .25cqw 0 #fff5,0 .5cqw 0 #0007;cursor:pointer;text-shadow:0 .25cqw 0 #0006}
 /* ---- the top bar from the owner's home mockup: his own pictures (tools/add_home_art.py), the bar stays 62px high, no label under the icons ---- */
 #nav{height:62px!important;gap:8px!important;padding-top:0!important;padding-bottom:0!important;justify-content:flex-start!important;max-width:1760px;margin-left:auto!important;margin-right:auto!important}   /* the profile card stands in the LEFT corner and the two keys in the RIGHT one (the owner: "put the top one back in its place"); the profile plate and the money plate grow a little to fill the room, what is still left is shared by equal gaps; on a very wide screen the bar is a centred strip of 1760 px so the gaps never open up */
 .pchip2{flex:1 0 auto!important;max-width:300px;width:auto;box-sizing:border-box;padding-right:37px;height:62px!important;filter:drop-shadow(0 2px 4px #000a)!important}
@@ -3665,16 +3671,17 @@ if (up) { try { levelUpFx(profile.level, gb, gc); } catch (e) { toast("⭐", `${
 function levelUpFx(lv, bonus, cashB) {   // full-screen celebration: spinning rays, a badge that drops in and counts up to the new level, the bonus, sparks
 const old = document.getElementById("lvlFx"); if (old) old.remove();
 const el = document.createElement("div"); el.id = "lvlFx";
-el.innerHTML = `<div class="lvstage"><img src="${IMG.lvl_bg}" alt=""><div class="lvnum">${lv - 1}</div><div class="lvtxt">${T("DARAJA OSHDI!")}</div><div class="lvbon">+${fmt(bonus)}</div>${cashB ? `<div class="lvcash"><span class="cash"></span> +${cashB}</div>` : ""}</div><small>${T("Davom etish uchun bosing")}</small>`;
+{ const ds = document.documentElement.style; if (/px/.test(ds.getPropertyValue("--u-vh"))) el.style.zoom = ds.getPropertyValue("--uiz") || 1; }   // phones / a turned page: the style sheet's vh / vw are the zoomed boxes' px there (fixUnits), so this overlay is zoomed like them; its 16:9 picture was 35% too big for a phone (cut at the top and bottom, the cash line was off the screen)
+el.innerHTML = `<div class="lvstage"><img src="${IMG.lvl_bg}" alt=""><div class="lvnum">${lv - 1}</div><div class="lvtxt">${T("DARAJA OSHDI!")}</div><div class="lvbon">+${fmt(bonus)}</div>${cashB ? `<div class="lvcash"><span class="cash"></span> +${cashB}</div>` : ""}${dblHTML(bonus, "level")}</div><small>${T("Davom etish uchun bosing")}</small>`;
 document.body.appendChild(el);
 const fitTo = (n, maxCq, base) => { const st = el.querySelector(".lvstage"); if (!st) return; const w = st.clientWidth / 100; n.style.fontSize = base + "cqw"; let k = 0; while (n.scrollWidth > maxCq * w && k++ < 40) n.style.fontSize = (base * (1 - k * 0.025)).toFixed(2) + "cqw"; };   // a long level number / bonus / translation shrinks until it fits its place
-const nb = el.querySelector(".lvnum"); fitTo(nb, 14, lv - 1 > 99 ? 7 : lv - 1 > 9 ? 9 : 11); fitTo(el.querySelector(".lvtxt"), 54, 7.4); fitTo(el.querySelector(".lvbon"), 16, 5.6);
+const nb = el.querySelector(".lvnum"); fitTo(nb, 14, lv - 1 > 99 ? 7 : lv - 1 > 9 ? 9 : 11); fitTo(el.querySelector(".lvtxt"), 54, 7.4); fitTo(el.querySelector(".lvbon"), 16, 5.6); { const d = el.querySelector(".dblb"); if (d) fitTo(d, 20, 3.3); }
 setTimeout(() => { nb.textContent = lv; fitTo(nb, 14, lv > 99 ? 7 : lv > 9 ? 9 : 11); nb.classList.add("pop"); try { Snd.coin(5); vib([20, 30, 40]); } catch (e) {} }, 700);
 for (let i = 0; i < 36; i++) { const p = document.createElement("i"); p.className = "lvs"; const a = Math.random() * 6.28, d = 140 + Math.random() * 260, sz = 5 + Math.random() * 10; const col = ["#ffd24d", "#fff", "#7ad0ff", "#ff8a1f"][i % 4];
 p.style.cssText = `width:${sz}px;height:${sz}px;background:${col};box-shadow:0 0 10px ${col}`; el.appendChild(p);
 p.animate([{transform: "translate(0,0) scale(1)", opacity: 0}, {opacity: 1, offset: 0.1}, {transform: `translate(${Math.cos(a) * d}px,${Math.sin(a) * d - 30}px) scale(.2)`, opacity: 0}], {duration: 900 + Math.random() * 800, delay: 650 + Math.random() * 250, easing: "ease-out", fill: "both"}).onfinish = () => p.remove(); }
 const close = () => { if (!el.isConnected) return; el.classList.add("out"); setTimeout(() => { el.remove(); try { updateNav(); } catch (e) {} }, 260); };
-el.onclick = close; setTimeout(close, 4200);
+el.onclick = close; dblWire(el); setTimeout(close, el.querySelector(".dblb") ? 9000 : 4200);
 }
 function unlock(id) {
 if (profile.ach[id]) return;
@@ -4884,14 +4891,14 @@ title = ring === LUCKY_RINGS[0] ? "MARKAZ! 🎯" : "Omadingiz keldi!"; icon = ri
 burst(); Snd.win(); setBanner(ring.label, ring.color);
 }
 updateNav();
-setTimeout(() => openModal({
+setTimeout(() => { openModal({
 icon, title, text: ring ? "Oltin shar nishonga tushdi!" : "Tasalli sovg'asi",
-extra: `<div class="reward">${ring && ring.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(amount)}</div>`,
+extra: `<div class="reward">${ring && ring.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(amount)}</div>${ring && ring.t === "cash" ? "" : dblHTML(amount, "lucky")}`,
 buttons: [
 goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : NO_CARD ? `💎 ${GOLD_GEMS}` : `3 × ${usdTxt(GOLD_USD)}`, cls: "orange", fn: goldenShot}
 : {label: hasTry("lucky") ? T("Yana (bepul)") : `⏳ ${fmtDur(freeLeftMs("lucky"))}`, cls: "orange", fn: () => startLucky()},
 {label: "Menyu", cls: "gray", fn: () => toMenu("mini")}],
-}), 900);
+}); dblWire($("mExtra")); }, 900);
 }
 function toWorld(e) {
 const lx = (rotated ? e.clientY : e.clientX) - insL, ly = (rotated ? innerWidth - e.clientX : e.clientY) - insT;
@@ -9319,6 +9326,7 @@ const open = u => { try { const w = window.open(u, "_blank", "noopener"); if (!w
 mk("share fb", `<svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M14 8V6.5c0-.7.2-1 1.2-1H17V2.2C16.600 2.100 15.500 2 14.300 2 11.700 2 10 3.600 10 6.400V8H7v3.600h3V22h4v-10.400h2.800L17.300 8z"/></svg>${T("Ulashish")}`, () => open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(txt)));
 mk("share xx", `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#fff" d="M17.800 3h3.100l-6.800 7.700L22 21h-6.200l-4.900-6.400L5.300 21H2.200l7.300-8.300L2 3h6.400l4.400 5.900zm-1.100 16.200h1.700L7.400 4.700H5.600z"/></svg>${T("Ulashish")}`, () => open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(txt) + "&url=" + encodeURIComponent(url)));
 }
+if (humanWon === true && prize > 0) { bt.insertAdjacentHTML("beforeend", dblHTML(prize, "win", true)); dblWire(bt); }   // the ×2 video for the prize of the match (not in lobby matches or trials: their prize is 0)
 rest.forEach(b => mk(b.cls || "green", b.label, b.fn));
 if (humanWon) { setTimeout(() => { try { burst(); Snd.win(); } catch (e) {} }, 500); } else { try { Snd.lose(); } catch (e) {} }
 setTimeout(() => {
@@ -10196,7 +10204,8 @@ if (r.t === "lucky") profile.luckyTries += r.v;
 if (r.t === "wheel") profile.wheelTries += r.v;
 if (profile.streak >= 7) unlock("streak7");
 save(); updateNav(); Snd.coin(8); burst();
-toast(r.icon, T(r.label), "Kunlik sovg'a");
+if (r.t === "coins" && dblOk(r.v)) { openModal({icon: "🎁", title: "Kunlik sovg'a", text: r.label, extra: `<div class="reward"><span class="coin"></span> +${fmt(r.v)}</div>${dblHTML(r.v, "daily")}`, buttons: [{label: "Ajoyib!", cls: "green", fn: () => {}}]}); dblWire($("mExtra")); }
+else toast(r.icon, T(r.label), "Kunlik sovg'a");
 buildRewards();
 }
 const LEAGUE_COIN_MULT = [1, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.5, 4];   // victory-box coin multiplier per league (Silver ×1.5, as in the reference)
@@ -10475,8 +10484,8 @@ const p = WHEEL[idx];
 if (p.t === "cash") profile.cash = (profile.cash || 0) + p.v; else profile.coins += p.v;
 save(); updateNav(); Snd.win(); burst();
 openModal({icon: "🎡", title: "Tabriklaymiz!", text: "G'ildirakdan yutuq:",
-extra: `<div class="reward">${p.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(p.v)}</div>`,
-buttons: [{label: "Ajoyib!", cls: "green", fn: () => go("wheelScr")}]});
+extra: `<div class="reward">${p.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(p.v)}</div>${p.t === "cash" ? "" : dblHTML(p.v, "wheel")}`,
+buttons: [{label: "Ajoyib!", cls: "green", fn: () => go("wheelScr")}]}); dblWire($("mExtra"));
 }, 5100);
 };
 const cupImg = c => IMG["cup_" + c.id];
@@ -10690,6 +10699,21 @@ y8Ad("reward", name).then(ok => {
 if (!ok) { const nofill = !!Y8.noFill || /^(notReady|noAdPreloaded|frequencyCapped|timeout\d*|error|invalid|ignored)$/.test(Y8.lastStatus || ""); toast("📺", nofill ? T("Reklama hozir mavjud emas") : T("Reklama oxirigacha ko'rilmadi"), ""); return onFail && onFail(nofill); }   // (no ad came is not "not watched to the end")
 profile.adCount++; if (name === "bank-cash") profile.adCash = (profile.adCash | 0) + 1; give(); save(); updateNav(); Snd.coin(6);
 });
+}
+// ---- "×2": a rewarded video (about 30 s) that pays the same coins once more. Offered wherever a coin prize is given (a match won, a box, the daily gift, the minigames, a new level) and a rewarded video works
+// (Y8, Telegram, the app, the portals); ad-free players get it without a video. It uses y8Rewarded(), so it shares the 10-ads-a-day limit; the button works once per prize.
+const DBL_MIN = 100, DBL_DAY = 10;   // not offered for a prize smaller than DBL_MIN; at most DBL_DAY a day
+const dblUsed = () => profile.dblDay === today() ? profile.dblN | 0 : 0;
+function dblOk(c) { return (c | 0) >= DBL_MIN && !!(Y8.sdk && Y8.adsReady) && dblUsed() < DBL_DAY && (profile.adfree || !(profile.adDay === today() && (profile.adCount | 0) >= 10)); }
+const dblTxt = c => `📺 ×2 +${fmt(c)} 🪙`;
+function dblHTML(c, tag, row) { return dblOk(c) ? (row ? `<button class="orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button>` : `<div class="dblw"><button class="btn orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button></div>`) : ""; }
+function dblGo(c, tag, done) { y8Rewarded("double-" + tag, () => { if (profile.dblDay !== today()) { profile.dblDay = today(); profile.dblN = 0; } profile.dblN++; addCoins(c); toast("🪙", "+" + fmt(c), "×2"); try { coinShower(Math.min(28, 10 + Math.round(Math.log10(c + 1) * 3))); } catch (e) {} if (done) done(); }); }
+function dblWire(root) {   // the click of every ×2 button inside root: the video, then +the prize once more and the button is used up; no video / closed half way: the button works again
+(root || document).querySelectorAll(".dblb").forEach(b => { b.onclick = e => {
+e.stopPropagation(); if (b.disabled || Y8.busy) return; const [c, tag] = String(b.dataset.dbl).split("|"); b.disabled = true; let ok = false;
+dblGo(+c, tag, () => { ok = true; b.textContent = "✅ ×2"; });
+setTimeout(function chk() { if (ok) return; if (Y8.busy) return setTimeout(chk, 700); b.disabled = false; }, 1200);
+}; });
 }
 function updateY8Ui() {
 const show = !!(Y8.sdk && Y8.adsReady);
@@ -12030,8 +12054,8 @@ const nPieces = (Math.random() < [0.25, 0.4, 0.65, 1][t] ? 1 : 0) + (t === 3 && 
 for (let k = 0; k < nPieces; k++) { const pool = CUES.filter(c => (c.cat === "victory" || c.cat === "surprise") && !profile.cues.includes(c.id)); if (pool.length) { const c = pick(pool); addCuePiece(c); piece += `<div>${pcImg(26)} ${esc(cueName(c))}</div>`; } }
 save(); updateNav();
 boxOpenAnim(["rare", "rare", "epic", "leg"][t] || "rare", () => { Snd.win(); burst();
-openModal({icon: BOX_TIERS[t].i, title: T(BOX_TIERS[t].n), text: "", extra: `<div class="reward boxres"><span class="coin"></span> +${fmt(coins)}</div>${lgM > 1 ? `<div class="muted">${T("Liga imtiyozi")}: ×${lgM}</div>` : ""}${piece}`,
-buttons: [{label: T("Ajoyib!"), cls: "green", fn: () => buildHome()}]}); }, [`<span class="coin"></span> +${fmt(coins)}`].concat(piece ? [piece.replace(/<\/?div>/g, " ")] : []));
+openModal({icon: BOX_TIERS[t].i, title: T(BOX_TIERS[t].n), text: "", extra: `<div class="reward boxres"><span class="coin"></span> +${fmt(coins)}</div>${dblHTML(coins, "box")}${lgM > 1 ? `<div class="muted">${T("Liga imtiyozi")}: ×${lgM}</div>` : ""}${piece}`,
+buttons: [{label: T("Ajoyib!"), cls: "green", fn: () => buildHome()}]}); dblWire($("mExtra")); }, [`<span class="coin"></span> +${fmt(coins)}`].concat(piece ? [piece.replace(/<\/?div>/g, " ")] : []));
 }
 function boxClick(i) {
 const bx = (profile.boxes || [])[i]; if (!bx) return toast("📦", T("Bo'sh joy"), T("1 ga 1 o'yinda yutib quti oling"));
@@ -12233,7 +12257,8 @@ let used = 0, left = SCRATCH_FREE, paid = false;
 const cellSym = Array(9).fill(null), found = new Set();
 openModal({icon: "🎟", title: T("Qirib yuting"), text: "", extra: `<div id="scrInfo" class="h" style="text-align:center;font-size:18px;margin-bottom:4px"></div><div class="scratch">${Array.from({length: 9}, (_, i) => `<div class="scell" data-i="${i}"><span></span><canvas width="90" height="90"></canvas></div>`).join("")}</div><div id="scrBuy" style="text-align:center;margin-top:6px"></div>`,
 buttons: [{label: T("Yopish"), cls: "gray", fn: () => buildMini()}]});
-const info = () => { $("scrInfo").textContent = paid ? `${T("Yutuq")}: ${win.i} +${fmt(win.v)}` : left > 0 ? `${T("Qirishlar")}: ${left}` : T("Omad kelmadi"); $("mText").textContent = paid ? "" : T("Barmoq bilan qiring — 3 ta bir xil = sovrin!");
+const info = () => { if (paid) return;   // (the prize is final: a later scratch must not wipe the ×2 button)
+$("scrInfo").textContent = paid ? `${T("Yutuq")}: ${win.i} +${fmt(win.v)}` : left > 0 ? `${T("Qirishlar")}: ${left}` : T("Omad kelmadi"); $("mText").textContent = paid ? "" : T("Barmoq bilan qiring — 3 ta bir xil = sovrin!");
 $("scrBuy").innerHTML = !paid && left <= 0 && used < 9 ? `<button class="btn purple" id="scrMore">＋1 ${T("qirish")} · 💵 ${SCRATCH_CASH}</button><button class="btn blue" id="scrMoreG">＋1 · 💎 ${SCRATCH_PRICE}</button>` : "";
 if ($("scrMore")) $("scrMore").onclick = () => { if ((profile.cash || 0) < SCRATCH_CASH) { toast("😕", T("Pul yetmaydi"), T("Qirib yuting")); return; } profile.cash -= SCRATCH_CASH; left++; save(); updateNav(); Snd.click(); info(); };
 if ($("scrMoreG")) $("scrMoreG").onclick = () => { if ((profile.gems || 0) < SCRATCH_PRICE) return gemShort(); profile.gems -= SCRATCH_PRICE; left++; save(); updateNav(); Snd.click(); info(); }; };
@@ -12245,7 +12270,7 @@ if (s.t === "coins") addCoins(s.v); else if (s.t === "cash") profile.cash = (pro
 else if (s.t === "spin") profile.wheelTries += s.v; else profile.luckyTries += s.v;
 save(); updateNav(); Snd.win(); burst();
 document.querySelectorAll(".scell").forEach((el, i) => { if (cellSym[i] === s) el.classList.add("win"); const cv = el.querySelector("canvas"); if (cellSym[i]) cv.style.opacity = 0; });
-$("scrInfo").textContent = `${T("Yutuq")}: ${s.i} +${fmt(s.v)}`; $("scrBuy").innerHTML = ""; return;
+$("scrInfo").textContent = `${T("Yutuq")}: ${s.i} +${fmt(s.v)}`; $("scrBuy").innerHTML = ""; if (s.t === "coins") { $("scrInfo").insertAdjacentHTML("beforeend", dblHTML(s.v, "scratch")); dblWire($("scrInfo")); } return;
 }
 info();
 };
