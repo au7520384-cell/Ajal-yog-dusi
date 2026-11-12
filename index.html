@@ -5078,6 +5078,9 @@ const e = igkCur; if (!e) return;
 igkOs = e; igkHide(false); e.inputMode = "text"; e.blur();
 setTimeout(() => { try { e.focus(); } catch (er) {} }, 60);
 }
+// some Android versions send no window "resize" when the phone's own keyboard closes in full screen: the page stayed squeezed (the owner: "the menu stays in that state"). The keyboard closing is checked again.
+if (window.visualViewport) visualViewport.addEventListener("resize", () => setTimeout(resize, 150));
+document.addEventListener("focusout", e => { if (igkText(e.target)) { setTimeout(resize, 400); setTimeout(resize, 1100); } }, true);
 addEventListener("resize", () => { if (igkCur && kbH && igkH0 && innerHeight < igkH0 - 100) { const e = igkCur; igkOs = e; igkHide(false); e.inputMode = "text"; } });   // the phone's own keyboard came up anyway (its inputmode was not honoured): leave the box to it instead of showing two keyboards
 document.addEventListener("pointerdown", e => { if (igkOn() && igkText(e.target) && igkOs !== e.target) e.target.inputMode = "none"; }, true);   // before the tap focuses the box, so the phone's keyboard stays down
 document.addEventListener("focusin", e => { if (igkOn() && igkText(e.target)) igkShow(e.target); }, true);
