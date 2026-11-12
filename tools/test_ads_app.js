@@ -47,14 +47,14 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(init.adsReady && init.sdk && init.every === 4 && init.init.length === 1 && init.init[0].sdkKey === "SDKKEY-test-123" && init.init[0].rewardedId === "rw_unit_1" && init.init[0].interstitialId === "in_unit_1" && /\/privacy$/.test(init.init[0].privacyUrl), "the page starts the plugin with the server's AppLovin ids and the privacy page", init);
     // free coins / 💵 by rewarded video
     await p.evaluate(() => { go("shop"); buildFree(); }); await sleep(800);
-    ok(await p.evaluate(() => !!$("frVid") && !!$("frCash")), "the Free page shows the two video buttons (+15 🪙, +1 💵)");
+    ok(await p.evaluate(() => !!$("frVid") && !!$("frCash")), "the Free page shows the two video buttons (+300 🪙, +1 💵)");
     const c0 = await p.evaluate(() => profile.coins), h0 = await p.evaluate(() => profile.cash | 0);
     await clear(p); await p.evaluate(() => $("frVid").click()); await sleep(900);
-    ok(await p.evaluate(() => profile.coins) === c0 + 15 && (await A(p)).rew === 1, "a watched video pays +15 🪙", [await p.evaluate(() => profile.coins), c0]);
+    ok(await p.evaluate(() => profile.coins) === c0 + 300 && (await A(p)).rew === 1, "a watched video pays +300 🪙", [await p.evaluate(() => profile.coins), c0]);
     await p.evaluate(() => { __ad.mode = "early"; }); await clear(p); await p.evaluate(() => $("frVid").click()); await sleep(900);
-    ok(await p.evaluate(() => profile.coins) === c0 + 15 && /not (watched|seen)|to the end|completely/i.test(await toasts(p)), "a video closed early pays nothing and says so", await toasts(p));
+    ok(await p.evaluate(() => profile.coins) === c0 + 300 && /not (watched|seen)|to the end|completely/i.test(await toasts(p)), "a video closed early pays nothing and says so", await toasts(p));
     await p.evaluate(() => { __ad.mode = "nofill"; }); await clear(p); await p.evaluate(() => $("frVid").click()); await sleep(900);
-    ok(await p.evaluate(() => profile.coins) === c0 + 15 && /not available/i.test(await toasts(p)), "no ad loaded yet: nothing paid, 'ads are not available right now'", await toasts(p));
+    ok(await p.evaluate(() => profile.coins) === c0 + 300 && /not available/i.test(await toasts(p)), "no ad loaded yet: nothing paid, 'ads are not available right now'", await toasts(p));
     await p.evaluate(() => { __ad.mode = "ok"; });
     for (let i = 0; i < 2; i++) { await p.evaluate(() => $("frCash").click()); await sleep(700); }
     ok(await p.evaluate(() => profile.cash | 0) === h0 + 2, "two videos pay +1 💵 each", await p.evaluate(() => profile.cash | 0));
