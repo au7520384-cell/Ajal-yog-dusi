@@ -308,26 +308,62 @@ background:linear-gradient(#31c24a,#12822a);border:3px solid #6ff08a;box-shadow:
 .dayn{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#0c1222;border:2px solid #6ff08a;border-radius:10px;font-size:11px;padding:1px 8px;white-space:nowrap}
 /* leaderboard */
 .flag{vertical-align:middle;border-radius:3px;box-shadow:0 0 0 1px #0006}
-.lbtabs{flex:1;margin:0}
-.lbtabs .tab{font-size:16px;padding:8px 6px;white-space:nowrap}
-.lbhead{width:100%;max-width:980px;display:flex;align-items:center;gap:14px;background:linear-gradient(#2d3a5e,#1b2440);border:2px solid #3e4f7c;border-radius:14px;padding:10px 16px;margin-bottom:6px;flex-wrap:wrap}
-.lbhead .ttl{font-family:var(--fh);font-size:30px;color:var(--gold);line-height:1}
-.lbhead .ends{font-size:13px;color:#cfd8ee}
-.lbhead .pz{margin-left:auto;font-size:12px;line-height:1.3;color:#cfd8ee}
-.lbcols{width:100%;max-width:980px;display:grid;grid-template-columns:70px 1fr auto;padding:0 18px;font-size:12px;color:#8a96b4;text-transform:uppercase;letter-spacing:1px}
-.lb{width:100%;max-width:980px}
-.lbr .nm{display:flex;align-items:center;gap:8px;min-width:0}
-.lbr .nm b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lbr small.sub{display:block;color:#ffcf3d;font-size:12px}
+/* ratings: the owner's mockup (ornate tabs, an emblem header with a crown and laurels, laurel medals, framed rows) in a compact size, so that about ten rows are on a phone's page; everything is sized from the page's own height (vh) */
+#leader{padding:60px 10px 6px;--lbrow:clamp(22px,5.7vh,42px);--lbmd:calc(var(--lbrow) * 1.22);--lbav:calc(var(--lbrow) - 5px);--lbst:calc(var(--lbrow) * .74);--lbfl:calc(var(--lbrow) * .5);--lbnm:calc(var(--lbrow) * .5);--lbsb:calc(var(--lbrow) * .36)}
+#leader .head{margin-bottom:clamp(3px,1vh,8px);gap:clamp(5px,1.4vw,12px);max-width:1120px}
+#leader .head .back{width:clamp(28px,8.2vh,46px)!important;height:clamp(28px,8.2vh,46px)!important;flex:none}
+.lbtabs{flex:1;margin:0;gap:clamp(4px,1.1vw,10px)}
+.lbtabs .tab{position:relative;min-width:0;display:flex;align-items:center;justify-content:center;gap:.35em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(11px,3vh,17px);padding:clamp(3px,1vh,8px) clamp(4px,.9vw,12px);border-radius:10px;color:#dfe7ff;background:linear-gradient(#17255a,#0a1236);border:1.5px solid #7d6224;box-shadow:inset 0 1px 0 #ffffff22,0 2px 6px #0009}
+.lbtabs .tab.on{color:#fff;padding-left:clamp(12px,2.6vw,24px);padding-right:clamp(12px,2.6vw,24px);background:linear-gradient(#4a9bff,#1450c8 55%,#0b2f8a);border-color:#ffd96a;box-shadow:inset 0 1px 0 #ffffff77,0 0 14px #3b8cffcc,0 2px 6px #000a;text-shadow:0 1px 2px #0008}
+.lbtabs .tab.on::before,.lbtabs .tab.on::after{content:"";position:absolute;top:6%;bottom:6%;width:clamp(10px,2.3vw,20px);background-size:contain;background-repeat:no-repeat;background-position:center;pointer-events:none}
+.lbtabs .tab.on::before{left:1px;background-image:var(--lb-l)}
+.lbtabs .tab.on::after{right:1px;background-image:var(--lb-r)}
+.lbhead{position:relative;width:100%;max-width:1120px;box-sizing:border-box;display:flex;align-items:center;gap:clamp(8px,2vw,22px);padding:clamp(1px,.5vh,4px) clamp(12px,2.4vw,26px);margin-bottom:clamp(3px,.8vh,6px);border-radius:12px;border:2px solid #d9a22a;background:radial-gradient(ellipse at 14% 50%,#4aa0ff66,#0000 52%),linear-gradient(#143f9e,#0a2569 58%,#07194a);box-shadow:0 0 0 1px #5a3a08,inset 0 0 0 2px #0a1640,inset 0 1px 0 #fff4,0 0 16px #3b8cff55,0 4px 14px #0009;flex-wrap:wrap}
+.lbhead:empty{display:none}
+.lbhead::before,.lbhead::after{content:"";position:absolute;width:9px;height:9px;top:50%;margin-top:-5px;transform:rotate(45deg);background:linear-gradient(135deg,#fff3b8,#e9b838,#8a5a0e);box-shadow:0 0 7px #ffb300;border-radius:2px}
+.lbhead::before{left:-6px}.lbhead::after{right:-6px}
+.lbemb{position:relative;flex:none;width:clamp(30px,9.4vh,56px);height:clamp(30px,9.4vh,56px);margin:calc(clamp(30px,9.4vh,56px) * -.08) 0;background:var(--lb-emb) center/contain no-repeat}
+.lbemb>span{position:absolute;left:24%;right:24%;top:27%;bottom:13%;display:grid;place-items:center;font-size:clamp(13px,4.4vh,25px);line-height:1;filter:drop-shadow(0 1px 2px #000a)}
+.lbemb .flag{height:clamp(11px,3.3vh,19px)!important}.lbemb .lgm{height:clamp(14px,4.2vh,24px)!important}
+.lbhead .ttl{font-family:var(--fh);font-style:italic;font-size:clamp(16px,5.4vh,32px);line-height:1.05;background:linear-gradient(#fff6c4,#f4bf36 55%,#b27500);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #3a2400) drop-shadow(0 0 8px #ffb02077)}
+.lbhead .ends{font-size:clamp(9px,2.3vh,13px);color:#cfe0ff;margin-top:clamp(1px,.4vh,3px)}
+.lbhead .pz{margin:0 auto;text-align:center;font-size:clamp(9px,2.3vh,13px);line-height:1.25;color:#e4ecff}
+.lbhead .pz.lg{text-align:left;flex:1 1 40%;margin:0}
+.lbhead .pz>b{display:block;font-family:var(--fh);font-weight:400;color:#ffdf80;font-size:clamp(10px,2.8vh,16px)}
+.lbhead .pzr{display:flex;gap:clamp(6px,1.8vw,20px);align-items:center;justify-content:center;white-space:nowrap}
+.lbhead .pzr>span{display:inline-flex;align-items:center;gap:clamp(2px,.5vw,5px);font-family:var(--fh);font-size:clamp(11px,3vh,18px);color:#fff}
+.lbhead .pzr .cash{width:clamp(14px,3.6vh,22px);height:clamp(10px,2.6vh,16px)}
+.lbpm{display:inline-block;flex:none;width:clamp(12px,3.3vh,21px);height:clamp(15px,4.1vh,26px);background:center/contain no-repeat}
+.lbhead #lbLast{margin-left:auto;flex:none;font-size:clamp(10px,2.8vh,15px)!important;padding:clamp(3px,.9vh,7px) clamp(8px,1.4vw,16px)!important;color:#3a2300!important;background:linear-gradient(#ffe27a,#f2a615 60%,#c27a00)!important;border:1.5px solid #fff0a8!important;box-shadow:inset 0 1px 0 #fff9,0 2px 0 #7a4a00,0 0 10px #ffb30066!important;border-radius:10px!important;text-shadow:none!important}
+.lbcols{width:100%;max-width:1120px;box-sizing:border-box;display:grid;grid-template-columns:calc(var(--lbmd) + 12px) 1fr auto;align-items:center;padding:clamp(1px,.4vh,4px) clamp(12px,2.2vw,22px);margin-bottom:clamp(2px,.6vh,5px);font-size:clamp(8px,2vh,12px);color:#aab7dc;text-transform:uppercase;letter-spacing:1px;background:linear-gradient(#0e1a4a,#08113a);border:1px solid #28387a;border-radius:8px}
+.lbcols span:last-child::before{content:"\1F3C6";margin-right:.5em}
+.lb{width:100%;max-width:1120px}
+.lbr{position:relative;display:grid;grid-template-columns:calc(var(--lbmd) + 10px) calc(var(--lbav) + 8px) auto auto 1fr auto;gap:clamp(3px,.9vw,10px);align-items:center;box-sizing:border-box;height:var(--lbrow);padding:0 clamp(12px,2.2vw,22px);margin-bottom:clamp(1.5px,.5vh,4px);border-radius:10px;background:linear-gradient(90deg,#101c52e6,#0a1340ee 40%,#0b1442ee);border:1.5px solid #3d4f96;box-shadow:inset 0 1px 0 #ffffff1a,0 2px 5px #0007}
+.lbr.r1{border-color:#ffd24d;box-shadow:inset 0 0 14px #ffb30044,0 0 12px #ffb30099,0 2px 6px #0008}
+.lbr.r2{border-color:#cdd6ea}.lbr.r3{border-color:#d98a4e}
+.lbr.me{background:linear-gradient(90deg,#4a3a0c,#161f4a 55%,#0b1442);border-color:var(--gold)}
+.lbr.up{box-shadow:inset 3px 0 0 #3fe052,inset 0 1px 0 #ffffff1a,0 2px 5px #0007}
+.lbr.down{box-shadow:inset 3px 0 0 #ff4b3e,inset 0 1px 0 #ffffff1a,0 2px 5px #0007}
+.lbr .rk{display:grid;place-items:center;height:100%;font-family:var(--fh);font-size:calc(var(--lbrow) * .5);color:#dfe7ff}
+.lbr .lbmd{display:block;width:var(--lbmd);height:var(--lbmd);margin:-12% 0;background:center/contain no-repeat;filter:drop-shadow(0 2px 3px #000a)}
+.lbr .rkn{display:grid;place-items:center;min-width:calc(var(--lbrow) * .66);height:calc(var(--lbrow) * .66);padding:0 4px;border-radius:50%;background:#0a1236;border:1px solid #33468c;box-sizing:border-box}
+.lbr .avc{display:grid;place-items:center;width:calc(var(--lbav) + 8px);height:var(--lbav)}
+.lbr .avc .avx{width:var(--lbav)!important;height:var(--lbav)!important}
+.lbr .avc .avx.avp{transform:scale(.8);margin:0}
+.lbr .lvstar{width:var(--lbst);height:var(--lbst);font-size:calc(var(--lbst) * .4)}
+.lbr .flag{height:var(--lbfl)!important}
+.lbr .nm{display:block;min-width:0}
+.lbr .nm>div{display:flex;align-items:center;gap:clamp(3px,.8vw,8px);min-width:0;line-height:1.1;white-space:nowrap}
+.lbr .nm b{flex:0 1 auto;min-width:0;font-size:var(--lbnm);font-weight:400;font-family:var(--fh);color:#fff;overflow:hidden;text-overflow:ellipsis}
+.lbr small.sub{display:block;flex:0 1 auto;min-width:0;color:#ffcf3d;font-size:var(--lbsb);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbr small.muted{flex:none;font-size:var(--lbsb)}
+.lbr .tbadge,.lbr .ctag{flex:none;font-size:var(--lbsb)}
+.lbr .amt{display:flex;align-items:center;gap:4px;white-space:nowrap;font-family:var(--fh);font-size:calc(var(--lbrow) * .6);color:#ffe27a;text-shadow:0 1px 0 #4a2a00}
+.lbr .amt .coin{width:calc(var(--lbrow) * .66);height:calc(var(--lbrow) * .66)}
+#lbDeco{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(52%,340px);aspect-ratio:220/120;background:var(--lb-ball) center bottom/contain no-repeat;pointer-events:none;z-index:-1}
 .lvstar{position:relative;display:inline-grid;place-items:center;width:30px;height:30px;font-family:var(--fh);font-size:12px;color:#fff;flex:none;
 clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
-.lbr.up{box-shadow:inset 4px 0 0 #3fe052}
-.lbr.down{box-shadow:inset 4px 0 0 #ff4b3e}
-.lbr{display:grid;grid-template-columns:64px 52px 1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;background:#1a2340;margin-bottom:6px;border:1px solid #2c3a60}
-.lgm.lgi{display:inline-block;vertical-align:middle;object-fit:contain}.sub .lgm.lgi{height:18px!important}
-.lbr.me{background:linear-gradient(90deg,#3b2f08,#1a2340);border-color:var(--gold)}
-.lbr .rk{font-family:var(--fh);font-size:22px;text-align:center}
-.lbr .av{width:40px;height:40px;border-radius:9px;display:grid;place-items:center;font-size:24px}
+.lgm.lgi{display:inline-block;vertical-align:middle;object-fit:contain}.sub .lgm.lgi{height:calc(var(--lbsb,11.25px) * 1.55)!important}
 .minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,320px));gap:16px;justify-content:center;width:100%}
 /* wheel */
 /* lucky wheel: illustrated scene (reference art 1672x845); the disc spins, everything else is static */
@@ -672,7 +708,7 @@ background:radial-gradient(circle at 40% 35%,#fff2b3,#ffcf3d 55%,#c98a00);clip-p
 .xpbar span{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
 .xprow .tro{font-size:15px}
 /* top bar in the owner's style */
-#nav{height:62px!important;background:linear-gradient(#141a2cf2,#0a0e1af2)!important;border-bottom:1px solid #3a2a0a!important}
+#nav{height:62px!important}   /* no band behind the top menu any more (the owner): the buttons and the money chips float over the menu's own picture */
 .screen{padding-top:72px}
 .pchip{background:linear-gradient(#10141f,#05070c)!important;border:2px solid #d9a63a!important;box-shadow:0 0 12px #ffb30055,inset 0 1px 0 #fff2;border-radius:14px!important;padding:4px 12px 4px 6px!important}
 .pav{width:48px!important;height:48px!important;border-radius:10px!important;overflow:visible!important;border:2px solid #ffcf3d;box-shadow:0 0 10px #ffb300aa!important;background:#1a1030}
@@ -1283,7 +1319,7 @@ body,button,input,select,textarea{font-family:Philosopher,"Palatino Linotype","B
 h1,h2,h3,.btn,.tab,b{letter-spacing:.2px}
 .screen>.panel,#modal .panel.achp{background:var(--sheen),radial-gradient(ellipse at 50% -10%,#1e3a8a,#0a1536 55%,#050a1c);background-clip:padding-box}
 .panel,.card{background-image:var(--sheen),linear-gradient(#1b2b5e,#0c1636)}
-#nav{background:var(--sheen),linear-gradient(#10204f,#060d26)!important;border-bottom:2px solid #c9951e!important;box-shadow:0 4px 18px #000a,0 1px 0 #ffe08a55 inset!important}
+#nav{background:none!important;border:0!important;box-shadow:none!important;pointer-events:none}#nav>*{pointer-events:auto}   /* (the empty strip between the buttons lets a tap through to the screen below)*/
 .btn.green,.btn.blue,.btn.orange,.btn.purple,.btn.red{box-shadow:inset 0 0 0 1.5px #ffe08a66,inset 0 2px 0 #fff6,0 3px 0 #0008}
 .iconbtn{border-color:#c9951e88!important}
 /* mockup skin for full screens: framed panels, gold serif titles, art back button, bevelled cards */
@@ -2109,6 +2145,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 <div class="lbhead" id="lbInfo"></div>
 <div class="lbcols"><span>#</span><span>Ism</span><span>Haftalik yutuq</span></div>
 <div class="lb" id="lbList"></div>
+<div id="lbDeco"></div>
 </div>
 <!-- ============ MINI GAMES ============ -->
 <div class="screen" id="mini">
@@ -4893,11 +4930,11 @@ function resize() {
 const touch = matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
 rotated = touch && innerHeight > innerWidth;
 document.documentElement.classList.toggle("rot", rotated);
-if (!rotated && kbH) igkHide(false);   // the phone was turned: the page is upright again and the phone's own keyboard fits
-const I = tgInsets(); insB = I.b; if (rotated && kbH) I.b += kbH;   // the in-game keyboard owns the bottom strip of the turned page (= the screen's left edge)
+if (kbH && !igkOn()) igkHide(false);   // the phone was turned (the page is upright again and the phone's own keyboard fits) or the full screen was left
+const I = tgInsets(); insB = I.b; if (kbH) I.b += kbH;   // the in-game keyboard owns the bottom strip of the page (of a turned page = the screen's left edge)
 insL = I.l; insT = I.t;
 vw = (rotated ? innerHeight : innerWidth) - I.l - I.r; vh = (rotated ? innerWidth : innerHeight) - I.t - I.b;
-const uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : Math.max(0.8, Math.min(1, vw / 700, vh / 340));   // big monitors scale the menus up; a small page (a phone in a narrow Telegram window, a Vivo Y31 ...) scales them down a little (never below 80%) instead of dropping or overlapping pieces
+const small = Math.max(0.8, Math.min(1, vw / 700, vh / 340)), uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : matchMedia("(pointer: coarse)").matches ? Math.max(0.74, small * 0.88) : small;   // a phone / tablet draws its menus 12% smaller than a computer would, so more of every list fits on the page (the owner: the menus are too big)   // big monitors scale the menus up; a small page (a phone in a narrow Telegram window, a Vivo Y31 ...) scales them down a little (never below 80%) instead of dropping or overlapping pieces
 for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) / uiz <= q.v);
 const bs = document.body.style, inset = I.l || I.t || I.r || I.b;
 bs.width = rotated || inset ? vw + "px" : ""; bs.height = rotated || inset ? vh + "px" : "";
@@ -4905,7 +4942,7 @@ if (rotated) { bs.left = bs.top = ""; bs.transform = inset ? `translate(${innerW
 else { bs.transform = ""; bs.position = inset ? "fixed" : ""; bs.left = inset ? I.l + "px" : ""; bs.top = inset ? I.t + "px" : ""; }
 let gq = DEV_GFX; try { gq = (profile.set && profile.set.gfx) || DEV_GFX; } catch (e) {}   // profile may not exist yet on the very first resize
 dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, high: 2.5, ultra: 4})[gq] || 2.5) * dprAuto);   // Settings → Graphics: HD 1.5 / Full HD 2 / 2K 2.5 / 4K = the screen's own pixels (sharper, heavier)
-cv.width = Math.round(vw * dpr); cv.height = Math.round(vh * dpr);
+{ const cw = Math.round(vw * dpr), ch = Math.round(vh * dpr); if (cv.width !== cw) cv.width = cw; if (cv.height !== ch) cv.height = ch; }   // (writing the same size would still wipe the picture: a black flash on every resize that changes nothing)
 scale = Math.min(vw / W, vh / H) * zoom;
 { const px = rotated || inset || uiz < 1, ds = document.documentElement.style;   // --u-vh / --u-vw: 1% of the page's own height / width (CSS px inside the zoomed boxes); upright and unzoomed: the browser's own units
 ds.setProperty("--u-vh", px ? (vh / uiz / 100).toFixed(4) + "px" : "1vh"); ds.setProperty("--u-vw", px ? (vw / uiz / 100).toFixed(4) + "px" : "1vw"); }
@@ -4978,9 +5015,14 @@ case "hide": igkHide(true); break;
 case "os": igkToOs(); break;
 }
 }
-function igkPlace() {   // the keyboard fills the page's bottom strip: the page's own frame turned like the body (page top = screen right)
+function igkFs() { try { return !!(document.fullscreenElement || document.webkitFullscreenElement || (TG && TG.isFullscreen)); } catch (e) { return false; } }
+// When the in-game keyboard stands in for the phone's own: a turned page (see above) and FULL SCREEN on a touch screen. In full screen the phone's own keyboard
+// makes Android resize the window / show and hide its bars: the whole screen flashes black (the owner, typing to a friend in full screen). The in-game keyboard changes nothing outside the page.
+function igkOn() { return rotated || (igkFs() && matchMedia("(pointer: coarse)").matches); }   // (a computer with a touch screen keeps its own keyboard: its main pointer is not coarse)
+function igkPlace() {   // the keyboard fills the page's bottom strip: a turned page's own frame turned like the body (page top = screen right), an upright page at the screen's bottom
 if (!igkEl) return;
-igkEl.style.width = vw + "px"; igkEl.style.height = kbH + "px"; igkEl.style.transform = `translate(${kbH + insB}px, ${insL}px) rotate(90deg)`;
+igkEl.style.width = vw + "px"; igkEl.style.height = kbH + "px";
+igkEl.style.transform = rotated ? `translate(${kbH + insB}px, ${insL}px) rotate(90deg)` : `translate(${insL}px, ${innerHeight - insB - kbH}px)`;
 }
 function igkInit() {
 igkEl = document.createElement("div"); igkEl.id = "igk"; document.documentElement.appendChild(igkEl);
@@ -5013,20 +5055,21 @@ requestAnimationFrame(into); setTimeout(into, 320);
 function igkHide(blur) {
 clearTimeout(igkHideT); clearInterval(igkWatchT); clearTimeout(igkRepT); clearInterval(igkRep);
 const e = igkCur; igkCur = null;
+if (e && e !== igkOs) { try { e.inputMode = ""; } catch (er) {} }   // the box goes back to the phone's own keyboard (it was set to "none" for the in-game one): a phone turned upright / a full screen left must still be able to type into it
 if (igkEl) igkEl.classList.remove("on");
 document.documentElement.classList.remove("igk");
 if (kbH) { kbH = 0; resize(); }
 if (blur && e && e.isConnected) { try { e.blur(); } catch (er) {} }
 }
-function igkWatch() { const e = igkCur; if (!e || !rotated || !e.isConnected || !e.getClientRects().length) igkHide(false); }   // the box is gone (the pop-up closed) or the phone was turned
+function igkWatch() { const e = igkCur; if (!e || !igkOn() || !e.isConnected || !e.getClientRects().length) igkHide(false); }   // the box is gone (the pop-up closed), the phone was turned or the full screen was left
 function igkToOs() {
 const e = igkCur; if (!e) return;
 igkOs = e; igkHide(false); e.inputMode = "text"; e.blur();
 setTimeout(() => { try { e.focus(); } catch (er) {} }, 60);
 }
 addEventListener("resize", () => { if (igkCur && kbH && igkH0 && innerHeight < igkH0 - 100) { const e = igkCur; igkOs = e; igkHide(false); e.inputMode = "text"; } });   // the phone's own keyboard came up anyway (its inputmode was not honoured): leave the box to it instead of showing two keyboards
-document.addEventListener("pointerdown", e => { if (rotated && igkText(e.target) && igkOs !== e.target) e.target.inputMode = "none"; }, true);   // before the tap focuses the box, so the phone's keyboard stays down
-document.addEventListener("focusin", e => { if (rotated && igkText(e.target)) igkShow(e.target); }, true);
+document.addEventListener("pointerdown", e => { if (igkOn() && igkText(e.target) && igkOs !== e.target) e.target.inputMode = "none"; }, true);   // before the tap focuses the box, so the phone's keyboard stays down
+document.addEventListener("focusin", e => { if (igkOn() && igkText(e.target)) igkShow(e.target); }, true);
 document.addEventListener("focusout", e => {
 if (e.target === igkCur) { clearTimeout(igkHideT); igkHideT = setTimeout(() => { if (igkCur && document.activeElement !== igkCur) igkHide(false); }, 220); }   // a little later, so the tap that moved the focus lands before the page changes size
 if (e.target === igkOs) setTimeout(() => { if (document.activeElement !== igkOs) igkOs = null; }, 300);
@@ -10039,36 +10082,63 @@ function lbStar(level) {
 const c = level >= 100 ? "#e0352b" : level >= 50 ? "#3fe052" : level >= 20 ? "#3b8cff" : level >= 10 ? "#a45cff" : "#e0a060";
 return `<span class="lvstar" style="background:radial-gradient(circle at 40% 35%,${shade(c, 70)},${c} 60%,${shade(c, -60)})">${level | 0}</span>`;
 }
+// ---- the ratings screen's own art, drawn here (nothing to download): laurel medals for places 1-3, a crown-and-laurel emblem for the header, ribbon medals for the prizes, an 8 ball in laurels for the bottom
+const LB_ART = {}, LB_METAL = [["#fff6c2", "#f2c230", "#a56a00"], ["#ffffff", "#cfd6e6", "#707c96"], ["#ffd9b0", "#dc8a48", "#7d3c12"]];
+const lbUrl = (k, make) => LB_ART[k] || (LB_ART[k] = `url('data:image/svg+xml,${encodeURIComponent(make()).replace(/'/g, "%27")}')`);   // single quotes: the url is also written inside style="..."
+const lbGrad = (id, m) => `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${m[0]}"/><stop offset=".55" stop-color="${m[1]}"/><stop offset="1" stop-color="${m[2]}"/></linearGradient>`;
+function lbLaurel(cx, cy, R, n, from, to, fill, k = 1, sides = [-1, 1]) {   // leaf pairs along an arc round a point: angle 0 = straight below, going up the sides (both sides unless one is asked for)
+let s = "";
+for (let i = 0; i < n; i++) {
+const t = n > 1 ? i / (n - 1) : 0, deg = from + (to - from) * t, th = deg * Math.PI / 180, ry = (7.6 - 2.8 * t) * k, rx = ry * 0.4;
+for (const side of sides) {
+const x = cx + side * R * Math.sin(th), y = cy + R * Math.cos(th), phi = side * (90 - deg);
+for (const tilt of [-28, 28]) { const a = (phi + tilt) * Math.PI / 180, ex = x + ry * Math.sin(a), ey = y - ry * Math.cos(a);   // the leaf grows out of the stem point
+s += `<ellipse cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" transform="rotate(${(phi + tilt).toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)})" fill="${fill}"/>`; }
+}
+}
+return s;
+}
+const lbCrown = (cx, y, w, fill, stroke) => { const h = w * 0.74, x = cx - w / 2; return `<path d="M${x} ${y + h} L${x + w * 0.05} ${y + h * 0.15} L${x + w * 0.3} ${y + h * 0.55} L${cx} ${y} L${x + w * 0.7} ${y + h * 0.55} L${x + w * 0.95} ${y + h * 0.15} L${x + w} ${y + h} Z" fill="${fill}" stroke="${stroke}" stroke-width="1" stroke-linejoin="round"/><circle cx="${cx}" cy="${y + h * 0.04}" r="${w * 0.07}" fill="#e23b3b"/>`; };
+const lbMedalURL = i => lbUrl("m" + i, () => { const m = LB_METAL[i]; return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs>${lbGrad("g", m)}<radialGradient id="d" cx=".4" cy=".3" r=".85"><stop offset="0" stop-color="${m[0]}"/><stop offset=".6" stop-color="${m[1]}"/><stop offset="1" stop-color="${m[2]}"/></radialGradient></defs>${lbLaurel(32, 36, 22, 6, 25, 150, "url(#g)")}<circle cx="32" cy="36" r="14.5" fill="url(#d)" stroke="${m[2]}" stroke-width="1.6"/><circle cx="32" cy="36" r="11.3" fill="none" stroke="#ffffff99" stroke-width=".9"/>${lbCrown(32, 3, 19, "url(#g)", m[2])}<text x="32" y="42.3" text-anchor="middle" font-family="Georgia,serif" font-weight="900" font-size="17" fill="${i === 1 ? "#39445c" : "#3d2300"}">${i + 1}</text></svg>`; });
+const lbRibbonURL = i => lbUrl("p" + i, () => { const m = LB_METAL[i]; return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40"><defs>${lbGrad("g", m)}</defs><path d="M9 1h8l4 14h-8z" fill="#2a63d4"/><path d="M23 1h-8l-4 14h8z" fill="#d9342b"/><circle cx="16" cy="25" r="11.5" fill="url(#g)" stroke="${m[2]}" stroke-width="1.5"/><circle cx="16" cy="25" r="8.6" fill="none" stroke="#ffffff99" stroke-width=".8"/><text x="16" y="30" text-anchor="middle" font-family="Georgia,serif" font-weight="900" font-size="13" fill="${i === 1 ? "#39445c" : "#3d2300"}">${i + 1}</text></svg>`; });
+const lbEmblemURL = () => lbUrl("emb", () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs>${lbGrad("g", LB_METAL[0])}<radialGradient id="o" cx=".4" cy=".3" r=".9"><stop offset="0" stop-color="#58b0ff"/><stop offset=".6" stop-color="#1a58c8"/><stop offset="1" stop-color="#0a2468"/></radialGradient></defs>${lbLaurel(50, 56, 37, 8, 18, 152, "url(#g)", 1.45)}<circle cx="50" cy="56" r="27" fill="url(#o)" stroke="#e9b838" stroke-width="2"/>${lbCrown(50, 3, 30, "url(#g)", "#9a6200")}</svg>`);
+const lbSideURL = side => lbUrl("s" + side, () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 50"><defs>${lbGrad("g", LB_METAL[0])}</defs>${lbLaurel(side < 0 ? 22 : -2, 25, 22, 6, 20, 150, "url(#g)", 0.8, [side < 0 ? -1 : 1])}</svg>`);
+const lbBallURL = () => lbUrl("ball", () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120"><defs>${lbGrad("g", LB_METAL[0])}<radialGradient id="b" cx=".36" cy=".3" r=".85"><stop offset="0" stop-color="#6a7390"/><stop offset=".28" stop-color="#1a1d2c"/><stop offset="1" stop-color="#000"/></radialGradient></defs>${lbLaurel(110, 88, 56, 9, 14, 120, "url(#g)", 1.9)}<circle cx="110" cy="84" r="40" fill="url(#b)"/><circle cx="110" cy="80" r="15" fill="#fff"/><text x="110" y="87" text-anchor="middle" font-family="Georgia,serif" font-weight="900" font-size="21" fill="#111">8</text><ellipse cx="94" cy="62" rx="13" ry="7" transform="rotate(-30 94 62)" fill="#ffffff55"/></svg>`);
+function lbDecoFit() { const d = $("lbDeco"); if (d) d.style.display = $("lbList").querySelectorAll(".lbr").length > 4 ? "none" : ""; }   // the 8 ball in laurels at the bottom shows only where the list is short (it would shine through the rows otherwise)
+function lbArtInit() { const st = $("leader").style; if (st.getPropertyValue("--lb-emb")) return; st.setProperty("--lb-emb", lbEmblemURL()); st.setProperty("--lb-l", lbSideURL(-1)); st.setProperty("--lb-r", lbSideURL(1)); st.setProperty("--lb-ball", lbBallURL()); }
 function buildLeader() {
+lbArtInit();
 document.querySelectorAll("[data-lb]").forEach(t => t.classList.toggle("on", t.dataset.lb === lbScope));
 const clTab = document.querySelector("[data-lb=clubs]"); if (clTab) clTab.textContent = "🛡 " + T("Klub ligalari");
 $("lbFlag").innerHTML = profile.country ? flagHTML(profile.country, 16) : "🏳️";
-const medal = i => i < 3 ? ["🥇", "🥈", "🥉"][i] : fmt(i + 1);
-const row = (u, rank, me, cls = "") => `<div class="lbr${me ? " me" : ""} ${cls}"><div class="rk">${medal(rank)}</div>
-${avHTML(u.avatar, u.frame, 48)}
-<div class="nm">${lbStar(u.level)}${flagHTML(u.country)}<div style="min-width:0"><b>${esc(u.name)}</b>${clubTag(u)}${tableBadge(me ? profile.tableSkin : u.tbl, me ? (profile.editions || {})[profile.tableSkin] : u.tblNo)}${me ? ` <small class="muted">(${T("siz")})</small>` : ""}<small class="sub">${leagueName(u.league)}${u.club ? ` · 🛡 ${esc(u.club)}` : ""}</small></div></div>
-<div class="h" style="color:#ffe27a;font-size:20px;white-space:nowrap">${fmtS(u.weekWon | 0)} <span class="coin"></span></div></div>`;
-$("lbInfo").innerHTML = ""; $("lbList").innerHTML = `<div class="muted" style="text-align:center;padding:20px">${T("Yuklanmoqda…")}</div>`;
+const medal = i => i < 3 ? `<i class="lbmd" style="background-image:${lbMedalURL(i)}"></i>` : `<span class="rkn">${fmt(i + 1)}</span>`;
+const row = (u, rank, me, cls = "") => `<div class="lbr${me ? " me" : ""} ${cls}${rank < 3 ? " r" + (rank + 1) : ""}"><div class="rk">${medal(rank)}</div>
+<div class="avc">${avHTML(u.avatar, u.frame, 40)}</div>${lbStar(u.level)}<span>${flagHTML(u.country)}</span>
+<div class="nm"><div><b>${esc(u.name)}</b>${clubTag(u, 16)}${tableBadge(me ? profile.tableSkin : u.tbl, me ? (profile.editions || {})[profile.tableSkin] : u.tblNo)}${me ? ` <small class="muted">(${T("siz")})</small>` : ""}<small class="sub">${leagueName(u.league)}${u.club ? ` · 🛡 ${esc(u.club)}` : ""}</small></div></div>
+<div class="amt">${fmtS(u.weekWon | 0)} <span class="coin"></span></div></div>`;
+const pzHTML = pr => `<div class="pz"><b>${T("Sovrin")}:</b><div class="pzr">${[0, 1, 2].map(i => `<span><i class="lbpm" style="background-image:${lbRibbonURL(i)}"></i><i class="cash"></i>${fmt(pr[i])}</span>`).join("")}</div></div>`;
+const headHTML = (emb, ttl, pz) => `<div class="lbemb"><span>${emb}</span></div><div><div class="ttl">${ttl}</div><div class="ends">⏱ ${T("Tugashiga")}: <span id="lbEnds"></span></div></div>${pz}<button class="btn blue" id="lbLast">📅 ${T("O'tgan hafta")}</button>`;
+$("lbInfo").innerHTML = ""; $("lbList").innerHTML = `<div class="muted" style="text-align:center;padding:20px">${T("Yuklanmoqda…")}</div>`; lbDecoFit();
 clearInterval(lbTimer);
 Net.sync().then(r => { if (!r) throw new Error("offline"); return Net.api("/api/leaderboard?scope=" + lbScope); }).then(r => {
 if (r.scope === "clubs") {
-$("lbInfo").innerHTML = `<div><div class="ttl">🛡 ${T("Klub ligalari")}</div><div class="ends">⏱ ${T("Tugashiga")}: <span id="lbEnds"></span></div></div><div class="pz"><b>${T("Sovrin")}:</b><br>🥇 💵 ${r.prizes[0]} · 🥈 💵 ${r.prizes[1]} · 🥉 💵 ${r.prizes[2]}</div><button class="btn blue" id="lbLast" style="padding:6px 12px;font-size:14px">${T("O'tgan hafta")}</button>`;
+$("lbInfo").innerHTML = headHTML("🛡", T("Klub ligalari"), pzHTML(r.prizes));
 const tk = () => { const s = Math.max(0, (r.endsAt - Date.now()) / 1000), el = $("lbEnds"); if (el) el.textContent = `${Math.floor(s / 86400)}${T("k")} ${Math.floor(s % 86400 / 3600)}${T("s")} ${Math.floor(s % 3600 / 60)}${T("d")} ${Math.floor(s % 60)}s`; };
 tk(); lbTimer = setInterval(tk, 1000); $("lbLast").onclick = showLastWeek;
-const crow = (c, i, me) => `<div class="lbr${me ? " me" : ""}"><div class="rk">${medal(i)}</div>${clubBadge(c)}<div class="nm"><div style="min-width:0"><b>${esc(c.name)}</b><small class="sub">${fmt(c.members)} ${T("A'zolar")}</small></div></div><div class="h" style="color:#ffe27a;font-size:20px;white-space:nowrap">${fmtS(c.score | 0)} <span class="coin"></span></div></div>`;
+const crow = (c, i, me) => `<div class="lbr${me ? " me" : ""}${i < 3 ? " r" + (i + 1) : ""}"><div class="rk">${medal(i)}</div><div class="avc">${clubBadge(c)}</div><span></span><span></span><div class="nm"><div><b>${esc(c.name)}</b><small class="sub">${fmt(c.members)} ${T("A'zolar")}</small></div></div><div class="amt">${fmtS(c.score | 0)} <span class="coin"></span></div></div>`;
 let ch = r.clubs.map((c, i) => crow(c, i, r.mine && c.id === r.mine.id)).join("");
 if (r.mine && !r.clubs.some(c => c.id === r.mine.id)) ch += `<div class="muted" style="text-align:center">⋮</div>` + crow(r.mine, r.mine.rank - 1, true);
 if (!r.mine) ch = `<div style="text-align:center;margin-bottom:10px"><b>${T("Siz hech qaysi klubga a'zo emassiz")}</b><br><button class="btn green" id="lbJoin" style="margin-top:6px">${T("Qo'shilish")}</button></div>` + ch;
-$("lbList").innerHTML = ch || `<div class="muted" style="text-align:center;padding:20px">${T("Hali hech kim yo'q — birinchi bo'ling!")}</div>`;
+$("lbList").innerHTML = ch || `<div class="muted" style="text-align:center;padding:20px">${T("Hali hech kim yo'q — birinchi bo'ling!")}</div>`; lbDecoFit();
 if ($("lbJoin")) $("lbJoin").onclick = () => go("clubsScr");
 return;
 }
-const title = {world: `🌍 ${T("Dunyo")}`, country: `${flagHTML(r.country, 26)} ${esc(r.country ? countryName(r.country) : T("Davlat"))}`,
-friends: `👥 ${T("Do'stlar")}`, league: leagueName(r.league)}[r.scope];
-$("lbInfo").innerHTML = `<div><div class="ttl">${title}</div><div class="ends">⏱ ${T("Tugashiga")}: <span id="lbEnds"></span></div></div>
-${r.scope === "world" || r.scope === "country" ? `<div class="pz"><b>${T("Sovrin")}:</b><br>🥇 💵 ${fmt(r.prizes[0])} · 🥈 💵 ${fmt(r.prizes[1])} · 🥉 💵 ${fmt(r.prizes[2])}</div>` : ""}
-${r.scope === "league" ? `<div class="pz">⬆ ${T("Top")} ${r.promote} ${T("keyingi ligaga chiqadi")}${r.demote ? `<br>⬇ ${T("Oxirgi")} ${r.demote} ${T("pastga tushadi")}` : ""}<br>🎁 ${T("Liga imtiyozi")}: ×${LEAGUE_COIN_MULT[Math.min(r.league | 0, LEAGUE_COIN_MULT.length - 1)]} 🪙${(r.league | 0) >= 1 ? " · +1 " + T("kiy bo'lagi") : ""}${r.instant && (r.league | 0) < r.leagues.length - 1 ? `<br>⚡ ${TT("Haftalik yutuq {0} ga yetsa — darhol yuqori ligaga chiqasiz va {1} 🪙 sovrin olasiz", fmtS(r.instant), fmtS(r.lgPrize || 0))}` : ""}</div>` : ""}
-<button class="btn blue" id="lbLast" style="padding:6px 12px;font-size:14px">${T("O'tgan hafta")}</button>`;
+const lgTxt = T((LEAGUE_UI[r.league | 0] || LEAGUE_UI[0]).n);
+const emb = {world: "🌍", country: r.country ? flagHTML(r.country, 22) : "🏳️", friends: "👥", league: leagueImg(r.league, 26)}[r.scope];
+const title = {world: T("Dunyo"), country: esc(r.country ? countryName(r.country) : T("Davlat")), friends: T("Do'stlar"), league: lgTxt}[r.scope];
+const pz = r.scope === "world" || r.scope === "country" ? pzHTML(r.prizes)
+: r.scope === "league" ? `<div class="pz lg">⬆ ${T("Top")} ${r.promote} ${T("keyingi ligaga chiqadi")}${r.demote ? ` · ⬇ ${T("Oxirgi")} ${r.demote} ${T("pastga tushadi")}` : ""}<br>🎁 ${T("Liga imtiyozi")}: ×${LEAGUE_COIN_MULT[Math.min(r.league | 0, LEAGUE_COIN_MULT.length - 1)]} 🪙${(r.league | 0) >= 1 ? " · +1 " + T("kiy bo'lagi") : ""}${r.instant && (r.league | 0) < r.leagues.length - 1 ? `<br>⚡ ${TT("Haftalik yutuq {0} ga yetsa — darhol yuqori ligaga chiqasiz va {1} 🪙 sovrin olasiz", fmtS(r.instant), fmtS(r.lgPrize || 0))}` : ""}</div>` : "";
+$("lbInfo").innerHTML = headHTML(emb, title, pz);
 const tick = () => { const s = Math.max(0, (r.endsAt - Date.now()) / 1000); const el = $("lbEnds"); if (el) el.textContent = `${Math.floor(s / 86400)}${T("k")} ${Math.floor(s % 86400 / 3600)}${T("s")} ${Math.floor(s % 3600 / 60)}${T("d")} ${Math.floor(s % 60)}s`; };
 tick(); lbTimer = setInterval(tick, 1000);
 $("lbLast").onclick = showLastWeek;
@@ -10076,11 +10146,13 @@ const n = r.top.length;
 let html = r.top.map((u, i) => row(u, i, u.id === r.me.id, r.scope === "league" && u.weekWon > 0 && i < r.promote ? "up" : r.scope === "league" && r.demote && i >= r.total - r.demote ? "down" : "")).join("");
 if (!r.top.some(u => u.id === r.me.id) && r.me.rank) html += `<div class="muted" style="text-align:center">⋮</div>` + row(r.me, r.me.rank - 1, true);
 $("lbList").innerHTML = lbScope === "friends" && r.top.length < 2 ? `<div style="text-align:center;padding:16px"><p class="muted"><b>${T("Hali do'stlaringiz o'ynamayapti. Haftalik sovrinlar uchun kimnidir taklif qiling!")}</b></p><button class="btn blue" id="lbAddF" style="font-size:18px">${T("Yangi do'st qo'shish")}</button></div>` + html : html || `<div class="muted" style="text-align:center;padding:20px">${T("Hali hech kim yo'q — birinchi bo'ling!")}</div>`;
+lbDecoFit();
 if ($("lbAddF")) $("lbAddF").onclick = () => go("friendsScr");
 void n;
 }).catch(() => {
 $("lbList").innerHTML = `<div class="muted" style="text-align:center;margin-bottom:10px">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>` +
 row({name: profile.name, avatar: profile.avatar, frame: profile.frame, level: profile.level, country: profile.country, weekWon: 0, league: 0}, 0, true);
+lbDecoFit();
 });
 }
 const WK_MEDAL = [["#ffd34d", "#a86a00"], ["#e4e9f2", "#6a7488"], ["#e0955a", "#7a3e12"]];
