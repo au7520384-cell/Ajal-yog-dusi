@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // The "×2 (video)" button (index.html: dblOk / dblHTML / dblWire / dblGo): a rewarded video (about 30 s) that pays a coin prize once more.
 //   node tools/test_double.js            (SHOT=dir also saves a picture of every window)
-// - it is offered where a coin prize is given (match won, mystery box, daily gift, lucky shot, wheel, scratch card, new level) and a rewarded video works (Y8 / Telegram / the app / the portals); never for cash, never for a lost match
+// - BY DEFAULT it is offered for the match win only (the owner: "you beat the opponent, and then a button to double the money you won"); the other places (mystery box, daily gift, lucky shot, wheel, scratch card, new level)
+//   are built and tested here with the switch DBL_PLACES turned on; it needs a rewarded video (Y8 / Telegram / the app / the portals); never for cash, never for a lost match
 // - the video is the "reward" kind, named double-<where>; viewed = the prize once more + the button is used up; closed half way / no video = nothing, the button works again; one use per prize
 // - its own limit: 10 a day (also for ad-free players, who get it without a video); the shared limit of 10 videos a day applies to everybody else
 const { chromium } = require("playwright"), http = require("http"), path = require("path"), fs = require("fs");
@@ -34,13 +35,21 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   // ---------------------------------------------------------------- 1) the rules (who is offered the button) and the click, on a generic window
   let p = await open({});
   const g = await p.evaluate(() => { const t = today(), r = {}; const set = (o) => { Object.assign(profile, { adDay: "", adCount: 0, dblDay: "", dblN: 0, adfree: false }, o); };
-    set({}); r.on = dblOk(1000); r.min = [dblOk(99), dblOk(100)]; r.html = dblHTML(1000, "x").includes("dblb") && dblHTML(40, "x") === "" && dblHTML(1000, "x", true).startsWith("<button");
-    set({ adDay: t, adCount: 10 }); r.capVid = dblOk(1000);
-    set({ adDay: t, adCount: 10, adfree: true }); r.capVidAdfree = dblOk(1000);
-    set({ dblDay: t, dblN: 10 }); r.capDbl = dblOk(1000);
-    set({ dblDay: t, dblN: 10, adfree: true }); r.capDblAdfree = dblOk(1000);
-    set({ dblDay: "2000-01-01", dblN: 10 }); r.oldDay = dblOk(1000);
-    set({}); const sdk = Y8.sdk; Y8.sdk = null; r.noSdk = dblOk(1000); Y8.sdk = sdk; Y8.adsReady = false; r.notReady = dblOk(1000); Y8.adsReady = true; r.back = dblOk(1000); return r; });
+    set({}); r.on = dblOk(1000, "win"); r.min = [dblOk(99, "win"), dblOk(100, "win")]; r.html = dblHTML(1000, "win").includes("dblb") && dblHTML(40, "win") === "" && dblHTML(1000, "win", true).startsWith("<button");
+    set({ adDay: t, adCount: 10 }); r.capVid = dblOk(1000, "win");
+    set({ adDay: t, adCount: 10, adfree: true }); r.capVidAdfree = dblOk(1000, "win");
+    set({ dblDay: t, dblN: 10 }); r.capDbl = dblOk(1000, "win");
+    set({ dblDay: t, dblN: 10, adfree: true }); r.capDblAdfree = dblOk(1000, "win");
+    set({ dblDay: "2000-01-01", dblN: 10 }); r.oldDay = dblOk(1000, "win");
+    set({}); const sdk = Y8.sdk; Y8.sdk = null; r.noSdk = dblOk(1000, "win"); Y8.sdk = sdk; Y8.adsReady = false; r.notReady = dblOk(1000, "win"); Y8.adsReady = true; r.back = dblOk(1000, "win"); return r; });
+  const df = await p.evaluate(() => ({ places: { ...DBL_PLACES }, html: Object.keys(DBL_PLACES).map(k => [k, dblHTML(1000, k) !== ""]), unknown: dblHTML(1000, "nope") }));
+  ok(JSON.stringify(df.places) === JSON.stringify({ win: 1, box: 0, daily: 0, wheel: 0, lucky: 0, scratch: 0, level: 0 }), "by default the button is for the match win only (the owner's wish)", df.places);
+  ok(df.html.every(([k, on]) => on === (k === "win")) && df.unknown === "", "dblHTML: a button for the win, nothing for the other places or an unknown one", df);
+  const dd = await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); profile.coins = 1000; claimReward(REWARDS.find(r => r.t === "coins" && r.v >= 300)); const d = { modal: document.getElementById("modal").classList.contains("on"), btn: document.querySelectorAll(".dblb").length, coins: profile.coins - 1000 };
+    levelUpFx(7, 700, 0); d.lvl = document.querySelectorAll("#lvlFx .dblb").length; d.lvlOn = !!document.getElementById("lvlFx"); const e = document.getElementById("lvlFx"); if (e) e.remove(); return d; });
+  ok(dd.modal === false && dd.btn === 0 && dd.coins >= 300, "default: a coin daily gift is paid with the plain toast as before (no window, no button)", dd);
+  ok(dd.lvlOn && dd.lvl === 0, "default: the level-up celebration has no button", dd);
+  await p.evaluate(() => { Object.assign(DBL_PLACES, { t: 1, box: 1, daily: 1, wheel: 1, lucky: 1, scratch: 1, level: 1 }); });   // (now every place on, to test each one)
   ok(g.on && g.min[0] === false && g.min[1] === true, "offered from 100 coins up (99: no)", g);
   ok(g.html, "dblHTML: a button for a real prize, nothing for a small one, a plain <button> for the row form", g);
   ok(g.capVid === false && g.capVidAdfree === true, "today's 10 videos used up: no button; ad-free players do not need the video limit", g);
@@ -171,6 +180,11 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   await sleep(2500); const c0 = (await st(p)).coins; await shot(p, "result");
   await p.locator("#resBtns .dblb").click({ force: true }); await sleep(900); s = await st(p);
   ok(s.coins === c0 + rw.prize && s.ads.length === 1 && s.ads[0] === "reward:double-win" && /✅/.test(s.btns[0].t), "match won: +the match prize once more after the video (tap on the real button)", [c0, s, rw.prize]);
+  const row = await p.evaluate(() => (document.querySelector('#resList .rrow[data-k="coins"] span') || {}).textContent || "");
+  ok(row.replace(/\s/g, "") === "+" + String(rw.prize * 2), "match won: the coin row of the result list shows the doubled prize (+1 000 becomes +2 000)", row);
+  const chip = await p.evaluate(() => (document.getElementById("resAf") || {}).textContent || "");
+  ok(chip.replace(/\s/g, "") === "+" + String(rw.prize * 2), "...and so does the chip under the winner", chip);
+  await sleep(700); await shot(p, "result_after");
   await match(p, false);
   const rl = await p.evaluate(() => document.querySelectorAll("#resBtns .dblb").length); ok(rl === 0, "match lost: no ×2 button", rl);
   await fake(p, false); await match(p, true);
