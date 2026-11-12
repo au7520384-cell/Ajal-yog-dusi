@@ -22,6 +22,12 @@ const SIZES = [{ n: "phone 915x412", w: 915, h: 412, mobile: true }, { n: "small
     await p.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 120000 }); await sleep(600);
     await p.evaluate(() => { const g = document.getElementById("lsGuest"); if (g) g.click(); }); await sleep(500);
     await p.evaluate(() => { go("home"); const t = document.getElementById("toasts"); if (t) t.style.display = "none"; }); await sleep(2500);
+    // measure a bar that stands still: a medal / coin landing bumps a money chip (scale) and counts its number up for a moment, and a chip that is mid-bump overlaps its neighbour on purpose (fitNav ignores it too)
+    let last = "", still = 0;
+    for (let i = 0; i < 50 && still < 4; i++) {
+      const st = await p.evaluate(() => ({ run: document.getAnimations().some(a => a.playState === "running" && a.effect && a.effect.getTiming().iterations !== Infinity && a.effect.target && a.effect.target.closest && a.effect.target.closest("#nav")), w: [...document.querySelectorAll("#nav .mchip, #nav .pchip2, #nav .nb")].map(e => Math.round(e.getBoundingClientRect().width * 10)).join(",") }));
+      if (!st.run && st.w === last) still++; else still = 0; last = st.w; await sleep(120);
+    }
     return p;
   };
   const rect = (p, sel) => p.evaluate(s => { const e = document.querySelector(s); if (!e) return null; const r = e.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height }; }, sel);   // (screen pixels: for taps)
