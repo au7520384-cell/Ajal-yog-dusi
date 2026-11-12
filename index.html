@@ -210,8 +210,8 @@ box-shadow:inset 0 2px 0 #ffffff22,0 20px 60px #000c;width:100%;max-width:1000px
 .stat .bars i{flex:1;height:9px;border-radius:2px;background:#0d1426}
 .stat .bars i.on{background:linear-gradient(#ffe27a,#ff9d00)}
 .tabs{display:flex;gap:8px;margin-bottom:12px}
-.tab{flex:1;padding:10px;border-radius:10px;border:0;background:#141c30;color:#a7b2cc;cursor:pointer;font-family:var(--fh);font-size:18px}
-.tab.on{background:linear-gradient(#3b8cff,#1553b3);color:#fff}
+.tab{flex:1;padding:8px 10px;border-radius:10px;border:1.5px solid #7d6224;background:linear-gradient(#17255a,#0a1236);color:#dfe7ff;cursor:pointer;font-family:var(--fh);font-size:16px;box-shadow:inset 0 1px 0 #ffffff22,0 2px 6px #0009}   /* every tab bar in the ratings screen's style: navy glass, gold rim, the chosen one blue and lit */
+.tab.on{background:linear-gradient(#4a9bff,#1450c8 55%,#0b2f8a);border-color:#ffd96a;color:#fff;box-shadow:inset 0 1px 0 #ffffff77,0 0 14px #3b8cffcc,0 2px 6px #000a;text-shadow:0 1px 2px #0008}
 .avx{display:inline-block;border-radius:10px;overflow:hidden;flex:none;vertical-align:middle;background:#0003}
 .avx img{width:100%;height:100%;display:block}
 .avx.avp{position:relative;overflow:visible;background:none;margin:12%}.avx.avp>img:first-child{border-radius:10px}
@@ -4945,7 +4945,7 @@ if (kbH && !igkOn()) igkHide(false);   // the phone was turned (the page is upri
 const I = tgInsets(); insB = I.b; if (kbH) I.b += kbH;   // the in-game keyboard owns the bottom strip of the page (of a turned page = the screen's left edge)
 insL = I.l; insT = I.t;
 vw = (rotated ? innerHeight : innerWidth) - I.l - I.r; vh = (rotated ? innerWidth : innerHeight) - I.t - I.b;
-const small = Math.max(0.8, Math.min(1, vw / 700, vh / 340)), uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : matchMedia("(pointer: coarse)").matches ? Math.max(0.74, small * 0.88) : small;   // a phone / tablet draws its menus 12% smaller than a computer would, so more of every list fits on the page (the owner: the menus are too big)   // big monitors scale the menus up; a small page (a phone in a narrow Telegram window, a Vivo Y31 ...) scales them down a little (never below 80%) instead of dropping or overlapping pieces
+const small = Math.max(0.8, Math.min(1, vw / 700, vh / 340)), uiz = !rotated && vw >= 1400 && vh >= 760 ? Math.min(1.6, Math.min(vw / 1280, vh / 720)) : matchMedia("(pointer: coarse)").matches ? Math.max(0.62, small * 0.74) : small;   // a phone / tablet draws its menus 12% smaller than a computer would, so more of every list fits on the page (the owner: the menus are too big)   // big monitors scale the menus up; a small page (a phone in a narrow Telegram window, a Vivo Y31 ...) scales them down a little (never below 80%) instead of dropping or overlapping pieces
 for (const q of MQ) document.documentElement.classList.toggle(q.cls, (q.w ? vw : vh) / uiz <= q.v);
 const bs = document.body.style, inset = I.l || I.t || I.r || I.b;
 bs.width = rotated || inset ? vw + "px" : ""; bs.height = rotated || inset ? vh + "px" : "";
@@ -11882,7 +11882,7 @@ toast("💱", `+${fmt(m)} ${to === "coins" ? "🪙" : "💵"}`, T("Almashtirildi
 }
 function layoutHome() {
 const h = $("home"), st = $("hstage"); if (!h || !st) return;
-const top = ($("nav").offsetHeight || 56), w = h.clientWidth || vw, hh = (h.clientHeight || vh) - top;
+const uz = parseFloat(document.documentElement.style.getPropertyValue("--uiz")) || 1, top = 62, w = vw / uz, hh = vh / uz - top;   // from the page's own size and the menu zoom, not from the element's (zoomed) client sizes: those differ between WebView versions and left the stage off-centre on a turned page
 const s = Math.min(w / 1866, hh / 707), ky = Math.min(1.28, Math.max(1, hh / (707 * s))), sy = s * ky;
 st.style.setProperty("--iky", (1 / ky).toFixed(4));
 st.style.transform = `translate(${(w - 1866 * s) / 2}px,${top + (hh - 707 * sy) / 2}px) scale(${s},${sy})`;
