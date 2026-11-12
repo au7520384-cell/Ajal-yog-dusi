@@ -980,6 +980,23 @@ const routes = {
     if (!ADMIN_KEY || !safeEq(String(k), ADMIN_KEY)) return [403, {error: "forbidden"}];
     return {sources: srcStats()};
   },
+  async "POST /api/adstat"(req) {   // the Y8 page tells what the ad network answered to an ad break (viewed / notReady / frequencyCapped / ...): only counted per day, no account needed
+    if (limited(req, "adstat", 120)) return [429, {error: "slow down"}];
+    const b = await jsonBody(req), W = x => String(x == null ? "" : x).replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 24);
+    const plat = W(b.p), type = W(b.t), status = W(b.s) || "none", name = W(b.n);
+    if (!plat || !type) return [400, {error: "bad"}];
+    db.meta = db.meta || {}; const all = db.meta.ads = db.meta.ads || {}, day = new Date().toISOString().slice(0, 10), d = all[day] = all[day] || {};
+    const k = `${plat} | ${type} | ${name || "-"} | ${status}`, r = d[k] = d[k] || {n: 0, viewed: 0, ms: 0};
+    if (Object.keys(d).length < 200) { r.n++; r.viewed += b.v ? 1 : 0; r.ms += Math.min(99999, Math.max(0, b.ms | 0)); }
+    const days = Object.keys(all).sort(); while (days.length > 30) delete all[days.shift()];
+    markDirty(); return {ok: true};
+  },
+  "GET /api/adstat"(req) {   // /api/adstat?key=ADMIN_KEY (or the x-admin-key header): per day, per ad break, what the ad network answered
+    const k = req.headers["x-admin-key"] || new URL(req.url, "http://x").searchParams.get("key") || "";
+    if (!ADMIN_KEY || !safeEq(String(k), ADMIN_KEY)) return [403, {error: "forbidden"}];
+    return {days: ((db.meta || {}).ads) || {}};
+  },
+  "GET /admin/ads": () => [200, {__html: `<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Reklama hisobi</title><style>body{font:15px system-ui;background:#0b1226;color:#e8eef7;max-width:760px;margin:16px auto;padding:0 12px}input,button{box-sizing:border-box;margin:6px 0;padding:11px;border-radius:10px;border:1px solid #3b4a74;background:#141d38;color:#fff;font:inherit}button{background:#1f9d4a;border:0;font-weight:700}table{border-collapse:collapse;width:100%;margin:6px 0 16px}td,th{border-bottom:1px solid #26335a;padding:5px 6px;text-align:left}small{opacity:.7}</style><h2>Y8 reklama hisobi</h2><small>Har bir reklama chaqirig'iga reklama tarmog'i nima javob bergani. <b>viewed</b> = reklama ko'rsatildi, <b>notReady / noAdPreloaded / frequencyCapped / timeout</b> = tarmoq reklama bermadi.</small><br><input id=k type=password placeholder="Admin kalit (ADMIN_KEY)"> <button onclick=go()>Ko'rsatish</button><div id=o></div><script>async function go(){const r=await fetch('/api/adstat',{headers:{'x-admin-key':k.value}});if(!r.ok){o.textContent='Xato: '+r.status;return}const j=(await r.json()).days,days=Object.keys(j).sort().reverse();let h='';for(const d of days){h+='<h3>'+d+'</h3><table><tr><th>chaqiriq</th><th>soni</th><th>ko\'rildi</th><th>o\'rtacha ms</th></tr>';for(const [n,v] of Object.entries(j[d]).sort((a,b)=>b[1].n-a[1].n))h+='<tr><td>'+n.replace(/[<>&]/g,'')+'</td><td>'+v.n+'</td><td>'+v.viewed+'</td><td>'+Math.round(v.ms/Math.max(1,v.n))+'</td></tr>';h+='</table>'}o.innerHTML=h||'Hali ma\'lumot yo\'q.'}</script>`}],
   "GET /api/adsgram/reward"(req) {
     if (limited(req, "adsgram", 600)) return [429, {error: "slow down"}];
     const q = new URL(req.url, "http://x").searchParams, key = String(q.get("key") || ""), tg = String(q.get("userid") || q.get("userId") || "").slice(0, 20);
@@ -1797,7 +1814,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /auth/done", "POST /api/auth/begin", "POST /api/auth/stash", "POST /api/auth/claim", "GET /api/adsgram/reward", "GET /api/src/stats", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /auth/done", "POST /api/auth/begin", "POST /api/auth/stash", "POST /api/auth/claim", "GET /api/adsgram/reward", "GET /api/src/stats", "POST /api/adstat", "GET /api/adstat", "GET /admin/ads", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
