@@ -322,11 +322,11 @@ def card_sprite(n):   # (sprite, origin in the mockup's px), cut once
 TOP.update({"c_" + n: (lambda n=n: card_sprite(n)[0]) for n in list(CARDS) + ["lim"]})
 
 # ---- where the pieces stand on the home stage (1866 x 707 stage px) and the CSS for it; the old painted cards are taken out of the hero picture
-S_CARD = 0.975; GAP = 12; ROW_CX = 931; ROW_BOTTOM = 414
+S_CARD = 0.84; GAP = 14; ROW_CX = 931; ROW_CY = 296
 CARD_SEL = {"play": "#tPlay", "cups": "#tTour", "events": "#tEvents", "mini": "#tMini", "friend": "#tWithFr"}
 TILE_W = 384; TILE_BOTTOM = 696; TILE_LEFT = 1456
 HERO_ORIG = os.path.join(ROOT, "tools", "art", "home_hero_orig.webp")
-HERO_HOLES = [(789, 190, 1083, 399, 30), (1098, 190, 1374, 399, 30), (1383, 190, 1672, 399, 30)]      # stage px: each of the owner's three old painted cards (events, minigames, with a friend), a little bigger than the card
+HERO_HOLE = (789, 190, 1672, 399)      # stage px: the three old painted cards (events, minigames, with a friend) and the thin strips between them
 
 
 def layout_css(sprites):
@@ -334,7 +334,7 @@ def layout_css(sprites):
     order = ["play", "cups", "events", "mini", "friend"]
     widths = [(CARDS[n][0][2] - CARDS[n][0][0]) * S_CARD for n in order]; x = ROW_CX - (sum(widths) + GAP * 4) / 2; out = []
     for n, w in zip(order, widths):
-        (l, t, r, b, rad), _ = CARDS[n]; spr, org = sprites[n]; h = (b - t) * S_CARD; top = ROW_BOTTOM - h
+        (l, t, r, b, rad), _ = CARDS[n]; spr, org = sprites[n]; h = (b - t) * S_CARD; top = ROW_CY - h / 2
         out.append("%s{left:%.1fpx;top:%.1fpx;width:%.1fpx;height:%.1fpx;border-radius:%.0fpx}" % (CARD_SEL[n], x, top, w, h, rad * S_CARD))
         out.append("%s>.hmci{left:%.1fpx;top:%.1fpx;width:%.1fpx;height:%.1fpx}" % (CARD_SEL[n], (org[0] - l) * S_CARD, (org[1] - t) * S_CARD, spr.width * S_CARD, spr.height * S_CARD))
         x += w + GAP
@@ -347,15 +347,40 @@ def layout_css(sprites):
     return "\n".join(out)
 
 
-def clean_hero():
-    """the hero picture without the three old painted cards (a push-pull fill from what is round them; the new cards are drawn over it)"""
-    im = Image.open(HERO_ORIG).convert("RGB"); a = np.asarray(im).astype(np.float32); h, w = a.shape[:2]; K = w / 1866.0; mk = np.zeros((h, w), bool)
-    for (x0, y0, x1, y1, r) in HERO_HOLES:
-        m = Image.new("L", (w, h), 0); ImageDraw.Draw(m).rounded_rectangle([x0 * K, y0 * K, x1 * K, y1 * K], radius=r * K, fill=255); mk |= np.asarray(m) > 127
-    f = fill(a, ~mk); f = blur_edges(f, mk, 6)
-    soft = np.asarray(Image.fromarray((mk * 255).astype(np.uint8), "L").filter(ImageFilter.GaussianBlur(3)), dtype=np.float32)[..., None] / 255.0
-    out = a * (1 - soft) + f * soft
-    return Image.fromarray(np.clip(out, 0, 255).astype(np.uint8), "RGB")
+def _box_blur(a, r):
+    """box blur of radius r along both axes of an (h, w, c) float array (cumulative sums, edge-replicated)"""
+    for ax in (0, 1):
+        n = a.shape[ax]; pad = [(0, 0)] * a.ndim; pad[ax] = (r + 1, r); c = np.cumsum(np.pad(a, pad, mode="edge"), axis=ax, dtype=np.float64)
+        hi = np.take(c, np.arange(2 * r + 1, 2 * r + 1 + n), axis=ax); lo = np.take(c, np.arange(0, n), axis=ax); a = ((hi - lo) / (2 * r + 1)).astype(np.float32)
+    return a
+
+
+def _gauss(a, sigma):
+    """a Gaussian blur made of three box blurs"""
+    r = max(1, int(round(sigma * 0.8)))
+    for _ in range(3): a = _box_blur(a, r)
+    return a
+
+
+def clean_hero(ctx=7, detail=0.45, donor_w=600, feather=12):
+    """the hero picture without the three old painted cards. The scene behind them is stratified (the skyline's reflection, neon lines, the dark floor), so every row of the hole is a smooth blend of what stands
+    left and right of it on the same row (the lines go straight on, nothing is smeared up and down like a blur); the left neighbourhood's own fine texture (its high-pass, mirrored and tiled) is laid over it so it is not
+    flat; the edge is feathered into the picture. The new cards are drawn over it, only slivers of it show."""
+    im = Image.open(HERO_ORIG).convert("RGB"); a = np.asarray(im).astype(np.float32); h, w = a.shape[:2]; K = w / 1866.0
+    x0, y0, x1, y1 = [int(round(v * K)) for v in HERO_HOLE]; hw = x1 - x0
+    L = a[y0:y1, x0 - 3 * ctx:x0 - ctx].mean(axis=1); R = a[y0:y1, x1 + ctx:x1 + 3 * ctx].mean(axis=1)
+    ker = np.exp(-0.5 * (np.arange(-4, 5) / 1.5) ** 2); ker /= ker.sum()
+    for v in (L, R):   # (a little smoothing along y so a single noisy row does not stripe)
+        for c in range(3): v[:, c] = np.convolve(np.pad(v[:, c], 4, mode="edge"), ker, mode="valid")
+    t = np.linspace(0, 1, hw); t = (t * t * (3 - 2 * t))[None, :, None]; base = L[:, None, :] * (1 - t) + R[:, None, :] * t
+    don = a[y0:y1, x0 - donor_w:x0]; hp = don - _gauss(don, 7)
+    tiles, flip = [], True
+    while sum(q.shape[1] for q in tiles) < hw: tiles.append(hp[:, ::-1] if flip else hp); flip = not flip   # the mirrored copy first: continuous at the edge
+    det = np.concatenate(tiles, axis=1)[:, :hw]; fade = np.clip(1 - np.linspace(0, 1, hw) * 0.9, 0, 1)[None, :, None]
+    rows = (np.arange(y0, y1) / K)[:, None, None]; amp = np.clip((rows - 285) / 30.0, 0, 1)   # (the left neighbourhood holds lounge furniture in the upper rows: no texture from there, it would show as ghosts)
+    out = a.copy(); out[y0:y1, x0:x1] = base + detail * amp * det * fade
+    m = np.zeros((h, w, 1), np.float32); m[y0:y1, x0:x1] = 1; fm = np.clip(_gauss(m, feather / 2.0), 0, 1)
+    return Image.fromarray(np.clip(a * (1 - fm) + out * fm, 0, 255).astype(np.uint8), "RGB")
 
 
 ESR = None
