@@ -43,13 +43,19 @@ const SIZES = [{ n: "phone 915x412", w: 915, h: 412, mobile: true }, { n: "small
         items.sort((a, b) => a[1] - b[1]); const bad = []; for (let i = 0; i < items.length - 1; i++) if (items[i][2] > items[i + 1][1] + 1.5) bad.push([items[i][0], items[i + 1][0]]);
         const nr = n.getBoundingClientRect(), uz = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--uiz")) || 1, lim = rotated ? nr.bottom : nr.right, gaps = [];
         for (let i = 0; i < items.length - 1; i++) gaps.push((items[i + 1][1] - items[i][2]) / uz);
-        return { bad, n: items.length, h: (rotated ? nr.width : nr.height) / uz, rot: rotated, maxGap: Math.max(...gaps), lm: items[0][1] / uz, rm: (lim - items[items.length - 1][2]) / uz }; });
+        const fr = e => { const r = document.querySelector(e).getBoundingClientRect(); return rotated ? [r.top, r.bottom] : [r.left, r.right]; }, pc = fr(".pchip2"), nb = fr(".navbtns"), mo = fr(".money");
+        return { bad, n: items.length, h: (rotated ? nr.width : nr.height) / uz, rot: rotated, maxGap: Math.max(...gaps), lm: items[0][1] / uz, rm: (lim - items[items.length - 1][2]) / uz, gapL: (nb[0] - pc[1]) / uz, gapR: (mo[0] - nb[1]) / uz, cssW: (rotated ? nr.height : nr.width) / uz }; });
       ok(nav.n >= 10 && nav.bad.length === 0, `${sz.n}: the top bar does not overlap itself (${nav.n} pieces)`, nav);
-      ok(nav.maxGap <= 32, `${sz.n}: the top bar stays close together like the mockup (widest gap ${nav.maxGap.toFixed(1)} px, not opened up on a wide screen)`, nav);
-      ok(nav.lm < 0 || nav.rm < 0 || Math.abs(nav.lm - nav.rm) <= 12, `${sz.n}: ...and the group is centred (margins ${nav.lm.toFixed(0)} / ${nav.rm.toFixed(0)})`, nav);
+      ok(nav.cssW > 1760 || (nav.lm <= 16 && nav.rm <= 16), `${sz.n}: the profile card stands in the LEFT corner and the keys in the RIGHT one (margins ${nav.lm.toFixed(0)} / ${nav.rm.toFixed(0)} px)`, nav);
+      ok(Math.abs(nav.gapL - nav.gapR) <= 6, `${sz.n}: the icons stand in the middle between the profile plate and the money plate (gaps ${nav.gapL.toFixed(0)} / ${nav.gapR.toFixed(0)} px)`, nav);
+      ok(nav.maxGap <= 230, `${sz.n}: the gaps of the top bar do not open up (widest ${nav.maxGap.toFixed(0)} px)`, nav);
       ok(Math.abs(nav.h - 62) < 1.5, `${sz.n}: the top bar is 62 px high (${nav.h.toFixed(1)})`, nav);
       const pl = { chip: await frame(p, ".pchip2"), name: await frame(p, "#navName"), lvl: await frame(p, "#navLvl"), xp: await frame(p, "#navXpT") };
       ok(inside(pl.name, pl.chip) && inside(pl.lvl, pl.chip) && inside(pl.xp, pl.chip), `${sz.n}: name, level and XP numbers stand inside the profile plate`, pl);
+      // a coin landing makes its money chip 16% bigger for 0.2 s; the bar must not "squeeze" (hide pieces) because of it
+      const bump = await p.evaluate(async () => { const nav = document.getElementById("nav"), seen = []; const chips = [...document.querySelectorAll(".money .mchip")]; const anims = chips.map(c => c.animate([{ transform: "scale(1)" }, { transform: "scale(1.3)" }, { transform: "scale(1)" }], { duration: 700 }));
+        for (let i = 0; i < 6; i++) { fitNav(); seen.push(nav.className); await new Promise(r => setTimeout(r, 90)); } anims.forEach(a => a.cancel()); return seen; });
+      ok(bump.every(c => !/nf\d/.test(c)), `${sz.n}: a bumping money chip does not squeeze the top bar`, bump);
       // ---- taps on the top bar
       const tapNav = [["#pchip", "profileScr"], ["#nav .navbtns .nb:nth-child(1)", "clubsScr"], ["#nav .navbtns .nb:nth-child(2)", "passScr"], ["#nav .navbtns .nb:nth-child(3)", "shop"], ["#nav .nb-cues", "shop"], ["#nav .navbtns .nb:nth-child(5)", "leader"], ["#nav .nb-mini", "mini"], ["#setBtn", "settingsScr"]];
       for (const [sel, want] of tapNav) {
@@ -65,6 +71,9 @@ const SIZES = [{ n: "phone 915x412", w: 915, h: 412, mobile: true }, { n: "small
       const R = {}; for (const id of cards) R[id] = await frame(p, "#" + id);
       const art = await p.evaluate(ids => Object.fromEntries(ids.map(id => { const i = document.querySelector("#" + id + " .hmci"); const r = i.getBoundingClientRect(); return [id, { w: rotated ? r.height : r.width, h: rotated ? r.width : r.height, nw: i.naturalWidth, nh: i.naturalHeight }]; })), cards);
       for (const id of cards) { const a = art[id], asp = (a.w / a.h) / (a.nw / a.nh); ok(Math.abs(asp - 1) < 0.03, `${sz.n}: the picture of #${id} keeps its proportions (${asp.toFixed(3)})`, a); }
+      const stage = await frame(p, "#hstage"), rowL = R.tPlay.l - stage.l, rowR = stage.r - R.tWithFr.r, rowW = R.tWithFr.r - R.tPlay.l;
+      ok(rowW / stage.w <= 0.72, `${sz.n}: the five cards take at most 72% of the picture's width (${(100 * rowW / stage.w).toFixed(0)}%)`, { rowW, stageW: stage.w });
+      ok(Math.abs(rowL - rowR) / stage.w <= 0.03, `${sz.n}: the row of cards is centred (${(100 * rowL / stage.w).toFixed(1)}% / ${(100 * rowR / stage.w).toFixed(1)}%)`, { rowL, rowR });
       const row = cards.slice(0, 5).map(id => R[id]); let ovl = [];
       for (let i = 0; i < row.length - 1; i++) if (row[i].r > row[i + 1].l + 0.5) ovl.push([cards[i], cards[i + 1]]);
       ok(ovl.length === 0, `${sz.n}: the five mode cards do not overlap`, { ovl, row });
