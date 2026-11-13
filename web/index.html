@@ -10739,13 +10739,14 @@ buttons: [{label: "📺 " + T("Ko'rish"), cls: "green", fn: () => y8Rewarded("op
 {label: "Keyinroq", cls: "gray", fn: plain}]});
 }
 // Y8 asked for "an ad on the first click" (so that more players see ads: the gap between plays and ad impressions was huge; the start ad used to wait for the tutorial and was asked at load, without a click).
-// The FIRST click / tap of every visit on the Y8 page starts the short start ad - new players too. A returning player's first click is his answer to the gift window (Watch = the rewarded video, Later = the start ad): that already is the ad.
+// The FIRST click / tap of every visit on the Y8 page (and in the Telegram Mini App, when an Adsgram interstitial block is set) starts the short start ad - new players too. A returning player's first click is his answer to the gift window (Watch = the rewarded video, Later = the start ad): that already is the ad.
 let y8FirstDone = false;
 function y8FirstFire() {
 if (y8FirstDone) return;
-if (!ON_PORTAL || typeof CRAZY_BUILD !== "undefined" || Y8.app || Y8.startAds) { y8FirstDone = true; return; }
+if (typeof CRAZY_BUILD !== "undefined" || Y8.app || (!ON_PORTAL && !TG_LAUNCH)) { y8FirstDone = true; return; }   // (Y8 page and Telegram only; the other portal builds and the app keep their own rules)
 if (Y8.pre || Y8.busy) { y8FirstDone = true; return; }   // the gift window or another ad is the first-click ad
-if (!Y8.sdk || !Y8.adsReady) return;   // the SDK is still loading: the next click tries again
+if (!Y8.sdk || !Y8.adsReady) return;   // the SDK / Adsgram is still loading: the next click tries again
+if (!ON_PORTAL && Y8.startAds !== "tg") { y8FirstDone = true; return; }   // Telegram without an Adsgram interstitial block: no ad
 y8FirstDone = true;
 if (profile.adfree) return;
 Y8.pre = true; Y8.lastBreak = Date.now(); y8Ad("start", "first-click");
