@@ -178,6 +178,10 @@ border:3px solid #ffffff30;box-shadow:inset 0 3px 0 #ffffff40,0 10px 30px #000b;
 .city::before{content:"";position:absolute;inset:-20px;background:var(--cb) center/cover;filter:blur(14px) brightness(.55) saturate(1.3);z-index:0}
 .city::after{content:"";position:absolute;inset:0;background:linear-gradient(#0000 30%,#050818cc 70%,#050818 100%);z-index:0}
 .city>*{position:relative;z-index:1}
+/* the list scrolls smoothly: 31 cards each with a blur filter on a rounded-clipped layer, a backdrop blur and a filtered lock overlay made the phone's screen flicker while scrolling past the locked cities (owner's Telegram screenshot). A plain dim copy of the picture instead of the blurred one, no backdrop blur, no filter on the lock: the cards look the same. */
+.city::before{filter:none;opacity:.45}
+.city .prize{backdrop-filter:none!important}
+.city .lock{filter:none}
 .city .cban{margin:-12px -12px 2px;overflow:hidden;aspect-ratio:364/110;box-shadow:0 6px 14px #000a}.city .cban img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
 .city{border-color:var(--ac,#ffcf3d)!important;box-shadow:0 0 18px color-mix(in srgb,var(--ac,#ffb300) 45%,transparent),0 10px 30px #000b!important}
 .city .cban img{object-position:50% 100%}.city .cban{container-type:inline-size;position:relative;aspect-ratio:456/281!important;margin:-12px -12px 4px!important}
