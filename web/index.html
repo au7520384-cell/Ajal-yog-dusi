@@ -611,6 +611,12 @@ html.rot body{position:fixed;top:0;left:0;transform-origin:0 0;transform:rotate(
 #igk button.spc:after{content:"";display:block;width:34%;height:4px;margin:0 auto;border-radius:2px;background:#8fa6e8}
 html.igk #lbChat,html.igk #specUi,html.igk #wChat{bottom:calc(var(--kbh,0px) / var(--uiz,1))}   /* (the owner: "I must be able to read what I type": these panels stood behind the keys, their text box too) */
 html.igk #modal{padding-bottom:var(--kbh,0px)}
+/* The phone's own keyboard in a browser (Chrome) lies OVER the page (the page keeps its size): --osk is the height it covers, measured on the screen's bottom edge. An upright page lifts the chat panels / pop-ups above it, a turned page (its screen bottom = the page's right edge) narrows them from the right, so the send key and the text box stay in sight (the owner: the world chat was cut off behind the keys in Chrome; inside Telegram the page is resized by the app itself and --osk stays 0) */
+html.osk:not(.rot) #lbChat,html.osk:not(.rot) #specUi,html.osk:not(.rot) #wChat{bottom:calc(var(--osk,0px) / var(--uiz,1))}
+html.osk:not(.rot) #modal{padding-bottom:var(--osk,0px)}
+html.osk.rot #lbChat{right:calc(var(--osk,0px) / var(--uiz,1))}
+html.osk.rot #specUi,html.osk.rot #wChat{right:calc(var(--osk,0px) / var(--uiz,1))}
+html.osk.rot #modal{padding-right:var(--osk,0px)}
 #igk .pv{flex:none;box-sizing:border-box;height:var(--igkpv,26px);display:flex;align-items:center;gap:6px;padding:0 10px;border-radius:7px;background:#050a1c;border:1px solid #3a5190;overflow:hidden;font-weight:600;font-size:calc(var(--igkpv,26px) * .6)}
 #igk .pv .pl{flex:none;color:#7f93c8;max-width:34%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:.8em}
 #igk .pv .pt{flex:1;min-width:0;display:flex;justify-content:flex-end;white-space:pre;color:#fff;overflow:hidden}#igk .pv .pt i{font-style:normal;color:#ffd24d;animation:igkblink 1s steps(1) infinite}
@@ -5116,7 +5122,10 @@ dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, ({low: 1.5, mid: 2, hig
 scale = Math.min(vw / W, vh / H) * zoom;
 { const px = rotated || inset || uiz < 1, ds = document.documentElement.style;   // --u-vh / --u-vw: 1% of the page's own height / width (CSS px inside the zoomed boxes); upright and unzoomed: the browser's own units
 ds.setProperty("--u-vh", px ? (vh / uiz / 100).toFixed(4) + "px" : "1vh"); ds.setProperty("--u-vw", px ? (vw / uiz / 100).toFixed(4) + "px" : "1vw"); }
-document.documentElement.style.setProperty("--kbh", (kbH && !rotated ? I.b : 0) + "px");   // the in-game keyboard's strip at the bottom of an upright screen: the chat panels / pop-ups end above it (see html.igk)
+document.documentElement.style.setProperty("--kbh", (kbH && !rotated ? I.b : 0) + "px");
+{ let osk = 0; try { const vv = window.visualViewport, ae = document.activeElement;   // the phone's own keyboard over the page: the visible part is shorter than the page, a text box is in use, and the game's own keyboard is not up
+  if (vv && !kbH && igkText(ae)) osk = Math.round(Math.max(0, innerHeight - vv.height - vv.offsetTop)); } catch (e) {}
+  if (osk < 120) osk = 0; document.documentElement.classList.toggle("osk", osk > 0); document.documentElement.style.setProperty("--osk", osk + "px"); }   // the in-game keyboard's strip at the bottom of an upright screen: the chat panels / pop-ups end above it (see html.igk)
 document.documentElement.style.setProperty("--uiz", uiz.toFixed(3)); document.documentElement.style.setProperty("--pvh", vh + "px");   // --pvh: the turned page's own height (CSS vh would be the wrong axis)
 document.documentElement.style.setProperty("--bks", (rotated ? 1 : Math.max(1, Math.min(2.2, vh / uiz / 430))).toFixed(3));   // the tournament bracket is drawn in tiny px for phones; on a monitor it grows with the screen height   // big monitors: scale the menus up with the table so nothing looks tiny
 offX = (vw - W * scale) / 2; offY = (vh - H * scale) / 2;
@@ -5252,6 +5261,8 @@ document.addEventListener("focusout", e => { if (igkText(e.target)) { setTimeout
 addEventListener("resize", () => { if (igkCur && kbH && igkH0 && innerHeight < igkH0 - 100) { const e = igkCur; igkOs = e; igkHide(false); e.inputMode = "text"; } });   // the phone's own keyboard came up anyway (its inputmode was not honoured): leave the box to it instead of showing two keyboards
 document.addEventListener("pointerdown", e => { if (igkOn() && igkText(e.target) && igkOs !== e.target) e.target.inputMode = "none"; }, true);   // before the tap focuses the box, so the phone's keyboard stays down
 document.addEventListener("focusin", e => { if (igkOn() && igkText(e.target)) igkShow(e.target); }, true);
+document.addEventListener("focusin", e => { if (igkText(e.target)) { setTimeout(resize, 350); setTimeout(resize, 900); } }, true);   // the phone's own keyboard slides up a little later: --osk is measured again
+if (window.visualViewport) visualViewport.addEventListener("scroll", () => setTimeout(resize, 100));
 document.addEventListener("input", e => { if (e.target === igkCur) igkPv(); }, true);
 document.addEventListener("selectionchange", () => { if (igkCur) igkPv(); });
 document.addEventListener("focusout", e => {
