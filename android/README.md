@@ -49,7 +49,7 @@ When Google refunds or charges back a purchase, the server notices: every 30 min
 ## Ads (AppLovin MAX)
 The app shows two kinds of ads (`appAdsInit()` in `index.html`, the native side is our own small Capacitor plugin `android/native/RbAdsPlugin.java` - there is no maintained AppLovin plugin for Capacitor; the workflow copies it into the project, registers it in `MainActivity` and adds `com.applovin:applovin-sdk:13.7.0`):
 - **Rewarded video** (the player taps a button): free 🪙 +15 and 💵 +1 (2 a day), the extra tries of the lucky shot / wheel / scratch card, the second trial of a cue / table in one day, and "watch N ads" instead of a price on everything **💵 can buy** (frames, sticker packs, ordinary / elite tables). Never on premium / horror / country cues, premium tables or avatars (`adBuyOk`), never 💎: 💎 stay paid-only.
-- **Short ad between games**: every 4th finished game (`Y8.every = 4` in `y8Break`), at least 90 s after the last one, never for a player with fewer than 3 games and never for the owner of "Ad-Free Forever".
+- **Short ad between games**: every 2nd finished game (`Y8.every = 2` in `y8Break`; it was every 4th before), at least 90 s after the last one, never for a player with fewer than 3 games and never for the owner of "Ad-Free Forever".
 The page asks the game server for the AppLovin ids (`GET /api/auth/config` -> `applovin`), so **no new build is needed** once the account exists. Until the three env vars below are set the app shows no ads and no ad buttons.
 
 ### What you do (once, after the app is on Google Play)
