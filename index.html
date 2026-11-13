@@ -10769,7 +10769,7 @@ Y8.pre = true; Y8.lastBreak = Date.now(); y8Ad("start", "first-click");
 document.addEventListener("click", () => { if (!y8FirstDone) setTimeout(y8FirstFire, 60); }, true);   // (a moment after the click, so that a rewarded key that was tapped first starts its own ad)
 function y8Break(then) {
 Y8.matches++;
-if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {   // the Android app: every 4th game, not for new players
+if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8_SITE ? 1 : (Y8.every || 2)) === 0 && Date.now() - Y8.lastBreak > (Y8_SITE ? 45000 : 90000) && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {   // the Android app: every 4th game, not for new players
 Y8.lastBreak = Date.now(); y8Ad("next", "between-matches").then(then);
 } else then();
 }
@@ -10790,8 +10790,9 @@ profile.adCount++; if (name === "bank-cash") profile.adCash = (profile.adCash | 
 const DBL_MIN = 100, DBL_DAY = 10;   // not offered for a prize smaller than DBL_MIN; at most DBL_DAY a day
 // WHERE it is offered. The owner: "you beat the opponent, and then a button to double the money you won": the match win only. The other places are built and tested (tools/test_double.js) but off: set one to 1 to switch it on.
 const DBL_PLACES = {win: 1, box: 0, daily: 0, wheel: 0, lucky: 0, scratch: 0, level: 0};
+const Y8_SITE = ON_PORTAL && typeof CRAZY_BUILD === "undefined";   // the Y8 page (and id.net): NOT Telegram, the app or the other portal builds. The owner: on Y8 a player who tapped the ×2 video "left the game" (the ad took the page away): there the ×2 button is gone and a video ad comes after every match instead (y8Break)
 const dblUsed = () => profile.dblDay === today() ? profile.dblN | 0 : 0;
-function dblOk(c, tag) { return !!DBL_PLACES[tag] && (c | 0) >= DBL_MIN && !!(Y8.sdk && Y8.adsReady) && dblUsed() < DBL_DAY && (profile.adfree || !(profile.adDay === today() && (profile.adCount | 0) >= 10)); }
+function dblOk(c, tag) { return !!DBL_PLACES[tag] && !Y8_SITE && (c | 0) >= DBL_MIN && !!(Y8.sdk && Y8.adsReady) && dblUsed() < DBL_DAY && (profile.adfree || !(profile.adDay === today() && (profile.adCount | 0) >= 10)); }
 const dblTxt = c => `📺 ×2 +${fmt(c)} 🪙`;
 function dblHTML(c, tag, row) { return dblOk(c, tag) ? (row ? `<button class="orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button>` : `<div class="dblw"><button class="btn orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button></div>`) : ""; }
 function dblGo(c, tag, done) { y8Rewarded("double-" + tag, () => { if (profile.dblDay !== today()) { profile.dblDay = today(); profile.dblN = 0; } profile.dblN++; addCoins(c); toast("🪙", "+" + fmt(c), "×2"); try { coinShower(Math.min(28, 10 + Math.round(Math.log10(c + 1) * 3))); } catch (e) {} if (done) done(); }); }
