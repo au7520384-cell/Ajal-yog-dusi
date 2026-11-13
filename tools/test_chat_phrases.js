@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Ready-made chat phrases are shown in the READER's own language (14 languages), text typed by hand stays as written, and the phrase panel scrolls on a low screen:  node tools/test_chat_phrases.js
+// Ready-made chat phrases are shown in the READER's own language (16 languages), text typed by hand stays as written, and the phrase panel scrolls on a low screen:  node tools/test_chat_phrases.js
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__dirname, ".."), P = 8688;
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 400) : ""); } };
@@ -14,7 +14,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await p.evaluate(() => { const g = document.getElementById("lsGuest"); if (g) g.click(); }); await sleep(800);
     // 1) every phrase has a translation in every language (not the Uzbek source)
     const cov = await p.evaluate(() => { const ph = [...CHAT, ...DM_QUICK, "Avval joriy o'yinni tugating"], out = {}; for (const k of Object.keys(LANGS)) { applyLang(k); out[k] = k === "uz" ? [] : ph.filter(x => T(x) === x); } applyLang("en"); return { n: ph.length, langs: Object.keys(LANGS).length, miss: Object.entries(out).filter(([k, v]) => v.length) }; });
-    ok(cov.n === 15 && cov.langs === 14 && cov.miss.length === 0, "all 15 phrases (14 chat + the finish-your-match-first notice) are translated in all 14 languages", cov);
+    ok(cov.n === 15 && cov.langs === 16 && cov.miss.length === 0, "all 15 phrases (14 chat + the finish-your-match-first notice) are translated in all 16 languages", cov);
     // 2) the spectator chat: a phrase from an Uzbek sender is read in the reader's language, hand-typed text is untouched
     const sp = await p.evaluate(() => { const out = {}; for (const k of ["ko", "en", "ru", "uz"]) { applyLang(k); specInfo.log = [{ name: "Ali", avatar: 1, frame: 0, msg: "Yaxshi o'yin! 🤝" }, { name: "Vali", avatar: 2, frame: 0, msg: "Salom do'stlar" }, { me: true, msg: "Rahmat!" }]; const L = document.getElementById("specLog"); specDrawLog(); out[k] = [...L.querySelectorAll(".splb")].map(e => e.textContent.replace(/^(Ali|Vali|Siz|You|Вы|나)/, "")); out[k + "_exp"] = [T("Yaxshi o'yin! 🤝"), T("Rahmat!")]; } applyLang("en"); return out; });
     ok(sp.ko[0] === sp.ko_exp[0] && sp.ko[0] !== "Yaxshi o'yin! 🤝" && /[가-힣]/.test(sp.ko[0]), "spectator chat, Korean reader: the phrase is Korean", sp.ko);
