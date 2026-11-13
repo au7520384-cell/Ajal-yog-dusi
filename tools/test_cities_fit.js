@@ -2,6 +2,7 @@
 // "Choose a table" on the owner's phone:  node tools/test_cities_fit.js
 // His phone (393 px tall, 412 px phones too) is in the band 521..560 of the page's own height (after the 26% smaller menus). It got the ROOMY city card: the stats list filled the card, the city
 // picture (the beautiful skyline of London, Sydney ...) was squeezed into a ~58 px strip at the top and the cards looked big (the owner: "why did you push the beautiful cities to the top").
+// The list also scrolls without the blur filter, backdrop blur and filtered lock overlay of the cards (the owner's screen flickered while he scrolled past the locked cities).
 // Now that band gets the compact card of the phones just below it: a big picture, short stats, the fee on the PLAY key; four cards fit the row. Bigger screens keep the roomy card.
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__dirname, "..");
@@ -24,9 +25,11 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     const m = await p.evaluate(() => { const cs = (e, k, pe) => getComputedStyle(e, pe)[k], list = [...document.querySelectorAll("#cities .city")], C = list[0], B = C.querySelector(".cban");
       const full = list.filter(e => { const r = e.getBoundingClientRect(); return r.left >= -1 && r.top >= -1 && r.right <= innerWidth + 1 && r.bottom <= innerHeight + 1; }).length;
       const ch = parseFloat(cs(C, "height")), bh = parseFloat(cs(B, "height")), cw = parseFloat(cs(C, "width"));
-      return { n: list.length, full, ch, bh, cw, ratio: bh / ch, fee: cs(C.querySelector(".cplay"), "content", "::after"), rows: [...C.querySelectorAll(".crow")].map(e => cs(e, "display")), band: document.documentElement.classList.contains("mh560") && !document.documentElement.classList.contains("mh520") }; });
+      const lk = document.querySelector("#cities .city .lock");
+      return { n: list.length, full, ch, bh, cw, ratio: bh / ch, blur: cs(C, "filter", "::before"), backdrop: cs(C.querySelector(".prize"), "backdropFilter"), lockFilter: lk ? cs(lk, "filter") : "no-lock", fee: cs(C.querySelector(".cplay"), "content", "::after"), rows: [...C.querySelectorAll(".crow")].map(e => cs(e, "display")), band: document.documentElement.classList.contains("mh560") && !document.documentElement.classList.contains("mh520") }; });
     ok(m.n >= 30, `${name}: the city cards are there`, m);
     ok(m.bh >= 100, `${name}: the city picture is big (${Math.round(m.bh)} px, not a strip)`, m);
+    ok(m.blur === "none" && m.backdrop === "none" && m.lockFilter === "none", `${name}: the cards carry no blur / backdrop / lock filter (smooth scrolling)`, m);
     if (kind !== "roomy") ok(m.ratio >= 0.4, `${name}: the picture is at least 40% of the card (${Math.round(m.ratio * 100)}%)`, m);
     ok(m.full >= minFull, `${name}: ${minFull}+ cards fit the screen fully (${m.full})`, m);
     if (kind === "band") { ok(m.band, `${name}: the page is in the 521..560 band`, m); ok(m.cw >= 190 && m.cw <= 225, `${name}: the compact card width (190..225 px, 22% of the page: ${Math.round(m.cw)})`, m); ok(/🪙/.test(m.fee), `${name}: the fee is on the PLAY key`, m); ok(m.rows.every(d => d === "none"), `${name}: the extra rows are hidden`, m); }
