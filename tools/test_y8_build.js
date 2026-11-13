@@ -88,6 +88,15 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   // 2b) the first click when the ad network has no ad: nothing breaks and it is not asked again at every click
   t = await open({ name: "New", genderAsked: true, gender: "m", lang: "en" }); await sleep(3500); await t.fr().evaluate(() => { window.__status = "notReady"; });
   await click(t.p); await click(t.p); await click(t.p); const a2c = await t.fr().evaluate(() => window.__ads.slice()); ok(a2c.length === 1 && a2c[0] === "start:first-click", "no ad available: asked once (first-click), not at every click", a2c); await t.p.context().close();
+  // 2c) the owner: "Ads are not available right now" on Y8 and nobody could tell why. The toast now carries what the ad network answered (a screenshot is enough): the status, or why the SDK refused
+  t = await open(base); await sleep(4500); await t.fr().evaluate(() => { document.querySelector("#mBtns .gray").click(); window.__status = "noAdPreloaded"; }); await sleep(800);
+  const w1 = await t.fr().evaluate(async () => { y8FirstDone = true; Y8.pre = true; document.getElementById("toasts").innerHTML = ""; toastQ.length = 0; y8Rewarded("reward-test", () => {}, () => {}); await new Promise(r => setTimeout(r, 900)); return document.getElementById("toasts").textContent; });
+  ok(/not available/i.test(w1) && /noAdPreloaded/.test(w1), "no ad from the network: the toast says so and shows the network's answer (noAdPreloaded)", w1);
+  const w2 = await t.fr().evaluate(async () => { Y8.sdk.showAd = () => Promise.reject(new Error("ads disabled for this game")); document.getElementById("toasts").innerHTML = ""; toastQ.length = 0; y8Rewarded("reward-test", () => {}, () => {}); await new Promise(r => setTimeout(r, 900)); return document.getElementById("toasts").textContent; });
+  ok(/not available/i.test(w2) && /error/.test(w2) && /ads disabled/.test(w2), "the SDK refuses (rejects): the toast shows why", w2);
+  const w3 = await t.fr().evaluate(async () => { Y8.adsReady = false; document.getElementById("toasts").innerHTML = ""; toastQ.length = 0; adStep("k", 5, () => {}, () => {}); await new Promise(r => setTimeout(r, 900)); return document.getElementById("toasts").textContent; });
+  ok(/not available/i.test(w3) && /sdk-not-ready/.test(w3), "the SDK is still loading: the toast says sdk-not-ready", w3);
+  await t.p.context().close();
   // 3) ad-free player: no start ad, no gift window, not even at the first click
   t = await open({ ...base, adfree: true }); await sleep(4000); await click(t.p); await click(t.p);
   const a3 = await t.fr().evaluate(() => ({ ads: window.__ads, modal: document.getElementById("modal").classList.contains("on") })); ok(a3.ads.length === 0 && !a3.modal, "no start ad and no gift window for ad-free players (also after clicks)", a3); await t.p.context().close();
