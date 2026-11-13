@@ -238,7 +238,7 @@ else:
     sub('$("fsBtn").onclick = toggleFullscreen;', 'if ($("fsBtn")) $("fsBtn").onclick = toggleFullscreen;')
     sub('{ const fb = $("gFs"); const can = ', '{ const fb = $("gFs"); if (!fb) { /* CrazyGames: no own full-screen button */ } else { const can = ')
     sub('document.addEventListener("webkitfullscreenchange", sync); }', 'document.addEventListener("webkitfullscreenchange", sync); } }')
-sub('<br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a> · <a href="/refund" target="_blank" style="color:#8fc4ff">Refund</a></div>`;', '</div>`;')
+sub('<br><a href="/privacy" target="_blank" style="color:#8fc4ff">${T("Maxfiylik siyosati")}</a> · <a href="/terms" target="_blank" style="color:#8fc4ff">${T("Foydalanish shartlari")}</a> · <a href="/refund" target="_blank" style="color:#8fc4ff">${T("Refund")}</a></div>`;', '</div>`;')
 # language: English first (CrazyGames requires English; reviewers must not meet another language by chance). The other languages stay one tap away in Settings.
 sub("function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\n", "function detectLang() {\nconst saved = profile.lang;\nif (saved && LANGS[saved]) return saved;\n" + ("if (CRAZY_BUILD) { const l = window.__B8_LANG; return l && LANGS[l] ? l : \"en\"; }\n" if PG else "if (CRAZY_BUILD) return \"en\";\n"))   # Playgama: the platform's language is the source language; CrazyGames: English first
 # hide Y8-only UI

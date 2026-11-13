@@ -88,7 +88,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(await until(async () => await D.evaluate(() => !!(game && game.net && game.net.spec && mode === "game")), 15000), "Watch opens the live match");
     await sleep(2500);
     const ds = await lv(D); ok(ds.want && !ds.susp && ds.ok >= 3, "while he watches he stays in the voice room", ds);
-    ok(await D.evaluate(() => document.getElementById("lbChatG").classList.contains("on") && document.getElementById("lbChatG").style.bottom === "122px"), "and has the chat button on the watching screen too");
+    ok(await D.evaluate(() => document.getElementById("lbChatG").classList.contains("on") && document.getElementById("lbChatG").classList.contains("spec")), "and has the chat button on the watching screen too (in the watcher's corner, above his microphone key)");
 
     // ---------------------------------------------------------------- the match ends; the winner does NOT tap "Continue"
     const room1 = await P1.evaluate(() => game.net.room);

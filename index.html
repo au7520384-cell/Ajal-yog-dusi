@@ -972,7 +972,9 @@ background:linear-gradient(#5a8a4a,#2e5a26);box-shadow:inset 0 2px 0 #fff4,0 3px
 #lbChat{position:fixed;right:0;top:0;bottom:0;width:min(46vw,380px);z-index:38;background:#0a1020f2;border-left:1px solid #34436a;display:none;flex-direction:column;padding:6px 8px 8px;zoom:var(--uiz,1)}#lbChat.on{display:flex}
 #lbChatLog{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:6px 2px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;min-height:0}#lbChatLog .muted{text-align:center;margin:auto 0}
 #lbChatEmoRow{display:none;flex-wrap:wrap;gap:4px;padding:4px 0}#lbChatEmoRow.on{display:flex}#lbChatEmoRow button{border:0;background:#1b2543;border-radius:8px;font-size:22px;padding:3px 6px;cursor:pointer}
-#lbChatG{position:fixed;left:12px;bottom:76px;z-index:17;width:40px;height:40px;border-radius:50%;border:2px solid #ffd45a;background:linear-gradient(#2d6cdf,#123a8e);color:#fff;font-size:19px;line-height:1;cursor:pointer;padding:0;display:none;zoom:var(--uiz,1);box-shadow:0 3px 8px #0009}#lbChatG.on{display:block}
+#lbChatG{position:fixed;left:calc(max(2px,env(safe-area-inset-left)) + 64px / var(--uiz,1));bottom:calc(38px / var(--uiz,1) - 15px);z-index:17;width:40px;height:40px;border-radius:50%;border:2px solid #ffd45a;background:linear-gradient(#2d6cdf,#123a8e);color:#fff;font-size:19px;line-height:1;cursor:pointer;padding:0;display:none;zoom:var(--uiz,1);box-shadow:0 3px 8px #0009}#lbChatG.on{display:block}   /* the owner (marked on his Telegram screenshot): the round "write a message" key stands just beyond the zoom + / - keys at the table's bottom-left corner, centred on them, not on top of the + (a watcher keeps the old corner above his microphone key); the corner feed of new lines starts after it */
+#lbChatG.spec{left:12px;bottom:122px}
+body:has(#lbChatG.on:not(.spec)) #liveFeed{left:calc(42px + 70px / var(--uiz,1))}
 .lbprz{text-align:center;font-weight:700;color:#ffe27a}
 .mh520 #lbBody{padding:6px 8px;max-height:calc(100% - 52px)}.mh520 .lbt{flex-basis:148px;padding:0 0 5px}.mh520 .lbart{aspect-ratio:2.3/1;background-position:center 35%}.mh520 .lbt .lbnm{margin:-15px 4px 0}.mh520 .lbt .lbnm b{font-size:clamp(14px,12cqw,17px)}.mh520 .lbt .lbtp,.mh520 .lbt .lbtf{margin:3px 6px 0;padding:2px 4px;font-size:clamp(10px,7.6cqw,12px);white-space:nowrap}.mh520 .lbt .lbtk{font-size:11px;padding:1px 6px}
 .mh520 .lbfoot{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap}.mh520 .lbfoot .lbnote,.mh520 .lbfoot .lbauto{margin:0;padding:0}.mh520 .lbnm{margin:0 0 3px}.mh520 .lbnm b{font-size:17px}.mh520 .lbnm small{font-size:9px}
@@ -13226,7 +13228,7 @@ function sync() {   // the log belongs to ONE lobby; the round chat button on th
 const c = LB ? LB.code : "";
 if (c !== code) { code = c; log = []; unread = 0; if (!c) close(); badge(); }
 const g = $("lbChatG"), on = inMatch() && !isOpen();
-g.classList.toggle("on", on); if (on) g.style.bottom = (game.net.spec ? 122 : 76) + "px";   // (a watcher has the lobby's mic button in that corner: the chat button sits above it)
+g.classList.toggle("on", on); g.classList.toggle("spec", !!(on && game.net && game.net.spec)); g.style.bottom = "";   // (a watcher has the lobby's mic button in the old corner: the chat button sits above it, see #lbChatG.spec)
 }
 function draw() {
 const el = $("lbChatLog"); if (!el) return;
