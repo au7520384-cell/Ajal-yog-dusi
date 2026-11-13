@@ -1896,7 +1896,12 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 /* the ×2 video button */
 .dblw{margin:10px 0 2px;text-align:center}.dblb{white-space:nowrap}.dblw .dblb{animation:dblpulse 1.8s ease-in-out infinite}.dblb:disabled{animation:none;filter:grayscale(.3) brightness(.85);cursor:default}
 @keyframes dblpulse{50%{transform:scale(1.06)}}
-.resBtns .dblb:not(:disabled){animation:pop .4s both 1.4s,dblpulse 1.8s ease-in-out 2.2s infinite;box-shadow:inset 0 2px 0 #fff5,0 4px 0 #0007,0 0 16px #ffb020b0}.resBtns .dblb:disabled{animation:none;filter:grayscale(.3) brightness(.85);cursor:default}   /* the ×2 of the match prize: it pulses and glows a little so that it is seen */
+/* the ×2 of the match prize stands BESIDE the prize chip under the winner (the owner: not among the menu buttons, where a late pop-in shifted the keys and players hit "back" by mistake) */
+.feeRow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:nowrap}
+.feeRow .dblb{flex:none;min-height:34px;height:auto;padding:3px 14px;font-size:21px;line-height:1.1;border-radius:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s}
+.feeRow .dblb.on{opacity:1;pointer-events:auto}
+.feeRow .dblb.on:not(:disabled){animation:pop .4s both,dblpulse 1.8s ease-in-out .6s infinite;box-shadow:inset 0 2px 0 #fff5,0 3px 0 #0007,0 0 14px #ffb020b0}
+.feeRow .dblb:disabled{animation:none;filter:grayscale(.3) brightness(.85);cursor:default}
 #scrInfo .dblw{display:inline-block;margin:0 0 0 10px;vertical-align:middle}#scrInfo .dblb{min-height:0;padding:3px 12px;font-size:15px}
 #lvlFx .dblw{position:absolute;left:77%;top:77.6%;translate:0 -50%;margin:0;z-index:3;animation:lvtxt .5s 1.2s both}
 #lvlFx .dblb{display:block;min-height:0;height:auto;white-space:nowrap;padding:.8cqw 1.5cqw;font:900 3.3cqw/1.1 var(--fh);color:#fff;border:.25cqw solid #0006;border-radius:1.5cqw;background:linear-gradient(#ffb020,#d06a00);box-shadow:inset 0 .25cqw 0 #fff5,0 .5cqw 0 #0007;cursor:pointer;text-shadow:0 .25cqw 0 #0006}
@@ -2377,7 +2382,7 @@ width:calc(40px / var(--uiz,1))!important;height:calc(33px / var(--uiz,1))!impor
 <div class="screen full" id="res">
 <div class="vsLogo" id="resLogo"></div>
 <div class="resList" id="resList"></div>
-<div class="vsp vsL" id="resAw"><div class="wtag" id="resAtag"></div><div class="big" id="resA"></div><div class="nm" id="resAn"></div><div class="vsc" id="resAc"></div><div class="vsfee on" id="resAf"></div></div>
+<div class="vsp vsL" id="resAw"><div class="wtag" id="resAtag"></div><div class="big" id="resA"></div><div class="nm" id="resAn"></div><div class="vsc" id="resAc"></div><div class="feeRow" id="resAr"><div class="vsfee on" id="resAf"></div></div></div>
 <div class="vsmid"><div class="vstxt">VS</div><div class="pot"><div class="stack">🪙</div><span id="resPot">0</span></div></div>
 <div class="vsp vsR" id="resBw"><div class="wtag" id="resBtag"></div><div class="big" id="resB"></div><div class="nm" id="resBn"></div><div class="vsc" id="resBc"></div><div class="vsfee on" id="resBf"></div></div>
 <div class="resBtns" id="resBtns"></div>
@@ -9396,7 +9401,8 @@ const open = u => { try { const w = window.open(u, "_blank", "noopener"); if (!w
 mk("share fb", `<svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" d="M14 8V6.5c0-.7.2-1 1.2-1H17V2.2C16.600 2.100 15.500 2 14.300 2 11.700 2 10 3.600 10 6.400V8H7v3.600h3V22h4v-10.400h2.800L17.300 8z"/></svg>${T("Ulashish")}`, () => open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) + "&quote=" + encodeURIComponent(txt)));
 mk("share xx", `<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#fff" d="M17.800 3h3.100l-6.800 7.700L22 21h-6.200l-4.900-6.400L5.300 21H2.200l7.300-8.300L2 3h6.400l4.400 5.900zm-1.100 16.200h1.700L7.400 4.700H5.600z"/></svg>${T("Ulashish")}`, () => open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(txt) + "&url=" + encodeURIComponent(url)));
 }
-if (humanWon === true && prize > 0) { bt.insertAdjacentHTML("beforeend", dblHTML(prize, "win", true)); dblWire(bt); }   // the ×2 video for the prize of the match (not in lobby matches or trials: their prize is 0)
+{ const fr = $("resAr"); fr.querySelectorAll(".dblb").forEach(x => x.remove());   // the ×2 video for the prize of the match (not in lobby matches or trials: their prize is 0) stands beside the prize chip of the winner, not among the keys (a button that pops in late shifted the keys and players hit "back" by mistake)
+  if (humanWon === true && prize > 0) { fr.insertAdjacentHTML("beforeend", dblHTML(prize, "win", true)); dblWire(fr); const showDbl = () => fr.querySelectorAll(".dblb").forEach(x => x.classList.add("on")); setTimeout(showDbl, 4300); window.__showDbl = showDbl; } else window.__showDbl = null; }
 rest.forEach(b => mk(b.cls || "green", b.label, b.fn));
 if (humanWon) { setTimeout(() => { try { burst(); Snd.win(); } catch (e) {} }, 500); } else { try { Snd.lose(); } catch (e) {} }
 setTimeout(() => {
@@ -9408,7 +9414,7 @@ const c = document.createElement("i"); c.className = "flycoin"; document.body.ap
 const sx = pcx - 13 + (Math.random() - .5) * 30, sy = pcy - 13 + (Math.random() - .5) * 14, ex = wcx - 13 + (Math.random() - .5) * 40, ey = wcy - 13 + (Math.random() - .5) * 40, mx = (sx + ex) / 2, my = (sy + ey) / 2 - 40 - Math.random() * 30, spin = 540 + Math.random() * 540;
 c.animate([{transform: `translate(${sx}px,${sy}px) scale(.9) rotateY(0deg)`, opacity: 1}, {transform: `translate(${mx}px,${my}px) scale(1.3) rotateY(${spin * .6}deg)`, opacity: 1, offset: .5}, {transform: `translate(${ex}px,${ey}px) scale(.7) rotateY(${spin}deg)`, opacity: 1}], {duration: 750 + Math.random() * 250, delay: k * 70, easing: "cubic-bezier(.4,.05,.7,.9)", fill: "both"}).onfinish = () => {
 c.remove(); landed++; if (landed % 2 === 0) Snd.coin(1); pot.textContent = fmt(Math.round(potTotal * (1 - landed / n)));
-if (landed === n) { pot.textContent = "0"; const chip = $(humanWon === false ? "resBf" : "resAf"); chip.innerHTML = `<span class="coin"></span>+${fmt(potTotal)}`; chip.style.opacity = 1; chip.animate([{transform: "scale(.6)"}, {transform: "scale(1.25)"}, {transform: "scale(1)"}], {duration: 400}); }
+if (landed === n) { pot.textContent = "0"; const chip = $(humanWon === false ? "resBf" : "resAf"); chip.innerHTML = `<span class="coin"></span>+${fmt(potTotal)}`; chip.style.opacity = 1; chip.animate([{transform: "scale(.6)"}, {transform: "scale(1.25)"}, {transform: "scale(1)"}], {duration: 400}); if (window.__showDbl) window.__showDbl(); }
 };
 }
 if (prize) setTimeout(() => { addCoins(prize); }, 300 + n * 70);
@@ -10769,7 +10775,7 @@ Y8.pre = true; Y8.lastBreak = Date.now(); y8Ad("start", "first-click");
 document.addEventListener("click", () => { if (!y8FirstDone) setTimeout(y8FirstFire, 60); }, true);   // (a moment after the click, so that a rewarded key that was tapped first starts its own ad)
 function y8Break(then) {
 Y8.matches++;
-if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8_SITE ? 1 : (Y8.every || 2)) === 0 && Date.now() - Y8.lastBreak > (Y8_SITE ? 45000 : 90000) && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {   // the Android app: every 4th game, not for new players
+if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {   // the owner: an ad after every 2nd game (at most one per 90 s) on every platform, whether or not the player took the ×2 video; the app does not show one to a brand-new player (before his 4th game)
 Y8.lastBreak = Date.now(); y8Ad("next", "between-matches").then(then);
 } else then();
 }
@@ -10790,11 +10796,10 @@ profile.adCount++; if (name === "bank-cash") profile.adCash = (profile.adCash | 
 const DBL_MIN = 100, DBL_DAY = 10;   // not offered for a prize smaller than DBL_MIN; at most DBL_DAY a day
 // WHERE it is offered. The owner: "you beat the opponent, and then a button to double the money you won": the match win only. The other places are built and tested (tools/test_double.js) but off: set one to 1 to switch it on.
 const DBL_PLACES = {win: 1, box: 0, daily: 0, wheel: 0, lucky: 0, scratch: 0, level: 0};
-const Y8_SITE = ON_PORTAL && typeof CRAZY_BUILD === "undefined";   // the Y8 page (and id.net): NOT Telegram, the app or the other portal builds. The owner: on Y8 a player who tapped the ×2 video "left the game" (the ad took the page away): there the ×2 button is gone and a video ad comes after every match instead (y8Break)
 const dblUsed = () => profile.dblDay === today() ? profile.dblN | 0 : 0;
-function dblOk(c, tag) { return !!DBL_PLACES[tag] && !Y8_SITE && (c | 0) >= DBL_MIN && !!(Y8.sdk && Y8.adsReady) && dblUsed() < DBL_DAY && (profile.adfree || !(profile.adDay === today() && (profile.adCount | 0) >= 10)); }
-const dblTxt = c => `📺 ×2 +${fmt(c)} 🪙`;
-function dblHTML(c, tag, row) { return dblOk(c, tag) ? (row ? `<button class="orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button>` : `<div class="dblw"><button class="btn orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c)}</button></div>`) : ""; }
+function dblOk(c, tag) { return !!DBL_PLACES[tag] && (c | 0) >= DBL_MIN && !!(Y8.sdk && Y8.adsReady) && dblUsed() < DBL_DAY && (profile.adfree || !(profile.adDay === today() && (profile.adCount | 0) >= 10)); }
+const dblTxt = (c, tag) => tag === "win" ? "📺 ×2" : `📺 ×2 +${fmt(c)} 🪙`;   // (beside the prize chip of a won match the amount is already there)
+function dblHTML(c, tag, row) { return dblOk(c, tag) ? (row ? `<button class="orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c, tag)}</button>` : `<div class="dblw"><button class="btn orange dblb" data-dbl="${c | 0}|${tag}">${dblTxt(c, tag)}</button></div>`) : ""; }
 function dblGo(c, tag, done) { y8Rewarded("double-" + tag, () => { if (profile.dblDay !== today()) { profile.dblDay = today(); profile.dblN = 0; } profile.dblN++; addCoins(c); toast("🪙", "+" + fmt(c), "×2"); try { coinShower(Math.min(28, 10 + Math.round(Math.log10(c + 1) * 3))); } catch (e) {} if (done) done(); }); }
 function dblRow(c) {   // the result screen shows the doubled prize where it shows the match prize: the coin row of the list ("+1 000" becomes "+2 000") and the chip under the winner
 const flash = el => { try { el.animate([{transform: "scale(1)", filter: "brightness(1)"}, {transform: "scale(1.12)", filter: "brightness(1.6)"}, {transform: "scale(1)", filter: "brightness(1)"}], {duration: 520, easing: "ease-out"}); } catch (e) {} };
@@ -11892,7 +11897,7 @@ async function appAdsInit() {
         })().then(end);
       });
     }};
-    Y8.app = true; Y8.every = 4; Y8.startAds = 0; Y8.adsReady = true; updateY8Ui();
+    Y8.app = true; Y8.every = 2; Y8.startAds = 0; Y8.adsReady = true; updateY8Ui();
   } catch (e) {} finally { appAdsBusy = false; }
 }
 if (adNP()) { setTimeout(appAdsInit, 5000); document.addEventListener("visibilitychange", () => { if (!document.hidden) appAdsInit(); }); }

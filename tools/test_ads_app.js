@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Ads in the ANDROID APP (AppLovin MAX through the Capacitor plugin "RbAds"), seen from the page: the real server + a browser with a fake plugin:  node tools/test_ads_app.js
 // Checks: no AppLovin ids on the server = no ads and no ad buttons; with ids the page initialises the plugin with them; rewarded video pays free coins / 💵 (2 a day), a video closed early or not loaded pays nothing and says so;
-// an interstitial comes every 4th game (not for new players, not for the Ad-Free owner); "watch N ads" buttons exist only where 💵 buys (frames, stickers, ordinary tables) and never on premium / horror / country cues, premium tables or avatars.
+// an interstitial comes every 2nd game (not for new players, not for the Ad-Free owner); "watch N ads" buttons exist only where 💵 buys (frames, stickers, ordinary tables) and never on premium / horror / country cues, premium tables or avatars.
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = path.resolve(__dirname, ".."), P = 8664, P2 = 8665;
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 500) : ""); } };
@@ -44,7 +44,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     // ---- 2) with ids
     p = await phone(P); await sleep(6500);
     const init = await p.evaluate(() => ({ init: __ad.init, adsReady: Y8.adsReady, every: Y8.every, sdk: !!Y8.sdk }));
-    ok(init.adsReady && init.sdk && init.every === 4 && init.init.length === 1 && init.init[0].sdkKey === "SDKKEY-test-123" && init.init[0].rewardedId === "rw_unit_1" && init.init[0].interstitialId === "in_unit_1" && /\/privacy$/.test(init.init[0].privacyUrl), "the page starts the plugin with the server's AppLovin ids and the privacy page", init);
+    ok(init.adsReady && init.sdk && init.every === 2 && init.init.length === 1 && init.init[0].sdkKey === "SDKKEY-test-123" && init.init[0].rewardedId === "rw_unit_1" && init.init[0].interstitialId === "in_unit_1" && /\/privacy$/.test(init.init[0].privacyUrl), "the page starts the plugin with the server's AppLovin ids and the privacy page", init);
     // free coins / 💵 by rewarded video
     await p.evaluate(() => { go("shop"); buildFree(); }); await sleep(800);
     ok(await p.evaluate(() => !!$("frVid") && !!$("frCash")), "the Free page shows the two video buttons (+300 🪙, +1 💵)");
@@ -60,10 +60,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(await p.evaluate(() => profile.cash | 0) === h0 + 2, "two videos pay +1 💵 each", await p.evaluate(() => profile.cash | 0));
     const r2 = (await A(p)).rew; await clear(p); await p.evaluate(() => $("frCash").click()); await sleep(700);
     ok(await p.evaluate(() => profile.cash | 0) === h0 + 2 && (await A(p)).rew === r2 && /over|tomorrow|ended/i.test(await toasts(p)), "the third 💵 video of the day is refused before any ad is shown", await toasts(p));
-    // ---- 3) the short ad between games: every 4th game, not for new players, not for the Ad-Free owner
+    // ---- 3) the short ad between games: every 2nd game, not for new players, not for the Ad-Free owner
     const brk = n => p.evaluate(async n => { for (let i = 0; i < n; i++) { Y8.lastBreak = 0; await new Promise(r => y8Break(r)); } }, n);
     await p.evaluate(() => { Y8.matches = 0; __ad.inter = 0; }); await brk(8);
-    ok((await A(p)).inter === 2, "8 games = 2 short ads (the 4th and the 8th)", await A(p));
+    ok((await A(p)).inter === 4, "8 games = 4 short ads (every 2nd game)", await A(p));
     await p.evaluate(() => { Y8.matches = 0; __ad.inter = 0; profile.adfree = 1; }); await brk(8);
     ok((await A(p)).inter === 0, "the Ad-Free owner sees none", await A(p));
     await p.evaluate(() => { Y8.matches = 0; __ad.inter = 0; profile.adfree = 0; profile.games = 1; }); await brk(8);
