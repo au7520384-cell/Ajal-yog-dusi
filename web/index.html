@@ -1239,6 +1239,15 @@ html.nosoc .chanonly{display:none!important}   /* the Telegram channel row and t
 .city .crow{padding:2px 8px;font-size:11px;flex:0 0 auto} .city .btn{padding:5px;font-size:15px;flex:0 0 auto}
 }
 @media (max-height:520px){ .screen{padding-top:62px} .logo{margin:0 0 8px} .tile small{display:none} .rw{min-height:104px} .rw .ri{font-size:30px} }
+/* the band 521..560 (a 393 px phone after the 26% smaller menus) got the ROOMY city card: the stats list filled the card and squeezed the city picture into a thin strip at the top, the cards looked big (owner: "the beautiful cities are pushed to the top"). The compact card of the phones just below the band (big picture, short stats, the fee on the PLAY key) for this band too. */
+.mh560:not(.mh520) #cities.screen{padding-top:62px}
+.mh560:not(.mh520) #cities .head{margin-bottom:0}.mh560:not(.mh520) #cities .head h2{font-size:22px}.mh560:not(.mh520) #cities .carousel{padding:4px 16px 6px}
+.mh560:not(.mh520) .city{gap:4px;padding:8px;flex:0 0 clamp(190px,22vw,225px)}.mh560:not(.mh520) .city .cban{flex:0 0 auto;margin:-8px -8px 0!important;aspect-ratio:456/281!important;height:auto;max-height:calc(100vh - 243px)!important}.mh560:not(.mh520) .city .cban img{object-position:50% 100%}.mh560:not(.mh520) .city .prize .pv{font-size:19px}.mh560:not(.mh520) .city .ctro{margin-top:-1px}
+.mh560:not(.mh520) .city .ctro{padding:2px 5px;gap:4px}.mh560:not(.mh520) .city .ctro span{font-size:9px}.mh560:not(.mh520) .city .ctro span b{font-size:12px}.mh560:not(.mh520) .city .cring .ringimg,.mh560:not(.mh520) .city .cring .ring{width:28px!important;height:28px!important}
+.mh560:not(.mh520) .city .cbar em{font-size:11px}.mh560:not(.mh520) .city .ctip,.mh560:not(.mh520) .city .crow:has([data-online]){display:none}
+.mh560:not(.mh520) .city .prize{padding:2px 6px;flex:0 0 auto}.mh560:not(.mh520) .city .prize .pl{display:none}.mh560:not(.mh520) .city .prize .pv .coin{width:20px!important;height:20px!important}.mh560:not(.mh520) .city .cpass{font-size:11px;padding:2px 6px}
+.mh560:not(.mh520) .city .crow{padding:2px 8px;font-size:11px;flex:0 0 auto}.mh560:not(.mh520) .city .btn{padding:5px;font-size:15px;flex:0 0 auto}
+.mh560:not(.mh520) .city .crow:not(:has([data-online])){display:none}.mh560:not(.mh520) .city .cplay::after{content:" · 🪙 " attr(data-fee);font-size:.8em;opacity:.95}
 @media (max-width:560px){ .route{grid-template-columns:repeat(2,1fr)} .bracket{grid-template-columns:1fr} }
 #inbox.screen{padding:78px max(44px,env(safe-area-inset-right)) 20px max(44px,env(safe-area-inset-left))}
 @media (max-height:520px){ #inbox.screen{padding-top:72px} }
