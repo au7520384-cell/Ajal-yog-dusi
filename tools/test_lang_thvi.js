@@ -11,7 +11,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   const srv = spawn("node", [path.join(ROOT, "server", "server.js")], { env: { ...process.env, PORT: String(P), DATA_DIR: tmp }, stdio: "ignore" }); await sleep(2500);
   const b = await chromium.launch();
   const lines = fs.readFileSync(path.join(ROOT, "tools", "xt.txt"), "utf8").replace(/\n+$/, "").split("\n").map(l => { const [k, v] = l.split("‖"), a = v.split("|"); return { k, th: a[a.length - 2], vi: a[a.length - 1], n: a.length }; });
-  ok(lines.length === 1807, "xt.txt has 1807 strings", lines.length);
+  ok(lines.length >= 1812, "xt.txt has all strings", lines.length);
   const mk = async (prof, locale, tz) => {
     const ctx = await b.newContext({ viewport: { width: 844, height: 390 }, locale: locale || "en-US", timezoneId: tz || "Europe/London", serviceWorkers: "block" }), p = await ctx.newPage();
     p.on("pageerror", e => errs.push(e.message.slice(0, 200)));
@@ -41,7 +41,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
       ok(r.lang === L && r.html === L, L + ": the game starts in the saved language", r);
       ok(!!r.inPicker, L + ": it is in the language list", r.inPicker);
       ok(r.empty.length === 0, L + ": no empty translation", r.empty.slice(0, 5));
-      ok(r.bad.length === 0, L + ": T() returns the translation for all 1807 strings", r.bad.slice(0, 3));
+      ok(r.bad.length === 0, L + ": T() returns the translation for every string of tools/xt.txt", r.bad.slice(0, 3));
       ok(r.noPh.length === 0, L + ": placeholders kept", r.noPh.slice(0, 3));
       ok(r.same <= (L === "vi" ? 150 : 25), L + ": almost nothing is left in English (Vietnamese keeps city, cue and hall names as they are)", r.same);
       ok(r.core === 0, L + ": the core table has every label", r.core);
