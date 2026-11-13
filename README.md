@@ -266,7 +266,7 @@ The report from a friends' lobby (one friend inside Telegram): "the microphone d
 - Tests: `node server/test_auth_browser.js` (start redirects, verified hand-over, once-only claim, cancel, rate limit, fake Google / Facebook checkers via `GOOGLE_TOKENINFO_URL` / `FB_GRAPH_URL`) and `node tools/test_login_app.js` (the app with a fake Capacitor: whole Google / Facebook rounds with the real `/auth/done` page, cancel and retry, a closed tab, the settings window).
 - **Still not verified on a real phone:** the Chrome tab, Google's / Facebook's own pages and the `royalbilliard8://auth` jump back were exercised only with fakes here (no Android device, no Google / Facebook test account).
 
-## Quiz translations (14 languages)
+## Quiz translations (16 languages)
 Quizzes are shown to every player in their own game language. `uz` and `en` come from the bank itself
 (`tools/channel_bank/*.txt`). The other 12 languages live in `tools/channel_bank/i18n/<lang>.txt`
 (`Q001|question|opt1;opt2;opt3;opt4|explanation`, `=` keeps the bank option). Run

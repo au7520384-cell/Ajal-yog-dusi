@@ -1,0 +1,151 @@
+// Vietnamese (questions and options; the explanation in English is shown after the answer)
+Q001|Trong bi-a 9 bi, trên bàn có bao nhiêu bi, tính cả bi cái?|=;=;=;=|Chín bi có số cộng bi cái: tổng cộng 10 bi.
+Q002|Trong bi-a 9 bi, bi cái phải chạm vào bi nào trước?|Bi nào cũng được;Bi có số cao nhất;Bi số 9;Bi có số thấp nhất|Luôn là bi có số thấp nhất còn lại trên bàn.
+Q003|Trong bi-a 9 bi, bi nào giúp thắng ván khi được đưa xuống lỗ hợp lệ?|Bi số 8;Bi số 1;Bi cái;Bi số 9|Đưa bi số 9 xuống lỗ hợp lệ là thắng ván.
+Q004|Trong bi-a 9 bi, các bi được xếp thành hình gì?|Hình tròn;Hình tam giác;Hình vuông;Hình thoi|Hình thoi gồm các hàng 1-2-3-2-1, bi số 9 ở giữa.
+Q005|15 bi được xếp thành tam giác gồm bao nhiêu hàng?|=;=;=;=|1+2+3+4+5 = 15: năm hàng.
+Q006|Tổng các số trên bi từ 1 đến 15 là bao nhiêu?|=;=;=;=|15 × 16 / 2 = 120.
+Q007|Snooker có bao nhiêu bi đỏ?|=;=;=;=|15 bi đỏ, 6 bi màu và bi cái: tổng cộng 22 bi.
+Q008|Break cao nhất có thể trong snooker là bao nhiêu điểm?|=;=;=;=|15 bi đỏ + 15 bi đen = 120, các bi màu thêm 27: 147.
+Q009|Bi đen trong snooker được bao nhiêu điểm?|=;=;=;=|Bi đen được 7 điểm, hồng 6 và xanh dương 5.
+Q010|Bàn snooker cỡ lớn dài bao nhiêu?|15 feet;12 feet;9 feet;7 feet|12 feet, khoảng 3,6 mét.
+Q011|Bàn bi-a carom có bao nhiêu lỗ?|=;=;=;=|Carom không có lỗ: bạn ghi điểm bằng cách cho các bi va vào nhau.
+Q012|Cú đánh "masse" là gì?|Nhảy bi cái;Đánh bi bật băng;Cú phá bi;Cầm cơ gần thẳng đứng, bi cái chạy cong|Cơ gần như thẳng đứng và bi chạy cong.
+Q013|Khi bi cái nhảy qua bi cản, đó gọi là gì?|=;=;=;=|Jump shot nhấc bi cái nhảy qua vật cản.
+Q014|Bi cái chạm băng trước, rồi mới chạm bi mục tiêu. Đó là cú gì?|=;=;=;=|Kick shot đi vòng qua đường bị chắn bằng một lần chạm băng.
+Q015|Bi mục tiêu chạm băng rồi rơi xuống lỗ. Đó là gì?|=;=;=;=|Trong bank shot, bi mục tiêu bật băng rồi vào lỗ.
+Q016|Bi cái đánh vào một bi, bi đó đẩy bi khác xuống lỗ. Đó là...|Cú kết hợp (combination);=;=;=|Combination (combo): cú đánh liên hoàn qua hai bi.
+Q017|Bàn tay (hoặc dụng cụ) dùng để đỡ cơ trong tiếng Anh gọi là gì?|=;=;=;=|Bridge giữ cơ vững khi trượt.
+Q018|Khung tam giác dùng để xếp bi trước khi phá bi gọi là gì?|=;=;=;=|Rack xếp các bi chặt và đều.
+Q019|Thành bàn có đệm trong tiếng Anh gọi là gì?|=;=;=;Cushion (rail)|Băng (cushion hay rail) làm bi bật trở lại.
+Q020|Lớp vải mềm phủ mặt bàn gọi là gì?|=;=;=;=|Felt là tấm vải phủ bàn; trong trò chơi, màu của nó đổi theo thành phố.
+Q021|Cú đánh khiến bi cái dừng hẳn sau khi chạm gọi là gì?|=;=;=;=|Đánh thấp hơn tâm một chút và bi cái dừng tại chỗ sau cú đánh thẳng.
+Q022|Đánh phía trên tâm để bi cái tiếp tục lăn về phía trước sau khi chạm. Đó là gì?|Follow (xoáy tiến);=;Draw (xoáy lùi);=|Follow: đánh cao khiến bi cái tiếp tục lăn về phía trước.
+Q023|Cú đánh đầu tiên của ván, làm tung các bi đã xếp, gọi là gì?|=;=;=;=|Cú phá bi làm tung các bi đã xếp.
+Q024|Phương pháp "bi ma" (ghost ball) dùng để làm gì?|Lăn phấn đầu cơ;Nhảy bi;Xếp bi;Hình dung vị trí bi cái cần đến|Bi ma giúp bạn ngắm bi mục tiêu chính xác.
+Q025|Trong điều kiện lý tưởng, bi rời băng với góc nào?|Bằng góc tới;Ngẫu nhiên;Gấp đôi;Luôn 90°|Góc ra bằng góc vào.
+Q026|Đầu cơ thường làm bằng gì?|Thủy tinh;Gỗ;Kim loại;Da|Đầu cơ bằng da giữ phấn và bám vào bi cái.
+Q027|Bi pool hiện đại chủ yếu làm bằng gì?|Nhựa resin;Thủy tinh;Ngà voi;Gỗ|Nhựa phenolic bền; bi cũ còn làm bằng ngà voi.
+Q028|Cơ pool tiêu chuẩn dài khoảng bao nhiêu?|90 cm;120 cm;147 cm;200 cm|Cơ tiêu chuẩn dài khoảng 147 cm (58 in).
+Q029|Đường kính bi pool tiêu chuẩn khoảng bao nhiêu?|3 cm;5,7 cm;8 cm;10 cm|57,15 mm (2¼ in).
+Q030|Khu vực chơi của bàn pool 9 feet rộng khoảng bao nhiêu?|4 × 2 m;3,5 × 1,75 m;2,54 × 1,27 m;1,5 × 0,75 m|254 × 127 cm (100 × 50 in): chính xác tỉ lệ 2:1.
+Q031|Bi số 1 trong bộ bi 8 tiêu chuẩn có màu gì?|Vàng;Xanh lá;Xanh dương;Đỏ|1 vàng, 2 xanh dương, 3 đỏ, 4 tím.
+Q032|Bi số 5 trong bộ tiêu chuẩn có màu gì?|Xanh lá;Đen;Tím;Cam|5 cam, 6 xanh lá, 7 đỏ sẫm, 8 đen.
+Q033|Efren "Phù thủy" Reyes, huyền thoại pool, đến từ nước nào?|Nhật Bản;Trung Quốc;Mỹ;Philippines|Reyes là người Philippines và đã vô địch thế giới bi-a 9 bi năm 1999.
+Q034|Willie Mosconi đã đánh liên tiếp bao nhiêu bi trong màn trình diễn straight pool?|=;=;=;=|526: một trong những kỷ lục nổi tiếng nhất của bộ môn bi-a.
+Q035|Ai đóng vai tay cá cược pool "Fast Eddie" trong phim "The Hustler" năm 1961?|=;=;=;=|Paul Newman, người trở lại vai này trong "The Color of Money" (1986).
+Q036|Ai đóng cùng Paul Newman trong "The Color of Money" (1986)?|=;=;=;=|Tom Cruise; bộ phim nói về những tay cá cược pool.
+Q037|Biệt danh của huyền thoại snooker Ronnie O'Sullivan là gì?|=;=;=;=|"The Rocket": nổi tiếng nhờ lối chơi nhanh.
+Q038|Từ tiếng Anh "cue" bắt nguồn từ từ tiếng Pháp nào?|cube (khối);clé (chìa khóa);cible (mục tiêu);queue (đuôi)|Từ "queue" trong tiếng Pháp nghĩa là đuôi, giống hình dáng cây gậy.
+Q039|Big Ben ở thành phố nào? Đó cũng là bàn đầu tiên của trò chơi!|London;Paris;Madrid;Roma|Big Ben ở London, và bàn London là bàn đầu tiên của trò chơi.
+Q040|Sydney, nổi tiếng với Nhà hát Opera mái hình cánh buồm, thuộc nước nào?|Canada;Nam Phi;New Zealand;Úc|Ở Úc. Bàn thứ 2 của trò chơi là Harbour Bar.
+Q041|Bánh tart trứng "pastel de nata" xuất xứ từ nước nào?|Bồ Đào Nha;Tây Ban Nha;Pháp;Ý|Bồ Đào Nha; thủ đô Lisbon là bàn thứ 3 của trò chơi.
+Q042|Sân vận động Santiago Bernabéu ở thành phố nào?|Lisbon;Barcelona;Roma;Madrid|Ở Madrid, quê hương của Real. Bàn Madrid của trò chơi: Plaza Mayor.
+Q043|Trước năm 1868, Tokyo có tên là gì?|Edo;Osaka;Nagoya;Kyoto|Edo. Bàn "Samurai Dojo" mang tinh thần đó.
+Q044|"Dojo" trong tiếng Nhật là gì?|Phòng tập võ thuật;Khu vườn;Quán trà;Ngôi đền|Dojo là phòng tập. Bàn Tokyo là "Samurai Dojo".
+Q045|Điệu nhảy tango gắn với nước nào (bàn Buenos Aires: "Tango Salon")?|Tây Ban Nha;Brazil;Mexico;Argentina|Tango ra đời ở vùng bờ biển Argentina và Uruguay.
+Q046|Indonesia, quê hương của Jakarta, có khoảng bao nhiêu hòn đảo?|170.000;17.000;1.700;170|Khoảng 17.000 hòn đảo. Trong trò chơi: "Volcano Arena".
+Q047|Lá cây nào có trên quốc kỳ Canada (bàn Toronto: "Maple Lounge")?|Phong;Sồi;Cọ;Bạch dương|Lá phong: vì thế có bàn Toronto "Maple Lounge".
+Q048|Mexico City được xây trên nền thành phố cổ nào?|Teotihuacan;Chichen Itza;Machu Picchu;Tenochtitlan|Tenochtitlan, kinh đô Aztec xây trên hồ.
+Q049|Các kim tự tháp Giza ở nước nào (bàn Cairo: "Pyramid Hall")?|Ai Cập;Sudan;Morocco;Jordan|Ở Ai Cập, ngay cạnh Cairo.
+Q050|Tòa Burj Khalifa cao 828 mét ở thành phố nào?|Singapore;Thượng Hải;New York;Dubai|Ở Dubai. Bàn Dubai của trò chơi: "Golden Tower".
+Q051|Tên "Singapore" có nghĩa là "Thành phố Sư tử". Đúng hay sai?|Đúng;Sai|Từ tiếng Phạn "simha pura": thành phố sư tử.
+Q052|Tháp Minh Châu Phương Đông (Oriental Pearl Tower) ở thành phố nào?|Bangkok;Thượng Hải;Seoul;Osaka|Ở Thượng Hải. Bàn của trò chơi: "Pearl Club".
+Q053|Tháp Eiffel ở thành phố nào?|Roma;Paris;Berlin;Amsterdam|Ở Paris. Bàn của trò chơi ở đó: "Château Royal".
+Q054|New York ban đầu có tên là gì?|New Amsterdam;New Paris;New Rome;New London|New Amsterdam cho đến năm 1664. Cả hai thành phố đều có trong trò chơi.
+Q055|Đấu trường Colosseum ở thành phố nào?|Cairo;Istanbul;Athens;Roma|Ở Roma. Trong trò chơi, bàn là "Colosseo".
+Q056|Bangkok là thủ đô của nước nào?|Campuchia;Thái Lan;Malaysia;Việt Nam|Thủ đô của Thái Lan. Trong trò chơi: "Golden Temple".
+Q057|Tòa tháp đôi Petronas nổi tiếng ở thành phố nào?|Singapore;Manila;Jakarta;Kuala Lumpur|Ở Kuala Lumpur. Bàn của trò chơi: "Twin Towers".
+Q058|Seoul là thủ đô của nước nào?|Hàn Quốc;Trung Quốc;Nhật Bản;Thái Lan|Thủ đô của Hàn Quốc. Trong trò chơi: "Neon Tower".
+Q059|Mumbai từng có tên là gì cho đến năm 1995?|Bombay;Madras;Delhi;Calcutta|Bombay, trái tim của Bollywood. Trong trò chơi: "Maharaja Palace".
+Q060|Thế vận hội hiện đại đầu tiên năm 1896 được tổ chức ở thành phố nào?|Roma;London;Paris;Athens|Ở Athens. Bàn của trò chơi: "Acropolis Hall".
+Q061|Bức tường Berlin sụp đổ vào năm nào?|=;=;=;=|Ngày 9 tháng 11 năm 1989. Bàn của trò chơi: "Platz Arena".
+Q062|Istanbul nằm trên hai châu lục nào?|Châu Á và châu Mỹ;Châu Âu và châu Á;Châu Âu và châu Phi;Châu Á và châu Phi|Eo biển Bosphorus chia thành phố giữa hai châu lục.
+Q063|Tên "Casablanca" có nghĩa là gì?|Ngôi nhà trắng;Thành phố mới;Biển Đen;Chợ lớn|Tiếng Tây Ban Nha "casa blanca": ngôi nhà trắng. Thành phố ở Morocco.
+Q064|Trong 30 thành phố của trò chơi, có bao nhiêu thành phố ở Nhật Bản?|=;=;=;=|Hai: Tokyo (Samurai Dojo) và Osaka (Skyline).
+Q065|Tàu điện ngầm Tashkent, đầu tiên ở Trung Á, mở cửa vào năm nào?|=;=;=;=|Ngày 6 tháng 11 năm 1977. Trong trò chơi: bàn Tashkent "Silk Road".
+Q066|Tashkent kỷ niệm 2.200 năm vào năm nào?|=;=;=;=|Năm 2009. "Tashkent" nghĩa là "thành phố đá".
+Q067|Tên "Rio de Janeiro" có nghĩa là gì?|Hồ lớn;Sông Tháng Giêng;Sông Vàng;Gió biển|Tiếng Bồ Đào Nha nghĩa là "sông Tháng Giêng", đặt tên vào tháng 1 năm 1502.
+Q068|Nhà thờ thánh Basil nằm trên quảng trường nào?|Quảng trường Thời đại;Quảng trường Taksim;Quảng trường Độc lập;Quảng trường Đỏ|Trên Quảng trường Đỏ ở Moscow, bàn cao nhất của trò chơi.
+Q069|Las Vegas thuộc bang nào của Mỹ?|Texas;Nevada;Florida;California|Ở Nevada. Bàn của trò chơi: "Royal Flush".
+Q070|Amsterdam là thủ đô của nước nào?|Hà Lan;Đan Mạch;Thụy Điển;Bỉ|Thủ đô của Hà Lan, thành phố của những con kênh. Trong trò chơi: "Canal House".
+Q071|Trong trò chơi có khoảng bao nhiêu cây cơ?|=;=;=;=|Hơn 470. Bộ đếm bộ sưu tập hiện "1/471".
+Q072|Trong trò chơi có bao nhiêu cây cơ quốc gia?|=;=;=;=|199, mỗi cây mang màu cờ của nước đó.
+Q073|Có bao nhiêu ảnh đại diện chân dung miễn phí?|=;=;=;=|76 ảnh chân dung miễn phí; 70 ảnh đại diện cao cấp tính riêng.
+Q074|Có bao nhiêu gói nhãn dán?|=;=;=;=|6: Billiards, Animals, Funny, Food, Magic, Hearts.
+Q075|Một gói nhãn dán giá bao nhiêu 💎?|=;=;=;=|25 💎.
+Q076|Trong một trận, bạn có thể tặng đối thủ bao nhiêu loại quà?|=;=;=;=|13 loại, từ trái tim đến máy bay phản lực.
+Q077|Món quà nào lớn nhất (👍 ×7.000)?|Xe hơi;Kim cương;Vương miện;Máy bay phản lực|Máy bay phản lực ×7.000; xe hơi ×5.000, xe đạp ×3.000.
+Q078|Hai món quà nào miễn phí mỗi ngày?|Vương miện và kim cương;Cỏ ba lá và sô-cô-la;Xe hơi và máy bay phản lực;Bánh và bó hoa|Một cỏ ba lá và một sô-cô-la miễn phí mỗi ngày.
+Q079|Thẻ Season Pass có bao nhiêu cấp?|=;=;=;=|400 cấp, với chủ đề mới mỗi tháng.
+Q080|Các cúp hằng ngày mở vào những giờ nào (giờ Tashkent)?|=;=;=;=|Bốn lần mỗi ngày, mỗi lần mở 3 giờ.
+Q081|Cúp hằng ngày mở trong bao lâu sau khi bắt đầu?|Cả ngày;6 giờ;1 giờ;3 giờ|3 giờ. Bỏ lỡ một cúp thì cúp tiếp theo đang chờ.
+Q082|Có bao nhiêu người chơi tham gia World Cup?|=;=;=;=|64 người chơi; giải thưởng 7.500.000 🪙.
+Q083|Có bao nhiêu người chơi trong Europe Cup?|=;=;=;=|48 người chơi; Asia Cup và South America Cup mỗi cúp có 32.
+Q084|Cần bao nhiêu cúp để mở Bàn Grandmaster?|=;=;=;=|Mở khi có 45 cúp.
+Q085|Cây cơ Grandmaster huyền thoại được ghép từ bao nhiêu mảnh?|=;=;=;=|Từ 40 mảnh.
+Q086|Cần bao nhiêu mảnh để có một cây cơ Chiến thắng?|=;=;=;=|4 mảnh = 1 cây cơ. Mảnh có được nhờ chiến thắng.
+Q087|Từ cấp độ nào bạn có thể tạo hoặc tham gia câu lạc bộ?|=;=;=;=|Từ cấp 6.
+Q088|Một câu lạc bộ có tối đa bao nhiêu thành viên?|=;=;=;=|Tối đa 50 thành viên.
+Q089|Hạng 1 bảng xếp hạng thế giới hằng tuần nhận bao nhiêu 🪙?|=;=;=;=|1.500.000 🪙; hạng 2 nhận 750.000 và hạng 3 nhận 400.000.
+Q090|Hạng 1 bảng xếp hạng quốc gia nhận bao nhiêu 🪙?|=;=;=;=|400.000 🪙; hạng 2 nhận 200.000 và hạng 3 nhận 100.000.
+Q091|Bảng xếp hạng tuần được đặt lại vào lúc nào (giờ Tashkent)?|Thứ Hai, 05:00;Thứ Bảy, 20:00;Thứ Sáu, 00:00;Thứ Ba, buổi trưa|Tuần đặt lại vào thứ Hai 00:00 UTC: tức 05:00 giờ Tashkent.
+Q092|Khoảng bao nhiêu phần trăm của một giải đấu lên hạng mỗi tuần?|=;=;=;=|20% đứng đầu lên hạng và 20% cuối bảng xuống hạng.
+Q093|"Bàn của tuần" được giảm giá bao nhiêu?|=;=;=;=|−40%; mỗi thứ Hai có một bàn mới.
+Q094|Bản giới hạn hiếm nhất, Rainbow Opal, có bao nhiêu bản?|=;=;=;=|Chỉ 300; mỗi chủ sở hữu nhận một số seri.
+Q095|Bản giới hạn phổ biến nhất, Bronze, có bao nhiêu bản?|=;=;=;=|5.000, trong khi Rainbow Opal có 300.
+Q096|Thành phố nào có bàn rẻ nhất (đầu tiên) trong trò chơi?|Tashkent;Dubai;Moscow;London|London: phí tham gia 50 🪙, giải thưởng 100 🪙.
+Q097|Thành phố nào có bàn cao nhất (cuối cùng) trong trò chơi?|Moscow;New York;Tashkent;Rio|Moscow, Quảng trường Đỏ: phí tham gia 100.000.000 🪙.
+Q098|Bàn Tashkent của trò chơi tên là gì?|=;=;=;=|"Silk Road", mang tinh thần Con đường Tơ lụa vĩ đại.
+Q099|Vải bàn London có màu gì?|Xanh dương;Đỏ;Đen;Vàng|London màu xanh dương, Sydney xanh lá, Madrid đỏ.
+Q100|Bàn của thành phố nào có vải màu đen?|London;Madrid;Sydney;Las Vegas|Las Vegas: phòng "Royal Flush", vải đen.
+Q101|"Giải thưởng lớn" nằm ở ngày nào trên lộ trình thưởng?|Ngày 8;Ngày 7;Ngày 5;Ngày 3|Ngày 7: giải thưởng lớn 5.000 🪙.
+Q102|Có bao nhiêu huy chương (thành tích)?|=;=;=;=|32; mỗi huy chương mới trả 1.000 🪙.
+Q103|Đâu KHÔNG phải là bộ lọc trong danh sách "Sảnh đang mở"?|Chỗ trống;Phòng thoại;Bạn bè;Giá cơ|Các bộ lọc: chỗ trống, phòng thoại và bạn bè.
+Q104|Nhẫn thành phố cộng thêm bao nhiêu vào điểm Showdown của bạn?|=;=;=;=|+50%, và bàn của thành phố miễn phí.
+Q105|Cần thắng bao nhiêu trận để có nhẫn ở bàn London (+4 mỗi trận thắng, mục tiêu 15 cúp)?|=;=;=;=|4 × 4 = 16, trên 15: bốn trận thắng.
+Q106|Showdown có bao nhiêu mốc thưởng?|=;=;=;=|8: xu, token, một hộp và một mảnh cơ.
+Q107|Giải vô địch riêng của mỗi thành phố có bao nhiêu người chơi?|=;=;=;=|32 người chơi, chơi trên bàn của thành phố đó.
+Q108|Cúp hằng ngày nào lớn nhất (giải 400.000 🪙)?|Buổi tối;Ban đêm;Buổi sáng;Buổi trưa|Cúp Đêm: phí tham gia 10.000 🪙, giải thưởng 400.000 🪙.
+Q109|Phòng thoại của sảnh có tối đa bao nhiêu người nói cùng lúc?|=;=;=;=|Tối đa tám người, bằng số người trong sảnh.
+Q110|Trong bi-a 8 bi, mỗi người chơi có bao nhiêu bi trong nhóm (không tính bi số 8)?|=;=;=;=|1–7 hoặc 9–15: bảy bi mỗi nhóm.
+Q111|Với 15 bi mục tiêu và một bi cái, có bao nhiêu bi sọc?|=;=;=;=|Bi 9 đến 15: bảy bi sọc.
+Q112|Không tính bi cái, các bi của bi-a 8 bi chia thành mấy nhóm?|=;=;=;=|Bi đặc (1–7), bi sọc (9–15) và bi đen số 8 đơn độc: ba nhóm.
+Q113|Huyền thoại Willie Mosconi đã làm vô địch thế giới bao nhiêu lần?|=;=;=;=|15 lần. Được gọi là "Mr. Pocket Billiards".
+Q114|Năm 1953, Mosconi đã đánh liên tiếp bao nhiêu bi trong straight pool?|=;=;=;=|526 bi mà không trượt một cú nào.
+Q115|Ai đóng vai Minnesota Fats trong phim "The Hustler" (1961)?|=;=;=;=|Jackie Gleason, bản thân cũng là một tay chơi giỏi.
+Q116|Nhân vật do Paul Newman đóng trong "The Hustler" có biệt danh gì?|=;=;=;=|"Fast Eddie". Ông trở lại trong "The Color of Money".
+Q117|Nhà vô địch nào đã dạy Paul Newman và đánh các cú đặc biệt trong phim?|=;=;=;=|Mosconi là cố vấn của bộ phim và tự mình thực hiện các cú khó.
+Q118|Biệt danh của ngôi sao snooker Ronnie O'Sullivan là gì?|=;=;=;=|"The Rocket", nhờ lối chơi nhanh.
+Q119|Alex Higgins của làng snooker được biết đến với biệt danh nào?|=;=;=;=|"The Hurricane", nhờ lối chơi nhanh và hấp dẫn.
+Q120|Jimmy White được biết đến với biệt danh nào?|=;=;=;=|"The Whirlwind". Ông đã vào nhiều trận chung kết thế giới.
+Q121|Biệt danh của nhà vô địch thế giới nhiều lần Steve Davis là gì?|=;=;=;=|"The Nugget", ngôi sao của thập niên 1980.
+Q122|Biệt danh "Bata" của Efren Reyes nghĩa là gì trong tiếng Tagalog?|Sư tử;Tia chớp;Bậc thầy;Đứa trẻ|"Bata" nghĩa là đứa trẻ. Ông cũng là "The Magician".
+Q123|Earl Strickland được biết đến với biệt danh nào?|=;=;=;=|"The Pearl", một cựu vô địch thế giới.
+Q124|Biệt danh của Shane Van Boening là gì?|=;=;=;=|"South Dakota Kid", đến từ bang South Dakota.
+Q125|Lev Tolstoy viết truyện ngắn "Ghi chép của người ghi điểm bi-a" năm 1855. Về trò chơi nào?|Bài;Cờ đam;Cờ vua;Bi-a|Về bi-a: một người ghi điểm nhìn một chàng quý tộc trẻ đánh bạc.
+Q126|Bi-a được nhắc đến trong vở kịch nào của Shakespeare?|=;=;=;=|Trong "Antony and Cleopatra", Cleopatra nói "Let us to billiards".
+Q127|Vị vua nào, theo lời khuyên của bác sĩ, đã chơi bi-a để tập thể dục và khiến nó trở thành mốt trong triều đình?|Amir Timur;Pyotr I của Nga;Louis XIV của Pháp;Julius Caesar|Louis XIV. Bi-a trở thành mốt trong các triều đình châu Âu.
+Q128|Nhà soạn nhạc Wolfgang Amadeus Mozart có gì trong nhà ở Vienna?|Chuồng ngựa;Bàn bi-a;Hồ bơi trong thư viện;Sàn đấu quyền Anh|Mozart yêu bi-a và có một bàn ở nhà.
+Q129|Người ta nói bi-a phát triển từ loại trò chơi nào?|Trò chơi bóng trên bãi cỏ;Đấu vật;Bơi lội;Cờ vua|Từ các trò chơi chơi trên cỏ, vì thế vải màu xanh lá.
+Q130|Từ "billiards" bắt nguồn từ ngôn ngữ nào?|Tiếng Ả Rập;Tiếng Tây Ban Nha;Tiếng Đức;Tiếng Pháp|Từ tiếng Pháp "billart" (cây cơ) hoặc "bille" (viên bi).
+Q131|Từ "pool" ban đầu chỉ điều gì?|Vải bàn;Hồ nước;Một loại cơ;Tiền cược chung|Tiền cược chung. "Poolroom" là nơi nhận cá cược.
+Q132|Trước thế kỷ 19, bi bi-a được làm bằng gì?|Thép;Gỗ sơn;Ngà voi;Thủy tinh|Ngà voi. Ngày nay dùng nhựa phenolic.
+Q133|Bi pool chuyên nghiệp hiện đại chủ yếu làm bằng gì?|Nhựa phenolic;Cao su;Kim loại;Đá tự nhiên|Nhựa phenolic: bền, lăn và nảy chuẩn.
+Q134|Đầu cơ thường làm bằng gì?|Kim loại;Da;Nhựa;Thủy tinh|Da. Nó giữ phấn để cơ không trượt.
+Q135|Phấn ở đầu cơ dùng để làm gì?|Để trông đẹp;Tăng ma sát để cơ không trượt;Đổi màu bi;Lau sạch bàn|Để bám: đầu cơ không trượt khỏi bi.
+Q136|Bi pool rộng khoảng bao nhiêu?|68 mm;57 mm;48 mm;38 mm|57,15 mm (2¼ inch).
+Q137|Bi trong bi-a kim tự tháp của Nga rộng bao nhiêu?|57 mm;62 mm;68 mm;75 mm|68 mm, lớn hơn rõ rệt so với bi pool.
+Q138|Khu vực chơi của bàn pool 9 feet rộng khoảng bao nhiêu?|1,5 × 0,75 m;2,54 × 1,27 m;3,5 × 1,75 m;4 × 2 m|Khoảng 254 × 127 cm: dài gấp đôi chiều rộng.
+Q139|Bi xanh dương trong snooker được bao nhiêu điểm?|=;=;=;=|Vàng 2, xanh lá 3, nâu 4, xanh dương 5, hồng 6, đen 7.
+Q140|Bi hồng trong snooker được bao nhiêu điểm?|=;=;=;=|Hồng là 6, đen là 7.
+Q141|Bàn snooker có bao nhiêu bi đỏ?|=;=;=;=|15 bi đỏ, 6 bi màu và bi cái: tổng cộng 22 bi.
+Q142|Trong bi-a 9 bi, các bi được xếp thành hình gì?|Hình tam giác;Hình vuông;Hình tròn;Hình thoi|Hình thoi, bi số 9 ở giữa và bi số 1 ở trên cùng.
+Q143|Trong bi-a 8 bi, điều gì xảy ra nếu bạn đưa bi số 8 xuống lỗ quá sớm?|Thường là thua;Được thêm điểm;Không có gì;Lượt không chuyển|Thường là thua. Bi số 8 phải vào sau cùng.
+Q144|Trong "14.1 straight pool", số 14 có nghĩa là gì?|Số phút;Cỡ bàn;Sau khi 14 bi xuống lỗ, các bi còn lại được xếp lại;Số người chơi|Sau khi 14 bi xuống lỗ, bi cuối cùng ở lại và các bi còn lại được xếp lại.
+Q145|Bàn bi-a carom có bao nhiêu lỗ?|=;=;=;=|Không có: bạn ghi điểm bằng cách cho bi của mình chạm vào các bi khác.
+Q146|Trong bi-a ba băng (three-cushion), bi cái phải làm gì?|Chạm ít nhất 3 băng rồi đánh vào bi thứ hai;Xoay 3 vòng;Dừng trong 3 giây;Đưa 3 bi xuống lỗ|Phải chạm ba băng và cả hai bi mục tiêu.
+Q147|"Jump shot" là gì?|Người chơi nhảy;Bàn nhảy;Cơ nhảy;Bi cái nhảy qua bi khác|Bi cái được đánh để nhảy qua bi cản.
+Q148|Cú "masse" được thực hiện thế nào?|Chỉ đánh vào băng;Ném cơ;Cầm cơ gần thẳng đứng, bi cái chạy cong;Đánh bi thẳng|Cơ cầm gần thẳng đứng và bi chạy cong. Trong trò chơi của chúng tôi: "độ cao cơ".
+Q149|"Bank shot" là gì?|Đổi bàn;Đánh bi mục tiêu bật băng rồi vào lỗ;Đưa bi cái xuống lỗ;Đánh bi hai lần|Bi mục tiêu chạm băng trước, rồi mới vào lỗ.
+Q150|Trong bi-a, "kiss" là gì?|Các bi chạm nhẹ vào nhau rồi đi tiếp;Đưa bi xuống lỗ;Lỗi phạm luật;Kết thúc ván|Các bi chạm nhẹ vào nhau và đổi hướng.
