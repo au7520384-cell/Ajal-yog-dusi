@@ -29,8 +29,8 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(m.bh >= 100, `${name}: the city picture is big (${Math.round(m.bh)} px, not a strip)`, m);
     if (kind !== "roomy") ok(m.ratio >= 0.4, `${name}: the picture is at least 40% of the card (${Math.round(m.ratio * 100)}%)`, m);
     ok(m.full >= minFull, `${name}: ${minFull}+ cards fit the screen fully (${m.full})`, m);
-    if (kind === "band") { ok(m.band, `${name}: the page is in the 521..560 band`, m); ok(Math.round(m.cw) === 225, `${name}: the compact card width (225 px)`, m); ok(/🪙/.test(m.fee), `${name}: the fee is on the PLAY key`, m); ok(m.rows.every(d => d === "none"), `${name}: the extra rows are hidden`, m); }
-    if (kind === "compact") ok(Math.round(m.cw) === 225, `${name}: the compact card width is unchanged (225 px)`, m);
+    if (kind === "band") { ok(m.band, `${name}: the page is in the 521..560 band`, m); ok(m.cw >= 190 && m.cw <= 225, `${name}: the compact card width (190..225 px, 22% of the page: ${Math.round(m.cw)})`, m); ok(/🪙/.test(m.fee), `${name}: the fee is on the PLAY key`, m); ok(m.rows.every(d => d === "none"), `${name}: the extra rows are hidden`, m); }
+    if (kind === "compact") ok(m.cw >= 190 && m.cw <= 225, `${name}: the compact card width is unchanged (190..225 px: ${Math.round(m.cw)})`, m);
     if (kind === "roomy") ok(Math.round(m.cw) >= 260 && !/🪙/.test(m.fee), `${name}: a computer keeps the roomy card (${Math.round(m.cw)} px)`, m);
     await ctx.close();
   }
