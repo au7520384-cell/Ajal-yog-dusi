@@ -22,7 +22,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
       await p.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 120000 }); await sleep(600);
       await p.evaluate(() => { const g = document.getElementById("lsGuest"); if (g) g.click(); const t = document.getElementById("toasts"); if (t) t.style.display = "none"; document.getElementById("modal").classList.remove("on"); }); await sleep(500);
       await p.evaluate(() => document.getElementById("hWorld").click()); await sleep(900);
-      const g = () => p.evaluate(() => { const r = id => { const e = document.getElementById(id).getBoundingClientRect(); return { l: Math.round(e.left), t: Math.round(e.top), r: Math.round(e.right), b: Math.round(e.bottom) }; }; return { osk: document.documentElement.classList.contains("osk"), wChat: r("wChat"), go: r("wChatGo"), inp: r("wChatIn"), ih: innerHeight, iw: innerWidth }; });
+      const g = () => p.evaluate(() => { const r = id => { const e = document.getElementById(id).getBoundingClientRect(); return { l: Math.round(e.left), t: Math.round(e.top), r: Math.round(e.right), b: Math.round(e.bottom) }; }; const bd = document.body.getBoundingClientRect(), nv = document.getElementById("nav") && document.getElementById("nav").getBoundingClientRect(); return { body: { t: Math.round(bd.top), b: Math.round(bd.bottom), l: Math.round(bd.left), r: Math.round(bd.right) }, osk: document.documentElement.classList.contains("osk"), wChat: r("wChat"), go: r("wChatGo"), inp: r("wChatIn"), ih: innerHeight, iw: innerWidth }; });
       await p.evaluate(() => { document.getElementById("wChatIn").focus(); igkToOs(); }); await sleep(500);   // the box is handed to the phone's own keyboard
       const a0 = await g(); ok(!a0.osk, name + ": class osk is off without a keyboard", a0);
       await p.evaluate(f => { const ih = innerHeight; Object.defineProperty(window, "visualViewport", { value: { height: Math.round(ih * (1 - f)), offsetTop: 0, width: innerWidth, scale: 1, addEventListener() {} }, configurable: true }); resize(); }, frac); await sleep(500);
@@ -30,9 +30,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
       ok(a.osk, name + ": the phone's keyboard over the page is measured (class osk)", a);
       ok(a.go.b <= limit + 1 && a.inp.b <= limit + 1 && a.go.t >= 0, name + ": the send key and the text box are above the keyboard (visible part " + limit + " px)", [a, limit]);
       ok(a.wChat.b <= limit + 1, name + ": the whole panel ends above the keyboard", [a.wChat, limit]);
+      ok(a.body.b <= limit + 1, name + ": the whole page (not only the chat) fits above the keyboard, so every text box of the game stays in sight", [a.body, limit]);
       if (SHOT) await p.screenshot({ path: path.join(SHOT, "osk_" + name.split(" ")[0] + ".png") });
       await p.evaluate(() => { Object.defineProperty(window, "visualViewport", { value: { height: innerHeight, offsetTop: 0, width: innerWidth, scale: 1, addEventListener() {} }, configurable: true }); document.activeElement.blur(); resize(); }); await sleep(400);
-      const c = await g(); ok(!c.osk, name + ": keyboard gone, osk is off again", c);
+      const c = await g(); ok(!c.osk && c.body.b >= c.ih - 1, name + ": keyboard gone, the page is full size again", c);
       // a zoomed page (pinch) has a short visualViewport too, but no text box in use: no --osk
       await p.evaluate(() => { Object.defineProperty(window, "visualViewport", { value: { height: Math.round(innerHeight * 0.5), offsetTop: 0, width: innerWidth, scale: 2, addEventListener() {} }, configurable: true }); resize(); }); await sleep(300);
       const z = await g(); ok(!z.osk, name + ": a zoomed page with no text box in use does not count as a keyboard", z);
