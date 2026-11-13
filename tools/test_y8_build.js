@@ -105,6 +105,11 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   await t.fr().evaluate(() => { endGame(0, "test"); }); await t.fr().waitForSelector("#res.on #resBtns button", { timeout: 15000 }); await sleep(1500);
   const sh = await t.fr().evaluate(() => ({ btns: [...document.querySelectorAll("#resBtns button")].map(b => b.className), share: document.querySelectorAll("#resBtns .share").length, html: document.getElementById("resBtns").innerHTML }));
   ok(sh.btns.length >= 2 && sh.share === 0 && !/facebook|twitter/i.test(sh.html), "Y8: the result screen has no share-on-Facebook / X keys", sh.btns);
+  // the owner: on Y8 a player who tapped the "×2" video left the game: no ×2 button there, a video ad after EVERY match instead (at most one per 45 s)
+  const dbl = await t.fr().evaluate(() => ({ site: Y8_SITE, dblOk: dblOk(5000, "win"), btn: document.querySelectorAll("#resBtns .dblb").length }));
+  ok(dbl.site && !dbl.dblOk && dbl.btn === 0, "Y8: the result screen has no ×2 video button", dbl);
+  const br = await t.fr().evaluate(async () => { window.__ads = []; const r = []; for (const gap of [50000, 20000, 50000]) { Y8.matches = 1; Y8.lastBreak = Date.now() - gap; const before = window.__ads.length; await new Promise(res => { let d = false; y8Break(() => { d = true; res(); }); setTimeout(() => { if (!d) res(); }, 2500); }); r.push(window.__ads.length - before); } return r; });
+  ok(br[0] === 1 && br[1] === 0 && br[2] === 1, "Y8: an ad comes after every match (odd or even), but not twice within 45 s", br);
   await t.p.context().close();
   // 5) the plain website (not a portal) keeps the social keys: the community pages are ours
   { const ctx = await b.newContext({ viewport: { width: 1280, height: 720 }, locale: "en-US" }), p = await ctx.newPage(); p.on("pageerror", e => errs.push(e.message.slice(0, 160)));
