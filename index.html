@@ -4627,6 +4627,10 @@ Snd.foul(); input.power = 0; input.drag = null; input.charging = false;
 nextTurn();
 if (G.net) sendState();
 }
+// ---- the win streak pays (retention): 3 wins in a row +10% of the match prize, 5 and more +25%. Coins only (diamonds are never given away); a loss ends the streak.
+const STREAK_STEPS = [[3, 10], [5, 25]];
+const streakPct = n => { let q = 0; for (const [w, pc] of STREAK_STEPS) if (n >= w) q = pc; return q; };
+const streakNext = n => STREAK_STEPS.find(([w]) => n < w) || null;   // the step the streak is heading for: [wins, percent]; null = already at the top
 function endGame(winner, why) {
 const G = game; if (G.net && G.net.spec) return;   // a watcher never ends the match from his own simulation (it can differ a little): the server says when it is over (specEnd)
 if (G.over) return; G.over = true; Snd.roll(0);
@@ -4657,6 +4661,8 @@ const extra = Math.max(1, Math.round(G.city.prize * tb / 100));
 setTimeout(() => { addCoins(extra); updateNav(); toast("👑", `+${fmt(extra)} 🪙`, `${T(setBonus() ? "To'plam bonusi" : "Stol bonusi")} +${tb}%`, {kind: "trophy"}); }, 2300);
 }
 profile.wstreak = (profile.wstreak | 0) + 1; profile.bestStreak = Math.max(profile.bestStreak | 0, profile.wstreak);
+{ const sn = profile.wstreak, sp = streakPct(sn); if (sp && !G.tourLobby) { const sb = Math.max(1, Math.round(G.city.prize * sp / 100)); G.rw.streak = {n: sn, pct: sp, coins: sb};
+  setTimeout(() => { addCoins(sb); updateNav(); toast("🔥", `+${fmt(sb)} 🪙`, `${T("G'alaba seriyasi")} ×${sn} · +${sp}%`, {kind: "trophy"}); }, 2000); } }
 { const ei = CITIES.indexOf(G.city); if (ei >= CITIES.findIndex(c => c.id === "dub")) { const eg = 15 * (ei - CITIES.findIndex(c => c.id === "dub") + 1) * GEM_TO_COINS; profile.coins += eg; G.rw.eliteCoins = eg; setTimeout(() => toast("🪙", `+${fmtS(eg)} 🪙`, T("Elite stol")), 2100); } }
 profile.cityWins = profile.cityWins || {}; profile.cityWins[G.city.id] = (profile.cityWins[G.city.id] | 0) + 1; setTimeout(checkAch, 2500);
 y8Score(); y8Event("match_win", G.city.prize);
@@ -9413,6 +9419,7 @@ const rows = [], im = k => `<img alt="" src="${RWIC[k]}">`, sg = n => (n > 0 ? "
 const HUE = BOX_HUE;
 if (rw.box) rows.push({c: rw.box.c, b1: "#4a230a", b2: "#1a0d05", ic: `<img alt="" src="${IMG["bi" + Math.max(0, BOX_TIERS.indexOf(rw.box))]}" style="filter:drop-shadow(0 3px 4px #000a)">`, t: T(rw.box.n)});
 if (rw.coins) rows.push({k: "coins", c: "#e0a41c", b1: "#3d2b06", b2: "#171004", ic: im("coin"), t: sg(rw.coins).replace(/(\d+)/, m => fmt(+m)), neg: rw.coins < 0});
+if (rw.streak) rows.push({c: "#ff7a1a", b1: "#4a1f06", b2: "#1a0a03", ic: `<img alt="" src="${EMO_IMG["🔥"]}">`, t: `+${fmt(rw.streak.coins)} <small>×${rw.streak.n} · +${rw.streak.pct}%</small>`});
 if (rw.trophy) rows.push({c: "#a44be6", b1: "#2e0f45", b2: "#12061e", ic: im("trophy"), t: sg(rw.trophy), neg: rw.trophy < 0});
 if (rw.pass) rows.push({c: "#3b8cf2", b1: "#0d2547", b2: "#060f20", ic: im("shield"), t: sg(rw.pass)});
 if (rw.xp) rows.push({c: "#2fd251", b1: "#0a3a16", b2: "#04140a", ic: im("xp"), t: sg(rw.xp)});
