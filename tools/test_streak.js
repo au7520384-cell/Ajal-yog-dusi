@@ -19,7 +19,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await p.goto(`http://localhost:${port}/index.html`, { waitUntil: "commit" });
     await p.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 120000 });
     await p.evaluate(() => { const e = document.getElementById("loginSplash"); if (e) e.remove(); document.getElementById("modal").classList.remove("on"); });
-    await p.evaluate(() => { window.unlock = () => {}; window.checkAch = () => {}; }); await sleep(300); return p;   // (the medals pay coins once - the streak medals (3, 5, 10 ... in a row), the first win, the clean table ... - switched off here, so they do not move the coin numbers below)
+    await p.evaluate(() => { window.unlock = () => {}; window.checkAch = () => {}; }); await sleep(4500); return p;   // (the medals pay coins once - the streak medals (3, 5, 10 ... in a row), the first win, the clean table ... - switched off here, so they do not move the coin numbers below)
   }
   // a match of city 2 ended at once: pre = the streak before it, win = true / false, lobby = a lobby-tournament match; returns what the game decided and what the player got
   const match = async (p, pre, win, lobby) => {
