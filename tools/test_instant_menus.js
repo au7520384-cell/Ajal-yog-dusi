@@ -52,6 +52,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   ok(t1.filled && t1.claim, "scrolling to the first tiers fills them in, with a working Take button", t1);
   const t2 = await p.evaluate(() => { const w = document.querySelector("#passBody .passwrap"), c = w.querySelector('[data-claim="5f"]'); const before = !!passState().got["5f"]; c.click(); return { before, after: !!passState().got["5f"] }; });
   ok(!t2.before && t2.after, "the Take button of a late-filled tier gives the prize", t2);
+  // after taking a prize the list is rebuilt: the place the player was looking at must be complete at once (no empty frames blinking in), and stay where it was
+  const t2b = await p.evaluate(() => { const w = document.querySelector("#passBody .passwrap"), vis = [...w.querySelectorAll(".ptier")].filter(e => e.offsetLeft + e.offsetWidth > w.scrollLeft && e.offsetLeft < w.scrollLeft + w.clientWidth);   // the page may be turned 90 degrees: use the list's own coordinates
+    return { left: Math.round(w.scrollLeft), shown: vis.length, empty: vis.filter(e => e.classList.contains("fcell")).length, got: !!w.querySelector(".ptier.got") }; });
+  ok(t2b.left === 3 * 126 && t2b.shown >= 6 && t2b.empty === 0 && t2b.got, "after taking a prize the same place is shown, complete at once", t2b);
   await sleep(300);
   const filledAt = async (left, tiers) => { await p.evaluate(l => { document.querySelector("#passBody .passwrap").scrollLeft = l; }, left); await sleep(1500);
     return p.evaluate(ts => { const w = document.querySelector("#passBody .passwrap"); return ts.every(t => !w.querySelector(`.fcell[data-pc="${t}"]`)); }, tiers); };

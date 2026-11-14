@@ -15168,8 +15168,8 @@ function passArtFill(wrap, cell, onBtn) {   // the tiers far from the player's p
   const queue = () => { if (!queued) { queued = 1; requestAnimationFrame(run); } };
   wrap.addEventListener("scroll", queue, {passive: true}); queue();
 }
-function buildPass() {
-const p = passState(), tier = Math.min(PASS_TIERS, Math.floor(p.pts / PASS_STEP)), box = $("passBody"), th = seasonTheme();
+function buildPass(keep) {   // keep: the scroll place to come back to (after a prize was taken): the tiers there are complete at once, so nothing blinks
+const p = passState(), tier = Math.min(PASS_TIERS, Math.floor(p.pts / PASS_STEP)), box = $("passBody"), th = seasonTheme(), ft = keep === undefined ? tier : Math.round(keep / 126) + 3;
 $("passTitle").textContent = `♞ ${T("Mavsum passi")}`;
 const cell = (t, prem) => {
 const r = passRew(t, prem), [ico, qty] = rewIcon(r), key = t + (prem ? "p" : "f"), got = p.got[key], open = tier >= t && (!prem || p.prem), big = t % 25 === 0;
@@ -15189,9 +15189,9 @@ box.innerHTML = `<div class="pass2" style="--p1:${th.c1};--p2:${th.c2};--pa:${th
 <div class="p2free"><img src="${RWIC.shield || ""}" alt=""><b>${T("Bepul")}</b></div>
 <div class="p2lvl"><span>${p.pts % PASS_STEP}/${PASS_STEP}</span><em>${tier}</em></div>
 <div class="p2prem"><div class="pplogo">POOL<br><small>PASS</small></div>${p.prem ? `<b style="color:#ffe27a">👑 ${T("Premium")}</b>` : `<button class="btn green" id="passBuy">${T("Pass olish")}<br><small><span class="cash"></span> ${PASS_PRICE}</small></button><button class="btn blue" id="passGem" style="padding:4px 8px;font-size:13px"><span class="gem"></span> ${fmt(PASS_GEMS)}</button>`}</div></div>
-<div class="passwrap"><div class="passgrid">${Array.from({length: PASS_TIERS}, (_, i) => { const t = i + 1, nr = Math.abs(t - tier) <= 9; return (nr ? cell(t, false) : farCell(t, false)) + bars[i] + (nr ? cell(t, true) : farCell(t, true)); }).join("")}</div></div></div>
+<div class="passwrap"><div class="passgrid">${Array.from({length: PASS_TIERS}, (_, i) => { const t = i + 1, nr = Math.abs(t - tier) <= 9 || Math.abs(t - ft) <= 9; return (nr ? cell(t, false) : farCell(t, false)) + bars[i] + (nr ? cell(t, true) : farCell(t, true)); }).join("")}</div></div></div>
 <p class="muted" style="text-align:center;margin:6px 0 0">${p.prem ? "" : T("Premium mukofotlarni ochish uchun Pass oling.")}</p></div>`;
-const wrap = box.querySelector(".passwrap"); wrap.scrollLeft = Math.max(0, (tier - 2) * 126);
+const wrap = box.querySelector(".passwrap"); wrap.scrollLeft = keep === undefined ? Math.max(0, (tier - 2) * 126) : keep;
 { const g = box.querySelector(".passgrid"), bs = [...g.querySelectorAll(".pbar")]; if (g && bs.length) { g.style.position = "relative";   // the player's marker walks along the pass to the current point
   const seen = p.ptsSeen === undefined ? p.pts : p.ptsSeen, posAt = v => { const i = clamp(Math.floor(v / PASS_STEP), 0, bs.length - 1), b = bs[i], f = clamp((v - i * PASS_STEP) / PASS_STEP, 0, 1); return b.offsetLeft + b.offsetWidth * f; };
   const mk = document.createElement("div"); mk.className = "cpmk"; mk.style.top = "50%"; mk.style.bottom = "auto"; mk.innerHTML = `<i></i><div><span class="av" style="background-image:url(${avatarURL(profile.avatar)})"></span><b>${Math.floor(seen / PASS_STEP)}</b></div>`; g.appendChild(mk);
@@ -15202,7 +15202,7 @@ const wrap = box.querySelector(".passwrap"); wrap.scrollLeft = Math.max(0, (tier
 const claimBtn = b => b.onclick = () => {
 const key = b.dataset.claim, t = parseInt(key), prem = key.endsWith("p");
 if (p.got[key]) return; p.got[key] = 1; giveReward(passRew(t, prem)); Snd.coin(6); updatePassDot();
-const left = wrap.scrollLeft; buildPass(); box.querySelector(".passwrap").scrollLeft = left;
+buildPass(wrap.scrollLeft);
 };
 box.querySelectorAll("[data-claim]").forEach(claimBtn); passArtFill(wrap, cell, claimBtn);
 $("passMis").onclick = passMissionsModal; $("passPast").onclick = passPastModal;
