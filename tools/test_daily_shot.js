@@ -92,6 +92,48 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(f.panel && f.buttons && f.n >= 3, `${name}: the result window and its keys are on the screen`, f);
     await q.context().close();
   }
+  // 10) never a dead end (the owner, Telegram: "after the shot it showed the rating, I shared it to the channel, and then I cannot get back to the menu"):
+  //     from the finished shot every window leads on - the board has Menu, a share brings the window back, a failed call brings the result back, and when every window is closed the result returns by itself
+  {
+    const q = await open({ width: 915, height: 412 }, true);
+    await q.evaluate(() => { profile.dshot = null; startDailyShot(); }); await sleep(2200);
+    await shoot(q, "near"); await q.waitForSelector("#modal.on #mBtns button", { timeout: 8000 });
+    let r = await modal(q);
+    ok(r.btns.some(x => /Menyu|Menu/.test(x)), "dead end 1: the result window has Menu", r.btns);
+    await clickBtn(q, "Leaderboard"); await sleep(1500); r = await modal(q);
+    ok(r.on && /Today's best/.test(r.text) && r.btns.some(x => /Menyu|Menu/.test(x)) && !r.btns.some(x => /^Close$/.test(x)) && r.btns.some(x => /Share/.test(x)), "dead end 2: the board opened from the finished shot has Menu (not a bare Close) and Share", r.btns);
+    await q.evaluate(() => { window.__sh = 0; navigator.share = async () => { window.__sh++; }; });
+    await clickBtn(q, "Share"); await sleep(900); r = await modal(q); const shared = await q.evaluate(() => window.__sh);
+    ok(shared === 1 && r.on && /Today's best/.test(r.text), "dead end 3: Share from the board - the share goes out and the board is still on the screen", { shared, text: r.text.slice(0, 80) });
+    await q.evaluate(() => document.querySelector("#modal .mx").click()); await sleep(900);
+    let st = await q.evaluate(() => ({ mode, screen: (document.querySelector(".screen.on") || {}).id, modal: document.getElementById("modal").classList.contains("on") }));
+    ok(st.mode === "menu" && st.screen === "mini" && !st.modal, "dead end 4: the corner x of that board leaves to the Minigames screen", st);
+    await q.context().close();
+
+    const q2 = await open({ width: 393, height: 730 }, true);   // an upright phone (the page turned), as in Telegram
+    await q2.evaluate(() => { profile.dshot = null; startDailyShot(); }); await sleep(2200);
+    await shoot(q2, "near"); await q2.waitForSelector("#modal.on #mBtns button", { timeout: 8000 });
+    await q2.evaluate(() => { window.__sh = 0; navigator.share = async () => { window.__sh++; }; });
+    await clickBtn(q2, "Share"); await sleep(900); r = await modal(q2);
+    ok(r.on && /Daily Shot 1\/3/.test(r.text) && (await q2.evaluate(() => window.__sh)) === 1, "dead end 5: Share from the result window - the result is still on the screen afterwards", r.text.slice(0, 80));
+    await q2.evaluate(() => { window.__api = Net.api; Net.api = () => Promise.reject(new Error("offline")); });
+    await clickBtn(q2, "Leaderboard"); await sleep(900); r = await modal(q2);
+    ok(r.on && /Daily Shot 1\/3/.test(r.text), "dead end 6: the board without a connection - the result window comes back", r.text.slice(0, 80));
+    await clickBtn(q2, "Again"); await sleep(900); r = await modal(q2);
+    ok(r.on && /Daily Shot 1\/3/.test(r.text), "dead end 7: Again without a connection - the result window comes back", r.text.slice(0, 80));
+    await q2.evaluate(() => { Net.api = window.__api; document.getElementById("modal").classList.remove("on"); }); await sleep(4300); r = await modal(q2);
+    ok(r.on && /Daily Shot 1\/3/.test(r.text), "dead end 8: every window closed on a finished shot - the result comes back by itself", r.text.slice(0, 80));
+    await q2.evaluate(() => document.getElementById("gMenu").click()); await sleep(500); await clickBtn(q2, "Continue|Resume"); await sleep(4300); r = await modal(q2);
+    ok(r.on && /Daily Shot 1\/3/.test(r.text), "dead end 9: Pause -> Continue on the finished shot - the result window returns", r.text.slice(0, 80));
+    await clickBtn(q2, "^Menu$|^Menyu$"); await sleep(900);
+    st = await q2.evaluate(() => ({ mode, screen: (document.querySelector(".screen.on") || {}).id }));
+    ok(st.mode === "menu" && st.screen === "mini", "...and Menu on it leads to the Minigames screen", st);
+    // the plain Lucky shot (no daily) has the same safety net
+    await q2.evaluate(() => { startLucky(); }); await sleep(1800); await shoot(q2, "near"); await q2.waitForSelector("#modal.on #mBtns button", { timeout: 8000 });
+    await q2.evaluate(() => { document.getElementById("modal").classList.remove("on"); }); await sleep(4300); r = await modal(q2);
+    ok(r.on && r.btns.some(x => /Menyu|Menu/.test(x)), "dead end 10: the plain Lucky shot - every window closed, the result (with Menu) comes back by itself", r);
+    await q2.context().close();
+  }
   ok(errs.length === 0, "no page errors", errs);
   await b.close(); srv.kill(); console.log(`pass ${pass}, fail ${fail}`); process.exit(fail ? 1 : 0);
 })();

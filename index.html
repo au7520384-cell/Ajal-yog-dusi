@@ -5005,14 +5005,15 @@ title = ring === LUCKY_RINGS[0] ? "MARKAZ! 🎯" : "Omadingiz keldi!"; icon = ri
 burst(); Snd.win(); setBanner(ring.label, ring.color);
 }
 updateNav();
-setTimeout(() => { openModal({
+const show = () => { openModal({
 icon, title, text: ring ? "Oltin shar nishonga tushdi!" : "Tasalli sovg'asi",
 extra: `<div class="reward">${ring && ring.t === "cash" ? '<span class="cash"></span>' : '<span class="coin"></span>'} +${fmt(amount)}</div>${ring && ring.t === "cash" ? "" : dblHTML(amount, "lucky")}`,
 buttons: [
 goldenMode ? {label: profile.goldShots ? `${T("Yana")} (${profile.goldShots})` : NO_CARD ? `💎 ${GOLD_GEMS}` : `3 × ${usdTxt(GOLD_USD)}`, cls: "orange", fn: goldenShot}
 : {label: hasTry("lucky") ? T("Yana (bepul)") : `⏳ ${fmtDur(freeLeftMs("lucky"))}`, cls: "orange", fn: () => startLucky()},
 {label: "Menyu", cls: "gray", fn: () => toMenu("mini")}],
-}); dblWire($("mExtra")); }, 900);
+}); dblWire($("mExtra")); };
+setTimeout(() => { if (game !== G || mode !== "game") return; G.reopen = show; show(); }, 900);   // (the player left already: no window over the menu) (G.reopen: the result window of a finished shot can always come back, see the watchdog below)
 }
 // ---- "Kunlik zarba" / the daily shot (retention): the same lucky-shot layout for every player each (Tashkent) day, 3 attempts, ranked by how close the gold ball stops to the target; share the result.
 // The server (/api/dshot/*) gives the day and the seed, counts the attempts and keeps the board; the shot is played here. Coins only (the plain lucky shot pays 💵 3 in the centre).
@@ -5021,13 +5022,17 @@ const dshotDayKey = () => new Date(Date.now() + 5 * 3600e3).toISOString().slice(
 const dshotMine = () => { const d = profile.dshot; return d && d.day === dshotDayKey() ? d : null; };   // what this page remembers of today's attempts (the server decides)
 const dshotLeft = () => Math.max(0, DSHOT_TRIES - ((dshotMine() || {}).n | 0));
 const dshotOffline = () => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "");
+function dailyShotBack() {   // a window of the FINISHED shot failed (no connection): its result comes back - the player is never left on a bare finished table
+  const G = game; if (mode !== "game" || !G || !G.over) return;
+  if (typeof G.reopen === "function") G.reopen(); else toMenu("mini");
+}
 function startDailyShot() {
-  if (!Net.acct) return dshotOffline();
+  if (!Net.acct) { dshotOffline(); return dailyShotBack(); }
   Net.api("/api/dshot/day", {}).then(r => {
     profile.dshot = r.mine ? {day: r.day, n: r.mine.n, d: r.mine.d, rank: r.rank, total: r.total} : {day: r.day, n: 0, d: 9999}; save();
     if (r.mine && r.mine.n >= r.tries) return dailyShotTop();   // all attempts used: the board instead
     startLucky(false, {day: r.day, seed: r.seed, n: r.mine ? r.mine.n : 0, tries: r.tries});
-  }).catch(dshotOffline);
+  }).catch(() => { dshotOffline(); dailyShotBack(); });
 }
 function luckyEntry() {   // the Lucky shot card: while today's daily shot has attempts left it is offered first
   const left = dshotLeft();
@@ -5041,23 +5046,27 @@ function dailyShotFinish(G, hitGold, d, ring) {
   const rec = profile.dshot = dshotMine() || {day: dy.day, n: 0, d: 9999}; rec.n++; rec.d = Math.min(rec.d, dist); save();   // (the server's answer below replaces these with its own numbers)
   const sent = Net.api("/api/dshot/submit", {day: dy.day, d: dist, hit: hitGold}).then(r => { Object.assign(rec, {n: r.n, d: r.d, rank: r.rank, total: r.total}); save(); return r; }).catch(() => null);
   const title = ring ? (ring === LUCKY_RINGS[0] ? "MARKAZ! 🎯" : "Omadingiz keldi!") : hitGold ? "Yaqin qoldi!" : "Tegmadi!";
-  setTimeout(() => Promise.race([sent, new Promise(r => setTimeout(() => r(null), 2500))]).then(() => {
+  const show = () => {   // the result window: the board, the share and a failed "Again" all come back to it, and it always has "Menyu" (the owner: after the board and the share "I cannot get back to the menu")
     const left = Math.max(0, (dy.tries || DSHOT_TRIES) - rec.n), best = rec.d >= 9999 ? "—" : fmt(rec.d);
     openModal({icon: ring ? (ring === LUCKY_RINGS[0] ? "🤩" : "🎯") : "😅", title, text: `${T("Kunlik zarba")} ${rec.n}/${dy.tries || DSHOT_TRIES}`,
       extra: `<div class="reward"><span class="coin"></span> +${fmt(amount)}</div><p class="muted" style="margin:6px 0 0">${dist >= 9999 ? T("Tegmadi!") : fmt(dist) + " px"}${rec.rank ? ` · ${TT("Eng yaxshi: {0} px · #{1} / {2}", best, rec.rank, rec.total)}` : ""}</p>`,
       buttons: [...(left ? [{label: `${T("Yana")} (${left})`, cls: "orange", fn: startDailyShot}] : []), {label: T("Reyting"), cls: "blue", fn: dailyShotTop},
-        ...(!NO_SOCIAL && rec.d < 9999 ? [{label: T("Ulashish"), cls: "purple", fn: () => shareDailyShot(rec.d, rec.rank)}] : []), {label: "Menyu", cls: "gray", fn: () => toMenu("mini")}]});
-  }), 900);
+        ...(!NO_SOCIAL && rec.d < 9999 ? [{label: T("Ulashish"), cls: "purple", fn: () => { shareDailyShot(rec.d, rec.rank); setTimeout(show, 300); }}] : []), {label: "Menyu", cls: "gray", fn: () => toMenu("mini")}]});
+  };
+  setTimeout(() => Promise.race([sent, new Promise(r => setTimeout(() => r(null), 2500))]).then(() => { if (game !== G || mode !== "game") return; G.reopen = show; show(); }), 900);   // (the player left within these seconds: no window over the menu)
 }
 function dailyShotTop() {
+  const inGame = mode === "game" && !!game && !!game.over;   // opened from the finished shot (its result window was closed by the key): this window must lead to the menu, not to a bare table
   Net.api("/api/dshot/top", {}).then(r => {
     const meId = Net.acct && Net.acct.id, left = dshotLeft(), medal = i => i < 3 ? ["🥇", "🥈", "🥉"][i] : i + 1;
     if (r.me) profile.dshot = {day: r.day, n: r.me.n, d: r.me.d, rank: r.me.rank, total: r.total};
     const rows = r.top.map((u, i) => `<div class="lbr${u.id === meId ? " me" : ""}" style="grid-template-columns:40px 40px 1fr auto"><div class="rk">${medal(i)}</div>${avHTML(u.avatar, u.frame, 36)}<div class="nm">${flagHTML(u.country)}<b>${esc(u.name)}</b></div><div class="h" style="color:#ffe27a">${u.d >= 9999 ? "—" : fmt(u.d) + " px"}</div></div>`).join("");
     const mine = r.me ? `<div class="card" style="margin-bottom:10px">${TT("Eng yaxshi: {0} px · #{1} / {2}", r.me.d >= 9999 ? "—" : fmt(r.me.d), r.me.rank, r.total)}</div>` : "";
-    openModal({icon: "🎯", title: T("Bugungi eng yaxshilar"), text: "", extra: `<div style="max-height:50vh;overflow:auto;text-align:left">${mine}${rows || `<div class="muted">${T("Hali natija yo'q")}</div>`}</div>`,
-      buttons: [...(left ? [{label: `🎯 ${T("Kunlik zarba")} (${left})`, cls: "green", fn: startDailyShot}] : []), ...(!NO_SOCIAL && r.me && r.me.d < 9999 ? [{label: T("Ulashish"), cls: "purple", fn: () => shareDailyShot(r.me.d, r.me.rank)}] : []), {label: T("Yopish"), cls: "gray", fn: () => {}}]});
-  }).catch(dshotOffline);
+    const show = () => openModal({icon: "🎯", title: T("Bugungi eng yaxshilar"), text: "", extra: `<div style="max-height:50vh;overflow:auto;text-align:left">${mine}${rows || `<div class="muted">${T("Hali natija yo'q")}</div>`}</div>`,
+      buttons: [...(left ? [{label: `🎯 ${T("Kunlik zarba")} (${left})`, cls: "green", fn: startDailyShot}] : []), ...(!NO_SOCIAL && r.me && r.me.d < 9999 ? [{label: T("Ulashish"), cls: "purple", fn: () => { shareDailyShot(r.me.d, r.me.rank); setTimeout(show, 300); }}] : []),
+        inGame ? {label: "Menyu", cls: "gray", fn: () => toMenu("mini")} : {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+    show();
+  }).catch(() => { dshotOffline(); dailyShotBack(); });
 }
 function shareDailyShot(best, rank) {   // the Telegram chat picker (a friend's code rides in the link), the phone's share sheet, or a copy
   const {web, tg} = inviteLinks(), url = tg || web, text = TT("Kunlik zarba: oltin shar nishondan {0} px! Meni yeng!", fmt(best)) + (rank ? ` #${rank}` : "");
@@ -5066,6 +5075,11 @@ function shareDailyShot(best, rank) {   // the Telegram chat picker (a friend's 
   try { navigator.clipboard.writeText(url ? `${text} ${url}` : text); toast("📋", T("Nusxalandi!"), T("Ulashish")); } catch (e) {}
   return false;
 }
+setInterval(() => {   // a finished lucky / daily shot is never left on the screen without a window: when the player has closed every window (or one failed), its result comes back after ~3 s - and it has "Menyu"
+  const G = game;
+  if (mode !== "game" || !G || !G.over || G.type !== "lucky" || typeof G.reopen !== "function" || Y8.busy || document.hidden || $("modal").classList.contains("on")) { if (G) G.bare = 0; return; }
+  G.bare = (G.bare | 0) + 1; if (G.bare >= 3) { G.bare = 0; G.reopen(); }
+}, 1000);
 function toWorld(e) {
 const lx = (rotated ? e.clientY : e.clientX) - insL, ly = (rotated ? innerWidth - e.clientX : e.clientY) - insT;
 return {x: (lx - offX) / scale, y: (ly - offY) / scale};
