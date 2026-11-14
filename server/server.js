@@ -857,6 +857,21 @@ async function botCommand(cmd, m, arg) {   // /start, /stop and /id typed in the
 }
 
 // ---------------------------------------------------------------- routes
+// ---------------------------------------------------------------- the daily shot ("Kunlik zarba")
+// Retention: the same lucky-shot layout for every player each (Tashkent) day, DSHOT_TRIES attempts, ranked by how close the gold ball came to the target (smaller = better; DSHOT_MISS = the gold ball was not touched).
+// The page plays the shot itself (the whole game is client-side), so a score is what the page reports - like every other score of the game; the server keeps the attempts honest (3 a day) and the board.
+// db.meta.dshot = { "2026-11-14": { <userId>: {n: attempts used, d: best distance, at: when the best came} }, ... } - the last DSHOT_KEEP days only.
+const DSHOT_TRIES = 3, DSHOT_MISS = 9999, DSHOT_KEEP = 4;
+const dshotDay = (now = Date.now()) => plan.localDay(now).key;
+const dshotSeed = day => { let h = 2166136261; for (const c of "dshot:" + day) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0; return h % 999983 + 1; };   // 1..999983: small enough for the page's seeded generator
+function dshotBook(day, create) {
+  db.meta = db.meta || {}; const all = db.meta.dshot = db.meta.dshot || {};
+  if (create && !all[day]) { all[day] = {}; const ks = Object.keys(all).sort(); while (ks.length > DSHOT_KEEP) delete all[ks.shift()]; markDirty(); }
+  return all[day] || {};
+}
+function dshotRows(book) { return Object.entries(book).map(([id, r]) => ({id, n: r.n | 0, d: r.d, at: r.at | 0})).filter(r => r.n > 0).sort((a, b) => a.d - b.d || a.at - b.at); }
+const dshotRank = (rows, uid) => { const i = rows.findIndex(r => r.id === uid); return i < 0 ? null : i + 1; };
+
 const routes = {
   "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, web: WEB_OK, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err,
     play: {on: PLAY.configured(), refundChecks: ((db.meta || {}).playvoid || {}).runs | 0, refunded: ((db.meta || {}).playvoid || {}).taken | 0, lastCheck: ((db.meta || {}).playvoid || {}).at || 0, err: ((db.meta || {}).playvoid || {}).err || ""},
@@ -965,6 +980,27 @@ const routes = {
     if (ok && (qz.paid | 0) < QUIZ_DAY_CAP) { coins = QUIZ_COINS; qz.paid = (qz.paid | 0) + 1; grant(u, {coins, cash: 0, kind: "quiz", from: id}); }
     if (qz.set.day === day && !qz.set.bonus && qz.set.ids.every(x => qz.done[x] && qz.done[x].ok)) { qz.set.bonus = true; cash = QUIZ_BONUS_CASH; grant(u, {coins: 0, cash, kind: "quiz", from: "5/5"}); }
     markDirty(); return {again: false, coins, cash, ...quizView(id, qz, b.lang)};
+  },
+  async "POST /api/dshot/day"(req, u) {   // today's shot: the day, the seed the page builds the layout from, and what this player has done so far
+    const day = dshotDay(), book = dshotBook(day), me = book[u.id] || null, rows = dshotRows(book);
+    return {day, seed: dshotSeed(day), tries: DSHOT_TRIES, mine: me && me.n ? {n: me.n | 0, d: me.d} : null, rank: me && me.n ? dshotRank(rows, u.id) : null, total: rows.length};
+  },
+  async "POST /api/dshot/submit"(req, u) {   // one attempt: the distance (px) of the gold ball from the target, or a miss
+    if (limited(req, "dshot", 30)) return [429, {error: "slow down"}];
+    const b = await jsonBody(req), day = dshotDay();
+    if (String(b.day) !== day) return [409, {error: "old_day", day}];
+    let d = Math.round(+b.d); if (!b.hit || !(d >= 0)) d = DSHOT_MISS; d = Math.min(d, DSHOT_MISS);
+    const book = dshotBook(day, true), e = book[u.id] || (book[u.id] = {n: 0, d: DSHOT_MISS + 1, at: 0});
+    if ((e.n | 0) >= DSHOT_TRIES) return [409, {error: "no_tries", day}];
+    e.n = (e.n | 0) + 1; if (d < e.d) { e.d = d; e.at = Date.now(); }
+    markDirty(); const rows = dshotRows(book);
+    return {day, n: e.n, d: e.d, tries: DSHOT_TRIES, rank: dshotRank(rows, u.id), total: rows.length};
+  },
+  async "POST /api/dshot/top"(req, u) {   // today's best (20) and this player's place
+    const day = dshotDay(), book = dshotBook(day), rows = dshotRows(book), by = id => db.users[id];
+    const row = (r, i) => { const x = by(r.id); return x ? {...publicUser(x), rank: i + 1, d: r.d, n: r.n} : null; };
+    const me = book[u.id] && book[u.id].n ? {rank: dshotRank(rows, u.id), d: book[u.id].d, n: book[u.id].n} : null;
+    return {day, tries: DSHOT_TRIES, top: rows.slice(0, 20).map(row).filter(Boolean), me, total: rows.length};
   },
   "POST /api/src"(req, u) {   // the page reports the ad link it was opened from (startapp=c_NAME): opens, and new players (account made in the last 6 h, counted once)
     return jsonBody(req).then(b => {
