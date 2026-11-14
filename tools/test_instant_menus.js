@@ -73,6 +73,28 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   ok(rd.walk, "the player's marker is on the road", rd);
   ok(rd.sync < 900, `opening the road is quick (${rd.sync} ms of script on this computer)`, rd);
 
+  // 5. "Choose a table": the first cards at once, the rest a few per frame; the late cards get the online text too
+  await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); go("home"); }); await sleep(300);
+  const c0 = await p.evaluate(() => { go("cities"); return { now: document.querySelectorAll("#cities .city:not(.lounge)").length, total: CITIES.length }; });
+  ok(c0.now <= 8 && c0.now >= 4 && c0.total >= 30, "the city list opens with its first cards only", c0);
+  await sleep(1500);
+  const c1 = await p.evaluate(() => { const cs = [...document.querySelectorAll("#cities .city:not(.lounge)")]; return { n: cs.length, total: CITIES.length, lounge: !!document.querySelector("#cityList [data-lng]"), dash: cs.filter(c => /—/.test(c.querySelector("[data-online]").textContent)).length, play: cs.filter(c => c.querySelector(".cplay") && typeof c.querySelector(".cplay").onclick === "function").length }; });
+  ok(c1.n === c1.total, "all the city cards are there a moment later", c1);
+  ok(c1.lounge, "the lounge cards come after the last city", c1);
+  ok(c1.dash === 0, "every card, late ones too, got its online text", c1);
+  ok(c1.play === c1.total, "every card's PLAY key works", c1);
+  // opening it again at once must not double the cards (the first build's later frames are dropped)
+  const c2 = await p.evaluate(async () => { go("cities"); go("cities"); await new Promise(r => setTimeout(r, 1200)); return { n: document.querySelectorAll("#cities .city:not(.lounge)").length, total: CITIES.length }; });
+  ok(c2.n === c2.total, "opening the list twice quickly does not double the cards", c2);
+
+  // 6. Tournaments: the first cups at once, the rest a few per frame
+  await p.evaluate(() => { go("home"); }); await sleep(300);
+  const u0 = await p.evaluate(() => { go("tourScr"); return { now: document.querySelectorAll("#tourBody .tcup").length, total: CUPS.length + CITY_CUPS.length }; });
+  ok(u0.now >= 1 && u0.now <= 6 && u0.total > 10, "the tournament list opens with its first cups only", u0);
+  await sleep(1500);
+  const u1 = await p.evaluate(() => ({ n: document.querySelectorAll("#tourBody .tcup").length, total: CUPS.length + CITY_CUPS.length, a: document.querySelectorAll("#tourBody .tcups:not(.cities) .tcup").length, b: document.querySelectorAll("#tourBody .tcups.cities .tcup").length, ea: CUPS.length, eb: CITY_CUPS.length }));
+  ok(u1.n === u1.total && u1.a === u1.ea && u1.b === u1.eb, "all the cups are there a moment later, each in its own group", u1);
+
   ok(errs.length === 0, "no page errors", errs);
   await b.close(); srv.kill(); console.log(`pass ${pass}, fail ${fail}`); process.exit(fail ? 1 : 0);
 })();

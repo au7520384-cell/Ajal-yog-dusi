@@ -9565,9 +9565,12 @@ g.fillStyle = "#8fd8ff"; g.fillText(bt[1], tx, ty + 38);
 return bannerCache[c.id] = cv.toDataURL("image/jpeg", 0.88);
 }
 const CITY_AC = {"lon": "#f0a020", "syd": "#2a7aff", "lis": "#26c04a", "mad": "#e03030", "tok": "#8a3aff", "veg": "#f0b820", "bue": "#30a8ff", "jak": "#f07a20", "tor": "#ff2a8a", "mex": "#2ab040", "cai": "#e8a820", "dub": "#30b0ff", "sin": "#8a40ff", "sha": "#e02830", "par": "#e0a828", "ams": "#20b8c0", "rom": "#8a3ae0", "bkk": "#f08a20", "kul": "#20c0d0", "seo": "#e030b0", "mum": "#9a40e0", "ath": "#3a88ff", "ber": "#e02838", "ist": "#e8b030", "cas": "#4ab040", "osa": "#9a40ff", "tas": "#20c8d0", "rio": "#e8b020", "nyc": "#2a80ff", "mos": "#e03040"};
+let citiesTok = 0;
 function buildCities() {
 const box = $("cityList"); box.innerHTML = "";
-CITIES.forEach(c => {
+const tok = ++citiesTok; let online = null;   // the first cards are made at once, the rest a few per frame (they are off the screen to the right): 30 cards in one go took 0.5-0.9 s on a slow phone
+const setOnline = el => { el.textContent = online === false ? `● ${T("oflayn")}` : `● ${fmt(online.total)} · ${T("kutmoqda")}: ${online.byCity[el.dataset.online] || 0}`; };
+const addCity = c => {
 const lockWhy = cityLock(c), locked = !!lockWhy;
 const el = document.createElement("div"); el.className = "city";
 el.style.setProperty("--cb", `url(${cityBanner(c)})`); el.style.setProperty("--ac", CITY_AC[c.id] || "#ffcf3d");
@@ -9585,12 +9588,13 @@ ${locked ? `<div class="lock"><div><div>🔒</div>${lockWhy}</div></div>` : ""}`
 el.querySelector("button.btn").onclick = () => playCity(c);
 if (!locked) el.querySelector(".cban").onclick = () => playCity(c);
 el.querySelector(".cring").onclick = () => { ringSel = c; ringsModal(); };
-box.appendChild(el);
-});
-box.insertAdjacentHTML("beforeend", loungeHTML()); box.querySelectorAll("[data-lng]").forEach(b => b.onclick = () => playLounge(+b.dataset.lng));
-Net.api("/api/online").then(r => {
-for (const el of box.querySelectorAll("[data-online]")) el.textContent = `● ${fmt(r.total)} · ${T("kutmoqda")}: ${r.byCity[el.dataset.online] || 0}`;
-}).catch(() => { for (const el of box.querySelectorAll("[data-online]")) el.textContent = `● ${T("oflayn")}`; });
+box.appendChild(el); if (online !== null) setOnline(el.querySelector("[data-online]"));
+};
+const rest = CITIES.slice(), FIRST = 6, PER = 6;
+rest.splice(0, FIRST).forEach(addCity);
+const finish = () => { box.insertAdjacentHTML("beforeend", loungeHTML()); box.querySelectorAll("[data-lng]").forEach(b => b.onclick = () => playLounge(+b.dataset.lng)); };
+if (rest.length) { const more = () => { if (tok !== citiesTok || !box.isConnected) return; rest.splice(0, PER).forEach(addCity); if (rest.length) requestAnimationFrame(more); else finish(); }; requestAnimationFrame(more); } else finish();
+Net.api("/api/online").then(r => { if (tok !== citiesTok) return; online = r; for (const el of box.querySelectorAll("[data-online]")) setOnline(el); }).catch(() => { if (tok !== citiesTok) return; online = false; for (const el of box.querySelectorAll("[data-online]")) setOnline(el); });
 }
 function findOpponent(c) {
 return new Promise(resolve => {
@@ -9748,6 +9752,7 @@ function dailyRecord(res) {
 if (!tour || !tour.slot) return;
 const h = profile.dailyHist = (profile.dailyHist || []).filter(x => x.t !== tour.slot); h.push({t: tour.slot, res}); profile.dailyHist = h.slice(-7); save();
 }
+let tourTok = 0;
 function buildTour() {
 const body = $("tourBody"); body.innerHTML = ""; { const ts = $("tourScr"); ts.classList.toggle("tbr", !!tour); if (tour) { ts.style.setProperty("background-image", `linear-gradient(90deg,#0009,#0000 14%,#0000 86%,#0009),linear-gradient(#0006,#0000 22%),url(${IMG.tour_bg})`, "important"); ts.style.setProperty("background-size", "100% 100%, 100% 100%, cover", "important"); ts.style.setProperty("background-position", "center top", "important"); } else { ts.style.removeProperty("background-image"); ts.style.removeProperty("background-size"); ts.style.removeProperty("background-position"); } }
 if (!tour) {
@@ -9774,11 +9779,14 @@ ${locked ? `<div class="lock"><div><div>🔒</div>${lockWhy}</div></div>` : ""}`
 el.querySelector("button").onclick = () => joinTour(c);
 grid.appendChild(el);
 };
-CUPS.forEach(c => addCup(c, grid));
 body.appendChild(grid);
 const hd = document.createElement("div"); hd.className = "h tcsec"; hd.textContent = "🏙️ " + T("Shahar kuboklari"); body.appendChild(hd);
 const sub = document.createElement("div"); sub.className = "muted tcsub"; sub.textContent = T("Har shaharning o'z chempionati. Bitta kubokni yutsangiz, keyingisi ochiladi."); body.appendChild(sub);
-const grid2 = document.createElement("div"); grid2.className = "tcups cities"; CITY_CUPS.forEach(c => addCup(c, grid2)); body.appendChild(grid2);
+const grid2 = document.createElement("div"); grid2.className = "tcups cities"; body.appendChild(grid2);
+// the cups that fill the first screen are made at once, the rest (further down) a few per frame: all of them in one go took 0.5-1 s on a slow phone
+const todo = [...CUPS.map(c => [c, grid]), ...CITY_CUPS.map(c => [c, grid2])], tok = ++tourTok;
+todo.splice(0, 4).forEach(([c, g]) => addCup(c, g));
+if (todo.length) { const more = () => { if (tok !== tourTok || !grid.isConnected) return; todo.splice(0, 4).forEach(([c, g]) => addCup(c, g)); if (todo.length) requestAnimationFrame(more); }; requestAnimationFrame(more); }
 return;
 }
 const c = cupOf(tour.cup), P = tour.players, R = tour.rounds.length - 1, total = tourRounds(c.n);
