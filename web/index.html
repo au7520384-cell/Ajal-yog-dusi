@@ -112,7 +112,7 @@ padding:66px 14px 14px;overflow:auto;touch-action:pan-x pan-y}
 .screen.on{display:flex}
 .tapfx{position:fixed;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;pointer-events:none;z-index:9999;border:2px solid #ffe27a;box-shadow:0 0 12px #ffd76a,inset 0 0 10px #fff6;background:radial-gradient(circle,#fff8,#ffd76a33 55%,transparent 70%);animation:tapfx .5s ease-out forwards}
 @keyframes tapfx{0%{transform:scale(.4);opacity:1}100%{transform:scale(4.2);opacity:0;border-width:.5px}}
-.screen.on{animation:scrIn .24s ease-out}
+.screen.on{animation:none}   /* the owner: a tap opens the menu AT ONCE. The 0.24 s fade from transparent made every menu start empty, and its end (the big layer is painted again) showed 1-2 dark frames on his phone */
 @keyframes scrIn{from{opacity:0}to{opacity:1}}
 button:active:not(:disabled){filter:brightness(1.15)}
 @media (prefers-reduced-motion:reduce){.tapfx,.screen.on{animation:none}.tapfx{display:none}}
@@ -145,9 +145,9 @@ box-shadow:inset 0 3px 0 #ffffff66,inset 0 -5px 0 #0003,0 6px 0 #0009,0 10px 24p
 .tile .ic{position:absolute;right:8px;top:6px;font-size:clamp(34px,7vh,56px);filter:drop-shadow(0 4px 4px #0007);transform:rotate(-8deg)}
 .tile b{font-family:var(--fh);font-weight:400;font-size:clamp(20px,3.6vh,28px);line-height:1.05;text-shadow:0 3px 0 #0007;position:relative}
 .tile small{font-size:12px;opacity:.9;position:relative;text-shadow:0 1px 0 #0007}
-.tile::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;pointer-events:none;
+.tile::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;pointer-events:none;will-change:transform;
 background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);animation:shine 4.5s infinite}
-@keyframes shine{0%,70%{left:-60%}100%{left:130%}}
+@keyframes shine{0%,70%{transform:translateX(0) skewX(-20deg)}100%{transform:translateX(475%) skewX(-20deg)}}   /* (was left: -60% -> 130%, i.e. layout + paint every frame) */
 .t-green{background:linear-gradient(160deg,#6cf06f,#16b52a 55%,#0c7f1b)}
 .t-red{background:linear-gradient(160deg,#ff8a5e,#e0351b 50%,#8e160c)}
 .t-teal{background:linear-gradient(160deg,#6ff2e6,#14b3a6 55%,#0a6f67)}
@@ -503,7 +503,7 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 #nav.nf9 .pc-m,#nav.nf9 .pc-r,#nav.nf9 .pc-plate{display:none!important} #nav.nf9 .pchip2{padding-right:0!important;flex:none!important}   /* the very last resort: only the avatar */
 /* modal */
 #modal{justify-content:center;background:#000b;z-index:40;padding-top:14px}
-#modal .panel{max-width:460px;text-align:center;animation:pop .35s cubic-bezier(.2,1.5,.4,1)}
+#modal .panel{max-width:460px;text-align:center}   /* no zoom-in bounce: the window is simply there */
 #modal .panel:has(.ringsbox),#modal .panel:has(.medbox){max-width:min(900px,96vw);width:min(900px,96vw);padding:10px}
 #modal .panel:has(.vipbox){max-width:min(560px,94vw);padding:8px}
 #modal .panel:has(.ringsbox) #mIcon,#modal .panel:has(.medbox) #mIcon,#modal .panel:has(.vipbox) #mIcon,#modal .panel:has(.ringsbox) #mTitle,#modal .panel:has(.medbox) #mTitle,#modal .panel:has(.vipbox) #mTitle,#modal .panel:has(.ringsbox) #mText,#modal .panel:has(.medbox) #mText,#modal .panel:has(.vipbox) #mText{display:none}
@@ -1129,7 +1129,7 @@ html.nosoc .chanonly{display:none!important}   /* the Telegram channel row and t
 .ptier.c-coin .ico{background:radial-gradient(circle,#ffcf3d77,transparent 70%)}.ptier.c-tok .ico{background:radial-gradient(circle,#ff9d3a77,transparent 70%);color:#ffe27a}
 .ptier.c-epic{box-shadow:0 0 16px #ff4fd8aa;border-color:#ff8ae8}.ptier.big{transform:scale(1.04);border-width:3px;box-shadow:0 0 22px #ffcf3dcc}
 .ptier.big::before{content:"👑";position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:20px;filter:drop-shadow(0 2px 2px #000)}
-.ptier.ready{animation:pready 1.2s ease-in-out infinite}@keyframes pready{50%{box-shadow:0 0 22px #5ae35a,0 0 4px #fff}}
+.ptier.ready{box-shadow:0 0 14px #5ae35acc,0 0 3px #fff}   /* steady glow: a pulsing box-shadow repainted the whole pass every frame */@keyframes pready{50%{box-shadow:0 0 22px #5ae35a,0 0 4px #fff}}
 .ptier .ptimg{width:92px;border-radius:6px;box-shadow:0 3px 8px #000a}.ptier .qty{max-width:108px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15px}
 .ptier .qty{font-family:var(--fh);font-size:18px;color:#fff;text-shadow:0 2px 0 #0008}
 .ptier.got{opacity:.55}
@@ -1174,7 +1174,7 @@ html.nosoc .chanonly{display:none!important}   /* the Telegram channel row and t
 .cpshield{width:66px;height:76px;background:linear-gradient(#7a4ad0,#3a1a80);clip-path:polygon(50% 0,100% 12%,100% 62%,50% 100%,0 62%,0 12%);display:grid;place-items:center;filter:drop-shadow(0 0 8px #b08aff)}.cpshield i{font-style:normal;font-family:var(--fh);font-size:26px;color:#ffe27a;margin-top:-6px}
 .cptrack2{flex:1;min-width:0;overflow-x:auto;padding-bottom:6px}.cpg{display:grid;grid-auto-flow:column;grid-auto-columns:118px;grid-template-rows:auto 30px;gap:6px 8px}
 .cpn2{position:relative;border-radius:12px;background:linear-gradient(#3a2470,#1c1040);border:2px solid #5a3a9a;padding:22px 4px 8px;min-height:150px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
-.cpn2.ok{border-color:#3fe052;animation:pready 1.2s ease-in-out infinite}.cpn2.got{opacity:.6}.cpn2.big{border-color:#ffcf3d;box-shadow:0 0 14px #ffcf3d77}
+.cpn2.ok{border-color:#3fe052;box-shadow:0 0 14px #5ae35acc,0 0 3px #fff}.cpn2.got{opacity:.6}.cpn2.big{border-color:#ffcf3d;box-shadow:0 0 14px #ffcf3d77}
 .cpn2 .ico{font-size:34px;width:54px;height:54px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle,#ffffff40,transparent 70%)}.cpn2 b{color:#fff;font-family:var(--fh);font-size:16px}.cpn2 .btn{padding:4px 10px;font-size:13px}
 .cps{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:32px;height:36px;background:linear-gradient(#ffd24d,#a06a0a);clip-path:polygon(50% 0,100% 14%,100% 62%,50% 100%,0 62%,0 14%);display:grid;place-items:center}.cps i{font-style:normal;font-weight:900;font-size:13px;color:#2a1a00;margin-top:-4px}
 .cpck,.cpk{position:absolute;top:4px;right:4px;font-size:16px}.cpck{color:#3fe052;font-weight:900;background:#0008;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-size:14px}
@@ -1184,7 +1184,7 @@ html.nosoc .chanonly{display:none!important}   /* the Telegram channel row and t
 
 /* the diamond store: a big window that fills the screen (like the "Recharge" page of Mobile Legends), six big pack cards */
 #modal .panel:has(.dstore){max-width:none;width:auto;padding:0;background:none;border:0;box-shadow:none}#modal .panel:has(.dstore) #mIcon,#modal .panel:has(.dstore) #mTitle,#modal .panel:has(.dstore) #mText,#modal .panel:has(.dstore) #mBtns,#modal .panel:has(.dstore) .mx{display:none}
-.dstore{width:min(1100px,98vw);height:min(82vh,720px);display:flex;flex-direction:column;gap:8px;text-align:left;border-radius:20px;padding:10px 14px 12px;background:radial-gradient(ellipse at 50% -25%,#2c4aa8,#0b1236 62%,#050818);border:3px solid #e2b13a;box-shadow:0 0 0 2px #5a3a08,0 0 40px #ffb30055,inset 0 0 0 3px #08102e;animation:pop .35s cubic-bezier(.2,1.5,.4,1)}
+.dstore{width:min(1100px,98vw);height:min(82vh,720px);display:flex;flex-direction:column;gap:8px;text-align:left;border-radius:20px;padding:10px 14px 12px;background:radial-gradient(ellipse at 50% -25%,#2c4aa8,#0b1236 62%,#050818);border:3px solid #e2b13a;box-shadow:0 0 0 2px #5a3a08,0 0 40px #ffb30055,inset 0 0 0 3px #08102e}
 .dsh{display:flex;align-items:center;gap:10px}.dsh h2{margin:0;flex:1;font-family:var(--fh);font-weight:400;font-size:clamp(20px,3.4vh,30px);color:#ffe27a;text-shadow:0 2px 0 #000a}
 .dsx{width:40px;height:40px;border-radius:12px;border:2px solid #c9951e;background:linear-gradient(#5a1d1d,#2a0a0a);color:#fff;font-size:20px;font-weight:900;cursor:pointer}
 .dsbal{display:flex;align-items:center;gap:6px;background:#0c1222;border:1px solid #3a4a7a;border-radius:12px;padding:4px 12px;font-family:var(--fh);font-size:clamp(16px,2.8vh,24px);color:#fff}.dsbal .gem{width:26px;height:26px}
@@ -6527,6 +6527,22 @@ for (const dx of [-1, 1]) { g.strokeStyle = gold; g.lineWidth = 2; g.beginPath()
 return cv.toDataURL("image/jpeg", 0.86);
 }
 const tblThumbs = {};
+const TT_PH = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";   // a 1x1 transparent picture
+const tblSoon = {q: [], busy: 0};
+function tableThumbSoon(t, el) {   // drawing a table's picture takes 100-300 ms on a phone (more on a slow one): never inside a menu's opening. The <img> shows a placeholder and gets its picture one table at a time, a moment later.
+  if (!t || !el) return;
+  if (tblThumbs[t.id]) { el.src = tblThumbs[t.id]; return; }
+  tblSoon.q.push([t, el]);
+  if (tblSoon.busy) return; tblSoon.busy = 1;
+  const run = () => {
+    const i = tblSoon.q.findIndex(x => x[1].isConnected);   // pictures of a closed menu are skipped
+    if (i < 0) { tblSoon.q.length = 0; tblSoon.busy = 0; return; }
+    const [tb] = tblSoon.q[i]; let url = ""; try { url = tableThumb(tb); } catch (e) {}
+    for (let k = tblSoon.q.length - 1; k >= 0; k--) if (tblSoon.q[k][0].id === tb.id) { const el2 = tblSoon.q[k][1]; if (url && el2.isConnected) el2.src = url; tblSoon.q.splice(k, 1); }
+    setTimeout(run, 24);
+  };
+  setTimeout(run, 24);
+}
 function tableThumb(t) {
 if (tblThumbs[t.id]) return tblThumbs[t.id];
 try { return (tblThumbs[t.id] = tableCard(t)); } catch (e) { console.warn("tableCard", t.id, e); }
@@ -9549,9 +9565,12 @@ g.fillStyle = "#8fd8ff"; g.fillText(bt[1], tx, ty + 38);
 return bannerCache[c.id] = cv.toDataURL("image/jpeg", 0.88);
 }
 const CITY_AC = {"lon": "#f0a020", "syd": "#2a7aff", "lis": "#26c04a", "mad": "#e03030", "tok": "#8a3aff", "veg": "#f0b820", "bue": "#30a8ff", "jak": "#f07a20", "tor": "#ff2a8a", "mex": "#2ab040", "cai": "#e8a820", "dub": "#30b0ff", "sin": "#8a40ff", "sha": "#e02830", "par": "#e0a828", "ams": "#20b8c0", "rom": "#8a3ae0", "bkk": "#f08a20", "kul": "#20c0d0", "seo": "#e030b0", "mum": "#9a40e0", "ath": "#3a88ff", "ber": "#e02838", "ist": "#e8b030", "cas": "#4ab040", "osa": "#9a40ff", "tas": "#20c8d0", "rio": "#e8b020", "nyc": "#2a80ff", "mos": "#e03040"};
+let citiesTok = 0;
 function buildCities() {
 const box = $("cityList"); box.innerHTML = "";
-CITIES.forEach(c => {
+const tok = ++citiesTok; let online = null;   // the first cards are made at once, the rest a few per frame (they are off the screen to the right): 30 cards in one go took 0.5-0.9 s on a slow phone
+const setOnline = el => { el.textContent = online === false ? `● ${T("oflayn")}` : `● ${fmt(online.total)} · ${T("kutmoqda")}: ${online.byCity[el.dataset.online] || 0}`; };
+const addCity = c => {
 const lockWhy = cityLock(c), locked = !!lockWhy;
 const el = document.createElement("div"); el.className = "city";
 el.style.setProperty("--cb", `url(${cityBanner(c)})`); el.style.setProperty("--ac", CITY_AC[c.id] || "#ffcf3d");
@@ -9569,12 +9588,13 @@ ${locked ? `<div class="lock"><div><div>🔒</div>${lockWhy}</div></div>` : ""}`
 el.querySelector("button.btn").onclick = () => playCity(c);
 if (!locked) el.querySelector(".cban").onclick = () => playCity(c);
 el.querySelector(".cring").onclick = () => { ringSel = c; ringsModal(); };
-box.appendChild(el);
-});
-box.insertAdjacentHTML("beforeend", loungeHTML()); box.querySelectorAll("[data-lng]").forEach(b => b.onclick = () => playLounge(+b.dataset.lng));
-Net.api("/api/online").then(r => {
-for (const el of box.querySelectorAll("[data-online]")) el.textContent = `● ${fmt(r.total)} · ${T("kutmoqda")}: ${r.byCity[el.dataset.online] || 0}`;
-}).catch(() => { for (const el of box.querySelectorAll("[data-online]")) el.textContent = `● ${T("oflayn")}`; });
+box.appendChild(el); if (online !== null) setOnline(el.querySelector("[data-online]"));
+};
+const rest = CITIES.slice(), FIRST = 6, PER = 6;
+rest.splice(0, FIRST).forEach(addCity);
+const finish = () => { box.insertAdjacentHTML("beforeend", loungeHTML()); box.querySelectorAll("[data-lng]").forEach(b => b.onclick = () => playLounge(+b.dataset.lng)); };
+if (rest.length) { const more = () => { if (tok !== citiesTok || !box.isConnected) return; rest.splice(0, PER).forEach(addCity); if (rest.length) requestAnimationFrame(more); else finish(); }; requestAnimationFrame(more); } else finish();
+Net.api("/api/online").then(r => { if (tok !== citiesTok) return; online = r; for (const el of box.querySelectorAll("[data-online]")) setOnline(el); }).catch(() => { if (tok !== citiesTok) return; online = false; for (const el of box.querySelectorAll("[data-online]")) setOnline(el); });
 }
 function findOpponent(c) {
 return new Promise(resolve => {
@@ -9732,6 +9752,7 @@ function dailyRecord(res) {
 if (!tour || !tour.slot) return;
 const h = profile.dailyHist = (profile.dailyHist || []).filter(x => x.t !== tour.slot); h.push({t: tour.slot, res}); profile.dailyHist = h.slice(-7); save();
 }
+let tourTok = 0;
 function buildTour() {
 const body = $("tourBody"); body.innerHTML = ""; { const ts = $("tourScr"); ts.classList.toggle("tbr", !!tour); if (tour) { ts.style.setProperty("background-image", `linear-gradient(90deg,#0009,#0000 14%,#0000 86%,#0009),linear-gradient(#0006,#0000 22%),url(${IMG.tour_bg})`, "important"); ts.style.setProperty("background-size", "100% 100%, 100% 100%, cover", "important"); ts.style.setProperty("background-position", "center top", "important"); } else { ts.style.removeProperty("background-image"); ts.style.removeProperty("background-size"); ts.style.removeProperty("background-position"); } }
 if (!tour) {
@@ -9758,11 +9779,14 @@ ${locked ? `<div class="lock"><div><div>🔒</div>${lockWhy}</div></div>` : ""}`
 el.querySelector("button").onclick = () => joinTour(c);
 grid.appendChild(el);
 };
-CUPS.forEach(c => addCup(c, grid));
 body.appendChild(grid);
 const hd = document.createElement("div"); hd.className = "h tcsec"; hd.textContent = "🏙️ " + T("Shahar kuboklari"); body.appendChild(hd);
 const sub = document.createElement("div"); sub.className = "muted tcsub"; sub.textContent = T("Har shaharning o'z chempionati. Bitta kubokni yutsangiz, keyingisi ochiladi."); body.appendChild(sub);
-const grid2 = document.createElement("div"); grid2.className = "tcups cities"; CITY_CUPS.forEach(c => addCup(c, grid2)); body.appendChild(grid2);
+const grid2 = document.createElement("div"); grid2.className = "tcups cities"; body.appendChild(grid2);
+// the cups that fill the first screen are made at once, the rest (further down) a few per frame: all of them in one go took 0.5-1 s on a slow phone
+const todo = [...CUPS.map(c => [c, grid]), ...CITY_CUPS.map(c => [c, grid2])], tok = ++tourTok;
+todo.splice(0, 4).forEach(([c, g]) => addCup(c, g));
+if (todo.length) { const more = () => { if (tok !== tourTok || !grid.isConnected) return; todo.splice(0, 4).forEach(([c, g]) => addCup(c, g)); if (todo.length) requestAnimationFrame(more); }; requestAnimationFrame(more); }
 return;
 }
 const c = cupOf(tour.cup), P = tour.players, R = tour.rounds.length - 1, total = tourRounds(c.n);
@@ -12473,7 +12497,7 @@ return [{k: "coins", v: 1000 * c * 3}, {k: "cash", v: 2 + (k / 30 | 0)}, {k: "sp
 // the player's marker walks along the Trophy Road: it steps from the last seen trophy count to the new one, each prize it reaches lights up and pops
 function roadWalk(tr, items, tp) {
 const nodes = [...tr.querySelectorAll(".rdn")]; if (!nodes.length) return;
-const cx = i => nodes[i].offsetLeft + nodes[i].offsetWidth / 2, cl01 = v => Math.max(0, Math.min(1, v));
+const xs = nodes.map(n => n.offsetLeft + n.offsetWidth / 2), cx = i => xs[i], cl01 = v => Math.max(0, Math.min(1, v));   // the places are read ONCE (the prizes have fixed widths): reading offsetLeft after each tick that was added made the browser lay the whole road out again and again - over a second on a phone
 const posFor = t => { let i = items.findIndex(it => it.at > t); if (i < 0) i = items.length;
 if (i === 0) return 20 + (cx(0) - 20) * cl01(t / items[0].at);
 if (i >= items.length) return cx(items.length - 1);
@@ -12483,7 +12507,9 @@ const mk = document.createElement("div"); mk.className = "rdwalk";
 mk.innerHTML = `<i class="pin"></i><div class="pill"><div class="av" style="background-image:url(${avatarURL(profile.avatar)})"></div><b>${fmt(seen)}</b></div>`; tr.appendChild(mk);
 const nb = mk.querySelector("b");
 const lineH = tr.querySelector(".rdline"); const barBottom = lineH ? 50 : 0;   // the marker hangs under the bar, so it never covers a prize
-nodes.forEach((n, i) => { if (i % 2) return; const tk = document.createElement("div"); tk.className = "rdtk" + (items[i].at <= tp ? " on" : ""); tk.style.left = cx(i) + "px"; tk.textContent = fmt(Math.ceil(items[i].at)); tr.appendChild(tk); });
+const tkf = document.createDocumentFragment();
+nodes.forEach((n, i) => { if (i % 2) return; const tk = document.createElement("div"); tk.className = "rdtk" + (items[i].at <= tp ? " on" : ""); tk.style.left = cx(i) + "px"; tk.textContent = fmt(Math.ceil(items[i].at)); tkf.appendChild(tk); });
+tr.appendChild(tkf);
 const fill = tr.querySelector(".rdline i"), put = x => { mk.style.transform = `translateX(${x - 48}px)`; if (fill) fill.style.width = x + "px"; };
 if (fill) fill.style.transition = "none";
 const x1 = posFor(tp);
@@ -15120,15 +15146,38 @@ profile.cash -= PAST_CASH; got[sid] = 1; items.forEach(giveReward); save(); upda
 if ((profile.gems || 0) < PAST_COST) return gemShort();
 profile.gems -= PAST_COST; got[sid] = 1; items.forEach(giveReward); save(); updateNav(); Snd.win(); burst(); }}]});
 }
+const passArt = (r, ico) => r.k === "avatar" ? avHTML(r.id, 0, 56) : r.k === "frame" ? avHTML(profile.avatar, r.i, 62) : r.k === "cue" ? `<img class="pcue" src="${cueArtURL(cueDef(r.id))}" alt="">` : r.k === "table" ? `<img class="ptimg" data-tt="${esc(String(r.id))}" src="${tblThumbs[r.id] || TT_PH}" style="aspect-ratio:2/1" alt="">` : `<div class="ico">${ico}</div>`;
+function passArtFill(wrap, cell, onBtn) {   // the tiers far from the player's place are empty frames (.fcell) until they scroll near; then a handful per frame is drawn, nearest first (800 cells with their pictures made at once froze the pass for seconds on a phone)
+  let queued = 0;
+  const run = () => {
+    queued = 0; if (!wrap.isConnected) return;
+    wrap.querySelectorAll("img[data-tt]").forEach(im => { if (!im.dataset.q) { im.dataset.q = 1; tableThumbSoon(tableById(im.dataset.tt), im); } });
+    const left = [...wrap.querySelectorAll(".fcell")]; if (!left.length) { wrap.removeEventListener("scroll", queue); return; }   // every frame is full: nothing to listen for
+    const mid = (wrap.scrollLeft + wrap.clientWidth / 2) / 126;
+    for (const e of left) e.__d = Math.abs(parseInt(e.dataset.pc) - mid);
+    left.sort((a, b) => a.__d - b.__d);
+    const t0 = performance.now(); let n = 0;
+    for (const e of left) {
+      if (e.__d > 14 || n >= 8 || performance.now() - t0 > 8) break;
+      const k = e.dataset.pc; e.insertAdjacentHTML("afterend", cell(parseInt(k), k.endsWith("p")));
+      const nx = e.nextElementSibling; e.remove(); n++;
+      const b = nx && nx.querySelector("[data-claim]"); if (b && onBtn) onBtn(b);
+    }
+    if (n) queue();
+  };
+  const queue = () => { if (!queued) { queued = 1; requestAnimationFrame(run); } };
+  wrap.addEventListener("scroll", queue, {passive: true}); queue();
+}
 function buildPass() {
 const p = passState(), tier = Math.min(PASS_TIERS, Math.floor(p.pts / PASS_STEP)), box = $("passBody"), th = seasonTheme();
 $("passTitle").textContent = `♞ ${T("Mavsum passi")}`;
 const cell = (t, prem) => {
 const r = passRew(t, prem), [ico, qty] = rewIcon(r), key = t + (prem ? "p" : "f"), got = p.got[key], open = tier >= t && (!prem || p.prem), big = t % 25 === 0;
-const art = r.k === "avatar" ? avHTML(r.id, 0, 56) : r.k === "frame" ? avHTML(profile.avatar, r.i, 62) : r.k === "cue" ? `<img class="pcue" src="${cueArtURL(cueDef(r.id))}" alt="">` : r.k === "table" ? `<img class="ptimg" src="${tableThumb(tableById(r.id))}">` : `<div class="ico">${ico}</div>`;
+const art = passArt(r, ico);
 return `<div class="ptier ${prem ? "prem" : "free"} ${rewKind(r)}${big ? " big" : ""}${got ? " got" : ""}${open && !got ? " ready" : ""}${prem && !p.prem ? " lock" : ""}">${art}<div class="qty">${esc(String(qty))}</div>
 ${got ? "✅" : open ? `<button class="btn green" data-claim="${key}">${T("Olish")}</button>` : ""}</div>`;
 };
+const farCell = (t, prem) => `<div class="ptier ${prem ? "prem" : "free"} fcell" data-pc="${t}${prem ? "p" : "f"}"></div>`;   // an empty frame (the same colours and size)
 const bars = Array.from({length: PASS_TIERS}, (_, i) => { const t = i + 1, f = clamp((p.pts - i * PASS_STEP) / PASS_STEP, 0, 1);
 return `<div class="pbar${f >= 1 ? " done" : f > 0 ? " half" : ""}${t % 25 === 0 ? " mile" : ""}">${f > 0 && f < 1 ? `<i style="width:${f * 100}%"></i>` : ""}<span>${t}</span></div>`; });
 const unclaimed = p.ms.filter(m => m.done && !m.claimed).length;
@@ -15140,7 +15189,7 @@ box.innerHTML = `<div class="pass2" style="--p1:${th.c1};--p2:${th.c2};--pa:${th
 <div class="p2free"><img src="${RWIC.shield || ""}" alt=""><b>${T("Bepul")}</b></div>
 <div class="p2lvl"><span>${p.pts % PASS_STEP}/${PASS_STEP}</span><em>${tier}</em></div>
 <div class="p2prem"><div class="pplogo">POOL<br><small>PASS</small></div>${p.prem ? `<b style="color:#ffe27a">👑 ${T("Premium")}</b>` : `<button class="btn green" id="passBuy">${T("Pass olish")}<br><small><span class="cash"></span> ${PASS_PRICE}</small></button><button class="btn blue" id="passGem" style="padding:4px 8px;font-size:13px"><span class="gem"></span> ${fmt(PASS_GEMS)}</button>`}</div></div>
-<div class="passwrap"><div class="passgrid">${Array.from({length: PASS_TIERS}, (_, i) => cell(i + 1, false) + bars[i] + cell(i + 1, true)).join("")}</div></div></div>
+<div class="passwrap"><div class="passgrid">${Array.from({length: PASS_TIERS}, (_, i) => { const t = i + 1, nr = Math.abs(t - tier) <= 9; return (nr ? cell(t, false) : farCell(t, false)) + bars[i] + (nr ? cell(t, true) : farCell(t, true)); }).join("")}</div></div></div>
 <p class="muted" style="text-align:center;margin:6px 0 0">${p.prem ? "" : T("Premium mukofotlarni ochish uchun Pass oling.")}</p></div>`;
 const wrap = box.querySelector(".passwrap"); wrap.scrollLeft = Math.max(0, (tier - 2) * 126);
 { const g = box.querySelector(".passgrid"), bs = [...g.querySelectorAll(".pbar")]; if (g && bs.length) { g.style.position = "relative";   // the player's marker walks along the pass to the current point
@@ -15150,11 +15199,12 @@ const wrap = box.querySelector(".passwrap"); wrap.scrollLeft = Math.max(0, (tier
   const stp = now => { if (!mk.isConnected) return; const u = clamp((now - t0) / dur, 0, 1), e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2, x = x0 + (x1 - x0) * e; put(x); nb.textContent = Math.floor((seen + (p.pts - seen) * e) / PASS_STEP);
     if (seen !== p.pts) wrap.scrollLeft += (Math.max(0, x - wrap.clientWidth / 2) - wrap.scrollLeft) * 0.15; if (u < 1) requestAnimationFrame(stp); else { p.ptsSeen = p.pts; try { save(); } catch (er) {} } };
   requestAnimationFrame(stp); } }
-box.querySelectorAll("[data-claim]").forEach(b => b.onclick = () => {
+const claimBtn = b => b.onclick = () => {
 const key = b.dataset.claim, t = parseInt(key), prem = key.endsWith("p");
 if (p.got[key]) return; p.got[key] = 1; giveReward(passRew(t, prem)); Snd.coin(6); updatePassDot();
 const left = wrap.scrollLeft; buildPass(); box.querySelector(".passwrap").scrollLeft = left;
-});
+};
+box.querySelectorAll("[data-claim]").forEach(claimBtn); passArtFill(wrap, cell, claimBtn);
 $("passMis").onclick = passMissionsModal; $("passPast").onclick = passPastModal;
 $("passInfo").onclick = () => openModal({icon: "♞", title: th.name, text: `${T("Har bir mavsumda 400 daraja: bepul va premium mukofotlar. G'alaba, missiya va turnirlar ♞ beradi.")} ${T("Mavsum cuelari faqat shu passdan olinadi, do'konda sotilmaydi.")}`, buttons: [{label: T("Yopish"), cls: "gray", fn: () => {}}]});
 if ($("passBuy")) $("passBuy").onclick = () => {
