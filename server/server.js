@@ -402,6 +402,19 @@ function quizView(id, qz, lang) {   // what the page may see: the question and t
 const CLUB_MAX = 50, CLUB_LEVEL = 6, CLUB_PRIZES = [20, 10, 5];   // cash
 function clubScore(c) { const w = curWeek(); return c.members.reduce((a, id) => a + (db.users[id] && db.users[id].week === w ? db.users[id].weekWon || 0 : 0), 0); }
 function clubInfo(c) { return {id: c.id, name: c.name, badge: c.badge || 0, color: c.color || 0, members: c.members.length, score: clubScore(c), league: c.league || 0}; }
+// ---- the club chest ("Klub sandig'i", retention): the wins of the club's members this week fill a shared chest with three steps; every member who won at least once that week takes each reached step once (coins only, a server grant).
+// A step needs max(min, per x members) wins, so a club of 3 and a club of 30 both have a goal they can reach. A member adds at most CHEST_CAP wins a week, and at most CHEST_SYNC per sync (the win counts come from the page: nothing here can replay a match; a forged number only fills a chest of coins).
+const CHEST_TIERS = [{k: 1, per: 1, min: 5, coins: 20000}, {k: 2, per: 3, min: 15, coins: 60000}, {k: 3, per: 6, min: 30, coins: 150000}], CHEST_CAP = 40, CHEST_SYNC = 20;
+function addChestWins(u, n) {
+  const w = curWeek(); if (!u.cw || u.cw.week !== w) u.cw = {week: w, n: 0, got: []};
+  const before = u.cw.n; u.cw.n = Math.min(CHEST_CAP, u.cw.n + Math.max(0, n)); if (u.cw.n !== before) markDirty();
+}
+function clubChest(c, u) {
+  const w = curWeek(), n = c.members.length, mine = u && u.cw && u.cw.week === w ? u.cw : null;
+  const wins = c.members.reduce((a, id) => { const x = db.users[id]; return a + (x && x.cw && x.cw.week === w ? x.cw.n : 0); }, 0);
+  return {week: w, wins, mine: mine ? mine.n : 0, got: mine ? (mine.got || []).slice() : [], members: n, tiers: CHEST_TIERS.map(t => ({k: t.k, need: Math.max(t.min, t.per * n), coins: t.coins}))};
+}
+const chestOf = u => (u.club && db.clubs[u.club] ? clubChest(db.clubs[u.club], u) : null);
 function clubSay(c, u, text) {
   (c.chat = c.chat || []).push(u ? {from: u.id, name: u.name, avatar: u.avatar, text, at: Date.now()} : {sys: true, text, at: Date.now()});
   if (c.chat.length > 80) c.chat.splice(0, c.chat.length - 80);
@@ -1148,6 +1161,7 @@ const routes = {
     if (cleanCountry(b.country)) u.country = cleanCountry(b.country);
     else if (!u.country) u.country = geoCountry(req);
     // weekly winnings come ONLY from verified online matches (finish()); device-reported totals never count (they include AI games and can be forged)
+    if (b.wins !== undefined) { const w = int(b.wins); if (u.winsSeen === undefined) u.winsSeen = w; else if (w > u.winsSeen) { addChestWins(u, Math.min(CHEST_SYNC, w - u.winsSeen)); u.winsSeen = w; } }   // the club chest counts the wins the page reports, once each (first sync: nothing back-dated)
     for (const k of ["level", "won", "wins", "games"]) if (b[k] !== undefined) u[k] = Math.max(u[k] || 0, int(b[k]));
     if (b.xp !== undefined) u.xp = int(b.xp);
     if (b.tbl !== undefined) u.tbl = /^[a-z]_[a-z]{3}$/.test(String(b.tbl)) ? String(b.tbl) : "";   // equipped exclusive table (badge)
@@ -1158,7 +1172,7 @@ const routes = {
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
-    return {me: publicUser(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}, notify: notifyInfo(u), tgOff: !!(u.tg && u.tg.off)};
+    return {me: publicUser(u), chest: chestOf(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}, notify: notifyInfo(u), tgOff: !!(u.tg && u.tg.off)};
   },
 
   async "POST /api/referral"(req, u) {
@@ -1358,9 +1372,9 @@ const routes = {
   },
   "GET /api/clubs/mine"(req, u) {
     const c = db.clubs[u.club]; if (!c) return {club: null};
-    const members = c.members.map(id => db.users[id]).filter(Boolean).map(m => ({...publicUser(m), role: m.id === c.owner ? "owner" : "member"}))
+    const members = c.members.map(id => db.users[id]).filter(Boolean).map(m => ({...publicUser(m), role: m.id === c.owner ? "owner" : "member", cwins: m.cw && m.cw.week === curWeek() ? m.cw.n : 0}))
       .sort((a, b) => b.weekWon - a.weekWon);
-    return {club: {...clubInfo(c), desc: c.desc || "", owner: c.owner, lastWeek: c.lastWeek || null}, members, chat: (c.chat || []).slice(-50), prizes: CLUB_PRIZES};
+    return {club: {...clubInfo(c), desc: c.desc || "", owner: c.owner, lastWeek: c.lastWeek || null}, members, chat: (c.chat || []).slice(-50), prizes: CLUB_PRIZES, chest: clubChest(c, u)};
   },
   async "POST /api/clubs/create"(req, u) {
     const b = await jsonBody(req);
@@ -1392,6 +1406,18 @@ const routes = {
     }
     markDirty();
     return {ok: true};
+  },
+  async "POST /api/clubs/chest"(req, u) {   // take a reached step of the club chest (once a week per step; only a member who won this week)
+    if (limited(req, "chest", 30)) return [429, {error: "slow down"}];
+    const c = db.clubs[u.club]; if (!c) return [400, {error: "no_club"}];
+    const b = await jsonBody(req), k = Math.floor(+b.tier), t = CHEST_TIERS.find(x => x.k === k); if (!t) return [400, {error: "bad_tier"}];
+    const ch = clubChest(c, u), need = ch.tiers.find(x => x.k === k).need;
+    if (ch.wins < need) return [409, {error: "not_yet"}];
+    if (ch.mine < 1) return [409, {error: "no_wins"}];
+    if (ch.got.includes(k)) return [409, {error: "taken"}];
+    u.cw.got = [...(u.cw.got || []), k];
+    grant(u, {coins: t.coins, cash: 0, kind: "clubchest", from: c.name}); markDirty();
+    return {ok: true, coins: t.coins, chest: clubChest(c, u)};
   },
   async "POST /api/clubs/chat"(req, u) {
     const b = await jsonBody(req), c = db.clubs[u.club];
