@@ -112,7 +112,7 @@ padding:66px 14px 14px;overflow:auto;touch-action:pan-x pan-y}
 .screen.on{display:flex}
 .tapfx{position:fixed;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;pointer-events:none;z-index:9999;border:2px solid #ffe27a;box-shadow:0 0 12px #ffd76a,inset 0 0 10px #fff6;background:radial-gradient(circle,#fff8,#ffd76a33 55%,transparent 70%);animation:tapfx .5s ease-out forwards}
 @keyframes tapfx{0%{transform:scale(.4);opacity:1}100%{transform:scale(4.2);opacity:0;border-width:.5px}}
-.screen.on{animation:scrIn .24s ease-out}
+.screen.on{animation:none}   /* the owner: a tap opens the menu AT ONCE. The 0.24 s fade from transparent made every menu start empty, and its end (the big layer is painted again) showed 1-2 dark frames on his phone */
 @keyframes scrIn{from{opacity:0}to{opacity:1}}
 button:active:not(:disabled){filter:brightness(1.15)}
 @media (prefers-reduced-motion:reduce){.tapfx,.screen.on{animation:none}.tapfx{display:none}}
@@ -503,7 +503,7 @@ filter:drop-shadow(0 4px 0 #6a3a00);animation:pop .6s cubic-bezier(.2,1.8,.4,1) 
 #nav.nf9 .pc-m,#nav.nf9 .pc-r,#nav.nf9 .pc-plate{display:none!important} #nav.nf9 .pchip2{padding-right:0!important;flex:none!important}   /* the very last resort: only the avatar */
 /* modal */
 #modal{justify-content:center;background:#000b;z-index:40;padding-top:14px}
-#modal .panel{max-width:460px;text-align:center;animation:pop .35s cubic-bezier(.2,1.5,.4,1)}
+#modal .panel{max-width:460px;text-align:center}   /* no zoom-in bounce: the window is simply there */
 #modal .panel:has(.ringsbox),#modal .panel:has(.medbox){max-width:min(900px,96vw);width:min(900px,96vw);padding:10px}
 #modal .panel:has(.vipbox){max-width:min(560px,94vw);padding:8px}
 #modal .panel:has(.ringsbox) #mIcon,#modal .panel:has(.medbox) #mIcon,#modal .panel:has(.vipbox) #mIcon,#modal .panel:has(.ringsbox) #mTitle,#modal .panel:has(.medbox) #mTitle,#modal .panel:has(.vipbox) #mTitle,#modal .panel:has(.ringsbox) #mText,#modal .panel:has(.medbox) #mText,#modal .panel:has(.vipbox) #mText{display:none}
@@ -1184,7 +1184,7 @@ html.nosoc .chanonly{display:none!important}   /* the Telegram channel row and t
 
 /* the diamond store: a big window that fills the screen (like the "Recharge" page of Mobile Legends), six big pack cards */
 #modal .panel:has(.dstore){max-width:none;width:auto;padding:0;background:none;border:0;box-shadow:none}#modal .panel:has(.dstore) #mIcon,#modal .panel:has(.dstore) #mTitle,#modal .panel:has(.dstore) #mText,#modal .panel:has(.dstore) #mBtns,#modal .panel:has(.dstore) .mx{display:none}
-.dstore{width:min(1100px,98vw);height:min(82vh,720px);display:flex;flex-direction:column;gap:8px;text-align:left;border-radius:20px;padding:10px 14px 12px;background:radial-gradient(ellipse at 50% -25%,#2c4aa8,#0b1236 62%,#050818);border:3px solid #e2b13a;box-shadow:0 0 0 2px #5a3a08,0 0 40px #ffb30055,inset 0 0 0 3px #08102e;animation:pop .35s cubic-bezier(.2,1.5,.4,1)}
+.dstore{width:min(1100px,98vw);height:min(82vh,720px);display:flex;flex-direction:column;gap:8px;text-align:left;border-radius:20px;padding:10px 14px 12px;background:radial-gradient(ellipse at 50% -25%,#2c4aa8,#0b1236 62%,#050818);border:3px solid #e2b13a;box-shadow:0 0 0 2px #5a3a08,0 0 40px #ffb30055,inset 0 0 0 3px #08102e}
 .dsh{display:flex;align-items:center;gap:10px}.dsh h2{margin:0;flex:1;font-family:var(--fh);font-weight:400;font-size:clamp(20px,3.4vh,30px);color:#ffe27a;text-shadow:0 2px 0 #000a}
 .dsx{width:40px;height:40px;border-radius:12px;border:2px solid #c9951e;background:linear-gradient(#5a1d1d,#2a0a0a);color:#fff;font-size:20px;font-weight:900;cursor:pointer}
 .dsbal{display:flex;align-items:center;gap:6px;background:#0c1222;border:1px solid #3a4a7a;border-radius:12px;padding:4px 12px;font-family:var(--fh);font-size:clamp(16px,2.8vh,24px);color:#fff}.dsbal .gem{width:26px;height:26px}
