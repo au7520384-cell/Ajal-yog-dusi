@@ -14322,7 +14322,30 @@ function vipOpen() {   // the VIP window: the first time of a visit it starts on
 if (!vipPaged) { vipPaged = true; vipPage = new Date().getDate() % VO().length; }
 vipOffers();
 }
-
+// ---- the Android app sells a VIP pack for 💎 diamonds (the owner: "abbdayam olmosda sotib olaydigon qilib qo'y"): there are no card payments in the app (Google Play wants Play Billing; the 💎 packs are bought that way)
+// and the window used to say "Tez orada". The price is the pack's dollar price x 50 (the same value as the card price, like every other premium thing in the app); the pack gives what the card order gives (server: fulfill()).
+const vipGems = t => diaFor(t.usd);
+function vipPack(t) {   // what a VIP pack gives: coins, 💵, VIP points, the cue and its frame / table (/ zodiac avatar), golden shots, surprise boxes - the items of the server's SKU, in the format of applyGrant()
+  const items = {cues: [t.cue]};
+  if (t.frame) items.pframes = [t.frame]; if (t.table) items.tables = [t.table]; if (t.avatar) items.avs = [t.avatar]; if (t.goldShots) items.goldShots = t.goldShots; if (t.sboxes) items.sboxes = t.sboxes;
+  return {coins: t.coins || 0, cash: t.cash || 0, vip: t.vip || 0, items};
+}
+function vipBuyGems(o, t) {
+  const price = vipGems(t), cue = cueDef(t.cue), nm = T(o.horror ? HORROR[+o.id.slice(4)][0] : o.title);
+  if (profile.cues.includes(cue.id)) return vipOffers();
+  if ((profile.gems | 0) < price) return gemShort();   // not enough 💎: the diamond store (Google Play Billing)
+  openModal({icon: "♛", title: nm, text: `${T("Hammasini olish")} · 💎 ${fmt(price)}`, buttons: [
+    {label: `💎 ${fmt(price)}`, cls: "green", fn: () => {
+      if (profile.cues.includes(cue.id) || (profile.gems | 0) < price) return vipOffers();   // (a second tap, or the 💎 were spent meanwhile: nothing is charged twice)
+      const g = vipPack(t);
+      try { Net.applyGrant({kind: "purchase", coins: g.coins, cash: g.cash, gems: 0, vip: g.vip, items: g.items, from: nm}); }   // the same path as an order that arrives from the server (it saves the profile)
+      catch (e) { console.warn("VIP pack failed", e); return vipOffers(); }   // (the pack first, the 💎 after: a failure never takes diamonds for a pack that was not given)
+      profile.gems -= price; save();
+      updateNav(); try { Net.sync(); Snd.win(); burst(); } catch (e) {}
+      vipOffers();   // the window again: "✓ the cue is yours"
+    }},
+    {label: T("Yopish"), cls: "gray", fn: () => vipOffers()}]});
+}
 
 let vipShownSession = false;
 function vipGallery() {                                // every VIP cue on one page: tap a cue to open its window
@@ -14392,7 +14415,7 @@ function horrorOfferModal(o, t) {
     <div class="hbody"><div class="hcues" id="hCue"></div><div class="hright">
       <div class="hstat">${bars}<div class="hpw">🔓 +${cuePower(cue)} ⚜</div></div>
       <div class="hcols${o.kind === "zodiac" ? " h8" : ""}">${col("🎱", "Kiy", esc(T(cue.name)))}${col('<span class="coin" style="width:40px;height:40px"></span>', "Tanga", fmtS(t.coins))}${col('<span class="cash" style="width:50px;height:36px"></span>', "Naqd pul", fmt(t.cash))}${t.goldShots ? col("🏆", "Oltin zarba", "×" + t.goldShots) : ""}${t.avatar ? col(`<img src="${avatarURL(t.avatar)}" style="height:54px;width:54px;border-radius:50%;border:2px solid ${P.g}">`, "Avatar", esc(T(o.title))) : ""}${t.frame ? col(avHTML(profile.avatar, frameIdx(t.frame), 54), "Ramka", esc(T(FRAMES[frameIdx(t.frame)].name))) : ""}${tbl ? col(`<img src="${tableThumb(tbl)}" style="height:40px;border-radius:5px">`, "Stol", esc(T(tbl.name))) : ""}${t.sboxes ? col("🎁", "Syurpriz qutilar", "×" + t.sboxes) : ""}</div>
-      <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : NO_CARD ? `<small>${T("Tez orada")}</small>` : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} ${usdTxt(cardUsd(t.usd))}</button>${cardBtnHTML(t.usd, t.sku, "orange")}`}${o.horror ? `<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small>` : ""}</div></div></div>
+      <div class="hbuy"><span class="hrib">${T("ENG YAXSHI!")}</span>${ownC ? `<b style="color:#8dff9a;font-size:18px">✓ ${T("Bu kiy sizda bor")}</b>` : NO_CARD ? (isApp() ? `<button class="btn green" id="hBuyD" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} 💎 ${fmt(vipGems(t))}</button>` : `<small>${T("Tez orada")}</small>`) : `<button class="btn green" id="hBuy" style="font-size:22px;padding:10px 26px">${T("Hammasini olish")} ${usdTxt(cardUsd(t.usd))}</button>${cardBtnHTML(t.usd, t.sku, "orange")}`}${o.horror ? `<small class="hend">⏱ ${T("Tugashi")}: ${Math.floor(left / 86400)}${T("k")} ${Math.floor(left % 86400 / 3600)}${T("s")}</small>` : ""}</div></div></div>
     <div class="hnav"><button class="btn gray" id="hPrev">‹</button><span class="hdots" style="color:#fff;font-weight:800">${vipPage % offers.length + 1} / ${offers.length}</span><button class="btn gray" id="hNext">›</button><button class="btn blue" id="hAll">▦ ${T("Hammasi")} (${offers.length})</button></div></div>`, buttons: []});
   vipCueShow(cue, $("hCue"));
   $("hClose").onclick = () => $("modal").classList.remove("on");
@@ -14400,6 +14423,7 @@ function horrorOfferModal(o, t) {
   $("hPrev").onclick = () => { vipPage = (vipPage + offers.length - 1) % offers.length; vipOffers(); };
   $("hNext").onclick = () => { vipPage = (vipPage + 1) % offers.length; vipOffers(); };
   if ($("hBuy")) $("hBuy").onclick = () => Net.checkout(t.sku, $("hBuy"));
+  if ($("hBuyD")) $("hBuyD").onclick = () => vipBuyGems(o, t);   // the Android app: the pack for 💎 diamonds
 }
 function vipOffers(start) {
 if (typeof start === "string") { const P = VOP(); let k = P.findIndex(o => o.id === start); if (k < 0) k = P.findIndex(o => o.id === start + "#" + (start === "zodiac" ? vipSel.zodiac : (vipSel[start] | 0))); vipPage = Math.max(0, k); }

@@ -3,7 +3,7 @@
 // The owner: "abbda ochilganda VIP kiyalar oynasi ochilmayapti ... VIP bo'limini sterelka bilan belgilagan joyimga qo'shib qo'y, bosganda VIP bo'lim chiqsin".
 // Real server + Chromium phone, three kinds of page:
 //  - the web / Telegram page (card payments on): the VIP window opens by itself a few seconds after the home screen, the tile says VIP and opens the same window again, the price is a real "$" button
-//  - the Android app (CARD_PAY=false + a fake Capacitor): the window now opens at launch too; no "$" price anywhere (the pack cannot be bought in the app yet: "Tez orada")
+//  - the Android app (CARD_PAY=false + a fake Capacitor): the window now opens at launch too; no "$" price anywhere (the pack is bought for 💎 there: tools/test_vip_gems.js)
 //  - a Y8 page (referrer y8.com): the launch window stays away (Y8's start has the video gift / the first-click ad), the tile still opens the window
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), P = +process.env.TEST_PORT || 8676;
@@ -46,9 +46,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
       ok(await p.evaluate(() => !document.getElementById("limCv")), `${kind}: it is the VIP window, not the old limited cue`);
       // ---- prices (every page of the pager is the tall window now: its price is #hBuy, or "Tez orada" where no card works)
       await p.evaluate(() => vipOffers("sport")); await sleep(500);
-      const pr = await p.evaluate(() => ({ buy: !!document.getElementById("hBuy"), buyTxt: (document.getElementById("hBuy") || {}).textContent || "", soon: !!document.querySelector(".hbuy small"), dollars: /\$\s?\d/.test(document.getElementById("modal").innerText) }));
+      const pr = await p.evaluate(() => ({ buyD: !!document.getElementById("hBuyD"), buy: !!document.getElementById("hBuy"), buyTxt: (document.getElementById("hBuy") || {}).textContent || "", soon: !!document.querySelector(".hbuy small"), dollars: /\$\s?\d/.test(document.getElementById("modal").innerText) }));
       if (kind === "web") ok(pr.buy && /\$\d/.test(pr.buyTxt), "web: a real $ price button", pr);
-      else ok(!pr.buy && pr.soon && !pr.dollars, `${kind}: no $ price anywhere, "coming soon" instead of the buy button`, pr);
+      else if (kind === "app") ok(!pr.buy && pr.buyD && !pr.soon && !pr.dollars, "app: a 💎 buy button instead of \"coming soon\", no $ anywhere (test_vip_gems.js buys with it)", pr);
+      else ok(!pr.buy && !pr.buyD && pr.soon && !pr.dollars, `${kind}: no $ price anywhere, "coming soon" instead of the buy button`, pr);
       // ---- the window remembers its page
       await p.evaluate(() => (document.getElementById("vNext") || document.getElementById("hNext")).click()); await sleep(400);
       const pg = await p.evaluate(() => vipPage); await closeModal(p); await sleep(300); await tapTile(p);
