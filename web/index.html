@@ -2287,7 +2287,7 @@ width:calc(40px / var(--uiz,1))!important;height:calc(33px / var(--uiz,1))!impor
 <button class="hbt hbt-cyan" data-go="friendsScr" style="left:176px;top:566px"><img data-img="nv_friends" alt=""><b>Do'stlar</b><i class="dot" id="dotFr" style="display:none">!</i></button>
 <button class="hbt hbt-purple hbt-tv" id="hWatch" style="left:424px;top:566px"><video id="hWatchV" muted loop playsinline preload="auto" poster="img/fed032207ba1e1.webp"></video><b>Tomosha</b></button>
 <button class="hbt hbt-blue" id="hInvite" style="left:300px;top:566px" title="Taklif qilish"><img data-img="inv_ic" alt="" class="invbig"><b>Taklif qilish</b></button>
-<button class="hs hmc" id="hLimited"><img class="hmci" data-img="home_c_lim" alt=""><span class="hlim">Cheklangan nashr</span><span class="htime" id="hLimEnds"></span></button>
+<button class="hs hmc" id="hLimited"><img class="hmci" data-img="home_c_lim" alt=""><span class="hlim">VIP</span><span class="htime" id="hLimEnds"></span></button>
 <button class="hs hcupban" id="hCupBan" style="left:1136px;top:96px;width:324px;height:52px;display:none"></button>
 <button class="hs hloopart" id="hLoop" style="left:1228px;top:563px;width:212px;height:121.4px;filter:drop-shadow(0 6px 10px #000a)" title="Keyingi daraja aksiyasi"></button><span class="htime hloopt" id="hLoopT" style="left:1349.0px;top:637.4px;width:79.5px;height:20.6px;background:none;color:#3a1c02;text-shadow:0 1px 0 #ffe9a8,0 0 4px #ffd36a;font-size:23px;white-space:nowrap;line-height:20.6px"></span>
 </div>
@@ -11941,7 +11941,7 @@ $("tEvents").onclick = () => go("eventsScr");
 $("tWithFr").onclick = () => go("withFrScr");
 $("hWatch").onclick = () => go("liveScr");
 $("hInvite").onclick = () => { if (!shareInvite()) go("friendsScr"); };
-$("hLimited").onclick = limitedCue;
+$("hLimited").onclick = vipOpen;   // the VIP tile (the owner's arrow: it was "Limited edition"): the same VIP window that opens when the game starts
 document.querySelectorAll("[data-img]").forEach(el => { el.src = IMG[el.dataset.img]; });
 { const wv = $("hWatchV"); if (wv) { wv.src = WATCH_VID; wv.muted = true; const go = () => { const pl = wv.play(); if (pl && pl.catch) pl.catch(() => {}); }; go(); try { new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? go() : wv.pause())).observe(wv); } catch (e) {} } }
 $("hbg").src = $("hbgBlur").src = IMG.homeBg; $("hExtT").src = IMG.homeExtT; $("hExtB").src = IMG.homeExtB;
@@ -12484,7 +12484,7 @@ else if ($("hLoop")) { $("hLoop").onclick = loopModal; const lo = loopNow(); $("
 $("hLimEnds").textContent = `⏱ ${Math.floor(wl / 864e5)}${T("k")} ${Math.floor(wl % 864e5 / 36e5)}${T("s")} ${Math.floor(wl % 36e5 / 6e4)}${T("d")}`;
 $("hTourSub").textContent = `16–64 ${T("o'yinchi")}`;
 if (!vipShownSession) setTimeout(loginFirst, 1200);
-if (!vipShownSession && !NO_CARD) { vipShownSession = true; const tryVip = n => setTimeout(() => { if (!$("home").classList.contains("on")) return; if ($("modal").classList.contains("on") && n < 6) return tryVip(n + 1); if ($("modal").classList.contains("on")) return; profile.vipPop = today(); save(); vipPage = new Date().getDate() % VO().length; vipOffers(); }, n ? 2500 : 1800); tryVip(0); }   // the VIP offer window opens on every app launch
+if (!vipShownSession && (!NO_CARD || isApp())) { vipShownSession = true; const tryVip = n => setTimeout(() => { if (!$("home").classList.contains("on")) return; if ($("modal").classList.contains("on") && n < 6) return tryVip(n + 1); if ($("modal").classList.contains("on")) return; profile.vipPop = today(); save(); vipOpen(); }, n ? 2500 : 1800); tryVip(0); }   // the VIP window opens on every launch: the web and Telegram, and now the Android app too (the owner: "abbda ochilganda VIP oynasi ochilmayapti"); not on Y8 / the other portals (their start has the video gift and the first-click ad)
 clearInterval(homeTimer);
 homeTimer = setInterval(() => {
 if (!$("home").classList.contains("on")) return clearInterval(homeTimer);
@@ -14308,7 +14308,11 @@ const VIP_OFFERS0 = [
 tiers: ZODIAC.map((z, i) => ({sku: "zod_" + i, usd: 24.99, cue: "vip_z" + i, avatar: ZOD_AV + i, coins: 62000, cash: 185, sboxes: 5, vip: 2708, sign: z}))},
 ];
 const VO = () => [...horrorWeek(), ...VIP_OFFERS0];
-let vipPage = 0, vipSel = {sport: 1, atom: 1, zodiac: new Date().getMonth()};
+let vipPage = 0, vipSel = {sport: 1, atom: 1, zodiac: new Date().getMonth()}, vipPaged = false;
+function vipOpen() {   // the VIP window: the first time of a visit it starts on the page of the day, after that where the player left it (the launch window and the home VIP tile both come here)
+if (!vipPaged) { vipPaged = true; vipPage = new Date().getDate() % VO().length; }
+vipOffers();
+}
 
 
 let vipShownSession = false;
