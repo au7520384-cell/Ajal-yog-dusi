@@ -13511,7 +13511,8 @@ try {
 await Net.ensure(); mine = String((Net.acct || {}).id || "");
 const r = await Net.api("/api/world" + (last && !first ? "?after=" + last : ""));
 if (first) msgs = [];
-const fresh = add(r.msgs), before = JSON.stringify(lobs); last = Math.max(last, r.last | 0); online = r.online | 0; muted = !!r.muted; lobs = r.lobbies || [];
+let fresh = add(r.msgs); const before = JSON.stringify(lobs); last = Math.max(last, r.last | 0); online = r.online | 0; muted = !!r.muted; lobs = r.lobbies || [];
+if (r.from) { const n0 = msgs.length; msgs = msgs.filter(x => x.id >= r.from); if (msgs.length !== n0) fresh = true; }   // a line lives one hour on the server: an open window drops what is gone there (by id, not by the phone's clock)
 if (isOpen()) { if (fresh || first) draw(!first); else { $("wChatN").textContent = online ? `· ${T("Onlayn")}: ${fmt(online)}` : ""; if (JSON.stringify(lobs) !== before) drawLobs(); } }
 } catch (e) { if (first && isOpen()) { $("wChatLog").innerHTML = `<p class="muted">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</p>`; } }
 busy = false;

@@ -2286,6 +2286,8 @@ setInterval(() => {
 // Plain HTTP for the chat itself (the page polls every 2-3 s while the window is open): no socket handlers to clash with the lobby's.
 const WORLD = []; let worldSeq = 0;                              // the last messages, kept in memory only (a restart empties the room)
 const worldPosts = new Map();                                    // lobby wid -> {wid, uid, name, avatar, frame, level, league, country, city, fee, at}: the lobbies posted to the room
+const WORLD_TTL = +process.env.WORLD_TTL_MS || 3600e3;   // a chat line lives ONE HOUR (the owner: "1 soat tursin"), then it is gone from the server
+function worldPrune() { const old = Date.now() - WORLD_TTL; while (WORLD.length && WORLD[0].at < old) WORLD.shift(); }
 const WORLD_KEEP = 150, WORLD_LEN = 100, WORLD_REQ_MS = +process.env.WORLD_REQ_MS || 40e3, WORLD_PENDING_MAX = +process.env.WORLD_PENDING_MAX || 6;   // (most open join requests one host can have at a time)
 const WORLD_STK = new Set(["🎱", "🏆", "🏅", "👑", "🤴", "♨️", "🧊", "⚔️", "🎖️", "🦊", "🐯", "🐼", "🦅", "🐸", "🐺", "🐻", "🐰", "🦎", "🤣", "😜", "🥰", "🕶️", "🤯", "🥶", "😈", "🤡", "🤩", "🍕", "🍔", "🍉", "🍩", "☕", "🍿", "🍟", "🍣", "🥐", "🔮", "⚡", "🌟", "🌈", "🧿", "💎", "🚀", "💗", "💙", "💖", "💔", "❤️", "🌹", "🎁", "💘"]);                              // the sticker emojis of the game's packs
 const worldReq = new Map();                                      // request id -> {rid, uid, host, code, wid, at, state: "wait" | "yes" | "no" | "full"}
@@ -2302,7 +2304,7 @@ const WORLD_CONTACT = /(https?:|www\.|\b[a-z0-9-]{2,}\.(com|net|org|uz|ru|io|me|
 const lobbyByWid = wid => { if (!wid) return null; for (const L of lobbies.values()) if (L.wid === wid) return L; return null; };
 function worldAdd(u, kind, text, extra) {
   const m = {id: ++worldSeq, at: Date.now(), uid: u.id, name: cleanChat(String(u.name || "Player").slice(0, 16)), avatar: u.avatar | 0, frame: u.frame | 0, level: u.level | 0, league: u.league | 0, country: String(u.country || "").slice(0, 3), kind, text, ...extra};
-  WORLD.push(m); if (WORLD.length > WORLD_KEEP) WORLD.shift();
+  worldPrune(); WORLD.push(m); if (WORLD.length > WORLD_KEEP) WORLD.shift();
   return m;
 }
 function worldPub(m) {   // a chat line (text or sticker)
@@ -2321,8 +2323,9 @@ const muted = u => +u.wmute > Date.now();   // (a timestamp: never `| 0`, it doe
 Object.assign(routes, {
   "GET /api/world"(req, u) {   // ?after=<id>: what came since (no id: the last 40)
     if (!ubucket(u.id, "wpoll", 12, 6000)) return [429, {error: "slow down"}];
+    worldPrune();
     const after = int(new URL(req.url, "http://x").searchParams.get("after"), 1e12), list = after ? WORLD.filter(m => m.id > after) : WORLD.slice(-40);
-    return {msgs: list.slice(-60).map(worldPub), lobbies: worldLobbies(), last: worldSeq, online: clients.size, muted: muted(u)};
+    return {msgs: list.slice(-60).map(worldPub), lobbies: worldLobbies(), last: worldSeq, from: WORLD.length ? WORLD[0].id : worldSeq + 1, online: clients.size, muted: muted(u)};   // (from: the oldest line still alive: an open window drops what is older)
   },
   async "POST /api/world/send"(req, u) {   // {text} or {stk}
     const b = await jsonBody(req);
@@ -2385,6 +2388,7 @@ Object.assign(routes, {
     r.state = "yes"; return {ok: true, state: "yes"};
   },
   async "POST /api/world/report"(req, u) {   // {mid}: a player reports a message; three different players within an hour mute its sender for 30 minutes
+    worldPrune();
     const b = await jsonBody(req), m = WORLD.find(x => x.id === int(b.mid, 1e12));
     if (!m || m.uid === u.id || !ubucket(u.id, "wrep", 4, 30e3)) return {ok: true};
     const rs = (db.meta.wreports = db.meta.wreports || []);
@@ -2397,6 +2401,7 @@ Object.assign(routes, {
   "GET /api/world/admin"(req) {   // ?key=ADMIN_KEY (or x-admin-key): the room's last messages and the reports
     const k = req.headers["x-admin-key"] || new URL(req.url, "http://x").searchParams.get("key") || "";
     if (!ADMIN_KEY || !safeEq(String(k), ADMIN_KEY)) return [403, {error: "forbidden"}];
+    worldPrune();
     return {msgs: WORLD.slice(-100).reverse().map(m => ({...worldPub(m), muted: !!(db.users[m.uid] && muted(db.users[m.uid]))})), lobbies: worldLobbies(), reports: (db.meta.wreports || []).slice(-60).reverse()};
   },
   async "POST /api/world/mute"(req) {   // {key, uid, mins}: mins 0 = unmute
