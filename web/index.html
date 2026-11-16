@@ -2559,8 +2559,8 @@ sintez qilingan realistik tovushlar, AI raqiblar, turnir, sovg'alar.
 ===================================================================== */
 const CONFIG = {
 server: "https://billiard8.onrender.com",
-y8AppId: "6a9dd9da38fed6db2f1f1339",         // Y8 account App ID — https://account.y8.com/applications/
-y8GameId: "282389",
+y8AppId: "6ad579a6abe0343702b12ba1",         // Y8 account App ID — https://account.y8.com/applications/
+y8GameId: "288343",
 y8Leaderboard: "Leaderboard",
 };
 const WATCH_VID = "a/35c8ad05defd57.mp4";   // the animated Watch tile (curved TV: cosmic waves, then a pool match), cropped above the baked-in caption
@@ -15486,6 +15486,15 @@ if (cl) return cl;
 for (const l of dev) { if (LANGS[l]) return l; if (DEV_LANG[l]) return DEV_LANG[l]; }
 return "en";
 }
+// A portal build (tools/portal_html.py) takes the Uzbek static text out of the page's HTML (a portal's ad network judges the page's language from its raw HTML, and Uzbek is not a language it serves: Y8, Nov 16): the markup holds
+// U+2063 markers, the originals are in window.__SEN. They are put back here, BEFORE the static text is collected for the language switch, so every label, its translation and its size are as without that step.
+(function restoreStatic() {
+const SEN = window.__SEN; if (!Array.isArray(SEN)) return;
+const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT), list = [];
+for (let n; (n = w.nextNode());) if (n.nodeValue.indexOf("\u2063") >= 0) list.push(n);
+for (const n of list) n.nodeValue = n.nodeValue.replace(/\u2063(\d+)\u2063/g, (m, i) => SEN[+i] == null ? "" : SEN[+i]);
+for (const el of document.body.querySelectorAll("[title],[placeholder],[aria-label]")) for (const a of ["title", "placeholder", "aria-label"]) { const v = el.getAttribute(a); if (v && v.indexOf("\u2063") >= 0) el.setAttribute(a, v.replace(/\u2063a(\d+)\u2063/g, (m, i) => SEN[+i] == null ? "" : SEN[+i])); }
+})();
 const staticText = [], staticAttr = [];
 (function collectStatic() {
 const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
