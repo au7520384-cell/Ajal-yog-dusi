@@ -1,14 +1,16 @@
 #!/usr/bin/env node
-// Typing when the game runs INSIDE AN IFRAME (Y8 and the other portals) on a phone:  node tools/test_iframe_keyboard.js   (B8_ROOT=<repo copy>; SHOT=dir saves pictures)
-// The owner (Nov 16, Y8 in Chrome, screenshot of the world chat): "while I type, the text box is behind the keyboard, you stuffed the keyboard over it again; and Back turns the screen black".
-// Why: inside an iframe document.fullscreenElement is null even when the Y8 page made the frame full screen, and visualViewport does not shrink for a frame, so the game neither knew it was in
-// full screen (the in-game keyboard "igk" stands in for the phone's own one there) nor how high the phone's keyboard was (--osk): the text box of the world chat stayed behind the keys and the
-// phone's keyboard made Android resize / flash the window. Now a touch phone in an iframe always gets the in-game keyboard (its ⌨ key still hands the box to the phone's own keyboard).
-// Checked here (Chromium, a phone-sized touch screen, the game in a frame like Y8's):
-//  - the world chat's text box gets the in-game keyboard (inputMode "none": the phone's keyboard stays down), its panel ends above the keys, what is typed is shown in the strip, the keys type, Enter sends
-//  - the other panels with a text box (the lobby chat panel) the same; a computer (mouse as the main pointer) in a frame keeps its own keyboard
-//  - the Back button (popstate): the first press hides the in-game keyboard, the next one closes the world chat, the next ones do not leave the page (a toast asks for a second press at the home screen)
-//  - the same page NOT in a frame keeps working as before (no in-game keyboard in a landscape window that is not full screen)
+// Where the in-game keyboard replaces the phone's own one:  node tools/test_iframe_keyboard.js   (B8_ROOT=<repo copy>; SHOT=dir saves pictures)
+// The owner (Nov 16, Y8 in Chrome, screenshot of the world chat): "while I type, the text box is behind the keyboard, you stuffed the keyboard over it again; and Back turns the screen black",
+// then: "wherever I write a message this keyboard comes up again and the screen goes dark". The phone's own keyboard breaks the window where the page cannot see it:
+//  - in an IFRAME (Y8 and the other portals): document.fullscreenElement is null even when the portal made the frame full screen and visualViewport does not shrink for a frame
+//  - in the ANDROID APP: an immersive window (its bars are hidden): the keyboard shows them, resizes the page, the screen flashes black
+//  - in full screen (tools/test_fs_keyboard.js)
+// So a touch phone gets the in-game keyboard (igk; its ⌨ key still hands a box to the phone's own keyboard) in a frame, in the app, in full screen - and on the website / in Telegram for the languages
+// igk can type completely (uz, en, ru, id); a Turkish / Thai ... player there keeps the phone's keyboard. A computer (mouse as the main pointer) keeps its own keyboard everywhere.
+// Checked here (Chromium, a phone-sized touch screen, the game in a frame like Y8's / with a fake Capacitor):
+//  - the world chat's text box gets igk (inputMode "none"), its panel ends above the keys, what is typed is shown in the strip, the keys type
+//  - the Back button (popstate): the first press hides igk, the next one closes the world chat, the next ones do not leave a framed page
+//  - the app: igk for every language (also Thai); the website: igk for en / uz, the phone's keyboard for tr / th; a mouse in a frame: its own keyboard
 const { chromium } = require("playwright"), http = require("http"), path = require("path"), fs = require("fs");
 const ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), sleep = ms => new Promise(r => setTimeout(r, ms)), SHOT = process.env.SHOT || "";
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 600) : ""); } };
@@ -21,10 +23,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   await new Promise(r => srv.listen(0, r)); const port = srv.address().port, b = await chromium.launch(), errs = [];
   if (SHOT) fs.mkdirSync(SHOT, { recursive: true });
   // open the game: inFrame = true -> inside an iframe of /wrap; touch = a phone (coarse main pointer) or a computer
-  const open = async (inFrame, touch, name) => {
+  const open = async (inFrame, touch, name, lang = "en", app = false) => {
     const ctx = await b.newContext({ locale: "en-US", viewport: { width: 915, height: 412 }, hasTouch: touch, isMobile: touch, deviceScaleFactor: SHOT ? 2 : 1 }), p = await ctx.newPage();
     p.on("pageerror", e => errs.push(name + ": " + e.message.slice(0, 200)));
-    await p.addInitScript(() => { try { if (location.pathname.endsWith("index.html") || location.pathname === "/") { localStorage.setItem("b8guest", "1"); localStorage.setItem("billiard8v2", JSON.stringify({ name: "Alex", tutDone: true, games: 60, genderAsked: true, gender: "m", lang: "en", coins: 5000 })); } } catch (e) {} });
+    await p.addInitScript(([lg, app]) => { try { if (location.pathname.endsWith("index.html") || location.pathname === "/") { localStorage.setItem("b8guest", "1"); localStorage.setItem("billiard8v2", JSON.stringify({ name: "Alex", tutDone: true, games: 60, genderAsked: true, gender: "m", lang: lg, coins: 5000 })); if (app) window.Capacitor = { isNativePlatform: () => true, Plugins: { Browser: { async open() {}, async close() {}, async addListener() { return { remove() {} }; } } } }; } } catch (e) {} }, [lang, app]);
     await p.route(u => !/localhost|127\.0\.0\.1/.test(String(u)), r => r.abort());
     await p.goto(`http://localhost:${port}/${inFrame ? "wrap" : "index.html"}`, { waitUntil: "commit" });
     const fr = () => inFrame ? p.frames().find(f => f.url().includes("/index.html")) : p.mainFrame();
@@ -67,12 +69,24 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await f.evaluate(() => { const i = document.getElementById("wChatIn"); i.blur(); i.focus(); }); await sleep(600);
     s = await state(f); ok(!s.igk && s.im !== "none", "a computer (mouse as the main pointer) in a frame keeps its own keyboard", s);
     await ctx.close();
-    // ================= not in a frame, a touch phone in a landscape window (not full screen): the phone's own keyboard as before
-    ({ p, fr, ctx } = await open(false, true, "plain-touch")); f = fr();
-    await f.evaluate(() => document.getElementById("hWorld").click()); await sleep(800);
-    await f.evaluate(() => { const i = document.getElementById("wChatIn"); i.blur(); i.focus(); }); await sleep(600);
-    s = await state(f); ok(!s.frame && !s.igk && s.im !== "none", "not in a frame, not full screen: no in-game keyboard (the phone's own keyboard, as before)", s);
-    await ctx.close();
+    // ================= not in a frame, a touch phone in a landscape window (not full screen): the website / Telegram
+    for (const [lang, want] of [["en", true], ["uz", true], ["ru", true], ["tr", false], ["th", false]]) {
+      ({ p, fr, ctx } = await open(false, true, "plain-" + lang, lang)); f = fr();
+      await f.evaluate(() => document.getElementById("hWorld").click()); await sleep(800);
+      await f.evaluate(() => { const i = document.getElementById("wChatIn"); i.blur(); i.focus(); }); await sleep(600);
+      s = await state(f); ok(!s.frame && s.igk === want && (s.im === "none") === want, `the website, not full screen, language ${lang}: ${want ? "the in-game keyboard" : "the phone's own keyboard (the in-game one cannot type this language completely)"}`, s);
+      await ctx.close();
+    }
+    // ================= the Android app (a fake Capacitor), a touch phone: the in-game keyboard for every language
+    for (const lang of ["en", "th"]) {
+      ({ p, fr, ctx } = await open(false, true, "app-" + lang, lang, true)); f = fr();
+      ok(await f.evaluate(() => typeof isApp === "function" && isApp()), `(the page runs as the app, language ${lang})`);
+      await f.evaluate(() => document.getElementById("hWorld").click()); await sleep(800);
+      await f.evaluate(() => { const i = document.getElementById("wChatIn"); i.blur(); i.focus(); }); await sleep(600);
+      s = await state(f); const kb2 = await rect(f, "#igk"), row2 = await rect(f, "#wChat .sp-in");
+      ok(s.igk && s.kbH > 0 && s.im === "none" && kb2 && row2 && row2.b <= kb2.t + 1, `the app, language ${lang}: the in-game keyboard, the box above the keys (the immersive window is never resized by the phone's keyboard)`, { s, kb2, row2 });
+      await ctx.close();
+    }
     ok(errs.length === 0, "no page errors", errs.slice(0, 4));
   } finally { await b.close(); srv.close(); }
   console.log(`pass ${pass}, fail ${fail}`); process.exit(fail ? 1 : 0);
