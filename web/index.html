@@ -1083,6 +1083,16 @@ background:linear-gradient(color-mix(in srgb,var(--c) 85%,#fff),color-mix(in srg
 .scell canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;transition:opacity .3s;cursor:crosshair}
 .scell canvas.shk{animation:shk .3s}@keyframes shk{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .scell.win{box-shadow:0 0 18px #3fe052;border-color:#3fe052}
+/* "Qirib yuting" (scratch card) window on short screens (the owner's Telegram screenshot, turned page: the 3rd row of cells lay outside the window; the landscape phone had the same): the compact sizes above (in the 460 px media block) never applied - the base rules come later and a media query cannot see the TURNED page's height - so the page's own class (html.mh560: the logical height is 560 or less, turned or not) shrinks the window: no big icon, smaller title, 56 px cells, so title + 3 rows + the button fit */
+html.mh560 #modal .panel:has(.scratch){padding:8px 12px}
+html.mh560 #modal .panel:has(.scratch) #mIcon{display:none}
+html.mh560 #modal .panel:has(.scratch) #mTitle{font-size:20px;margin:0}
+html.mh560 #modal .panel:has(.scratch) #mText{font-size:12px;margin:2px 0}
+html.mh560 #modal .panel:has(.scratch) #scrInfo{font-size:14px!important;margin-bottom:2px!important}
+html.mh560 #modal .scratch{grid-template-columns:repeat(3,56px);gap:5px;margin:3px 0}
+html.mh560 #modal .scratch .scell{width:56px;height:56px;font-size:28px;border-width:2px;border-radius:9px}
+html.mh560 #modal .panel:has(.scratch) #scrBuy{margin-top:3px!important}
+html.mh560 #modal .panel:has(.scratch) #mBtns .btn{padding:6px 14px;font-size:14px}
 .evhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .sdms{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
 .sdm,.cpn{flex:none;width:110px;border-radius:12px;background:linear-gradient(#26345a,#141c30);border:2px solid #34436a;padding:8px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
