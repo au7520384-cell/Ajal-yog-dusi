@@ -334,6 +334,7 @@ function weekStart(t = Date.now()) {
 const curWeek = () => new Date(weekStart()).toISOString().slice(0, 10);
 const weekEndsAt = () => weekStart() + 7 * 864e5;
 function addWeekly(u, amount) {
+  rollWeek();   // (the old week is closed first: a match that ends in the first minute of a new week must not wipe the result of the week that just ended)
   const w = curWeek();
   if (u.week !== w) { u.week = w; u.weekWon = 0; }
   u.weekWon = (u.weekWon || 0) + Math.max(0, amount);
@@ -1155,6 +1156,7 @@ const routes = {
 
   async "POST /api/sync"(req, u) {
     const b = await jsonBody(req);
+    rollWeek();   // the week that just ended is closed (ranked, prizes granted) BEFORE this player's fields are moved to the new week; the 60-second timer alone leaves a minute after Monday 00:00 UTC in which a sync wiped last week's result
     if (b.name) u.name = cleanName(b.name);
     if (b.avatar !== undefined) u.avatar = int(b.avatar, 999);
     if (b.frame !== undefined) u.frame = int(b.frame, 99);
