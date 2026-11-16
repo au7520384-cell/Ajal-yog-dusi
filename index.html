@@ -5347,9 +5347,18 @@ function igkFs() { try { return !!(document.fullscreenElement || document.webkit
 // When the in-game keyboard stands in for the phone's own: a turned page (see above) and FULL SCREEN on a touch screen. In full screen the phone's own keyboard
 // makes Android resize the window / show and hide its bars: the whole screen flashes black (the owner, typing to a friend in full screen). The in-game keyboard changes nothing outside the page.
 // A game inside an IFRAME (Y8 and the other portals) cannot see the phone's keyboard or its own full screen: document.fullscreenElement is null in the frame even when the portal made the frame full screen,
-// and visualViewport does not shrink for a frame - so the text box of the world chat stood behind the keys and Android flashed the window (the owner, Y8 in Chrome). A touch screen in a frame always gets the in-game keyboard.
+// and visualViewport does not shrink for a frame - so the text box of the world chat stood behind the keys and Android flashed the window (the owner, Y8 in Chrome). The Android app is an immersive window too
+// (its bars are hidden): the phone's own keyboard shows them and resizes the page, the screen flashes black (the owner: "wherever I write a message this keyboard comes up and the screen goes dark").
+// So on a touch screen the in-game keyboard is used in full screen, in a frame and in the app; elsewhere (the website, Telegram) for the languages it can type completely.
 const IN_FRAME = (() => { try { return window.top !== window.self; } catch (e) { return true; } })();
-function igkOn() { return rotated || ((igkFs() || IN_FRAME) && matchMedia("(pointer: coarse)").matches); }   // (a computer with a touch screen keeps its own keyboard: its main pointer is not coarse)
+const IGK_LANGS = /^(uz|en|ru|id)$/;   // Latin without accents + Cyrillic: what the in-game keyboard has (a Turkish / Thai / Arabic ... player needs the phone's own keyboard where it does not break the window; its ⌨ key hands a box over anywhere)
+const igkApp = () => !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform());   // (isApp() is defined further down)
+function igkOn() {
+if (rotated) return true;
+if (!matchMedia("(pointer: coarse)").matches) return false;   // a computer with a touch screen keeps its own keyboard: its main pointer is not coarse
+if (igkFs() || IN_FRAME || igkApp()) return true;   // full screen / a portal's frame / the app: the phone's own keyboard breaks the window there
+return IGK_LANGS.test(LANG);   // the website and Telegram: the in-game keyboard for the languages it can type
+}
 function igkPlace() {   // the keyboard fills the page's bottom strip: a turned page's own frame turned like the body (page top = screen right), an upright page at the screen's bottom
 if (!igkEl) return;
 igkEl.style.width = vw + "px"; igkEl.style.height = kbH + "px";

@@ -2,7 +2,7 @@
 // The owner: "in full screen, when I write a message to my friend the screen goes black once and comes back":  node tools/test_fs_keyboard.js   (B8_ROOT=<repo copy>)
 // The phone's own keyboard makes Android resize the window / show and hide its bars. In full screen on a touch screen the in-game keyboard (igk) now stands in for it,
 // so nothing outside the page changes. Checked here (Chromium, a phone-sized touch screen):
-//  - landscape, NOT full screen: the phone's own keyboard is left alone (no in-game keyboard)
+//  - landscape, NOT full screen: the in-game keyboard for en / uz / ru / id (the owner: "wherever I write, no phone keyboard over the page"); the phone's own keyboard for a language it cannot type completely (tr ...)
 //  - landscape, FULL SCREEN: a text box gets the in-game keyboard at the bottom of the page (full width), the page shrinks above it, the keys type, Enter reaches the box's own handler
 //  - leaving full screen takes the in-game keyboard away and gives the box back to the phone's own keyboard (inputMode reset)
 //  - a computer (mouse as the main pointer) in full screen keeps its own keyboard
@@ -38,7 +38,10 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     let p = await open({ viewport: { width: 915, height: 412 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 }, "land");
     ok(await p.evaluate(() => matchMedia("(pointer: coarse)").matches), "(the emulated phone has a coarse main pointer)");
     await focusBox(p); let s = await st(p);
-    ok(!s.igk && !s.on && s.kbH === 0, "landscape, not full screen: the phone's own keyboard is left alone (no in-game keyboard)", s);
+    ok(s.igk && s.on && s.kbH > 0 && s.im === "none", "landscape, not full screen, a language the in-game keyboard can type (en): the in-game keyboard (the owner: no phone keyboard over the page, wherever he types)", s);
+    await p.evaluate(() => { document.getElementById("tIn").blur(); applyLang("tr"); }); await sleep(500); await focusBox(p); s = await st(p);   // Turkish has letters the in-game keyboard lacks: the phone's own keyboard, as before
+    ok(!s.igk && !s.on && s.kbH === 0, "landscape, not full screen, a language it cannot type completely (tr): the phone's own keyboard is left alone", s);
+    await p.evaluate(() => { document.getElementById("tIn").blur(); applyLang("en"); }); await sleep(500);
     await p.evaluate(() => { document.getElementById("tIn").blur(); window.__fs = true; document.dispatchEvent(new Event("fullscreenchange")); }); await sleep(300);
     await focusBox(p); s = await st(p);
     ok(s.igk && s.on && s.kbH > 60 && s.rot === false, "landscape, FULL SCREEN: the in-game keyboard comes up for a text box", s);
