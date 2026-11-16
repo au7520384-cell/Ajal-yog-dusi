@@ -7,7 +7,10 @@ english_static(html) makes the raw HTML of the page English without changing wha
     marker (U+2063 INVISIBLE SEPARATOR + a number [+ U+2063]) and the originals go into a small script  window.__SEN = [...]  in the head;
     index.html puts them back (restoreStatic()) BEFORE it collects the static text for the language switch, so the labels, their translations and their sizes are exactly as without this step
   - what stays visible in the HTML is English: the <title>, the <noscript> paragraph, the links "Terms of Service / Privacy Policy / Refund Policy"
-Usage: python3 tools/portal_html.py in.html out.html   (build_y8.py calls it on the Y8 page)"""
+  - the script with the originals is plain ASCII (every non-ASCII character is a \\uXXXX escape) and stands right AFTER <meta charset>, so no host or browser can read the labels with a wrong encoding
+  - calling it again on a page that already went through it changes nothing (the same count comes back)
+Every build runs it: tools/build_web.py (the website, Telegram, the Android app, the Y8 zip) and tools/build_crazy.py (CrazyGames, Playgama, GameMonetize); UZ_HTML=1 keeps the plain Uzbek page (the tests compare the two).
+Usage: python3 tools/portal_html.py in.html out.html"""
 import re, sys, json, html as H
 
 SEP = "⁣"
@@ -36,7 +39,18 @@ def split_blocks(html):
     return out
 
 
+SEN_RE = re.compile(r"window\.__SEN=(\[.*?\]);</script>", re.S)
+
+
+def already(html):
+    """the number of pieces if this page already went through english_static, else None"""
+    m = SEN_RE.search(html)
+    return len(json.loads(m.group(1))) if m else None
+
+
 def english_static(html):
+    done_before = already(html)
+    if done_before is not None: return html, done_before   # (idempotent)
     sen = []
     head_end = re.search(r"<body\b", html, re.I)
     if not head_end: raise SystemExit("no <body> in the page")
@@ -75,8 +89,16 @@ def english_static(html):
     res = "".join(done)
     res = re.sub(r"<html\b([^>]*?)\blang\s*=\s*\"[^\"]*\"", r'<html\1lang="en"', res, count=1, flags=re.I)
     if "<html" in res and not re.search(r"<html\b[^>]*\blang=", res, re.I): res = re.sub(r"<html\b", '<html lang="en"', res, count=1, flags=re.I)
-    inject = '<meta http-equiv="content-language" content="en"><script>window.__SEN=' + json.dumps(sen, ensure_ascii=False).replace("</", "<\\/") + ";</script>"
-    res = re.sub(r"<head\b[^>]*>", lambda m: m.group(0) + inject, res, count=1, flags=re.I)
+    # plain ASCII ("\\ud83c\\udfb1"), and "</" / "<!--" cannot end or confuse the script
+    data = json.dumps(sen, ensure_ascii=True).replace("</", "<\\/").replace("<!--", "\\u003c!--")
+    inject = '<meta http-equiv="content-language" content="en"><script>window.__SEN=' + data + ";</script>"
+    head = re.search(r"<head\b[^>]*>", res, re.I)
+    if not head: raise SystemExit("no <head> in the page")
+    at = head.end()
+    close = re.search(r"</head\s*>", res[at:], re.I)
+    cs = re.search(r"<meta\s+charset\s*=\s*[\"']?[\w-]+[\"']?\s*/?>", res[at:at + close.start()] if close else res[at:at + 4000], re.I)
+    if cs: at += cs.end()   # after <meta charset>: the encoding is declared before anything that is not plain ASCII
+    res = res[:at] + inject + res[at:]
     return res, len(sen)
 
 
