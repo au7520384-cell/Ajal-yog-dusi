@@ -6,7 +6,7 @@ Usage: python3 tools/build_web.py [out_dir]   (default: ./web_site)   Optional: 
 The game server of this repo serves the build in ./web itself (server/server.js, same origin, pictures cached for a year, a stale build is ignored):
    SAME_ORIGIN=1 INLINE_UNDER=6000 NO_ZIP=1 python3 tools/build_web.py web      <- run it after every change of index.html, then commit web/
 SAME_ORIGIN=1 keeps the API on the same host (the default build points it at CONFIG.server, for Cloudflare Pages); INLINE_UNDER=N leaves pictures smaller than N bytes inside index.html
-(fewer files); NO_ZIP=1 skips the zip. The file .src holds the hash of the index.html the build was made from (the server compares it)."""
+(fewer files); NO_ZIP=1 skips the zip; UZ_HTML=1 keeps the Uzbek static text in the page's HTML (by default it is English: tools/portal_html.py). The file .src holds the hash of the index.html the build was made from (the server compares it)."""
 import os, re, sys, hashlib, base64, shutil, zipfile
 root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 out = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else os.path.join(root, "web_site"))
@@ -48,6 +48,13 @@ def _media(m):
     AUD[name] = raw
     return name
 src = re.sub(r"data:(audio/wav|video/mp4);base64,([A-Za-z0-9+/=]+)", _media, src)
+# The HTML the browser (and an ad network's crawler: Y8, Nov 16, "Google judges the page from its HTML ... Uzbek isn't a supported publisher language, so AdX declines") reads is English; the Uzbek static labels
+# are put back by the page itself when it starts, so players see exactly what they saw before (tools/portal_html.py). UZ_HTML=1 keeps the plain page (tools/test_portal_html.js compares the two).
+if not os.environ.get("UZ_HTML"):
+    sys.path.insert(0, os.path.join(root, "tools")); import portal_html
+    src, _moved = portal_html.english_static(src); _left = portal_html.leftover(src)
+    if _left or _moved < 50: sys.exit(f"the page's HTML is not English: {_moved} pieces moved, left over: {_left[:5]}")
+    print("static text moved out of the markup:", _moved, "(lang=en)")
 KEEP = out.rstrip("/") + ".hd_keep"; HD_DIR = os.path.join(out, "hd")
 if os.path.abspath(HD_STORE).startswith(out.rstrip("/") + os.sep) and os.path.isdir(HD_STORE):   # the store is inside the folder that is about to be rebuilt: set it aside
     if os.path.isdir(KEEP): shutil.rmtree(KEEP)
