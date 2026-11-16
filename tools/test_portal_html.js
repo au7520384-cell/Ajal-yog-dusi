@@ -3,13 +3,13 @@
 // Y8's developer (Nov 16): "billiard_8's build page is marked and its static HTML text is Uzbek ... Google judges the page from its HTML. Uzbek isn't a Google-supported publisher language, so AdX declines
 // the in-game requests ... make the static HTML text English ... restore y8GameId 288343 / y8AppId 6ad579a6abe0343702b12ba1 (the v1.6 build sends Icy Tower's IDs)".
 // Then the owner: "did you make lang=en everywhere: Telegram, the app, Playgama too?" - so the step runs in tools/build_web.py (website + Telegram, the Android app, the Y8 zip) and tools/build_crazy.py
-// (CrazyGames, Playgama, GameMonetize); UZ_HTML=1 keeps the plain page.
+// (Playgama, and the CrazyGames / GameMonetize variants); UZ_HTML=1 keeps the plain page (tests only: the builds refuse it outside the temp folder). THE RULE: CLAUDE.md, tools/test_html_lang.js.
 // Checked here:
 //  - the default build_web.py page (website / Telegram / app): <html lang="en">, no Uzbek label left in the markup (what a crawler reads), the English title / noscript / terms links still there, 85 pieces of text
 //    in window.__SEN; it is byte for byte what tools/portal_html.py makes of the plain page, and running the tool on it again changes nothing
 //  - window.__SEN is plain ASCII (emoji as \u escapes) and stands AFTER <meta charset> (a host that sends no charset cannot make the labels unreadable), the charset itself is in the first 1024 bytes
 //  - the page runs: after start no marker is left in the DOM, and for uz / en / ru / th / tr the static labels, the placeholders / titles and the home screen's text are IDENTICAL to the plain page
-//  - the CrazyGames, Playgama and GameMonetize pages and the Y8 zip: the raw HTML says lang=en with no Uzbek label in it (their runtime: tools/test_playgama_ads.js, tools/test_y8_build.js)
+//  - the Playgama page and the Y8 zip: the raw HTML says lang=en with no Uzbek label in it (their runtime: tools/test_playgama_ads.js, tools/test_y8_build.js)
 //  - the Royal Billiard 8 IDs are in the Y8 page (App 6ad579a6abe0343702b12ba1, Game 288343), not Icy Tower's
 const { chromium } = require("playwright"), http = require("http"), path = require("path"), fs = require("fs"), os = require("os"), { spawnSync } = require("child_process");
 const ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -36,7 +36,7 @@ const rawChecks = (tag, raw) => {
   const b2 = py("build_web.py", [en], { INLINE_UNDER: "6000", NO_ZIP: "1" });
   if (b2.status) { console.log(b2.stderr || b2.stdout); process.exit(1); }
   const raw = fs.readFileSync(path.join(en, "index.html"), "utf8"), rawPlain = fs.readFileSync(path.join(plain, "index.html"), "utf8");
-  ok(/<html\b[^>]*\blang="uz"/.test(rawPlain.slice(0, 2000)) && senOf(rawPlain).arr.length === 0, "(UZ_HTML=1 keeps the plain page: lang=uz, nothing moved)");
+  ok(UZ.some(w => readable(rawPlain).includes(w)) && senOf(rawPlain).arr.length === 0, "(UZ_HTML=1 keeps the plain page: its Uzbek labels are in the HTML, nothing moved)");
   ok(/static text moved out of the markup: 85 \(lang=en\)/.test(b2.stdout), "build_web.py (the website, Telegram, the app) reports the 85 pieces it moved", b2.stdout.slice(0, 200));
   rawChecks("website / Telegram / app (build_web.py)", raw);
   // the tool: the plain page through tools/portal_html.py is byte for byte the default build, and a second pass changes nothing
@@ -47,7 +47,7 @@ const rawChecks = (tag, raw) => {
   ok(t2.status === 0 && fs.readFileSync(path.join(tmp, "cli2.html"), "utf8") === raw, "running the tool on a page that already went through it changes nothing", t2.stdout + t2.stderr);
   ok(/^[\s\S]{0,1024}<meta charset="utf-8">/.test(Buffer.from(raw, "utf8").subarray(0, 1024).toString("latin1")), "<meta charset> is inside the first 1024 bytes (what a browser looks at before it decodes anything)");
   // the other builds: the raw HTML
-  const portals = [["CrazyGames", {}], ["Playgama", { PORTAL: "playgama" }], ["GameMonetize", { PORTAL: "gamemonetize" }]];
+  const portals = [["Playgama", { PORTAL: "playgama" }]];   // (the owner does not use the CrazyGames / GameMonetize variants: build_crazy.py still refuses to build them with Uzbek HTML)
   for (const [name, env] of portals) {
     const o = path.join(tmp, "p_" + name), r = py("build_crazy.py", [o], { INLINE_UNDER: "6000", ...env });
     ok(r.status === 0, `${name}: the build is made (tools/build_crazy.py)`, (r.stderr || r.stdout).slice(-300));

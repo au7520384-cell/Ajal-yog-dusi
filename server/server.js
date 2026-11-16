@@ -83,6 +83,7 @@ try {
   if (WEB_OK) WEB_ETAG = `W/"${crypto.createHash("sha1").update(fs.readFileSync(path.join(WEB, "index.html"))).digest("hex").slice(0, 16)}"`;
 } catch (e) {}
 console.log(WEB_OK ? "web build: serving ./web (light page, cached pictures)" : "web build: missing or stale, serving the single-file page");
+if (!WEB_OK) console.error("WARNING: ./web is missing or older than index.html: the site serves the single-file page, whose HTML still has the Uzbek labels. Rebuild: SAME_ORIGIN=1 INLINE_UNDER=6000 NO_ZIP=1 python3 tools/build_web.py web");
 function sendFile(req, res, p, head) {   // a file with Range support (the little video needs it)
   const st = fs.statSync(p), r = /^bytes=(\d*)-(\d*)$/.exec(String(req.headers.range || ""));
   if (r && (r[1] || r[2])) {

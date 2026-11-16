@@ -11,6 +11,7 @@ python3 - <<'PY'
 import json, re
 p = "android/www/assets.json"; m = json.load(open(p)); m.pop("hd", None); open(p, "w").write(json.dumps(m, separators=(",", ":")))
 f = "android/www/index.html"; s = open(f, encoding="utf-8").read()
+assert re.search(r'<html\b[^>]*\blang="en"', s[:2000]) and "window.__SEN=" in s, "the app's HTML must be English (lang=en, the Uzbek labels in window.__SEN): CLAUDE.md"
 n = s.count("const CARD_PAY = true,"); assert n == 1, n
 s = s.replace("const CARD_PAY = true,", "const CARD_PAY = false,")
 import os
