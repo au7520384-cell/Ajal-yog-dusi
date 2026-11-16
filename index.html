@@ -5346,7 +5346,10 @@ case "os": igkToOs(); break;
 function igkFs() { try { return !!(document.fullscreenElement || document.webkitFullscreenElement || (TG && TG.isFullscreen)); } catch (e) { return false; } }
 // When the in-game keyboard stands in for the phone's own: a turned page (see above) and FULL SCREEN on a touch screen. In full screen the phone's own keyboard
 // makes Android resize the window / show and hide its bars: the whole screen flashes black (the owner, typing to a friend in full screen). The in-game keyboard changes nothing outside the page.
-function igkOn() { return rotated || (igkFs() && matchMedia("(pointer: coarse)").matches); }   // (a computer with a touch screen keeps its own keyboard: its main pointer is not coarse)
+// A game inside an IFRAME (Y8 and the other portals) cannot see the phone's keyboard or its own full screen: document.fullscreenElement is null in the frame even when the portal made the frame full screen,
+// and visualViewport does not shrink for a frame - so the text box of the world chat stood behind the keys and Android flashed the window (the owner, Y8 in Chrome). A touch screen in a frame always gets the in-game keyboard.
+const IN_FRAME = (() => { try { return window.top !== window.self; } catch (e) { return true; } })();
+function igkOn() { return rotated || ((igkFs() || IN_FRAME) && matchMedia("(pointer: coarse)").matches); }   // (a computer with a touch screen keeps its own keyboard: its main pointer is not coarse)
 function igkPlace() {   // the keyboard fills the page's bottom strip: a turned page's own frame turned like the body (page top = screen right), an upright page at the screen's bottom
 if (!igkEl) return;
 igkEl.style.width = vw + "px"; igkEl.style.height = kbH + "px";
@@ -14956,11 +14959,14 @@ const guard = () => { try { history.pushState({bg: 1}, ""); } catch (e) {} };
 try { history.replaceState({bg: 0}, ""); } catch (e) {}
 guard();
 addEventListener("popstate", () => {
+if (igkEl && igkEl.classList.contains("on")) { igkHide(true); guard(); return; }   // Back hides the in-game keyboard first (like Android hides its own)
 const modal = $("modal");
 if (modal && modal.classList.contains("on")) { modal.classList.remove("on"); guard(); return; }
+const wc = $("wChat"); if (wc && wc.classList.contains("on")) { try { $("wChatX").click(); } catch (e) { wc.classList.remove("on"); } guard(); return; }   // the world chat is a panel, not a pop-up: Back closes it too
 if (mode === "game" && game && !game.over) { guard(); try { $("gMenu").click(); } catch (e) {} return; }
 const on = document.querySelector(".screen.on");
 if (on && on.id !== "home" && on.id !== "vs" && on.id !== "res") { guard(); go("home"); return; }
+if (IN_FRAME) { guard(); return; }   // a game in a frame (Y8 ...): the page that holds it is not ours to leave (history.back() here turned the whole tab black / blank); the portal has its own exit key
 if (Date.now() - lastBack < 2200) { try { history.back(); } catch (e) {} return; }   // second press: allow the system to leave
 lastBack = Date.now(); guard(); toast("↩", T("Chiqish uchun yana bir marta bosing"), "");
 });
