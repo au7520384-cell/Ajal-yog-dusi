@@ -2302,6 +2302,12 @@ function ubucket(uid, key, max, perMs) {
   if (ubk.size > 20000) for (const [kk, v] of ubk) if (now - v.t > 600e3) ubk.delete(kk);
   return ok;
 }
+// ---- translating a world chat line (the owner's idea, Nov 16): a button under a line shows it in the reader's own language. Google Cloud Translation v2 (GOOGLE_TRANSLATE_KEY, set on Render by the owner: never in chat);
+// without the key the room says tr:false and the client shows no button. A line is translated once per language (cached), one player gets 8 translations per 48 s, the whole game TRANSLATE_DAILY_CHARS characters
+// a day (default 12000, about 360k a month: inside Google's 500k free month); the translated text goes through the same swear filter. TRANSLATE_URL is for the tests (a mock Google).
+const TRANSLATE_KEY = process.env.GOOGLE_TRANSLATE_KEY || "", TRANSLATE_URL = process.env.TRANSLATE_URL || "https://translation.googleapis.com/language/translate/v2", TRANSLATE_DAILY = +process.env.TRANSLATE_DAILY_CHARS || 12000;
+const TR_LANGS = {uz: "uz", en: "en", ru: "ru", tr: "tr", es: "es", pt: "pt", ar: "ar", id: "id", hi: "hi", fr: "fr", de: "de", ko: "ko", ja: "ja", zh: "zh-CN", th: "th", vi: "vi"};   // the game's language -> Google's code
+const trCache = new Map(); let trDay = "", trUsed = 0;
 const worldText = s => String(s || "").replace(/[\u0000-\u001f\u007f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, WORLD_LEN);
 const WORLD_CONTACT = /(https?:|www\.|\b[a-z0-9-]{2,}\.(com|net|org|uz|ru|io|me|gg|ly|xyz|info|tk|cc|co)\b|t\.me|telegram\.me|@[a-z0-9_]{4,}|(?:\d[\s().+-]*){9,})/i;   // links, user names, phone numbers: no advertising, no luring players away
 const lobbyByWid = wid => { if (!wid) return null; for (const L of lobbies.values()) if (L.wid === wid) return L; return null; };
@@ -2328,7 +2334,29 @@ Object.assign(routes, {
     if (!ubucket(u.id, "wpoll", 12, 6000)) return [429, {error: "slow down"}];
     worldPrune();
     const after = int(new URL(req.url, "http://x").searchParams.get("after"), 1e12), list = after ? WORLD.filter(m => m.id > after) : WORLD.slice(-40);
-    return {msgs: list.slice(-60).map(worldPub), lobbies: worldLobbies(), last: worldSeq, from: WORLD.length ? WORLD[0].id : worldSeq + 1, online: clients.size, muted: muted(u)};   // (from: the oldest line still alive: an open window drops what is older)
+    return {tr: !!TRANSLATE_KEY, msgs: list.slice(-60).map(worldPub), lobbies: worldLobbies(), last: worldSeq, from: WORLD.length ? WORLD[0].id : worldSeq + 1, online: clients.size, muted: muted(u)};   // (from: the oldest line still alive: an open window drops what is older)
+  },
+  async "POST /api/world/translate"(req, u) {   // {id, to}: the line's text in the reader's language: {ok, t, src} or {ok, same}
+    const b = await jsonBody(req);
+    if (!TRANSLATE_KEY) return [503, {error: "off"}];
+    const to = TR_LANGS[String(b.to || "")]; if (!to) return [400, {error: "bad"}];
+    const m = WORLD.find(x => x.id === (b.id | 0)); if (!m || m.kind !== "text") return [404, {error: "gone"}];
+    const ck = m.id + "|" + to, hit = trCache.get(ck); if (hit) return {ok: true, ...hit};
+    if (!ubucket(u.id, "wtr", 8, 6000)) return [429, {error: "slow"}];
+    const day = new Date().toISOString().slice(0, 10); if (day !== trDay) { trDay = day; trUsed = 0; }
+    if (trUsed + m.text.length > TRANSLATE_DAILY) return [503, {error: "limit"}];
+    trUsed += m.text.length;
+    let out;
+    try {
+      const r = await fetch(TRANSLATE_URL, {method: "POST", headers: {"Content-Type": "application/json", "X-goog-api-key": TRANSLATE_KEY}, body: JSON.stringify({q: m.text, target: to, format: "text"}), signal: AbortSignal.timeout(6000)});
+      if (!r.ok) { trUsed -= m.text.length; return [502, {error: "fail"}]; }
+      const t = ((await r.json()).data || {}).translations || []; if (!t[0] || typeof t[0].translatedText !== "string") { trUsed -= m.text.length; return [502, {error: "fail"}]; }
+      const src = String(t[0].detectedSourceLanguage || "").slice(0, 8), same = src.split("-")[0] === to.split("-")[0];
+      out = same ? {same: true} : {t: cleanChat(worldText(t[0].translatedText)), src};
+    } catch (e) { trUsed -= m.text.length; return [502, {error: "fail"}]; }
+    if (trCache.size > 4000) trCache.delete(trCache.keys().next().value);
+    trCache.set(ck, out);
+    return {ok: true, ...out};
   },
   async "POST /api/world/send"(req, u) {   // {text} or {stk}
     const b = await jsonBody(req);
