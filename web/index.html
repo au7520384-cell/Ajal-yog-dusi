@@ -1861,7 +1861,10 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 .wk .wkwon .coin{width:42px;height:42px}
 .wk .wkempty{padding:24px;text-align:center;color:#aab0cc;font-weight:700}
 .wk .wkcl{position:absolute;right:-18px;top:6px;z-index:4}
+.wk .wkgot{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 22px;align-items:center;justify-content:center;background:linear-gradient(#0f3a1f,#0a2614);border:1px solid #2fbf5a;border-radius:10px;padding:8px 14px;font-weight:900;font-size:20px;color:#9dffb0;box-shadow:inset 0 0 14px #1f8a4a55}
+.wk .wkgot span{display:inline-flex;align-items:center;gap:8px}.wk .wkgot .cash{width:34px;height:24px;flex:none;display:inline-block}
 @media (max-height:560px),(max-width:820px){
+.wk .wkgot{margin-top:4px;padding:3px 8px;font-size:12px;gap:2px 14px}.wk .wkgot span{gap:4px}.wk .wkgot .cash{width:24px;height:17px}
 .wk .wktab{padding:6px 14px 8px;font-size:13px;min-width:0;gap:6px}.wk .wkh{margin:0 auto -4px;width:min(27%,210px)}.wk .wkh span{font-size:15px;transform:translateY(-4px)}
 .wk .wkme{gap:8px;padding:6px 10px}.wk .wkrank{padding:8px 8px;font-size:14px;min-width:78px}.wk .wkstar{width:40px;height:38px;font-size:16px}.wk .wkn{font-size:18px}.wk .wkw{font-size:16px}.wk .wkw .coin,.wk .wkpz .coin{width:22px;height:22px}.wk .wkglobe img.wg{width:64px}.wk .wkglobe{font-size:32px}
 .wk .wkpz{padding-left:8px;font-size:13px;gap:1px}.wk .wkpz .pt{font-size:12px}.wk .wkpz .cash{width:30px;height:21px}.wk .wkpz div{grid-template-columns:18px 1fr 30px;gap:4px}
@@ -10541,12 +10544,14 @@ const rows = top.length ? top.map((u, i) => `<div class="wkrow r${i + 1}"><div c
 <div class="wkpl">${avHTML(u.avatar, u.frame, 56)}${flagHTML(u.country, 26)}<span class="nm">${esc(u.name)}</span></div>
 <div class="wkwon">${fmtS(u.won)} <span class="coin"></span></div></div>`).join("") : `<div class="wkempty">${T("Hali natija yo'q")}</div>`;
 const rank = me && me.rank ? fmt(me.rank) : "—", won = me ? me.won | 0 : 0;
+const endMs = lw && lw.week ? Date.parse(lw.week + "T00:00:00Z") + 7 * 864e5 : 0, got = endMs ? (profile.prizeLog || []).filter(x => (x.k === "weekly" || x.k === "country") && x.at >= endMs - 432e5) : [];   // (credited after that week ended)
+const gotHTML = got.length ? `<div class="wkgot">✅ ${got.map(x => `<span>+${fmt(x.cash | 0)} <i class="cash"></i> ${esc(T(x.k === "country" ? "Davlat reytingi sovrini" : "Haftalik reyting sovrini"))}${x.from ? " · " + esc(x.from) : ""}</span>`).join("")}</div>` : "";
 $("mExtra").innerHTML = `<div class="wk"><div class="wktabs">${tabs.map(([k, l, ic]) => `<div class="wktab${k === scope ? " on" : ""}" data-wk="${k}">${ic}<span>${l}</span></div>`).join("")}</div>
 <div class="wkbody"><div class="wkh" style="background-image:url(${IMG.wk_plate})"><span>${T("Haftalik natijalar")}</span></div>
 <div class="wkme"><div class="wkrank">${rank}</div>${star(lvl, sc)}${avHTML(profile.avatar, profile.frame, 64)}
 <div><div class="wkn">${esc(profile.name)}</div><div class="wkw">${fmtS(won)} <span class="coin"></span></div></div><div class="wkglobe">${scope === "country" && profile.country ? flagHTML(profile.country, 50) : scope === "friends" ? '<span>👥</span>' : `<img class="wg" src="${IMG.wk_globe}" alt="">`}</div>
 ${prizes ? `<div class="wkpz"><b class="pt">${T("Top 3 sovrin")}:</b>${prizes.map((v, i) => `<div><span>${i + 1}.</span><b>${fmt(v)}</b><span class="cash"></span></div>`).join("")}</div>` : `<div class="wkpz"></div>`}</div>
-<div class="wkcols"><span>${T("O'RIN")}</span><span>${T("ISM")}</span><span>${T("HAFTALIK YUTUQ")}</span></div>
+${gotHTML}<div class="wkcols"><span>${T("O'RIN")}</span><span>${T("ISM")}</span><span>${T("HAFTALIK YUTUQ")}</span></div>
 <div class="wklist">${rows}</div></div></div>`;
 $("mExtra").querySelectorAll("[data-wk]").forEach(t => t.onclick = () => { Snd.click(); showWeeklyResults(r, t.dataset.wk); });
 }
@@ -11020,6 +11025,7 @@ if (k === "tables") for (const id of [].concat(v)) if (!(profile.tables = profil
 if (k === "emblems") for (const id of [].concat(v)) if (!(profile.emb = profile.emb || []).includes(+id)) profile.emb.push(+id);
 if (k === "avs") for (const id of [].concat(v)) if (!profile.avs.includes(+id)) { profile.avs.push(+id); profile.avatar = +id; }
 }
+if (["weekly", "country"].includes(g.kind) && (gCash || gCoins)) { const L = profile.prizeLog = profile.prizeLog || []; L.push({k: g.kind, cash: gCash, coins: gCoins, from: String(g.from || "").slice(0, 24), at: Date.now()}); if (L.length > 12) L.splice(0, L.length - 12); }   // what the world / country weekly prizes gave: the "Itogi nedeli" window says so (a toast can be missed, e.g. behind the start ad)
 save(); if (g.items && $("mini").classList.contains("on")) buildMini();
 const why = {purchase: T("Xarid uchun rahmat!"), referral: T("Taklif bonusi"), invited: T("Do'stingiz qo'shildi"), gift: T("Sovg'a"),
 weekly: T("Haftalik reyting sovrini"), country: T("Davlat reytingi sovrini"), league: T("Liga sovrini"), club: T("Klub mukofoti"), quiz: T("Viktorina"), clubchest: T("Klub sandig'i")}[g.kind] || "";
