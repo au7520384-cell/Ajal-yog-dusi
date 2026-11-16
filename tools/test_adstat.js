@@ -2,7 +2,7 @@
 // What the ad network answered, counted by the server so that "no ad came" can be told from "the game never asked":  node tools/test_adstat.js   (B8_ROOT=<repo copy>)
 // The owner: "the Y8 ad does not pay / is not called". The Y8 page (in a frame, like Y8's own) reports every ad break (breakStatus) to POST /api/adstat;
 // the owner reads it on /admin/ads (needs the ADMIN_KEY). Checked here against the real server and a fake Y8 SDK:
-//  - when the game opens the video gift window comes first; "Later" asks the short start ad, which is reported (start / game-start / viewed); "Watch" asks a rewarded video (reward / open-gift / viewed)
+//  - when the game opens nothing is asked; the first click asks the short start ad, which is reported (start / first-click / viewed); a rewarded video is reported too (reward / <name> / viewed)
 //  - an ad the network did not give (notReady) is reported as such, with viewed = 0
 //  - an ad break every 2nd finished match (y8Break), none after the 1st
 //  - the numbers need the admin key; the page /admin/ads exists; junk is refused
@@ -32,15 +32,15 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     for (let i = 0; i < 600 && !(fr() && await fr().evaluate(() => typeof profile !== "undefined" && !document.getElementById("boot") && window.__bootGone).catch(() => false)); i++) await sleep(200);
     await sleep(4000);
     ok(await fr().evaluate(() => ON_PORTAL && Y8.sdk && Y8.adsReady), "the page runs in Y8 mode with the (fake) SDK ready");
-    ok((await fr().evaluate(() => window.__ads)).length === 0 && await fr().evaluate(() => document.getElementById("modal").classList.contains("on")), "the gift window comes first, no ad yet", await fr().evaluate(() => window.__ads));
-    await fr().evaluate(() => document.querySelector("#mBtns .gray").click()); await sleep(800);   // "Later"
-    ok(JSON.stringify(await fr().evaluate(() => window.__ads)) === JSON.stringify(["start:game-start"]), "one start ad when the game opens (\"Later\")", await fr().evaluate(() => window.__ads));
+    ok((await fr().evaluate(() => window.__ads)).length === 0 && await fr().evaluate(() => !document.getElementById("modal").classList.contains("on")), "no window and no ad at load", await fr().evaluate(() => window.__ads));
+    await fr().evaluate(() => document.body.click()); await sleep(800);   // the first click of the visit
+    ok(JSON.stringify(await fr().evaluate(() => window.__ads)) === JSON.stringify(["start:first-click"]), "one start ad on the first click", await fr().evaluate(() => window.__ads));
     let r = await get("adminkey123"); let f = flat(r.j);
-    ok(r.status === 200 && f["y8 | start | game-start | viewed"] && f["y8 | start | game-start | viewed"].n === 1 && f["y8 | start | game-start | viewed"].viewed === 1, "the start ad is counted as viewed", f);
-    // the rewarded video of the gift window ("Watch") is reported too
-    await fr().evaluate(() => { window.__ads.length = 0; Y8.lastBreak = 0; y8Rewarded("open-gift", () => {}); }); await sleep(700);
+    ok(r.status === 200 && f["y8 | start | first-click | viewed"] && f["y8 | start | first-click | viewed"].n === 1 && f["y8 | start | first-click | viewed"].viewed === 1, "the start ad is counted as viewed", f);
+    // a rewarded video (a "watch" key) is reported too
+    await fr().evaluate(() => { window.__ads.length = 0; Y8.lastBreak = 0; y8Rewarded("reward-test", () => {}); }); await sleep(700);
     r = await get("adminkey123"); f = flat(r.j);
-    ok(f["y8 | reward | open-gift | viewed"] && f["y8 | reward | open-gift | viewed"].n === 1 && f["y8 | reward | open-gift | viewed"].viewed === 1, "a viewed rewarded video is counted (reward / open-gift)", f);
+    ok(f["y8 | reward | reward-test | viewed"] && f["y8 | reward | reward-test | viewed"].n === 1 && f["y8 | reward | reward-test | viewed"].viewed === 1, "a viewed rewarded video is counted (reward / reward-test)", f);
     // the network gives no ad
     await fr().evaluate(() => { window.__status = "notReady"; Y8.lastBreak = 0; return y8Ad("next", "between-matches"); }); await sleep(600);
     r = await get("adminkey123"); f = flat(r.j);

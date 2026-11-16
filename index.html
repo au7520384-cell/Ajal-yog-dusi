@@ -10907,24 +10907,18 @@ setTimeout(() => done("timeout90"), 90000);
 });
 }
 const VID_COINS = 300;   // a rewarded video (the ad that is a real video of about 30 s and pays best) gives this many coins: it has to be worth watching (it was +15)
-function y8Preroll() {   // the video GIFT window when the game opens on Y8 (the menu is up first), once per visit; for returning players only (a NEW player's first click shows the start ad: y8FirstFire) and not for ad-free players
+function y8Preroll() {   // when the game is open: the other portal builds, the Android app and Telegram ask the plain start ad at load; the Y8 PAGE asks nothing here (the FIRST CLICK of the visit starts its one ad: y8FirstFire below)
 if (!ON_PORTAL || Y8.pre || !Y8.sdk || !Y8.adsReady || profile.adfree || !profile.tutDone || Y8.busy) return;
-const plain = () => y8Ad("start", "game-start");   // the short ad the network gives for a "start" break (about 5 s: a picture or a skippable video): its length is the network's choice, the game cannot make it longer
-const capped = profile.adDay === today() && (profile.adCount | 0) >= 10;
-if (typeof CRAZY_BUILD !== "undefined" || Y8.app || Y8.startAds) { Y8.pre = true; Y8.lastBreak = Date.now(); return plain(); }   // the other portal builds (Playgama / CrazyGames / GameMonetize), the Android app and Telegram: no gift window, the ad is asked as before (the portal's own SDK decides when it really shows)
-if (capped || $("modal").classList.contains("on")) return;   // (the Y8 page) no gift window: the FIRST CLICK shows the start ad (y8FirstFire below); an ad is never started without a click. The video gift is only for the Y8 page (not the Playgama / CrazyGames / GameMonetize builds, the Android app or Telegram)
-Y8.pre = true; Y8.lastBreak = Date.now();
-openModal({icon: "🎁", title: "Sovg'a", text: "Videoni oxirigacha ko'ring — tangalar sizniki!", extra: `<div class="reward"><span class="coin"></span> +${fmt(VID_COINS)}</div>`,
-buttons: [{label: "📺 " + T("Ko'rish"), cls: "green", fn: () => y8Rewarded("open-gift", () => { addCoins(VID_COINS); toast("🪙", "+" + fmt(VID_COINS), T("Rahmat!")); }, nofill => { if (nofill) plain(); })},   // watched to the end: the coins, and no short ad on top; no video available: the short ad as before; closed half way: nothing more
-{label: "Keyinroq", cls: "gray", fn: plain}]});
+if (typeof CRAZY_BUILD !== "undefined" || Y8.app || Y8.startAds) { Y8.pre = true; Y8.lastBreak = Date.now(); return y8Ad("start", "game-start"); }   // the short ad the network gives for a "start" break (about 5 s): its length is the network's choice, the game cannot make it longer; the portal's own SDK decides when it really shows
+// (the Y8 page: no window and no ad at load. There was a "Sovg'a" window here, a rewarded video for +300 coins; the owner: one ad when the game is entered, nothing else. An ad is never started without a click. The rewarded video keys - Free rewards, the ×2 after a won match - stay.)
 }
 // Y8 asked for "an ad on the first click" (so that more players see ads: the gap between plays and ad impressions was huge; the start ad used to wait for the tutorial and was asked at load, without a click).
-// The FIRST click / tap of every visit on the Y8 page (and in the Telegram Mini App, when an Adsgram interstitial block is set) starts the short start ad - new players too. A returning player's first click is his answer to the gift window (Watch = the rewarded video, Later = the start ad): that already is the ad.
+// The FIRST click / tap of every visit on the Y8 page (and in the Telegram Mini App, when an Adsgram interstitial block is set) starts the short start ad - new players too. Every player's first click is that ad (a returning player too: there is no window before it).
 let y8FirstDone = false;
 function y8FirstFire() {
 if (y8FirstDone) return;
 if (typeof CRAZY_BUILD !== "undefined" || Y8.app || (!ON_PORTAL && !TG_LAUNCH)) { y8FirstDone = true; return; }   // (Y8 page and Telegram only; the other portal builds and the app keep their own rules)
-if (Y8.pre || Y8.busy) { y8FirstDone = true; return; }   // the gift window or another ad is the first-click ad
+if (Y8.pre || Y8.busy) { y8FirstDone = true; return; }   // another ad is the first-click ad
 if (!Y8.sdk || !Y8.adsReady) return;   // the SDK / Adsgram is still loading: the next click tries again
 if (!ON_PORTAL && Y8.startAds !== "tg") { y8FirstDone = true; return; }   // Telegram without an Adsgram interstitial block: no ad
 y8FirstDone = true;
