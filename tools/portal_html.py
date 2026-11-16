@@ -9,7 +9,8 @@ english_static(html) makes the raw HTML of the page English without changing wha
   - what stays visible in the HTML is English: the <title>, the <noscript> paragraph, the links "Terms of Service / Privacy Policy / Refund Policy"
   - the script with the originals is plain ASCII (every non-ASCII character is a \\uXXXX escape) and stands right AFTER <meta charset>, so no host or browser can read the labels with a wrong encoding
   - calling it again on a page that already went through it changes nothing (the same count comes back)
-Every build runs it: tools/build_web.py (the website, Telegram, the Android app, the Y8 zip) and tools/build_crazy.py (CrazyGames, Playgama, GameMonetize); UZ_HTML=1 keeps the plain Uzbek page (the tests compare the two).
+Every build runs it: tools/build_web.py (the website, Telegram, the Android app, the Y8 zip) and tools/build_crazy.py (Playgama, and the CrazyGames / GameMonetize variants); UZ_HTML=1 keeps the plain Uzbek labels in the HTML and is refused outside the temp folder (only the tests compare the two).
+RULE (the owner, Nov 16): the HTML of a shipped page is English, NEVER lang="uz" - see CLAUDE.md and tools/test_html_lang.js.
 Usage: python3 tools/portal_html.py in.html out.html"""
 import re, sys, json, html as H
 
@@ -37,6 +38,14 @@ def split_blocks(html):
         out.append(("raw", m.group(0))); pos = m.end()
     if pos < len(html): out.append(("markup", html[pos:]))
     return out
+
+
+def plain_allowed(out_dir):
+    """UZ_HTML=1 (the plain page with its Uzbek labels in the HTML) exists for the tests only: it is refused unless the output folder is inside the system's temp folder,
+    so a page for the website, Telegram, the app or a portal can never be built with Uzbek HTML by accident (the owner, Nov 16: never lang=uz, never forget it)"""
+    import os, tempfile
+    t, o = os.path.realpath(tempfile.gettempdir()), os.path.realpath(out_dir)
+    return o == t or o.startswith(t + os.sep)
 
 
 SEN_RE = re.compile(r"window\.__SEN=(\[.*?\]);</script>", re.S)

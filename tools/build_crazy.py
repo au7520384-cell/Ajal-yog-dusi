@@ -370,12 +370,13 @@ def _bare(m):
 if PG or GM or os.environ.get("BARE_WEBP"): src = re.sub(r'"(UklGR[A-Za-z0-9+/=]{300,})"', _bare, src)
 
 # The page's raw HTML is English (the portal's ad network judges the language from it: Y8, Nov 16; tools/portal_html.py); the game puts its Uzbek static labels back when it starts. UZ_HTML=1 keeps the plain page.
+out = sys.argv[1] if len(sys.argv) > 1 else root
+sys.path.insert(0, os.path.join(root, "tools")); import portal_html
+if os.environ.get("UZ_HTML") and not portal_html.plain_allowed(out): sys.exit("UZ_HTML=1 (Uzbek labels in the HTML) is for the tests only: the output folder must be in the temp folder. A portal page is always English (CLAUDE.md).")
 if not os.environ.get("UZ_HTML"):
-    sys.path.insert(0, os.path.join(root, "tools")); import portal_html
     src, _moved = portal_html.english_static(src); _left = portal_html.leftover(src)
     if _left or _moved < 50: sys.exit(f"the page's HTML is not English: {_moved} pieces moved, left over: {_left[:5]}")
     print("static text moved out of the markup:", _moved, "(lang=en)")
-out = sys.argv[1] if len(sys.argv) > 1 else root
 os.makedirs(out, exist_ok=True)
 z = os.path.join(out, "bilyard8-playgama.zip" if PG else "bilyard8-gamemonetize.zip" if GM else "bilyard8-crazy.zip")
 with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:

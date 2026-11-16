@@ -50,8 +50,9 @@ def _media(m):
 src = re.sub(r"data:(audio/wav|video/mp4);base64,([A-Za-z0-9+/=]+)", _media, src)
 # The HTML the browser (and an ad network's crawler: Y8, Nov 16, "Google judges the page from its HTML ... Uzbek isn't a supported publisher language, so AdX declines") reads is English; the Uzbek static labels
 # are put back by the page itself when it starts, so players see exactly what they saw before (tools/portal_html.py). UZ_HTML=1 keeps the plain page (tools/test_portal_html.js compares the two).
+sys.path.insert(0, os.path.join(root, "tools")); import portal_html
+if os.environ.get("UZ_HTML") and not portal_html.plain_allowed(out): sys.exit("UZ_HTML=1 (Uzbek labels in the HTML) is for the tests only: the output folder must be in the temp folder. A page for the website, Telegram, the app or a portal is always English (CLAUDE.md).")
 if not os.environ.get("UZ_HTML"):
-    sys.path.insert(0, os.path.join(root, "tools")); import portal_html
     src, _moved = portal_html.english_static(src); _left = portal_html.leftover(src)
     if _left or _moved < 50: sys.exit(f"the page's HTML is not English: {_moved} pieces moved, left over: {_left[:5]}")
     print("static text moved out of the markup:", _moved, "(lang=en)")
