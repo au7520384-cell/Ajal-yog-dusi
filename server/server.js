@@ -1160,7 +1160,7 @@ const routes = {
     rollWeek();   // the week that just ended is closed (ranked, prizes granted) BEFORE this player's fields are moved to the new week; the 60-second timer alone leaves a minute after Monday 00:00 UTC in which a sync wiped last week's result
     if (b.name) u.name = cleanName(b.name);
     if (b.avatar !== undefined) u.avatar = int(b.avatar, 999);
-    if (b.frame !== undefined) u.frame = int(b.frame, 99);
+    if (b.frame !== undefined) u.frame = int(b.frame, 999);   // (was 99: the game has 128 frames, so every frame from #100 on - the scary, VIP and newest ones - was stored as #99 and the other players saw a wrong, oversized frame: the owner's arrow, Nov 16)
     if (cleanCountry(b.country)) u.country = cleanCountry(b.country);
     else if (!u.country) u.country = geoCountry(req);
     // weekly winnings come ONLY from verified online matches (finish()); device-reported totals never count (they include AI games and can be forged)
