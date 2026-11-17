@@ -66,11 +66,11 @@ const ANIMALS = ["🦊", "🐯", "🐼", "🦅", "🐸", "🐺", "🐻", "🐰",
   let s1 = await run(() => bubble(0, "🐯", 2600));
   const tigerD = s1.find(x => x > 1.9 && x < 2.2);
   ok(!!tigerD, "my voiced sticker (tiger) plays its sound once", s1);
-  let s2 = await run(() => bubble(1, "🐺", 5000), 450);   // 0.45 s later: inside the 1.2 s
-  ok(!s2.some(x => x > 1.9 && x < 2.0) && !s2.some(x => x > 1.8 && x < 2.0 && x !== tigerD), "a second voiced sticker within 1.2 s is silent (nobody can machine-gun a roar)", { s2, tigerD });
+  let s2 = await run(() => bubble(1, "🐺", 5000), 450);   // 0.45 s later: the opponent's sticker is heard too (it cuts the tiger)
+  ok(s2.some(x => x > 1.8 && x < 2.0) && s2.filter(x => x > 1.8 && x < 2.0).length === 1, "a sticker that comes right after another is heard as well (the opponent's wolf, its own shorter sound, once)", { s2, tigerD });
   await sleep(1300);
-  let s3 = await run(() => bubble(1, "🐺", 5000));
-  ok(s3.some(x => x > 1.8 && x < 2.0) && s3.filter(x => x > 1.8 && x < 2.0).length === 1, "...after that the opponent's wolf plays (its own, shorter sound), once", s3);
+  let s3 = await run(() => { bubble(1, "🐺", 5000); bubble(1, "🐺", 5000); });
+  ok(s3.filter(x => x > 1.8 && x < 2.0).length === 1, "...and a double trigger within 0.25 s is one sound", s3);
   await sleep(1300);
   let s4 = await run(() => { bubble(0, "🎱", 2600); bubble(0, "Salom!", 2600); });
   ok(!s4.some(x => x > 0.3 && x < 2.2 && Math.abs(x - 2.064) < 0.1), "a sticker with no voice and a text bubble play no sticker sound", s4);
