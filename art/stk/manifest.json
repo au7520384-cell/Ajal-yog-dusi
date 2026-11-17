@@ -1,0 +1,83 @@
+{
+  "🦊": {
+    "slug": "fox",
+    "move": "yip",
+    "src": {
+      "made_with": "Higgsfield, model mirelo_text_to_audio, duration 2 s, free plan (Nov 17, 2026)",
+      "job": "e4fd7c6b-53e6-480f-a5f4-2b15987b77ba",
+      "prompt": "A small fox yelping, one short playful bark and a yip, close up, dry recording, no music, no background noise"
+    }
+  },
+  "🐯": {
+    "slug": "tiger",
+    "move": "roar",
+    "src": {
+      "made_with": "Higgsfield, model mirelo_text_to_audio, duration 2 s, free plan (Nov 17, 2026)",
+      "job": "c8efbb0f-3a23-4765-a5d7-d8887c94d074",
+      "prompt": "A single fierce tiger roar, close up, powerful and clear, dry recording, no music, no background noise"
+    }
+  },
+  "🐼": {
+    "slug": "panda",
+    "move": "grunt",
+    "src": {
+      "made_with": "Higgsfield, model mirelo_text_to_audio, duration 2 s, free plan (Nov 17, 2026)",
+      "job": "37fb2058-bbd5-476d-8f32-d03d7e51d7e3",
+      "prompt": "A cute giant panda making a soft happy squeaky grunt, close up, dry recording, no music, no background noise"
+    }
+  },
+  "🦅": {
+    "slug": "eagle",
+    "move": "screech",
+    "src": {
+      "made_with": "Higgsfield, model mirelo_text_to_audio, duration 2 s, free plan (Nov 17, 2026)",
+      "job": "2cc0e4fa-3def-469e-bcc1-d093f056f14d",
+      "prompt": "A bald eagle screeching, one loud piercing hawk-like cry, dry recording, no music, no background noise"
+    }
+  },
+  "🐸": {
+    "slug": "frog",
+    "move": "ribbit",
+    "src": {
+      "made_with": "Higgsfield, model mirelo_text_to_audio, duration 2 s, free plan (Nov 17, 2026)",
+      "job": "dbfc8a00-6975-4804-8fb8-e8bf6d576ee2",
+      "prompt": "A frog croaking, two loud ribbit sounds, close up, dry recording, no music, no background noise"
+    }
+  },
+  "🐺": {
+    "slug": "wolf",
+    "move": "howl",
+    "src": {
+      "made_with": "Higgsfield, model mirelo_text_to_audio, duration 2 s, free plan (Nov 17, 2026)",
+      "job": "c158d4fe-b702-4afd-a8a6-d56730fce629",
+      "prompt": "A wolf howling, one long dramatic howl, dry recording, no music, no background noise"
+    }
+  },
+  "🐻": {
+    "slug": "bear",
+    "move": "roar",
+    "src": {
+      "made_with": "Higgsfield, model mirelo_text_to_audio, duration 2 s, free plan (Nov 17, 2026)",
+      "job": "a720897f-1180-4585-9fb1-0c8964f319fd",
+      "prompt": "A brown bear growling, a deep powerful roar, close up, dry recording, no music, no background noise"
+    }
+  },
+  "🐰": {
+    "slug": "rabbit",
+    "move": "squeak",
+    "src": {
+      "made_with": "Higgsfield, model mirelo_text_to_audio, duration 2 s, free plan (Nov 17, 2026)",
+      "job": "01637596-ed36-4288-ba13-6bed0bb00598",
+      "prompt": "A small rabbit making a short cute squeak, close up, dry recording, no music, no background noise"
+    }
+  },
+  "🦎": {
+    "slug": "lizard",
+    "move": "hiss",
+    "src": {
+      "made_with": "Higgsfield, model mirelo_text_to_audio, duration 2 s, free plan (Nov 17, 2026)",
+      "job": "db33b7c3-b52d-4c48-8d5e-2803c6220cc1",
+      "prompt": "A lizard hissing, a short sharp hiss, close up, dry recording, no music, no background noise"
+    }
+  }
+}
