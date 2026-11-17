@@ -16,7 +16,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await p.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 120000 }); await sleep(800);
     await p.evaluate(() => { const g = document.getElementById("lsGuest"); if (g) g.click(); });
     await p.waitForFunction(() => Net.acct && Net.acct.id, null, { timeout: 20000 }); await sleep(1200);
-    await p.evaluate(() => { window.unlock = () => {}; window.checkAch = () => {}; document.getElementById("modal").classList.remove("on"); });
+    await p.evaluate(() => { window.unlock = () => {}; window.checkAch = () => {}; document.getElementById("modal").classList.remove("on"); CONFIG.dailyShot = true; });   // (the daily shot is OFF by default: CONFIG.dailyShot; tools/test_lucky_one.js checks the default)
     return p;
   };
   const modal = p => p.evaluate(() => ({ on: document.getElementById("modal").classList.contains("on"), text: (document.querySelector("#modal .panel") || {}).innerText || "", btns: [...document.querySelectorAll("#mBtns button")].map(x => x.textContent.trim()) }));

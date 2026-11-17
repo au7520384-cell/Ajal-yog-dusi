@@ -25,3 +25,7 @@ Royal Billiard 8 = Y8 **game `288343`**, **app `6ad579a6abe0343702b12ba1`** (`CO
 The owner (Nov 16) said the **CrazyGames** build is not needed: do not build or send it. **GameMonetize is in use again** (Nov 17: he uploaded the game to GameMonetize's portal and went through its "Verify SDK" step).
 The ones in use: the website + Telegram (Render), the Android app, Y8, Playgama (`PORTAL=playgama python3 tools/build_crazy.py <out>`) and GameMonetize (`PORTAL=gamemonetize python3 tools/build_crazy.py <out>`, its Game ID is in the script).
 GameMonetize has **no rewarded video** (only `sdk.showBanner()` interstitials): its build shows one at game open and after every 2nd match (at most one per 90 s); `node tools/test_gm_ads.js` checks it on a mock SDK.
+
+## 4. Files sent to the owner
+Every zip (or other file) sent to the owner has a **unique name with the portal, the version and the commit**, e.g. `bilyard8-y8-v1.8-a1b2c3d.zip` (copy the built file to that name in the scratchpad before SendUserFile).
+All our zips used to be called `bilyard8-y8.zip` etc., so his phone's file picker offered an OLD one (the Nov 17 screenshots with garbled labels came from the first, buggy Y8 zip). Never send two files with the same name.
