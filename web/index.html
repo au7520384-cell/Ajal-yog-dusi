@@ -4597,7 +4597,7 @@ G.balls = rack(); G.ballInHand = true; G.isBreak = true; G.tray = [];
 } else G.isBreak = false;
 nextTurn(); return;
 }
-let foul = null; const g = G.groups[p];
+let foul = null, respot8 = false; const g = G.groups[p];
 if (s.firstHit === null) foul = T("Hech bir sharga tegmadi");
 else if (g) {
 const ok = s.ownBefore > 0 ? groupOf(s.firstHit) === g : s.firstHit === 8;
@@ -4611,7 +4611,7 @@ if (G.isBreak) {
 const b8 = G.balls.find(b => b.n === 8), sp = freeSpot(FW * 0.72, FH / 2);
 Object.assign(b8, {out: false, x: sp.x, y: sp.y, vx: 0, vy: 0});
 G.sinking = G.sinking.filter(q => q.b.n !== 8); G.tray = G.tray.filter(q => q.b.n !== 8);
-setPill("8-shar joyiga qaytarildi");
+respot8 = true;   // (announced below: the pill alone was overwritten by the next turn's text in the same moment, so the ball seemed to come back by itself: the owner, Nov 17)
 } else if (g && s.ownBefore === 0 && !foul) return endGame(p, T("8-sharni tushirdi!"));
 else return endGame(o, foul ? "8-shar tushdi va qoida buzildi" : "8-shar vaqtidan oldin tushdi");
 }
@@ -4648,6 +4648,10 @@ const cont = own ? ownPotted > 0 : obj.length > 0;
 if (ownPotted >= 2) setBanner(ownPotted >= 3 ? "AJOYIB!" : "ZO'R!", "#ffe27a");
 if (!cont) G.cur = o;
 else if (G.players[p].isAI && ownPotted && Math.random() < 0.25) bubble(p, pick(["😎", "🔥", "Oson! 😏"]));
+}
+if (respot8) {   // the 8 pocketed on the break goes back on the table (the usual rule): said in the middle of the screen, after any banner that is still up
+const bn = G.banner, now = performance.now(), wait = bn && now - bn.t0 < bn.dur ? bn.dur - (now - bn.t0) + 120 : 0;
+setTimeout(() => { if (game === G) setBanner("8-shar joyiga qaytarildi", "#ffe27a"); }, wait);
 }
 nextTurn();
 }
