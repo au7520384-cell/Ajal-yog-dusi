@@ -171,7 +171,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   const match = async (p, win) => { await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); try { toMenu(); } catch (e) {} });
     await p.evaluate(() => { profile.dblDay = ""; profile.dblN = 0; window.__ads = []; startMatch("ai", CITIES[2], { name: "Elif", avatar: 301, frame: 0, level: 5, isAI: true, color: "#d33", cue: "start" }, null); });
     for (let i = 0; i < 40; i++) { await sleep(300); if (await p.locator("#tutSkip").count()) await p.locator("#tutSkip").click().catch(() => {}); if (await p.evaluate(() => canControl())) break; }
-    await p.evaluate(w => { endGame(w ? 0 : 1, "test"); }, win); await p.waitForSelector("#res.on #resBtns button.green", { timeout: 15000 }); await sleep(1500); };
+    await p.evaluate(w => { game.bot = false; endGame(w ? 0 : 1, "test"); }, win); await p.waitForSelector("#res.on #resBtns button.green", { timeout: 15000 }); await sleep(1500); };   // (a REAL opponent: against a bot the game pays no coins at all, tools/test_bot_free.js; the test mimics a human by clearing the bot flag)
   p = await open({});
   await match(p, true);
   const rw = await p.evaluate(() => ({ btns: [...document.querySelectorAll("#resBtns button")].map(x => x.className + ":" + x.textContent.trim()), dbl: [...document.querySelectorAll("#resAr .dblb")].map(x => x.dataset.dbl), keys: document.querySelectorAll("#resBtns .dblb").length, coins: profile.coins, prize: CITIES[2].prize }));
