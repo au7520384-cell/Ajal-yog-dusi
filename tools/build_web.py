@@ -44,10 +44,10 @@ src = re.sub(r'"(UklGR[A-Za-z0-9+/=]{300,})"', _bare, src)
 # sounds and the little video: files too (decoded / played only when needed; fetch() and <video> take a path as well as a data: address)
 AUD = {}
 def _media(m):
-    raw = base64.b64decode(m.group(2)); name = "a/" + hashlib.sha1(raw).hexdigest()[:14] + "." + ("wav" if m.group(1) == "audio/wav" else "mp4")
+    raw = base64.b64decode(m.group(2)); name = "a/" + hashlib.sha1(raw).hexdigest()[:14] + "." + {"audio/wav": "wav", "audio/mpeg": "mp3"}.get(m.group(1), "mp4")
     AUD[name] = raw
     return name
-src = re.sub(r"data:(audio/wav|video/mp4);base64,([A-Za-z0-9+/=]+)", _media, src)
+src = re.sub(r"data:(audio/wav|audio/mpeg|video/mp4);base64,([A-Za-z0-9+/=]+)", _media, src)
 # The HTML the browser (and an ad network's crawler: Y8, Nov 16, "Google judges the page from its HTML ... Uzbek isn't a supported publisher language, so AdX declines") reads is English; the Uzbek static labels
 # are put back by the page itself when it starts, so players see exactly what they saw before (tools/portal_html.py). UZ_HTML=1 keeps the plain page (tools/test_portal_html.js compares the two).
 sys.path.insert(0, os.path.join(root, "tools")); import portal_html

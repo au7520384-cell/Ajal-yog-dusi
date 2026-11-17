@@ -72,7 +72,7 @@ function gzipFor(p, etag) {
   return null;   // not ready yet: this request gets the plain file
 }
 const STATIC = {"/": "index.html", "/index.html": "index.html", "/manifest.webmanifest": "manifest.webmanifest", "/icon.svg": "icon.svg", "/icon-192.png": "icon-192.png", "/icon-512.png": "icon-512.png", "/icon-1024.png": "icon-1024.png", "/apple-touch-icon.png": "apple-touch-icon.png", "/favicon-48.png": "favicon-48.png", "/sw.js": "sw.js", "/assets.json": "assets.json"};
-const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript", ".webp": "image/webp", ".jpg": "image/jpeg", ".gif": "image/gif", ".wav": "audio/wav", ".mp4": "video/mp4"};
+const MIME = {".html": "text/html; charset=utf-8", ".webmanifest": "application/manifest+json", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".js": "text/javascript", ".webp": "image/webp", ".jpg": "image/jpeg", ".gif": "image/gif", ".wav": "audio/wav", ".mp3": "audio/mpeg", ".mp4": "video/mp4"};
 // The light build (./web, made by tools/build_web.py): a 4 MB page and the pictures / sounds as files. A visitor downloads the page, the pictures only when a screen shows them, and keeps them
 // (their names are hashes, so a file never changes: cached for a year); after an update only the changed page is downloaded again. A build older than index.html is ignored (the single-file page is served).
 const WEB = path.join(ROOT, "web"), WEBFILE = /^\/(img|a|hd)\/[A-Za-z0-9._-]+$/;

@@ -1937,7 +1937,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 .wch{display:flex;align-items:center;gap:5px;font-size:12px;color:#9fb4d8;cursor:pointer;min-width:0}.wch b{color:#ffd45a;font-weight:700;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wch .lgm{flex:none}.wch .wct{margin-left:auto;font-size:10px;opacity:.6;flex:none}
 .wctb{display:block;margin:3px 0 0;border:0;background:none;color:#8fb4ff;font:inherit;font-size:12px;padding:2px 0;cursor:pointer}.wctt{margin-top:3px;background:#0e2a44;border-left:3px solid #4aa3ff;border-radius:4px 10px 10px 4px;padding:5px 8px;font-size:13px;line-height:1.3;color:#d7ecff;word-break:break-word;display:block;width:fit-content;max-width:100%}.wctt.dim{background:none;border-left-color:#fff3;color:#9aa6c4;font-size:12px}
 .wcx{margin-top:2px;background:#16213f;border-radius:4px 12px 12px 12px;padding:6px 9px;font-size:14px;line-height:1.3;color:#eaf0ff;word-break:break-word;display:inline-block;max-width:100%}.wcm.me .wcx{background:#1d3a72}
-.wcs{margin-top:2px}.wcs .stkimg{height:60px}
+.wcs{margin-top:2px}.wcs .stkimg{height:60px}.wcs[data-s]{cursor:pointer}.wcs.stkplay .stkimg{animation:stkwig .65s ease-in-out}@keyframes stkwig{0%,100%{transform:none}18%{transform:rotate(-9deg) scale(1.14)}38%{transform:rotate(8deg) scale(1.2)}58%{transform:rotate(-6deg) scale(1.12)}78%{transform:rotate(3deg) scale(1.05)}}
 .wrh{color:#ffd45a;font-size:14px;font-weight:700;padding:2px 2px 6px;flex:none}
 #wLobList{flex:1;overflow:auto;display:flex;flex-direction:column;gap:7px;min-height:0;-webkit-overflow-scrolling:touch;scrollbar-width:thin}#wLobList .muted{text-align:center;margin:auto 0;font-size:13px}
 .wlc{background:linear-gradient(135deg,#17306a,#0d1c42);border:1px solid #3b6fd0;border-radius:12px;padding:6px 8px;display:flex;flex-direction:column;gap:5px;flex:none}.wlc.off{opacity:.55}
@@ -3955,6 +3955,13 @@ const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampTo
 g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
 s.connect(f); f.connect(g); g.connect(master); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.03);
 }
+const vox = {}, voxBusy = {};   // the voiced stickers' sounds, decoded when first needed (or ahead of time: stkWarm)
+let voxAt = 0, voxCur = null;
+function voxGet(t) {
+const v = STK_VOX[t]; if (!v || !ac) return Promise.resolve(null);
+if (vox[t]) return Promise.resolve(vox[t]);
+return voxBusy[t] || (voxBusy[t] = fetch(v.u).then(r => r.arrayBuffer()).then(buf => new Promise((res, rej) => ac.decodeAudioData(buf, res, rej))).then(b => (vox[t] = b)).catch(() => null).finally(() => { delete voxBusy[t]; }));
+}
 const now = () => ac.currentTime;
 return {
 init,
@@ -3968,6 +3975,18 @@ const s = ac.createBufferSource(); s.buffer = ui.roll; const g = ac.createGain()
 s.start(0, Math.random() * 0.3, 1.2); return {s, g};
 },
 trayStop(h) { if (!h) return; try { h.g.gain.setTargetAtTime(0, ac.currentTime, 0.04); h.s.stop(ac.currentTime + 0.2); } catch (e) {} },
+stk(t, tap) {   // a voiced sticker shows up: its sound plays once, a new one cuts the old, and nobody can machine-gun it (one per 1.2 s; a tap in the world chat always plays). false = silent (muted, not running, too soon)
+if (!STK_VOX[t] || !ok()) return false;
+const tm = performance.now(); if (!tap && tm - voxAt < 1200) return false; voxAt = tm;
+const go = b => {
+if (!b || !ac) return;
+try { if (voxCur) { voxCur.g.gain.setTargetAtTime(0, ac.currentTime, 0.03); voxCur.s.stop(ac.currentTime + 0.15); } } catch (e) {}
+const s = ac.createBufferSource(); s.buffer = b; const g = ac.createGain(); g.gain.value = 0.9; s.connect(g); g.connect(master); s.start(); voxCur = {s, g};
+};
+if (vox[t]) go(vox[t]); else voxGet(t).then(b => { if (performance.now() - tm < 700) go(b); });   // not decoded yet: it starts as soon as it is (a late one is dropped)
+return true;
+},
+stkWarm() { if (ac) for (const t of Object.keys(STK_VOX)) voxGet(t); },
 found() { if (!ok()) return; if (ui.found) play(ui.found, 0.8); else { this.pop(); this.coin(4); } },
 search(on) {   // looping card-shuffle sound while the opponent is being searched for
 try { if (searchSrc) { const g = searchSrc.g; g.gain.setTargetAtTime(0, ac.currentTime, 0.05); searchSrc.s.stop(ac.currentTime + 0.3); searchSrc = null; } } catch (e) { searchSrc = null; }
@@ -4429,6 +4448,7 @@ else if (type === "pvp") players = [mePlayer(T("1-o'yinchi")), {name: T("2-o'yin
 else if (type === "watch") players = [botPlayer(5, 30), botPlayer(5, 30)];
 else players = [mePlayer()];
 const G = baseGame(type, city, players);
+if (type === "ai" || type === "tour" || type === "pvp") setTimeout(() => { try { Snd.stkWarm(); } catch (e) {} }, 3000);   // (the voiced stickers' sounds are decoded ahead, so the first roar of a match is not late)
 G.bot = type === "ai" && !net && !!players[1].isAI;   // a 1v1 table match against a BOT (nobody was found online): no entry fee, no prize, no coin bonuses (the owner, Nov 17: "playing with a bot must give no coins"); XP and trophies stay
 if (type === "ai") G.pot = G.bot ? 0 : city.prize;
 if (type === "tour") { const cup = cupOf(tour.cup); G.skill = cup.skill * Math.pow(0.8, Math.max(0, tour.rounds.length - 1)); G.pot = cup.prize; }
@@ -4508,7 +4528,7 @@ function bubble(i, text, dur = 2600) {
 if (!game) return;
 if (opt("cheer") === "mine" && game.players[i] && (game.players[i].isAI || game.players[i].remote)) return;
 game.bubbles[i] = {text: T(text), until: performance.now() + dur, t0: performance.now()};
-if (!game.demo) Snd.pop();
+if (!game.demo) { Snd.pop(); if (STK_VOX[game.bubbles[i].text]) Snd.stk(game.bubbles[i].text); }
 }
 function nextTurn(first) {
 const G = game;
@@ -8845,7 +8865,11 @@ if (n !== null) drawBall(iconBall(n), sx, sy, 0.92);
 const bb = G.bubbles[i];
 if (bb && performance.now() < bb.until && stkEl(bb.text)) {   // an illustrated sticker: it pops in with a bounce and fades out, no speech bubble
 const t = performance.now() - (bb.t0 || bb.until - 2600), k = Math.min(1, t / 260), pop = 1 + 0.25 * Math.sin(Math.min(1, t / 260) * Math.PI) * (1 - k * 0.2), fade = Math.min(1, (bb.until - performance.now()) / 400), im = stkEl(bb.text);
-if (im.complete) { ctx.save(); ctx.globalAlpha = fade; ctx.translate(ax + s / 2, ay + s + 56); ctx.scale(k * pop, k * pop); ctx.shadowColor = "#000a"; ctx.shadowBlur = 12; ctx.shadowOffsetY = 4; ctx.drawImage(im, -46, -46, 92, 92); ctx.restore(); }
+if (im.complete) { const mv = STK_VOX[bb.text] ? stkMove(bb.text, performance.now() - (bb.t0 || bb.until - 2600)) : null;   // (a voiced sticker: it shakes / jumps with the loudness of its sound, rings of sound go out of the loud ones)
+ctx.save(); ctx.globalAlpha = fade; ctx.translate(ax + s / 2 + (mv ? mv.x : 0), ay + s + 56 + (mv ? mv.y : 0));
+if (mv && mv.ring > 0.25) for (let j = 0; j < 2; j++) { const ph = (mv.w * 2.4 + j * 0.5) % 1; ctx.save(); ctx.globalAlpha = fade * (1 - ph) * 0.8 * mv.ring; ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 3.5 * (1 - ph) + 1; ctx.beginPath(); ctx.arc(0, 0, 46 + 40 * ph, 0, 6.2832); ctx.stroke(); ctx.restore(); }
+if (mv) ctx.rotate(mv.r);
+ctx.scale(k * pop * (mv ? mv.s : 1), k * pop * (mv ? mv.s : 1)); ctx.shadowColor = "#000a"; ctx.shadowBlur = 12; ctx.shadowOffsetY = 4; ctx.drawImage(im, -46, -46, 92, 92); ctx.restore(); }
 } else if (bb && performance.now() < bb.until) {
 const k = Math.min(1, (performance.now() - (bb.t0 || bb.until - 2600)) / 150);
 ctx.save(); ctx.font = `20px Nunito,sans-serif`;
@@ -11847,6 +11871,29 @@ const STICKER_PACKS = [
 const STK_IMG = {}; for (const p of STICKER_PACKS) p.e.forEach((t, i) => STK_IMG[t] = STK_ART[p.id][i]);
 const stkEls = {}, stkEl = t => STK_IMG[t] ? (stkEls[t] || (stkEls[t] = Object.assign(new Image(), {src: STK_IMG[t]}))) : null;
 const stkHTML = t => STK_IMG[t] ? `<img class="stkimg" src="${STK_IMG[t]}" alt="">` : esc(t);
+// ---- voiced stickers (the owner, Nov 17: "stickers must have a sound, and move"): a sticker listed in STK_VOX has a recorded sound (an AI sound-effect model, trimmed and levelled by tools/build_stk.py)
+// and its picture moves with the loudness of that sound (stkMove, drawn in the match bubble). A tap on it in the world chat plays it again. Every other sticker is unchanged.
+// u = the sound (MP3, ~2 s, embedded like the game's other sounds), e = its loudness in 50 ms steps (0-9), m = how the picture moves (STK_MOVE)
+const STK_VOX = {"🦊":{"u":"a/dd1b41eddf9f34.mp3","e":"57973114798741000000000000000123455433210","m":"yip"},"🐯":{"u":"a/cb831aa06c5ba1.mp3","e":"55556667777789999988788888765543211111110","m":"roar"},"🐼":{"u":"a/6933ddcb04703f.mp3","e":"11000014898863100000111000","m":"grunt"},"🦅":{"u":"a/da6bd4423f3867.mp3","e":"96454223686433333453222222269622223553210","m":"screech"},"🐸":{"u":"a/90b38fa7527831.mp3","e":"22222223333586466598675465566776887841110","m":"ribbit"},"🐺":{"u":"a/d741aabc194c4e.mp3","e":"12223467787545444456544478998888876532","m":"howl"},"🐻":{"u":"a/509c66924f73a8.mp3","e":"33334689853222222223455544444556766765310","m":"roar"},"🐰":{"u":"a/025b554cb094d3.mp3","e":"325962100","m":"squeak"},"🦎":{"u":"a/3f9a43ded25326.mp3","e":"2233445556789987655554443221000","m":"hiss"}};
+const STK_MOVE = {   // sc = how much it swells with the loudness, rot / f = shake (radians, speed), dx = sideways shake (px), hop = jump (px), tilt = head turned while it is loud, ring = rings of sound
+roar: {sc: 0.20, rot: 0.11, f: 38, dx: 4, hop: 0, tilt: 0, ring: 1},        // tiger, bear: the whole head shakes with the roar
+howl: {sc: 0.06, rot: 0.03, f: 16, dx: 0, hop: 0, tilt: -0.34, ring: 1},   // wolf: the head goes back and stays up while it howls
+screech: {sc: 0.14, rot: 0.16, f: 55, dx: 3, hop: 0, tilt: 0.12, ring: 1}, // eagle: a sharp quick jitter
+ribbit: {sc: 0.08, rot: 0.03, f: 22, dx: 0, hop: 15, tilt: 0, ring: 0},    // frog: jumps with every croak
+yip: {sc: 0.10, rot: 0.07, f: 30, dx: 0, hop: 9, tilt: 0.10, ring: 0},     // fox: quick nods
+squeak: {sc: 0.12, rot: 0.04, f: 40, dx: 0, hop: 11, tilt: 0, ring: 0},    // rabbit: a small bounce
+hiss: {sc: 0.05, rot: 0.05, f: 12, dx: 7, hop: 0, tilt: 0.06, ring: 0},    // lizard: sways from side to side
+grunt: {sc: 0.13, rot: 0.05, f: 14, dx: 0, hop: 4, tilt: 0, ring: 0},      // panda: a soft squash
+};
+const stkEnv = {};
+function stkMove(t, ms) {   // how a voiced sticker moves ms after its sound began; null = it is not voiced, or the sound is over (then it is the plain sticker)
+const v = STK_VOX[t]; if (!v || !(ms >= 0)) return null;
+const env = stkEnv[t] || (stkEnv[t] = Array.from(v.e, c => +c / 9)), f = ms / 50, i = Math.floor(f), a = env[i];
+if (a === undefined) return null;
+const b = env[i + 1] === undefined ? 0 : env[i + 1], e = a + (b - a) * (f - i), mv = STK_MOVE[v.m] || STK_MOVE.roar, w = ms / 1000;
+const up = Math.max(a, env[Math.max(0, i - 1)], env[Math.max(0, i - 2)]);   // (the head stays turned between two syllables)
+return {s: 1 + mv.sc * e, r: mv.rot * e * Math.sin(w * mv.f) + mv.tilt * up, x: mv.dx * e * Math.sin(w * mv.f * 1.3 + 1), y: -mv.hop * e, ring: mv.ring ? e : 0, w};
+}
 const EMOJIS = ["😀", "😂", "😍", "😎", "😮", "😢", "😡", "🤔", "👍", "👏", "🔥", "🎉"];
 function buildChat(tab = "p") {
 const stk = (profile.stk || []).flatMap(id => (STICKER_PACKS.find(p => p.id === id) || {e: []}).e), list = tab === "s" ? stk : tab === "e" ? EMOJIS : CHAT.filter(c => /[a-z]/i.test(c));
@@ -13516,7 +13563,7 @@ function row(m) {
 const me = m.uid === mine, av = avHTML(normAv(m.avatar | 0), m.frame | 0, 34);
 const head = `<div class="wch" data-u="${esc(m.uid)}" data-m="${m.id}">${leagueImg(m.league | 0, 18)}<b>${esc(pname(m.name))}</b>${lbStar(m.level | 0)}${m.country ? flagHTML(m.country, 11) : ""}<span class="wct">${hhmm(m.at)}</span></div>`;
 const q = m.kind !== "sticker" && !me && trOn ? tr.get(m.id) : null;
-const body = (m.kind === "sticker" ? `<div class="wcs">${stkHTML(m.text)}</div>` : `<div class="wcx">${esc(m.text)}</div>`)
+const body = (m.kind === "sticker" ? `<div class="wcs"${STK_VOX[m.text] ? ` data-s="${esc(m.text)}"` : ""}>${stkHTML(m.text)}</div>` : `<div class="wcx">${esc(m.text)}</div>`)
 + (m.kind === "sticker" || me || !trOn ? "" : q && q.t ? `<div class="wctt">🌐 ${esc(q.t)}</div>` : q && q.s === "busy" ? `<div class="wctt dim">${T("Tarjima qilinmoqda…")}</div>` : q && q.s ? `<div class="wctt dim">${T(q.s === "same" ? "Bu xabar sizning tilingizda" : "Tarjima hozir mavjud emas")}</div>` : `<button class="wctb" data-tr="${m.id}">🌐 ${T("Tarjima")}</button>`);
 return `<div class="wcm${me ? " me" : ""}" data-id="${m.id}"><div class="wca" data-u="${esc(m.uid)}" data-m="${m.id}">${av}</div><div class="wcb">${head}${body}</div></div>`;
 }
@@ -13645,7 +13692,7 @@ catch (e) { tr.set(id, {s: "fail"}); setTimeout(() => { if ((tr.get(id) || {}).s
 if (isOpen()) draw(true);
 if (tr.size > 300) for (const k of [...tr.keys()]) if (!msgs.some(x => x.id === k)) tr.delete(k);
 }
-$("wChatLog").addEventListener("click", e => { const b = e.target.closest("[data-tr]"); if (b) { translate(+b.dataset.tr); return; } const u = e.target.closest("[data-u]"); if (u) who(u.dataset.u, +u.dataset.m); });
+$("wChatLog").addEventListener("click", e => { const b = e.target.closest("[data-tr]"); if (b) { translate(+b.dataset.tr); return; } const u = e.target.closest("[data-u]"); if (u) { who(u.dataset.u, +u.dataset.m); return; } const sv = e.target.closest(".wcs[data-s]"); if (sv) { Snd.stk(sv.dataset.s, true); sv.classList.remove("stkplay"); void sv.offsetWidth; sv.classList.add("stkplay"); } });
 $("wLobList").addEventListener("click", e => { const j = e.target.closest("[data-w]"); if (j) join(j.dataset.w, j); });
 $("wLobPost").onclick = () => { if (LB && LB.role === "host" && LB.state === "open" && !LB.pending) postLobby($("wLobPost")); else if (LB) toast("🎱", T("Avval joriy lobbidan chiqing"), T("Dunyo chati")); else { close(); lbTablesOpen(); } };   // (inside somebody else's lobby / a running one: leave it first, never drop it silently)
 setInterval(() => { if (isOpen() && (mode === "game" || typeof CRAZY_BUILD !== "undefined")) close(); }, 700);   // the room is a menu thing: a match closes it
