@@ -7,3 +7,4 @@ Owner's own files (Nov 17): 😀 -> grin_owner.wav (20261117_225254.wav).
 😍 -> love_owner.wav (20261117_225750.wav).
 😎 -> cool_owner.wav (20261117_230502.wav).
 😢 (owner wrote 😥) -> sad_owner.wav (20261117_231427.wav).
+🤔 -> think_owner.wav (20261117_231750.wav).
