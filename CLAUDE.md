@@ -21,6 +21,7 @@ The owner (Nov 16): *"never lang=uz - understood? never forget this."*
 Royal Billiard 8 = Y8 **game `288343`**, **app `6ad579a6abe0343702b12ba1`** (`CONFIG.y8GameId` / `y8AppId` in `index.html`).
 `282389` / `6a9dd9da38fed6db2f1f1339` are **Icy Tower's**: never put them back. Check an ID against README before changing it.
 
-## 3. Builds the owner does not use
-The owner said (Nov 16) that the **CrazyGames** and **GameMonetize** builds are not needed: do not build or send them. The ones the owner uses: the website + Telegram (Render), the Android app,
-Y8 and Playgama (`PORTAL=playgama python3 tools/build_crazy.py <out>`).
+## 3. Which portal builds the owner uses
+The owner (Nov 16) said the **CrazyGames** build is not needed: do not build or send it. **GameMonetize is in use again** (Nov 17: he uploaded the game to GameMonetize's portal and went through its "Verify SDK" step).
+The ones in use: the website + Telegram (Render), the Android app, Y8, Playgama (`PORTAL=playgama python3 tools/build_crazy.py <out>`) and GameMonetize (`PORTAL=gamemonetize python3 tools/build_crazy.py <out>`, its Game ID is in the script).
+GameMonetize has **no rewarded video** (only `sdk.showBanner()` interstitials): its build shows one at game open and after every 2nd match (at most one per 90 s); `node tools/test_gm_ads.js` checks it on a mock SDK.

@@ -191,13 +191,15 @@ Y8.sdk = {
 // an interstitial between matches (GameMonetize has no rewarded video): at most one every 90 s; the game goes on when the SDK says SDK_GAME_START (or after a safety timeout)
 showAd(o) {
 return new Promise(resolve => {
-if (o.type === "reward" || Date.now() - last < 90000 || !window.sdk || !window.sdk.showBanner) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return resolve(); }
+if (o.type === "reward" || Date.now() - last < 90000) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return resolve(); }
 last = Date.now(); let over = false, shown = false;
 const end = () => { if (over) return; over = true; waiter = null; try { o.adBreakDone && o.adBreakDone(); } catch (e) {} resolve(); };
 waiter = s => { if (s === "pause" && !shown) { shown = true; try { o.beforeAd && o.beforeAd(); } catch (e) {} } else if (s === "start") end(); };
 setTimeout(end, 60000);
-try { window.sdk.showBanner(); } catch (e) { end(); }
-setTimeout(() => { if (!shown) end(); }, 4000);   // no ad came: nothing to wait for
+const fire = () => { try { window.sdk.showBanner(); } catch (e) { return end(); } setTimeout(() => { if (!shown) end(); }, 4000); };   // (no ad came: nothing to wait for)
+// the game's own entry ad can be asked before the SDK script has arrived (it loads from GameMonetize): wait for it up to 6 s, then go on without an ad
+let n = 0; const wait = () => { if (window.sdk && window.sdk.showBanner) return fire(); if (++n > 24) return end(); setTimeout(wait, 250); };
+wait();
 });
 },
 saveData: bye, loadData: bye, trackCustomEvent: bye, awardAchievement: bye, showAchievements: bye, showLeaderboard: bye, saveLeaderboardScore: bye, login() {},
@@ -259,6 +261,8 @@ sub('const SET_DEF = { gfx: DEV_GFX, fps: "90"', 'const SET_DEF = { gfx: "high",
 # Playgama-only patches
 sub('<head>', '<head>\n<style>.chanonly{display:none!important}</style>')   # the channel name switch and the channel row mean nothing on a portal
 if GM:   # the SDK's pause (an ad is on) silences the game; interstitials at natural pauses, no rewarded video
+    # the ad when the game opens (once per visit, new players too, not for ad-free players): GameMonetize's check wants to SEE an ad shown through the SDK, and this ad used to wait for rewarded video (Y8.adsReady), which GameMonetize does not have, so it never came (the owner's Verify screenshot, Nov 17: "no ad")
+    sub("if (!ON_PORTAL || Y8.pre || !Y8.sdk || !Y8.adsReady || profile.adfree || !profile.tutDone || Y8.busy) return;", "if (!ON_PORTAL || Y8.pre || !Y8.sdk || profile.adfree || Y8.busy) return;")
     sub("master = ac.createGain(); master.gain.value = profile.muted ? 0 : level();", "master = ac.createGain(); master.gain.value = (profile.muted || window.__B8_MUTE) ? 0 : level();")
     sub("setMuted(m) { if (master) master.gain.setTargetAtTime(m ? 0 : level(), ac.currentTime, 0.02); },", "setMuted(m) { if (master) master.gain.setTargetAtTime(m || window.__B8_MUTE ? 0 : level(), ac.currentTime, 0.02); },")
     sub("if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {", "if (Y8.sdk && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree) {")
