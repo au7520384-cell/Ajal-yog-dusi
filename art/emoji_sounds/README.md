@@ -4,3 +4,4 @@ Mapping: 😂 laugh_*, 🔥 fire_*, 👏 clap_1, 😮 wow_1, 😡 angry_1. The o
 Licence of these clips is not stated in that game's CREDITS.md: check before shipping.
 
 Owner's own files (Nov 17): 😀 -> grin_owner.wav (20261117_225254.wav).
+😍 -> love_owner.wav (20261117_225750.wav).
