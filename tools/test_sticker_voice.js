@@ -33,8 +33,8 @@ const ANIMALS = ["🦊", "🐯", "🐼", "🦅", "🐸", "🐺", "🐻", "🐰",
   await sleep(3500);
 
   // ---------------------------------------------------------------- 1) the data
-  const d = await p.evaluate(() => ({ keys: Object.keys(STK_VOX), mp3: Object.values(STK_VOX).every(v => /^data:audio\/mpeg;base64,/.test(v.u) && v.u.length > 3000), env: Object.values(STK_VOX).map(v => /^[0-9]{8,}$/.test(v.e) && Math.max(...[...v.e].map(Number)) === 9), moves: Object.values(STK_VOX).every(v => !!STK_MOVE[v.m]), art: Object.keys(STK_VOX).every(k => !!STK_IMG[k]), styles: Object.keys(STK_MOVE).length }));
-  ok(JSON.stringify(d.keys.slice().sort()) === JSON.stringify(ANIMALS.slice().sort()) && d.mp3, "STK_VOX holds the nine animal stickers, each with an MP3 sound", d.keys);
+  const d = await p.evaluate(() => ({ keys: Object.keys(STK_VOX), mp3: Object.values(STK_VOX).every(v => /^data:audio\/mpeg;base64,/.test(v.u) && v.u.length > 3000), env: Object.values(STK_VOX).map(v => /^[0-9]{8,}$/.test(v.e) && Math.max(...[...v.e].map(Number)) === 9), moves: Object.values(STK_VOX).every(v => !!STK_MOVE[v.m]), art: Object.keys(STK_VOX).filter(k => STK_VOX[k].m !== "emo").every(k => !!STK_IMG[k]), styles: Object.keys(STK_MOVE).length }));
+  ok(ANIMALS.every(k => d.keys.includes(k)) && d.keys.length === 22 && d.mp3, "STK_VOX holds the nine animal stickers and the thirteen chat emoji, each with an MP3 sound", d.keys);
   ok(d.env.every(Boolean) && d.moves && d.art, "...each has a loudness curve (0-9, the loudest step is 9), a known way to move and a picture", d);
 
   // ---------------------------------------------------------------- 2) stkMove
@@ -56,7 +56,7 @@ const ANIMALS = ["🦊", "🐯", "🐼", "🦅", "🐸", "🐺", "🐻", "🐰",
   // ---------------------------------------------------------------- 3) in a match
   await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); try { toMenu(); } catch (e) {} startMatch("ai", CITIES[0], botPlayer(1, 4)); });
   for (let i = 0; i < 40; i++) { await sleep(300); if (await p.locator("#tutSkip").count()) await p.locator("#tutSkip").click().catch(() => {}); if (await p.evaluate(() => canControl())) break; }
-  await p.evaluate(() => { Snd.init(); setOpt("cheer", "all"); profile.muted = false; });
+  await p.evaluate(() => { Snd.init(); setOpt("cheer", "all"); profile.muted = false; game.players[1].isAI = false; game.players[1].remote = true; });   // (the opponent stands for a real player: a bot's own chatter is silent, see 5b)
   await sleep(4200);   // (the 3 s warm-up decodes the sounds; it also lets the opening chatter of the bot's bubble pass)
   const starts = async (lo, hi) => p.evaluate(([lo, hi]) => window.__starts.filter(s => s.d >= lo && s.d <= hi).length, [lo, hi]);
   const D = await p.evaluate(() => Object.fromEntries(Object.keys(STK_VOX).map(k => [k, 0])));   // (the decoded durations are read from the played buffers below)
@@ -109,6 +109,19 @@ const ANIMALS = ["🦊", "🐯", "🐼", "🦅", "🐸", "🐺", "🐻", "🐰",
     return { starts: window.__starts.slice(n0).map(s => +s.d.toFixed(3)), wig: voiced.classList.contains("stkplay"), plainWig: plain.classList.contains("stkplay"), msgAttr: typeof stkHTML === "function" };
   });
   ok(tap.starts.filter(x => x > 1.8 && x < 2.0).length === 2 && tap.wig && !tap.plainWig, "world chat: every tap on a voiced sticker plays its sound (also inside the 1.2 s) and wiggles it; a sticker with no voice does nothing", tap);
+
+  // ---------------------------------------------------------------- 5b) the chat emoji (the owner, Nov 17): sounds only, the 💬 window stays; 🎉 out, 🤪 🤦 in
+  const em = await p.evaluate(() => { buildChat("e"); return { list: EMOJIS.join(""), n: document.querySelectorAll("#chatPanel [data-msg]").length, voiced: EMOJIS.every(e => !!STK_VOX[e]), party: !!STK_VOX["🎉"] }; });
+  ok(em.list === "😀😂😍😎😮😢😡🤔👍👏🔥🤪🤦" && em.n === 13 && em.voiced && !em.party, "the 😀 tab of the chat window has 13 emoji (🎉 out, 🤪 and 🤦 in) and every one has a sound", em);
+  await sleep(1300);
+  let e1 = await run(() => { game.cur = 0; sendChat("😂"); });
+  ok(e1.some(x => x > 0.5 && x < 0.95), "a chat emoji I send (😂) plays its sound", e1);
+  await sleep(1300);
+  let e2 = await run(() => { game.players[1].isAI = true; bubble(1, "😎", 2600); game.players[1].isAI = false; });
+  ok(!e2.some(x => x > 1.6 && x < 2.2), "the bot's own chatter (an emoji bubble of an AI player) makes no sound", e2);
+  await sleep(1300);
+  let e3 = await run(() => { game.type = "watch"; bubble(0, "🔥", 2600); game.type = "ai"; });
+  ok(!e3.some(x => x > 0.9 && x < 1.3), "the spectator cheer keys (watch games) make no sound", e3);
 
   // ---------------------------------------------------------------- 6) the light build: the sounds become files
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8stk-")), out = path.join(tmp, "w");

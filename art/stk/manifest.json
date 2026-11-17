@@ -79,5 +79,109 @@
       "job": "db33b7c3-b52d-4c48-8d5e-2803c6220cc1",
       "prompt": "A lizard hissing, a short sharp hiss, close up, dry recording, no music, no background noise"
     }
+  },
+  "😀": {
+    "slug": "emo_grin",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/grin_owner.wav, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "owner"
+    }
+  },
+  "😂": {
+    "slug": "emo_laugh",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/laugh_1.mp3, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "Icy Tower"
+    }
+  },
+  "😍": {
+    "slug": "emo_love",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/love_owner.wav, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "owner"
+    }
+  },
+  "😎": {
+    "slug": "emo_cool",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/cool_owner.wav, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "owner"
+    }
+  },
+  "😮": {
+    "slug": "emo_wow",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/wow_1.mp3, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "Icy Tower"
+    }
+  },
+  "😢": {
+    "slug": "emo_sad",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/sad_owner.wav, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "owner"
+    }
+  },
+  "😡": {
+    "slug": "emo_angry",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/angry_1.mp3, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "Icy Tower"
+    }
+  },
+  "🤔": {
+    "slug": "emo_think",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/think_owner.wav, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "owner"
+    }
+  },
+  "👍": {
+    "slug": "emo_thumbs",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/thumbs_owner.wav, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "owner"
+    }
+  },
+  "👏": {
+    "slug": "emo_clap",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/clap_1.mp3, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "Icy Tower"
+    }
+  },
+  "🔥": {
+    "slug": "emo_fire",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/fire_1.mp3, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "Icy Tower"
+    }
+  },
+  "🤪": {
+    "slug": "emo_crazy",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/crazy_owner.wav, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "owner"
+    }
+  },
+  "🤦": {
+    "slug": "emo_facepalm",
+    "move": "emo",
+    "src": {
+      "made_with": "chat emoji sound (no picture moves), first sounds of art/emoji_sounds/facepalm_owner.wav, trimmed by tools/build_stk.py --cap 2.6",
+      "from": "owner"
+    }
   }
 }

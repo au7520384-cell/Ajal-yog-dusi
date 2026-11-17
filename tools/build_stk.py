@@ -3,7 +3,7 @@
 Every voiced sticker has a short recorded sound (made with an AI sound-effect model, then trimmed and levelled here); its picture moves with the loudness of that sound
 (index.html: STK_VOX / STK_MOVE / stkMove, drawn in the match bubble) and a tap on it in the world chat plays it again.
 
-    python3 tools/build_stk.py --import <dir>     process the raw sounds <dir>/<slug>_raw.mp3 -> art/stk/<slug>.mp3 (trim, level, fade, 22 kHz mono MP3 ~12 KB)
+    python3 tools/build_stk.py --import <dir> [--cap 2.6]  process the raw sounds <dir>/<slug>_raw.mp3|wav -> art/stk/<slug>.mp3 (trim, level, fade, 22 kHz mono MP3 ~12 KB)
     python3 tools/build_stk.py                    write `const STK_VOX = {...}` into index.html from art/stk/manifest.json (the sounds are embedded like every other sound of the game;
                                                   tools/build_web.py moves them into a/<hash>.mp3 for the light build)
     python3 tools/build_stk.py --check            only say whether index.html is up to date (exit 1 when it is not)
@@ -26,11 +26,21 @@ def encode(samples, out):
                        input=samples.tobytes(), capture_output=True)
     if p.returncode: sys.exit("ffmpeg could not encode " + out + ": " + p.stderr.decode()[-300:])
 
-def process(raw_path, out_path):
+def process(raw_path, out_path, cap=None):
     x = decode(raw_path); n = len(x); w = int(0.01 * SR)
     r = [math.sqrt(sum(v * v for v in x[i:i + w]) / max(1, len(x[i:i + w]))) for i in range(0, n, w)]   # loudness in 10 ms steps
     m = max(r) or 1.0
     s0 = next((i for i, v in enumerate(r) if v > 0.10 * m), 0); s1 = next((i for i in range(len(r) - 1, -1, -1) if r[i] > 0.04 * m), len(r) - 1)
+    if cap:   # a long recording (the owner's emoji sounds start after ~2 s of silence and hold several sounds): keep the first sound, and the next ones while the whole stays within `cap` seconds, ending where a sound ends
+        on = [v > 0.12 * m for v in r]; ends = []; i = s0
+        while i < len(on):
+            if on[i]:
+                j = i
+                while j < len(on) and (on[j] or any(on[j:j + 30])): j += 1
+                ends.append(j); i = j
+            else: i += 1
+        keep = [e for e in ends if (e - s0) * 0.01 <= cap] or ends[:1]
+        s1 = min(s1, keep[-1])
     a = max(0, (s0 - 3) * w); b = min(n, (s1 + 13) * w)                    # 30 ms before the sound starts, 120 ms after it has faded: a faint hiss before / after is cut
     y = [float(v) for v in x[a:b]]
     rms = math.sqrt(sum(v * v for v in y) / max(1, len(y))) or 1.0; pk = max(abs(v) for v in y) or 1.0
@@ -63,9 +73,10 @@ def build():
 if __name__ == "__main__":
     if len(sys.argv) > 2 and sys.argv[1] == "--import":
         d = sys.argv[2]; os.makedirs(ART, exist_ok=True)
+        CAP = float(sys.argv[sys.argv.index("--cap") + 1]) if "--cap" in sys.argv else None   # e.g. --cap 2.6 for long recordings
         for f in sorted(os.listdir(d)):
-            if f.endswith("_raw.mp3"):
-                slug = f[:-8]; dur, g = process(os.path.join(d, f), os.path.join(ART, slug + ".mp3")); print("%-8s %.2fs  gain x%.2f -> art/stk/%s.mp3 (%d bytes)" % (slug, dur, g, slug, os.path.getsize(os.path.join(ART, slug + ".mp3"))))
+            if f.endswith("_raw.mp3") or f.endswith("_raw.wav"):
+                slug = f[:-8]; dur, g = process(os.path.join(d, f), os.path.join(ART, slug + ".mp3"), CAP); print("%-8s %.2fs  gain x%.2f -> art/stk/%s.mp3 (%d bytes)" % (slug, dur, g, slug, os.path.getsize(os.path.join(ART, slug + ".mp3"))))
         sys.exit(0)
     block = build(); path = os.path.join(root, "index.html"); s = open(path, encoding="utf-8").read()
     s2, n = re.subn(r"const STK_VOX = \{.*?\};\n", lambda m: block + "\n", s, count=1, flags=re.S)
