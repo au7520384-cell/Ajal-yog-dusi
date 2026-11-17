@@ -5,3 +5,4 @@ Licence of these clips is not stated in that game's CREDITS.md: check before shi
 
 Owner's own files (Nov 17): 😀 -> grin_owner.wav (20261117_225254.wav).
 😍 -> love_owner.wav (20261117_225750.wav).
+😎 -> cool_owner.wav (20261117_230502.wav).
