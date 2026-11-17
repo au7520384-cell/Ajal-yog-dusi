@@ -94,7 +94,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   ok(st.rows >= 2 && st.shown === 0 && !st.chan, "Y8: Settings has no channel row / key (Telegram channel)", st);
   await t.fr().evaluate(() => { toMenu(); window.__ads = []; startMatch("ai", CITIES[2], { name: "Elif", avatar: 301, frame: 0, level: 5, isAI: true, color: "#d33", cue: "start" }, null); });
   for (let i = 0; i < 40; i++) { await sleep(300); if (await t.fr().evaluate(() => canControl())) break; }
-  await t.fr().evaluate(() => { endGame(0, "test"); }); await t.fr().waitForSelector("#res.on #resBtns button", { timeout: 15000 }); await sleep(1500);
+  await t.fr().evaluate(() => { game.bot = false; endGame(0, "test"); }); await t.fr().waitForSelector("#res.on #resBtns button", { timeout: 15000 }); await sleep(1500);   // (a REAL opponent: against a bot the match pays no prize and shows no ×2, tools/test_bot_free.js)
   const sh = await t.fr().evaluate(() => ({ btns: [...document.querySelectorAll("#resBtns button")].map(b => b.className), share: document.querySelectorAll("#resBtns .share").length, html: document.getElementById("resBtns").innerHTML }));
   ok(sh.btns.length >= 2 && sh.share === 0 && !/facebook|twitter/i.test(sh.html), "Y8: the result screen has no share-on-Facebook / X keys", sh.btns);
   // the owner (all platforms): the ×2 video stands beside the prize of a won match, not among the menu keys; an ad after every 2nd game, at most one per 90 s, whether or not the player took the ×2
