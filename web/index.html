@@ -3975,9 +3975,9 @@ const s = ac.createBufferSource(); s.buffer = ui.roll; const g = ac.createGain()
 s.start(0, Math.random() * 0.3, 1.2); return {s, g};
 },
 trayStop(h) { if (!h) return; try { h.g.gain.setTargetAtTime(0, ac.currentTime, 0.04); h.s.stop(ac.currentTime + 0.2); } catch (e) {} },
-stk(t, tap) {   // a voiced sticker shows up: its sound plays once, a new one cuts the old, and nobody can machine-gun it (one per 1.2 s; a tap in the world chat always plays). false = silent (muted, not running, too soon)
+stk(t, tap) {   // a voiced sticker / chat emoji shows up: its sound plays once and a new one cuts the old (the owner: the opponent must hear every one; only a double trigger within 0.25 s is dropped). false = silent (the listener muted the game sound, not running)
 if (!STK_VOX[t] || !ok()) return false;
-const tm = performance.now(); if (!tap && tm - voxAt < 1200) return false; voxAt = tm;
+const tm = performance.now(); if (!tap && tm - voxAt < 250) return false; voxAt = tm;
 const go = b => {
 if (!b || !ac) return;
 try { if (voxCur) { voxCur.g.gain.setTargetAtTime(0, ac.currentTime, 0.03); voxCur.s.stop(ac.currentTime + 0.15); } } catch (e) {}
