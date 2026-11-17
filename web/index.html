@@ -4528,7 +4528,7 @@ function bubble(i, text, dur = 2600) {
 if (!game) return;
 if (opt("cheer") === "mine" && game.players[i] && (game.players[i].isAI || game.players[i].remote)) return;
 game.bubbles[i] = {text: T(text), until: performance.now() + dur, t0: performance.now()};
-if (!game.demo) { Snd.pop(); if (STK_VOX[game.bubbles[i].text]) Snd.stk(game.bubbles[i].text); }
+if (!game.demo) { Snd.pop(); if (STK_VOX[game.bubbles[i].text] && game.type !== "watch" && !(game.players[i] && game.players[i].isAI)) Snd.stk(game.bubbles[i].text); }   // (a sound for a sticker / chat emoji a PLAYER sent: not the bot's chatter, not the spectator cheer keys)
 }
 function nextTurn(first) {
 const G = game;
@@ -11874,7 +11874,7 @@ const stkHTML = t => STK_IMG[t] ? `<img class="stkimg" src="${STK_IMG[t]}" alt="
 // ---- voiced stickers (the owner, Nov 17: "stickers must have a sound, and move"): a sticker listed in STK_VOX has a recorded sound (an AI sound-effect model, trimmed and levelled by tools/build_stk.py)
 // and its picture moves with the loudness of that sound (stkMove, drawn in the match bubble). A tap on it in the world chat plays it again. Every other sticker is unchanged.
 // u = the sound (MP3, ~2 s, embedded like the game's other sounds), e = its loudness in 50 ms steps (0-9), m = how the picture moves (STK_MOVE)
-const STK_VOX = {"🦊":{"u":"a/dd1b41eddf9f34.mp3","e":"57973114798741000000000000000123455433210","m":"yip"},"🐯":{"u":"a/cb831aa06c5ba1.mp3","e":"55556667777789999988788888765543211111110","m":"roar"},"🐼":{"u":"a/6933ddcb04703f.mp3","e":"11000014898863100000111000","m":"grunt"},"🦅":{"u":"a/da6bd4423f3867.mp3","e":"96454223686433333453222222269622223553210","m":"screech"},"🐸":{"u":"a/90b38fa7527831.mp3","e":"22222223333586466598675465566776887841110","m":"ribbit"},"🐺":{"u":"a/d741aabc194c4e.mp3","e":"12223467787545444456544478998888876532","m":"howl"},"🐻":{"u":"a/509c66924f73a8.mp3","e":"33334689853222222223455544444556766765310","m":"roar"},"🐰":{"u":"a/025b554cb094d3.mp3","e":"325962100","m":"squeak"},"🦎":{"u":"a/3f9a43ded25326.mp3","e":"2233445556789987655554443221000","m":"hiss"}};
+const STK_VOX = {"🦊":{"u":"a/dd1b41eddf9f34.mp3","e":"57973114798741000000000000000123455433210","m":"yip"},"🐯":{"u":"a/cb831aa06c5ba1.mp3","e":"55556667777789999988788888765543211111110","m":"roar"},"🐼":{"u":"a/6933ddcb04703f.mp3","e":"11000014898863100000111000","m":"grunt"},"🦅":{"u":"a/da6bd4423f3867.mp3","e":"96454223686433333453222222269622223553210","m":"screech"},"🐸":{"u":"a/90b38fa7527831.mp3","e":"22222223333586466598675465566776887841110","m":"ribbit"},"🐺":{"u":"a/d741aabc194c4e.mp3","e":"12223467787545444456544478998888876532","m":"howl"},"🐻":{"u":"a/509c66924f73a8.mp3","e":"33334689853222222223455544444556766765310","m":"roar"},"🐰":{"u":"a/025b554cb094d3.mp3","e":"325962100","m":"squeak"},"🦎":{"u":"a/3f9a43ded25326.mp3","e":"2233445556789987655554443221000","m":"hiss"},"😀":{"u":"a/3979e243b275fd.mp3","e":"468779954785248843796200","m":"emo"},"😂":{"u":"a/a9691bf274cdc4.mp3","e":"5532596245310","m":"emo"},"😍":{"u":"a/701d84a2a8b3fd.mp3","e":"2589998888876654443332100000258875343100","m":"emo"},"😎":{"u":"a/28e299473fe579.mp3","e":"4788888888887631124444446899776653100","m":"emo"},"😮":{"u":"a/d54e53e11bf03b.mp3","e":"5899999998998887788777653210","m":"emo"},"😢":{"u":"a/3871f1667f1474.mp3","e":"11246777421111001257898632100","m":"emo"},"😡":{"u":"a/8cefd1ea83a46f.mp3","e":"5898888777777888777642320","m":"emo"},"🤔":{"u":"a/10a7e8fd84ddb3.mp3","e":"32357997311456777778777887654332223443332222234200","m":"emo"},"👍":{"u":"a/e0bfdadd6b01c2.mp3","e":"7569965433322211000000000001565788654332100","m":"emo"},"👏":{"u":"a/f22ed1594e64a6.mp3","e":"224667889987667777777666778888777643210","m":"emo"},"🔥":{"u":"a/0614e6afbda7ff.mp3","e":"5678766689866777898521","m":"emo"},"🤪":{"u":"a/1adcd543d8d464.mp3","e":"6744876984553453353257877643210","m":"emo"},"🤦":{"u":"a/405cac9e6ae318.mp3","e":"68879963100268788521037778852100","m":"emo"}};
 const STK_MOVE = {   // sc = how much it swells with the loudness, rot / f = shake (radians, speed), dx = sideways shake (px), hop = jump (px), tilt = head turned while it is loud, ring = rings of sound
 roar: {sc: 0.20, rot: 0.11, f: 38, dx: 4, hop: 0, tilt: 0, ring: 1},        // tiger, bear: the whole head shakes with the roar
 howl: {sc: 0.06, rot: 0.03, f: 16, dx: 0, hop: 0, tilt: -0.34, ring: 1},   // wolf: the head goes back and stays up while it howls
@@ -11884,6 +11884,7 @@ yip: {sc: 0.10, rot: 0.07, f: 30, dx: 0, hop: 9, tilt: 0.10, ring: 0},     // fo
 squeak: {sc: 0.12, rot: 0.04, f: 40, dx: 0, hop: 11, tilt: 0, ring: 0},    // rabbit: a small bounce
 hiss: {sc: 0.05, rot: 0.05, f: 12, dx: 7, hop: 0, tilt: 0.06, ring: 0},    // lizard: sways from side to side
 grunt: {sc: 0.13, rot: 0.05, f: 14, dx: 0, hop: 4, tilt: 0, ring: 0},      // panda: a soft squash
+emo: {sc: 0, rot: 0, f: 1, dx: 0, hop: 0, tilt: 0, ring: 0},               // a chat emoji (😀 😂 ...): it has a sound only, no picture to move
 };
 const stkEnv = {};
 function stkMove(t, ms) {   // how a voiced sticker moves ms after its sound began; null = it is not voiced, or the sound is over (then it is the plain sticker)
@@ -11894,7 +11895,7 @@ const b = env[i + 1] === undefined ? 0 : env[i + 1], e = a + (b - a) * (f - i), 
 const up = Math.max(a, env[Math.max(0, i - 1)], env[Math.max(0, i - 2)]);   // (the head stays turned between two syllables)
 return {s: 1 + mv.sc * e, r: mv.rot * e * Math.sin(w * mv.f) + mv.tilt * up, x: mv.dx * e * Math.sin(w * mv.f * 1.3 + 1), y: -mv.hop * e, ring: mv.ring ? e : 0, w};
 }
-const EMOJIS = ["😀", "😂", "😍", "😎", "😮", "😢", "😡", "🤔", "👍", "👏", "🔥", "🎉"];
+const EMOJIS = ["😀", "😂", "😍", "😎", "😮", "😢", "😡", "🤔", "👍", "👏", "🔥", "🤪", "🤦"];   // (every one has a sound: STK_VOX; the owner, Nov 17: 🎉 out, 🤪 and 🤦 in)
 function buildChat(tab = "p") {
 const stk = (profile.stk || []).flatMap(id => (STICKER_PACKS.find(p => p.id === id) || {e: []}).e), list = tab === "s" ? stk : tab === "e" ? EMOJIS : CHAT.filter(c => /[a-z]/i.test(c));
 $("chatPanel").innerHTML = `<div class="ctabs"><button data-ct="e" class="${tab === "e" ? "on" : ""}">😀</button><button data-ct="p" class="${tab === "p" ? "on" : ""}">💬</button><button data-ct="s" class="${tab === "s" ? "on" : ""}">🎭</button><button data-ct="g" class="${tab === "g" ? "on" : ""}">🎁</button></div>${tab === "s" && !stk.length ? `<div class="muted" style="padding:8px">${T("Stikerlar do'konda (Kiylar → Stikerlar)")}</div>` : ""}
