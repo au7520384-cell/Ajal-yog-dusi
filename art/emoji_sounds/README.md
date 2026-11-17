@@ -10,3 +10,4 @@ Owner's own files (Nov 17): 😀 -> grin_owner.wav (20261117_225254.wav).
 🤔 -> think_owner.wav (20261117_231750.wav).
 👍 -> thumbs_owner.wav (20261117_232228.wav).
 Decision (owner, Nov 17): 🎉 is dropped (no sound, to be removed from the 😀 tab when we start). New emoji with sounds to come: 🤪 and 🤦 (owner is searching).
+🤪 -> crazy_owner.wav (20261117_233136.wav).
