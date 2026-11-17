@@ -2,3 +2,5 @@
 Taken from the owner's Icy Tower GameMonetize build (engine.js, REAL_*_CLIP). Not wired into the game yet: the owner will say when to start.
 Mapping: 😂 laugh_*, 🔥 fire_*, 👏 clap_1, 😮 wow_1, 😡 angry_1. The other 7 emoji (😀 😍 😎 😢 🤔 👍 🎉) wait for the owner's files.
 Licence of these clips is not stated in that game's CREDITS.md: check before shipping.
+
+Owner's own files (Nov 17): 😀 -> grin_owner.wav (20261117_225254.wav).
