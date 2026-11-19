@@ -1981,7 +1981,7 @@ function leaveLobby(ws, dropped) {   // dropped: the socket just died (not a del
 function leaveQueue(ws) { leaveLobby(ws); for (const q of queues.values()) { const i = q.indexOf(ws); if (i >= 0) q.splice(i, 1); } }
 const MATCH_GRACE = +process.env.MATCH_GRACE_MS || 30e3;   // a phone whose connection drops in a match (network change, the app in the background) has this long to come back before it forfeits
 const recentEnd = new Map();   // room id -> {winner, reason, at}: a phone that comes back after its match was decided is told how it ended
-const matchMsg = (room, seat) => ({t: "match", room: room.id, seat, first: room.first, seed: room.seed, city: room.city, opp: room.p[1 - seat].profile, tour: room.tour ? {round: room.tour.round, rounds: room.tour.rounds} : undefined});
+const matchMsg = (room, seat) => ({t: "match", room: room.id, seat, first: room.first, seed: room.seed, city: room.city, opp: room.p[1 - seat].profile, tour: room.tour ? {round: room.tour.round, rounds: room.tour.rounds} : undefined, cup: room.cup ? {sid: room.cup.S.sid, round: room.cup.S.round, n: room.cup.S.n} : undefined});
 function dropSeat(room, seat) {   // the phone of this seat lost its connection: the match waits for it
   if (room.over || room.away[seat]) return;
   room.away[seat] = Date.now();
@@ -2003,10 +2003,10 @@ function swapSocket(L, old, ws) {   // ... and his seat in the lobby / the brack
   adoptRoom(old, ws);
 }
 const mkProfile = (u, cue, tbl) => ({name: u.name, avatar: u.avatar, frame: u.frame || 0, country: u.country || "", level: u.level, cue: String(cue || "start").slice(0, 16), tbl: String(tbl || "").slice(0, 8), tblNo: (u.editions || {})[String(tbl || "")] || 0, code: u.code, club: u.club && db.clubs[u.club] ? db.clubs[u.club].name : "", cb: u.club && db.clubs[u.club] ? [db.clubs[u.club].badge | 0, db.clubs[u.club].color | 0] : null});
-function startRoom(a, b, city, T, match) {   // a sits in seat 0, b in seat 1
+function startRoom(a, b, city, T, match, cup) {   // a sits in seat 0, b in seat 1 (cup: {S, mt} when it is a match of a public cup)
   for (const s of [a, b]) if (s && s.pref && db.users[s.uid]) s.profile = mkProfile(db.users[s.uid], s.pref.cue, s.pref.tbl);   // the cue / table / avatar the player has NOW (he may have changed them while sitting in the lobby)
   const first = crypto.randomInt(2);
-  const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null, tour: T || null, tourMatch: match || null,
+  const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null, tour: T || null, tourMatch: match || null, cup: cup || null,
     rx: [0, 0], sn: [0, 0], log: [[], []], away: [0, 0], timers: [null, null]};   // rx: shot / state / result / resign messages taken from each seat; sn + log: the shots and positions relayed from each seat (numbered, so a phone that was away gets the ones it missed)
   rooms.set(room.id, room);
   for (const s of [a, b]) if (s && s.spec) { const r = s.spec; r.specs.delete(s); s.spec = null; specCount(r); }   // a player who was watching another match of the lobby now plays his own
@@ -2094,7 +2094,7 @@ function finishTournament(L, champ) {
   lobbyBroadcast(L);                                               // everybody stays in the lobby: play again with the same friends
 }
 setInterval(() => {   // a tournament match nobody finishes does not block the bracket forever
-  for (const room of [...rooms.values()]) if (room.tour && !room.over && Date.now() - room.startedAt > 45 * 60000) finish(room, crypto.randomInt(2), "timeout");
+  for (const room of [...rooms.values()]) if ((room.tour || room.cup) && !room.over && Date.now() - room.startedAt > 45 * 60000) finish(room, crypto.randomInt(2), "timeout");
   for (const [id, r] of recentEnd) if (Date.now() - r.at > 10 * 60000) recentEnd.delete(id);
 }, 60000);
 function finish(room, winnerSeat, reason) {
@@ -2104,7 +2104,7 @@ function finish(room, winnerSeat, reason) {
   recentEnd.set(room.id, {winner: winnerSeat, reason, at: Date.now()});
   const [a, b] = room.p, w = room.p[winnerSeat], l = room.p[1 - winnerSeat];
   const wu = w && db.users[w.uid], lu = l && db.users[l.uid];
-  if (wu) { wu.wins++; wu.games++; if (!room.tour) { wu.won += CITY_PRIZE[room.city] || 0; addWeekly(wu, CITY_PRIZE[room.city] || 0); } }
+  if (wu) { wu.wins++; wu.games++; if (!room.tour && !room.cup) { wu.won += CITY_PRIZE[room.city] || 0; addWeekly(wu, CITY_PRIZE[room.city] || 0); } }
   if (lu) lu.games++;
   markDirty();
   for (const s of [a, b]) { wsSend(s, {t: "end", winner: winnerSeat, reason}); if (s) s.room = null; }
@@ -2112,6 +2112,171 @@ function finish(room, winnerSeat, reason) {
   room.specs.clear();
   rooms.delete(room.id);
   if (room.tour) tourMatchEnd(room, winnerSeat);
+  if (room.cup) cupMatchEnd(room, winnerSeat);
+}
+
+
+// ---------------------------------------------------------------- public cups (the owner, Nov 18: "press a cup and you play bots 100%: wait 3 minutes, see who joins, PLAY is locked until the time ends, then everybody goes in; the World Cup waits 5")
+// A cup is a waiting room first: every player who presses the same cup within the wait joins one SESSION (3 minutes; a 64-player cup 5), the list of who joined is pushed to everybody in it. When the time is up the knockout starts:
+// the places of the bracket are the real players that came and "bots" for the rest (the phones draw the bots from the session's seed). Two real players meet in a real online match (a room, like a lobby tournament's), a real player
+// against a bot plays it on his phone and reports the result (the computer takes the match when he does not play it in time), two bots are decided by chance. The prize is paid by the phone of the winner, as before.
+const cups = new Map();        // sid -> session
+const cupOfUid = new Map();    // uid -> sid: a player is in one cup at a time
+const CUP_WAIT_MS = +process.env.CUP_WAIT_MS || 180e3, CUP_WAIT_BIG_MS = +process.env.CUP_WAIT_BIG_MS || 300e3;   // the waiting room: 3 minutes, a 64-player cup 5
+const CUP_LOCAL_MS = +process.env.CUP_LOCAL_MS || 20 * 60e3;   // a match against a computer player is played on the phone: the player has this long for it, then the computer takes it
+const CUP_AWAY_MS = +process.env.CUP_AWAY_MS || 3 * 60e3;      // a phone that is gone this long leaves the cup (its entry fee stays paid)
+const CUP_KEEP_MS = 10 * 60e3;
+const cupRoundsOf = n => Math.ceil(Math.log2(n));
+function cupShuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = crypto.randomInt(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function cupRound0(n, ids) {   // the first round: n places on a bracket of 2^k places; the byes (empty seats) are spread evenly over the whole bracket, so both halves hold the same number of players
+  const size = 2 ** cupRoundsOf(n), byes = size - n, M = size / 2, byeAt = new Set(), rest = ids.slice(), round = [];
+  for (let k = 0; k < byes; k++) byeAt.add(Math.floor((k + 0.5) * M / byes));
+  for (let i = 0; i < M; i++) {
+    if (byeAt.has(i)) { const a = rest.pop(); round.push([a, null, a]); }
+    else { const a = rest.pop(), b = rest.pop(); round.push([a, b, null]); }
+  }
+  return round;
+}
+function cupMakeRound(ids) { const m = []; for (let i = 0; i < ids.length; i += 2) m.push([ids[i], ids[i + 1] === undefined ? null : ids[i + 1], null]); return m; }
+const cupEach = (S, fn) => { for (const uid of S.players) { const w = clients.get(uid); if (w && w.readyState === 1) fn(w, uid); } };
+const cupPubOf = (S, uid) => ({uid, ...(S.pub[uid] || {})});
+const cupStateMsg = S => ({t: "cupstate", sid: S.sid, cup: S.cup, n: S.n, city: S.city, state: S.state, endsAt: S.endsAt, now: Date.now(), players: S.players.map(uid => cupPubOf(S, uid))});
+function cupBracketMsg(S, full) {
+  return {t: "cupbracket", sid: S.sid, cup: S.cup, n: S.n, city: S.city, state: S.state, round: S.round, rounds: S.rounds, seed: S.seed, roundEnds: S.roundEnds || 0, now: Date.now(),
+    slots: full ? S.slots.map(s => s.uid ? cupPubOf(S, s.uid) : null) : undefined};
+}
+function cupNew(cup, n, city) {
+  const S = {sid: crypto.randomUUID(), cup, n, city, state: "gather", createdAt: Date.now(), endsAt: 0, players: [], pub: {}, away: {}, gone: new Set(), slots: null, rounds: null, round: 0, mt: [], seed: 0, roundEnds: 0, timer: null};
+  S.endsAt = S.createdAt + (n >= 64 ? CUP_WAIT_BIG_MS : CUP_WAIT_MS);
+  S.timer = setTimeout(() => { try { cupStart(S); } catch (e) { console.error("cup:", e && e.stack || e); } }, S.endsAt - Date.now());
+  cups.set(S.sid, S); return S;
+}
+function cupSendFull(S, ws) {   // the whole picture for one phone (it joined, or it came back)
+  wsSend(ws, cupStateMsg(S));
+  if (S.state === "run" || S.state === "done") {
+    wsSend(ws, cupBracketMsg(S, true));
+    const rm = ws.room; if (rm && !rm.over && rm.cup && rm.cup.S === S) { wsSend(ws, matchMsg(rm, ws.seat)); for (const o of rm.log[1 - ws.seat]) wsSend(ws, o); }
+  }
+}
+function cupMessage(ws, m) {
+  const u = db.users[ws.uid]; if (!u) return;
+  if (m.t === "cupstatus") {
+    const S = cups.get(cupOfUid.get(ws.uid)); if (!S) return wsSend(ws, {t: "cupnone"});
+    delete S.away[ws.uid]; return cupSendFull(S, ws);
+  }
+  if (m.t === "cupjoin") {
+    if (!bucket(ws, "cupjoin", 6, 10000)) return;
+    const have = cups.get(cupOfUid.get(ws.uid));
+    if (have && have.state !== "done") { delete have.away[ws.uid]; return cupSendFull(have, ws); }   // already in a cup (pressed twice, or came back): the same picture
+    if (ws.room && !ws.room.over) return wsSend(ws, {t: "cuperr", why: "busy"});
+    const cup = String(m.cup || "").replace(/[^A-Za-z0-9_]/g, "").slice(0, 16); if (!cup) return;
+    const n = Math.max(4, Math.min(64, Math.floor(+m.n || 32))), city = String(m.city || "lon").replace(/[^a-z0-9]/gi, "").slice(0, 8) || "lon";
+    leaveQueue(ws); if (ws.spec) { ws.spec.specs.delete(ws); ws.spec = null; }   // one place at a time: a lobby, the queue, a match being watched
+    ws.pref = {cue: m.cue, tbl: m.tbl}; ws.profile = mkProfile(u, m.cue, m.tbl);
+    let S = [...cups.values()].find(x => x.cup === cup && x.state === "gather" && Date.now() < x.endsAt && x.players.length < x.n);
+    if (!S) S = cupNew(cup, n, city);
+    S.players.push(ws.uid); S.pub[ws.uid] = pubProfile(ws.profile); cupOfUid.set(ws.uid, S.sid);
+    return cupEach(S, w => wsSend(w, cupStateMsg(S)));
+  }
+  const S = cups.get(cupOfUid.get(ws.uid)); if (!S || (m.sid && String(m.sid) !== S.sid)) return;
+  if (m.t === "cupleave") return cupLeave(S, ws.uid, true);
+  if (m.t === "cupres" && S.state === "run") {   // the result of the match against a computer player, played on the phone
+    if ((m.round | 0) !== S.round) return;
+    const mt = S.mt.find(x => x.kind === "rb" && x.uid === ws.uid && x.w === undefined); if (!mt) return;
+    const me = S.slots[mt.a].uid === ws.uid ? mt.a : mt.b, bot = me === mt.a ? mt.b : mt.a;
+    mt.w = m.win ? me : bot; cupCheckRound(S);
+  }
+}
+function cupLeave(S, uid, ack) {
+  if (S.state === "gather") {
+    S.players = S.players.filter(x => x !== uid); delete S.pub[uid]; delete S.away[uid]; cupOfUid.delete(uid);
+    if (ack) wsSend(clients.get(uid), {t: "cupleft", sid: S.sid});
+    if (!S.players.length) { clearTimeout(S.timer); cups.delete(S.sid); return; }
+    return cupEach(S, w => wsSend(w, cupStateMsg(S)));
+  }
+  if (S.state !== "run" || S.gone.has(uid)) return;
+  S.gone.add(uid); cupOfUid.delete(uid);   // left the knockout: he forfeits what he has not played
+  if (ack) wsSend(clients.get(uid), {t: "cupleft", sid: S.sid});
+  for (const mt of S.mt) {
+    if (mt.w !== undefined) continue;
+    if (mt.kind === "rb" && mt.uid === uid) mt.w = S.slots[mt.a].uid === uid ? mt.b : mt.a;
+    else if (mt.kind === "rr" && mt.room && !mt.room.over) { const seat = mt.room.p.findIndex(p => p && p.uid === uid); if (seat >= 0) finish(mt.room, 1 - seat, "left"); }
+    else if (mt.kind === "rr" && !mt.room) mt.w = S.slots[mt.a].uid === uid ? mt.b : mt.a;
+  }
+  cupCheckRound(S);
+}
+function cupDrop(ws) {   // the socket of a player died: the cup waits for his phone a while
+  const S = cups.get(cupOfUid.get(ws.uid)); if (!S || S.state === "done" || clients.get(ws.uid) !== ws && clients.get(ws.uid)) return;
+  S.away[ws.uid] = Date.now();
+  setTimeout(() => { const t = S.away[ws.uid]; const c = clients.get(ws.uid); if (t && Date.now() - t >= CUP_AWAY_MS && !(c && c.readyState === 1) && S.state !== "done") cupLeave(S, ws.uid, false); }, CUP_AWAY_MS + 500);
+}
+function cupStart(S) {
+  S.timer = null; if (S.state !== "gather") return;
+  const now = Date.now();
+  for (const uid of S.players.slice()) { const c = clients.get(uid), t = S.away[uid]; if (!(c && c.readyState === 1) && (!t || now - t >= CUP_AWAY_MS)) cupLeave(S, uid, false); }   // (a phone that has been gone all the wait is not in the bracket)
+  if (!cups.has(S.sid) || S.state !== "gather") return;
+  const real = S.players.slice(); if (!real.length) { cups.delete(S.sid); return; }
+  S.state = "run"; S.seed = crypto.randomInt(2 ** 31);
+  S.slots = real.map(uid => ({uid})).concat(Array.from({length: S.n - real.length}, () => ({bot: true})));
+  S.rounds = [cupRound0(S.n, cupShuffle(S.slots.map((_, i) => i)))]; S.round = 0;
+  console.log(`cup ${S.cup}: ${real.length} real player(s) of ${S.n} (the rest are bots)`);
+  cupRunRound(S);
+}
+function cupRunRound(S) {
+  const R = S.rounds[S.round];
+  S.mt = R.map(([a, b, w]) => ({a, b, w: w === null || w === undefined ? undefined : w, kind: "", uid: "", room: null}));
+  const rooms2 = [];
+  for (const mt of S.mt) {
+    if (mt.w !== undefined) continue;
+    if (mt.b === null) { mt.w = mt.a; continue; }
+    const ua = S.slots[mt.a].uid, ub = S.slots[mt.b].uid;
+    if (!ua && !ub) { mt.w = crypto.randomInt(2) ? mt.a : mt.b; continue; }   // two bots
+    if (ua && ub) {   // two real players: an online match
+      mt.kind = "rr";
+      const ga = S.gone.has(ua), gb = S.gone.has(ub);
+      if (ga || gb) { mt.w = ga && gb ? (crypto.randomInt(2) ? mt.a : mt.b) : ga ? mt.b : mt.a; continue; }
+      rooms2.push(mt); continue;
+    }
+    mt.kind = "rb"; mt.uid = ua || ub;   // a real player against a bot: played on his phone
+    if (S.gone.has(mt.uid)) mt.w = ua ? mt.b : mt.a;
+  }
+  S.roundEnds = Date.now() + CUP_LOCAL_MS; clearTimeout(S.timer);
+  S.timer = setTimeout(() => { try { cupSweepRound(S, S.round); } catch (e) { console.error("cup:", e && e.stack || e); } }, CUP_LOCAL_MS + 500);
+  const R2 = S.rounds[S.round]; S.mt.forEach((mt, i) => { R2[i][2] = mt.w === undefined ? null : mt.w; });
+  cupEach(S, w => wsSend(w, cupBracketMsg(S, S.round === 0)));   // the bracket first, then the matches
+  for (const mt of rooms2) {
+    const wa = clients.get(S.slots[mt.a].uid), wb = clients.get(S.slots[mt.b].uid);
+    if (!wa || !wb || wa.room && !wa.room.over || wb.room && !wb.room.over) {   // a phone that is not here (or busy): it forfeits the match
+      mt.w = !wa && !wb ? (crypto.randomInt(2) ? mt.a : mt.b) : !wa || wa.room && !wa.room.over ? mt.b : mt.a; continue;
+    }
+    mt.room = startRoom(wa, wb, S.city, null, null, {S, mt});
+  }
+  cupCheckRound(S);
+}
+function cupSweepRound(S, round) {   // the time for the matches played on the phones is over: the computer takes what was not played
+  if (S.state !== "run" || S.round !== round) return;
+  for (const mt of S.mt) if (mt.w === undefined && mt.kind === "rb") mt.w = S.slots[mt.a].uid === mt.uid ? mt.b : mt.a;
+  cupCheckRound(S);
+}
+function cupMatchEnd(room, winnerSeat) {
+  const c = room.cup; if (!c || c.S.state !== "run" || c.mt.w !== undefined) return;
+  const wu = room.p[winnerSeat] && room.p[winnerSeat].uid;
+  c.mt.w = c.S.slots[c.mt.a].uid === wu ? c.mt.a : c.mt.b;
+  cupCheckRound(c.S);
+}
+function cupCheckRound(S) {
+  if (S.state !== "run") return;
+  const R = S.rounds[S.round]; S.mt.forEach((mt, i) => { R[i][2] = mt.w === undefined ? null : mt.w; });
+  if (S.mt.some(mt => mt.w === undefined)) return cupEach(S, w => wsSend(w, cupBracketMsg(S, false)));   // somebody decided: everybody sees the bracket move
+  const next = S.mt.map(mt => mt.w);
+  if (next.length === 1) return cupFinish(S, next[0]);
+  S.rounds.push(cupMakeRound(next)); S.round++; cupRunRound(S);
+}
+function cupFinish(S, champ) {
+  S.state = "done"; clearTimeout(S.timer); S.timer = null; S.champion = champ;
+  cupEach(S, w => wsSend(w, {t: "cupend", sid: S.sid, champion: champ, rounds: S.rounds}));
+  for (const uid of S.players) if (cupOfUid.get(uid) === S.sid) cupOfUid.delete(uid);
+  setTimeout(() => cups.delete(S.sid), CUP_KEEP_MS);
 }
 
 wss.on("connection", (ws, req) => {
@@ -2175,6 +2340,8 @@ wss.on("connection", (ws, req) => {
       const L = ws.lobby && lobbies.get(ws.lobby);
       if (!L || L.host !== ws || !bucket(ws, "lpub", 6, 5000)) return;
       L.pub = !!m.on; lobbyBroadcast(L);
+    } else if (m.t === "cupjoin" || m.t === "cupleave" || m.t === "cupres" || m.t === "cupstatus") {   // public cups (see "public cups" above)
+      try { cupMessage(ws, m); } catch (e) { console.error("cup:", e && e.stack || e); }
     } else if (m.t === "cancel") {
       leaveQueue(ws);
     } else if (m.t === "spectate") {
@@ -2272,6 +2439,7 @@ wss.on("connection", (ws, req) => {
   ws.on("close", () => {
     leaveLobby(ws, true);
     leaveQueue(ws);
+    try { cupDrop(ws); } catch (e) { console.error("cup:", e && e.stack || e); }
     if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
     if (clients.get(u.id) === ws) clients.delete(u.id);
     const room = ws.room;
