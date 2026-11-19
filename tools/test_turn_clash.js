@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // An online match whose player is silent for a long time and then shoots anyway (the owner, Nov 18: "his turn ran out; a little later it said 'the opponent did not respond'; then he shoots, the shot
-// reaches me late and the balls change places"):  node tools/test_turn_clash.js   (B8_ROOT=<repo copy>; ~7 min; two real browsers against the real server)
+// reaches me late and the balls change places"):  node tools/test_turn_clash.js   (B8_ROOT=<repo copy>; ~8 min; two real browsers against the real server)
 // Both phones play every shot themselves and then agree on the final places (`state`). When one phone (Q) loses sight of the other (P) for turnLimit + 8 s it takes the turn ("opponent did not respond"),
 // and Q's own shot / state then meet P's LATE shot / state: each phone used to accept the other's table, so the two tables were swapped for good.
 //  - the match goes on in the normal way first (no clash: both tables the same after every shot, nobody "did not respond")
@@ -10,6 +10,7 @@
 //  - a take-over that is RIGHT (P did not shoot at all, his phone was frozen): Q takes the turn, shoots, P's phone replays it and goes on; both tables the same after Q's shot and after P's next shot (the new rules must not touch it)
 //  - P's OWN clock runs out (he does not shoot) while Q takes the turn and shoots: P's late "time-out" table is older than Q's shot and must not put the balls back
 //  - six normal shots with every message 0.6 s late both ways: the same tables after each
+//  - the turn leaves a player while he is making his shot (the opponent's `state` arrives inside the 5 frames of the strike): that shot is not played at all (it used to be played on his phone only and never sent)
 //  - the take-over itself still works (see tools/test_afk.js for the three-turns rule)
 const { chromium } = require("playwright"), { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), PORT = +process.env.TEST_PORT || 8771;
@@ -137,6 +138,15 @@ const HOLD = () => {
       await shoot(who, 0.35 + (i % 4) * 0.15); await sleep(800);
       const s4 = await idle(A, B, 3, 60);
       ok(s4[0] && s4[1] && diff(s4[0], s4[1]) <= 1 && s4[0].cur === s4[1].cur && !/did not respond|not responding/i.test(s4[0].banner + s4[1].banner), "slow network: shot " + (i + 1) + " is the same on both phones, nobody is told \"did not respond\"", s4[0] && s4[1] && [diff(s4[0], s4[1]), s4[0].cur, s4[1].cur, s4[0].banner, s4[1].banner]);
+    }
+    // ---- 5. the turn leaves a player while he is making his shot: the shot must not be played on his phone alone
+    await newMatch(A, B);
+    {
+      const me = (await mine(A)) ? A : B;
+      await me.evaluate(() => { const G = game, c = G.balls[0], t = G.balls.find(x => !x.out && x.n !== 0); G.angle = Math.atan2(t.y - c.y, t.x - c.x); G.elev = 0; G.spin = { x: 0, y: 0 }; requestShot(0.6);
+        applyState({ balls: G.balls.map(x => [x.x, x.y, x.out ? 1 : 0]), turn: seatOf(1), groups: [null, null], bih: false, brk: G.isBreak }); });   // (the opponent's table arrives while the shot is in its 5 strike frames)
+      await sleep(1500); const s5 = await idle(A, B, 2.5, 40);
+      ok(s5[0] && s5[1] && diff(s5[0], s5[1]) <= 1 && s5[0].no === s5[1].no, "the turn left while he shot: the shot is not played on his phone alone (both tables the same, no shot counted)", s5[0] && s5[1] && [diff(s5[0], s5[1]), s5[0].no, s5[1].no]);
     }
     ok(errs.length === 0, "no page errors", errs.slice(0, 4));
   } finally { await b.close(); srv.kill(); try { fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 5 }); } catch (e) {} }

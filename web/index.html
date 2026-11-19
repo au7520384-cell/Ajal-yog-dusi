@@ -9165,7 +9165,8 @@ if (input.charging) { if (canControl()) input.power = Math.min(1, input.power + 
 if (G.replayQ && G.replayQ.length && !G.strike && !G.moving && !G.over && G.net && !G.net.spec) { const q = G.replayQ.shift(); try { if (q.t === "shot") remoteShot(q); else applyState(q); } catch (e) { onFrameError(e); } }   // the opponent's shots from before this phone started the match, in order
 if (G.strike) {
 G.strike.t++;
-if (G.strike.t >= 5) { const s = G.strike; G.strike = null; try { doShoot(s.power, s.remote); } catch (e) { onFrameError(e); if (!G.moving) { G.moving = true; G.shot = G.shot || {firstHit: null, potted: [], ownBefore: -1, rails: 0, power: s.power}; } } }
+// (online: the turn went to the opponent while this shot was being made - his `state` arrived inside the 5 frames of the strike: that shot never happened. It used to be played here and never sent, and the two tables differed)
+if (G.strike.t >= 5) { const s = G.strike; G.strike = null; if (!s.remote && G.net && !G.net.spec && G.cur !== 0) { input.power = 0; input.charging = false; G.aiPull = 0; } else try { doShoot(s.power, s.remote); } catch (e) { onFrameError(e); if (!G.moving) { G.moving = true; G.shot = G.shot || {firstHit: null, potted: [], ownBefore: -1, rails: 0, power: s.power}; } } }
 } else if (G.moving) {
 physicsFrame(G);
 if (!G.demo) Snd.roll(G.balls.reduce((s, b) => { const v = b.out ? 0 : Math.hypot(b.vx, b.vy); return s + (v > 0.6 ? v : 0); }, 0));
