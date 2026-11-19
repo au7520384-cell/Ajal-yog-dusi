@@ -241,6 +241,8 @@ box-shadow:inset 0 2px 0 #ffffff22,0 20px 60px #000c;width:100%;max-width:1000px
 .tblcard.lux .tprev{position:relative;overflow:hidden}
 .tblcard.lux .tprev::after{content:"";position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(110deg,transparent,#ffffff99 50%,transparent);
 transform:translateX(-120%);animation:luxsh 2.8s linear infinite;will-change:transform}
+.tblcard.lux:not(.shn) .tprev::after{display:none}   /* only the cards on the screen shine (112 animated layers made the list heavy) ... */
+#tblGrid.mv .tblcard.lux .tprev::after{animation-play-state:paused}   /* ... and not while the list is being dragged */
 @keyframes luxsh{to{transform:translateX(330%)}}
 .tblcard.lux b{background:linear-gradient(90deg,#fff6b0,#ffcf3d,#fff,#ffcf3d);-webkit-background-clip:text;background-clip:text;color:transparent}
 .tblhead{grid-column:1/-1;font-family:var(--fh);font-size:22px;color:#ffe27a;margin:8px 0 -2px;text-shadow:0 2px 0 #0008}
@@ -6721,6 +6723,63 @@ ctx.setTransform(k, 0, 0, k, -x0 * k, -y0 * k);
 try { paintTable({id: t.id, name: t.city ? t.name : "", felt: t.felt, rail: t.rail, trim: t.trim, pat: t.pat, gem: t.gem, thumb: 1}); } finally { ctx = saved; }
 return (tblThumbs[t.id] = oc.toDataURL("image/jpeg", 0.85));
 }
+// ---- the shop's table pictures: made in small slices, never while the list moves, and the big colouring canvas is not kept
+// The owner (Nov 19, Telegram, the Premium tables row): "when I try to go down it freezes and goes down in jerks". A table's picture costs 0.35 s here and 1.3 s on a 4x slower phone, 85% of it the colouring of the big table photo
+// (tintedTable); the list drew four of them in one go every time a new row came into view, all inside the scroll. Now (tools/test_table_thumbs.js):
+//  - the colouring runs as a generator, ~8 ms at a time (tintSlices), and only while nothing touches the list; the same pixels as before (the test compares every table);
+//  - the cards on the screen first, then those just outside it, one picture at a time (a card that was scrolled past is not drawn at all);
+//  - the colouring canvas (6 MB; one per table; they were ALL kept for ever: 150 tables = 900 MB) is dropped once the picture is made.
+const TBLQ = {cards: [], paint: null, vis: new Set(), near: new Set(), io: [], busy: false, last: 0, own: new Set()};
+const tintLook = t => { const look = {id: t.id, name: "", felt: t.felt, rail: t.rail, trim: t.trim, pat: t.pat, gem: t.gem, thumb: 1}; return luxStyle(look) ? Object.assign({}, look, {felt: look.felt.map(vividHex), _viv: 1}) : look; };   // (what paintTable makes of it)
+const tblHot = () => document.hidden || performance.now() - TBLQ.last < 160;   // the finger is on the list / it is still moving / the page is in the background
+const tblWait = ms => new Promise(r => setTimeout(r, ms));
+function tintSlices(look) {   // the colouring of one table, ~8 ms of work at a time (the frames stay free); resolves when it is in TINT_TBL
+  return new Promise(res => {
+    if (!isCityTable(look) || look.id === "syd") return res();   // (these never use the coloured photo)
+    const it = tintedTableGen(look);
+    const step = () => {
+      if (tblHot()) return setTimeout(step, 80);
+      const t0 = performance.now(); let r;
+      try { do r = it.next(); while (!r.done && performance.now() - t0 < 8); } catch (e) { console.warn("tint", e); return res(); }
+      if (r.done) return res();
+      setTimeout(step, 4);
+    };
+    step();
+  });
+}
+function tblNext() {   // the card to draw next: a visible one, else one just outside the screen
+  const need = c => c[0].isConnected && !c[0].style.backgroundImage;
+  for (const c of TBLQ.cards) if (TBLQ.vis.has(c) && need(c)) return c;
+  for (const c of TBLQ.cards) if (TBLQ.near.has(c) && need(c)) return c;
+  return null;
+}
+async function tblPump() {
+  if (TBLQ.busy) return; TBLQ.busy = true;
+  try {
+    for (;;) {
+      while (tblHot()) await tblWait(90);
+      const c = tblNext(); if (!c) break;
+      const t = c[1], look = tintLook(t), key = isCityTable(look) && t.id !== "syd" ? tintKeyOf(look) : "";
+      if (key && !tblThumbs[t.id]) { if (!TINT_TBL[key]) TBLQ.own.add(key); await tintSlices(look); }   // (own: the entry is the shop's, it is dropped below)
+      while (tblHot()) await tblWait(90);
+      if (c[0].isConnected && !c[0].style.backgroundImage) TBLQ.paint(c);   // the picture itself: the colouring is cached now, what is left is ~60 ms here
+      if (key && TBLQ.own.has(key) && t.id !== profile.tableSkin) { delete TINT_TBL[key]; TBLQ.own.delete(key); }
+      await tblWait(40);
+    }
+  } finally { TBLQ.busy = false; }
+}
+function tblPaint(cards, paint) {   // the shop list: [preview element, table] pairs; paint(card) puts the picture in
+  TBLQ.cards = cards; TBLQ.paint = paint; TBLQ.vis.clear(); TBLQ.near.clear();
+  for (const o of TBLQ.io) o.disconnect(); TBLQ.io = [];
+  if (!("IntersectionObserver" in window)) { cards.forEach(c => { TBLQ.near.add(c); if (c[0].parentElement) c[0].parentElement.classList.add("shn"); }); return tblPump(); }
+  const watch = (set, margin, shine) => { const io = new IntersectionObserver(es => { for (const e of es) { const c = e.target._c; if (!c) continue; if (e.isIntersecting) set.add(c); else set.delete(c); if (shine && c[0].parentElement) c[0].parentElement.classList.toggle("shn", e.isIntersecting); } tblPump(); }, {rootMargin: margin}); cards.forEach(c => { c[0]._c = c; io.observe(c[0]); }); TBLQ.io.push(io); };
+  watch(TBLQ.vis, "0px", true); watch(TBLQ.near, "360px", false);
+}
+{ const sh = $("shop"); if (sh) for (const ev of ["scroll", "touchstart", "touchmove", "wheel"]) sh.addEventListener(ev, () => {
+  TBLQ.last = performance.now(); const g = $("tblGrid"); if (!g) return;
+  if (!g.classList.contains("mv")) g.classList.add("mv");   // (the shine stands still while the list is dragged)
+  clearTimeout(TBLQ.mvT); TBLQ.mvT = setTimeout(() => g.classList.remove("mv"), 220);
+}, {passive: true, capture: true}); }
 let tableCache = null, feltNoise = null, feltWeave = null;
 function luxGem(x, y, r, col, rn) {
 if (col === "opal") col = ["#ff5a8a", "#ffb040", "#ffe95a", "#5aff9a", "#40d8ff", "#8a6aff", "#ff6ae0"][rn() * 7 | 0];
@@ -7601,11 +7660,13 @@ const tr = city.trim || "#d9ad5a", sh = (typeof shade === "function") ? shade : 
 const neon = (typeof vividHex === "function" && city.felt ? vividHex(city.felt[0]) : st.glow || tr);
 return city._ls = Object.assign({}, st, {lux: 1, royal: 1, neon, metal: /^(x_ice|xh_0|xh_2)$/.test(city.id) ? ["#ffffff", "#c9d2de", "#4a5566"] : ["#fff0b0", "#e3aa32", "#5c3a06"], orn: /^x_/.test(city.id) ? city.id : "x_blk", gemrow: neon});
 }
-function sharpFelt(g, W, H, m, amt = 0.9, px = 1.2, m2 = null, amt2 = 0) {   // crisp cloth: unsharp mask on the felt only (fibres and weave read clearly, edges of the cushions are left alone)
+function drainGen(it) { let r; while (!(r = it.next()).done); return r.value; }   // runs a generator to its end at once (the same result as the plain function it was cut from)
+function sharpFelt(g, W, H, m, amt, px, m2, amt2) { return drainGen(sharpFeltGen(g, W, H, m, amt, px, m2, amt2)); }
+function* sharpFeltGen(g, W, H, m, amt = 0.9, px = 1.2, m2 = null, amt2 = 0) {   // crisp cloth: unsharp mask on the felt only (fibres and weave read clearly, edges of the cushions are left alone)
 const src = g.getImageData(0, 0, W, H), d = src.data, a = document.createElement("canvas"); a.width = W; a.height = H; a.getContext("2d").putImageData(src, 0, 0);
 const b = document.createElement("canvas"); b.width = W; b.height = H; const bg = b.getContext("2d"); bg.filter = `blur(${px}px)`; bg.drawImage(a, 0, 0);
 const bd = bg.getImageData(0, 0, W, H).data;
-for (let n = 0, i = 0; n < W * H; n++, i += 4) { const k = m[n] ? amt : m2 && m2[n] ? amt2 : 0; if (k) for (let c = 0; c < 3; c++) { const v = d[i + c] + (d[i + c] - bd[i + c]) * k; d[i + c] = v < 0 ? 0 : v > 255 ? 255 : v; } }
+for (let n = 0, i = 0; n < W * H; n++, i += 4) { const k = m[n] ? amt : m2 && m2[n] ? amt2 : 0; if (k) for (let c = 0; c < 3; c++) { const v = d[i + c] + (d[i + c] - bd[i + c]) * k; d[i + c] = v < 0 ? 0 : v > 255 ? 255 : v; } if ((n & 0x3FFFF) === 0x3FFFF) yield; }
 g.putImageData(src, 0, 0);
 }
 function worstedFelt(g, W, H, m) {   // worsted cloth (Simonis-type): smooth, tightly woven, hardly any visible fibre, a very fine regular weave and a soft satin sheen
@@ -7635,8 +7696,12 @@ d[i] = o[i] * (1 - al) + o[j] * al; d[i + 1] = o[i + 1] * (1 - al) + o[j + 1] * 
 g.putImageData(id, x0, ys);
 }
 }
-function tintedTable(city) {
-const lsx = luxStyle(city), lx = !!lsx, vipR = isVipRail(city.id), key = city.felt[0] + city.felt[1] + city.rail[0] + city.rail[1] + (lx ? "L" : "") + "" + (city.cloth === "worsted" ? "W" : "") + (vipR ? "V" : "");
+function tintedTable(city) { return drainGen(tintedTableGen(city)); }
+const tintKeyOf = city => city.felt[0] + city.felt[1] + city.rail[0] + city.rail[1] + (luxStyle(city) ? "L" : "") + "" + (city.cloth === "worsted" ? "W" : "") + (isVipRail(city.id) ? "V" : "");
+// The cloth / rail colouring of the table picture is 85% of what a table's picture in the shop costs (1.3 s on a 4x slower phone, all in one go: the list froze while it scrolled). tintedTableGen is the SAME code as a generator that
+// gives way every few ms (see tintSlices); tintedTable() above runs it to the end at once, so the game itself gets exactly what it always got.
+function* tintedTableGen(city) {
+const lsx = luxStyle(city), lx = !!lsx, vipR = isVipRail(city.id), key = tintKeyOf(city);
 if (TINT_TBL[key]) return TINT_TBL[key];
 const W = SYD_TBL.naturalWidth, H = SYD_TBL.naturalHeight, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
 const g = cv.getContext("2d"); g.drawImage(SYD_TBL, 0, 0);
@@ -7656,16 +7721,17 @@ for (let y = 0; y < 256; y++) { let k = 0; while (k < sat.length - 2 && y > sat[
 }
 // one even cloth colour: the picture's own lit centre / dark edge falloff is measured (large masked blur of the felt) and divided out, so only the fibre detail is kept
 const lowG = new Float32Array(W * H); { const gm = new Float32Array(W * H), mm = new Float32Array(W * H);
-for (let n = 0, i = 0; n < W * H; n++, i += 4) { const r0 = d[i], g0 = d[i + 1], b0 = d[i + 2]; if (g0 > r0 + 12 && g0 > b0 + 8 && (g0 >= 70 && g0 <= 150 && inF(n))) { gm[n] = g0; mm[n] = 1; } }   // the reference level is measured on the playing field alone: the cushion shadow and the lit cushion face must not pull it
-const box = (arr, R) => { const t = new Float32Array(W * H), o = new Float32Array(W * H);
-for (let y = 0; y < H; y++) { let a2 = 0; const o0 = y * W; for (let x = -R; x <= R; x++) a2 += arr[o0 + Math.min(W - 1, Math.max(0, x))]; for (let x = 0; x < W; x++) { t[o0 + x] = a2; a2 += arr[o0 + Math.min(W - 1, x + R + 1)] - arr[o0 + Math.max(0, x - R)]; } }
-for (let x = 0; x < W; x++) { let a2 = 0; for (let y = -R; y <= R; y++) a2 += t[Math.min(H - 1, Math.max(0, y)) * W + x]; for (let y = 0; y < H; y++) { o[y * W + x] = a2; a2 += t[Math.min(H - 1, y + R + 1) * W + x] - t[Math.max(0, y - R) * W + x]; } }
+for (let n = 0, i = 0; n < W * H; n++, i += 4) { const r0 = d[i], g0 = d[i + 1], b0 = d[i + 2]; if (g0 > r0 + 12 && g0 > b0 + 8 && (g0 >= 70 && g0 <= 150 && inF(n))) { gm[n] = g0; mm[n] = 1; } if ((n & 0x3FFFF) === 0x3FFFF) yield; }   // the reference level is measured on the playing field alone: the cushion shadow and the lit cushion face must not pull it
+const box = function* (arr, R) { const t = new Float32Array(W * H), o = new Float32Array(W * H);
+for (let y = 0; y < H; y++) { let a2 = 0; const o0 = y * W; for (let x = -R; x <= R; x++) a2 += arr[o0 + Math.min(W - 1, Math.max(0, x))]; for (let x = 0; x < W; x++) { t[o0 + x] = a2; a2 += arr[o0 + Math.min(W - 1, x + R + 1)] - arr[o0 + Math.max(0, x - R)]; } if ((y & 15) === 15) yield; }
+for (let x = 0; x < W; x++) { let a2 = 0; for (let y = -R; y <= R; y++) a2 += t[Math.min(H - 1, Math.max(0, y)) * W + x]; for (let y = 0; y < H; y++) { o[y * W + x] = a2; a2 += t[Math.min(H - 1, y + R + 1) * W + x] - t[Math.max(0, y - R) * W + x]; } if ((x & 15) === 15) yield; }
 return o; };
-let bg = box(gm, 70), bm = box(mm, 70); bg = box(bg, 40); bm = box(bm, 40);
-for (let n = 0; n < W * H; n++) lowG[n] = bm[n] > 1 ? bg[n] / bm[n] : 0; }
+let bg = yield* box(gm, 70), bm = yield* box(mm, 70); bg = yield* box(bg, 40); bm = yield* box(bm, 40);
+for (let n = 0; n < W * H; n++) { lowG[n] = bm[n] > 1 ? bg[n] / bm[n] : 0; if ((n & 0x3FFFF) === 0x3FFFF) yield; } }
 const FLATG = 104, inField = n => inF(n);   // the target level every felt pixel is normalised to
 const mid = f0.map((v, i) => v * 0.55 + f1[i] * 0.45);   // the cloth colour; its light and dark come from the picture
 for (let i = 0; i < d.length; i += 4) {
+if ((i & 0x3FFFF) === 0) yield;
 const r = d[i], gg = d[i + 1], b = d[i + 2];
 if (!lx && r > gg * 1.04 && r > 14 && b < gg + 8) { const w = Math.min(1, (r / Math.max(1, gg) - 1.04) / 0.12), o = ((0.299 * r + 0.587 * gg + 0.114 * b) | 0) * 3; d[i] = r * (1 - w) + RAMP[o] * w; d[i + 1] = gg * (1 - w) + RAMP[o + 1] * w; d[i + 2] = b * (1 - w) + RAMP[o + 2] * w; if (w > 0.5) fmask[i >> 2] = 1; }   // the carved frame: same light and shade as the picture, in the table's own rail material
 else if (r > gg * 1.12 && r > 18 && b < gg + 8) { const kw = lx ? 0.82 + Math.min(1, r / 200) * 0.5 : Math.min(1.6, r / 70), w = Math.min(1, (r / Math.max(1, gg) - 1.12) / 0.3) * (lx ? 0.95 : 0.85); d[i] = d[i] * (1 - w) + Math.min(255, rl[0] * kw) * w; d[i + 1] = d[i + 1] * (1 - w) + Math.min(255, rl[1] * kw) * w; d[i + 2] = d[i + 2] * (1 - w) + Math.min(255, rl[2] * kw) * w; }   // the wooden frame takes the city's rail colour
@@ -7678,7 +7744,7 @@ d[i] = Math.min(255, mid[0] * k); d[i + 1] = Math.min(255, mid[1] * k); d[i + 2]
 }
 }
 g.putImageData(id, 0, 0);
-if (city.cloth === "worsted") { worstedFelt(g, W, H, wmask); if (!lx) sharpFelt(g, W, H, fmask, 0.55, 1.1); } else sharpFelt(g, W, H, wmask, 0.35, 1.1, lx ? null : fmask, 0.55);   // the cloth keeps the picture's own fine fibre (no amplified crumple); the carved frame's grain and thin edge lines read crisp (one pass)
+if (city.cloth === "worsted") { worstedFelt(g, W, H, wmask); if (!lx) yield* sharpFeltGen(g, W, H, fmask, 0.55, 1.1); } else yield* sharpFeltGen(g, W, H, wmask, 0.35, 1.1, lx ? null : fmask, 0.55);   // the cloth keeps the picture's own fine fibre (no amplified crumple); the carved frame's grain and thin edge lines read crisp (one pass)
 if (lx) { g.putImageData(id, 0, 0); { const st9 = lsx; luxFrameOver(g, W, H, st9.metal, st9.gemrow || (st9.pave && st9.pave !== "opal" ? st9.pave : null) || city.gem || st9.metal[0], !!(st9.royal || PREM_COL_SRC[city.id])); } }   // premium / special tables bring their own supplied collars, drawn later on top of the channel inlays (collarsTop); every other lux table keeps the engraved metal collars drawn here
 else cityEdgeClean(g, W, H);
 if (vipR) cutSidePockets(g, W, H);
@@ -9288,9 +9354,13 @@ let frameErr = 0;
 const STEP_MS = 1000 / 60;
 let lastNow = 0, accum = 0, nextDraw = 0, lastDraw = 0;
 const fpsTarget = () => { let v = "90"; try { v = (profile.set && profile.set.fps) || "90"; } catch (e) {} return v === "auto" ? 1000 : (+v || 90); };
+// A demo match plays behind the menus (game.demo). Every screen listed here hides the canvas completely (tools/test_table_scroll.js checks that with a magenta canvas), so the demo is neither simulated nor drawn while one is open:
+// on the turned page the finger's swipe is handled by the page's own JS (see "A phone held upright"), and the demo's physics + drawing took 3/4 of every frame of the shop on a 4x slower phone, so the list could only move a few times a second.
+const DEMO_COVER = new Set(["shop", "cities", "tourScr", "mini", "freeScr", "roadScr", "liveScr", "withFrScr", "lbScr", "friendsScr", "profileScr", "settingsScr", "clubsScr", "passScr", "openScr", "rewards", "eventsScr", "leader"]);
 function frame(now) {
 if (!(now > 0)) now = performance.now();
 let dt = now - lastNow; lastNow = now; adaptRes(dt);
+if (mode === "menu" && game && game.demo) { const sc = document.querySelector(".screen.on"); if (sc && DEMO_COVER.has(sc.id)) { accum = 0; requestAnimationFrame(frame); return; } }
 const pj0 = PERF ? performance.now() : 0;
 if (!(dt > 0) || dt > 250) dt = STEP_MS;   // first frame / returning from another tab: do not fast-forward
 accum += dt;
@@ -10433,7 +10503,7 @@ grid.appendChild(bn);
 if (bn.querySelector('[data-w="cash"]')) bn.querySelector('[data-w="cash"]').onclick = () => buyTable(wk, "cash", pr.cash).then(ok => ok && buildShop("tables"));
 bn.querySelector('[data-w="gems"]').onclick = () => buyTable(wk, "gems", pr.gems).then(ok => ok && buildShop("tables"));
 bn.querySelector('[data-w="try"]').onclick = () => tryTable(wk);
-setTimeout(() => previewTable(wk, bn.querySelector("canvas")), 50);
+{ const wl = tintLook(wk); if (isCityTable(wl) && wl.id !== "syd" && !TINT_TBL[tintKeyOf(wl)]) TBLQ.own.add(tintKeyOf(wl)); tintSlices(wl).then(() => { const cv = bn.querySelector("canvas"); if (cv && cv.isConnected) previewTable(wk, cv); }); }   // (the banner's picture waits for its colouring, which is made in slices)
 }
 const head = txt => { const h = document.createElement("div"); h.className = "tblhead"; h.innerHTML = txt; grid.appendChild(h); };
 let lastSec = "";
@@ -10479,10 +10549,7 @@ if (tripleT) wirePay(elT, {sku: "tbl_" + t.id, buy: cur => buyTable(t, cur, cur 
 }
 if (!cards[0][1]) { cards[0][0].innerHTML = '<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:40px">🌍</div>'; cards.shift(); }
 const paintThumb = c => { if (c[0].isConnected && !c[0].style.backgroundImage) c[0].style.backgroundImage = `url(${c[1] ? tableThumb(c[1]) : IMG.cb_lon || ""})`; };
-if ("IntersectionObserver" in window) {   // thumbnails are drawn only when their card scrolls into view (156 tables)
-const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); setTimeout(() => paintThumb(e.target._c), 0); } }), {rootMargin: "300px"});
-cards.forEach(c => { c[0]._c = c; io.observe(c[0]); });
-} else { const next = () => { const c = cards.shift(); if (!c || !c[0].isConnected) return; paintThumb(c); setTimeout(next, 0); }; setTimeout(next, 0); }
+tblPaint(cards, paintThumb);   // the pictures (156 tables): the visible cards first, one at a time, in small slices, never while the list moves - see TBLQ
 return;
 }
 const owns = c => profile.cues.includes(c.id);
