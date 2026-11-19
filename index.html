@@ -4496,7 +4496,7 @@ const localOf = s => s === game.net.seat ? 0 : 1;
 function sendState() {
 const G = game; if (!G || !G.net || G.net.spec) return;
 const groups = []; groups[seatOf(0)] = G.groups[0]; groups[seatOf(1)] = G.groups[1];
-Net.send({t: "state", balls: G.balls.map(b => [b.x, b.y, b.out ? 1 : 0]), turn: seatOf(G.cur), groups, bih: G.ballInHand, brk: G.isBreak});
+Net.send({t: "state", balls: G.balls.map(b => [b.x, b.y, b.out ? 1 : 0]), turn: seatOf(G.cur), groups, bih: G.ballInHand, brk: G.isBreak, no: G.shotNo | 0, tk: G.tk | 0});   // (no: the table comes after this many shots; tk: my take-over's first shot, see turnClash)
 }
 function applyState(m) {
 const G = game; if (!G || !G.net) return;
@@ -4570,7 +4570,8 @@ let dev = -G.spin.x * k * 0.03;
 if (offS > 0.88 && power > 0.55 && !pl.isAI) { dev += (G.spin.x >= 0 ? 1 : -1) * 0.07 * power; cue.vx *= 0.92; cue.vy *= 0.92; if (!G.demo) setTimeout(() => toast("⚠️", T("Miskyu!"), ""), 0); }
 if (dev) { const c = Math.cos(dev), sn = Math.sin(dev), vx = cue.vx; cue.vx = vx * c - cue.vy * sn; cue.vy = vx * sn + cue.vy * c; }
 applyStrike(cue, G.spin.x, G.spin.y, k, el);
-if (G.net && G.cur === 0) Net.send({t: "shot", power, x: cue.x, y: cue.y, vx: cue.vx, vy: cue.vy, dir: cue.dir, w: [cue.wx, cue.wy, cue.wz], vz0: cue.vz0, a: G.angle, e: +el.toFixed(2), no: (G.shotNo | 0) + 1});
+G.lastLocal = (G.shotNo | 0) + 1;   // (the number of the last shot I played myself: turnClash)
+if (G.net && G.cur === 0) Net.send({t: "shot", power, x: cue.x, y: cue.y, vx: cue.vx, vy: cue.vy, dir: cue.dir, w: [cue.wx, cue.wy, cue.wz], vz0: cue.vz0, a: G.angle, e: +el.toFixed(2), tk: G.tk | 0, no: (G.shotNo | 0) + 1});
 }
 cue.followDone = false; if (cue.vz0) { cue.vz = cue.vz0; cue.z = 0.01; } else { cue.vz = 0; cue.z = 0; }
 G.shotBy = G.cur;
@@ -9174,7 +9175,7 @@ if (G.type === "lucky") luckyFinish(); else resolveShot();
 if (G.net) {
 if (G.net.spec) { if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; } if (G.specQ && G.specQ.length) specShot(G, G.specQ.shift()); }
 else if (G.shotBy === 0) sendState();
-else if (G.pendingState) { applyState(G.pendingState); G.pendingState = null; }
+else if (G.pendingState) { const ps = G.pendingState; G.pendingState = null; if (ps.no === undefined || (ps.no | 0) >= (G.shotNo | 0)) applyState(ps); }   // (a pending table older than the shot just played is dropped, see turnClash)
 if (G.pendingShot && !G.net.spec) { const ps = G.pendingShot; G.pendingShot = null; remoteShot(ps); }
 }
 }
@@ -9342,7 +9343,7 @@ input.drag = null; input.power = 0; input.charging = false; timeoutFoul();
 } else if (pl.remote && G.net && !G.net.spec && timed() && G.turnLimit) {
 // the opponent's phone runs his clock; if it froze or lost the connection and has sent nothing for a long time, take the turn instead of waiting forever
 const quiet = (now - Math.max(G.turnStart, G.net.lastRx || 0)) / 1000;
-if (quiet > G.turnLimit + 8) { G.cur = 1; timeoutFoul(); if (!G.over) setBanner(T("Raqib javob bermadi"), "#ffe27a", TT("Raqib harakatsiz: {0}/{1}", G.afk[1], AFK_MAX)); }
+if (quiet > G.turnLimit + 8) { G.tk = (G.shotNo | 0) + 1; G.cur = 1; timeoutFoul(); if (!G.over) setBanner(T("Raqib javob bermadi"), "#ffe27a", TT("Raqib harakatsiz: {0}/{1}", G.afk[1], AFK_MAX)); }   // (G.tk: the number of the shot I take; if his shot was only late, turnClash settles it)
 }
 if (now - (G.audioChk || 0) > 2500) { G.audioChk = now; try { Snd.check(); } catch (e) {} }
 }
@@ -11299,8 +11300,34 @@ if (netGate(m)) return;
 const G = game; if (G && G.net && G.net.spec) { specShot(G, m); return; }
 if (!G || !G.net || G.over) return;
 G.net.lastRx = performance.now();
+if (turnClash(G, m, "shot")) return;
 remoteShot(m);
 });
+// A phone that has heard nothing from the other one for turnLimit + 8 s takes the turn ("Raqib javob bermadi", G.tk = the number of the shot it takes). The other phone may have shot IN TIME and only its messages were late
+// (a stalled mobile connection): then both phones played a shot with the same number from the same table, each took the other's result, and the two tables were swapped for good (the owner: "the shot reaches me late, the balls change places").
+// The one who did NOT take the turn is right. Its phone ignores the take-over's messages (they carry `tk` = the take-over's first shot number) when its own last shot is not older than that and it had not accepted the
+// take-over before (G.accTk); the phone that took the turn plays the late shot as the next one if it has not shot yet (the take-over is over), and if it HAS shot it gives its table up for the other's final positions (his next
+// `state`, G.adopt) instead of replaying on a table that is not his. Without a take-over (tk 0 everywhere) none of this does anything.
+function turnClash(G, m, kind) {
+if (!G || !G.net || G.net.spec) return false;
+const tk = m.tk | 0, no = m.no !== undefined ? m.no | 0 : kind === "state" ? G.adopt | 0 : 0;
+if (tk > 0) {
+if ((G.lastLocal | 0) >= tk && (G.accTk | 0) < tk) return true;
+G.accTk = Math.max(G.accTk | 0, tk); return false;
+}
+if ((G.tk | 0) > 0 && no >= G.tk) {
+if (kind === "shot") { if (no > (G.shotNo | 0)) { G.tk = 0; return false; } G.adopt = no; return true; }
+if (kind === "state" && (G.adopt | 0) > 0 && no >= G.adopt) {
+G.adopt = 0; G.tk = 0; G.pendingState = null; G.pendingShot = null; G.strike = null;
+if (G.moving) { G.moving = false; try { Snd.roll(0); } catch (e) {} }
+for (const b of G.balls) b.vx = b.vy = 0;
+applyState(m); G.shotNo = no; G.turnStart = performance.now(); if (G.afk) G.afk[1] = 0;
+return true;
+}
+}
+if (kind === "state" && m.no !== undefined && (m.no | 0) < (G.shotNo | 0)) return true;   // a table that comes after fewer shots than the one I am on (a late `state` of an earlier shot, or the other phone's own time-out that crossed my take-over): it would put the balls back
+return false;
+}
 // A SPECTATOR plays the shots of the two players on his own screen, in order. A shot is never dropped (it used to be when the previous one was still rolling here: the balls then jumped):
 // if the shooter's final positions of the previous shot are already here they are shown at once and the new shot goes on from them, otherwise the shot waits until the balls stop.
 function specShot(G, m) {
@@ -11325,6 +11352,7 @@ Net.on("state", m => {
 if (netGate(m)) return;
 const G = game; if (!G || !G.net) return;
 G.net.lastRx = performance.now();
+if (turnClash(G, m, "state")) return;
 if (G.moving || G.strike) G.pendingState = m; else applyState(m);
 });
 Net.on("chat", m => {   // a real opponent wrote / sent a sticker: his bubble stays 5 s (it used to be 2.6 s: easy to miss), the line stays in the chat panel's log and the 💬 button shows a dot until the panel is opened
