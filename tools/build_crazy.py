@@ -157,7 +157,9 @@ else if (s === "closed") end();
 else if (s === "failed") { if (!rewarded) { try { o.adDismissed && o.adDismissed(); } catch (e) {} } end(); }
 }};
 guard = setTimeout(end, 120000);
-try { call(); } catch (e) { end(); }
+const fire = () => { try { call(); } catch (e) { end(); } };
+// Bridge refuses an interstitial that is asked BEFORE the game has said "game_ready" (state "failed", nothing shown; Bridge 2.4.3 AdvertisementModule.show): the entry ad is asked a moment after the logo goes and the game_ready message follows it by a few hundred ms, so it waits for that message (at most ~9 s: game_ready goes out within 7.4 s whatever happens)
+if (kind === "interstitial" && !Y8.gameReady) { let n = 0; const wait = () => { if (Y8.gameReady || ++n > 90) fire(); else setTimeout(wait, 100); }; wait(); } else fire();
 });
 },
 saveData: bye, loadData: bye, trackCustomEvent: bye,
@@ -178,8 +180,8 @@ applyAudio();
 try { P.on(EV.AUDIO_STATE_CHANGED, en => { audioOn = en !== false; applyAudio(); }); } catch (e) {}
 try { P.on(EV.PAUSE_STATE_CHANGED, p => { paused = !!p; if (paused) { try { input.charging = false; input.drag = null; input.power = 0; } catch (e) {} } applyAudio(); }); } catch (e) {}
 // the first playable frame: the logo splash is gone and the game accepts input
-let sent = false;
-const ready = () => { if (sent) return; sent = true; try { const r = P.sendMessage("game_ready"); if (r && r.catch) r.catch(() => {}); } catch (e) {} };
+let sent = false; Y8.gameReady = false;   // (Y8.gameReady turns true right after the message went out: an interstitial asked earlier waits for it, see showAd)
+const ready = () => { if (sent) return; sent = true; try { const r = P.sendMessage("game_ready"); if (r && r.catch) r.catch(() => {}); } catch (e) {} Y8.gameReady = true; };
 const t0 = Date.now(), iv = setInterval(() => { if (!document.getElementById("boot") || Date.now() - t0 > 7000) { clearInterval(iv); setTimeout(ready, 400); } }, 250);
 }
 '''
@@ -313,7 +315,8 @@ var go = function () {
     src = src[:j] + LOADER + src[j:]
 PG_ACH = [("first_win", "First Win"), ("double", "Double Pot"), ("breakpot", "Power Break"), ("runout", "Clean Table"), ("champ", "Tournament Champion"), ("lucky", "Bullseye"), ("streak7", "Loyal Player"), ("rich", "Rich"), ("collector", "Collector")]   # the game's Y8_ACH table
 import json
-_cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "interstitial": {"placements": [{"id": "between_matches"}, {"id": "game_start"}]}},
+# "initialInterstitialDelay": 0 - Bridge's own default refuses EVERY interstitial in the first 30 s after game_ready (state "failed", no ad: the owner's "Playgamada kirganda reklama qo'ymayapti"), and the game's entry ad is asked right when it opens
+_cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "initialInterstitialDelay": 0, "interstitial": {"placements": [{"id": "between_matches"}, {"id": "game_start"}]}},
         "leaderboards": [{"id": "main", "isMain": True}],
         "achievements": [{"id": k, "name": v, "y8": {"achievement": v, "achievementkey": k}} for k, v in PG_ACH]}
 if os.environ.get("PG_SAAS_TOKEN"):   # Playgama's own leaderboard service (Bridge SaaS): the public token from the developer dashboard (it is meant to sit in the game files)

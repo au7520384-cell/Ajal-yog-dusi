@@ -1732,7 +1732,7 @@ button:active:not(:disabled),.btn:active:not(:disabled),.nb:active,.mchip:active
 /* inbox: the supplied mock-up is the background; text and rows are drawn on top at its coordinates */
 #inbox.screen{padding:64px 0 0!important}
 #inbox .head{display:none}
-#inboxBody.panel{position:relative;border:0;border-image:none;background:none;box-shadow:none;padding:0;margin:0 auto;overflow:visible;height:calc(100vh - 66px);display:flex;align-items:center;justify-content:center}
+#inboxBody.panel{position:relative;border:0;border-image:none;background:none!important;box-shadow:none;padding:0;margin:0 auto;overflow:visible;height:calc(100vh - 66px);display:flex;align-items:center;justify-content:center}
 .ibm{position:relative;container-type:inline-size;width:min(100vw,calc((100vh - 66px) * 1.658));aspect-ratio:1615/974;font-family:Philosopher,var(--fh)}
 .ibmbg{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
 .ibm>*{position:absolute;box-sizing:border-box}.ibm>.ibmbg{position:absolute}
@@ -2039,6 +2039,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 #specTurn:empty{display:none}
 #specEye{position:absolute;left:calc(max(2px,env(safe-area-inset-left)) + 48px);bottom:8px;width:34px;height:34px;border-radius:50%;border:2px solid #7cc0ff;background:linear-gradient(#2d6cdf,#123a8e);color:#fff;font-size:17px;cursor:pointer;padding:0;box-shadow:0 3px 8px #0009}   /* bottom left, but RIGHT of the zoom + / - buttons (#zoomBox sits at max(2px, safe-area-left)): it must not cover them */
 #specEye i{position:absolute;right:-7px;top:-7px;min-width:18px;height:18px;border-radius:9px;background:#25c25a;border:2px solid #0b1226;color:#fff;font:800 10px/14px system-ui;font-style:normal;padding:0 3px;box-sizing:border-box}
+body:has(#specUi.on) #liveFeed{left:calc(max(2px,env(safe-area-inset-left)) + 104px)}   /* a watcher: the corner feed starts RIGHT of the eye key (it stood under it: the owner, Nov 18, "the name is hidden, I must read who writes") */
 #specChatBtn{position:absolute;right:12px;bottom:14px;width:46px;height:40px;border-radius:10px;border:0;background:linear-gradient(#ffd24d,#f0a30a);font-size:22px;cursor:pointer;padding:0;box-shadow:0 3px 8px #0009}
 #specChat{position:absolute;right:0;top:0;bottom:0;width:min(46vw,380px);background:#0a1020e6;border-left:1px solid #34436a;display:none;flex-direction:column;padding:6px 8px 8px}
 #specChat.on{display:flex}
