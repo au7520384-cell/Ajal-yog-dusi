@@ -53,7 +53,11 @@ async function scenario(name, P, opt) {
       for (let i = 0; i < 240 && !me; i++) { const r = await Promise.all([A, B].map(p => p.evaluate(() => ({ ctl: canControl(), busy: !!(game.moving || game.strike || game.pendingShot || game.pendingState) })))); if (r[0].ctl && !r[0].busy) me = A; else if (r[1].ctl && !r[1].busy) me = B; else await sleep(250); }
       if (!me) { ok(false, "somebody can shoot (shot " + (k + 1) + ")"); break; }
       await sleep(500 + Math.random() * 700);
-      await me.evaluate(pw => { const G = game, c = G.balls[0]; const ts = G.balls.filter(x => !x.out && x.n !== 0 && x.n !== "gold"); const t = ts[(Math.random() * ts.length) | 0]; G.angle = Math.atan2(t.y - c.y, t.x - c.x) + (Math.random() - 0.5) * 0.08; G.elev = 0; G.spin = { x: (Math.random() - 0.5) * 0.3, y: (Math.random() - 0.5) * 0.3 }; requestShot(pw); }, 0.2 + Math.random() * 0.35);
+      // (the random target is never the 8: a shot that pots it ends the match and then nobody can shoot - it looked like a freeze)
+      const before = await me.evaluate(() => game.shotNo | 0);
+      await me.evaluate(pw => { const G = game, c = G.balls[0]; const ts = G.balls.filter(x => !x.out && x.n !== 0 && x.n !== 8 && x.n !== "gold"); const t = ts[(Math.random() * ts.length) | 0]; G.angle = Math.atan2(t.y - c.y, t.x - c.x) + (Math.random() - 0.5) * 0.08; G.elev = 0; G.spin = { x: (Math.random() - 0.5) * 0.3, y: (Math.random() - 0.5) * 0.3 }; requestShot(pw); }, 0.2 + Math.random() * 0.35);
+      await sleep(400);
+      if (!(await me.evaluate(b => (game.shotNo | 0) > b, before))) { k--; continue; }   // the turn left him while he shot (the opponent's table arrived inside the 5 frames of the strike): that shot never happened - ask again (see tools/test_turn_clash.js)
       made++;
       await sleep(1200);
       for (let i = 0; i < 200; i++) { const r = await Promise.all([A, B].map(settle)); if (!r[0] && !r[1]) break; await sleep(250); }
