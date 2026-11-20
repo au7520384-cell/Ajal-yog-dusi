@@ -10587,17 +10587,18 @@ el.innerHTML = `<div class="cuemain"><div class="cuettl"><b class="h">👑 ${esc
 ${owned || !EDITION_CAP[c.id] ? "" : edLine(c.id)}</div>
 <div>${c.st.map((v, i) => `<div class="stat"><span>${T(STAT_NAMES[i])}</span><div class="bars">${Array.from({length: 10}, (_, k) => `<i class="${k < v ? "on" : ""}"></i>`).join("")}</div></div>`).join("")}</div>
 <div>${owned ? (sel ? `<button class="btn gray" disabled style="width:100%">✓ ${T("TANLANGAN")}</button>` : `<button class="btn blue" data-p="use" style="width:100%">${T("TANLASH")}</button>`)
-: `<div class="tpay"><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💎 ${fmt(c.gems)}`}</button>${usdBtn(c.usd, "cue_" + c.id, so ? "disabled" : "", "green", true)}</div>
+: `${c.nc ? `<button class="btn purple" data-p="cash" style="width:100%"><span class="cash"></span> ${fmtS(c.price)}</button>` : `<div class="tpay"><button class="btn blue" data-p="gems" ${so ? "disabled" : ""}>${so ? T("SOTILDI") : `💎 ${fmt(c.gems)}`}</button>${usdBtn(c.usd, "cue_" + c.id, so ? "disabled" : "", "green", true)}</div>`}
 <div class="tpay"><button class="btn orange" data-p="try">${T("Sinab ko'rish")}</button><button class="btn gray" data-p="view">${T("Ko'rish")}</button></div>`}
 <div class="cpts">+${cuePower(c)} ⚜</div></div>`;
 const cvw = el.querySelector(".cuecvw"); cvw._cue = c; if (io) io.observe(cvw); else cvw.appendChild(cueCanvas(c));
 const on = (k, f) => { const b = el.querySelector(`[data-p="${k}"]`); if (b) b.onclick = f; };
 on("use", () => { profile.cue = c.id; save(); updateNav(); Net.sync(); buildShop("cues"); });
 on("gems", () => buyCue(c, "gems", c.gems).then(ok => ok && buildShop("cues")));
+on("cash", () => buyCue(c, "cash", c.price).then(ok => ok && buildShop("cues")));
 on("usd", () => Net.checkout("cue_" + c.id, el.querySelector('[data-p="usd"]')));
 on("try", () => tryCue(c));
 on("view", () => { openModal({icon: "👑", title: `${T(c.name)} · ${T("kiy")}`, text: `⚡ ${T("Zarba effekti")}${EDITION_CAP[c.id] ? ` · 🔢 ${T("Cheklangan nashr")}: ${fmt(EDITION_CAP[c.id])}` : ""}`,
-extra: `<canvas class="tpcv cuepv" width="620" height="200"></canvas>`, buttons: [{label: `💎 ${fmt(c.gems)}`, cls: "blue", fn: () => buyCue(c, "gems", c.gems).then(ok => ok && buildShop("cues"))}, {label: `▶ ${T("Sinab ko'rish")}`, cls: "orange", fn: () => tryCue(c)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
+extra: `<canvas class="tpcv cuepv" width="620" height="200"></canvas>`, buttons: [c.nc ? {label: `💵 ${fmtS(c.price)}`, cls: "purple", fn: () => buyCue(c, "cash", c.price).then(ok => ok && buildShop("cues"))} : {label: `💎 ${fmt(c.gems)}`, cls: "blue", fn: () => buyCue(c, "gems", c.gems).then(ok => ok && buildShop("cues"))}, {label: `▶ ${T("Sinab ko'rish")}`, cls: "orange", fn: () => tryCue(c)}, {label: T("Yopish"), cls: "gray", fn: () => {}}]});
 previewCue(c, document.querySelector("#modal .cuepv")); });
 grid.appendChild(el); return;
 }
@@ -14396,26 +14397,27 @@ fx: "l_" + k, shaft: ["#fffdf4", "#efe6cc"], butt: [mid, lo], metal: hi, deco: "
 CUES.push(...PREMIUM_CUES);
 const CUE_ART = {"pc_brz": "img/b8914f94c95b5d.webp", "pc_slv": "img/0e2a348bd6fe1a.webp", "pc_gld": "img/a9b0b4aa1ba4bc.webp", "pc_rgd": "img/253a4f3629e922.webp", "pc_plt": "img/b2c60a44a578d0.webp", "pc_sap": "img/eb18587b81c50d.webp", "pc_emr": "img/10a4315dc3613b.webp", "pc_rby": "img/9c425ad6475ff7.webp", "pc_ame": "img/b8fdf7a7a28d23.webp", "pc_dia": "img/39d46883a8f60f.webp", "pc_bdi": "img/a451dddf618304.webp", "pc_opl": "img/751e0924647ab9.webp"};   // the illustrated premium cues (butt on the left, tip on the right), cut from the supplied sheet
 PREMIUM_CUES.forEach(c => { c.art = CUE_ART[c.id]; bgCue(c); });
-// ---- 29 more glowing premium cues (the owner's sheet, Nov 20: "make these for money, the most expensive 3000"): listed on the Premium page and sold for 💎 like the other premium cues; their prices sit on the same dollar ladder as every cash-sold cue
-// (the ladder gets one more step for THESE cues only, $59.99 = 3000 💎, so the dearest of them costs exactly 3000; same step = same strength; the shared CUE_TIERS and every older cue are untouched). The pictures (CUE_ART3) are cut out of the sheet by tools/make_new_cues.py (butt on the left, tip on the right, like the others).
-// [name, $ step, base stats (Kuch / Nishon / Aylanish / Vaqt: the cue's flavour, the total comes from the step), colour set]
+// ---- 29 more glowing premium cues (the owner's sheet, Nov 20): sold for 💵 CASH (the paper money, the green chip; "qog'ozli pul"), 200 .. 3000 💵, the dearest 3000: the money of the weekly rating (world top 3 = 1500 / 750 / 400 💵,
+// country top 3 = 400 / 200 / 100 💵) is meant to be enough to collect them. Listed on the Premium page; NOT sold for 💎 or by card (no server SKU). The pictures (CUE_ART3) are cut out of the sheet by tools/make_new_cues.py (butt on the left, tip on the right, like the others).
+// [name, 💵 price, base stats (Kuch / Nishon / Aylanish / Vaqt: the cue's flavour, the total comes from the step), colour set]
 const NC_PAL = {
 gold:   {butt: ["#c8921f", "#2a1a05"], metal: "#ffd24d", glow: "#ffcf3d", fx: "l_gld"}, blue:   {butt: ["#1a5ad8", "#061a4a"], metal: "#9fd0ff", glow: "#4aa8ff", fx: "l_sap"},
 red:    {butt: ["#c01818", "#2a0505"], metal: "#ff9a7a", glow: "#ff3a2a", fx: "l_rby"}, purple: {butt: ["#7a2ad8", "#14052e"], metal: "#d8a8ff", glow: "#b05aff", fx: "l_ame"},
 green:  {butt: ["#2a9a2a", "#062a0a"], metal: "#9aff7a", glow: "#4aff4a", fx: "l_emr"}, teal:   {butt: ["#1a8a9a", "#04222a"], metal: "#7ff7ff", glow: "#3ffcff", fx: "l_emr"},
 white:  {butt: ["#e8e8f0", "#6a6a7a"], metal: "#ffffff", glow: "#cfe8ff", fx: "l_plt"}, black:  {butt: ["#2a2a36", "#050508"], metal: "#e8e8f0", glow: "#aab4ff", fx: "l_bdi"},
 };
+const NC_STAT_TOTAL = {200: 25, 400: 28, 600: 30, 1000: 33, 1500: 35, 2250: 38, 3000: 39};   // stat total of the four bars by price (same price = same strength, the ladder of the other cash-sold cues)
 const NEW_CUES = [
-["Oltin Toj", 44.99, [8, 8, 8, 8], "gold"], ["Moviy Chaqin", 3.99, [8, 8, 7, 7], "blue"], ["Qizil Ajdar", 19.99, [10, 8, 8, 8], "red"], ["Sher Yuragi", 29.99, [10, 8, 8, 9], "gold"],
-["Kosmik Bo'ron", 7.99, [7, 8, 10, 8], "purple"], ["Qora Sakkizlik", 44.99, [9, 9, 9, 9], "black"], ["Feruza Kristal", 11.99, [8, 9, 8, 9], "teal"], ["Qor Malikasi", 11.99, [8, 9, 8, 8], "white"],
-["Qon Yoquti", 11.99, [10, 8, 8, 8], "red"], ["Qirol Toji", 29.99, [9, 9, 9, 9], "gold"], ["Safir Toji", 59.99, [9, 10, 9, 10], "blue"], ["Binafsha Olmos", 11.99, [8, 8, 10, 8], "purple"],
-["Zumrad Alanga", 11.99, [8, 8, 8, 10], "green"], ["Oq Marmar", 19.99, [9, 9, 9, 9], "white"], ["Asal Uyasi", 19.99, [8, 10, 8, 9], "gold"], ["Suv Ajdari", 29.99, [9, 9, 9, 10], "blue"],
-["Olov Girdobi", 7.99, [10, 7, 8, 7], "red"], ["Oltin Naqsh", 7.99, [8, 8, 8, 8], "gold"], ["Qirol Sakkizligi", 59.99, [10, 10, 9, 10], "blue"], ["Sirli Binafsha", 11.99, [8, 8, 9, 9], "purple"],
-["Yashil Girdob", 7.99, [8, 7, 8, 10], "green"], ["Oq Sakkizlik", 44.99, [9, 9, 10, 9], "white"], ["Saroy", 19.99, [9, 9, 9, 9], "gold"], ["Moviy To'r", 11.99, [8, 10, 8, 8], "blue"],
-["Qora Alanga", 19.99, [10, 9, 8, 8], "red"], ["Binafsha Gavhar", 11.99, [8, 8, 10, 8], "purple"], ["Feruza Toji", 29.99, [9, 10, 9, 9], "teal"], ["Muz Saroyi", 19.99, [8, 9, 9, 10], "white"],
-["Oltin Ajdar", 29.99, [10, 9, 9, 9], "gold"],
-].map(([name, usd, st, pal], i) => { const P = NC_PAL[pal];
-return {id: "nc_" + String(i + 1).padStart(2, "0"), nc: true, name, cat: "premium", tier: "Premium", st, usd, cash: 0, gems: 0, price: 1, cur: "cash", fx: P.fx, shaft: ["#fffdf4", "#efe6cc"], butt: P.butt, metal: P.metal, deco: "plain", dc: P.metal, glow: P.glow};   // cash / gems / price / stats are set by the shared price ladder below
+["Oltin Toj", 2250, [8, 8, 8, 8], "gold"], ["Moviy Chaqin", 200, [8, 8, 7, 7], "blue"], ["Qizil Ajdar", 1000, [10, 8, 8, 8], "red"], ["Sher Yuragi", 1500, [10, 8, 8, 9], "gold"],
+["Kosmik Bo'ron", 400, [7, 8, 10, 8], "purple"], ["Qora Sakkizlik", 2250, [9, 9, 9, 9], "black"], ["Feruza Kristal", 600, [8, 9, 8, 9], "teal"], ["Qor Malikasi", 600, [8, 9, 8, 8], "white"],
+["Qon Yoquti", 600, [10, 8, 8, 8], "red"], ["Qirol Toji", 1500, [9, 9, 9, 9], "gold"], ["Safir Toji", 3000, [9, 10, 9, 10], "blue"], ["Binafsha Olmos", 600, [8, 8, 10, 8], "purple"],
+["Zumrad Alanga", 600, [8, 8, 8, 10], "green"], ["Oq Marmar", 1000, [9, 9, 9, 9], "white"], ["Asal Uyasi", 1000, [8, 10, 8, 9], "gold"], ["Suv Ajdari", 1500, [9, 9, 9, 10], "blue"],
+["Olov Girdobi", 400, [10, 7, 8, 7], "red"], ["Oltin Naqsh", 400, [8, 8, 8, 8], "gold"], ["Qirol Sakkizligi", 3000, [10, 10, 9, 10], "blue"], ["Sirli Binafsha", 600, [8, 8, 9, 9], "purple"],
+["Yashil Girdob", 400, [8, 7, 8, 10], "green"], ["Oq Sakkizlik", 2250, [9, 9, 10, 9], "white"], ["Saroy", 1000, [9, 9, 9, 9], "gold"], ["Moviy To'r", 600, [8, 10, 8, 8], "blue"],
+["Qora Alanga", 1000, [10, 9, 8, 8], "red"], ["Binafsha Gavhar", 600, [8, 8, 10, 8], "purple"], ["Feruza Toji", 1500, [9, 10, 9, 9], "teal"], ["Muz Saroyi", 1000, [8, 9, 9, 10], "white"],
+["Oltin Ajdar", 1500, [10, 9, 9, 9], "gold"],
+].map(([name, price, st, pal], i) => { const P = NC_PAL[pal];
+return {id: "nc_" + String(i + 1).padStart(2, "0"), nc: true, name, cat: "premium", tier: "Premium", st: fitStats(st, NC_STAT_TOTAL[price]), cash: price, price, cur: "cash", fx: P.fx, shaft: ["#fffdf4", "#efe6cc"], butt: P.butt, metal: P.metal, deco: "plain", dc: P.metal, glow: P.glow};   // sold for 💵 cash only (no 💎, no card price, no server SKU)
 });
 CUES.push(...NEW_CUES);
 const CUE_ART3 = {"nc_01":"img/26f08d6ee6cd2c.webp","nc_02":"img/56ec38c5a3ea94.webp","nc_03":"img/f52615a869ec31.webp","nc_04":"img/fd43238bba7ac0.webp","nc_05":"img/5143ee93bd53d8.webp","nc_06":"img/13fd11eaa816e8.webp","nc_07":"img/12acf90a688b2d.webp","nc_08":"img/0403cee75f3632.webp","nc_09":"img/d6c770aa697a5b.webp","nc_10":"img/c17093a0b48999.webp","nc_11":"img/d82cdf012191f0.webp","nc_12":"img/9646986debd6d2.webp","nc_13":"img/be858cc3f5d0e7.webp","nc_14":"img/16a197ecedd66b.webp","nc_15":"img/1866b8dd1af03e.webp","nc_16":"img/6f184be64f2ed5.webp","nc_17":"img/c127a68afd77de.webp","nc_18":"img/1abe4149818c7e.webp","nc_19":"img/635e794974a7e0.webp","nc_20":"img/b68d675829e580.webp","nc_21":"img/af6ef1d577de67.webp","nc_22":"img/47b6fcf91f9c77.webp","nc_23":"img/d013323dcc792c.webp","nc_24":"img/7a7ebde8bceee7.webp","nc_25":"img/bfbbd184de5839.webp","nc_26":"img/6a77668e402409.webp","nc_27":"img/8ba4bd65f4dab8.webp","nc_28":"img/edc78ded2ea04a.webp","nc_29":"img/48e0fe411204a3.webp"};
@@ -14452,8 +14454,8 @@ for (let pass = 0; rest > 0 && pass < 4; pass++) for (const [, i] of ord) if (re
 return out;
 }
 for (const c of CUES) {   // cash-sold cues: standard (cash), horror, premium, country
-if (c.cur !== "cash" || !(c.price > 0) || !["standard", "horror", "premium", "country"].includes(c.cat)) continue;
-const [usd, S] = c.nc && c.usd === 59.99 ? [59.99, 39] : cueTierOf(c.usd || c.price / CASH_PER_USD);   // the new cues (nc) have one more step, $59.99 = 3000 💎; the shared ladder is untouched (cues of other sets keep their prices)
+if (c.nc || c.cur !== "cash" || !(c.price > 0) || !["standard", "horror", "premium", "country"].includes(c.cat)) continue;   // (the new nc cues are sold for 💵 only: not on this dollar / 💎 ladder)
+const [usd, S] = cueTierOf(c.usd || c.price / CASH_PER_USD);   // the new cues (nc) have one more step, $59.99 = 3000 💎; the shared ladder is untouched (cues of other sets keep their prices)
 c.usd = usd; c.cash = cashFor(usd); c.gems = gemsFor(usd); c.price = c.cash; c.st = fitStats(c.st, S);
 }
 {   // coin-sold standard cues: 9 power steps of 5 cues; every step costs about 4-5x the one before and adds 3 to the stat total (same price = same strength)
