@@ -1,26 +1,33 @@
 #!/usr/bin/env python3
-"""Cuts the owner's sheet of 29 glowing cues (art/cue_sheet_nov20.png, 1536x1024, cues standing upright on black, tip up) into the game's cue pictures.
+"""Cuts the owner's sheet of 29 glowing cues (art/cue_sheet_nov20.png, 1536x1024, cues standing upright on black, tip up) into the game's cue pictures, AS THEY ARE IN THE SHEET.
 
 The game draws an illustrated cue from a horizontal picture with the BUTT on its left and the TIP on its right (drawCueStick), about 1160 px long, with a transparent background.
-For every cue: find its silhouette row by row (bright rim + body, the dark glow / reflection under the butt is left out), turn it into an alpha mask, rotate the sheet 90 degrees clockwise
-(tip up -> tip right), scale to 1160 px long, centre the cue's axis, write a lossy WebP with alpha.
+Every cue is cut out with its real outline: thick butt with its metal rings, the body tapering to the thin tip with its ferrule and leather tip, and everything that sticks out of the body
+(8 ball, crown, lion's head, dragon coils). Then the sheet is rotated 90 degrees clockwise (tip up -> tip right) and scaled so that the cue is 1160 px long (the same scale for all 29).
 
-    /usr/bin/python3 tools/make_new_cues.py                 -> writes the pictures to the scratch folder given by --out (default /tmp/newcues) + a contact sheet
+How the outline is found (the glow around the cues and dark carbon bodies defeat a plain brightness threshold):
+  * FLOOD FILL: everything outside the cue is reachable from the border of a window around the cue through pixels that are dark and flat; the cue's rim (a crisp bright edge, gradient > 20) and
+    everything bright (> 110) is a wall. What the flood cannot reach is the cue (holes filled). Works for gold / silver / bright cues, crowns, the lion, the 8 balls.
+  * COMMON CONE: the 29 cues are one design (about 14 px wide at the tip, 36 px from the upper third down to the butt cap). Dark cues have dim rims that the flood leaks through, so the
+    outline is never thinner than this cone (a low percentile of the 29 measured widths per row, no clamp: a "never thinner towards the butt" clamp once made every cue a uniform stick).
+    outline = cone UNION flood-fill silhouette (limited to +-33 px of the axis, which holds the widest thing: the lion's mane).
+
+    /usr/bin/python3 tools/make_new_cues.py                 -> writes the pictures to --out (default /tmp/newcues) + a contact sheet
     /usr/bin/python3 tools/make_new_cues.py --apply         -> also writes `const CUE_ART3 = {...}` into index.html (replacing an older one)
-(Needs numpy + Pillow.)"""
-import os, sys, io, re, json, base64, argparse
-import numpy as np
-from PIL import Image, ImageFilter
+(Needs numpy, Pillow and opencv: the system /usr/bin/python3 has them.)"""
+import os, io, re, json, base64, argparse
+import numpy as np, cv2
+from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SHEET = os.path.join(ROOT, "art", "cue_sheet_nov20.png")
 IDS = ["nc_%02d" % i for i in range(1, 30)]
-# rows (sheet y) where a cue really carries something wider than its body: an 8 ball, a lion's head, a crown, a dragon's head (cue number -> [(y0, y1)]); everywhere else the body is a clean cone
-ORNAMENTS = {3: [(330, 363)], 4: [(329, 395)], 6: [(315, 369)], 11: [(370, 410)], 19: [(315, 360)], 22: [(347, 381)], 27: [(322, 357)]}
-TOP, BOT = 33, 933          # the cues stand on y = 33 (tip) .. 933 (butt); below that is their reflection
-HALF = 30                   # a cue and its ornaments (crown, 8 ball) fit in +-30 px around its axis; the neighbours' axes are 50+ px away
+TOP, BOT = 33, 933          # the cues stand on y = 33 (tip) .. 933 (butt cap); below that is their reflection
+Y0, Y1 = TOP - 3, BOT       # the rows of every picture (the same for all, so the same scale)
 OUT_LEN = 1160              # same length as the game's other cue pictures
-T = 62                      # brightness that counts as "part of the cue" (the faint glow around it is dimmer)
+T = 62                      # brightness that counts as "part of the cue" when the cone is measured
+WIN = 36                    # flood-fill window: +-36 px around the axis
+LIM = 33                    # nothing farther than 33 px from the axis is part of a cue (the lion's mane reaches 33; the neighbours' rims start at ~33)
 
 def runs_of(lum):
     band = lum[100:880, :]
@@ -37,16 +44,6 @@ def runs_of(lum):
 def pct_filter(v, k, q):
     p = np.pad(v, (k // 2, k // 2), mode="edge"); return np.array([np.percentile(p[i:i + k], q) for i in range(len(v))])
 
-def raw_edges(lum, cx):
-    """per row: left / right edge (sheet x) of everything brighter than T within +-26 px of cx. Polluted by the glow of the cue itself and by sparks, so it is only used for the AXIS and for the
-    rows that carry a real ornament; the body outline comes from the common cone below."""
-    w = lum[TOP:BOT + 1, cx - 26: cx + 27]; n = w.shape[0]; l = np.full(n, np.nan); r = np.full(n, np.nan)
-    for y in range(n):
-        xs = np.where(w[y] > T)[0]
-        if len(xs) >= 2: l[y], r[y] = xs[0], xs[-1]
-    idx = np.where(~np.isnan(l))[0]
-    return np.interp(np.arange(n), idx, l[idx]) - 26 + cx, np.interp(np.arange(n), idx, r[idx]) - 26 + cx
-
 def find_axis(lum, cx):
     """the x about which the cue is most mirror-symmetric (rows 150..750), robust to one-sided glow"""
     best, bx = -1, cx
@@ -58,42 +55,90 @@ def find_axis(lum, cx):
         if sc > best: best, bx = sc, c2
     return float(bx)
 
+def raw_widths(lum, ax):
+    """per row (TOP..BOT): the width of everything brighter than T within +-26 px of the axis (polluted by glow: only a low percentile over the 29 cues is used)"""
+    cx = int(round(ax)); w = lum[TOP:BOT + 1, cx - 26: cx + 27]; n = w.shape[0]; l = np.full(n, np.nan); r = np.full(n, np.nan)
+    for y in range(n):
+        xs = np.where(w[y] > T)[0]
+        if len(xs) >= 2: l[y], r[y] = xs[0], xs[-1]
+    idx = np.where(~np.isnan(l))[0]
+    return np.interp(np.arange(n), idx, r[idx]) - np.interp(np.arange(n), idx, l[idx])
+
+def grad_mag(win):
+    b = cv2.GaussianBlur(win, (0, 0), 0.8)
+    mags = []
+    for c in range(3):
+        gx = cv2.Sobel(b[:, :, c], cv2.CV_32F, 1, 0, ksize=3, scale=1 / 8)
+        gy = cv2.Sobel(b[:, :, c], cv2.CV_32F, 0, 1, ksize=3, scale=1 / 8)
+        mags.append(np.hypot(gx, gy))
+    return np.max(mags, axis=0)
+
+def fill_holes(m):
+    inv = 1 - m; n, lab = cv2.connectedComponents(inv.astype(np.uint8), connectivity=4)
+    outside = set(lab[0, :]) | set(lab[-1, :]) | set(lab[:, 0]) | set(lab[:, -1])
+    holes = np.isin(lab, [l for l in range(1, n) if l not in outside]) & (inv == 1)
+    return (m | holes).astype(np.uint8)
+
+def flood_silhouette(sheet, ax, Tg=20, Tb=110):
+    """the cue's outline by flood fill from outside (see the module doc). Returns a uint8 0/1 mask of the window rows Y0..Y1 x columns ax-WIN..ax+WIN"""
+    cx = int(round(ax)); win = sheet[Y0:Y1 + 1, cx - WIN: cx + WIN + 1].copy()
+    g = win.max(axis=2); mag = grad_mag(win)
+    wall = cv2.dilate(((mag > Tg) | (g > Tb)).astype(np.uint8), np.ones((3, 3), np.uint8))
+    n, lab = cv2.connectedComponents((1 - wall).astype(np.uint8), connectivity=4)
+    border = set(lab[:, 0]) | set(lab[:, -1]) | set(lab[0, :]) | set(lab[-1, :])
+    bg = np.isin(lab, [l for l in border if l != 0]) & (wall == 0)
+    fg = (~bg).astype(np.uint8)
+    n2, lab2 = cv2.connectedComponents(fg, connectivity=8)
+    mid = lab2[(Y1 - Y0) // 2, WIN]
+    if mid != 0: fg = (lab2 == mid).astype(np.uint8)
+    return fill_holes(fg)
+
+def cue_mask(sheet, ax, Wc_full):
+    """0/1 mask (rows Y0..Y1 x columns ax-WIN..ax+WIN) of one cue: common cone UNION flood-fill silhouette"""
+    n = Y1 - Y0 + 1; cx = int(round(ax)); frac = ax - cx; xs = np.arange(-WIN, WIN + 1)
+    half = Wc_full / 2 + 1.0
+    cone = (np.abs(xs[None, :] - frac) <= half[:, None]).astype(np.uint8)
+    fg = cv2.erode(flood_silhouette(sheet, ax), np.ones((3, 3), np.uint8))           # the wall was dilated: the outline sits ~1 px outside the rim
+    # what sticks out of the cone (crown, mane, 8 ball, dragon ...) must be a real, solid thing that belongs to THIS cue:
+    #  * sparks and light streaks beside the cue hang on it by 1-2 px bridges: the part beyond the cone is opened (3x3) to cut them, only what still touches the cone is kept;
+    #  * an ornament of the NEIGHBOUR (its 8 ball, crown, a rim) pokes into the window from the side: it crosses the +-33 px line, nothing of this cue does (the widest, the lion's mane, ends at 33), so any
+    #    piece that crosses that line is dropped as a whole.
+    band = cv2.dilate(cone, np.ones((3, 3), np.uint8), iterations=2)
+    extra = cv2.morphologyEx((fg & (1 - band)).astype(np.uint8), cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3)))
+    far = np.abs(xs) > LIM
+    nn, ll = cv2.connectedComponents(extra, connectivity=8)
+    extra[np.isin(ll, np.unique(ll[:, far])) & (ll > 0)] = 0
+    nn, ll = cv2.connectedComponents((extra | band).astype(np.uint8), connectivity=8)
+    touch = np.isin(ll, np.unique(ll[band > 0])) & (extra > 0)
+    fg[:, far] = 0
+    m = (cone | (fg & band) | touch).astype(np.uint8)
+    m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8)); m = fill_holes(m)
+    n2, lab2 = cv2.connectedComponents(m, connectivity=8); mid = lab2[n // 2, WIN]
+    if mid != 0: m = (lab2 == mid).astype(np.uint8)
+    return m, cone, fg
+
+def common_cone(lum, axes):
+    Wm = np.array([raw_widths(lum, ax) for ax in axes])
+    Wc = pct_filter(np.percentile(Wm, 25, axis=0), 15, 50)              # ~14 px at the tip ... ~33 px at the butt (a low percentile: glow only ever adds)
+    return np.concatenate([np.full(TOP - Y0, Wc[0]), Wc])                # rows Y0..BOT (the 3 rows above the tip repeat the first)
+
 def build(sheet_path, out_dir, q=86):
-    im = Image.open(sheet_path).convert("RGB"); a = np.asarray(im).astype(int); lum = a.max(axis=2)
+    im = Image.open(sheet_path).convert("RGB"); sheet = np.asarray(im).astype(np.float32); lum = sheet.max(axis=2).astype(int)
     runs = runs_of(lum)
     assert len(runs) == 29, ("expected 29 cues, found", len(runs))
-    raws = []
-    for x0, x1 in runs:
-        cx = (x0 + x1) // 2; ax = find_axis(lum, cx); l, r = raw_edges(lum, int(round(ax)))
-        raws.append((ax, l, r))
-    # the 29 cues come from one design: the same cone. Per row take a LOW percentile of the widths (glow only ever adds to a width), smooth it, and never let it grow towards the tip
-    Wm = np.array([r - l for _, l, r in raws]); Wc = pct_filter(np.percentile(Wm, 30, axis=0), 15, 50)
-    for y in range(len(Wc) - 2, -1, -1): Wc[y] = min(Wc[y], Wc[y + 1])         # y grows towards the butt: the width cannot shrink while going to the butt, so the tip side is never wider
+    axes = [find_axis(lum, (x0 + x1) // 2) for x0, x1 in runs]
+    Wc_full = common_cone(lum, axes)
     pics = {}; info = []
-    for k, ((ax, l, r), cid) in enumerate(zip(raws, IDS)):
-        n = len(Wc); orn = np.zeros(n, bool)
-        for y0, y1 in ORNAMENTS.get(k + 1, ()): orn[max(0, y0 - 6 - TOP):max(0, y1 + 6 - TOP + 1)] = True
-        hl, hr = ax - l, r - ax
-        half = Wc / 2 + 1.5
-        half = np.where(orn, np.maximum(half, np.minimum(hl, hr)), half)
-        half = pct_filter(half, 5, 50)
-        H = n; hh = int(np.ceil(half.max())) + 8; W = 2 * hh + 1; off = int(round(ax)) - hh
-        crop = im.crop((off, TOP, off + W, BOT + 1))
-        sub = lum[TOP:BOT + 1, off:off + W].astype(float)
-        soft = np.clip((sub - 60.0) / 110.0, 0, 1) * 255                  # a thin glow rim: really bright pixels within 5 px of the body, fading out
-        m = np.zeros((H, W), np.uint8)
-        for y in range(H):
-            a0 = int(np.floor(ax - half[y] - off)); a1 = int(np.ceil(ax + half[y] - off))
-            for x in range(max(0, a0 - 5), min(W, a1 + 6)):
-                d = a0 - x if x < a0 else x - a1 if x > a1 else 0
-                if d > 0: m[y, x] = int(soft[y, x] * max(0.0, 1.0 - d / 5.5))
-            m[y, max(0, a0):min(W, a1 + 1)] = 255
-        mask = Image.fromarray(m).filter(ImageFilter.GaussianBlur(0.8))
-        mm = np.asarray(mask).astype(float)
-        mm[-3:, :] *= np.array([[0.7], [0.45], [0.2]])    # soften the last rows (the reflection starts right below)
-        mask = Image.fromarray(mm.astype(np.uint8))
-        rgba = crop.convert("RGBA"); rgba.putalpha(mask)
-        rot = rgba.rotate(-90, expand=True)             # clockwise: tip (top) -> right, butt -> left
+    for ax, cid in zip(axes, IDS):
+        cx = int(round(ax)); m, _, _ = cue_mask(sheet, ax, Wc_full)
+        alpha = cv2.GaussianBlur(m.astype(np.float32) * 255, (0, 0), 0.7)
+        alpha[-2:, :] *= np.array([[0.6], [0.3]], np.float32)                            # the last rows (the reflection starts right below the butt)
+        crop = im.crop((cx - WIN, Y0, cx + WIN + 1, Y1 + 1)).convert("RGBA")
+        crop.putalpha(Image.fromarray(np.clip(alpha, 0, 255).astype(np.uint8)))
+        a = np.asarray(crop)[:, :, 3]; cols = np.where(a.max(axis=0) > 8)[0]             # trim the empty columns (the widest thing sets the picture's height), the axis stays in the middle
+        hh = int(max(WIN - cols.min(), cols.max() - WIN)) + 2
+        crop = crop.crop((WIN - hh, 0, WIN + hh + 1, crop.height))
+        rot = crop.rotate(-90, expand=True)                                              # clockwise: tip (top) -> right, butt -> left
         sc = OUT_LEN / rot.width
         big = rot.resize((OUT_LEN, max(8, int(round(rot.height * sc)))), Image.LANCZOS)
         if big.height % 2: big = big.crop((0, 0, big.width, big.height - 1))
@@ -104,7 +149,7 @@ def build(sheet_path, out_dir, q=86):
 
 def contact(pics, path):
     ims = [Image.open(io.BytesIO(b)).convert("RGBA") for b in pics.values()]
-    sc = 0.5; rows = []
+    sc = 0.5
     W = int(OUT_LEN * sc); H = sum(int(i.height * sc) + 6 for i in ims)
     sheet = Image.new("RGBA", (W, H), (40, 44, 60, 255)); y = 0
     for i in ims:
