@@ -16,6 +16,8 @@ if [ -n "$PKG" ]; then
 else
   echo "age-signals: AgeSignalsManagerFactory NOT found in the library - the plugin keeps its guesses"
 fi
-for c in $(echo "$CLASSES" | sed 's#\.class$##; s#/#.#g' | head -40); do javap -public -cp "$D/c.jar" "$c" 2>/dev/null; done | head -200
+# the public API (the library's own classes incl. nested ones like Builder; the obfuscated internals zz.. are left out)
+PUB=$(unzip -Z1 "$D/c.jar" 2>/dev/null | grep '\.class$' | grep -v '/internal/' | grep -v -E '/z[a-z]{1,3}(\$[^/]*)?\.class$' | sed 's#\.class$##; s#/#.#g' | head -60)
+for c in $PUB; do javap -public -cp "$D/c.jar" "$c" 2>/dev/null; done | head -400
 rm -rf "$D"
 exit 0

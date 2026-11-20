@@ -22,6 +22,8 @@ import java.lang.reflect.Proxy;
 //   "verification_required"        the law applies but Play has not verified the age yet (the player has to open the Play Store)
 //   "unavailable"                  the library classes are not in the app          "error"  Play / the connection failed (error = the reason)       "busy"  a check is already running
 // The library's class names are looked up BY NAME (reflection), so a wrong guess can never break the Gradle build: the workflow (tools/age_pkg.sh) reads the real package out of the library and writes it over the placeholder in the first entry below; the other entries are guesses.
+// (Confirmed in the GitHub build log for com.google.android.play:age-signals:0.0.6: package com.google.android.play.agesignals, AgeSignalsManagerFactory.create(Context), AgeSignalsManager.requestAgeSignalsAccess / checkAgeSignals returning a Play-services Task,
+//  AgeSignalsAccessResult.ageSignalsStatus() and AgeSignalsResult.ageLower() / ageUpper() as Integer, AgeSignalsException.getErrorCode(); AgeSignalsStatus lives in the ".model" sub-package.)
 // The calls follow Google's sample: requestAgeSignalsAccess(activity) [Play shows its own prompt only when it is needed] -> if SHARED: checkAgeSignals().
 // Play's policy: the answer is only for giving age-appropriate content - never for ads, marketing, profiling or statistics. The installId the API also returns is NOT passed on.
 // (No ProGuard / R8 rules needed: the Capacitor template builds with minifyEnabled false.)
@@ -36,8 +38,13 @@ public class RbAgePlugin extends Plugin {
 
     private interface Cb { void run(Object o) throws Exception; }
 
+    // the library keeps its main classes in the package itself and the constants (AgeSignalsStatus, AgeRangeSource ...) in its ".model" sub-package (seen in the build log of the real library)
     private static Class<?> cls(String simple) throws ClassNotFoundException {
-        for (String p : PKGS) { try { return Class.forName(p + "." + simple); } catch (Throwable t) { /* next guess */ } }
+        for (String p : PKGS) {
+            for (String sub : new String[]{".", ".model."}) {
+                try { return Class.forName(p + sub + simple); } catch (Throwable t) { /* next guess */ }
+            }
+        }
         throw new ClassNotFoundException(simple);
     }
 
@@ -115,6 +122,7 @@ public class RbAgePlugin extends Plugin {
     private void fail(Throwable t) {
         while (t instanceof InvocationTargetException && t.getCause() != null) t = t.getCause();
         String msg = t.getClass().getSimpleName() + (t.getMessage() != null ? ": " + t.getMessage() : "");
+        try { msg += " [code " + t.getClass().getMethod("getErrorCode").invoke(t) + "]"; } catch (Throwable ignore) { /* AgeSignalsException has getErrorCode(); other errors do not */ }
         finish(t instanceof ClassNotFoundException ? "unavailable" : "error", null, null, msg.length() > 160 ? msg.substring(0, 160) : msg);
     }
 
