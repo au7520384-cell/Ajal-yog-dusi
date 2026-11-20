@@ -37,6 +37,15 @@ const GMSDK = `window.__gm = {ads: 0, mute: []}; window.sdk = {showBanner() { wi
     ok(await ads(p) === 1, "a returning player gets exactly one sdk.showBanner() when the game opens", await ads(p));
     const ml = await p.evaluate(() => window.__muteLog); ok(ml.includes(true) && ml[ml.length - 1] === false, "the game is silent while the SDK says SDK_GAME_PAUSE and the sound is back at SDK_GAME_START", ml);
     ok(await p.evaluate(() => !Y8.busy && !!document.getElementById("home")), "the game is back to normal after the ad (not stuck behind it)");
+    // 1b. the owner (Nov 20, on cached.gamemonetize.co: "did you remove the full-screen one?"): the game's own full-screen keys stay in this page (they hide by themselves where the frame may not go full screen)
+    ok(await p.evaluate(() => !!document.getElementById("fsBtn") && !!document.getElementById("gFs")), "the game's full-screen keys (menu bar + in a match) are in the GameMonetize page");
+    // 1c. what the SDK did is written at the end of Settings, so a screenshot tells what GameMonetize answered (ready? asked? really shown?)
+    await p.evaluate(() => { go("settingsScr"); }); await sleep(2600);
+    const diag = await p.evaluate(() => (document.getElementById("setBuild") || {}).textContent || "");
+    ok(/GM sdk ok ready ok asked 1 shown 1\b/.test(diag), "Settings shows 'GM sdk ok ready ok asked 1 shown 1' after the entry ad", diag.slice(-90));
+    await p.evaluate(() => { go("home"); });
+    // 1d. the line under the 'ads are not available' toast: GameMonetize has no rewarded video, it must not read like a fault
+    ok(await p.evaluate(() => adNoWhy()) === "no-rewarded-video-here", "the why-line of a 📺 key says there is no rewarded video here (not 'sdk-not-ready')", await p.evaluate(() => adNoWhy()));
     // 2. the end of every 2nd match: an interstitial (the clock is moved past the 90 s guard)
     await p.evaluate(() => { const d = Date.now.bind(Date); window.__skew = 100000; Date.now = () => d() + window.__skew; Y8.lastBreak = 0; });
     await p.evaluate(() => y8Break(() => {})); await sleep(300); const one = await ads(p);
