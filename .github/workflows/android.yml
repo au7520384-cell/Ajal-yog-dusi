@@ -73,6 +73,7 @@ jobs:
               @Override
               public void onCreate(Bundle savedInstanceState) {
                   registerPlugin(RbAdsPlugin.class);   // the AppLovin MAX ads (android/native/RbAdsPlugin.java), must be registered before super.onCreate
+                  registerPlugin(RbAgePlugin.class);   // Play Age Signals (android/native/RbAgePlugin.java)
                   super.onCreate(savedInstanceState);
               }
 
@@ -104,6 +105,17 @@ jobs:
           sed -i "/^dependencies {/a\\    implementation 'com.applovin:applovin-sdk:13.7.0'" android/app/build.gradle
           grep -c "applovin-sdk:13.7.0" android/app/build.gradle
           grep -c "registerPlugin(RbAdsPlugin.class)" "$MA"
+          # Play Age Signals API (US state age laws + Brazil): own small plugin "RbAge" asks Play for the player's age RANGE (kept on the phone, see android/README.md). It finds the library's classes by name, so the build cannot break on a wrong class name;
+          # tools/age_pkg.sh reads the real package out of the library (and prints its classes + public API in this log) and writes it into the plugin. It never fails the build.
+          sed "1s/.*/$PKG/" native/RbAgePlugin.java > "$(dirname "$MA")/RbAgePlugin.java"
+          sed -i "/^dependencies {/a\\    implementation 'com.google.android.play:age-signals:0.0.6'" android/app/build.gradle
+          grep -c "age-signals:0.0.6" android/app/build.gradle
+          grep -c "registerPlugin(RbAgePlugin.class)" "$MA"
+          if curl -fsSL --retry 3 -o "$RUNNER_TEMP/age.aar" https://dl.google.com/android/maven2/com/google/android/play/age-signals/0.0.6/age-signals-0.0.6.aar; then
+            bash ../tools/age_pkg.sh "$RUNNER_TEMP/age.aar" "$(dirname "$MA")/RbAgePlugin.java"
+          else
+            echo "age-signals: the library could not be downloaded here - the plugin keeps its guesses"
+          fi
           npx cap sync android
           # the billing plugin must be in the project (without it the app says 'not open yet' instead of selling 💎)
           grep -c "NativePurchases" android/app/src/main/assets/capacitor.plugins.json

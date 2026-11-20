@@ -12450,6 +12450,28 @@ async function appAdsInit() {
 }
 if (adNP()) { setTimeout(appAdsInit, 5000); document.addEventListener("visibilitychange", () => { if (!document.hidden) appAdsInit(); }); }
 
+// ---- Google Play Age Signals (the US state age laws, Brazil): the Android app asks Play for the player's age RANGE through our own plugin "RbAge" (android/native/RbAgePlugin.java). The answer lives only in window.__AGE on this phone:
+// {status: shared | not_shared | verification_required | unavailable | error | busy, lo, hi (null = not shared / top band), band: "child" (under 13) | "teen" (13-17) | "adult" (18+) | "unknown", at}.
+// It is NEVER sent to the server and never used for ads, offers, profiling or statistics (Play's policy: only for age-appropriate content). Nothing in the game changes because of it today; ageBand() is where such a rule would read it.
+const ageNP = () => { try { const c = window.Capacitor; return c && typeof c.isNativePlatform === "function" && c.isNativePlatform() && c.Plugins && c.Plugins.RbAge || null; } catch (e) { return null; } };
+window.__AGE = null;
+const ageBand = () => { const a = window.__AGE; if (!a || a.status !== "shared" || a.lo == null) return "unknown"; if (a.hi != null && a.hi < 13) return "child"; if (a.lo >= 18) return "adult"; if (a.hi != null && a.hi < 18) return "teen"; return "unknown"; };
+let ageBusy = false, ageWait = false;
+async function ageCheck() {
+  const np = ageNP(); if (!np || ageBusy) return; ageBusy = true;
+  try {
+    const r = await np.check() || {}, n = v => Number.isInteger(v) ? v : null;
+    window.__AGE = {status: String(r.status || "error"), lo: n(r.ageLower), hi: n(r.ageUpper), at: Date.now()};
+  } catch (e) { window.__AGE = {status: "error", lo: null, hi: null, at: Date.now()}; }
+  window.__AGE.band = ageBand(); ageBusy = false;
+}
+function ageSoon() {   // Play may show its own prompt: never in the middle of a match
+  if (ageBusy) return;
+  if (mode !== "menu") { if (!ageWait) { ageWait = true; setTimeout(() => { ageWait = false; ageSoon(); }, 30000); } return; }
+  ageCheck();
+}
+if (ageNP()) { setTimeout(ageSoon, 8000); document.addEventListener("visibilitychange", () => { if (!document.hidden && (!window.__AGE || Date.now() - window.__AGE.at > 6 * 3600 * 1000)) ageSoon(); }); }
+
 const DS_ART = [   // where the gems of a pack's picture sit ([x%, y%, px]): the bigger the pack the more gems, the biggest ones in a chest
 [[50, 48, 74]],
 [[34, 56, 58], [64, 52, 66], [50, 26, 46]],
