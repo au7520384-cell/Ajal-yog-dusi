@@ -6,7 +6,7 @@
 set -eo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 W=$(mktemp -d); trap 'rm -rf "$W"' EXIT
-S="$W/src"; mkdir -p "$S/android/app" "$S/android/content" "$S/android/os" "$S/android/util" "$S/com/getcapacitor/annotation" "$S/com/google/android/gms/tasks" "$S/fake/agesignals" "$S/com/royalbilliard8/app"
+S="$W/src"; mkdir -p "$S/fake/agesignals/model" "$S/android/app" "$S/android/content" "$S/android/os" "$S/android/util" "$S/com/getcapacitor/annotation" "$S/com/google/android/gms/tasks" "$S/fake/agesignals" "$S/com/royalbilliard8/app"
 
 # ---- stand-ins for Android / Capacitor / Play services Task
 cat > "$S/android/content/Context.java" <<'J'
@@ -75,8 +75,11 @@ class Impl<T> extends Task<T> {   // hidden (package-private) implementation, li
 J
 
 # ---- a FAKE Age Signals library: the shapes in Google's documented sample (the real package is found by tools/age_pkg.sh; here it is fake.agesignals)
-cat > "$S/fake/agesignals/AgeSignalsStatus.java" <<'J'
-package fake.agesignals; public final class AgeSignalsStatus { public static final int SHARED = 1, NOT_SHARED = 2, VERIFICATION_REQUIRED = 3; }
+cat > "$S/fake/agesignals/model/AgeSignalsStatus.java" <<'J'
+package fake.agesignals.model; public final class AgeSignalsStatus { public static final int SHARED = 1, NOT_SHARED = 2, VERIFICATION_REQUIRED = 3; }   // in a ".model" sub-package, like the real library (seen in the build log)
+J
+cat > "$S/fake/agesignals/AgeSignalsException.java" <<'J'
+package fake.agesignals; public class AgeSignalsException extends RuntimeException { private final int c; public AgeSignalsException(int c) { super("api error"); this.c = c; } public int getErrorCode() { return c; } }
 J
 cat > "$S/fake/agesignals/Scenario.java" <<'J'
 package fake.agesignals; public final class Scenario { public static String mode = "shared13"; public static int calls = 0; public static int checks = 0; public static Object seenActivity; }
@@ -86,8 +89,8 @@ package fake.agesignals; import com.google.android.gms.tasks.Task;
 public interface AgeSignalsManager { Task<AgeSignalsAccessResult> requestAgeSignalsAccess(AgeSignalsAccessRequest r); Task<AgeSignalsResult> checkAgeSignals(AgeSignalsRequest r); }
 J
 cat > "$S/fake/agesignals/AgeSignalsManagerFactory.java" <<'J'
-package fake.agesignals; import android.content.Context; import com.google.android.gms.tasks.Task;
-public final class AgeSignalsManagerFactory {
+package fake.agesignals; import android.content.Context; import com.google.android.gms.tasks.Task; import fake.agesignals.model.AgeSignalsStatus;
+public class AgeSignalsManagerFactory {
   public static AgeSignalsManager create(Context c) { return new M(); }
   private static final class M implements AgeSignalsManager {   // hidden implementation
     @Override public Task<AgeSignalsAccessResult> requestAgeSignalsAccess(AgeSignalsAccessRequest r) {
@@ -96,6 +99,7 @@ public final class AgeSignalsManagerFactory {
       if (m.equals("throw")) throw new IllegalStateException("boom");
       if (m.equals("never")) return Task.never();
       if (m.equals("accessfail")) return Task.failed(new RuntimeException("PLAY_STORE_NOT_FOUND"));
+      if (m.equals("apierror")) return Task.failed(new AgeSignalsException(-1));
       int st = m.equals("notshared") ? AgeSignalsStatus.NOT_SHARED : m.equals("verif") ? AgeSignalsStatus.VERIFICATION_REQUIRED : AgeSignalsStatus.SHARED;
       return Task.done(AgeSignalsAccessResult.of(st));
     }
@@ -130,10 +134,9 @@ public abstract class AgeSignalsAccessResult {
 J
 cat > "$S/fake/agesignals/AgeSignalsRequest.java" <<'J'
 package fake.agesignals;
-public abstract class AgeSignalsRequest {
-  public static Builder builder() { return new B(); }
-  public abstract static class Builder { public abstract AgeSignalsRequest build(); }
-  private static final class B extends Builder { @Override public AgeSignalsRequest build() { return new AgeSignalsRequest() {}; } }
+public class AgeSignalsRequest {   // a concrete class in the real library
+  public static Builder builder() { return new Builder(); }
+  public static class Builder { public AgeSignalsRequest build() { return new AgeSignalsRequest(); } }
 }
 J
 cat > "$S/fake/agesignals/AgeSignalsResult.java" <<'J'
@@ -189,6 +192,8 @@ public class Main {
     ok("error".equals(r.get("status")) && String.valueOf(r.get("error")).contains("PLAY_STORE_NOT_FOUND"), "Play failure -> error with the reason", r);
     r = run(p, "checkfail");
     ok("error".equals(r.get("status")) && String.valueOf(r.get("error")).contains("NETWORK_ERROR"), "failure of the second call -> error", r);
+    r = run(p, "apierror");
+    ok("error".equals(r.get("status")) && String.valueOf(r.get("error")).contains("AgeSignalsException") && String.valueOf(r.get("error")).contains("[code -1]"), "AgeSignalsException: the error code is reported", r);
     r = run(p, "throw");
     ok("error".equals(r.get("status")) && String.valueOf(r.get("error")).contains("boom"), "an exception inside the library is caught", r);
     // a check that never answers: a second call says busy, the watchdog frees the plugin
