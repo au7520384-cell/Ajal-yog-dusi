@@ -19,10 +19,11 @@ GM = os.environ.get("PORTAL", "crazy") == "gamemonetize"   # GameMonetize: PORTA
 GM_ID = os.environ.get("GM_ID", "esjcoyx21kbp842me139bq7bsc5vspio")
 GM_HEAD = r'''<script>
 // GameMonetize SDK: SDK_GAME_PAUSE / SDK_GAME_START come around every ad (the game is silent and does not take input while an ad is on)
+window.__gmN = {ready: 0, pause: 0, start: 0, asked: 0, other: ""};   // what the SDK did (shown at the end of the Settings page: "GM sdk .. ready .. asked .. shown ..")
 window.SDK_OPTIONS = {gameId: "%s", onEvent: function (a) {
-  try { if (a.name === "SDK_GAME_PAUSE") { window.__B8_MUTE = true; if (window.__gmAd) window.__gmAd("pause"); }
-  else if (a.name === "SDK_GAME_START") { window.__B8_MUTE = false; if (window.__gmAd) window.__gmAd("start"); }
-  else if (a.name === "SDK_READY") { window.__gmReady = true; } } catch (e) {}
+  try { var n = window.__gmN; if (a.name === "SDK_GAME_PAUSE") { n.pause++; window.__B8_MUTE = true; if (window.__gmAd) window.__gmAd("pause"); }
+  else if (a.name === "SDK_GAME_START") { n.start++; window.__B8_MUTE = false; if (window.__gmAd) window.__gmAd("start"); }
+  else if (a.name === "SDK_READY") { window.__gmReady = true; n.ready = 1; } else { n.other = String(a.name); } } catch (e) {}
 }};
 (function (a, b, c) { var d = a.getElementsByTagName(b)[0]; a.getElementById(c) || (a = a.createElement(b), a.id = c, a.src = "https://api.gamemonetize.com/sdk.js", d.parentNode.insertBefore(a, d)); })(document, "script", "gamemonetize-sdk");
 </script>''' % GM_ID
@@ -194,7 +195,7 @@ Y8.sdk = {
 showAd(o) {
 return new Promise(resolve => {
 if (o.type === "reward" || Date.now() - last < 90000) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return resolve(); }
-last = Date.now(); let over = false, shown = false;
+last = Date.now(); let over = false, shown = false; try { window.__gmN.asked++; } catch (e) {}
 const end = () => { if (over) return; over = true; waiter = null; try { o.adBreakDone && o.adBreakDone(); } catch (e) {} resolve(); };
 waiter = s => { if (s === "pause" && !shown) { shown = true; try { o.beforeAd && o.beforeAd(); } catch (e) {} } else if (s === "start") end(); };
 setTimeout(end, 60000);
@@ -207,6 +208,8 @@ wait();
 saveData: bye, loadData: bye, trackCustomEvent: bye, awardAchievement: bye, showAchievements: bye, showLeaderboard: bye, saveLeaderboardScore: bye, login() {},
 };
 window.__gmAd = s => { if (waiter) waiter(s); };
+setInterval(() => { try { const bl = document.getElementById("setBuild"); if (!bl) return; const n = window.__gmN || {};
+bl.textContent = bl.textContent.replace(/ · GM sdk.*$/, "") + " · GM sdk " + (window.sdk && window.sdk.showBanner ? "ok" : "none") + " ready " + (n.ready ? "ok" : "no") + " asked " + (n.asked | 0) + " shown " + (n.pause | 0) + (n.other ? " (" + n.other + ")" : ""); } catch (e) {} }, 2000);
 Y8.adsReady = false;   // the reward buttons show only where rewarded video exists
 Y8.user = {nickname: ""};
 updateY8Ui();
@@ -230,7 +233,7 @@ sub('<head>', '<head>\n<style>.nochat #gChat,.nochat #gVoice,.nochat #chatPanel,
 # default language: the device language (English stays English); the country-based guess is for the standalone game only
 sub('const cl = CC_LANG[profile.country || detectCountry()];', 'const cl = CRAZY_BUILD ? "" : CC_LANG[profile.country || detectCountry()];')
 # the portal brings its own full-screen button and shows no outside pages: no own full-screen buttons / auto full screen, no legal links in Settings
-if PG:   # Playgama's page has no full-screen button of its own: the game keeps its two (menu bar, in a match); no automatic full screen on the first tap, only on the button.
+if PG or GM:   # Playgama's page has no full-screen button of its own (GameMonetize: the owner asked for them back, Nov 20: "did you remove the full-screen one?" - the else branch below is for CrazyGames, which brings its own): the game keeps its two (menu bar, in a match); no automatic full screen on the first tap, only on the button.
     # They stay hidden where the browser does not allow full screen for the game's frame (document.fullscreenEnabled false). On a phone the button also turns the screen to landscape.
     sub("function goFullscreen(force) {\n", "function goFullscreen(force) {\nif (CRAZY_BUILD && !force) return;\n")
     sub("const can = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen); fb.style.display", "const can = document.fullscreenEnabled !== false && !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen); fb.style.display")
@@ -269,6 +272,7 @@ if GM:   # the SDK's pause (an ad is on) silences the game; interstitials at nat
     sub("setMuted(m) { if (master) master.gain.setTargetAtTime(m ? 0 : level(), ac.currentTime, 0.02); },", "setMuted(m) { if (master) master.gain.setTargetAtTime(m || window.__B8_MUTE ? 0 : level(), ac.currentTime, 0.02); },")
     sub("if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {", "if (Y8.sdk && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree) {")
     sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
+    sub('!Y8.adsReady ? "sdk-not-ready"', '!Y8.adsReady ? "no-rewarded-video-here"')   # (GameMonetize has banner ads only: the 📺 keys cannot work, and the line under the toast must not read like a fault)
 if PG:
     # saving only through Bridge Storage: the game's one save point (store) reads a cache filled from bridge.storage BEFORE the game starts; writes go back in batches
     sub("const store = {\nget(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },\nset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },\n};",
