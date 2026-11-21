@@ -6,16 +6,32 @@
 //  - the SDK script arrives 2.5 s late (it loads from GameMonetize): the entry ad still comes (the game waits for it); the SDK never arrives: the game starts and works, no hang, no error
 //  - a brand new player: the same one ad; a player who bought "no ads": none
 //  - the end of every 2nd match: an interstitial (at most one per 90 s); a rewarded-video key (GameMonetize has no rewarded video) does not hang the game
+//  - Nov 21, after the owner showed that Icy Tower gets GameMonetize ads and this game does not: the REAL sdk.js asks for an ad through the bare name $ (its own jQuery), and the game's own  const $ = id => ...  hid it. The mock SDK below does the same
+//    (so the old build fails these checks), the build renames the game's helper to $b8, and a real parser (acorn) finds no reference to $ left in the page
 const { chromium } = require("playwright"), http = require("http"), path = require("path"), fs = require("fs"), os = require("os"), { spawnSync } = require("child_process");
 const ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 400) : ""); } };
 const MIME = { ".html": "text/html; charset=utf-8", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".wav": "audio/wav", ".mp4": "video/mp4", ".js": "text/javascript", ".json": "application/json" };
-const GMSDK = `window.__gm = {ads: 0, mute: []}; window.sdk = {showBanner() { window.__gm.ads++; const o = window.SDK_OPTIONS; setTimeout(() => o.onEvent({name: "SDK_GAME_PAUSE"}), 50); setTimeout(() => o.onEvent({name: "SDK_GAME_START"}), 700); }}; setTimeout(() => window.SDK_OPTIONS && window.SDK_OPTIONS.onEvent({name: "SDK_READY"}), 100);`;
+// The mock works like the REAL sdk.js (read Nov 21): the SDK brings its own jQuery on window.$ and asks for an ad through the BARE name $ ($.getJSON("datax.json", ...) -> the ad request), all inside its own try/catch.
+// A page with a $ of its own in the global scope (the game had  const $ = id => document.getElementById(id)) hides it: nothing is requested and nothing shows an error. That is why GameMonetize never showed an ad (asked 1, shown 0).
+// calls = how often the game called showBanner(); ads = how many of those got through to the ad request.
+const GMSDK = `window.__gm = {ads: 0, calls: 0, mute: []};
+window.jQuery = window.$ = {getJSON(u, cb) { setTimeout(() => cb([]), 20); }, each(a, f) { for (const k in a) f(k, a[k]); }, now() { return Date.now(); }};
+window.sdk = {showBanner() { window.__gm.calls++; try { $.getJSON("https://api.gamemonetize.com/datax.json", () => { window.__gm.ads++; const o = window.SDK_OPTIONS; setTimeout(() => o.onEvent({name: "SDK_GAME_PAUSE"}), 50); setTimeout(() => o.onEvent({name: "SDK_GAME_START"}), 700); }); } catch (e) {} }};
+setTimeout(() => window.SDK_OPTIONS && window.SDK_OPTIONS.onEvent({name: "SDK_READY"}), 100);`;
 (async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8gm-")), dir = path.join(tmp, "site");
   const r = spawnSync("python3", [path.join(ROOT, "tools", "build_crazy.py"), path.join(tmp, "out")], { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 26, env: { ...process.env, PORTAL: "gamemonetize", INLINE_UNDER: "6000" } });
   ok(r.status === 0, "the GameMonetize build is made", (r.stderr || "").slice(-300)); if (r.status) { console.log(`pass ${pass}, fail ${fail}`); process.exit(1); }
   fs.mkdirSync(dir); ok(spawnSync("python3", ["-I", "-m", "zipfile", "-e", path.join(tmp, "out", "bilyard8-gamemonetize.zip"), dir]).status === 0, "the zip unpacks");
+  // the game's own helper is not called $ in this build (the SDK's jQuery owns that name): a real parser finds no reference to $ left in any inline script, and every script parses
+  try {
+    const acorn = require("acorn"), walk = require("acorn-walk"), html = fs.readFileSync(path.join(dir, "index.html"), "utf8"), re = /(<script\b(?![^>]*\bsrc=)[^>]*>)([\s\S]*?)(<\/script>)/gi; let m, scripts = 0, bad = 0, dollar = 0, mine = 0;
+    while ((m = re.exec(html))) { scripts++; let ast; try { ast = acorn.parse(m[2], { ecmaVersion: "latest", sourceType: "script", allowHashBang: true }); } catch (e) { bad++; continue; }
+      walk.full(ast, n => { if (n.type === "Identifier") { if (n.name === "$") dollar++; else if (n.name === "$b8") mine++; } }); }
+    ok(scripts >= 3 && bad === 0, "every inline script of the GameMonetize page parses", { scripts, bad });
+    ok(dollar === 0 && mine >= 500, "no reference to the bare name $ is left in the page (the game's helper is $b8; $ belongs to the SDK's jQuery)", { dollar, mine });
+  } catch (e) { console.log("acorn is not installed (NODE_PATH=/opt/node-tools/node_modules): the parser check is skipped:", String(e.message).slice(0, 80)); }
   const srv = http.createServer((q, res) => { const u = decodeURIComponent(q.url.split("?")[0]), f = path.join(dir, u === "/" ? "index.html" : u); if (!f.startsWith(dir) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end(); } res.writeHead(200, { "Content-Type": MIME[path.extname(f)] || "application/octet-stream" }); fs.createReadStream(f).pipe(res); });
   await new Promise(r => srv.listen(0, r)); const port = srv.address().port, b = await chromium.launch(), errs = [];
   const open = async (profileObj, name, sdk) => {   // sdk: "now" | "late" | "none"
@@ -35,6 +51,8 @@ const GMSDK = `window.__gm = {ads: 0, mute: []}; window.sdk = {showBanner() { wi
     // 1. a returning player: one entry ad; silent during it, sound back after it
     let p = await open(OLD, "returning", "now"); await sleep(4500);
     ok(await ads(p) === 1, "a returning player gets exactly one sdk.showBanner() when the game opens", await ads(p));
+    ok(await p.evaluate(() => $ === window.jQuery), "the bare name $ in the page is the SDK's jQuery (the game's own helper does not hide it)");
+    ok(await p.evaluate(() => window.__gm.calls) === 1, "the game called showBanner() once, and that call reached the ad request (none swallowed inside the SDK)", await p.evaluate(() => window.__gm.calls));
     const ml = await p.evaluate(() => window.__muteLog); ok(ml.includes(true) && ml[ml.length - 1] === false, "the game is silent while the SDK says SDK_GAME_PAUSE and the sound is back at SDK_GAME_START", ml);
     ok(await p.evaluate(() => !Y8.busy && !!document.getElementById("home")), "the game is back to normal after the ad (not stuck behind it)");
     // 1b. the owner (Nov 20, on cached.gamemonetize.co: "did you remove the full-screen one?"): the game's own full-screen keys stay in this page (they hide by themselves where the frame may not go full screen)
@@ -69,6 +87,12 @@ const GMSDK = `window.__gm = {ads: 0, mute: []}; window.sdk = {showBanner() { wi
     p = await open({ ...OLD, adfree: true }, "adfree", "now"); await sleep(4500);
     await p.evaluate(() => { Y8.lastBreak = 0; return new Promise(r => y8Break(r)); }); await p.evaluate(() => new Promise(r => y8Break(r))); await sleep(800);
     ok(await ads(p) === 0, "an ad-free player gets no ad at all", await ads(p)); await p.context().close();
+    // 8. the game itself works in this build (the helper rename touched ~700 places): every screen opens, a practice match starts
+    p = await open(OLD, "walk", "now"); await sleep(1500);
+    const walk = await p.evaluate(async () => { const out = []; for (const id of ["cities", "tourScr", "shop", "rewards", "leader", "mini", "eventsScr", "freeScr", "roadScr", "inbox", "liveScr", "withFrScr", "openScr", "lbScr", "wheelScr", "friendsScr", "profileScr", "settingsScr", "clubsScr", "passScr", "home"]) { try { go(id); await new Promise(r => setTimeout(r, 120)); out.push(id); } catch (e) { out.push(id + " ERR " + e.message); } } return out; });
+    ok(walk.length === 21 && walk.every(x => !/ERR/.test(x)), "every screen opens without an error in the GameMonetize page", walk.filter(x => /ERR/.test(x)));
+    await p.evaluate(() => startMatch("practice", CITIES[0])); await sleep(2500);
+    ok(await p.evaluate(() => mode === "game"), "a practice match starts"); await p.context().close();
     ok(errs.length === 0, "no page errors", errs.slice(0, 4));
   } finally { await b.close(); srv.close(); try { fs.rmSync(tmp, { recursive: true, force: true }); } catch (e) {} }
   console.log(`pass ${pass}, fail ${fail}`); process.exit(fail ? 1 : 0);
