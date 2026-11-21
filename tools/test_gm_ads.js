@@ -5,7 +5,7 @@
 //  - a returning player: ONE sdk.showBanner() when the game opens; the game is silent while the SDK says SDK_GAME_PAUSE and sound is back at SDK_GAME_START; the game is back to normal after it (not stuck behind the ad)
 //  - the SDK script arrives 2.5 s late (it loads from GameMonetize): the entry ad still comes (the game waits for it); the SDK never arrives: the game starts and works, no hang, no error
 //  - a brand new player: the same one ad; a player who bought "no ads": none
-//  - the end of every 2nd match: an interstitial (at most one per 90 s); a rewarded-video key (GameMonetize has no rewarded video) does not hang the game
+//  - the end of every 2nd match: an interstitial (at most one per 90 s); a 📺 key pays through an interstitial only when an ad was really shown (Nov 21)
 //  - Nov 21, after the owner showed that Icy Tower gets GameMonetize ads and this game does not: the REAL sdk.js asks for an ad through the bare name $ (its own jQuery), and the game's own  const $ = id => ...  hid it. The mock SDK below does the same
 //    (so the old build fails these checks), the build renames the game's helper to $b8, and a real parser (acorn) finds no reference to $ left in the page
 const { chromium } = require("playwright"), http = require("http"), path = require("path"), fs = require("fs"), os = require("os"), { spawnSync } = require("child_process");
@@ -17,7 +17,7 @@ const MIME = { ".html": "text/html; charset=utf-8", ".webp": "image/webp", ".png
 // calls = how often the game called showBanner(); ads = how many of those got through to the ad request.
 const GMSDK = `window.__gm = {ads: 0, calls: 0, mute: []};
 window.jQuery = window.$ = {getJSON(u, cb) { setTimeout(() => cb([]), 20); }, each(a, f) { for (const k in a) f(k, a[k]); }, now() { return Date.now(); }};
-window.sdk = {showBanner() { window.__gm.calls++; try { $.getJSON("https://api.gamemonetize.com/datax.json", () => { window.__gm.ads++; const o = window.SDK_OPTIONS; setTimeout(() => o.onEvent({name: "SDK_GAME_PAUSE"}), 50); setTimeout(() => o.onEvent({name: "SDK_GAME_START"}), 700); }); } catch (e) {} }};
+window.sdk = {showBanner() { window.__gm.calls++; try { $.getJSON("https://api.gamemonetize.com/datax.json", () => { if (window.__gmRefuse) { setTimeout(() => window.SDK_OPTIONS.onEvent({name: "SDK_GAME_START"}), 5); return; } window.__gm.ads++; const o = window.SDK_OPTIONS; setTimeout(() => o.onEvent({name: "SDK_GAME_PAUSE"}), 50); setTimeout(() => o.onEvent({name: "SDK_GAME_START"}), 700); }); } catch (e) {} }};
 setTimeout(() => window.SDK_OPTIONS && window.SDK_OPTIONS.onEvent({name: "SDK_READY"}), 100);`;
 (async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8gm-")), dir = path.join(tmp, "site");
@@ -62,16 +62,22 @@ setTimeout(() => window.SDK_OPTIONS && window.SDK_OPTIONS.onEvent({name: "SDK_RE
     const diag = await p.evaluate(() => (document.getElementById("setBuild") || {}).textContent || "");
     ok(/GM sdk ok ready ok asked 1 shown 1\b/.test(diag), "Settings shows 'GM sdk ok ready ok asked 1 shown 1' after the entry ad", diag.slice(-90));
     await p.evaluate(() => { go("home"); });
-    // 1d. the line under the 'ads are not available' toast: GameMonetize has no rewarded video, it must not read like a fault
-    ok(await p.evaluate(() => adNoWhy()) === "no-rewarded-video-here", "the why-line of a 📺 key says there is no rewarded video here (not 'sdk-not-ready')", await p.evaluate(() => adNoWhy()));
+    // 1d. the 📺 keys work on GameMonetize through an interstitial (the owner, Nov 21: "the spin key says watch an ad and no ad comes"): the keys are shown, they pay only when the SDK really showed an ad
+    ok(await p.evaluate(() => Y8.adsReady === true && !!Y8.sdk), "the 📺 keys are on (Y8.adsReady) in the GameMonetize page");
     // 2. the end of every 2nd match: an interstitial (the clock is moved past the 90 s guard)
     await p.evaluate(() => { const d = Date.now.bind(Date); window.__skew = 100000; Date.now = () => d() + window.__skew; Y8.lastBreak = 0; });
     await p.evaluate(() => y8Break(() => {})); await sleep(300); const one = await ads(p);
     await p.evaluate(() => new Promise(r => y8Break(r))); await sleep(1500);
     ok(one === 1 && await ads(p) === 2, "the end of the 2nd match asks for an interstitial (the 1st match does not)", { after1: one, after2: await ads(p) });
-    // 3. a rewarded-video key: GameMonetize has none: no hang
-    const rw = await p.evaluate(async () => { let failed = false; try { await Promise.race([new Promise(r => { y8Rewarded("test", () => r("gave"), () => { failed = true; r("failed"); }); }), new Promise(r => setTimeout(() => r("timeout"), 4000))]); } catch (e) {} return { failed, busy: !!Y8.busy }; });
-    ok(!rw.busy, "a rewarded-video key does not leave the game stuck (no rewarded video here)", rw);
+    // 3. a 📺 key (reward): one interstitial, the prize only when the SDK really showed it; refused by the SDK (inside its gap: SDK_GAME_START at once, no pause) = no prize, a "no ad" answer, the game is not stuck
+    const key = async () => p.evaluate(async () => new Promise(res => { const t0 = window.__gm.ads; let gave = 0, failed = 0; y8Rewarded("test-key", () => gave++, () => failed++); setTimeout(() => res({ gave, failed, ads: window.__gm.ads - t0, busy: !!Y8.busy, adCount: profile.adCount | 0 }), 3500); }));
+    await p.evaluate(() => { window.__gmRefuse = false; });
+    const k1 = await key(); ok(k1.gave === 1 && k1.failed === 0 && k1.ads === 1 && !k1.busy, "a 📺 key: the SDK shows an ad, the key pays once", k1);
+    await p.evaluate(() => { window.__gmRefuse = true; });
+    const k2 = await key(); ok(k2.gave === 0 && k2.failed === 1 && k2.ads === 0 && !k2.busy, "a 📺 key inside the SDK's gap (refused, no pause): no prize, a 'no ad' answer, the game is not stuck", k2);
+    await p.evaluate(() => { window.__gmRefuse = false; });
+    ok(await p.evaluate(() => { const w = Y8.lastWhy; return /^next ad in ~\d+ s$/.test(w || "") || w === "no ad came"; }), "the line under the 'no ad' toast says when the next ad can come", await p.evaluate(() => Y8.lastWhy));
+    const k3 = await key(); ok(k3.gave === 1 && k3.ads === 1, "the key works again after a refusal", k3);
     await p.context().close();
     // 4. the SDK script arrives 2.5 s late: the entry ad waits for it
     p = await open(OLD, "late", "late"); await sleep(7000);

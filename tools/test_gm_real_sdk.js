@@ -84,6 +84,7 @@ window.__ev = []; window.SDK_OPTIONS = {gameId: "esjcoyx21kbp842me139bq7bsc5vspi
     await sleep(imaErr ? 1500 : 3500);   // the fake video ad lasts 2.5 s
     const info = await p.evaluate(() => ({ sdk: typeof window.sdk, ima: window.__ima, ev: window.__ev, gm: window.__gmN, busy: typeof Y8 !== "undefined" ? !!Y8.busy : null,
       overlayHidden: (() => { const o = document.getElementById("sdk__advertisement"); return !o || getComputedStyle(o).opacity === "0" || getComputedStyle(o).transform.indexOf("-9999") >= 0; })(), home: !!document.getElementById("home") }));
+    if (kind === "game" && !imaErr) info.key = await p.evaluate(() => new Promise(res => { let gave = 0, failed = 0; y8Rewarded("test-key", () => gave++, () => failed++); setTimeout(() => res({ gave, failed, busy: !!Y8.busy, imaReqs: window.__ima.requests.length, why: Y8.lastWhy }), 9500); }));   // a 📺 key right after the entry ad: the real SDK refuses a second ad inside its gap
     await ctx.close(); return { reqs, errs, samples, ...info };
   };
   try {
@@ -99,6 +100,7 @@ window.__ev = []; window.SDK_OPTIONS = {gameId: "esjcoyx21kbp842me139bq7bsc5vspi
     ok(x.samples.length > 0 && x.samples.every(s => s.centre === "sdk__advertisement" && s.corner === "sdk__advertisement"), "this game: while the ad plays the SDK's overlay covers the whole game (nothing of the game is above it)", x.samples);
     ok(x.overlayHidden && x.home && x.busy === false, "this game: after the ad the overlay is gone and the game is back to normal", { hidden: x.overlayHidden, home: x.home, busy: x.busy });
     ok(x.errs.length === 0, "this game: no page errors", x.errs.slice(0, 3));
+    ok(x.key && x.key.gave === 0 && x.key.failed === 1 && !x.key.busy && x.key.imaReqs === 1, "this game: a 📺 key right after the entry ad is refused by the SDK's own gap (no 2nd ad request, no prize, not stuck)", x.key);
     x = await run("game", true);
     ok(x.ima.requests.length === 2 && /GameMonetize\.com-ADX-AFG-Preroll-Ads/.test(x.ima.requests[1]), "no fill: the SDK retries once with its ADX tag", x.ima.requests.map(u => u.slice(0, 120)));
     ok(x.reqs.some(u => /dataxxx\.json/.test(u)) && x.samples.length > 0 && x.samples.every(s => s.promo && s.centre === "promo" && s.corner === "promo" && /You can skip this in \d+ secs/.test(s.skip)), "no fill: the SDK's display ad (\"You can skip this in N secs\") covers the whole game", x.samples);

@@ -195,15 +195,22 @@ function gamemonetizeInit() {
 const bye = () => Promise.resolve();
 let last = 0, waiter = null;
 Y8.sdk = {
-// an interstitial between matches (GameMonetize has no rewarded video): at most one every 90 s; the game goes on when the SDK says SDK_GAME_START (or after a safety timeout)
+// GameMonetize has no rewarded video, only interstitials (sdk.showBanner()). An interstitial between matches / at game open: at most one every 90 s; the game goes on when the SDK says SDK_GAME_START (or after a safety timeout).
+// A "reward" key (the 📺 keys: extra spin, unlock ...) uses the same interstitial and pays ONLY when the SDK really showed an ad (SDK_GAME_PAUSE came, then SDK_GAME_START): the SDK itself refuses a second ad inside its own gap (130 s on GameMonetize's domains:
+// it answers SDK_GAME_START at once, without a pause), then the key says "no ad now" and pays nothing. The SDK cannot tell a watched ad from a skipped one: any shown ad counts.
 showAd(o) {
 return new Promise(resolve => {
-if (o.type === "reward" || Date.now() - last < 90000) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return resolve(); }
-last = Date.now(); let over = false, shown = false; try { window.__gmN.asked++; } catch (e) {}
-const end = () => { if (over) return; over = true; waiter = null; try { o.adBreakDone && o.adBreakDone(); } catch (e) {} resolve(); };
-waiter = s => { if (s === "pause" && !shown) { shown = true; try { o.beforeAd && o.beforeAd(); } catch (e) {} } else if (s === "start") end(); };
+const reward = o.type === "reward";
+if (!reward && Date.now() - last < 90000) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return resolve(); }
+if (!reward) last = Date.now();
+let over = false, shown = false; try { window.__gmN.asked++; } catch (e) {}
+const end = () => { if (over) return; over = true; waiter = null;
+if (reward && !shown) { try { Y8.lastWhy = last ? "next ad in ~" + Math.max(5, Math.round(130 - (Date.now() - last) / 1000)) + " s" : "no ad came"; o.adDismissed && o.adDismissed(); } catch (e) {} }
+else if (reward) { try { o.adViewed && o.adViewed(); } catch (e) {} }
+try { o.adBreakDone && o.adBreakDone(reward && !shown ? {breakStatus: "frequencyCapped"} : undefined); } catch (e) {} resolve(); };
+waiter = s => { if (s === "pause" && !shown) { shown = true; last = Date.now(); try { o.beforeAd && o.beforeAd(); } catch (e) {} } else if (s === "start") end(); };
 setTimeout(end, 60000);
-const fire = () => { try { window.sdk.showBanner(); } catch (e) { return end(); } setTimeout(() => { if (!shown) end(); }, 4000); };   // (no ad came: nothing to wait for)
+const fire = () => { try { window.sdk.showBanner(); } catch (e) { return end(); } setTimeout(() => { if (!shown) end(); }, reward ? 7000 : 4000); };   // (no ad came: nothing to wait for; a key waits a little longer for the ad request)
 // the game's own entry ad can be asked before the SDK script has arrived (it loads from GameMonetize): wait for it up to 6 s, then go on without an ad
 let n = 0; const wait = () => { if (window.sdk && window.sdk.showBanner) return fire(); if (++n > 24) return end(); setTimeout(wait, 250); };
 wait();
@@ -214,7 +221,7 @@ saveData: bye, loadData: bye, trackCustomEvent: bye, awardAchievement: bye, show
 window.__gmAd = s => { if (waiter) waiter(s); };
 setInterval(() => { try { const bl = document.getElementById("setBuild"); if (!bl) return; const n = window.__gmN || {};
 bl.textContent = bl.textContent.replace(/ · GM sdk.*$/, "") + " · GM sdk " + (window.sdk && window.sdk.showBanner ? "ok" : "none") + " ready " + (n.ready ? "ok" : "no") + " asked " + (n.asked | 0) + " shown " + (n.pause | 0) + (n.other ? " (" + n.other + ")" : ""); } catch (e) {} }, 2000);
-Y8.adsReady = false;   // the reward buttons show only where rewarded video exists
+Y8.adsReady = true;   // the 📺 keys work through an interstitial (see showAd): they pay only when the SDK really showed an ad
 Y8.user = {nickname: ""};
 updateY8Ui();
 }
