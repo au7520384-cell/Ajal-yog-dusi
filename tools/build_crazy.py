@@ -388,6 +388,17 @@ if not os.environ.get("UZ_HTML"):
     src, _moved = portal_html.english_static(src); _left = portal_html.leftover(src)
     if _left or _moved < 50: sys.exit(f"the page's HTML is not English: {_moved} pieces moved, left over: {_left[:5]}")
     print("static text moved out of the markup:", _moved, "(lang=en)")
+if GM:
+    # GameMonetize's SDK carries its own jQuery on window.$ and calls it through the bare name $ (showBanner: $.getJSON("datax.json", ...) -> the ad request; the fallback ad: $("<style>")...).
+    # The game's own helper  const $ = id => document.getElementById(id)  sits in the same global scope and hides it: every call of the SDK's $ failed inside the SDK's own try/catch, no ad was ever
+    # requested (asked 1, shown 0), while a game without a $ of its own (Icy Tower) got its ads.  In this build the game's helper is called $b8 (README, "GameMonetize: why no ad came").
+    import jsrename
+    assert "$b8" not in src, "the new name $b8 is already used in the page"
+    src, _n = jsrename.rename_in_page(src, "$", "$b8")
+    if _n < 500 or "const $b8 = id => document.getElementById(id);" not in src: sys.exit(f"GameMonetize: the game's $ helper was not renamed properly ({_n} tokens)")
+    _bad = re.findall(r"""\bon\w+\s*=\s*["'][^"']*\$\(""", src)
+    if _bad: sys.exit("GameMonetize: an inline handler in the markup still calls $(: " + _bad[0][:80])
+    print("GameMonetize: the game's $ helper is $b8 now:", _n, "tokens")
 os.makedirs(out, exist_ok=True)
 z = os.path.join(out, "bilyard8-playgama.zip" if PG else "bilyard8-gamemonetize.zip" if GM else "bilyard8-crazy.zip")
 with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
