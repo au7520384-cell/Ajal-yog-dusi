@@ -27,7 +27,7 @@ window.__gmN = {ready: 0, pause: 0, start: 0, asked: 0, other: ""};   // what th
 window.SDK_OPTIONS = {gameId: "%s", onEvent: function (a) {
   try { var n = window.__gmN; if (a.name === "SDK_GAME_PAUSE") { n.pause++; window.__B8_MUTE = true; if (window.__gmAd) window.__gmAd("pause"); }
   else if (a.name === "SDK_GAME_START") { n.start++; window.__B8_MUTE = false; if (window.__gmAd) window.__gmAd("start"); }
-  else if (a.name === "SDK_READY") { window.__gmReady = true; n.ready = 1; } else { n.other = String(a.name); } } catch (e) {}
+  else if (a.name === "SDK_READY") { window.__gmReady = true; n.ready = 1; } else { n.other = String(a.name); if (a.name === "AD_CANCELED" || a.name === "AD_ERROR") n.err = (n.err | 0) + 1; } } catch (e) {}
 }};
 (function (a, b, c) { var d = a.getElementsByTagName(b)[0]; a.getElementById(c) || (a = a.createElement(b), a.id = c, a.src = "https://api.gamemonetize.com/sdk.js", d.parentNode.insertBefore(a, d)); })(document, "script", "gamemonetize-sdk");
 </script>''' % GM_ID
@@ -203,14 +203,23 @@ return new Promise(resolve => {
 const reward = o.type === "reward";
 if (!reward && Date.now() - last < 90000) { try { o.adDismissed && o.adDismissed(); } catch (e) {} return resolve(); }
 if (!reward) last = Date.now();
-let over = false, shown = false; try { window.__gmN.asked++; } catch (e) {}
+let over = false, shown = false; const err0 = (window.__gmN && window.__gmN.err) | 0; try { window.__gmN.asked++; } catch (e) {}
 const end = () => { if (over) return; over = true; waiter = null;
 if (reward && !shown) { try { Y8.lastWhy = last ? "next ad in ~" + Math.max(5, Math.round(130 - (Date.now() - last) / 1000)) + " s" : "no ad came"; o.adDismissed && o.adDismissed(); } catch (e) {} }
 else if (reward) { try { o.adViewed && o.adViewed(); } catch (e) {} }
 try { o.adBreakDone && o.adBreakDone(reward && !shown ? {breakStatus: "frequencyCapped"} : undefined); } catch (e) {} resolve(); };
-waiter = s => { if (s === "pause" && !shown) { shown = true; last = Date.now(); try { o.beforeAd && o.beforeAd(); } catch (e) {} } else if (s === "start") end(); };
+// when the VIDEO ad has no fill the SDK cancels it (SDK_GAME_START, no pause), tries once more and then shows its own DISPLAY ad (#promo: black screen, "You can skip this in N secs"; it sends no event at all): a key waits a few seconds for that screen
+// and pays when the player has closed it (the screen covers the game, so it cannot be dodged); the other asks do not wait
+let watching = false; const promoWatch = () => watching;
+const watchPromo = () => { watching = true; let t = 0; const iv = setInterval(() => { t += 250; const el = document.getElementById("promo") || document.getElementById("promo-new"), up = !!el && getComputedStyle(el).display !== "none";
+if (over) return clearInterval(iv);
+if (up && !shown) { shown = true; last = Date.now(); try { o.beforeAd && o.beforeAd(); } catch (e) {} }
+if (shown && !up) { clearInterval(iv); return end(); }   // (closed)
+if (!shown && t > 9000) { clearInterval(iv); end(); }   // (no second ad came)
+if (t > 60000) { clearInterval(iv); end(); } }, 250); };
+waiter = s => { if (s === "pause" && !shown) { shown = true; last = Date.now(); try { o.beforeAd && o.beforeAd(); } catch (e) {} } else if (s === "start") { if (reward && !shown && ((window.__gmN.err | 0) > err0)) watchPromo(); else end(); } };   // (only after an ad error: a refusal inside the SDK's gap has none and ends at once)
 setTimeout(end, 60000);
-const fire = () => { try { window.sdk.showBanner(); } catch (e) { return end(); } setTimeout(() => { if (!shown) end(); }, reward ? 7000 : 4000); };   // (no ad came: nothing to wait for; a key waits a little longer for the ad request)
+const fire = () => { try { window.sdk.showBanner(); } catch (e) { return end(); } setTimeout(() => { if (!shown && !promoWatch()) end(); }, reward ? 7000 : 4000); };   // (no ad came: nothing to wait for; a key waits a little longer for the ad request)
 // the game's own entry ad can be asked before the SDK script has arrived (it loads from GameMonetize): wait for it up to 6 s, then go on without an ad
 let n = 0; const wait = () => { if (window.sdk && window.sdk.showBanner) return fire(); if (++n > 24) return end(); setTimeout(wait, 250); };
 wait();

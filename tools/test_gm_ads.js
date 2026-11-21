@@ -78,6 +78,13 @@ setTimeout(() => window.SDK_OPTIONS && window.SDK_OPTIONS.onEvent({name: "SDK_RE
     await p.evaluate(() => { window.__gmRefuse = false; });
     ok(await p.evaluate(() => { const w = Y8.lastWhy; return /^next ad in ~\d+ s$/.test(w || "") || w === "no ad came"; }), "the line under the 'no ad' toast says when the next ad can come", await p.evaluate(() => Y8.lastWhy));
     const k3 = await key(); ok(k3.gave === 1 && k3.ads === 1, "the key works again after a refusal", k3);
+    // 3b. the real screen path of the owner's complaint (Nov 21: "the spin says watch an ad and no ad comes"): Minigames -> the spin card (its free try is used up) -> the window "Reklama ko'rish 0/5" -> its 📺 button -> one ad -> 1/5
+    await p.evaluate(() => { profile.freeT = {...(profile.freeT || {}), wheel: Date.now(), lucky: Date.now(), scratch: Date.now()}; profile.adSteps = {}; save(); go("mini"); }); await sleep(900);
+    const ui0 = await p.evaluate(() => { const c = document.querySelector('.mgc[data-act="wheel"]'); if (c) c.click(); return !!c; }); await sleep(900);
+    const ui1 = await p.evaluate(() => { const b = [...document.querySelectorAll("#modal button")].find(x => x.textContent.includes("📺")); if (!b) return { found: false }; const t = b.textContent.trim(); b.click(); return { found: true, t }; });
+    await sleep(3500);
+    const ui2 = await p.evaluate(() => ({ step: (profile.adSteps || {}).try_wheel | 0, busy: !!Y8.busy }));
+    ok(ui0 && ui1.found && ui2.step === 1 && !ui2.busy, "the spin card -> 'watch an ad 0/5' window -> its 📺 button shows an ad and the progress becomes 1/5", { ui0, ui1, ui2 });
     await p.context().close();
     // 4. the SDK script arrives 2.5 s late: the entry ad waits for it
     p = await open(OLD, "late", "late"); await sleep(7000);
