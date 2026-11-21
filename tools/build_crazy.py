@@ -16,6 +16,10 @@ def sub(old, new, count=1):
 
 PG = os.environ.get("PORTAL", "crazy") == "playgama"
 GM = os.environ.get("PORTAL", "crazy") == "gamemonetize"   # GameMonetize: PORTAL=gamemonetize GM_ID=<game id> python3 tools/build_crazy.py <dir> -> bilyard8-gamemonetize.zip
+if GM and "SQUEEZE" not in os.environ: os.environ["SQUEEZE"] = "1"   # GameMonetize: the pictures are squeezed (PSNR >= 36 dB each, smooth ones untouched): the zip stays under the 35.2 MB that went through; SQUEEZE= (empty) switches it off (the tests do, for speed)
+if GM and os.environ.get("SQUEEZE"):
+    try: import numpy, PIL   # the squeeze skips a picture silently when these are missing: then the zip would be the unsqueezed 36 MB one, which GameMonetize did not apply
+    except ImportError: sys.exit("GameMonetize build: the picture squeeze needs numpy and Pillow (try /usr/bin/python3); SQUEEZE= (empty) builds without it")
 GM_ID = os.environ.get("GM_ID", "esjcoyx21kbp842me139bq7bsc5vspio")
 GM_HEAD = r'''<script>
 // GameMonetize SDK: SDK_GAME_PAUSE / SDK_GAME_START come around every ad (the game is silent and does not take input while an ad is on)
@@ -394,11 +398,13 @@ if GM:
     # requested (asked 1, shown 0), while a game without a $ of its own (Icy Tower) got its ads.  In this build the game's helper is called $b8 (README, "GameMonetize: why no ad came").
     import jsrename
     assert "$b8" not in src, "the new name $b8 is already used in the page"
-    src, _n = jsrename.rename_in_page(src, "$", "$b8")
+    _before = len(src)
+    src, _n = jsrename.rename_in_page(src, "$", "$b8", strip=True)   # (the comments go too: GameMonetize did not apply an upload whose index.html was 6.1 MB, it did apply 5.8 MB and 3.9 MB: README, "GameMonetize ... applied late")
     if _n < 500 or "const $b8 = id => document.getElementById(id);" not in src: sys.exit(f"GameMonetize: the game's $ helper was not renamed properly ({_n} tokens)")
     _bad = re.findall(r"""\bon\w+\s*=\s*["'][^"']*\$\(""", src)
     if _bad: sys.exit("GameMonetize: an inline handler in the markup still calls $(: " + _bad[0][:80])
-    print("GameMonetize: the game's $ helper is $b8 now:", _n, "tokens")
+    print("GameMonetize: the game's $ helper is $b8 now:", _n, "tokens; comments stripped: index.html", _before, "->", len(src), "bytes")
+    if len(src) > 5_800_000: print("WARNING: index.html is over 5.8 MB: GameMonetize has not applied an upload with a 6.1 MB index.html (5.77 MB was applied)")
 os.makedirs(out, exist_ok=True)
 z = os.path.join(out, "bilyard8-playgama.zip" if PG else "bilyard8-gamemonetize.zip" if GM else "bilyard8-crazy.zip")
 with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:

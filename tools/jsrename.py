@@ -17,8 +17,9 @@ _PUNCT3 = ("...", "===", "!==", "**=", "<<=", ">>=", ">>>", "&&=", "||=", "??=")
 _PUNCT2 = ("=>", "?.", "??", "++", "--", "==", "!=", "<=", ">=", "&&", "||", "**", "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<", ">>")
 
 
-def rename_js(js, old, new):
-    """Returns (js with every identifier token `old` renamed to `new`, count).  `old` after a "." / "?." (a property name) is left alone."""
+def rename_js(js, old, new, strip=False):
+    """Returns (js with every identifier token `old` renamed to `new`, count).  `old` after a "." / "?." (a property name) is left alone.
+    strip=True also drops the comments (a line comment leaves its line break, a block comment leaves one space, or one line break when it held one: automatic semicolons behave the same)."""
     out, i, n, cnt = [], 0, len(js), 0
     prev = None            # last significant token: (kind, value); kind: id | kw | num | str | tpl | re | op
     prev2_value_like = False
@@ -50,11 +51,12 @@ def rename_js(js, old, new):
             out.append(c); i += 1; continue
         if js.startswith("//", i):
             j = js.find("\n", i); j = n if j < 0 else j
-            out.append(js[i:j]); i = j; continue
+            if not strip: out.append(js[i:j])
+            i = j; continue
         if js.startswith("/*", i):
             j = js.find("*/", i + 2)
             if j < 0: raise ValueError("unterminated comment")
-            out.append(js[i:j + 2]); i = j + 2; continue
+            out.append((("\n" if "\n" in js[i:j] else " ") if strip else js[i:j + 2])); i = j + 2; continue
         if c in "'\"":
             j = i + 1
             while j < n and js[j] != c:
@@ -115,11 +117,11 @@ def rename_js(js, old, new):
 _SCRIPT = re.compile(r"(<script\b(?![^>]*\bsrc=)[^>]*>)(.*?)(</script>)", re.S | re.I)
 
 
-def rename_in_page(page, old, new):
+def rename_in_page(page, old, new, strip=False):
     """Applies rename_js to every inline <script> block (not the ones with src=) of an HTML page; returns (page, total count)."""
     total = [0]
     def one(m):
-        body, k = rename_js(m.group(2), old, new); total[0] += k
+        body, k = rename_js(m.group(2), old, new, strip); total[0] += k
         return m.group(1) + body + m.group(3)
     return _SCRIPT.sub(one, page), total[0]
 
