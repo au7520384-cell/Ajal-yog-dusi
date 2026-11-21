@@ -82,9 +82,19 @@ window.__ev = []; window.SDK_OPTIONS = {gameId: "esjcoyx21kbp842me139bq7bsc5vspi
       }
     } else { await sleep(2500); await p.evaluate(() => { try { window.sdk.showBanner(); } catch (e) { window.__showErr = String(e); } }); }
     await sleep(imaErr ? 1500 : 3500);   // the fake video ad lasts 2.5 s
-    const info = await p.evaluate(() => ({ sdk: typeof window.sdk, ima: window.__ima, ev: window.__ev, gm: window.__gmN, busy: typeof Y8 !== "undefined" ? !!Y8.busy : null,
+    let info = await p.evaluate(() => ({ sdk: typeof window.sdk, ima: window.__ima, ev: window.__ev, gm: window.__gmN, busy: typeof Y8 !== "undefined" ? !!Y8.busy : null,
       overlayHidden: (() => { const o = document.getElementById("sdk__advertisement"); return !o || getComputedStyle(o).opacity === "0" || getComputedStyle(o).transform.indexOf("-9999") >= 0; })(), home: !!document.getElementById("home") }));
     if (kind === "game" && !imaErr) info.key = await p.evaluate(() => new Promise(res => { let gave = 0, failed = 0; y8Rewarded("test-key", () => gave++, () => failed++); setTimeout(() => res({ gave, failed, busy: !!Y8.busy, imaReqs: window.__ima.requests.length, why: Y8.lastWhy }), 9500); }));   // a 📺 key right after the entry ad: the real SDK refuses a second ad inside its gap
+    if (kind === "game" && !imaErr) info.key2 = await p.evaluate(() => new Promise(res => {   // 140 s later (the page's clock moved: the SDK reads new Date()): a 📺 key gets its ad and pays
+      const OD = Date, skew = 140000; window.Date = class extends OD { constructor(...a) { if (a.length) super(...a); else super(OD.now() + skew); } static now() { return OD.now() + skew; } };
+      let gave = 0, failed = 0; y8Rewarded("test-key", () => gave++, () => failed++); setTimeout(() => res({ gave, failed, busy: !!Y8.busy, imaReqs: window.__ima.requests.length }), 6000); }));
+    if (kind === "game" && imaErr) {   // no video fill: the first display ad (entry) is closed, 140 s later a 📺 key: the SDK's retry fails too, its display ad comes, the key pays when the player closes it
+      await sleep(6000); await p.evaluate(() => { const b = document.getElementById("promo-button"); if (b && /SKIP/i.test(b.textContent)) b.click(); }); await sleep(800);
+      await p.evaluate(() => { window.__keyRes = { gave: 0, failed: 0 }; const OD = Date, skew = 140000; window.Date = class extends OD { constructor(...a) { if (a.length) super(...a); else super(OD.now() + skew); } static now() { return OD.now() + skew; } }; y8Rewarded("test-key", () => window.__keyRes.gave++, () => window.__keyRes.failed++); });
+      await sleep(7000); const upBefore = await p.evaluate(() => { const e = document.getElementById("promo"); return !!e && getComputedStyle(e).display !== "none"; });
+      await sleep(5500); await p.evaluate(() => { const b = document.getElementById("promo-button"); if (b && /SKIP/i.test(b.textContent)) b.click(); }); await sleep(1500);
+      info = { ...info, keyPromo: { upBefore, ...(await p.evaluate(() => ({ ...window.__keyRes, busy: !!Y8.busy }))) } };
+    }
     await ctx.close(); return { reqs, errs, samples, ...info };
   };
   try {
@@ -101,9 +111,11 @@ window.__ev = []; window.SDK_OPTIONS = {gameId: "esjcoyx21kbp842me139bq7bsc5vspi
     ok(x.overlayHidden && x.home && x.busy === false, "this game: after the ad the overlay is gone and the game is back to normal", { hidden: x.overlayHidden, home: x.home, busy: x.busy });
     ok(x.errs.length === 0, "this game: no page errors", x.errs.slice(0, 3));
     ok(x.key && x.key.gave === 0 && x.key.failed === 1 && !x.key.busy && x.key.imaReqs === 1, "this game: a 📺 key right after the entry ad is refused by the SDK's own gap (no 2nd ad request, no prize, not stuck)", x.key);
+    ok(x.key2 && x.key2.gave === 1 && x.key2.failed === 0 && !x.key2.busy && x.key2.imaReqs === 2, "this game: 140 s later the same 📺 key gets an ad from the SDK and pays (a 2nd ad request)", x.key2);
     x = await run("game", true);
     ok(x.ima.requests.length === 2 && /GameMonetize\.com-ADX-AFG-Preroll-Ads/.test(x.ima.requests[1]), "no fill: the SDK retries once with its ADX tag", x.ima.requests.map(u => u.slice(0, 120)));
     ok(x.reqs.some(u => /dataxxx\.json/.test(u)) && x.samples.length > 0 && x.samples.every(s => s.promo && s.centre === "promo" && s.corner === "promo" && /You can skip this in \d+ secs/.test(s.skip)), "no fill: the SDK's display ad (\"You can skip this in N secs\") covers the whole game", x.samples);
+    ok(x.keyPromo && x.keyPromo.upBefore && x.keyPromo.gave === 1 && x.keyPromo.failed === 0 && !x.keyPromo.busy, "no fill: a 📺 key gets the SDK's display ad (covers the game) and pays when the player closes it", x.keyPromo);
     ok(x.busy === false && x.home && x.errs.length === 0, "no fill: the game is not stuck and no page errors", { busy: x.busy, errs: x.errs.slice(0, 3) });
   } finally { await b.close(); try { fs.rmSync(tmp, { recursive: true, force: true }); } catch (e) {} }
   console.log(`pass ${pass}, fail ${fail}`); process.exit(fail ? 1 : 0);
