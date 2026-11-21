@@ -43,7 +43,7 @@ window.__ev = []; window.SDK_OPTIONS = {gameId: "esjcoyx21kbp842me139bq7bsc5vspi
 </script>${extra || ""}</head><body><div id="x">bare page</div></body></html>`;
 (async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8gmreal-")), site = path.join(tmp, "site");
-  const r = spawnSync("python3", [path.join(ROOT, "tools", "build_crazy.py"), path.join(tmp, "out")], { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 26, env: { ...process.env, PORTAL: "gamemonetize", INLINE_UNDER: "6000" } });
+  const r = spawnSync("python3", [path.join(ROOT, "tools", "build_crazy.py"), path.join(tmp, "out")], { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 26, env: { ...process.env, PORTAL: "gamemonetize", INLINE_UNDER: "6000", SQUEEZE: "" } });
   ok(r.status === 0, "the GameMonetize build is made", (r.stderr || "").slice(-300)); if (r.status) { console.log(`pass ${pass}, fail ${fail}`); process.exit(1); }
   fs.mkdirSync(site); ok(spawnSync("python3", ["-I", "-m", "zipfile", "-e", path.join(tmp, "out", "bilyard8-gamemonetize.zip"), site]).status === 0, "the zip unpacks");
   const b = await chromium.launch();

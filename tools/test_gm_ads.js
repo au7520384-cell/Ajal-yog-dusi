@@ -21,7 +21,7 @@ window.sdk = {showBanner() { window.__gm.calls++; try { $.getJSON("https://api.g
 setTimeout(() => window.SDK_OPTIONS && window.SDK_OPTIONS.onEvent({name: "SDK_READY"}), 100);`;
 (async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8gm-")), dir = path.join(tmp, "site");
-  const r = spawnSync("python3", [path.join(ROOT, "tools", "build_crazy.py"), path.join(tmp, "out")], { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 26, env: { ...process.env, PORTAL: "gamemonetize", INLINE_UNDER: "6000" } });
+  const r = spawnSync("python3", [path.join(ROOT, "tools", "build_crazy.py"), path.join(tmp, "out")], { cwd: ROOT, encoding: "utf8", maxBuffer: 1 << 26, env: { ...process.env, PORTAL: "gamemonetize", INLINE_UNDER: "6000", SQUEEZE: "" } });
   ok(r.status === 0, "the GameMonetize build is made", (r.stderr || "").slice(-300)); if (r.status) { console.log(`pass ${pass}, fail ${fail}`); process.exit(1); }
   fs.mkdirSync(dir); ok(spawnSync("python3", ["-I", "-m", "zipfile", "-e", path.join(tmp, "out", "bilyard8-gamemonetize.zip"), dir]).status === 0, "the zip unpacks");
   // the game's own helper is not called $ in this build (the SDK's jQuery owns that name): a real parser finds no reference to $ left in any inline script, and every script parses
