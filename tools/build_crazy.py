@@ -186,7 +186,7 @@ try { P.on(EV.AUDIO_STATE_CHANGED, en => { audioOn = en !== false; applyAudio();
 try { P.on(EV.PAUSE_STATE_CHANGED, p => { paused = !!p; if (paused) { try { input.charging = false; input.drag = null; input.power = 0; } catch (e) {} } b8Pause(paused, () => { paused = false; applyAudio(); }); applyAudio(); }); } catch (e) {}
 // the first playable frame: the logo splash is gone and the game accepts input
 let sent = false; Y8.gameReady = false;   // (Y8.gameReady turns true right after the message went out: an interstitial asked earlier waits for it, see showAd)
-const ready = () => { if (sent) return; sent = true; try { const r = P.sendMessage("game_ready"); if (r && r.catch) r.catch(() => {}); } catch (e) {} Y8.gameReady = true; };
+const ready = () => { if (sent) return; sent = true; try { const r = P.sendMessage("game_ready"); if (r && r.catch) r.catch(() => {}); } catch (e) {} Y8.gameReady = true; setTimeout(pgAchSync, 2000); };
 const t0 = Date.now(), iv = setInterval(() => { if (!document.getElementById("boot") || Date.now() - t0 > 7000) { clearInterval(iv); setTimeout(ready, 400); } }, 250);
 }
 // A REAL pause. The platform's pause message (an ad is on, the tab is hidden, the platform's own menu is open; Playgama's certification asks "Did the game pause?") used to silence the game only. Now a solo / bot / practice match STANDS STILL:
@@ -217,6 +217,16 @@ function b8Frz() {   // true while the match stands still; every call also moves
     if (G.handUntil) G.handUntil += d;
   }
   return true;
+}
+// Achievements (Playgama's Bridge docs: declare them in the config - id / name / description, see tools/pg_achievements.json - and unlock each one ONCE, when it is earned; Bridge keeps them for the platform; they are not asked back, the game's own window shows them).
+// The 9 main ones go through the game's unlock() -> y8Achievement() -> awardAchievement (above); the 62 of the second set (profile.ach2, checkAch()) go through pgAch() (patched in); what a player earned BEFORE this build is sent once (profile.pgAchSync).
+function pgAch(id) { try { if (Y8.sdk && id) return Y8.sdk.awardAchievement({achievementKey: String(id)}); } catch (e) {} }
+function pgAchSync() {
+  try {
+    if (profile.pgAchSync === 1) return;
+    Object.keys(profile.ach || {}).concat(Object.keys(profile.ach2 || {})).forEach(pgAch);
+    profile.pgAchSync = 1; save();
+  } catch (e) {}
 }
 // Playgama's leaderboard in "in_game" mode (bridge.leaderboards.type === "in_game"; the certification step "Leaderboards" said "Leaderboard entries were not requested"): the platform keeps the scores (setScore, see saveLeaderboardScore above)
 // and the GAME draws the table from getEntries(id). The leaderboard screen then has a "Playgama" tab, and it is the one that opens first, so the entries are asked for when the screen opens.
@@ -379,6 +389,8 @@ if PG:
                        ("FXS = Math.min(3, Math.max(0, (now - lastDraw) / STEP_MS)); lastDraw = now;", "FXS = Math.min(3, Math.max(0, (now - lastDraw) / STEP_MS)); lastDraw = now; if (b8Frz()) FXS = 0;")):
         assert src.count(_old) == 1, "the game's frame loop changed, the pause patch does not fit: " + _old[:60]
         sub(_old, _new)
+    # the second set of achievements (profile.ach2, awarded in checkAch) goes to the platform too, each once (pgAch in PG_JS; the 9 main ones already do through unlock() -> y8Achievement())
+    sub("fresh.forEach((a, k) => { profile.ach2[a.id] = Date.now() + k; });", "fresh.forEach((a, k) => { profile.ach2[a.id] = Date.now() + k; pgAch(a.id); });")
     # Playgama's leaderboard in "in_game" mode (pgLbOn / pgLbOpen / pgLeader in PG_JS): a "Playgama" tab on the leaderboard screen, hidden unless the platform says in_game; the screen opens on it and asks the platform for the entries (getEntries)
     sub('<button class="tab" data-lb="clubs">🛡 Klub ligalari</button>\n</div>', '<button class="tab" data-lb="clubs">🛡 Klub ligalari</button><button class="tab" data-lb="pg" id="lbPgTab" style="display:none">🎮 Playgama</button>\n</div>')
     sub('if (id === "leader") buildLeader();', 'if (id === "leader") { pgLbOpen(); buildLeader(); }')
@@ -410,10 +422,13 @@ var go = function () {
     src = src[:j] + LOADER + src[j:]
 PG_ACH = [("first_win", "First Win"), ("double", "Double Pot"), ("breakpot", "Power Break"), ("runout", "Clean Table"), ("champ", "Tournament Champion"), ("lucky", "Bullseye"), ("streak7", "Loyal Player"), ("rich", "Rich"), ("collector", "Collector")]   # the game's Y8_ACH table
 import json
+# every achievement of the game (the 9 main ones + the 62 of the second set), English name + description as the game shows them: tools/pg_achievements.js writes the file, tools/test_playgama_achievements.js checks it is current. The Y8 names (PG_ACH) stay for the first nine
+_ach = json.load(open(os.path.join(root, "tools", "pg_achievements.json"), encoding="utf-8"))
+assert all(k in [a["id"] for a in _ach] for k, _ in PG_ACH), "tools/pg_achievements.json lacks a main achievement"
 # "initialInterstitialDelay": 0 - Bridge's own default refuses EVERY interstitial in the first 30 s after game_ready (state "failed", no ad: the owner's "Playgamada kirganda reklama qo'ymayapti"), and the game's entry ad is asked right when it opens
 _cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "initialInterstitialDelay": 0, "interstitial": {"placements": [{"id": "between_matches"}, {"id": "game_start"}]}},
         "leaderboards": [{"id": "main", "isMain": True}],
-        "achievements": [{"id": k, "name": v, "y8": {"achievement": v, "achievementkey": k}} for k, v in PG_ACH]}
+        "achievements": [dict({"id": a["id"], "name": a["name"], "description": a["description"]}, **({"y8": {"achievement": dict(PG_ACH)[a["id"]], "achievementkey": a["id"]}} if a["id"] in dict(PG_ACH) else {})) for a in _ach]}
 if os.environ.get("PG_SAAS_TOKEN"):   # Playgama's own leaderboard service (Bridge SaaS): the public token from the developer dashboard (it is meant to sit in the game files)
     _cfg["saas"] = {"publicToken": os.environ["PG_SAAS_TOKEN"], "leaderboards": {"platforms": ["playgama", "qa_tool"]}}
 PG_CONFIG = json.dumps(_cfg, indent=2) + "\n"

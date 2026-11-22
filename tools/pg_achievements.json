@@ -1,0 +1,357 @@
+[
+ {
+  "id": "first_win",
+  "name": "First Win",
+  "description": "Win a 1-on-1 game"
+ },
+ {
+  "id": "double",
+  "name": "Double Trouble",
+  "description": "Pot 2 balls in a single shot"
+ },
+ {
+  "id": "breakpot",
+  "name": "Power Break",
+  "description": "Pot a ball on the break"
+ },
+ {
+  "id": "runout",
+  "name": "Clean Table",
+  "description": "Win without your opponent potting a ball"
+ },
+ {
+  "id": "champ",
+  "name": "Tournament Champion",
+  "description": "Win a tournament"
+ },
+ {
+  "id": "lucky",
+  "name": "Sharp Aim",
+  "description": "Hit the center on a Lucky Shot"
+ },
+ {
+  "id": "streak7",
+  "name": "Loyal Player",
+  "description": "7-day streak"
+ },
+ {
+  "id": "rich",
+  "name": "Rich",
+  "description": "Collect 10 000 coins"
+ },
+ {
+  "id": "collector",
+  "name": "Collector",
+  "description": "Buy 3 cues"
+ },
+ {
+  "id": "w1",
+  "name": "First Step",
+  "description": "Win 1 games"
+ },
+ {
+  "id": "w10",
+  "name": "Honored Player",
+  "description": "Win 10 games"
+ },
+ {
+  "id": "w100",
+  "name": "8 Ball Pro",
+  "description": "Win 100 games"
+ },
+ {
+  "id": "w1000",
+  "name": "8 Ball Master",
+  "description": "Win 1 000 games"
+ },
+ {
+  "id": "w10000",
+  "name": "8 Ball Legend",
+  "description": "Win 10 000 games"
+ },
+ {
+  "id": "p100",
+  "name": "Veteran",
+  "description": "Pot 100 balls"
+ },
+ {
+  "id": "p1000",
+  "name": "Pro Potter",
+  "description": "Pot 1 000 balls"
+ },
+ {
+  "id": "p10000",
+  "name": "Master Potter",
+  "description": "Pot 10 000 balls"
+ },
+ {
+  "id": "s3",
+  "name": "Hot Hand",
+  "description": "Win 3 in a row"
+ },
+ {
+  "id": "s5",
+  "name": "Fiery Streak",
+  "description": "Win 5 in a row"
+ },
+ {
+  "id": "s10",
+  "name": "Unstoppable",
+  "description": "Win 10 in a row"
+ },
+ {
+  "id": "l10",
+  "name": "Off We Go",
+  "description": "Reach level 10"
+ },
+ {
+  "id": "l25",
+  "name": "Experienced",
+  "description": "Reach level 25"
+ },
+ {
+  "id": "l50",
+  "name": "Halfway There",
+  "description": "Reach level 50"
+ },
+ {
+  "id": "l100",
+  "name": "Road of Life",
+  "description": "Reach level 100"
+ },
+ {
+  "id": "t1",
+  "name": "Trophy Owner",
+  "description": "Win 1 tournaments"
+ },
+ {
+  "id": "t10",
+  "name": "Trophy Hunter",
+  "description": "Win 10 tournaments"
+ },
+ {
+  "id": "t50",
+  "name": "King of Trophies",
+  "description": "Win 50 tournaments"
+ },
+ {
+  "id": "c10",
+  "name": "Collector",
+  "description": "Collect 10 cues"
+ },
+ {
+  "id": "c50",
+  "name": "Big Collection",
+  "description": "Collect 50 cues"
+ },
+ {
+  "id": "c100",
+  "name": "Museum",
+  "description": "Collect 100 cues"
+ },
+ {
+  "id": "city_lon",
+  "name": "London Master",
+  "description": "Get the London ring"
+ },
+ {
+  "id": "city_syd",
+  "name": "Sydney Master",
+  "description": "Get the Sydney ring"
+ },
+ {
+  "id": "city_lis",
+  "name": "Lisbon Master",
+  "description": "Get the Lisbon ring"
+ },
+ {
+  "id": "city_mad",
+  "name": "Madrid Master",
+  "description": "Get the Madrid ring"
+ },
+ {
+  "id": "city_tok",
+  "name": "Tokyo Master",
+  "description": "Get the Tokyo ring"
+ },
+ {
+  "id": "city_veg",
+  "name": "Las Vegas Master",
+  "description": "Get the Las Vegas ring"
+ },
+ {
+  "id": "city_bue",
+  "name": "Buenos Aires Master",
+  "description": "Get the Buenos Aires ring"
+ },
+ {
+  "id": "city_jak",
+  "name": "Jakarta Master",
+  "description": "Get the Jakarta ring"
+ },
+ {
+  "id": "city_tor",
+  "name": "Toronto Master",
+  "description": "Get the Toronto ring"
+ },
+ {
+  "id": "city_mex",
+  "name": "Mexico City Master",
+  "description": "Get the Mexico City ring"
+ },
+ {
+  "id": "city_cai",
+  "name": "Cairo Master",
+  "description": "Get the Cairo ring"
+ },
+ {
+  "id": "city_dub",
+  "name": "Dubai Master",
+  "description": "Get the Dubai ring"
+ },
+ {
+  "id": "city_sin",
+  "name": "Singapore Master",
+  "description": "Get the Singapore ring"
+ },
+ {
+  "id": "city_sha",
+  "name": "Shanghai Master",
+  "description": "Get the Shanghai ring"
+ },
+ {
+  "id": "city_par",
+  "name": "Paris Master",
+  "description": "Get the Paris ring"
+ },
+ {
+  "id": "city_ams",
+  "name": "Amsterdam Master",
+  "description": "Get the Amsterdam ring"
+ },
+ {
+  "id": "city_rom",
+  "name": "Rome Master",
+  "description": "Get the Rome ring"
+ },
+ {
+  "id": "city_bkk",
+  "name": "Bangkok Master",
+  "description": "Get the Bangkok ring"
+ },
+ {
+  "id": "city_kul",
+  "name": "Kuala Lumpur Master",
+  "description": "Get the Kuala Lumpur ring"
+ },
+ {
+  "id": "city_seo",
+  "name": "Seoul Master",
+  "description": "Get the Seoul ring"
+ },
+ {
+  "id": "city_mum",
+  "name": "Mumbai Master",
+  "description": "Get the Mumbai ring"
+ },
+ {
+  "id": "city_ath",
+  "name": "Athens Master",
+  "description": "Get the Athens ring"
+ },
+ {
+  "id": "city_ber",
+  "name": "Berlin Master",
+  "description": "Get the Berlin ring"
+ },
+ {
+  "id": "city_ist",
+  "name": "Istanbul Master",
+  "description": "Get the Istanbul ring"
+ },
+ {
+  "id": "city_cas",
+  "name": "Casablanca Master",
+  "description": "Get the Casablanca ring"
+ },
+ {
+  "id": "city_osa",
+  "name": "Osaka Master",
+  "description": "Get the Osaka ring"
+ },
+ {
+  "id": "city_tas",
+  "name": "Tashkent Master",
+  "description": "Get the Tashkent ring"
+ },
+ {
+  "id": "city_rio",
+  "name": "Rio Master",
+  "description": "Get the Rio ring"
+ },
+ {
+  "id": "city_nyc",
+  "name": "New York Master",
+  "description": "Get the New York ring"
+ },
+ {
+  "id": "city_mos",
+  "name": "Moscow Master",
+  "description": "Get the Moscow ring"
+ },
+ {
+  "id": "lg1",
+  "name": "Silver Medal League",
+  "description": "Reach the Silver Medal League"
+ },
+ {
+  "id": "lg2",
+  "name": "Medal League League",
+  "description": "Reach the Medal League League"
+ },
+ {
+  "id": "lg3",
+  "name": "Precise Shot League",
+  "description": "Reach the Precise Shot League"
+ },
+ {
+  "id": "lg4",
+  "name": "Fast Play League",
+  "description": "Reach the Fast Play League"
+ },
+ {
+  "id": "lg5",
+  "name": "Billiard Master League",
+  "description": "Reach the Billiard Master League"
+ },
+ {
+  "id": "lg6",
+  "name": "Diamond Rack League",
+  "description": "Reach the Diamond Rack League"
+ },
+ {
+  "id": "lg7",
+  "name": "Swift Strike League",
+  "description": "Reach the Swift Strike League"
+ },
+ {
+  "id": "lg8",
+  "name": "Legendary Champion League",
+  "description": "Reach the Legendary Champion League"
+ },
+ {
+  "id": "lg9",
+  "name": "Nine-Ball Champion League",
+  "description": "Reach the Nine-Ball Champion League"
+ },
+ {
+  "id": "club",
+  "name": "Team Player",
+  "description": "Join a club"
+ },
+ {
+  "id": "vip1",
+  "name": "VIP",
+  "description": "Reach VIP level 2"
+ }
+]
