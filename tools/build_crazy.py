@@ -170,7 +170,8 @@ if (kind === "interstitial" && !Y8.gameReady) { let n = 0; const wait = () => { 
 saveData: bye, loadData: bye, trackCustomEvent: bye,
 // achievements: the game unlocks each one once; Bridge tracks them (locally on Playgama, natively on Y8 / Lagged, ids in the config)
 awardAchievement(o) { try { const k = String(o.achievementKey || ""); if (k && !achSent.has(k) && B.achievements) { achSent.add(k); return Promise.resolve(B.achievements.unlock(k)).catch(() => {}); } } catch (e) {} return bye(); }, showAchievements: bye, showLeaderboard: bye, login() {},
-// the total winnings go to the platform's leaderboard where there is one (Facebook, Yandex, Y8 ... through Playgama); on Playgama itself the type is "not_available", then nothing is sent
+// the total winnings go to the platform's leaderboard where there is one (Facebook, Yandex, Y8 ... through Playgama); on Playgama itself the type is "not_available" (nothing is sent) unless the config carries the Bridge SaaS public token:
+// then Bridge reports "in_game" and setScore goes to Playgama's own leaderboard service (see PG_SAAS_TOKEN below)
 saveLeaderboardScore(o) { try { const L = B.leaderboards; if (L && L.type && L.type !== "not_available") return Promise.resolve(L.setScore("main", Math.max(0, Math.floor(+o.points || 0)))).catch(() => {}); } catch (e) {} return bye(); },
 };
 let rewardedOk = false; try { rewardedOk = !!A.isRewardedSupported; } catch (e) {}
@@ -247,6 +248,8 @@ function pgLeader() {
   let p; try { p = Promise.resolve(L.getEntries(PG_LB_ID)); } catch (e) { p = Promise.reject(e); }
   p.then(en => {
     if (!alive()) return;
+    // Bridge SaaS hands over the backend's JSON as it is (it does not look at the HTTP status): a table inside a wrapper is used, an object without a table (an error answer, e.g. the leaderboard is not created in the dashboard yet) counts as no connection
+    if (en && typeof en === "object" && !Array.isArray(en)) { const w = ["entries", "data", "items", "results", "leaderboard", "rows"].map(k => en[k]).find(Array.isArray); if (!w) throw new Error("no table"); en = w; }
     en = Array.isArray(en) ? en : [];
     const ea = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
     let mine = ""; try { mine = String(window.bridge.player.id); } catch (e) {}
@@ -429,8 +432,26 @@ assert all(k in [a["id"] for a in _ach] for k, _ in PG_ACH), "tools/pg_achieveme
 _cfg = {"advertisement": {"minimumDelayBetweenInterstitial": 60, "initialInterstitialDelay": 0, "interstitial": {"placements": [{"id": "between_matches"}, {"id": "game_start"}]}},
         "leaderboards": [{"id": "main", "isMain": True}],
         "achievements": [dict({"id": a["id"], "name": a["name"], "description": a["description"]}, **({"y8": {"achievement": dict(PG_ACH)[a["id"]], "achievementkey": a["id"]}} if a["id"] in dict(PG_ACH) else {})) for a in _ach]}
-if os.environ.get("PG_SAAS_TOKEN"):   # Playgama's own leaderboard service (Bridge SaaS): the public token from the developer dashboard (it is meant to sit in the game files)
-    _cfg["saas"] = {"publicToken": os.environ["PG_SAAS_TOKEN"], "leaderboards": {"platforms": ["playgama", "qa_tool"]}}
+# Playgama's own leaderboard service (Bridge SaaS, wiki: Bridge SDK -> SaaS): the PUBLIC token of the game's card in the developer dashboard (Bridge SaaS section, at the top of the page; it is meant to sit in the game files).
+# With it, Bridge 2.4.x turns the SaaS leaderboards on for the platforms playgama / playgama_sandbox / standalone by itself (their `saas` check: platform in that list AND a public token): bridge.leaderboards.type becomes "in_game",
+# setScore / getEntries go to Playgama's backend (api.playgama.com/api/bridge/v1) instead of the platform, which has no leaderboard of its own ("playgama" is under "does not support" in the leaderboards docs).
+# The token comes from the environment (PG_SAAS_TOKEN) or from tools/pg_saas_token.txt (one line, committed: it is public by design); neither = no `saas` block = the build of before.
+# `qa_tool` is NOT listed (the wiki's example lists it): the QA tool plays the leaderboard step itself, through its own platform bridge (it sets the type "in_game" / "not supported" and sees the getEntries / setScore messages);
+# with SaaS on for it the calls would go to the backend instead and the tool would never see them. PG_SAAS_QA=1 adds it back (only if Playgama says the tool needs it).
+def _pg_saas_token():
+    t = os.environ.get("PG_SAAS_TOKEN")
+    if t is None:
+        f = os.path.join(root, "tools", "pg_saas_token.txt")
+        t = open(f, encoding="utf-8").read() if os.path.exists(f) else ""
+    t = t.strip()
+    if t and not re.fullmatch(r"[A-Za-z0-9_.\-]{8,200}", t):
+        sys.exit("PG_SAAS_TOKEN / tools/pg_saas_token.txt: this does not look like a public token (8-200 letters, digits, - _ . only, no spaces; got %d characters)" % len(t))   # (the value itself is not echoed)
+    return t
+import re
+_tok = _pg_saas_token() if PG else ""   # (the other portals neither read the file nor care what it holds)
+if _tok:
+    _cfg["saas"] = {"publicToken": _tok}
+    if os.environ.get("PG_SAAS_QA") == "1": _cfg["saas"]["leaderboards"] = {"platforms": ["playgama", "qa_tool"]}
 PG_CONFIG = json.dumps(_cfg, indent=2) + "\n"
 
 # light build: every embedded picture becomes a real file in img/ (no base64 growth, and a picture is only downloaded when the game actually shows it)
