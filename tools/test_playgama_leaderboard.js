@@ -23,7 +23,7 @@ const MOCK = (store, lb) => `(function () {
     player: {id: "p-me"},
     leaderboards: {type: LB.type,
       setScore: function (id, s) { window.__lb.push("set:" + id + ":" + s); return Promise.resolve(); },
-      getEntries: function (id) { window.__lb.push("get:" + id); return LB.reject ? Promise.reject(new Error("no")) : new Promise(function (r) { setTimeout(function () { r(LB.entries || []); }, 60); }); },
+      getEntries: function (id) { window.__lb.push("get:" + id); return LB.reject ? Promise.reject(new Error("no")) : new Promise(function (r) { setTimeout(function () { r(LB.raw !== undefined ? LB.raw : (LB.entries || [])); }, 60); }); },   // (raw: the answer as it is, like Bridge SaaS hands over its backend's JSON)
       showNativePopup: function (id) { window.__lb.push("popup:" + id); return Promise.resolve(); }}};
 })();`;
 
@@ -100,6 +100,13 @@ const ENT = [
     p = await open("reject", { type: "in_game", reject: true }); await p.evaluate(() => go("leader")); await sleep(600); v = await view(p);
     ok(v.scope === "pg" && v.rows === 0 && /📡/.test(v.text), "a failed request shows the 'can't reach' message", v.text);
     await p.evaluate(() => go("home")); await sleep(300); ok(await p.evaluate(() => document.querySelector(".screen.on").id === "home"), "...and the screen can be left");
+    await p.context().close();
+    // 5b. Bridge SaaS hands over its backend's JSON as it is: a table in a wrapper is used, an object without a table (an error answer) counts as no connection
+    p = await open("wrapped", { type: "in_game", raw: { entries: ENT } }); await p.evaluate(() => go("leader")); await sleep(600); v = await view(p);
+    ok(v.scope === "pg" && v.rows === 5 && /Alpha/.test(v.text), "a table inside a wrapper ({entries: [...]}) is drawn", { scope: v.scope, rows: v.rows });
+    await p.context().close();
+    p = await open("errobj", { type: "in_game", raw: { error: "Leaderboard not found" } }); await p.evaluate(() => go("leader")); await sleep(600); v = await view(p);
+    ok(v.scope === "pg" && v.rows === 0 && /📡/.test(v.text), "an object without a table (an error answer) shows the 'can't reach' line", v.text);
     await p.context().close();
 
     // 6. the other modes: no tab, no request, the game's own screen
