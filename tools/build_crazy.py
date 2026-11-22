@@ -183,11 +183,40 @@ let audioOn = P.isAudioEnabled !== false, paused = false;
 const applyAudio = () => { window.__B8_MUTE = !audioOn || paused; try { Snd.setMuted(!!profile.muted); } catch (e) {} };   // __B8_MUTE: the platform's silence, kept apart from the player's own mute switch
 applyAudio();
 try { P.on(EV.AUDIO_STATE_CHANGED, en => { audioOn = en !== false; applyAudio(); }); } catch (e) {}
-try { P.on(EV.PAUSE_STATE_CHANGED, p => { paused = !!p; if (paused) { try { input.charging = false; input.drag = null; input.power = 0; } catch (e) {} } applyAudio(); }); } catch (e) {}
+try { P.on(EV.PAUSE_STATE_CHANGED, p => { paused = !!p; if (paused) { try { input.charging = false; input.drag = null; input.power = 0; } catch (e) {} } b8Pause(paused, () => { paused = false; applyAudio(); }); applyAudio(); }); } catch (e) {}
 // the first playable frame: the logo splash is gone and the game accepts input
 let sent = false; Y8.gameReady = false;   // (Y8.gameReady turns true right after the message went out: an interstitial asked earlier waits for it, see showAd)
 const ready = () => { if (sent) return; sent = true; try { const r = P.sendMessage("game_ready"); if (r && r.catch) r.catch(() => {}); } catch (e) {} Y8.gameReady = true; };
 const t0 = Date.now(), iv = setInterval(() => { if (!document.getElementById("boot") || Date.now() - t0 > 7000) { clearInterval(iv); setTimeout(ready, 400); } }, 250);
+}
+// A REAL pause. The platform's pause message (an ad is on, the tab is hidden, the platform's own menu is open; Playgama's certification asks "Did the game pause?") used to silence the game only. Now a solo / bot / practice match STANDS STILL:
+// the balls, the bot's thinking and shot, the turn clock (its number and its ring), the intro and the banners all wait, and go on from the same moment when the platform says "go on" (the clocks of the match are moved on by the time that passed).
+// An ONLINE match (G.net) is only silenced: the opponent's clock keeps running and one side cannot stop the table. frame() asks b8Frz() (patched in by tools/build_crazy.py, Playgama only).
+var b8PauseAt = 0, b8PauseSince = 0, b8PauseTimer = 0, B8_PAUSE_MAX = 180000;
+function b8Pause(on, release) {
+  if (on) {
+    if (!b8PauseAt) b8PauseAt = b8PauseSince = performance.now();
+    // a "go on" message that never comes must not freeze the solo matches for good: a visible page that has been paused for minutes (no ad lasts that long) goes on by itself
+    if (!b8PauseTimer) b8PauseTimer = setInterval(() => { if (b8PauseAt && document.visibilityState === "visible" && performance.now() - b8PauseSince > B8_PAUSE_MAX) { b8Pause(false); try { release && release(); } catch (e) {} } }, 1000);
+    return;
+  }
+  b8Frz(); b8PauseAt = 0; clearInterval(b8PauseTimer); b8PauseTimer = 0;
+}
+function b8Frz() {   // true while the match stands still; every call also moves the match's clocks on by the time that has passed since the last call, so the turn clock shows the same number before and after the pause
+  if (!b8PauseAt) return false;
+  const G = game; if (!G || G.net) return false;
+  const now = performance.now(), d = now - b8PauseAt; b8PauseAt = now;
+  if (d > 0) {
+    G.turnStart += d;
+    if (G.intro) G.intro.t0 += d;
+    if (G.banner) G.banner.t0 += d;
+    if (G.pill) G.pill.until += d;
+    for (const b of G.bubbles) if (b) { b.until += d; if (b.t0) b.t0 += d; }
+    if (G.venue && G.venue.t0) G.venue.t0 += d;
+    if (G.movingSince) G.movingSince += d;
+    if (G.handUntil) G.handUntil += d;
+  }
+  return true;
 }
 '''
 GM_JS = r'''
@@ -312,6 +341,12 @@ if PG:
     # the platform's silence (audio off / paused) also holds for a sound engine that starts later, and survives the game's own setMuted calls
     sub("master = ac.createGain(); master.gain.value = profile.muted ? 0 : level();", "master = ac.createGain(); master.gain.value = (profile.muted || window.__B8_MUTE) ? 0 : level();")
     sub("setMuted(m) { if (master) master.gain.setTargetAtTime(m ? 0 : level(), ac.currentTime, 0.02); },", "setMuted(m) { if (master) master.gain.setTargetAtTime(m || window.__B8_MUTE ? 0 : level(), ac.currentTime, 0.02); },")
+    # a REAL pause (b8Pause / b8Frz in PG_JS): while the platform says "pause" a solo / bot match does not step (physics, the bot, its clocks), its animation clocks stand and the bot does not think; an online match is only silenced (b8Frz answers false for it)
+    for _old, _new in (("try { update(); watchdog(); } catch (e) { onFrameError(e); }", "try { if (!b8Frz()) { update(); watchdog(); } } catch (e) { onFrameError(e); }"),
+                       ("try { if (game && game.aiGen) aiStep(game); render(); }", "try { if (game && game.aiGen && !b8Frz()) aiStep(game); render(); }"),
+                       ("FXS = Math.min(3, Math.max(0, (now - lastDraw) / STEP_MS)); lastDraw = now;", "FXS = Math.min(3, Math.max(0, (now - lastDraw) / STEP_MS)); lastDraw = now; if (b8Frz()) FXS = 0;")):
+        assert src.count(_old) == 1, "the game's frame loop changed, the pause patch does not fit: " + _old[:60]
+        sub(_old, _new)
     # ads: no own counters or timers, Bridge decides when an interstitial is really shown; the reward gate stays only for rewarded video
     sub("if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {", "if (Y8.sdk && !profile.adfree) {")
     sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
