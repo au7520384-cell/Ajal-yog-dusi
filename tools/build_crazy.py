@@ -218,6 +218,38 @@ function b8Frz() {   // true while the match stands still; every call also moves
   }
   return true;
 }
+// Playgama's leaderboard in "in_game" mode (bridge.leaderboards.type === "in_game"; the certification step "Leaderboards" said "Leaderboard entries were not requested"): the platform keeps the scores (setScore, see saveLeaderboardScore above)
+// and the GAME draws the table from getEntries(id). The leaderboard screen then has a "Playgama" tab, and it is the one that opens first, so the entries are asked for when the screen opens.
+// In every other mode (not_available, native_popup, no Bridge) nothing changes: no tab, no request. The game's own server leaderboard stays in its other tabs.
+var PG_LB_ID = "main";
+function pgLbOn() { try { const L = window.bridge && window.bridge.leaderboards; return !!L && String(L.type) === "in_game" && typeof L.getEntries === "function"; } catch (e) { return false; } }
+function pgLbOpen() {   // the leaderboard screen is opening
+  const on = pgLbOn(), t = document.getElementById("lbPgTab"); if (t) t.style.display = on ? "" : "none";
+  if (on) lbScope = "pg"; else if (lbScope === "pg") lbScope = "world";
+}
+function pgLbHead() { const c = document.querySelector("#leader .lbcols"); if (c) c.style.display = lbScope === "pg" ? "none" : ""; }   // (its "weekly winnings" label is for the game's own tabs)
+function pgLeader() {
+  const list = $("lbList"), tok = pgLeader.tok = (pgLeader.tok | 0) + 1, alive = () => tok === pgLeader.tok && lbScope === "pg";
+  $("lbInfo").innerHTML = '<div class="lbemb"><span>🎮</span></div><div><div class="ttl">Playgama</div></div>';
+  list.innerHTML = `<div class="muted" style="text-align:center;padding:20px">${T("Yuklanmoqda…")}</div>`; lbDecoFit();
+  const L = window.bridge.leaderboards, won = Math.max(0, Math.floor(+profile.won || 0));
+  if (won > 0) { try { Promise.resolve(L.setScore(PG_LB_ID, won)).catch(() => {}); } catch (e) {} }   // the player's total winnings go with the visit (they also go after a match), so he is in the table; the entries are not held back by it
+  let p; try { p = Promise.resolve(L.getEntries(PG_LB_ID)); } catch (e) { p = Promise.reject(e); }
+  p.then(en => {
+    if (!alive()) return;
+    en = Array.isArray(en) ? en : [];
+    const ea = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+    let mine = ""; try { mine = String(window.bridge.player.id); } catch (e) {}
+    const rows = en.slice(0, 100).map((e, i) => {
+      e = e || {}; const rk = e.rank > 0 ? e.rank | 0 : i + 1, nm = e.name ? String(e.name) : "", url = /^https:\/\//.test(String(e.photo || "")) ? String(e.photo) : "";
+      let h = 0; for (const ch of String(e.id == null ? nm : e.id)) h = (h * 31 + ch.charCodeAt(0)) % 997;
+      const av = url ? `<img src="${ea(url)}" alt="" referrerpolicy="no-referrer" style="width:var(--lbav);height:var(--lbav);border-radius:50%;object-fit:cover" onerror="this.replaceWith(document.createTextNode('👤'))">` : avHTML(h % 12, 0, 40);
+      const mdl = rk <= 3 ? `<i class="lbmd" style="background-image:${lbMedalURL(rk - 1)}"></i>` : `<span class="rkn">${fmt(rk)}</span>`;
+      return `<div class="lbr${rk <= 3 ? " r" + rk : ""}${mine && e.id != null && String(e.id) === mine ? " me" : ""}"><div class="rk">${mdl}</div><div class="avc">${av}</div><span></span><span></span><div class="nm"><div><b>${ea(nm || "?")}</b></div></div><div class="amt">${fmtS(+e.score || 0)} <span class="coin"></span></div></div>`;
+    }).join("");
+    list.innerHTML = rows || `<div class="muted" style="text-align:center;padding:20px">${T("Hali yo'q")}</div>`; lbDecoFit();
+  }).catch(() => { if (alive()) { list.innerHTML = `<div class="muted" style="text-align:center;margin-bottom:10px">📡 ${T("Server bilan aloqa yo'q. Internetni tekshiring.")}</div>`; lbDecoFit(); } });
+}
 '''
 GM_JS = r'''
 function gamemonetizeInit() {
@@ -347,6 +379,10 @@ if PG:
                        ("FXS = Math.min(3, Math.max(0, (now - lastDraw) / STEP_MS)); lastDraw = now;", "FXS = Math.min(3, Math.max(0, (now - lastDraw) / STEP_MS)); lastDraw = now; if (b8Frz()) FXS = 0;")):
         assert src.count(_old) == 1, "the game's frame loop changed, the pause patch does not fit: " + _old[:60]
         sub(_old, _new)
+    # Playgama's leaderboard in "in_game" mode (pgLbOn / pgLbOpen / pgLeader in PG_JS): a "Playgama" tab on the leaderboard screen, hidden unless the platform says in_game; the screen opens on it and asks the platform for the entries (getEntries)
+    sub('<button class="tab" data-lb="clubs">🛡 Klub ligalari</button>\n</div>', '<button class="tab" data-lb="clubs">🛡 Klub ligalari</button><button class="tab" data-lb="pg" id="lbPgTab" style="display:none">🎮 Playgama</button>\n</div>')
+    sub('if (id === "leader") buildLeader();', 'if (id === "leader") { pgLbOpen(); buildLeader(); }')
+    sub('clearInterval(lbTimer);\nNet.sync().then(r => { if (!r) throw new Error("offline");', 'clearInterval(lbTimer); pgLbHead();\nif (lbScope === "pg") return pgLeader();\nNet.sync().then(r => { if (!r) throw new Error("offline");')
     # ads: no own counters or timers, Bridge decides when an interstitial is really shown; the reward gate stays only for rewarded video
     sub("if (Y8.sdk && Y8.adsReady && Y8.matches % (Y8.every || 2) === 0 && Date.now() - Y8.lastBreak > 90000 && !profile.adfree && (!Y8.app || (profile.tutDone && (profile.games | 0) >= 3))) {", "if (Y8.sdk && !profile.adfree) {")
     sub("if (!Y8.sdk || !Y8.adsReady || Y8.busy) return resolve(false);", 'if (!Y8.sdk || (type === "reward" && !Y8.adsReady) || Y8.busy) return resolve(false);')
