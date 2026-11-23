@@ -149,9 +149,8 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(await until(async () => (await Promise.all(two.map(p => p.evaluate(() => document.querySelectorAll("#tnRoom .tn-seat:not(.free)").length)))).every(n => n === 2), 8000), "a player who leaves the waiting room frees his seat");
     await hostP.evaluate(() => document.querySelector('#tnRoom [data-a="start"]').click());
     ok(await until(async () => (await Promise.all(two.map(p => p.evaluate(() => !!(typeof game !== "undefined" && game && game.tnet && !game.over && mode === "game"))))).every(Boolean), 20000), "the host starts a second match with two phones: two bots play the empty seats");
-    await sleep(2500);
-    const bv = await Promise.all(two.map(view));
-    ok(same(bv, ["seed", "cur", "shooter", "shotNo"]) && bv.every(v => v.names.flat().filter(n => /\*/.test(n)).length === 2) && bv.every(v => v.driver === 0) && bv.every(v => JSON.stringify(v.balls) === JSON.stringify(bv[0].balls)), "the same table, the same turn, two bots, the host drives them", bv.map(v => [v.seat, v.cur, v.shooter, v.names]));
+    const cv0 = await converge(two, 0, 40000), bv = cv0.vs || await Promise.all(two.map(view));   // (a bot may break at once: the phones are compared the moment they have both stopped)
+    ok(cv0.ok && same(bv, ["seed"]) && bv.every(v => v.names.flat().filter(n => /\*/.test(n)).length === 2) && bv.every(v => v.driver === 0), "the same table, the same turn, two bots, the host drives them", bv.map(v => [v.seat, v.cur, v.shooter, v.names]));
     await shot(two[0], "09_two_bots");
     // play five shots: human shots on whichever phone holds the cue, bot shots by the driver
     let bad3 = [], n3 = 0;
