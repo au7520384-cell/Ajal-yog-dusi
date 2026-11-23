@@ -9,8 +9,8 @@
 //  7) shot analysis: the numbers of a match, the best and the worst shot keep frames for the replay
 //  8) every new text has a translation in all 15 languages
 //  9) on a portal (the page in a frame, NO_SOCIAL): the replay plays, but there is no share key and no link on the picture
-// 10) the screen of the new modes is made like the Minigames screen: its colours, wooden frames, painted pictures, green keys, the red dots, the leaderboard's rows in the lists
-// 11) SCALE (the owner: "pay attention to the scale too"): on every phone / tablet size (landscape, and the page turned on an upright phone) the screen of the new modes shows both rows without a scroll bar and its pictures are visible,
+// 10) the screen of the new modes is the owner's picture (five illustrated panels in a gold frame) with five keys over its panels: their order and place, the words, the red dots, a tap opens the list; the lists are the leaderboard's rows
+// 11) SCALE (the owner: "pay attention to the scale too"): on every phone / tablet size (landscape, and the page turned on an upright phone) the screen of the new modes shows the whole picture with its five keys (large, nothing cut off, no scroll bar),
 //     and the five lists and the analysis fit their window (no scroll bar inside, the Close key on the screen)
 const { chromium } = require("playwright"), http = require("http"), path = require("path"), fs = require("fs");
 const ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -228,20 +228,22 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   });
   ok(tr.n > 40 && tr.count === 0, "every text of the new modes is translated in all 15 languages", tr);
 
-  // ------------------------------------------------------------------ 10) the screen of the new modes is built like the Minigames screen (the owner: "make the new things as beautiful as the rest")
+  // ------------------------------------------------------------------ 10) the screen of the new modes is the owner's picture with five keys over its panels (Nov 23: "put the 3rd picture in place of the 4th, exactly like that")
   await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); toMenu("mini"); }); await sleep(800);
-  const mini = await p.evaluate(() => { const k = document.querySelector("#mini .head .pro-go"), r = k && k.getBoundingClientRect(), g = document.querySelector("#miniBody .mggrid").getBoundingClientRect(); return {key: !!k, img: !!(k && k.querySelector("img") && k.querySelector("img").naturalWidth > 0), inside: !!r && r.width > 40 && r.left > 0 && r.right <= innerWidth, gridH: Math.round(g.height)}; });
+  const mini = await p.evaluate(() => { const k = document.querySelector("#mini .head .pro-go"), r = k && k.getBoundingClientRect(); return {key: !!k, img: !!(k && k.querySelector("img") && k.querySelector("img").naturalWidth > 0), inside: !!r && r.width > 40 && r.left > 0 && r.right <= innerWidth}; });
   ok(mini.key && mini.img && mini.inside, "the Minigames screen has the gold 'New modes' key with the 8 ball, inside the screen", mini);
   await p.evaluate(() => toMenu("proScr")); await sleep(1500);
-  const scr = await p.evaluate(() => { const cards = [...document.querySelectorAll("#proBody .mggrid > .mgc")], mg = document.querySelector("#proBody .mggrid").getBoundingClientRect(), h0 = cards[0].getBoundingClientRect().height;
-    return {n: cards.length, themes: cards.map(c => ["mg-teal", "mg-parch", "mg-red", "mg-gold", "mg-felt"].find(t => c.classList.contains(t))).join(), art: cards.map(c => { const i = c.querySelector(".mgart img"); return !!i && i.naturalWidth >= 200 && i.naturalHeight >= 80; }), btn: cards.map(c => !!c.querySelector(".mgbtn")), wood: cards.map(c => /url\(/.test(getComputedStyle(c).borderImageSource)), dots: cards.filter(c => c.querySelector(".dot")).length, bottom: Math.round(mg.bottom), vh: innerHeight, gridH: Math.round(mg.height), tall: cards[4].getBoundingClientRect().height > 1.6 * h0};
-  });
-  ok(scr.n === 5 && scr.themes === "mg-teal,mg-parch,mg-red,mg-gold,mg-felt", "five cards in the Minigames colours (teal, parchment, red, gold, felt)", scr);
-  ok(scr.art.every(Boolean) && scr.btn.every(Boolean) && scr.wood.every(Boolean), "every card has a picture, a green key and the wooden frame", scr);
-  ok(scr.tall && scr.bottom <= scr.vh && Math.abs(scr.gridH - mini.gridH) <= 8, "the felt card is the tall one; the grid is as tall as the Minigames grid and fits the phone's screen", {scr, mini});
-  ok(scr.dots === 5, "an unopened mode carries the red dot", scr.dots);
-  const painted = await p.evaluate(() => { const out = []; for (const c of document.querySelectorAll("#proBody .mgc")) { const im = c.querySelector(".mgart img"), cv = document.createElement("canvas"); cv.width = im.naturalWidth; cv.height = im.naturalHeight; const g = cv.getContext("2d"); g.drawImage(im, 0, 0); const d = g.getImageData(0, 0, cv.width, cv.height).data; let a = 0, col = 0, n = 0; for (let i = 0; i < d.length; i += 16) { n++; if (d[i + 3] > 40) { a++; if (Math.max(d[i], d[i + 1], d[i + 2]) - Math.min(d[i], d[i + 1], d[i + 2]) > 40) col++; } } out.push({opaque: +(a / n).toFixed(2), colour: +(col / Math.max(1, a)).toFixed(2)}); } return out; });
-  ok(painted.every(x => x.opaque > 0.06 && x.colour > 0.05), "every card picture is painted (solid shapes, in colour), not blank", painted);
+  const scr = await p.evaluate(() => { const ban = document.getElementById("proBody"), br = ban.getBoundingClientRect(), im = ban.querySelector("img"), keys = [...ban.querySelectorAll(".pro-pan")];
+    const rel = keys.map(k => { const r = k.getBoundingClientRect(); return {act: k.dataset.act, l: +((r.left - br.left) / br.width * 100).toFixed(1), w: +(r.width / br.width * 100).toFixed(1), t: +((r.top - br.top) / br.height * 100).toFixed(1), h: +(r.height / br.height * 100).toFixed(1), title: (k.querySelector("b") || {}).textContent, sub: (k.querySelector("small") || {}).textContent, dot: !!k.querySelector(".dot")}; });
+    return {img: [im.naturalWidth, im.naturalHeight, im.complete], ratio: +(br.width / br.height).toFixed(3), rel, bottom: Math.round(br.bottom), vh: innerHeight}; });
+  ok(scr.img[0] === 2022 && scr.img[1] === 778 && scr.img[2] && Math.abs(scr.ratio - 2022 / 778) < 0.01, "the screen shows the owner's picture (2022 x 778) at its own proportions", scr);
+  ok(scr.rel.map(k => k.act).join() === "trick,lessons,bot,nine,team", "five keys, in the order of the picture's panels: trick shots, lessons, bot, 9-ball, 2v2", scr.rel);
+  ok(scr.rel.every((k, i) => k.w > 16 && k.w < 21 && k.t > 12 && k.t < 16 && k.h > 62 && k.h < 70 && (i === 0 || k.l > scr.rel[i - 1].l + scr.rel[i - 1].w - 0.5)) && scr.rel[0].l > 1.5 && scr.rel[4].l + scr.rel[4].w < 99, "each key lies over its own panel (side by side, none over another, inside the picture)", scr.rel);
+  ok(scr.rel.every(k => k.title && k.title.length > 2 && k.sub && k.sub.length > 2), "each key says what its mode is and gives a line about it", scr.rel);
+  ok(scr.bottom <= scr.vh && scr.rel.filter(k => k.dot).length === 5, "the picture fits the phone's screen; an unopened mode carries the red dot", scr);
+  const taps = await p.evaluate(async () => { const out = {}; for (const [act, n] of [["trick", 5], ["lessons", 6], ["bot", 3], ["nine", 2], ["team", 3]]) { document.getElementById("modal").classList.remove("on"); toMenu("proScr"); await new Promise(r => setTimeout(r, 120)); document.querySelector(`#proBody .pro-pan[data-act=${act}]`).click(); await new Promise(r => setTimeout(r, 200)); out[act] = [document.querySelectorAll("#mExtra .lbr.pro-row").length, n]; }
+    document.getElementById("modal").classList.remove("on"); toMenu("proScr"); await new Promise(r => setTimeout(r, 150)); out.dots = document.querySelectorAll("#proBody .pro-pan .dot").length; return out; });
+  ok(["trick", "lessons", "bot", "nine", "team"].every(a => taps[a][0] === taps[a][1]) && taps.dots === 0, "a tap on each key opens its list (5 tricks, 6 lessons, 3 levels, 9-ball 2, 2v2 3) and takes its red dot away", taps);
   const lists = await p.evaluate(async () => { const res = {}; for (const [k, f, n] of [["trick", () => proPickTrick(), 5], ["lessons", () => proPickLesson(), 6], ["level", () => proPickLevel("eight"), 3], ["nine", () => proPickNine(), 2], ["team", () => proPickTeam(), 3]]) { document.getElementById("modal").classList.remove("on"); f(); await new Promise(r => setTimeout(r, 150)); res[k] = [document.querySelectorAll("#mExtra .lbr.pro-row").length, n, document.querySelectorAll("#mExtra .lbr.pro-row .pro-gl").length]; } document.getElementById("modal").classList.remove("on"); return res; });
   ok(Object.values(lists).every(([got, want, gl]) => got === want && gl === want), "the lists (trick shots 5, lessons 6, levels 3, 9-ball 2, 2v2 3) are leaderboard rows with a picture each", lists);
 
@@ -254,18 +256,17 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     for (const [w, h] of VPS) {
       await p.setViewportSize({width: w, height: h}); await sleep(450);
       await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); toMenu("proScr"); }); await sleep(500);
-      const m = await p.evaluate(() => { const s = document.getElementById("proScr"), cards = [...document.querySelectorAll("#proBody .mgc")]; let clip = 0, tiny = 0;
-        for (const c of cards) { const bt = c.querySelector(".mgbtn"), art = c.querySelector(".mgart"), im = art.querySelector("img"), tt = c.querySelector(".mgtx b");   // (offsets: they do not change when the page is turned 90 degrees)
-          if (bt.offsetTop + bt.offsetHeight > c.clientHeight + 1 || tt.offsetTop < -1) clip++; if (im.offsetHeight < 18 || im.offsetWidth < 18 || art.offsetTop + art.offsetHeight > tt.offsetTop + 2) tiny++; }
-        return {over: s.scrollHeight - s.clientHeight, cards: cards.length, clip, tiny, rot: document.documentElement.classList.contains("rot")}; });
-      if (m.over > 1 || m.cards !== 5 || m.clip || m.tiny) bad.push(["screen", w + "x" + h, m]);
+      const m = await p.evaluate(() => { const s = document.getElementById("proScr"), ban = document.getElementById("proBody"), br = ban.getBoundingClientRect(), keys = [...ban.querySelectorAll(".pro-pan")]; let tiny = 0;
+        for (const k of keys) { const c = k.querySelector(".pro-cap"); if (!c || c.offsetHeight < 8 || k.offsetWidth < 40) tiny++; }   // (offsets: they do not change when the page is turned 90 degrees)
+        return {over: s.scrollHeight - s.clientHeight, cards: keys.length, tiny, inside: br.left >= -1 && br.top >= -1 && br.right <= innerWidth + 1 && br.bottom <= innerHeight + 1, share: +(ban.offsetWidth / Math.max(1, s.clientWidth)).toFixed(2), rot: document.documentElement.classList.contains("rot")}; });
+      if (m.over > 1 || m.cards !== 5 || m.tiny || !m.inside || m.share < 0.5) bad.push(["screen", w + "x" + h, m]);
       for (const [name, fn] of [["trick", () => proPickTrick()], ["lessons", () => proPickLesson()], ["level", () => proPickLevel("eight")], ["nine", () => proPickNine()], ["team", () => proPickTeam()], ["analysis", g => proShowAnalysis(g)]]) {
         await p.evaluate(([f, g]) => { document.getElementById("modal").classList.remove("on"); toMenu("proScr"); eval("(" + f + ")")(g); }, [fn.toString(), G0()]); await sleep(250);
         const q = await p.evaluate(() => { const ex = document.getElementById("mExtra"), bt = document.getElementById("mBtns").getBoundingClientRect(), pn = document.querySelector("#modal .panel").getBoundingClientRect(); return {ex: ex.scrollHeight - ex.clientHeight, btn: bt.left >= -1 && bt.top >= -1 && bt.right <= innerWidth + 1 && bt.bottom <= innerHeight + 1 && pn.top >= -1 && pn.left >= -1}; });   // (a turned page: its bottom is the screen's left edge, so the key must lie inside the screen on both axes)
         if (q.ex > 1 || !q.btn) bad.push([name, w + "x" + h, q]);
       }
     }
-    ok(bad.length === 0, "on 17 phone / tablet sizes (landscape and turned upright) the new screen shows both rows with their pictures, and the five lists and the analysis fit their window", bad.slice(0, 6));
+    ok(bad.length === 0, "on 17 phone / tablet sizes (landscape and turned upright) the new screen shows the whole picture with its five keys (large, nothing cut off), and the five lists and the analysis fit their window", bad.slice(0, 6));
     // the two result windows with the most in them: a trick shot solved (stars, coins, "all five done", the tries, four keys) and a bot match won (the coins, the record, four keys)
     await p.setViewportSize({width: 915, height: 412}); await sleep(400);
     await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); const st = proStore(); st.trick = {day: dshotDayKey(), st: [3, 3, 3, 0, 3], paid: [1, 1, 1, 0, 1], bonus: 0}; trickStart({mode: "daily", i: 3}); });

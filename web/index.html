@@ -1869,6 +1869,7 @@ html.mh460 .ibmd .ibd-ban{height:23%}html.mh460 .ibmd h3{margin-top:.9cqw}
 .wk .wkpl{display:flex;align-items:center;gap:14px;min-width:0}
 .wk .wkpl .nm{font-weight:900;font-size:28px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wk .wkpl .flag{height:26px;border-radius:3px;box-shadow:0 1px 3px #0008}
+.wk .wkrow .wkpl>.avx.avp,.wk .wkme>.avx.avp{margin:0;transform:scale(.8)}.wk .wkrow .wkpl>.avx.avp.avj,.wk .wkme>.avx.avp.avj{transform:scale(.45)}   /* an avatar with a frame carries a margin of 12% (floral frames 36%) of its cell's WIDTH: in these rows that made the row of a framed player several times higher than the others (the owner: "why is the 3rd place so much bigger than the 1st and 2nd?") - like the leaderboard's rows (.lbr .avc) and the home bar (.hci) it has none here, and the frame's picture is drawn smaller */
 .wk .wkwon{display:flex;align-items:center;justify-content:flex-end;gap:10px;background:#070b22;border:1px solid #2a3560;border-radius:12px;padding:12px 18px;font-weight:900;font-size:30px;box-shadow:inset 0 0 18px #1a2a6a88}
 .wk .wkwon .coin{width:42px;height:42px}
 .wk .wkempty{padding:24px;text-align:center;color:#aab0cc;font-weight:700}
@@ -2053,6 +2054,8 @@ body:has(#specUi.on) #liveFeed{left:calc(max(2px,env(safe-area-inset-left)) + 10
 .splb b{display:block;color:#7cc0ff;font-size:12px;margin-bottom:1px}
 .splr.me .splb{background:#1f3f8a}.splr.me .splb b{color:#ffd24d}
 .splb.big{font-size:30px;line-height:1.1}
+.splb.stk{background:none;padding:2px 4px}.splb .stkimg{width:54px;height:54px}
+#liveFeed .lf .lfs{display:inline-block;width:34px;height:34px;vertical-align:middle;margin:-8px 0 -8px 4px}
 .splsys{align-self:center;background:#0b1226;border:1px solid #34436a;border-radius:12px;padding:3px 10px;color:#ffd24d;font-size:12px}
 #spEmoRow{display:none;flex-wrap:wrap;gap:4px;padding:4px 0}#spEmoRow.on{display:flex}
 #spEmoRow button{border:0;background:#1b2543;border-radius:8px;font-size:22px;padding:3px 6px;cursor:pointer}
@@ -11642,7 +11645,7 @@ specLogAdd({name: String(m.name || "").slice(0, 16), avatar: m.avatar | 0, frame
 if (game.net.spec && $("specChat").classList.contains("on")) return;   // the open chat panel already shows it
 const feed = $("liveFeed"), row = document.createElement("div"); row.className = "lf";
 const b = document.createElement("b"); b.textContent = String(m.name || "").slice(0, 16); row.appendChild(b);
-row.appendChild(document.createTextNode(": " + String(m.msg || "").slice(0, 60)));
+row.appendChild(chatBody(String(m.msg || "").slice(0, 60)));
 feed.appendChild(row); while (feed.children.length > 5) feed.firstChild.remove();
 setTimeout(() => row.remove(), 9000); try { Snd.pop(); } catch (e) {}
 });
@@ -12241,11 +12244,18 @@ if (rep || Math.random() < 0.3) setTimeout(() => game === G && bubble(1, pick(re
 }
 buildChat();
 const specInfo = {list: [], log: []};
+function chatBody(msg) {   // what a chat line says in the corner feed: a STICKER is its picture (it was the bare emoji character, so a ring sticker showed up as a small medal: the owner, "why do other things come out when I send a sticker?")
+const f = document.createDocumentFragment(); f.appendChild(document.createTextNode(": "));
+if (STK_IMG[msg]) { const im = document.createElement("img"); im.className = "stkimg lfs"; im.alt = ""; im.src = STK_IMG[msg]; f.appendChild(im); }
+else f.appendChild(document.createTextNode(msg));
+return f;
+}
 function specLogAdd(m) { specInfo.log.push(m); if (specInfo.log.length > 60) specInfo.log.shift(); if ($("specChat").classList.contains("on")) specDrawLog(); }
 function specDrawLog() {
 const el = $("specLog"); if (!el) return;
-el.innerHTML = specInfo.log.map(m => m.sys ? `<div class="splsys">${m.msg}</div>` : m.me ? `<div class="splr me"><div class="splb${/^\p{Extended_Pictographic}+$/u.test(m.msg) ? " big" : ""}"><b>${T("Siz")}</b>${esc(qT(m.msg))}</div>${avHTML(profile.avatar, profile.frame, 34)}</div>`
-: `<div class="splr">${avHTML(m.avatar, m.frame, 34)}<div class="splb${/^\p{Extended_Pictographic}+$/u.test(m.msg) ? " big" : ""}"><b>${esc(m.name)}</b>${esc(qT(m.msg))}</div></div>`).join("");
+const sc = m => STK_IMG[m.msg] ? " stk" : /^\p{Extended_Pictographic}+$/u.test(m.msg) ? " big" : "", sb = m => STK_IMG[m.msg] ? stkHTML(m.msg) : esc(qT(m.msg));   // (a sticker is drawn as its picture, as in the players' own chat)
+el.innerHTML = specInfo.log.map(m => m.sys ? `<div class="splsys">${m.msg}</div>` : m.me ? `<div class="splr me"><div class="splb${sc(m)}"><b>${T("Siz")}</b>${sb(m)}</div>${avHTML(profile.avatar, profile.frame, 34)}</div>`
+: `<div class="splr">${avHTML(m.avatar, m.frame, 34)}<div class="splb${sc(m)}"><b>${esc(m.name)}</b>${sb(m)}</div></div>`).join("");
 el.scrollTop = el.scrollHeight;
 }
 function specRefresh() {
@@ -16004,6 +16014,11 @@ setInterval(() => { if (mode === "menu") pollNotify(); }, 30000);   // friend re
 migrateGems(); migrateDiamonds(); applySettings(); updatePassDot(); setTimeout(checkAch, 3000); setTimeout(checkChallenges, 3500);
 setInterval(() => { if (document.hidden || !profile) return; profile.playSec = (profile.playSec | 0) + 5; if (profile.playSec % 60 === 0) { save(); checkChallenges(); } }, 5000);   // play time for the time achievements setTimeout(checkFriendsOnline, 5000);
 /*PRO_BEGIN*/
+// ---------------------------------------------------------------- the picture of the screen of the new modes: the owner's own artwork, 2022 x 778 px (Nov 23: "put the 3rd picture in place of the 4th, exactly like that").
+// Five illustrated panels in a gold frame, left to right: a crowned 8 ball (trick shots), a rack of balls under a lamp (lessons), a robot with a cue (against a bot), a glowing 9 ball (9-ball), two couples
+// with a trophy (2v2). The five keys of the screen lie over the panels (where they are, in percent of the picture: PRO_PANELS in pro_5_screen.js). To change the picture: put the new one here (WebP, a data
+// URI) and keep its size, or move the numbers of the panels.
+const PRO_BAN = "img/94e387b64b061d.webp";
 /* =====================================================================================================================
    PRO MODES (the owner's list, Nov 22): bot levels + training lessons, trick shots (5 a day), 9-ball, 2v2 teams, shot analysis, replay + a 10 s clip.
    Everything here is ADDED. The old match flow is only WRAPPED (baseGame / enterGameUi / nextTurn / doShoot / resolveShot / endGame / physicsFrame / onRail /
@@ -16630,8 +16645,8 @@ function proShareClip(R) {
   });
 }
 
-// ---------------------------------------------------------------- pictures: the cards of the new screen are painted like the Minigames cards (a picture on a coloured card in a wooden frame). The pictures are made once, in code,
-// from the game's own pieces: its glossy numbered balls (drawBall), its avatars (drawAvatar) and a cue drawn here; nothing is added to the page's size.
+// ---------------------------------------------------------------- pictures: the small ones. The five big pictures of the screen are the owner's own artwork (pro_0_banner.js); what is painted here, in code, from the game's own pieces
+// (its glossy numbered balls: drawBall), is the 8 ball of the New modes key and the 36 px pictograms of the rows of the lists. Nothing is added to the page's size.
 const PRO_ART = {};
 function proArtMake(key, w, h, paint) {
   if (PRO_ART[key]) return PRO_ART[key];
@@ -16641,109 +16656,9 @@ function proArtMake(key, w, h, paint) {
   return PRO_ART[key] = cv.toDataURL("image/png");
 }
 const proBall = (g, n, x, y, r) => drawBall(iconBall(n), x, y, r / R);
-function proSpark(g, x, y, r, col, rot) {   // a four-point sparkle
-  g.save(); g.translate(x, y); g.rotate(rot || 0); g.fillStyle = col; g.beginPath();
-  for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, q = i % 2 ? r * 0.26 : r; g.lineTo(Math.cos(a) * q, Math.sin(a) * q); }
-  g.closePath(); g.fill(); g.restore();
-}
-function proCue(g, tx, ty, ang, len, w) {   // a cue: the tip at (tx, ty), the butt `len` away in the direction `ang`
-  g.save(); g.translate(tx, ty); g.rotate(ang); g.shadowColor = "rgba(0,0,0,.45)"; g.shadowBlur = 6; g.shadowOffsetY = 3;
-  const sh = g.createLinearGradient(0, -w, 0, w); sh.addColorStop(0, "#fbe6b0"); sh.addColorStop(0.45, "#d49a48"); sh.addColorStop(1, "#7a4418");
-  g.beginPath(); g.moveTo(0, -w * 0.4); g.lineTo(len * 0.64, -w * 0.62); g.lineTo(len * 0.64, w * 0.62); g.lineTo(0, w * 0.4); g.closePath(); g.fillStyle = sh; g.fill();
-  const bt = g.createLinearGradient(0, -w, 0, w); bt.addColorStop(0, "#6a4a78"); bt.addColorStop(0.5, "#2c1236"); bt.addColorStop(1, "#12061c");
-  g.beginPath(); g.moveTo(len * 0.64, -w * 0.62); g.lineTo(len, -w * 0.98); g.lineTo(len, w * 0.98); g.lineTo(len * 0.64, w * 0.62); g.closePath(); g.fillStyle = bt; g.fill();
-  g.shadowColor = "transparent"; g.fillStyle = "#f0cd62"; g.fillRect(len * 0.64 - 1.4, -w * 0.64, 2.8, w * 1.28); g.fillRect(len * 0.78, -w * 0.82, 2, w * 1.64);
-  g.fillStyle = "#f6f3e8"; g.fillRect(0, -w * 0.4, len * 0.045, w * 0.8); g.fillStyle = "#3c8cf0"; g.fillRect(-1.6, -w * 0.38, 2, w * 0.76);
-  g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 0.9; g.beginPath(); g.moveTo(len * 0.07, -w * 0.18); g.lineTo(len * 0.62, -w * 0.4); g.stroke();
-  g.restore();
-}
-function proRail(g, x, y, w, h) {   // a piece of wooden cushion rail with brass diamonds
-  const wd = g.createLinearGradient(0, y, 0, y + h); wd.addColorStop(0, "#c07a3a"); wd.addColorStop(0.5, "#8a4a20"); wd.addColorStop(1, "#4a220c");
-  proRR(g, x, y, w, h, h / 2.2); g.fillStyle = wd; g.fill(); g.strokeStyle = "#2a1006"; g.lineWidth = 1.2; g.stroke();
-  g.fillStyle = "#f6d675"; for (let i = 1; i < 6; i++) { g.beginPath(); g.moveTo(x + w * i / 6, y + h / 2 - 3); g.lineTo(x + w * i / 6 + 2.6, y + h / 2); g.lineTo(x + w * i / 6, y + h / 2 + 3); g.lineTo(x + w * i / 6 - 2.6, y + h / 2); g.closePath(); g.fill(); }
-}
 function proRR(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
-function proDashed(g, pts, col, wd) {   // a glowing dotted path through the points
-  g.save(); g.lineCap = "round"; g.lineJoin = "round"; g.setLineDash([2, 8]); g.shadowColor = col; g.shadowBlur = 10; g.strokeStyle = col; g.lineWidth = wd;
-  g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); g.restore();
-}
-function proRing(g, x, y, r, col) { g.save(); g.shadowColor = col; g.shadowBlur = 14; g.strokeStyle = col; g.lineWidth = 3; g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke(); g.restore(); }
-function proCap(g, cx, cy, k) {   // a mortarboard with its tassel, centre (cx, cy), scale k
-  g.save(); g.translate(cx - 110 * k, cy - 56 * k); g.scale(k, k);
-  g.save(); g.shadowColor = "rgba(0,0,0,.5)"; g.shadowBlur = 10; g.shadowOffsetY = 6;
-  const base = g.createLinearGradient(0, 70, 0, 112); base.addColorStop(0, "#1a2a5a"); base.addColorStop(1, "#070d26");
-  g.beginPath(); g.moveTo(66, 70); g.lineTo(66, 92); g.bezierCurveTo(66, 112, 154, 112, 154, 92); g.lineTo(154, 70); g.closePath(); g.fillStyle = base; g.fill(); g.restore();
-  const top = g.createLinearGradient(0, 30, 0, 86); top.addColorStop(0, "#5a6a9a"); top.addColorStop(0.5, "#1e2a58"); top.addColorStop(1, "#0a1030");
-  g.beginPath(); g.moveTo(110, 26); g.lineTo(186, 56); g.lineTo(110, 86); g.lineTo(34, 56); g.closePath(); g.fillStyle = top; g.fill();
-  g.strokeStyle = "#c9a23a"; g.lineWidth = 2.4; g.stroke(); g.strokeStyle = "rgba(255,255,255,.34)"; g.lineWidth = 1.4; g.beginPath(); g.moveTo(112, 30); g.lineTo(180, 56); g.stroke();
-  g.fillStyle = "#e8c050"; g.beginPath(); g.arc(110, 56, 6, 0, 7); g.fill();
-  g.strokeStyle = "#e8c050"; g.lineWidth = 3; g.lineCap = "round"; g.beginPath(); g.moveTo(110, 56); g.quadraticCurveTo(166, 62, 174, 76); g.lineTo(174, 98); g.stroke();
-  const tg = g.createLinearGradient(0, 94, 0, 120); tg.addColorStop(0, "#ffe9a0"); tg.addColorStop(1, "#c9861a"); g.fillStyle = tg; proRR(g, 169, 94, 10, 24, 3); g.fill();
-  g.strokeStyle = "#8a5a10"; g.lineWidth = 0.8; for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(171.5 + i * 2, 102); g.lineTo(171.5 + i * 2, 116); g.stroke(); }
-  g.restore();
-}
-function proArt(kind) {
+function proArt(kind) {   // the 8 ball of the New modes key
   if (kind === "ball8") return proArtMake("ball8", 40, 40, (g) => proBall(g, 8, 20, 20, 17));
-  if (kind === "trick") return proArtMake("trick", 240, 100, (g, W_, H_) => {   // a bank shot: the cue and the cue ball, a dotted path off the rail, the 8 ball in a gold ring
-    const lg = g.createRadialGradient(120, 54, 4, 120, 54, 120); lg.addColorStop(0, "rgba(255,255,255,.2)"); lg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = lg; g.fillRect(0, 0, W_, H_);
-    proRail(g, 62, 3, 124, 10);
-    proDashed(g, [[62, 62], [124, 14], [192, 52]], "#ffe27a", 3.4);
-    proCue(g, 40, 79, Math.atan2(0.61, -0.79), 78, 6);
-    proBall(g, 0, 62, 62, 19);
-    proRing(g, 196, 58, 29, "#ffd24d"); proBall(g, 8, 196, 58, 21);
-    proSpark(g, 226, 24, 10, "#fff6c0", 0.3); proSpark(g, 160, 84, 7, "#fff6c0", 0.6); proSpark(g, 20, 30, 7, "#ffe27a", 0);
-  });
-  if (kind === "lessons") return proArtMake("lessons", 240, 100, (g, W_, H_) => {   // a mortarboard with its tassel, and a cue ball with its spin dot and arrow
-    const lg = g.createRadialGradient(120, 54, 4, 120, 54, 120); lg.addColorStop(0, "rgba(255,255,255,.35)"); lg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = lg; g.fillRect(0, 0, W_, H_);
-    proCap(g, 84, 52, 0.84);
-    proBall(g, 0, 190, 56, 24);
-    g.save(); g.fillStyle = "#e11d1d"; g.shadowColor = "#ff5a4a"; g.shadowBlur = 8; g.beginPath(); g.arc(190, 46, 5.4, 0, 7); g.fill(); g.restore();
-    g.save(); g.strokeStyle = "#c9861a"; g.lineWidth = 3; g.lineCap = "round"; g.beginPath(); g.arc(190, 56, 33, Math.PI * 1.08, Math.PI * 1.72); g.stroke(); const a = Math.PI * 1.72; g.translate(190 + Math.cos(a) * 33, 56 + Math.sin(a) * 33); g.rotate(a + Math.PI / 2); g.fillStyle = "#c9861a"; g.beginPath(); g.moveTo(0, -7); g.lineTo(8, 5); g.lineTo(-8, 5); g.closePath(); g.fill(); g.restore();
-  });
-  if (kind === "bot") return proArtMake("bot", 240, 100, (g, W_, H_) => {   // a friendly robot with glowing eyes, and three bars (easy, medium, hard)
-    g.save(); g.translate(26, 10); g.scale(0.7, 0.7);
-    g.save(); g.shadowColor = "rgba(0,0,0,.5)"; g.shadowBlur = 12; g.shadowOffsetY = 6;
-    g.strokeStyle = "#8a96b4"; g.lineWidth = 4; g.lineCap = "round"; g.beginPath(); g.moveTo(110, 40); g.lineTo(110, 26); g.stroke();
-    const hg = g.createLinearGradient(0, 38, 0, 122); hg.addColorStop(0, "#f2f6ff"); hg.addColorStop(0.45, "#aab6d2"); hg.addColorStop(1, "#5d6a8c");
-    proRR(g, 56, 38, 108, 84, 26); g.fillStyle = hg; g.fill();
-    const eg = g.createLinearGradient(0, 60, 0, 100); eg.addColorStop(0, "#e8b84a"); eg.addColorStop(1, "#8a5a10"); g.fillStyle = eg; proRR(g, 44, 66, 14, 30, 5); g.fill(); proRR(g, 162, 66, 14, 30, 5); g.fill();
-    g.restore();
-    g.strokeStyle = "#4a5678"; g.lineWidth = 2; proRR(g, 56, 38, 108, 84, 26); g.stroke();
-    g.fillStyle = "rgba(255,255,255,.55)"; proRR(g, 66, 44, 60, 8, 4); g.fill();
-    const vg = g.createLinearGradient(0, 56, 0, 100); vg.addColorStop(0, "#1a2a5e"); vg.addColorStop(1, "#050a22"); g.fillStyle = vg; proRR(g, 68, 56, 84, 44, 18); g.fill();
-    g.strokeStyle = "#4ad8ff"; g.lineWidth = 1.6; g.globalAlpha = 0.7; proRR(g, 68, 56, 84, 44, 18); g.stroke(); g.globalAlpha = 1;
-    g.save(); g.shadowColor = "#4ad8ff"; g.shadowBlur = 14; g.fillStyle = "#7af0ff"; proRR(g, 82, 68, 20, 20, 8); g.fill(); proRR(g, 118, 68, 20, 20, 8); g.fill(); g.restore();
-    g.fillStyle = "#ffffff"; g.beginPath(); g.arc(92, 76, 3.2, 0, 7); g.arc(128, 76, 3.2, 0, 7); g.fill();
-    g.strokeStyle = "#3a4668"; g.lineWidth = 3; g.lineCap = "round"; for (let i = 0; i < 5; i++) { g.beginPath(); g.moveTo(90 + i * 10, 108); g.lineTo(90 + i * 10, 115); g.stroke(); }
-    g.save(); g.shadowColor = "#ff4a3a"; g.shadowBlur = 12; const rg = g.createRadialGradient(108, 20, 1, 110, 22, 8); rg.addColorStop(0, "#ffd0c8"); rg.addColorStop(0.4, "#ff4a3a"); rg.addColorStop(1, "#9a1008"); g.fillStyle = rg; g.beginPath(); g.arc(110, 22, 7.5, 0, 7); g.fill(); g.restore();
-    g.restore();
-    [["#3fe052", "#0f7a22", 28], ["#ffd24d", "#b07a08", 48], ["#ff5a4a", "#a01208", 68]].forEach(([c1, c2, hh], i) => {
-      const x = 144 + i * 24, y = 88 - hh, bg = g.createLinearGradient(0, y, 0, 90); bg.addColorStop(0, c1); bg.addColorStop(1, c2);
-      g.save(); g.shadowColor = c1; g.shadowBlur = 10; proRR(g, x, y, 19, hh, 6); g.fillStyle = bg; g.fill(); g.restore(); g.strokeStyle = "rgba(0,0,0,.45)"; g.lineWidth = 1.4; proRR(g, x, y, 19, hh, 6); g.stroke();
-      g.fillStyle = "rgba(255,255,255,.45)"; proRR(g, x + 3, y + 3, 5, hh - 10, 3); g.fill();
-    });
-  });
-  if (kind === "team") return proArtMake("team", 240, 100, (g, W_, H_) => {   // two against two: four of the game's own portraits (blue team, orange team) and a VS shield
-    const av = [3, 9, 14, 6], s = 38, y = 31, xs = [24, 64, 138, 178];   // (the free portraits are drawn at once; a player's own one may still be loading)
-    xs.forEach((x, i) => {
-      const col = i < 2 ? "#2ab8ff" : "#ff8a2a";
-      g.save(); g.shadowColor = col; g.shadowBlur = 12; g.fillStyle = col; proRR(g, x - 3, y - 3, s + 6, s + 6, 11); g.fill(); g.restore();
-      g.save(); proRR(g, x, y, s, s, 9); g.clip(); try { g.drawImage(avatarCanvas(av[i]), x, y, s, s); } catch (e) { g.fillStyle = "#223"; g.fillRect(x, y, s, s); } g.restore();
-      g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 1.2; proRR(g, x, y, s, s, 9); g.stroke();
-    });
-    g.save(); g.shadowColor = "#000"; g.shadowBlur = 8; g.shadowOffsetY = 3; const sg = g.createLinearGradient(0, 14, 0, 86); sg.addColorStop(0, "#fff1b0"); sg.addColorStop(1, "#d9962a");
-    g.beginPath(); g.moveTo(120, 12); g.lineTo(140, 19); g.lineTo(140, 50); g.quadraticCurveTo(140, 74, 120, 86); g.quadraticCurveTo(100, 74, 100, 50); g.lineTo(100, 19); g.closePath(); g.fillStyle = sg; g.fill(); g.restore();
-    g.strokeStyle = "#7a4a08"; g.lineWidth = 2; g.stroke();
-    g.fillStyle = "#4a2a04"; g.font = `900 24px ${FONT}`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText("VS", 120, 44);
-  });
-  if (kind === "nine") return proArtMake("nine", 372, 220, (g, W_, H_) => {   // the diamond rack of nine, the 9 in its gold ring, a cue lined up behind the cue ball
-    const lg = g.createRadialGradient(236, 112, 6, 236, 112, 170); lg.addColorStop(0, "rgba(255,248,200,.36)"); lg.addColorStop(1, "rgba(255,248,200,0)"); g.fillStyle = lg; g.fillRect(0, 0, W_, H_);
-    const r = 25, cols = [[1], [2, 3], [4, 9, 5], [6, 7], [8]], cx = 160, cy = 112;
-    proCue(g, 66, 112, Math.PI, 118, 7.4);
-    proBall(g, 0, 100, 112, r);
-    cols.forEach((col, c) => col.forEach((n, k) => { const x = cx + c * (r * 1.74), y = cy + (k - (col.length - 1) / 2) * (2 * r + 0.8); if (n === 9) proRing(g, x, y, r + 5, "#ffd24d"); proBall(g, n, x, y, r); }));
-    proSpark(g, 322, 40, 12, "#fff6c0", 0.3); proSpark(g, 180, 196, 9, "#fff6c0", 0.6); proSpark(g, 340, 188, 10, "#ffe27a", 0); proSpark(g, 70, 40, 8, "#ffe27a", 0.2);
-  });
   return "";
 }
 function proGlyph(kind) {   // a 36 px picture for the rows of the lists
@@ -16771,31 +16686,33 @@ function proGlyph(kind) {   // a 36 px picture for the rows of the lists
   });
 }
 
-// ---------------------------------------------------------------- the screen of the new modes ("proScr", reached by the key on the Minigames / Play-with-friends screens): the cards are the Minigames cards
-// (same classes: .mggrid .mgc .mg-* .mgart .mgtx .mgbtn, the same wooden frame), the lists are the leaderboard rows (.lbr). The page's own @media rules were turned into html.mh460 / .mh520 / .mh560 classes (the page may be
-// turned 90 degrees on a phone held upright), so this style sheet uses those classes and var(--u-vw / --u-vh) instead of @media and vw / vh.
+// ---------------------------------------------------------------- the screen of the new modes ("proScr", reached by the key on the Minigames / Play-with-friends screens): ONE picture, the owner's artwork (PRO_BAN:
+// five illustrated panels in a gold frame; Nov 23: "put the 3rd picture in place of the 4th, exactly like that") with five keys lying over its panels (PRO_PANELS: where each panel is, in percent of the picture),
+// each key carries the name of its mode, a short line and the red "!" until it was opened. The lists that a key opens are the leaderboard's rows (.lbr). The page's own @media rules were turned into html.mh460 /
+// .mh520 / .mh560 classes (the page may be turned 90 degrees on a phone held upright), so this style sheet uses those classes and var(--u-vw / --u-vh) instead of @media and vw / vh.
+const PRO_PANELS = [   // left edge and width of each panel of the picture, % of its width (2022 px); top 14 % and height 66 % of its height for all five
+  ["trick", 2.9, 18.1], ["lessons", 21.7, 18.3], ["bot", 40.8, 18.7], ["nine", 59.9, 18.5], ["team", 79.1, 18.5]];
 (function proUiInit() {
   const st = document.createElement("style"); st.id = "proCss";
   st.textContent = `
-#proScr .mgc{border:16px solid transparent!important;border-image:var(--woodcard) 22/16px stretch!important;background-clip:padding-box!important;border-radius:0!important;box-shadow:none!important;padding:0}
-html.mh460 #proScr .mgc{border-width:11px!important;border-image-width:11px!important}
-.mh560:not(.mh520) #proScr.screen{padding-top:62px}.mh560:not(.mh520) #proScr .panel{padding:10px}
-#proScr .mgc small .pro-st{letter-spacing:2px;font-size:15px;color:#ffffff40}#proScr .mgc small .pro-st .on{color:#ffd24d;text-shadow:0 1px 0 #0008}
-.mh560 #proScr .mgc small .pro-st{font-size:12px;letter-spacing:1px;line-height:1}
-#proScr .mggrid{align-items:stretch}
-/* SCALE (the owner: "pay attention to the scale too"). The Minigames screen is as tall as its cards want to be, so on a phone 340-385 px tall (a 360 dp phone held sideways) and on one 415-505 px tall (the big
-   iPhones, a Pixel Pro) its second row is cut off. This screen always fits: the panel may shrink under the title, the two rows share what is left, and the picture of a card is the part that gives way (it lies on a
-   box that shrinks; --pa is its size when there is room). The sizes follow the page's own height (--u-vh = 1% of it): the Minigames numbers at 560 px (phones) and at 700 px (roomy), a straight line between, so
-   nothing jumps at a class border. Where the screen is tall enough nothing changes. */
-#proScr>.panel{flex:0 1 auto;min-height:0;display:flex;flex-direction:column;padding:clamp(8px,calc(4.29 * var(--u-vh,1vh) - 14px),16px)}
-#proScr .mggrid{flex:1 1 auto;min-height:0;grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(6px,calc(4.29 * var(--u-vh,1vh) - 16px),14px)}
-#proScr .mgc{--pa:clamp(54px,calc(40 * var(--u-vh,1vh) - 170px),110px);min-height:0}
-#proScr .mg-felt{--pa:clamp(104px,calc(47.1 * var(--u-vh,1vh) - 160px),170px)}
-#proScr .mgc b{font-size:clamp(19px,calc(5 * var(--u-vh,1vh) - 9px),26px)}
-#proScr .mgc small{font-size:clamp(10px,calc(1.43 * var(--u-vh,1vh) + 2px),12px)}
-#proScr .mgbtn{font-size:clamp(14px,calc(2.14 * var(--u-vh,1vh) + 2px),17px);padding:clamp(5px,calc(2.14 * var(--u-vh,1vh) - 7px),8px)}
-#proScr .mgc .mgart{position:relative;display:block;align-self:stretch;flex:1 1 var(--pa);min-height:0}
-#proScr .mgc .mgart img{position:absolute;top:0;right:0;bottom:0;left:0;margin:auto;width:auto;height:100%;max-width:100%;max-height:var(--pa);object-fit:contain}
+/* the screen is the picture and five keys. SCALE (the owner: "pay attention to the scale too"): it is the largest picture that fits under the title, at most 1100 px wide (--pro-chrome = what the title row and the
+   paddings take of the page's own height; --u-vh = 1% of that height; 2.5993 = 2022 / 778), so it fits every phone, tablet and monitor: nothing is cut off and nothing scrolls. The words on it are in units of the
+   picture's own width (cqw), so they grow and shrink with it. */
+#proScr{--pro-chrome:142px}
+.mh520 #proScr,.mh560 #proScr{--pro-chrome:132px}
+.mh560:not(.mh520) #proScr.screen{padding-top:62px}
+#proScr .pro-ban{position:relative;flex:none;width:min(100%,1100px,calc((100 * var(--u-vh,1vh) - var(--pro-chrome)) * 2.5993));aspect-ratio:2022/778;container-type:inline-size;user-select:none;-webkit-user-select:none}
+#proScr .pro-ban>img{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none;border-radius:1.3cqw;box-shadow:0 .8cqw 2cqw #0009}
+.pro-pan{position:absolute;top:14%;height:66%;left:var(--l);width:var(--w);padding:0;border:0;background:none;color:#fff;cursor:pointer;border-radius:4.4cqw;-webkit-tap-highlight-color:transparent;font:inherit}
+.pro-pan::after{content:"";position:absolute;inset:0;border-radius:4.4cqw;background:radial-gradient(ellipse at 50% 55%,#ffe9a862,#ffd24d22 50%,transparent 72%);opacity:0;transition:opacity .15s;pointer-events:none}
+.pro-pan:hover::after,.pro-pan:active::after,.pro-pan:focus-visible::after{opacity:1}
+.pro-pan:focus-visible{outline:2px solid #ffe27a;outline-offset:-2px}
+.pro-pan .dot{top:3.4%;right:7%;z-index:2}
+.pro-cap{position:absolute;left:3%;right:3%;bottom:4.5%;display:flex;flex-direction:column;align-items:center;gap:.3cqw;text-align:center;pointer-events:none;isolation:isolate}
+.pro-cap::before{content:"";position:absolute;inset:-34% -4% -14%;z-index:-1;background:radial-gradient(ellipse at 50% 60%,#020a1cd0,#020a1c88 55%,transparent 78%)}
+.pro-cap b{max-width:100%;font:400 2.2cqw/1.04 var(--fh,system-ui);color:#fff4d0;letter-spacing:.02em;text-shadow:0 .2cqw 0 #000b,0 0 .8cqw #000,0 0 1.6cqw #000a;text-wrap:balance;overflow-wrap:anywhere}
+.pro-cap small{max-width:100%;font:800 1.3cqw/1.12 system-ui,sans-serif;color:#ffe9a8;text-shadow:0 .15cqw 0 #000b,0 0 .6cqw #000;overflow-wrap:anywhere}
+.pro-cap .pro-st{letter-spacing:.2cqw;font-size:1.8cqw;line-height:1;color:#ffffff58}.pro-cap .pro-st .on{color:#ffd24d;text-shadow:0 .15cqw 0 #000b}
 /* the lists and the analysis are tall: on a phone the header of the window shrinks with the page, so 5-6 rows fit without a scroll bar */
 #modal .panel:has(.pro-list) #mIcon,#modal .panel:has(.pro-an) #mIcon{font-size:clamp(30px,calc(15.9 * var(--u-vh,1vh) - 47px),64px);line-height:1.05;margin:0}
 #modal .panel:has(.pro-list) #mTitle,#modal .panel:has(.pro-an) #mTitle{font-size:clamp(24px,calc(7.5 * var(--u-vh,1vh) - 12px),40px);line-height:1.1;margin:0 0 2px}
@@ -16828,7 +16745,7 @@ html.mh460 #proRep .btn{min-height:34px;padding:2px 10px!important;border-width:
 html.mh460 .pro-ps .pst b{font-size:16px}html.mh460 .pro-shr .nm b{font-size:13px}`;
   document.head.appendChild(st);
   const scr = document.createElement("div"); scr.className = "screen"; scr.id = "proScr";
-  scr.innerHTML = `<div class="head"><button class="back" data-go="mini">‹</button><h2 id="proTitle"></h2></div><div class="panel" id="proBody"></div>`;
+  scr.innerHTML = `<div class="head"><button class="back" data-go="mini">‹</button><h2 id="proTitle"></h2></div><div class="pro-ban" id="proBody"><img src="${PRO_BAN}" alt="" draggable="false"><div id="proPans"></div></div>`;
   document.body.appendChild(scr);
 })();
 function proMiniBanner(sel) {   // the key that leads to the new modes: in the header of the Minigames screen and of the "play with friends" screen (the cards below stay as they were)
@@ -16837,20 +16754,20 @@ function proMiniBanner(sel) {   // the key that leads to the new modes: in the h
   if (!b) { b = document.createElement("button"); b.className = "pro-go"; b.onclick = () => go("proScr"); head.appendChild(b); }
   b.innerHTML = `<img src="${proArt("ball8")}" alt=""><span></span>`; b.querySelector("span").textContent = T("Yangi rejimlar");
 }
-function buildPro() {
+function buildPro() {   // the five keys over the picture: the name of the mode, a line under it (the stars of today's tricks, the lessons done ...), the red dot until the mode was opened once
   $("proTitle").textContent = T("Yangi rejimlar");
   try { trickPrefetch(); } catch (e) { console.error(e); }
-  const box = $("proBody"), st = proStore(), day = dshotDayKey(), d = st.trick && st.trick.day === day ? st.trick : null, ds = d ? d.st : [0, 0, 0, 0, 0], ls = st.lessons || {}, done = LESSONS.filter(x => ls[x.id]).length, seen = st.seen || {};
-  const card = (act, theme, title, sub, btn) => `<div class="mgc ${theme}" data-act="${act}">${seen[act] ? "" : '<i class="dot">!</i>'}<div class="mgart"><img src="${proArt(act === "trick" ? "trick" : act === "lessons" ? "lessons" : act === "bot" ? "bot" : act === "team" ? "team" : "nine")}" alt=""></div><div class="mgtx"><b>${title}</b><small>${sub}</small></div><button class="mgbtn">${btn}</button></div>`;
+  const st = proStore(), day = dshotDayKey(), d = st.trick && st.trick.day === day ? st.trick : null, ds = d ? d.st : [0, 0, 0, 0, 0], ls = st.lessons || {}, done = LESSONS.filter(x => ls[x.id]).length, seen = st.seen || {};
   const stars = `<span class="pro-st">${ds.map(s => `<span class="${s ? "on" : ""}">★</span>`).join("")}</span>`;
-  box.innerHTML = `<div class="mggrid">
-${card("trick", "mg-teal", T("Trick shot"), d && ds.some(x => x) ? stars : T("Har kuni 5 ta topshiriq"), T("O'ynash"))}
-${card("lessons", "mg-parch", T("O'rgatuvchi darslar"), done ? TT("{0}/6 dars bajarildi", done) : T("Kuch, spin, texnika"), T("O'rganish"))}
-${card("bot", "mg-red", T("Botga qarshi"), `${T("Oson")} · ${T("O'rta")} · ${T("Qiyin")}`, T("O'ynash"))}
-${card("team", "mg-gold", T("2v2 jamoa"), T("Do'st bilan juft bo'lib"), T("O'ynash"))}
-${card("nine", "mg-felt", T("9-ball"), T("1 dan 9 gacha"), T("O'ynash"))}
-</div>`;
-  box.querySelectorAll(".mgc").forEach(el => el.onclick = () => { const a = el.dataset.act; st.seen = st.seen || {}; if (!st.seen[a]) { st.seen[a] = 1; save(); } ({trick: proPickTrick, lessons: proPickLesson, bot: () => proPickLevel("eight"), nine: proPickNine, team: proPickTeam})[a](); });
+  const txt = {
+    trick: [T("Trick shot"), d && ds.some(x => x) ? stars : T("Har kuni 5 ta topshiriq")],
+    lessons: [T("O'rgatuvchi darslar"), done ? TT("{0}/6 dars bajarildi", done) : T("Kuch, spin, texnika")],
+    bot: [T("Botga qarshi"), `${T("Oson")} · ${T("O'rta")} · ${T("Qiyin")}`],
+    nine: [T("9-ball"), T("1 dan 9 gacha")],
+    team: [T("2v2 jamoa"), T("Do'st bilan juft bo'lib")]};
+  const box = $("proPans");
+  box.innerHTML = PRO_PANELS.map(([act, l, w]) => `<button class="pro-pan" data-act="${act}" style="--l:${l}%;--w:${w}%" aria-label="${esc(txt[act][0])}">${seen[act] ? "" : '<i class="dot">!</i>'}<span class="pro-cap"><b>${txt[act][0]}</b><small>${txt[act][1]}</small></span></button>`).join("");
+  box.querySelectorAll(".pro-pan").forEach(el => el.onclick = () => { const a = el.dataset.act; st.seen = st.seen || {}; if (!st.seen[a]) { st.seen[a] = 1; save(); } ({trick: proPickTrick, lessons: proPickLesson, bot: () => proPickLevel("eight"), nine: proPickNine, team: proPickTeam})[a](); });
 }
 function proPickList(icon, title, text, items, onPick) {   // items: [{id, n, glyph, name, sub, right, done}]: the rows are the leaderboard's (.lbr), a finished one has the gold frame
   const rows = items.map(x => `<div class="lbr pro-row${x.done ? " me" : ""}" data-id="${esc(x.id)}" style="grid-template-columns:34px 42px 1fr auto"><div class="rk">${x.n}</div><img class="pro-gl" src="${proGlyph(x.glyph)}" alt=""><div class="nm"><b>${x.name}</b>${x.sub ? `<small class="pro-sub">${x.sub}</small>` : ""}</div><div class="h">${x.right || ""}</div></div>`).join("");
