@@ -18315,6 +18315,7 @@ function wzOpen(o) {   // o: the same as mcOpen2d: {mode: "bot" | "local" | "onl
   const ov = wzEnsure(); MCU.tok++; MCU.on = true; MCU.use3d = true; MCU.mode = o.mode; MCU.lv = o.lv || "mid"; MCU.my = o.my || 1; MCU.flip = false; MCU.G = mcNew();
   MCU.sel = null; MCU.busy = 0; MCU.q = []; MCU.offer = 0; MCU.fin = 0; MCU.net = o.net || null; MCU.pl = o.pl; WZ.ready = false; clearTimeout(WZ.fin);
   const q = new URLSearchParams({embed: "1", mode: o.mode === "online" ? "net" : o.mode === "local" ? "2p" : "ai", human: String(MCU.my), level: String({easy: 0, mid: 1, hard: 2}[MCU.lv] ?? 1), lang: LANG === "uz" || LANG === "ru" ? LANG : "en"});
+  if (profile.muted) q.set("sound", "0");   // (the game is muted: the hall starts silent; its own sound key is still there)
   if (WZ.played) q.set("quick", "1");   // (the hall was seen once in this session: the next game goes straight to the board)
   $("wzFrame").src = new URL("wizard-chess/index.html?" + q, location.href).href;
   ov.classList.add("on"); const on = o.mode === "online";
@@ -18347,11 +18348,20 @@ function wzRemote(path) {   // a friend's move over the wire: checked, kept, sho
 function wzEndNow(winner, why) {   // a resignation, an agreed draw, the friend left: the board is locked and the result window comes
   const G = MCU.G; if (!G || G.over) return; G.over = {winner, why}; wzPost({t: "lock"}); mcFinish(G.over);
 }
+function wzFail() {   // the page could not draw the hall (the frame's WebGL was refused, or its context was lost): the flat board takes over the same game (an online game keeps its moves); WZ.ok = false: the next games open the flat board at once
+  if (!MCU.on || !MCU.use3d) return;
+  const o = {mode: MCU.mode, lv: MCU.lv, my: MCU.my, pl: MCU.pl, net: MCU.net}, moves = MCU.G ? MCU.G.moves.slice() : [];
+  WZ.ok = false; WZ.ready = false; WZ.finSet = false; clearTimeout(WZ.fin);
+  const ov = $("wzScr"); if (ov) ov.classList.remove("on"); const f = $("wzFrame"); if (f) f.src = "about:blank";
+  MCU.use3d = false; mcOpen2d(o);
+  if (o.mode === "online") { for (const pth of moves) { const mv = mcFind(MCU.G, pth); if (!mv) break; mcPlay(MCU.G, mv); } mcRender2d(); mcAfter2d(); }
+}
 addEventListener("message", ev => {
   if (!MCU.on || !MCU.use3d || ev.source !== wzWin()) return;
   const d = ev.data; if (!d || d.wc !== 1) return;
   if (d.t === "ready") { WZ.ready = true; WZ.played = true; if (MCU.mode === "online" && MCU.G && MCU.G.moves.length) wzRender(); }
   else if (d.t === "move" && MCU.mode === "online") wzMine(String(d.uci || ""));
+  else if (d.t === "fail") wzFail();
 });
 // ---- the way in: the 3D page when it is there, the flat board otherwise
 const mcOpen2d = mcOpen, mcClose2d = mcClose, mcEndNow2d = mcEndNow, mcRemote2d = mcRemote, mcRender2d = mcRender, mcAfter2d = mcAfter;
