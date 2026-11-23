@@ -37,7 +37,11 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
     const f = frameOf(p), xy = await f.evaluate(sq => { const W = window.__wc; for (const h of [0.45, 0.65, 0.3, 0.85, 0.15, 1.0]) for (const dx of [0, -8, 8, -16, 16]) { const [x, y] = W.sqScreen(sq, h), r = W.pick(x + dx, y); if (r.piece && r.piece[2] === sq) return [x + dx, y]; } return W.sqScreen(sq, 0.45); }, sq88(u));
     await f.evaluate(([x, y]) => window.__wc.onTap(x, y), xy); await sleep(350);
   };
-  const playTap = async (p, uci) => { await tapPiece(p, uci.slice(0, 2)); await tapSq(p, uci.slice(2, 4), 0); };
+  const tapCell = async (p, u) => {   // a finger on the cell a piece goes to: a point on that cell the page's ray reads as THAT cell (the raised piece that is going there hides the middle of it when it is seen from behind)
+    const f = frameOf(p), xy = await f.evaluate(sq => { const W = window.__wc, [x0, y0] = W.sqScreen(sq, 0); for (const [dx, dy] of [[0, 0], [0, -6], [0, 6], [-8, 0], [8, 0], [0, -12], [0, 12], [-14, -6], [14, -6], [-14, 6], [14, 6], [0, -18], [0, 18]]) { const r = W.pick(x0 + dx, y0 + dy); if (r.sq === sq && (!r.piece || r.piece[2] === sq)) return [x0 + dx, y0 + dy]; } return [x0, y0]; }, sq88(u));
+    await f.evaluate(([x, y]) => window.__wc.onTap(x, y), xy); await sleep(350);
+  };
+  const playTap = async (p, uci) => { await tapPiece(p, uci.slice(0, 2)); await tapCell(p, uci.slice(2, 4)); };
   const randomLegal = p => frameOf(p).evaluate(() => { const E = window.__wc.E, ms = E.legalMoves(window.__wc.game.s).map(m => E.toUCI(m)); const nonPromo = ms.filter(u => u.length === 4); return (nonPromo.length ? nonPromo : ms)[Math.floor(Math.random() * (nonPromo.length || ms.length))]; });
   const modal = p => p.evaluate(() => document.getElementById("modal").classList.contains("on") ? { t: document.getElementById("mTitle").textContent, txt: (document.getElementById("mText") || {}).textContent || "", btns: [...document.querySelectorAll("#mBtns button")].map(x => x.textContent) } : null);
   const clickBtn = (p, re) => p.evaluate(r => { const bt = [...document.querySelectorAll("#mBtns button")].find(x => new RegExp(r, "i").test(x.textContent)); if (bt) bt.click(); return !!bt; }, re);
@@ -66,15 +70,15 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
     for (const g of per) { const gm = await p.evaluate(g => { const G = mcNew(), bad = []; for (let i = 0; i < g.picked.length; i++) { const mine = mcLegal(G.P).map(m => mcUciOfPath(mcPath(m))).sort(); if (JSON.stringify(mine) !== JSON.stringify(g.lines[i])) { bad.push([i, mine.filter(x => !g.lines[i].includes(x)), g.lines[i].filter(x => !mine.includes(x))]); break; } const mv = mcFind(G, mcPathOfUci(g.picked[i])); if (!mv) { bad.push([i, "not found", g.picked[i]]); break; } mcPlay(G, mv); } return { bad, n: g.picked.length, promos: g.picked.filter(u => u.length > 4).length, over: G.over && G.over.why }; }, g); plies += gm.n; promos += gm.promos; if (gm.bad.length && !diff) diff = gm.bad[0]; }
     ok(diff === null && plies > 300, `two engines, one game: the 3D page's engine and the game's rules core have the same legal moves in every one of ${plies} positions (6 random games, ${promos} promotions)`, diff);
     // a finger in the hall
-    await tapPiece(p, "e2"); await tapSq(p, "e4"); ok(await until(async () => ((await fstate(p)) || { uci: [] }).uci.join() === "e2e4", 15000), "a tap on the pawn and a tap on the cell: the move is played in the hall");
+    await tapPiece(p, "e2"); await tapCell(p, "e4"); ok(await until(async () => ((await fstate(p)) || { uci: [] }).uci.join() === "e2e4", 15000), "a tap on the pawn and a tap on the cell: the move is played in the hall");
     ok(await until(async () => { const s = await fstate(p); return s && !s.busy; }, 15000), "its animation ends");
-    await tapPiece(p, "e7"); await tapSq(p, "e5"); ok(await until(async () => ((await fstate(p)) || { uci: [] }).uci.join() === "e2e4,e7e5", 15000), "two on one phone: Black answers on the same screen");
+    await tapPiece(p, "e7"); await tapCell(p, "e5"); ok(await until(async () => ((await fstate(p)) || { uci: [] }).uci.join() === "e2e4,e7e5", 15000), "two on one phone: Black answers on the same screen");
     await p.evaluate(() => document.querySelector('#wzScr [data-a="exit"]').click()); await sleep(500);
     ok(await p.evaluate(() => !document.getElementById("wzScr").classList.contains("on") && document.getElementById("wzFrame").src === "about:blank"), "the close key hides the hall and lets its memory go");
     // against the computer
     await p.evaluate(() => mcStartBot("easy")); ok(await hall(p), "against the computer: the hall opens");
     fu = frameOf(p).url(); const hum = /human=(-?1)/.exec(fu)[1]; ok(/mode=ai/.test(fu) && /level=0/.test(fu), "the frame was asked for the computer, the easy level (level=0)", fu);
-    if (hum === "1") { await tapPiece(p, "d2"); await tapSq(p, "d4"); } else { ok(await until(async () => ((await fstate(p)) || { uci: [] }).uci.length === 1, 30000), "the computer, White, opens"); await until(async () => { const s = await fstate(p); return s && !s.busy; }, 15000); const u = await randomLegal(p); await playTap(p, u); }
+    if (hum === "1") { await tapPiece(p, "d2"); await tapCell(p, "d4"); } else { ok(await until(async () => ((await fstate(p)) || { uci: [] }).uci.length === 1, 30000), "the computer, White, opens"); await until(async () => { const s = await fstate(p); return s && !s.busy; }, 15000); const u = await randomLegal(p); await playTap(p, u); }
     ok(await until(async () => { const s = await fstate(p); return s && s.uci.length >= 2 && !s.aiPending && !s.busy; }, 40000), `I am ${hum === "1" ? "White" : "Black"}: my move is played and the computer answers`, await fstate(p));
     if (SHOT) await p.screenshot({ path: path.join(SHOT, "02_bot.png") });
     await p.evaluate(() => document.querySelector('#wzScr [data-a="exit"]').click()); await sleep(400);
@@ -114,7 +118,7 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
     const white = hs[0] === 1 ? A : B, black = white === A ? B : A;
     const same = async () => { const [sa, sb, ga, gb] = await Promise.all([fstate(A), fstate(B), A.evaluate(() => MCU.G.moves.map(mcUciOfPath).join()), B.evaluate(() => MCU.G.moves.map(mcUciOfPath).join())]); return sa && sb && sa.uci.join() === sb.uci.join() && sa.uci.join() === ga && ga === gb && !sa.busy && !sb.busy ? sa.uci.length : -1; };
     // the black phone taps out of turn
-    const ob = await randomLegal(black).catch(() => null); await tapPiece(black, "e7"); await tapSq(black, "e5"); await sleep(600); ok(((await fstate(black)) || { uci: [] }).uci.length === 0, "a tap out of turn (Black before White) does nothing");
+    const ob = await randomLegal(black).catch(() => null); await tapPiece(black, "e7"); await tapCell(black, "e5"); await sleep(600); ok(((await fstate(black)) || { uci: [] }).uci.length === 0, "a tap out of turn (Black before White) does nothing");
     let n = 0, bad = null;
     for (let i = 0; i < 6; i++) {
       const wt = await white.evaluate(() => mcTurnMine()), mover = wt ? white : black, u = await randomLegal(mover);
@@ -132,7 +136,8 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
     const mover2 = (await white.evaluate(() => mcTurnMine())) ? white : black;
     await A.evaluate(() => document.querySelector('#wzScr [data-a="draw"]').click());
     ok(await until(async () => { const m = await modal(B); return m && /draw/i.test(m.t); }, 8000), "a draw offer reaches the friend as a question (over the hall)");
-    await clickBtn(B, "Yes"); await sleep(2500);
+    await clickBtn(B, "Yes");
+    await until(async () => (await Promise.all([A, B].map(modal))).every(m => m && /^Draw$/i.test(m.t.trim())), 20000, 400);
     const res = await Promise.all([A, B].map(modal)); ok(res.every(m => m && /^Draw$/i.test(m.t.trim())), "he says yes: the result window on both phones", res);
     ok((await Promise.all([A, B].map(x => fstate(x)))).every(s => s && s.gameOver), "and both halls are locked (the game ended outside the rules)");
     // a rematch: the colours swap, the hall opens at the board
@@ -154,7 +159,8 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
     ok(await until(async () => { const s = await fstate(B); return s && s.uci.join() === was && !s.busy; }, 40000, 500), "the hall is set to the match's move list again (it comes from the server's list)", [was, await fstate(B)]);
     ok((await same()) === was.split(",").length, "both phones have the same game again");
     // a resignation
-    await B.evaluate(() => document.querySelector('#wzScr [data-a="resign"]').click()); await sleep(400); await clickBtn(B, "Yes"); await sleep(2500);
+    await B.evaluate(() => document.querySelector('#wzScr [data-a="resign"]').click()); await sleep(400); await clickBtn(B, "Yes");
+    await until(async () => { const m = await modal(A); return m && /VICTORY/i.test(m.t); }, 20000, 400);
     const mm = await Promise.all([B, A].map(modal)); ok(mm[0] && mm[1] && /VICTORY/i.test(mm[1].t) && /Resigned/i.test(mm[1].txt), "a resignation: the friend gets the victory window with the reason", mm);
     await clickBtn(A, "Play again"); await clickBtn(B, "Play again");
     ok(await until(async () => (await Promise.all([A, B].map(x => x.evaluate(() => WZ.ready)))).every(Boolean) && (await Promise.all([A, B].map(x => x.evaluate(() => MCU.on && !MCU.G.over)))).every(Boolean), 90000, 500), "another match is on");
