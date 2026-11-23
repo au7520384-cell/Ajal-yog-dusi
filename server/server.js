@@ -2448,6 +2448,123 @@ function teamMessage(ws, m, u) {
 }
 setInterval(() => { const now = Date.now(); for (const r of [...trooms.values()]) if (now - r.at > 6 * 3600e3 || !r.seats.some((w, i) => w && r.uids[i] && !r.gone[i] && w.readyState === 1) && now - r.at > 5 * 60e3) tClose(r); }, 60e3).unref();
 
+// ---------------------------------------------------------------- board game rooms (shashka now; chess and mafia use the same room: code, seats, voice)
+// The owner (Nov 23): shashka, chess, mafia with voice. A room has a game, a 4-letter code, `max` seats (2 for the board games, up to 8 for mafia), a host who starts it. For the two-seat games the server also keeps the MOVE LIST of the
+// match (a phone that was away gets it back whole: `bsync`) and lets only the seat whose turn it is move; it does not know the rules (the phones check every move they receive). Voice: `bvoice` is relayed between the seats
+// (WebRTC signalling only, the audio never touches the server). Same away / gone idea as the 2v2 rooms: a phone that drops keeps its seat for a while (open room: 3 min, match: BROOM_GRACE_MS, then it forfeits).
+const brooms = new Map();   // code -> {code, game, max, id, state: "open" | "run", host, seats, uids, prof, away, timers, first, turn, moves, rem, at}
+const BG_MAX = {shashka: 2};
+const BROOM_GRACE = +process.env.BROOM_GRACE_MS || 30e3, BROOM_OPEN_GRACE = +process.env.BROOM_OPEN_GRACE_MS || 3 * 60e3;
+const BG_T = new Set(["bcreate", "bjoin", "bleave", "bstart", "bmove", "bover", "boffer", "brematch", "bresume", "bvoice"]);
+const bHere = (r, i) => !!r.uids[i], bLive = (r, i) => bHere(r, i) && !r.away[i] && r.seats[i] && r.seats[i].readyState === 1;
+const bPresent = r => [...r.uids.keys()].filter(i => bHere(r, i));
+function bPub(r) { return {t: "broom", code: r.code, game: r.game, max: r.max, state: r.state, host: r.host, id: r.state === "run" ? r.id : "", seats: [...r.uids.keys()].map(i => r.uids[i] ? {...pubProfile(r.prof[i]), uid: r.uids[i], away: r.away[i] ? 1 : 0} : null)}; }
+function bBroadcast(r) { const m = bPub(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m); }
+function bToAll(r, m, except) { for (let i = 0; i < r.max; i++) if (i !== except && bLive(r, i)) wsSend(r.seats[i], m); }
+const bMatchMsg = r => ({t: "bmatch", room: r.id, code: r.code, game: r.game, first: r.first, seats: bPub(r).seats});
+function bClose(r) { for (const x of r.timers) clearTimeout(x); brooms.delete(r.code); for (const w of r.seats) if (w && w.broom === r.code) w.broom = null; }
+function bEnd(r, winner, why) {   // the match is over (a phone reported it, or a player left / timed out): the room is a waiting room again
+  if (r.state !== "run") return;
+  const id = r.id; r.state = "open"; r.id = ""; r.rem = {}; r.lastFirst = r.first;
+  bToAll(r, {t: "bend", room: id, winner, why: String(why || "").slice(0, 12)});
+  bBroadcast(r);
+}
+function bDrop(r, i, why) {   // the seat is given up
+  const w = r.seats[i]; clearTimeout(r.timers[i]); r.timers[i] = null; if (w && w.broom === r.code) w.broom = null;
+  const was = r.state === "run";
+  r.seats[i] = null; r.uids[i] = null; r.prof[i] = null; r.away[i] = 0;
+  if (!bPresent(r).length) return bClose(r);
+  if (r.host === i) r.host = bPresent(r)[0];
+  if (was && r.max === 2) bEnd(r, bPresent(r)[0], "left"); else bBroadcast(r);
+}
+function boardDrop(ws) {
+  const r = ws.broom && brooms.get(ws.broom); if (!r) return;
+  const i = r.seats.indexOf(ws); ws.broom = null; if (i < 0 || !bHere(r, i) || r.away[i]) return;
+  r.away[i] = Date.now(); bBroadcast(r);
+  clearTimeout(r.timers[i]); r.timers[i] = setTimeout(() => { r.timers[i] = null; if (r.away[i] && brooms.get(r.code) === r) bDrop(r, i, "away"); }, r.state === "run" ? BROOM_GRACE : BROOM_OPEN_GRACE);
+}
+function bAttach(r, i, ws) { const old = r.seats[i]; if (old && old !== ws && old.broom === r.code) old.broom = null; r.seats[i] = ws; ws.broom = r.code; clearTimeout(r.timers[i]); r.timers[i] = null; r.away[i] = 0; }
+function bStartMatch(r) {
+  r.state = "run"; r.id = crypto.randomUUID(); r.moves = []; r.rem = {}; r.at = Date.now();
+  r.first = r.lastFirst === undefined ? crypto.randomInt(r.max) : (r.lastFirst + 1) % r.max;   // (the colours swap in a rematch)
+  r.turn = r.first;
+  const m = bMatchMsg(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m);
+  bBroadcast(r);
+}
+function boardMessage(ws, m, u) {
+  if (m.t === "bcreate") {
+    const game = String(m.game || ""), max = BG_MAX[game]; if (!max) return;
+    if (!bucket(ws, "bcreate", 5, 20000) || (ws.room && !ws.room.over)) return wsSend(ws, {t: "berr", why: "busy"});
+    leaveQueue(ws); if (ws.broom) boardLeave(ws);
+    let code = ""; for (let k = 0; k < 40 && (!code || brooms.has(code)); k++) code = Array.from({length: 4}, () => TCODE_CH[crypto.randomInt(TCODE_CH.length)]).join("");
+    if (brooms.has(code)) return wsSend(ws, {t: "berr", why: "busy"});
+    const n = [...Array(max).keys()], r = {code, game, max, id: "", state: "open", host: 0, seats: n.map(i => i ? null : ws), uids: n.map(i => i ? null : ws.uid), prof: n.map(i => i ? null : mkProfile(u, m.cue, m.tbl)), away: n.map(() => 0), timers: n.map(() => null), first: 0, turn: 0, moves: [], rem: {}, at: Date.now()};
+    brooms.set(code, r); ws.broom = code; return bBroadcast(r);
+  }
+  if (m.t === "bjoin") {
+    if (!bucket(ws, "bjoin", 8, 10000) || (ws.room && !ws.room.over)) return wsSend(ws, {t: "berr", why: "busy"});
+    const r = brooms.get(tcode(m.code)); if (!r) return wsSend(ws, {t: "berr", why: "none"});
+    const mine = r.uids.indexOf(ws.uid);
+    if (mine >= 0) { bAttach(r, mine, ws); if (r.state === "run") { wsSend(ws, bMatchMsg(r)); wsSend(ws, {t: "bsync", room: r.id, moves: r.moves}); } return bBroadcast(r); }
+    if (r.state === "run") return wsSend(ws, {t: "berr", why: "started"});
+    leaveQueue(ws); if (ws.broom) boardLeave(ws);
+    const i = r.uids.findIndex(x => !x); if (i < 0) return wsSend(ws, {t: "berr", why: "full"});
+    r.uids[i] = ws.uid; r.prof[i] = mkProfile(u, m.cue, m.tbl); bAttach(r, i, ws); return bBroadcast(r);
+  }
+  const r = ws.broom && brooms.get(ws.broom);
+  if (m.t === "bresume") {   // the phone lost its connection (or came back from the background): it takes its seat again, and gets the match and every move so far
+    if (!bucket(ws, "bresume", 8, 10000)) return;
+    const rr = r || (m.code ? brooms.get(tcode(m.code)) : [...brooms.values()].find(x => x.uids.includes(ws.uid)));
+    const i = rr ? rr.uids.indexOf(ws.uid) : -1;
+    if (!rr || i < 0) return wsSend(ws, {t: "berr", why: "none", resume: 1});
+    bAttach(rr, i, ws);
+    if (rr.state === "run") { wsSend(ws, bMatchMsg(rr)); wsSend(ws, {t: "bsync", room: rr.id, moves: rr.moves}); }
+    return bBroadcast(rr);
+  }
+  if (!r) return;
+  const seat = r.seats.indexOf(ws); if (seat < 0 || !bHere(r, seat)) return;
+  if (m.t === "bleave") return boardLeave(ws);
+  if (m.t === "bstart") {
+    if (r.host !== seat || r.state !== "open") return;
+    if (bPresent(r).filter(i => bLive(r, i)).length < Math.min(2, r.max) || bPresent(r).length < (r.max === 2 ? 2 : 1)) return wsSend(ws, {t: "berr", why: "min"});
+    return bStartMatch(r);
+  }
+  if (m.t === "bvoice") {   // WebRTC signalling between the seats of the room
+    if (!bucket(ws, "bvoice", 240, 100)) return;
+    const k = String(m.k || ""); if (!LVOICE_KINDS.has(k)) return;
+    const d = m.d && typeof m.d === "object" && JSON.stringify(m.d).length < 16000 ? m.d : null, out = {t: "bvoice", from: ws.uid, k, d, re: m.re ? 1 : 0};
+    if (m.to) { const j = r.uids.indexOf(String(m.to).slice(0, 40)); if (j >= 0 && j !== seat && bLive(r, j)) wsSend(r.seats[j], out); } else bToAll(r, out, seat);
+    return;
+  }
+  if (m.t === "brematch") {   // both seats want another match: it starts at once (the colours swap)
+    if (r.state !== "open" || r.max !== 2 || !bucket(ws, "brematch", 4, 5000)) return;
+    r.rem[seat] = true; bToAll(r, {t: "boffer", k: "rematch", from: seat}, seat);
+    if (bPresent(r).length === 2 && bPresent(r).every(i => r.rem[i] && bLive(r, i))) bStartMatch(r);
+    return;
+  }
+  if (r.state !== "run") return;
+  if (m.t === "bmove") {
+    if (seat !== r.turn || !Array.isArray(m.path) || m.path.length < 2 || m.path.length > 16 || m.path.some(x => !Number.isInteger(x) || x < 0 || x > 63) || r.moves.length >= 600) return;
+    r.moves.push(m.path.slice()); r.turn = (r.turn + 1) % r.max;
+    return bToAll(r, {t: "bmove", path: m.path.slice(), from: seat, n: r.moves.length, room: r.id}, seat);
+  }
+  if (m.t === "boffer") {   // a draw offer / answer: relayed
+    const k = String(m.k || ""); if (!["draw", "yes", "no"].includes(k) || !bucket(ws, "boffer", 6, 5000)) return;
+    return bToAll(r, {t: "boffer", k, from: seat, room: r.id}, seat);
+  }
+  if (m.t === "bover") {   // a phone says the match is over (by the rules, a resignation, an agreed draw): the first report counts
+    if (m.room && String(m.room) !== r.id) return;
+    const w = Number.isInteger(m.winner) && m.winner >= 0 && m.winner < r.max ? m.winner : -1;
+    return bEnd(r, w, m.why);
+  }
+}
+function boardLeave(ws) {
+  const r = ws.broom && brooms.get(ws.broom); ws.broom = null; if (!r) return;
+  const i = r.uids.indexOf(ws.uid); if (i < 0) return;
+  bDrop(r, i, "left");
+}
+setInterval(() => { const now = Date.now(); for (const r of [...brooms.values()]) if (now - r.at > 6 * 3600e3 || (!r.seats.some((w, i) => w && r.uids[i] && w.readyState === 1) && now - r.at > 5 * 60e3)) bClose(r); }, 60e3).unref();
+
 wss.on("connection", (ws, req) => {
   const url = new URL(req.url, "http://x"), u = db.users[url.searchParams.get("id")];
   if (!u || url.searchParams.get("token") !== u.token) return ws.close(4001, "unauthorized");
@@ -2505,6 +2622,8 @@ wss.on("connection", (ws, req) => {
       const ps = L.players.filter(p => p.readyState === 1 && !p.room);
       if (ps.length < 2) return wsSend(ws, {t: "lobbyerr", why: "min"});
       startTournament(L, ps);
+    } else if (BG_T.has(m.t)) {   // board game rooms (see "board game rooms" above)
+      try { boardMessage(ws, m, u); } catch (e) { console.error("board:", e && e.stack || e); }
     } else if (TEAM_T.has(m.t)) {   // online 2v2 team rooms (see "online 2v2" above)
       try { teamMessage(ws, m, u); } catch (e) { console.error("team:", e && e.stack || e); }
     } else if (m.t === "lpub") {   // the host makes his lobby public (listed for everybody) or private again
@@ -2611,6 +2730,7 @@ wss.on("connection", (ws, req) => {
     leaveLobby(ws, true);
     leaveQueue(ws);
     try { teamDrop(ws); } catch (e) { console.error("team:", e && e.stack || e); }
+    try { boardDrop(ws); } catch (e) { console.error("board:", e && e.stack || e); }
     try { cupDrop(ws); } catch (e) { console.error("cup:", e && e.stack || e); }
     if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
     if (clients.get(u.id) === ws) clients.delete(u.id);
