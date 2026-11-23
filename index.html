@@ -18281,7 +18281,7 @@ html.mh460 #mcScr .sh-pl{min-height:48px}html.mh460 #mcScr .sh-msg{font-size:16p
 BGS.magic = {id: "magic", U: MCU, open: mcOpen, remote: mcRemote, rules: {new: mcNew, find: mcFind, play: mcPlay}, endNow: mcEndNow, render: mcRender, after: mcAfter};
 BGLIST.push({id: "magic", name: "Sehrli shaxmat", sub: "Botga qarshi yoki do'st bilan, ovoz orqali", art: mcArt, pick: mcPick});
 
-// ---------------------------------------------------------------- THE 3D WIZARD CHESS inside the game (the owner, Nov 23: "Mana tayyor" - the ready-made 3D chess is the chess of the Board games row)
+// ---------------------------------------------------------------- THE 3D WIZARD CHESS inside the game (the owner, Nov 23: Mana tayyor, i.e. here it is ready - the ready-made 3D chess is the chess of the Board games row)
 // wizard-chess/index.html is a finished 3D game (a hall, pieces that fight with their own weapons, its own engine for the computer). The Board games row opens it in a frame (#wzScr):
 //  - against the computer and two on one phone it plays by itself (?embed=1&mode=ai|2p);
 //  - online with a friend (?mode=net) the page only draws and takes MY moves; the game keeps the rules (this phone's MCU / mcPlay, the core of pro_a), the room, the move list, the draw offers, the result window and the voice.
@@ -18302,7 +18302,7 @@ const wzPost = m => { const w = wzWin(); if (w) try { w.postMessage(Object.assig
 function wzEnsure() {
   let ov = $("wzScr"); if (ov) return ov;
   ov = document.createElement("div"); ov.id = "wzScr";
-  ov.innerHTML = `<iframe id="wzFrame" title="Wizard Chess" allow="autoplay; fullscreen"></iframe><div class="wz-btns"><button class="sh-b" data-a="mic" title="" style="display:none"></button><button class="sh-b" data-a="spk" title="" style="display:none"></button><button class="sh-b" data-a="draw" title="" style="display:none">🤝</button><button class="sh-b" data-a="resign" title="" style="display:none">🏳</button><button class="sh-b red" data-a="exit" title="">✕</button></div>`;
+  ov.innerHTML = `<iframe id="wzFrame" title='Wizard Chess' allow="autoplay; fullscreen"></iframe><div class="wz-btns"><button class="sh-b" data-a="mic" title="" style="display:none"></button><button class="sh-b" data-a="spk" title="" style="display:none"></button><button class="sh-b" data-a="draw" title="" style="display:none">🤝</button><button class="sh-b" data-a="resign" title="" style="display:none">🏳</button><button class="sh-b red" data-a="exit" title="">✕</button></div>`;
   document.body.appendChild(ov);
   ov.addEventListener("click", e => {
     const b = e.target.closest("[data-a]"); if (!b) return; try { Snd.click(); } catch (x) {}
