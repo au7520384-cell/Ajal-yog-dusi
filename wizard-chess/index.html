@@ -638,6 +638,7 @@ if(EMBED){
   const md=QS.get('mode'); if(md==='ai'||md==='2p'||md==='net') settings.mode=md;
   settings.human=QS.get('human')==='-1'?-1:1;
   const lv=+QS.get('level'); if(lv>=0&&lv<4) settings.level=lv|0;
+  if(QS.get('sound')==='0') settings.sound=false;   // (the game is muted: the hall starts silent, its own sound key still works)
 }
 const t=k=>{ const d=I18N[settings.lang]||I18N.uz; return d[k]!==undefined?d[k]:I18N.uz[k]; };
 
@@ -662,9 +663,12 @@ try{
   renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
 }catch(err){
   $('loadText').textContent=t('noWebGL');
+  if(EMBED) toParent({t:'fail',why:'webgl'});   // (the game shows its flat board instead)
   return;
 }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,lowPower?1.6:2));
+if(window.__wcPR) renderer.setPixelRatio(window.__wcPR);   // (tests: a low pixel ratio keeps the browser's software drawing light)
+canvas.addEventListener('webglcontextlost',()=>{ if(EMBED) toParent({t:'fail',why:'lost'}); });
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;

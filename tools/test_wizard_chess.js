@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// The 3D Wizard Chess inside the game:  node tools/test_wizard_chess.js   (B8_ROOT=<repo copy>; SHOT=dir saves pictures; about 8 minutes: the hall is drawn by the browser's software WebGL, ~20 s to open)
+// The 3D Wizard Chess inside the game:  node tools/test_wizard_chess.js   (B8_ROOT=<repo copy>; SHOT=dir saves pictures; PART=A runs only the one-phone part; about 12 minutes: the hall is drawn by the browser's software WebGL, ~20 s to open)
 // The owner (Nov 23, with a screenshot of the finished 3D chess): "Mana tayyor" - this is the chess of the Board games row. wizard-chess/index.html is opened in a frame (#wzScr); the game keeps the rules, the room, the voice.
 //  - the page is found (wizard-chess/ok.json) and WebGL is there: the Magic Chess card opens the 3D page (against the computer, two on one phone); where the page is not found or WebGL is off, the flat board opens
 //  - the 3D page and the game's own rules core (pro_a) are two engines: over six random games every position has the SAME legal moves in both (the frame's engine says, the game's core is compared), a move's text ("e7e8q") and path round-trip
@@ -124,6 +124,7 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
     ok((await r.evaluate(() => WZ.ok)) === false, "in a copy of the game without the 3D page (the Android app, a portal's zip) the page is taken as missing (WZ.ok = false)");
     await r.evaluate(() => { toMenu("mini"); mcStartLocal(); }); await sleep(900); ok(await r.evaluate(() => document.getElementById("mcScr").classList.contains("on")), "...and the flat board opens");
     await r._ctx.close(); await p._ctx.close(); srv.close(); srv2.close();
+    if (process.env.PART === "A") { console.log(`pass ${pass}, fail ${fail} (part A only: PART=A)`); await b.close(); process.exit(fail ? 1 : 0); }   // (PART=A skips the two-phone part B: about 5 minutes)
 
     // ================================================================== B. online, two phones (the real server)
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8wz-")), P = +process.env.TEST_PORT || 8800, base = `http://localhost:${P}`;
