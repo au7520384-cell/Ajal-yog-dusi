@@ -9,6 +9,7 @@
 //  7) shot analysis: the numbers of a match, the best and the worst shot keep frames for the replay
 //  8) every new text has a translation in all 15 languages
 //  9) on a portal (the page in a frame, NO_SOCIAL): the replay plays, but there is no share key and no link on the picture
+// 10) the screen of the new modes is made like the Minigames screen: its colours, wooden frames, painted pictures, green keys, the red dots, the leaderboard's rows in the lists
 const { chromium } = require("playwright"), http = require("http"), path = require("path"), fs = require("fs");
 const ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 500) : ""); } };
@@ -199,16 +200,20 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(await p.evaluate(() => /jamoa|Team|WINS|YUTDI/i.test(document.getElementById("mTitle").textContent)), "2v2 " + mode + ": the result window names the winning team");
   }
 
-  // ------------------------------------------------------------------ 7) shot analysis (a match with human shots)
-  await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); toMenu("proScr"); proStartBot("mid", "eight"); });
-  for (let i = 0; i < 60; i++) { await sleep(200); if (await p.evaluate(() => !!game && game.pro === "drill")) break; }
-  await p.evaluate(() => autoplay(90000));
-  const an = await p.evaluate(() => { const st = game.st, mine = st.shots.filter(x => x.mine); return {shots: st.shots.length, mine: mine.length, pots: mine.reduce((s, x) => s + x.n, 0), best: !!st.best, worst: !!st.worst, bestFrames: st.best && st.best.frames.f.length, run: st.run[mine[0] && mine[0].name], allHaveScore: st.shots.every(x => typeof x.score === "number" && typeof x.bad === "number"), badNoFoulScore: st.shots.filter(x => x.foul).every(x => x.score === 0)}; });
+  // ------------------------------------------------------------------ 7) shot analysis (a match with human shots: a bot that runs the table from its break leaves nothing to analyse, so try again)
+  let an = null;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); toMenu("proScr"); proStartBot("easy", "eight"); });
+    for (let i = 0; i < 60; i++) { await sleep(200); if (await p.evaluate(() => !!game && game.pro === "drill")) break; }
+    await p.evaluate(() => autoplay(90000));
+    an = await p.evaluate(() => { const st = game.st, mine = st.shots.filter(x => x.mine); return {shots: st.shots.length, mine: mine.length, pots: mine.reduce((s, x) => s + x.n, 0), best: !!st.best, worst: !!st.worst, bestFrames: st.best && st.best.frames.f.length, run: st.run[mine[0] && mine[0].name], allHaveScore: st.shots.every(x => typeof x.score === "number" && typeof x.bad === "number"), badNoFoulScore: st.shots.filter(x => x.foul).every(x => x.score === 0)}; });
+    if (an.mine > 3 && an.best) break;
+  }
   ok(an.mine > 3 && an.shots > an.mine && an.best && an.bestFrames > 3 && an.allHaveScore && an.badNoFoulScore, "the analysis counts every shot, keeps the best shot's frames, a foul scores nothing", an);
   for (let i = 0; i < 40; i++) { await sleep(300); if (await p.evaluate(() => document.getElementById("modal").classList.contains("on"))) break; }
   await p.evaluate(() => { [...document.querySelectorAll("#mBtns button")].find(b => /Tahlil|Analysis/.test(b.textContent)).click(); }); await sleep(600);
-  const html = await p.evaluate(() => ({table: document.querySelectorAll("#mExtra .pro-tb tr").length, rep: document.querySelectorAll("#mExtra [data-rep]").length, text: document.getElementById("mExtra").innerText.replace(/\s+/g, " ")}));
-  ok(html.table >= 2 && html.rep >= 1 && /Shots|Zarbalar/.test(html.text), "the analysis window: a row with the numbers, a replay key for the best shot", html);
+  const html = await p.evaluate(() => ({tiles: document.querySelectorAll("#mExtra .pstats .pst").length, rep: document.querySelectorAll("#mExtra [data-rep]").length, rows: document.querySelectorAll("#mExtra .lbr").length, text: document.getElementById("mExtra").innerText.replace(/\s+/g, " ")}));
+  ok(html.tiles === 5 && html.rep >= 1 && html.rows >= 1 && /Shots|Zarbalar/.test(html.text), "the analysis window: five stat tiles, the best shot (and the mistake) as rows with a replay key", html);
 
   // ------------------------------------------------------------------ 8) translations: every text has all 15 languages
   const tr = await p.evaluate(() => {
@@ -220,6 +225,23 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     LANG = "en"; return {n: cand.length, miss: out.slice(0, 12), count: out.length};
   });
   ok(tr.n > 40 && tr.count === 0, "every text of the new modes is translated in all 15 languages", tr);
+
+  // ------------------------------------------------------------------ 10) the screen of the new modes is built like the Minigames screen (the owner: "make the new things as beautiful as the rest")
+  await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); toMenu("mini"); }); await sleep(800);
+  const mini = await p.evaluate(() => { const k = document.querySelector("#mini .head .pro-go"), r = k && k.getBoundingClientRect(), g = document.querySelector("#miniBody .mggrid").getBoundingClientRect(); return {key: !!k, img: !!(k && k.querySelector("img") && k.querySelector("img").naturalWidth > 0), inside: !!r && r.width > 40 && r.left > 0 && r.right <= innerWidth, gridH: Math.round(g.height)}; });
+  ok(mini.key && mini.img && mini.inside, "the Minigames screen has the gold 'New modes' key with the 8 ball, inside the screen", mini);
+  await p.evaluate(() => toMenu("proScr")); await sleep(1500);
+  const scr = await p.evaluate(() => { const cards = [...document.querySelectorAll("#proBody .mggrid > .mgc")], mg = document.querySelector("#proBody .mggrid").getBoundingClientRect(), h0 = cards[0].getBoundingClientRect().height;
+    return {n: cards.length, themes: cards.map(c => ["mg-teal", "mg-parch", "mg-red", "mg-gold", "mg-felt"].find(t => c.classList.contains(t))).join(), art: cards.map(c => { const i = c.querySelector(".mgart img"); return !!i && i.naturalWidth >= 200 && i.naturalHeight >= 80; }), btn: cards.map(c => !!c.querySelector(".mgbtn")), wood: cards.map(c => /url\(/.test(getComputedStyle(c).borderImageSource)), dots: cards.filter(c => c.querySelector(".dot")).length, bottom: Math.round(mg.bottom), vh: innerHeight, gridH: Math.round(mg.height), tall: cards[4].getBoundingClientRect().height > 1.6 * h0};
+  });
+  ok(scr.n === 5 && scr.themes === "mg-teal,mg-parch,mg-red,mg-gold,mg-felt", "five cards in the Minigames colours (teal, parchment, red, gold, felt)", scr);
+  ok(scr.art.every(Boolean) && scr.btn.every(Boolean) && scr.wood.every(Boolean), "every card has a picture, a green key and the wooden frame", scr);
+  ok(scr.tall && scr.bottom <= scr.vh && Math.abs(scr.gridH - mini.gridH) <= 8, "the felt card is the tall one; the grid is as tall as the Minigames grid and fits the phone's screen", {scr, mini});
+  ok(scr.dots === 5, "an unopened mode carries the red dot", scr.dots);
+  const painted = await p.evaluate(() => { const out = []; for (const c of document.querySelectorAll("#proBody .mgc")) { const im = c.querySelector(".mgart img"), cv = document.createElement("canvas"); cv.width = im.naturalWidth; cv.height = im.naturalHeight; const g = cv.getContext("2d"); g.drawImage(im, 0, 0); const d = g.getImageData(0, 0, cv.width, cv.height).data; let a = 0, col = 0, n = 0; for (let i = 0; i < d.length; i += 16) { n++; if (d[i + 3] > 40) { a++; if (Math.max(d[i], d[i + 1], d[i + 2]) - Math.min(d[i], d[i + 1], d[i + 2]) > 40) col++; } } out.push({opaque: +(a / n).toFixed(2), colour: +(col / Math.max(1, a)).toFixed(2)}); } return out; });
+  ok(painted.every(x => x.opaque > 0.06 && x.colour > 0.05), "every card picture is painted (solid shapes, in colour), not blank", painted);
+  const lists = await p.evaluate(async () => { const res = {}; for (const [k, f, n] of [["trick", () => proPickTrick(), 5], ["lessons", () => proPickLesson(), 6], ["level", () => proPickLevel("eight"), 3], ["nine", () => proPickNine(), 2], ["team", () => proPickTeam(), 3]]) { document.getElementById("modal").classList.remove("on"); f(); await new Promise(r => setTimeout(r, 150)); res[k] = [document.querySelectorAll("#mExtra .lbr.pro-row").length, n, document.querySelectorAll("#mExtra .lbr.pro-row .pro-gl").length]; } document.getElementById("modal").classList.remove("on"); return res; });
+  ok(Object.values(lists).every(([got, want, gl]) => got === want && gl === want), "the lists (trick shots 5, lessons 6, levels 3, 9-ball 2, 2v2 3) are leaderboard rows with a picture each", lists);
 
   // ------------------------------------------------------------------ 9) a portal (Y8 ...: the page in a frame): no share key, no link on the picture, the replay itself stays
   {
