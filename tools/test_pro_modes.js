@@ -307,7 +307,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     const noSoc = await fr.evaluate(() => NO_SOCIAL);
     await fr.evaluate(() => trickStart({mode: "daily", i: 0}));
     for (let i = 0; i < 60; i++) { await sleep(200); if (await fr.evaluate(() => !!game && game.type === "trick" && !game.moving && canControl()).catch(() => false)) break; }
-    await fr.evaluate(() => { const G = game, L = G.trick.layout; G.angle = Math.atan2(L.segs[0][1].y - L.segs[0][0].y, L.segs[0][1].x - L.segs[0][0].x); requestShot(0.6); });
+    await fr.evaluate(() => { const G = game, L = G.trick.layout, deg = Math.PI / 180, s0 = L.segs[0], a0 = Math.atan2(s0[1].y - s0[0].y, s0[1].x - s0[0].x); let A = a0; for (let k = 0; k <= 6; k++) { let f = false; for (const sg of (k ? [1, -1] : [1])) { const a = a0 + sg * k * 0.1 * deg; if (okShot(L, a, 0.6, 0, 0)) { A = a; f = true; break; } } if (f) break; } G.angle = A; requestShot(0.6); });   // (the nearest aim of the solved band, as above)
     for (let i = 0; i < 80; i++) { await sleep(250); if (await fr.evaluate(() => document.getElementById("modal").classList.contains("on"))) break; }
     await fr.evaluate(() => { [...document.querySelectorAll("#mBtns button")].find(b => /Watch/.test(b.textContent)).click(); }); await sleep(1200);
     const port2 = await fr.evaluate(() => ({share: getComputedStyle(document.querySelector("#proRep [data-a=share]")).display, rep: document.getElementById("proRep").classList.contains("on")}));
