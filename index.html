@@ -16963,7 +16963,7 @@ function tnStart(m) {   // the server says: the match begins (also again, to a p
 }
 function tnIn(m) {   // a message of the match: queued (shots and tables are played / applied in order, when this phone's balls are at rest)
   const G = game;
-  if (!G || !G.tnet || G.tnet.room !== m.room) { if (m.room && (!G || !G.tnet) && TN.early.length < 60) TN.early.push(m); return false; }
+  if (!G || !G.tnet || G.tnet.room !== m.room) { if (m.room && TN.early.length < 60) TN.early.push(m); return false; }
   if (G.over) return false;
   G.tnet.lastRx = performance.now(); G.tnet.q.push(m); if (G.tnet.q.length > 40) G.tnet.q.shift(); return true;
 }
@@ -16974,11 +16974,12 @@ function tnSendShot(G, power, by) {
 function tnSendState(G) {
   const gs = [tnGs(G, 0), tnGs(G, 1)], groups = [], mi = [];
   for (const ls of [0, 1]) { groups[gs[ls]] = G.groups[ls]; mi[gs[ls]] = G.mi[ls] & 1; }
-  Net.send({t: "tstate", no: G.shotNo | 0, turn: gs[G.cur], mi, groups, balls: G.balls.map(b => [b.x, b.y, b.out ? 1 : 0]), bih: G.ballInHand, brk: G.isBreak, over: G.over ? 1 : 0, win: G.over ? gs[G.winnerSide | 0] : undefined});
+  G.tstNo = G.shotNo | 0; G.tstBy = G.tby | 0;
+  Net.send({t: "tstate", no: G.shotNo | 0, by: G.tby | 0, turn: gs[G.cur], mi, groups, balls: G.balls.map(b => [b.x, b.y, b.out ? 1 : 0]), bih: G.ballInHand, brk: G.isBreak, over: G.over ? 1 : 0, win: G.over ? gs[G.winnerSide | 0] : undefined});
 }
 function tnPlayShot(G, m) {   // somebody's shot (a human far away, or a bot of the driver's phone), reproduced from his own numbers
   const by = clamp(m.by | 0, 0, 3), ls = tnLs(G, by >> 1);
-  G.cur = ls; G.mi[ls] = by & 1; G.lastSide = ls; tnSync(G); tnStopAI(G);   // (the one holding the cue is right, whatever this phone thought)
+  G.cur = ls; G.mi[ls] = by & 1; G.lastSide = ls; G.tby = by; tnSync(G); tnStopAI(G);   // (the one holding the cue is right, whatever this phone thought)
   G.turnStart = performance.now(); G.angle = +m.a || G.angle; if (m.e != null) G.elev = clamp(+m.e || 0, 0, 1);
   G.shotNo = (m.no | 0) - 1;   // (doShoot counts it up again: this shot's dice are the same on every phone)
   requestShot(clamp(+m.power || 0.05, 0.03, 1), {x: +m.x, y: +m.y, vx: +m.vx, vy: +m.vy, dir: m.dir, w: m.w, vz0: +m.vz0 || 0});
@@ -17007,7 +17008,11 @@ function tnTick(G) {   // every frame, after update(): the queue, a table somebo
   if (G.over || G.moving || G.strike) return;
   while (N.q.length && !G.moving && !G.strike && !G.over) {
     const m = N.q.shift(), no = m.no | 0;
-    if (m.t === "tstate") { if (no >= (G.shotNo | 0)) tnApplyState(G, m); }
+    if (m.t === "tstate") {
+      const by = m.by === undefined ? 9 : m.by | 0;
+      if (no < (G.shotNo | 0) || (no === (G.shotNo | 0) && G.tstNo === no && by > (G.tstBy | 0))) continue;   // an older table; or the table of the SAME shot number from a higher seat (two phones played a shot from the same table: the lower seat's table stands, on every phone)
+      G.tstNo = no; G.tstBy = by; tnApplyState(G, m);
+    }
     else if (m.t === "tshot") { if (no > (G.shotNo | 0)) tnPlayShot(G, m); }
     else if (m.t === "tend") { if (!G.over) endGame(tnLs(G, m.winner === 1 ? 1 : 0), ""); }
   }
@@ -17084,7 +17089,7 @@ Net.on("terr", m => {
   const _u = update; update = function () { _u.apply(this, arguments); const G = game; if (G && G.tnet) { try { tnTick(G); } catch (e) { onFrameError(e); } } };
   const _ds = doShoot; doShoot = function (power, remote) {
     const G = game, by = G && G.tnet ? tnShooter(G) : 0, r = _ds.apply(this, arguments);
-    try { if (G && G.tnet && !G.demo) { G.tlocal = !remote; if (!remote) tnSendShot(G, power, by); } } catch (e) { console.error("tnet shot", e); }
+    try { if (G && G.tnet && !G.demo) { G.tlocal = !remote; if (!remote) { G.tby = by; tnSendShot(G, power, by); } } } catch (e) { console.error("tnet shot", e); }
     return r;
   };
   const _rs = resolveShot; resolveShot = function () {
