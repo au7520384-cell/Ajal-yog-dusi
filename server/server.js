@@ -274,7 +274,7 @@ const CITY_PRIZE = {mad: 2000, bue: 50000, mex: 320000, sin: 1400000, ams: 60000
 
 // ---------------------------------------------------------------- storage
 const store = createStore({databaseUrl: process.env.DATABASE_URL, dataDir: DATA_DIR});
-let db = {users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}};
+let db = {users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}, replays: {}};
 let dirty = false, saving = null;
 const markDirty = () => { dirty = true; };
 function flush() {
@@ -628,6 +628,20 @@ function pruneDms() {   // threads nobody has written in for two months go away
   for (const [k, arr] of Object.entries(db.dms || {})) if (!arr.length || now - arr[arr.length - 1].at > DM_TTL) { delete db.dms[k]; markDirty(); }
 }
 setInterval(pruneDms, 6 * 3600e3);
+
+// ---------------------------------------------------------------- shared shots (the replay window's "Share", Nov 23): a player shares a shot: the ball positions of the replay (a few KB, 60 frames a second at most 10 s,
+// Int16 in 1/16 px, deflated by the phone) are kept for 30 days and the Telegram / web link opens them in the game of whoever gets it. At most REPLAY_MAX are kept (the oldest go first).
+const REPLAY_TTL = 30 * 86400e3, REPLAY_MAX = 400, REPLAY_PER_HOUR = 30, REPLAY_PER_DAY = 120, replayLog = new Map();   // replayLog: user id -> the times of his last uploads (memory only)
+const REPLAY_ID = /^[A-Za-z0-9]{6,12}$/;
+function pruneReplays() {
+  const all = db.replays = db.replays || {}, now = Date.now();
+  for (const id of Object.keys(all)) if (now - all[id].at > REPLAY_TTL) { delete all[id]; markDirty(); }
+  const ids = Object.keys(all);
+  if (ids.length > REPLAY_MAX) { ids.sort((a, b) => all[a].at - all[b].at).slice(0, ids.length - REPLAY_MAX).forEach(id => delete all[id]); markDirty(); }
+}
+setInterval(pruneReplays, 6 * 3600e3);
+const replayNewId = () => { const A = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"; let s = ""; for (const x of crypto.randomBytes(10)) s += A[x % A.length]; return s; };
+const replayStr = (v, n) => String(v == null ? "" : v).replace(/[\u0000-\u001f<>]/g, "").slice(0, n);
 
 // ---------------------------------------------------------------- messages from the Telegram bot (friend requests, answers, chat messages, play invitations)
 // A player who signed in through the Mini App has their Telegram id in auth.telegram (it is also their chat id with the bot). The bot may write to them once they
@@ -1017,6 +1031,30 @@ const routes = {
     const me = book[u.id] && book[u.id].n ? {rank: dshotRank(rows, u.id), d: book[u.id].d, n: book[u.id].n} : null;
     return {day, tries: DSHOT_TRIES, top: rows.slice(0, 20).map(row).filter(Boolean), me, total: rows.length};
   },
+  async "POST /api/replay"(req, u) {   // the replay window's "Share": keep the shot, answer with its id (the link is made by the page)
+    if (limited(req, "replay", 20)) return [429, {error: "slow_down"}];
+    let b; try { b = JSON.parse((await readBody(req, 110 * 1024)).toString("utf8") || "{}"); } catch (e) { return [400, {error: "bad_body"}]; }
+    const nums = Array.isArray(b && b.nums) ? b.nums : [], nb = nums.length, n = b.n | 0;
+    if (!b || b.v !== 1 || nb < 2 || nb > 20 || b.nb !== nb || nums.some(x => !Number.isInteger(x) || x < 0 || x > 15) || n < 2 || n > 620 || typeof b.f !== "string" || b.f.length > 90000 || !/^[A-Za-z0-9+/]+={0,2}$/.test(b.f)) return [400, {error: "bad_replay"}];
+    const want = n * nb * 4, raw = Buffer.from(b.f, "base64"); let data = raw;
+    if (b.z === 1) { try { data = zlib.inflateRawSync(raw, {maxOutputLength: want + 16}); } catch (e) { return [400, {error: "bad_replay"}]; } }
+    if (data.length !== want) return [400, {error: "bad_replay"}];   // exactly n frames of nb balls (x, y: Int16) - it cannot be used to keep other data
+    const now = Date.now(), log = (replayLog.get(u.id) || []).filter(t => now - t < 86400e3);
+    if (log.length >= REPLAY_PER_DAY || log.filter(t => now - t < 3600e3).length >= REPLAY_PER_HOUR) { replayLog.set(u.id, log); return [429, {error: "too_many"}]; }
+    log.push(now); replayLog.set(u.id, log);
+    const all = db.replays = db.replays || {}; let id = replayNewId(); while (all[id]) id = replayNewId();
+    const rc = b.rec && typeof b.rec === "object" ? b.rec : {};
+    all[id] = {id, u: u.id, at: now, name: replayStr(u.name, 16), av: u.avatar | 0, fr: u.frame | 0, cc: replayStr(u.country, 2), v: 1, z: b.z === 1 ? 1 : 0, nb, n, nums: nums.slice(), city: replayStr(b.city, 24), tbl: replayStr(b.tbl, 24), f: b.f,
+      kind: ["best", "worst", "trick"].includes(b.kind) ? b.kind : "", wk: replayStr(b.wk, 60), why: replayStr(b.why, 120),
+      rec: {n: int(rc.n, 15), combo: int(rc.combo, 15), bank: int(rc.bank, 15), brk: !!rc.brk, won: !!rc.won, lost: !!rc.lost, cueP: !!rc.cueP, foul: !!rc.foul}};
+    pruneReplays(); markDirty();
+    return {id};
+  },
+  "GET /api/replay"(req, u) {   // the shot behind a shared link
+    const id = String(new URL(req.url, "http://x").searchParams.get("id") || ""), r = REPLAY_ID.test(id) && (db.replays || {})[id];
+    if (!r || Date.now() - r.at > REPLAY_TTL) return [404, {error: "gone"}];
+    return {replay: {v: r.v, z: r.z, nb: r.nb, n: r.n, nums: r.nums, city: r.city, tbl: r.tbl, f: r.f, kind: r.kind, wk: r.wk, why: r.why, rec: r.rec}, by: {name: r.name, avatar: r.av, frame: r.fr, country: r.cc}, at: r.at};
+  },
   "POST /api/src"(req, u) {   // the page reports the ad link it was opened from (startapp=c_NAME): opens, and new players (account made in the last 6 h, counted once)
     return jsonBody(req).then(b => {
       const n = String(b.src || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 24); if (!n) return [400, {error: "bad_src"}];
@@ -1150,6 +1188,7 @@ const routes = {
     if (c) { c.members = c.members.filter(id => id !== u.id); if (!c.members.length) delete db.clubs[c.id]; else if (c.owner === u.id) c.owner = c.members[0]; }
     for (const pu of Object.values(db.purchases || {})) if (pu.user === u.id) pu.user = null;
     for (const o of Object.values(db.p2p || {})) if (o.u === u.id) o.u = null;
+    for (const [id, r] of Object.entries(db.replays || {})) if (r.u === u.id) delete db.replays[id];   // the shots he shared
     delete db.codes[u.code]; delete db.users[u.id]; markDirty();
     const w = clients.get(u.id); if (w) { clients.delete(u.id); try { w.close(4002, "deleted"); } catch (e) {} }
     return {ok: true};
@@ -2615,7 +2654,7 @@ setInterval(() => { const now = Date.now(); for (const [k, r] of worldReq) if (n
 
 store.load().then(loaded => {
   if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}}, loaded);
-  db.meta = db.meta || {}; db.clubs = db.clubs || {}; db.dms = db.dms || {}; db.p2p = db.p2p || {};
+  db.meta = db.meta || {}; db.clubs = db.clubs || {}; db.dms = db.dms || {}; db.p2p = db.p2p || {}; db.replays = db.replays || {};
   setInterval(() => p2pSweep(), 5 * 60e3).unref();
   setInterval(playVoidSweep, +process.env.PLAY_VOID_MS || 30 * 60e3).unref(); setTimeout(playVoidSweep, +process.env.PLAY_VOID_FIRST_MS || 90e3).unref();   // Google Play refunds
   rollWeek();
