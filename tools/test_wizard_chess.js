@@ -4,6 +4,7 @@
 //  - the page is found (wizard-chess/ok.json) and WebGL is there: the Magic Chess card opens the 3D page (against the computer, two on one phone); where the page is not found or WebGL is off, the flat board opens
 //  - the 3D page and the game's own rules core (pro_a) are two engines: over six random games every position has the SAME legal moves in both (the frame's engine says, the game's core is compared), a move's text ("e7e8q") and path round-trip
 //  - a finger plays in the hall (a tap on the piece, a tap on the cell), the computer answers, the close key frees the hall
+//  - the owner's phone: a 412 x 915 window in which the page is turned 90 degrees (html.rot): the hall opens in the turned page and a REAL touch (the screen point goes through the turn into the frame) plays e2e4, the computer answers
 //  - online (real server, 2 phones with a fake microphone): the frame draws and takes MY moves, the game checks them by its rules and sends them; the friend's move is played in the other hall; a move out of turn does nothing;
 //    a draw offer, the result window, a rematch (the colours swap, the hall opens straight at the board), a resignation, a reload of the page in the middle (the move list brings the hall back), leaving
 const { chromium } = require("playwright"), { spawn } = require("child_process"), http = require("http"), path = require("path"), fs = require("fs"), os = require("os");
@@ -16,9 +17,9 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
   const frameOf = p => p.frames().find(f => /wizard-chess\/index\.html/.test(f.url())) || null;
   // (the browser draws the hall in software at a few frames a second: __wcMaxDt lets a frame count as half a second, or the camera sweep and the moves would take a minute)
   const mkPage = async (base, name, o = {}) => {
-    const ctx = await b.newContext({ viewport: { width: 915, height: 412 }, hasTouch: true, isMobile: true, locale: "en-US", deviceScaleFactor: SHOT ? 2 : 1, permissions: ["microphone"] }), p = await ctx.newPage(); p._ctx = ctx;
+    const ctx = await b.newContext({ viewport: o.vp || { width: 915, height: 412 }, hasTouch: true, isMobile: true, locale: "en-US", deviceScaleFactor: SHOT ? 2 : 1, permissions: ["microphone"] }), p = await ctx.newPage(); p._ctx = ctx;
     p.on("pageerror", e => errs.push(name + ": " + e.message.slice(0, 240)));
-    await p.addInitScript(([n, off]) => { if (/wizard-chess/.test(location.pathname)) { window.__wcTest = true; window.__wcMaxDt = 0.5; return; } if (off) window.__WZ_OFF = true; localStorage.setItem("b8_hd", "off"); localStorage.setItem("b8_assets", "x"); localStorage.setItem("b8guest", "1"); if (!localStorage.getItem("billiard8v2")) localStorage.setItem("billiard8v2", JSON.stringify({ name: n, tutDone: true, games: 60, lang: "en", genderAsked: true, gender: "m", coins: 50000 })); }, [name, !!o.off]);
+    await p.addInitScript(([n, off]) => { if (/wizard-chess/.test(location.pathname)) { window.__wcTest = true; window.__wcMaxDt = 0.5; window.__wcPR = 0.5; return; } if (off) window.__WZ_OFF = true; localStorage.setItem("b8_hd", "off"); localStorage.setItem("b8_assets", "x"); localStorage.setItem("b8guest", "1"); if (!localStorage.getItem("billiard8v2")) localStorage.setItem("billiard8v2", JSON.stringify({ name: n, tutDone: true, games: 60, lang: "en", genderAsked: true, gender: "m", coins: 50000 })); }, [name, !!o.off]);
     if (o.block) await p.route(/wizard-chess\/ok\.json/, r => r.abort());
     await p.goto(base + "/", { waitUntil: "commit" });
     await p.waitForFunction(() => typeof profile !== "undefined" && document.getElementById("home") && !document.getElementById("boot"), null, { timeout: 150000 }); await sleep(800);
@@ -84,6 +85,34 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
     ok(await until(async () => { const s = await fstate(p); return s && s.uci.length >= 2 && !s.aiPending && !s.busy; }, 40000), `I am ${hum === "1" ? "White" : "Black"}: my move is played and the computer answers`, await fstate(p));
     if (SHOT) await p.screenshot({ path: path.join(SHOT, "02_bot.png") });
     await p.evaluate(() => document.querySelector('#wzScr [data-a="exit"]').click()); await sleep(400);
+    // a muted game opens the hall silent; and when the frame cannot draw the hall it says so and the flat board takes over
+    await p.evaluate(() => { profile.muted = true; mcStartBot("easy"); }); ok(await hall(p), "a muted game: the hall opens");
+    ok(/sound=0/.test(frameOf(p).url()) && /off|o'chiq|выкл/i.test(await frameOf(p).evaluate(() => document.getElementById("bSound").textContent)), "...silent: the frame was asked for sound=0 and its sound key says off", frameOf(p).url());
+    await p.evaluate(() => { profile.muted = false; });
+    await frameOf(p).evaluate(() => parent.postMessage({ wc: 1, t: "fail", why: "test" }, "*")); await sleep(700);
+    ok(await p.evaluate(() => document.getElementById("mcScr").classList.contains("on") && !document.getElementById("wzScr").classList.contains("on") && WZ.ok === false && MCU.use3d === false && document.getElementById("wzFrame").src === "about:blank" && document.querySelectorAll("#mcPcs .mp").length === 32), "the frame says it cannot draw the hall (WebGL refused / context lost): the flat board takes over, and the next games open it at once");
+    await p.evaluate(() => mcClose()); await sleep(300);
+    // the owner's phone (his screenshots): a PORTRAIT window in which the page is turned 90 degrees (html.rot) - he holds the phone sideways. The hall is drawn in the turned page and a real finger (a touch THROUGH the turn) plays.
+    const T = await mkPage(sbase, "Turned", { vp: { width: 412, height: 915 } });
+    ok(await T.evaluate(() => rotated === true && document.documentElement.classList.contains("rot")), "a 412 x 915 window: the page is turned 90 degrees (the owner's phone)");
+    await T.evaluate(() => { toMenu("mini"); mcOpen({ mode: "bot", lv: "easy", my: 1, pl: [{ name: "Me", avatar: 5, frame: 0 }, { name: "Bot", avatar: 3, frame: 12 }] }); });
+    ok(await hall(T), "the turned page: the hall opens in the frame");
+    const tg = await T.evaluate(() => { const e = document.getElementById("wzFrame"), r = e.getBoundingClientRect(); return { w: r.width, h: r.height, iw: e.contentWindow.innerWidth, ih: e.contentWindow.innerHeight }; });
+    ok(tg.w === 412 && tg.h === 915 && tg.iw === 915 && tg.ih === 412, "the frame fills the turned page: 915 x 412 inside the 412 x 915 window", tg);
+    const touchAt = async (xy) => { const [sx, sy] = [tg.w - xy[1], xy[0]]; await T.touchscreen.tap(sx, sy); await sleep(500); };   // the frame's point (x, y) is at the screen's (width - y, x)
+    const evs = await frameOf(T).evaluate(() => { window.__ev = []; for (const t of ["pointerdown", "touchend", "click"]) addEventListener(t, e => { const q = (e.changedTouches && e.changedTouches[0]) || e; window.__ev.push([t, Math.round(q.clientX), Math.round(q.clientY)]); }, true); return 1; });
+    const pickPiece = await frameOf(T).evaluate(sq => { const W = window.__wc; for (const h of [0.45, 0.65, 0.3, 0.85, 0.15, 1.0]) for (const dx of [0, -8, 8, -16, 16]) { const [x, y] = W.sqScreen(sq, h), r = W.pick(x + dx, y); if (r.piece && r.piece[2] === sq) return [x + dx, y]; } return W.sqScreen(sq, 0.45); }, sq88("e2"));
+    await touchAt(pickPiece);
+    const seen = await frameOf(T).evaluate(() => window.__ev);
+    ok(seen.some(e => e[0] === "pointerdown" && Math.abs(e[1] - Math.round(pickPiece[0])) <= 1 && Math.abs(e[2] - Math.round(pickPiece[1])) <= 1), "a touch on the screen reaches the frame at the point the page asked for (the turn is undone by the browser)", { seen, pickPiece });
+    const pickCell = await frameOf(T).evaluate(sq => { const W = window.__wc, [x0, y0] = W.sqScreen(sq, 0); for (const [dx, dy] of [[0, 0], [0, -6], [0, 6], [-8, 0], [8, 0], [0, -12], [0, 12]]) { const r = W.pick(x0 + dx, y0 + dy); if (r.sq === sq) return [x0 + dx, y0 + dy]; } return [x0, y0]; }, sq88("e4"));
+    await touchAt(pickCell);
+    ok(await until(async () => { const s = await fstate(T); return s && s.uci[0] === "e2e4"; }, 15000), "a finger's tap on the pawn and on the cell, through the turned page: e2e4 is played");
+    ok(await until(async () => { const s = await fstate(T); return s && s.uci.length >= 2 && !s.aiPending && !s.busy; }, 40000), "...and the computer answers");
+    if (SHOT) { await T.screenshot({ path: path.join(SHOT, "03_turned.png") }); }
+    await T.evaluate(() => document.querySelector('#wzScr [data-a="exit"]').click()); await sleep(400);
+    ok(await T.evaluate(() => !document.getElementById("wzScr").classList.contains("on")), "the turned page: the close key hides the hall");
+    await T._ctx.close();
     // where the page is not there, the flat board
     const q = await mkPage(sbase, "Flat", { off: true }); await q.evaluate(() => { toMenu("mini"); mcStartLocal(); }); await sleep(900);
     ok(await q.evaluate(() => document.getElementById("mcScr").classList.contains("on") && !(document.getElementById("wzScr") || { classList: { contains: () => false } }).classList.contains("on")), "with the 3D page switched off (a portal's zip, no WebGL) the flat Magic Chess board opens instead");
@@ -98,7 +127,8 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
 
     // ================================================================== B. online, two phones (the real server)
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "b8wz-")), P = +process.env.TEST_PORT || 8800, base = `http://localhost:${P}`;
-    const server = spawn("node", [path.join(ROOT, "server", "server.js")], { env: { ...process.env, PORT: String(P), DATA_DIR: tmp, BROOM_GRACE_MS: "150000" }, stdio: "ignore" });   // (a page that is reloaded needs more than the usual 30 s to draw its hall again in this slow browser) await sleep(2500);
+    const server = spawn("node", [path.join(ROOT, "server", "server.js")], { env: { ...process.env, PORT: String(P), DATA_DIR: tmp, BROOM_GRACE_MS: "150000" }, stdio: "ignore" });   // (a page that is reloaded needs more than the usual 30 s to draw its hall again in this slow browser)
+    await until(() => fetch(base + "/api/health").then(r => r.ok).catch(() => false), 60000, 300);   // (the server is waited for until it answers: a fixed pause was too short when the machine was busy)
     const A = await mkPage(base, "Alice"), B = await mkPage(base, "Bob");
     for (const x of [A, B]) await x.evaluate(() => Net.ensure().then(() => Net.connect()));
     ok(await until(async () => (await Promise.all([A, B].map(x => x.evaluate(() => WZ.ok)))).every(v => v === true), 30000), "both phones find the 3D page on the real server (it serves /wizard-chess/)");
@@ -124,7 +154,8 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
     let n = 0, bad = null;
     for (let i = 0; i < 6; i++) {
       const wt = await white.evaluate(() => mcTurnMine()), mover = wt ? white : black, u = await randomLegal(mover);
-      if (i < 2) await playTap(mover, u); else await playDirect(mover, u);
+      if (i < 2) { for (let k = 0; k < 3; k++) { const before = ((await fstate(mover)) || { uci: [] }).uci.length; await playTap(mover, u); if (await until(async () => ((await fstate(mover)) || { uci: [] }).uci.length > before, 5000, 300)) break; } }   // (a finger: a tap that the slow software-drawn hall let slip is made again)
+      else await playDirect(mover, u);
       if (!await until(async () => (await same()) === i + 1, 45000, 500)) { bad = ["after move " + (i + 1), u, await fstate(A), await fstate(B), await A.evaluate(() => MCU.G.moves.map(mcUciOfPath).join()), await B.evaluate(() => MCU.G.moves.map(mcUciOfPath).join())]; break; }
       n++;
     }
