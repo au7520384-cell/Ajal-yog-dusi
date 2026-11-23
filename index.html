@@ -16480,16 +16480,16 @@ function proHudTrick(G) {
   const TK = G.trick; if (!TK) return;
   const cx = W / 2; ctx.save(); ctx.textAlign = "center"; ctx.textBaseline = "middle";
   const title = TK.mode === "daily" ? `TRICK SHOT  ${TK.i + 1}/${TR_SET.length}` : T(("Dars") ) + `  ${LESSONS.findIndex(x => x.id === TK.id) + 1}/${LESSONS.length}`;
-  const g = ctx.createLinearGradient(0, 14, 0, 62); g.addColorStop(0, "#ffffff"); g.addColorStop(0.5, "#ffe9a8"); g.addColorStop(1, "#f2b52a");
-  ctx.font = `38px ${FONT}`; ctx.lineWidth = 6; ctx.strokeStyle = "#2a1a00"; ctx.lineJoin = "round"; ctx.strokeText(title, cx, 34); ctx.fillStyle = g; ctx.shadowColor = "#ffb020"; ctx.shadowBlur = 14; ctx.fillText(title, cx, 34);
-  ctx.shadowBlur = 0; ctx.fillStyle = "rgba(6,10,24,.66)"; rr(cx - 118, 52, 236, 48, 12); ctx.fill(); ctx.strokeStyle = "rgba(255,210,100,.6)"; ctx.lineWidth = 1.6; ctx.stroke();   // (a dark plate: the name and the attempts stay readable over the rail)
-  ctx.font = `20px ${FONT}`; ctx.fillStyle = "#dfe8ff"; ctx.lineWidth = 4; ctx.strokeStyle = "rgba(0,0,0,.7)";
-  const sub = TK.name ? T(TK.name) : ""; ctx.strokeText(sub, cx, 66); ctx.fillText(sub, cx, 66);
-  ctx.font = `17px ${FONT}`; ctx.fillStyle = "#ffe27a"; const tr = `${T("Urinishlar")}: ${TK.tries}`; ctx.strokeText(tr, cx, 90); ctx.fillText(tr, cx, 90);
+  const g = ctx.createLinearGradient(0, 8, 0, 48); g.addColorStop(0, "#ffffff"); g.addColorStop(0.5, "#ffe9a8"); g.addColorStop(1, "#f2b52a");
+  ctx.font = `36px ${FONT}`; ctx.lineWidth = 6; ctx.strokeStyle = "#2a1a00"; ctx.lineJoin = "round"; ctx.strokeText(title, cx, 26); ctx.fillStyle = g; ctx.shadowColor = "#ffb020"; ctx.shadowBlur = 14; ctx.fillText(title, cx, 26);
+  ctx.shadowBlur = 0; ctx.fillStyle = "rgba(6,10,24,.66)"; rr(cx - 118, 46, 236, 42, 11); ctx.fill(); ctx.strokeStyle = "rgba(255,210,100,.6)"; ctx.lineWidth = 1.6; ctx.stroke();   // (a dark plate above the rail: the name and the attempts stay readable and the middle pocket stays free)
+  ctx.font = `19px ${FONT}`; ctx.fillStyle = "#dfe8ff"; ctx.lineWidth = 4; ctx.strokeStyle = "rgba(0,0,0,.7)";
+  const sub = TK.name ? T(TK.name) : ""; ctx.strokeText(sub, cx, 59); ctx.fillText(sub, cx, 59);
+  ctx.font = `16px ${FONT}`; ctx.fillStyle = "#ffe27a"; const tr = `${T("Urinishlar")}: ${TK.tries}`; ctx.strokeText(tr, cx, 78); ctx.fillText(tr, cx, 78);
   if (TK.info) {
-    const ls = proWrapText(T(TK.info), 520, `17px ${FONT}`), y0 = 112; ctx.font = `17px ${FONT}`;
-    const w = Math.max(...ls.map(l => ctx.measureText(l).width)) + 26, h = ls.length * 22 + 10; ctx.fillStyle = "rgba(6,10,24,.72)"; rr(cx - w / 2, y0 - 12, w, h, 10); ctx.fill();
-    ctx.fillStyle = "#cfe7ff"; ls.forEach((l, i) => ctx.fillText(l, cx, y0 + 2 + i * 22));
+    const ls = proWrapText(T(TK.info), 560, `18px ${FONT}`), y0 = 112; ctx.font = `18px ${FONT}`;
+    const w = Math.max(...ls.map(l => ctx.measureText(l).width)) + 28, h = ls.length * 23 + 10; ctx.fillStyle = "rgba(6,10,24,.78)"; rr(cx - w / 2, y0 - 12, w, h, 10); ctx.fill();
+    ctx.fillStyle = "#d8ecff"; ls.forEach((l, i) => ctx.fillText(l, cx, y0 + 2 + i * 23));
   }
   ctx.restore();
   const sb = SPIN_BTN, bi = hudImg("ball"), D = 2 * (sb.r + 9);   // the spin ball (the lessons teach it)
@@ -16781,16 +16781,37 @@ function proGlyph(kind) {   // a 36 px picture for the rows of the lists
 html.mh460 #proScr .mgc{border-width:11px!important;border-image-width:11px!important}
 .mh560:not(.mh520) #proScr.screen{padding-top:62px}.mh560:not(.mh520) #proScr .panel{padding:10px}
 #proScr .mgc small .pro-st{letter-spacing:2px;font-size:15px;color:#ffffff40}#proScr .mgc small .pro-st .on{color:#ffd24d;text-shadow:0 1px 0 #0008}
+.mh560 #proScr .mgc small .pro-st{font-size:12px;letter-spacing:1px;line-height:1}
 #proScr .mggrid{align-items:stretch}
+/* SCALE (the owner: "pay attention to the scale too"). The Minigames screen is as tall as its cards want to be, so on a phone 340-385 px tall (a 360 dp phone held sideways) and on one 415-505 px tall (the big
+   iPhones, a Pixel Pro) its second row is cut off. This screen always fits: the panel may shrink under the title, the two rows share what is left, and the picture of a card is the part that gives way (it lies on a
+   box that shrinks; --pa is its size when there is room). The sizes follow the page's own height (--u-vh = 1% of it): the Minigames numbers at 560 px (phones) and at 700 px (roomy), a straight line between, so
+   nothing jumps at a class border. Where the screen is tall enough nothing changes. */
+#proScr>.panel{flex:0 1 auto;min-height:0;display:flex;flex-direction:column;padding:clamp(8px,calc(4.29 * var(--u-vh,1vh) - 14px),16px)}
+#proScr .mggrid{flex:1 1 auto;min-height:0;grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(6px,calc(4.29 * var(--u-vh,1vh) - 16px),14px)}
+#proScr .mgc{--pa:clamp(54px,calc(40 * var(--u-vh,1vh) - 170px),110px);min-height:0}
+#proScr .mg-felt{--pa:clamp(104px,calc(47.1 * var(--u-vh,1vh) - 160px),170px)}
+#proScr .mgc b{font-size:clamp(19px,calc(5 * var(--u-vh,1vh) - 9px),26px)}
+#proScr .mgc small{font-size:clamp(10px,calc(1.43 * var(--u-vh,1vh) + 2px),12px)}
+#proScr .mgbtn{font-size:clamp(14px,calc(2.14 * var(--u-vh,1vh) + 2px),17px);padding:clamp(5px,calc(2.14 * var(--u-vh,1vh) - 7px),8px)}
+#proScr .mgc .mgart{position:relative;display:block;align-self:stretch;flex:1 1 var(--pa);min-height:0}
+#proScr .mgc .mgart img{position:absolute;top:0;right:0;bottom:0;left:0;margin:auto;width:auto;height:100%;max-width:100%;max-height:var(--pa);object-fit:contain}
+/* the lists and the analysis are tall: on a phone the header of the window shrinks with the page, so 5-6 rows fit without a scroll bar */
+#modal .panel:has(.pro-list) #mIcon,#modal .panel:has(.pro-an) #mIcon{font-size:clamp(30px,calc(15.9 * var(--u-vh,1vh) - 47px),64px);line-height:1.05;margin:0}
+#modal .panel:has(.pro-list) #mTitle,#modal .panel:has(.pro-an) #mTitle{font-size:clamp(24px,calc(7.5 * var(--u-vh,1vh) - 12px),40px);line-height:1.1;margin:0 0 2px}
+#modal .panel:has(.pro-list) #mText{font-size:clamp(12px,calc(1.4 * var(--u-vh,1vh) + 5px),15px);margin:2px 0 clamp(2px,calc(3 * var(--u-vh,1vh) - 12px),10px)}
+#modal .panel:has(.pro-list),#modal .panel:has(.pro-an){padding-top:clamp(8px,calc(3 * var(--u-vh,1vh) - 6px),14px);padding-bottom:clamp(8px,calc(3 * var(--u-vh,1vh) - 6px),14px)}
+#modal .panel:has(.pro-list) #mBtns,#modal .panel:has(.pro-an) #mBtns{margin-top:clamp(4px,calc(2 * var(--u-vh,1vh) - 4px),10px)}
 .pro-go{margin-left:auto;display:inline-flex;align-items:center;gap:8px;border:2px solid #7a4a08;border-radius:14px;padding:6px 14px 6px 8px;font:900 17px/1 var(--fh,system-ui);color:#4a2a04;text-shadow:0 1px 0 #fff8;background:linear-gradient(#ffeaa6,#f4b830 55%,#c9861a);box-shadow:inset 0 2px 0 #fffa,inset 0 -3px 0 #0003,0 4px 0 #0007,0 0 16px #ffb02088;cursor:pointer;white-space:nowrap}
 .pro-go img{height:26px;width:26px;filter:drop-shadow(0 2px 2px #0007)}
 .pro-list{display:flex;flex-direction:column;gap:2px;text-align:left;max-height:calc(52 * var(--u-vh,1vh));overflow:auto}
-.pro-row{cursor:pointer}.pro-row .pro-gl{width:36px;height:36px;border-radius:8px;box-shadow:0 2px 4px #0008}
+.pro-row{cursor:pointer}.pro-row .pro-gl{--gs:clamp(28px,calc(4.2 * var(--u-vh,1vh) + 6px),36px);width:var(--gs);height:var(--gs);border-radius:8px;box-shadow:0 2px 4px #0008}
 .pro-row .nm{display:flex;flex-direction:column;align-items:flex-start;gap:1px}.pro-row .pro-sub{font-size:12px;color:#aebce0;font-weight:700}.pro-row .h{display:flex;align-items:center;gap:6px;color:#ffe27a;letter-spacing:1px}
 .pro-row .h .coin{width:16px;height:16px}
 .pro-an{text-align:left}.pro-an .pro-pl{color:#ffe27a;font:400 18px/1.1 var(--fh,system-ui);margin:4px 2px 4px;text-shadow:0 2px 0 #0008}
-.pro-ps{grid-template-columns:repeat(5,1fr)!important;margin-bottom:8px}.pro-ps .pst{align-items:center;text-align:center;padding:5px 4px}.pro-ps .pst small{font-size:11px;white-space:nowrap}.pro-ps .pst b{font-size:20px;color:#ffe9a8}
-.pro-shr{margin-top:6px}.pro-shr .pro-ic{font-size:26px;text-align:center;filter:drop-shadow(0 2px 2px #0008)}.pro-shr .nm{display:flex;flex-direction:column;align-items:flex-start;gap:1px}.pro-shr .nm b{font-weight:800;font-size:15px;line-height:1.15}
+.pro-ps{grid-template-columns:repeat(5,1fr)!important;margin-bottom:clamp(4px,calc(2 * var(--u-vh,1vh) - 4px),8px)}.pro-ps .pst{align-items:center;text-align:center;padding:clamp(2px,calc(1.5 * var(--u-vh,1vh) - 3px),5px) 4px}.pro-ps .pst small{font-size:11px;white-space:nowrap}.pro-ps .pst b{font-size:clamp(15px,calc(2.4 * var(--u-vh,1vh) + 3px),20px);color:#ffe9a8}
+.pro-shr{margin-top:6px;height:auto!important;grid-template-columns:40px minmax(0,1fr) auto!important;grid-template-areas:"ic lb bt" "ic tx tx";align-items:center;row-gap:2px;padding:5px 10px}   /* the label and the keys on one line, the text under them over the full width (a narrow window had left it 5 lines) */
+.pro-shr .pro-ic{grid-area:ic;font-size:26px;text-align:center;filter:drop-shadow(0 2px 2px #0008)}.pro-shr .nm{display:contents}.pro-shr .nm small{grid-area:lb;text-align:left}.pro-shr .nm b{grid-area:tx;text-align:left;font-weight:800;font-size:15px;line-height:1.15}.pro-shr .pro-shb{grid-area:bt}
 .pro-sub{font-size:12px;color:#aebce0;font-weight:700}
 .pro-shr.pro-bad{border-color:#ff6b5e!important;background:linear-gradient(#3a1a22,#1a0a10)!important}
 .pro-shb{display:flex;gap:6px;flex-wrap:nowrap;align-items:center}.pro-shb .btn{padding:3px 10px!important;margin:0;min-width:0;font-size:16px}
@@ -16859,19 +16880,20 @@ function proPickTeam() {
 }
 
 function proHudExtra(G) {   // 9-ball: the balls still on the table; teams: both members of each side (the one who shoots has the green frame)
-  if (G.rule === "nine") {
-    const cx = W / 2, y = 98, lo = nineLow(G); ctx.save();
+  if (G.rule === "nine") {   // the balls still on the table: in the free top-left corner (it used to sit on the rail and the middle pocket), in a dark plate, big enough to read on a phone
+    const x0 = 72, y = 46, st = 33, lo = nineLow(G); ctx.save();
+    ctx.fillStyle = "rgba(6,10,24,.66)"; rr(x0 - 26, y - 24, 8 * st + 52, 48, 12); ctx.fill(); ctx.strokeStyle = "rgba(255,210,100,.55)"; ctx.lineWidth = 1.6; ctx.stroke();
     for (let n = 1; n <= 9; n++) {
-      const x = cx + (n - 5) * 23, on = G.balls.some(b => b.n === n && !b.out);
-      ctx.globalAlpha = on ? 1 : 0.22; drawBall(iconBall(n), x, y, 0.62);
-      if (on && n === lo) { ctx.globalAlpha = 1; ctx.strokeStyle = "#78e6ff"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 12.5, 0, 7); ctx.stroke(); }
+      const x = x0 + (n - 1) * st, on = G.balls.some(b => b.n === n && !b.out);
+      ctx.globalAlpha = on ? 1 : 0.22; drawBall(iconBall(n), x, y, 0.82);
+      if (on && n === lo) { ctx.globalAlpha = 1; ctx.strokeStyle = "#78e6ff"; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(x, y, 17.5, 0, 7); ctx.stroke(); }
     }
     ctx.restore();
   }
   if (G.team) {
     ctx.save(); ctx.translate(0, -9);
     for (const s of [0, 1]) {
-      const members = G.team[s], x0 = s === 0 ? 236 : 1062;
+      const members = G.team[s], x0 = s === 0 ? 196 : 1062;
       members.forEach((m, k) => { const act = G.cur === s && G.mi[s] === k && !G.over; drawAvatar(x0 + k * 56, 16, 46, m, act, undefined); });
       ctx.fillStyle = s === 0 ? "#78e6ff" : "#ffb86b"; ctx.font = `15px ${FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(T(s === 0 ? "1-jamoa" : "2-jamoa"), x0 + 28, 82);
     }

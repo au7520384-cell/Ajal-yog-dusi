@@ -10,6 +10,8 @@
 //  8) every new text has a translation in all 15 languages
 //  9) on a portal (the page in a frame, NO_SOCIAL): the replay plays, but there is no share key and no link on the picture
 // 10) the screen of the new modes is made like the Minigames screen: its colours, wooden frames, painted pictures, green keys, the red dots, the leaderboard's rows in the lists
+// 11) SCALE (the owner: "pay attention to the scale too"): on every phone / tablet size (landscape, and the page turned on an upright phone) the screen of the new modes shows both rows without a scroll bar and its pictures are visible,
+//     and the five lists and the analysis fit their window (no scroll bar inside, the Close key on the screen)
 const { chromium } = require("playwright"), http = require("http"), path = require("path"), fs = require("fs");
 const ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 500) : ""); } };
@@ -242,6 +244,50 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   ok(painted.every(x => x.opaque > 0.06 && x.colour > 0.05), "every card picture is painted (solid shapes, in colour), not blank", painted);
   const lists = await p.evaluate(async () => { const res = {}; for (const [k, f, n] of [["trick", () => proPickTrick(), 5], ["lessons", () => proPickLesson(), 6], ["level", () => proPickLevel("eight"), 3], ["nine", () => proPickNine(), 2], ["team", () => proPickTeam(), 3]]) { document.getElementById("modal").classList.remove("on"); f(); await new Promise(r => setTimeout(r, 150)); res[k] = [document.querySelectorAll("#mExtra .lbr.pro-row").length, n, document.querySelectorAll("#mExtra .lbr.pro-row .pro-gl").length]; } document.getElementById("modal").classList.remove("on"); return res; });
   ok(Object.values(lists).every(([got, want, gl]) => got === want && gl === want), "the lists (trick shots 5, lessons 6, levels 3, 9-ball 2, 2v2 3) are leaderboard rows with a picture each", lists);
+
+  // ------------------------------------------------------------------ 11) SCALE: nothing is cut off, whatever the phone (the Minigames screen itself is cut off on 340-385 and 415-505 px tall pages: this screen is not)
+  {
+    const G0 = () => ({st: {shots: [{mine: true, name: "Azizjon", n: 2, foul: false}, {mine: true, name: "Azizjon", n: 0, foul: true}], run: {Azizjon: {best: 2}},
+      best: {rec: {n: 2, combo: true, bank: true, brk: true, won: true}, frames: {f: new Array(10).fill(new Float32Array(4))}}, worst: {rec: {cueP: true}, frames: {f: new Array(10).fill(new Float32Array(4))}}}});
+    const VPS = [[568, 320], [640, 360], [700, 340], [740, 360], [780, 360], [804, 392], [844, 390], [915, 412], [932, 430], [960, 440], [1004, 489], [1024, 600], [1024, 768], [390, 844], [360, 740], [430, 932], [412, 915]];
+    const bad = [];
+    for (const [w, h] of VPS) {
+      await p.setViewportSize({width: w, height: h}); await sleep(450);
+      await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); toMenu("proScr"); }); await sleep(500);
+      const m = await p.evaluate(() => { const s = document.getElementById("proScr"), cards = [...document.querySelectorAll("#proBody .mgc")]; let clip = 0, tiny = 0;
+        for (const c of cards) { const bt = c.querySelector(".mgbtn"), art = c.querySelector(".mgart"), im = art.querySelector("img"), tt = c.querySelector(".mgtx b");   // (offsets: they do not change when the page is turned 90 degrees)
+          if (bt.offsetTop + bt.offsetHeight > c.clientHeight + 1 || tt.offsetTop < -1) clip++; if (im.offsetHeight < 18 || im.offsetWidth < 18 || art.offsetTop + art.offsetHeight > tt.offsetTop + 2) tiny++; }
+        return {over: s.scrollHeight - s.clientHeight, cards: cards.length, clip, tiny, rot: document.documentElement.classList.contains("rot")}; });
+      if (m.over > 1 || m.cards !== 5 || m.clip || m.tiny) bad.push(["screen", w + "x" + h, m]);
+      for (const [name, fn] of [["trick", () => proPickTrick()], ["lessons", () => proPickLesson()], ["level", () => proPickLevel("eight")], ["nine", () => proPickNine()], ["team", () => proPickTeam()], ["analysis", g => proShowAnalysis(g)]]) {
+        await p.evaluate(([f, g]) => { document.getElementById("modal").classList.remove("on"); toMenu("proScr"); eval("(" + f + ")")(g); }, [fn.toString(), G0()]); await sleep(250);
+        const q = await p.evaluate(() => { const ex = document.getElementById("mExtra"), bt = document.getElementById("mBtns").getBoundingClientRect(), pn = document.querySelector("#modal .panel").getBoundingClientRect(); return {ex: ex.scrollHeight - ex.clientHeight, btn: bt.left >= -1 && bt.top >= -1 && bt.right <= innerWidth + 1 && bt.bottom <= innerHeight + 1 && pn.top >= -1 && pn.left >= -1}; });   // (a turned page: its bottom is the screen's left edge, so the key must lie inside the screen on both axes)
+        if (q.ex > 1 || !q.btn) bad.push([name, w + "x" + h, q]);
+      }
+    }
+    ok(bad.length === 0, "on 17 phone / tablet sizes (landscape and turned upright) the new screen shows both rows with their pictures, and the five lists and the analysis fit their window", bad.slice(0, 6));
+    // the two result windows with the most in them: a trick shot solved (stars, coins, "all five done", the tries, four keys) and a bot match won (the coins, the record, four keys)
+    await p.setViewportSize({width: 915, height: 412}); await sleep(400);
+    await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); const st = proStore(); st.trick = {day: dshotDayKey(), st: [3, 3, 3, 0, 3], paid: [1, 1, 1, 0, 1], bonus: 0}; trickStart({mode: "daily", i: 3}); });
+    for (let i = 0; i < 80; i++) { await sleep(200); if (await p.evaluate(() => !!game && game.type === "trick" && !game.moving && canControl())) break; }
+    await p.evaluate(() => { game.trick.tries = 1; game.rec = {f: new Array(10).fill(new Float32Array(4))}; trickWin(game); });   // (a recording: the window then has the 'watch' key too)
+    for (let i = 0; i < 30; i++) { await sleep(200); if (await p.evaluate(() => document.getElementById("modal").classList.contains("on"))) break; }
+    const bad2 = [], measure = async (what, w, h) => { const q = await p.evaluate(() => { const ex = document.getElementById("mExtra"), bt = document.getElementById("mBtns").getBoundingClientRect(), pn = document.querySelector("#modal .panel").getBoundingClientRect();
+      return {ex: ex.scrollHeight - ex.clientHeight, on: document.getElementById("modal").classList.contains("on"), nb: document.querySelectorAll("#mBtns button").length, btn: bt.left >= -1 && bt.top >= -1 && bt.right <= innerWidth + 1 && bt.bottom <= innerHeight + 1 && pn.top >= -1 && pn.left >= -1}; });
+      if (!q.on || q.ex > 1 || !q.btn) bad2.push([what, w + "x" + h, q]); return q; };
+    const win0 = await measure("trick win", 915, 412);
+    for (const [w, h] of VPS) { await p.setViewportSize({width: w, height: h}); await sleep(350); await measure("trick win", w, h); }
+    ok(win0.nb === 4, "the trick-shot window has its four keys (next, watch, again, menu)", win0);
+    await p.setViewportSize({width: 915, height: 412}); await sleep(300);
+    for (const [w, h] of VPS) {
+      await p.setViewportSize({width: w, height: h}); await sleep(350);
+      await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); proResult({proOpt: {kind: "drill", lv: "easy", rule: "eight"}, st: {shots: [{mine: true, name: "A", n: 1}]}, rule: "eight", team: null}, 0, "8-sharni tushirdi!", true, 500, "Azizjon", false); }); await sleep(300);
+      await measure("bot result", w, h);
+    }
+    ok(bad2.length === 0, "on 17 sizes the trick-shot window and the bot-match result window fit the screen (no scroll bar inside, the keys on the screen)", bad2.slice(0, 6));
+    await p.setViewportSize({width: 915, height: 412}); await sleep(400);
+    await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); toMenu("proScr"); });
+  }
 
   // ------------------------------------------------------------------ 9) a portal (Y8 ...: the page in a frame): no share key, no link on the picture, the replay itself stays
   {
