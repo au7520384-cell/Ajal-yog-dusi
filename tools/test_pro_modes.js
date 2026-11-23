@@ -98,7 +98,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   for (let i = 0; i < 40; i++) { await sleep(150); if (await p.evaluate(() => !game.over && !game.moving)) break; }
   const back = await p.evaluate(() => { const G = game, L = G.trick.layout; return {over: G.over, moving: G.moving, bi: G.balls.length, cueAtStart: Math.abs(G.balls[0].x - L.cue.x) < 1e-6 && Math.abs(G.balls[0].y - L.cue.y) < 1e-6, ctl: canControl()}; });
   ok(!back.over && back.cueAtStart && back.ctl, "after a miss the table is back as it was and the player can shoot again", back);
-  await p.evaluate(() => { const G = game; G.angle = aimOf(G.trick.layout); requestShot(0.6); });
+  await p.evaluate(() => { const G = game, L = G.trick.layout, deg = Math.PI / 180, a0 = aimOf(L); let A = a0; for (let k = 0; k <= 6; k++) { let f = false; for (const sg of (k ? [1, -1] : [1])) { const a = a0 + sg * k * 0.1 * deg; if (okShot(L, a, 0.6, 0, 0)) { A = a; f = true; break; } } if (f) break; } G.angle = A; requestShot(0.6); });   // (the layout's exact line, or the nearest aim of the solved band - the day check above accepts up to 0.6 degrees either side - so a day whose exact line just misses does not fail the test)
   for (let i = 0; i < 80; i++) { await sleep(250); if (await p.evaluate(() => document.getElementById("modal").classList.contains("on"))) break; }
   const win = await p.evaluate(() => ({title: document.getElementById("mTitle").textContent, extra: document.getElementById("mExtra").textContent, stars: (document.getElementById("mExtra").innerHTML.match(/★/g) || []).length, btns: [...document.querySelectorAll("#mBtns button")].map(b => b.textContent), coins: profile.coins, pro: profile.pro && profile.pro.trick ? JSON.parse(JSON.stringify(profile.pro.trick)) : null, modal: document.getElementById("modal").className, text: document.getElementById("mText") ? document.getElementById("mText").textContent.slice(0, 120) : ""}));
   ok(/Great shot/.test(win.title) && win.pro.st[0] === 2 && win.pro.paid[0] === 1, "second attempt wins with 2 stars", win);
@@ -118,7 +118,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); trickStart({mode: "daily", i: 0}); });
   for (let i = 0; i < 60; i++) { await sleep(200); if (await p.evaluate(() => !!game && game.type === "trick" && !game.moving && canControl())) break; }
   const c1 = await p.evaluate(() => profile.coins);
-  await p.evaluate(() => { const G = game; G.angle = aimOf(G.trick.layout); requestShot(0.6); });
+  await p.evaluate(() => { const G = game, L = G.trick.layout, deg = Math.PI / 180, a0 = aimOf(L); let A = a0; for (let k = 0; k <= 6; k++) { let f = false; for (const sg of (k ? [1, -1] : [1])) { const a = a0 + sg * k * 0.1 * deg; if (okShot(L, a, 0.6, 0, 0)) { A = a; f = true; break; } } if (f) break; } G.angle = A; requestShot(0.6); });   // (the layout's exact line, or the nearest aim of the solved band - the day check above accepts up to 0.6 degrees either side - so a day whose exact line just misses does not fail the test)
   for (let i = 0; i < 80; i++) { await sleep(250); if (await p.evaluate(() => document.getElementById("modal").classList.contains("on"))) break; }
   const again = await p.evaluate(() => ({coins: profile.coins, st: profile.pro.trick.st[0]}));
   ok(again.coins === c1 && again.st === 3, "playing a solved puzzle again pays nothing (the stars only go up: 2 -> 3)", {again, c1});
