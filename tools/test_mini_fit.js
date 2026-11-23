@@ -26,7 +26,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok(m.n === 5, `${name}: five minigame cards`, m);
     if (w < 900 && h >= 390) {   // the band 521..560
       ok(m.band, `${name}: the page is in the 521..560 band`, m);
-      ok(m.sh <= m.ch + 1, `${name}: the Minigames screen needs no scrolling (${m.sh} <= ${m.ch})`, m);
+      ok(m.out === 0 && m.sh >= m.ch, `${name}: the five cards fit on the first screen; the new-modes picture and the Board games row (the owner, Nov 23: under the cards) are reached by scrolling (${m.sh} >= ${m.ch})`, m);   // (it used to demand no scrolling at all: the rows under the cards were not there)
       ok(m.out === 0, `${name}: every card is fully on the screen`, m);
       ok(m.art === "54px", `${name}: the cards' pictures are the band's size`, m);
     } else if (w < 900) {

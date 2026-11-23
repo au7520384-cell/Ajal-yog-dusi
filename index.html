@@ -17624,7 +17624,7 @@ function brStart(m) {   // the server says: the match begins (also again to a ph
   const mk = s => { const p = m.seats[s] || {}; return {name: p.name || "Player", avatar: p.avatar | 0, frame: p.frame | 0}; };
   const white = m.first | 0, pl = [mk(white), mk(1 - white)];
   BR.code = String(m.code || BR.code); BR.game = m.game; brClose(); try { $("modal").classList.remove("on"); } catch (e) {}
-  for (const o of Object.values(BGS)) if (o !== g && o.U.on) { o.U.on = false; o.U.tok++; const el = $(o.id === "magic" ? "mcScr" : "shScr"); if (el) el.classList.remove("on"); }
+  for (const o of Object.values(BGS)) if (o !== g && o.U.on) { o.U.on = false; o.U.tok++; for (const id of (o.id === "magic" ? ["mcScr", "wzScr"] : ["shScr"])) { const el = $(id); if (el) el.classList.remove("on"); } }
   g.open({mode: "online", my: my === white ? 1 : -1, pl, net: {room: String(m.room), code: BR.code, seat: my, first: white, n: 0, wait: false}});
   const e = BR.early.filter(x => x.room === m.room); BR.early = []; for (const x of e) brIn(x);
 }
@@ -17832,8 +17832,8 @@ const RV = (() => {
   function paint() {
     const talk = want && mic && !MicHub.muted() && !listenOnly, so = MicHub.spkOff();
     const onl = !!brGame();
-    for (const b of document.querySelectorAll('#brRoom [data-a="mic"],#shScr [data-a="mic"],#mcScr [data-a="mic"]')) { b.style.display = onl || b.closest("#brRoom") ? "" : "none"; b.className = "sh-b" + (!want ? "" : talk ? " on" : " mute"); const ic = talk ? IC.mic : IC.micOff; if (b.dataset.i !== ic) { b.dataset.i = ic; b.innerHTML = ic; } b.title = T(!want ? "Ovozli xona" : talk ? "Mikrofon yoqiq" : listenOnly ? "Faqat eshitish rejimi" : "Mikrofon o'chiq"); }
-    for (const b of document.querySelectorAll('#brRoom [data-a="spk"],#shScr [data-a="spk"],#mcScr [data-a="spk"]')) { b.style.display = onl || b.closest("#brRoom") ? "" : "none"; b.className = "sh-b" + (so ? " off" : ""); const ic = so ? IC.spkOff : IC.spk; if (b.dataset.i !== ic) { b.dataset.i = ic; b.innerHTML = ic; } }
+    for (const b of document.querySelectorAll('#brRoom [data-a="mic"],#shScr [data-a="mic"],#mcScr [data-a="mic"],#wzScr [data-a="mic"]')) { b.style.display = onl || b.closest("#brRoom") ? "" : "none"; b.className = "sh-b" + (!want ? "" : talk ? " on" : " mute"); const ic = talk ? IC.mic : IC.micOff; if (b.dataset.i !== ic) { b.dataset.i = ic; b.innerHTML = ic; } b.title = T(!want ? "Ovozli xona" : talk ? "Mikrofon yoqiq" : listenOnly ? "Faqat eshitish rejimi" : "Mikrofon o'chiq"); }
+    for (const b of document.querySelectorAll('#brRoom [data-a="spk"],#shScr [data-a="spk"],#mcScr [data-a="spk"],#wzScr [data-a="spk"]')) { b.style.display = onl || b.closest("#brRoom") ? "" : "none"; b.className = "sh-b" + (so ? " off" : ""); const ic = so ? IC.spkOff : IC.spk; if (b.dataset.i !== ic) { b.dataset.i = ic; b.innerHTML = ic; } }
     for (const a of els) a.muted = sm();
   }
   async function stats() {   // for the tests: the audio bytes received / sent over all the calls
@@ -18280,6 +18280,101 @@ html.mh460 #mcScr .sh-pl{min-height:48px}html.mh460 #mcScr .sh-msg{font-size:16p
 // ---- registered as a board game: the row under the mini-games, the room and the match over the wire (pro_9) use this
 BGS.magic = {id: "magic", U: MCU, open: mcOpen, remote: mcRemote, rules: {new: mcNew, find: mcFind, play: mcPlay}, endNow: mcEndNow, render: mcRender, after: mcAfter};
 BGLIST.push({id: "magic", name: "Sehrli shaxmat", sub: "Botga qarshi yoki do'st bilan, ovoz orqali", art: mcArt, pick: mcPick});
+
+// ---------------------------------------------------------------- THE 3D WIZARD CHESS inside the game (the owner, Nov 23: "Mana tayyor" - the ready-made 3D chess is the chess of the Board games row)
+// wizard-chess/index.html is a finished 3D game (a hall, pieces that fight with their own weapons, its own engine for the computer). The Board games row opens it in a frame (#wzScr):
+//  - against the computer and two on one phone it plays by itself (?embed=1&mode=ai|2p);
+//  - online with a friend (?mode=net) the page only draws and takes MY moves; the game keeps the rules (this phone's MCU / mcPlay, the core of pro_a), the room, the move list, the draw offers, the result window and the voice.
+//    The frame says {wc: 1, t: "move", uci}; a friend's move goes in as {t: "apply", uci}; after a reconnect {t: "load", moves} sets the board again; {t: "lock"} ends it when the game ended outside the rules.
+// Where the page is not there (the Android app, the portals' zips) or there is no WebGL, the flat Magic Chess of pro_b is used: same card, same room, same rules, same voice (WZ.ok decides, asked once in the background).
+const WZ = {ok: null, asking: false, played: false, ready: false};
+function wzCheck() {
+  if (WZ.ok !== null || WZ.asking) return; WZ.asking = true;
+  let gl = false; try { const c = document.createElement("canvas"), x = c.getContext("webgl2") || c.getContext("webgl"); gl = !!x; try { const e = x && x.getExtension("WEBGL_lose_context"); if (e) e.loseContext(); } catch (e) {} } catch (e) {}
+  if (!gl || ON_PORTAL || !/^https?:$/.test(location.protocol)) { WZ.ok = false; return; }
+  fetch(new URL("wizard-chess/ok.json", location.href).href, {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { WZ.ok = !!(j && j.v === 1); }).catch(() => { WZ.ok = false; });
+}
+setTimeout(wzCheck, 2500);
+const mcUciOfPath = p => mcName(p[0]) + mcName(p[1]) + (p.length > 2 ? "qrbn"[p[2]] : "");   // a move's path [from, to, (choice)] <-> the page's text "e2e4" / "e7e8q"
+const mcPathOfUci = u => [mcSq(u.slice(0, 2)), mcSq(u.slice(2, 4))].concat(u.length > 4 && "qrbn".includes(u[4]) ? ["qrbn".indexOf(u[4])] : []);
+const wzWin = () => { const f = $("wzFrame"); return f ? f.contentWindow : null; };
+const wzPost = m => { const w = wzWin(); if (w) try { w.postMessage(Object.assign({wc: 1}, m), "*"); } catch (e) {} };
+function wzEnsure() {
+  let ov = $("wzScr"); if (ov) return ov;
+  ov = document.createElement("div"); ov.id = "wzScr";
+  ov.innerHTML = `<iframe id="wzFrame" title="Wizard Chess" allow="autoplay; fullscreen"></iframe><div class="wz-btns"><button class="sh-b" data-a="mic" title="" style="display:none"></button><button class="sh-b" data-a="spk" title="" style="display:none"></button><button class="sh-b" data-a="draw" title="" style="display:none">🤝</button><button class="sh-b" data-a="resign" title="" style="display:none">🏳</button><button class="sh-b red" data-a="exit" title="">✕</button></div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener("click", e => {
+    const b = e.target.closest("[data-a]"); if (!b) return; try { Snd.click(); } catch (x) {}
+    const a = b.dataset.a;
+    if (a === "exit") mcExit(); else if (a === "resign") mcResign(); else if (a === "draw") mcDraw(); else if (a === "mic" || a === "spk") { try { shVoiceBtn(a); } catch (x) {} }
+  });
+  return ov;
+}
+function wzOpen(o) {   // o: the same as mcOpen2d: {mode: "bot" | "local" | "online", lv, my, pl, net}
+  const ov = wzEnsure(); MCU.tok++; MCU.on = true; MCU.use3d = true; MCU.mode = o.mode; MCU.lv = o.lv || "mid"; MCU.my = o.my || 1; MCU.flip = false; MCU.G = mcNew();
+  MCU.sel = null; MCU.busy = 0; MCU.q = []; MCU.offer = 0; MCU.fin = 0; MCU.net = o.net || null; MCU.pl = o.pl; WZ.ready = false; clearTimeout(WZ.fin);
+  const q = new URLSearchParams({embed: "1", mode: o.mode === "online" ? "net" : o.mode === "local" ? "2p" : "ai", human: String(MCU.my), level: String({easy: 0, mid: 1, hard: 2}[MCU.lv] ?? 1), lang: LANG === "uz" || LANG === "ru" ? LANG : "en"});
+  if (WZ.played) q.set("quick", "1");   // (the hall was seen once in this session: the next game goes straight to the board)
+  $("wzFrame").src = new URL("wizard-chess/index.html?" + q, location.href).href;
+  ov.classList.add("on"); const on = o.mode === "online";
+  for (const b of ov.querySelectorAll(".wz-btns .sh-b")) { const a = b.dataset.a; b.title = {mic: T("Ovozli suhbat"), spk: T("Ovoz"), draw: T("Durang taklif qilish"), resign: T("Taslim bo'lish"), exit: T("Chiqish")}[a] || ""; if (a !== "exit") b.style.display = on ? "" : "none"; }
+  try { RV.paint(); } catch (e) {}
+}
+function wzClose() {
+  MCU.tok++; MCU.on = false; MCU.busy = 0; clearTimeout(WZ.fin); const ov = $("wzScr"); if (ov) ov.classList.remove("on");
+  const f = $("wzFrame"); if (f) f.src = "about:blank";   // (the hall's memory is let go)
+  try { shLeaveOnline(); } catch (e) {}
+}
+function wzRender() { if (WZ.ready && MCU.mode === "online") wzPost({t: "load", moves: MCU.G.moves.map(mcUciOfPath)}); }   // the page is set to the game this phone has (after a reconnect: the server's list)
+function wzAfter() {
+  const G = MCU.G; if (!G || !G.over || WZ.finSet) return;
+  WZ.finSet = true; const tok = MCU.tok;
+  WZ.fin = setTimeout(() => { WZ.finSet = false; if (tok === MCU.tok && MCU.on && MCU.use3d) mcFinish(G.over); }, G.over.why === "mate" ? 2800 : 1400);   // (the page's own spell of a mate / the banner first, then the result window)
+}
+function wzMine(uci) {   // my move from the page: checked by the rules here, sent to the friend
+  const G = MCU.G; if (!G || G.over) return;
+  const path = mcPathOfUci(uci), mv = mcFind(G, path);
+  if (!mv) return wzRender();   // (it cannot happen: the page has the same rules; if it does, the page gets this phone's game)
+  try { bgSend(MCU, path); } catch (e) { console.error("wz net", e); }
+  mcPlay(G, mv); wzAfter();
+}
+function wzRemote(path) {   // a friend's move over the wire: checked, kept, shown by the page
+  const G = MCU.G; if (!G || G.over) return;
+  const mv = mcFind(G, path); if (!mv) { try { shIllegal(path); } catch (e) {} return; }
+  mcPlay(G, mv); wzPost({t: "apply", uci: mcUciOfPath(path)}); wzAfter();
+}
+function wzEndNow(winner, why) {   // a resignation, an agreed draw, the friend left: the board is locked and the result window comes
+  const G = MCU.G; if (!G || G.over) return; G.over = {winner, why}; wzPost({t: "lock"}); mcFinish(G.over);
+}
+addEventListener("message", ev => {
+  if (!MCU.on || !MCU.use3d || ev.source !== wzWin()) return;
+  const d = ev.data; if (!d || d.wc !== 1) return;
+  if (d.t === "ready") { WZ.ready = true; WZ.played = true; if (MCU.mode === "online" && MCU.G && MCU.G.moves.length) wzRender(); }
+  else if (d.t === "move" && MCU.mode === "online") wzMine(String(d.uci || ""));
+});
+// ---- the way in: the 3D page when it is there, the flat board otherwise
+const mcOpen2d = mcOpen, mcClose2d = mcClose, mcEndNow2d = mcEndNow, mcRemote2d = mcRemote, mcRender2d = mcRender, mcAfter2d = mcAfter;
+mcOpen = function (o) { if (WZ.ok === true && !window.__WZ_OFF) return wzOpen(o); MCU.use3d = false; return mcOpen2d(o); };
+mcClose = function () { return MCU.use3d ? wzClose() : mcClose2d(); };
+mcEndNow = function (w, why) { return MCU.use3d ? wzEndNow(w, why) : mcEndNow2d(w, why); };
+BGS.magic.open = o => mcOpen(o);
+BGS.magic.remote = p => MCU.use3d ? wzRemote(p) : mcRemote2d(p);
+BGS.magic.render = () => MCU.use3d ? wzRender() : mcRender2d();
+BGS.magic.after = () => MCU.use3d ? wzAfter() : mcAfter2d();
+BGS.magic.endNow = (w, why) => mcEndNow(w, why);
+(function wzStyle() {
+  const st = document.createElement("style");
+  st.textContent = `#wzScr{position:fixed;inset:0;z-index:99983;background:#09070a;display:none}
+#wzScr.on{display:block}
+#wzScr iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#09070a}
+body:has(#wzScr.on) #modal{z-index:99990}body:has(#wzScr.on) #toasts{z-index:99991}
+#wzScr .wz-btns{position:absolute;right:calc(1.4 * var(--u-vh,1vh));bottom:calc(8 * var(--u-vh,1vh));display:flex;flex-direction:column;gap:calc(1.2 * var(--u-vh,1vh));zoom:var(--uiz,1)}
+#wzScr .sh-b{width:calc(9 * var(--u-vh,1vh));height:calc(9 * var(--u-vh,1vh));min-width:38px;min-height:38px;max-width:52px;max-height:52px;border-radius:50%;border:2px solid #ffd98c88;background:linear-gradient(#3a2a12cc,#140c04cc);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 3px 0 #0008;backdrop-filter:blur(2px)}
+#wzScr .sh-b.red{background:linear-gradient(#a02a2acc,#5a0f0fcc)}#wzScr .sh-b svg{width:60%;height:60%;fill:#fff}
+#wzScr .sh-b.on{border-color:#8dff9a;box-shadow:0 0 12px #8dff9a88}#wzScr .sh-b.mute{border-color:#ff9a8a}#wzScr .sh-b.off{opacity:.6}`;
+  document.head.appendChild(st);
+})();
 /*PRO_END*/
 // ?perf=1 : a small frame-time monitor in the corner (for finding hitches on a real phone). Shows fps, the slowest frame of the last 3 s, how many frames
 // took > 25 ms, long main-thread tasks (JS / garbage collection) and the worst frame in the 2.5 s after the last shot.
