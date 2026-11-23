@@ -2318,6 +2318,136 @@ function cupFinish(S, champ) {
   setTimeout(() => cups.delete(S.sid), CUP_KEEP_MS);
 }
 
+// ---------------------------------------------------------------- online 2v2 (team rooms)
+// The owner (Nov 23): "Online 2v2 ni boshla". Two to four phones, two sides of two seats: seats 0 + 1 are side 0, seats 2 + 3 are side 1 (side = seat >> 1). A room has a 4-letter code (typed or sent as a link), the host
+// starts it; a seat nobody sits in is played by a bot, and the phone of the LOWEST human seat that is still here (the "driver") plays all the bots' shots. The server knows nothing about billiards: every phone simulates the
+// same table from the same seed, the shooter sends the numbers of his shot (tshot) and the table afterwards (tstate), and this hub only seats people, relays to the other seats and keeps the room alive while a phone is away.
+const trooms = new Map();   // code -> {code, id, state: "open" | "run", host, driver, seats: [ws|null x4], uids: [uid|null x4], prof: [profile|null x4], away: [ms x4], gone: [bool x4], timers: [x4], bots, seed, first, city, at}
+const TCODE_CH = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const TEAM_GRACE = +process.env.TEAM_GRACE_MS || 25e3;          // a phone that drops in a running match has this long to come back, then a bot plays its seat
+const TEAM_OPEN_GRACE = +process.env.TEAM_OPEN_GRACE_MS || 3 * 60e3;   // ... and in the waiting room (the share sheet / another app drops the socket) this long
+const TEAM_T = new Set(["tcreate", "tjoin", "tmove", "tleave", "tstart", "tresume", "tend", "taim", "tshot", "tstate", "tchat", "tneed"]);
+const TEAM_RELAY = new Set(["taim", "tshot", "tstate", "tchat", "tneed", "tend"]);
+const tcode = c => String(c || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+const tHere = (r, i) => !!r.uids[i] && !r.gone[i];                        // a human seat that has not been given up
+const tLive = (r, i) => tHere(r, i) && !r.away[i] && r.seats[i] && r.seats[i].readyState === 1;
+const tHumans = r => [0, 1, 2, 3].filter(i => tHere(r, i));
+function tElect(r) {   // the driver: the lowest human seat that is connected (when none is, the first one that is merely not given up: it plays the bots when it comes back)
+  const live = [0, 1, 2, 3].filter(i => tLive(r, i)); if (live.length) return live[0];
+  const here = tHumans(r); return here.length ? here[0] : 0;
+}
+function tPub(r) {
+  return {t: "troom", code: r.code, id: r.state === "run" ? r.id : "", state: r.state, host: r.host, driver: r.driver,
+    seats: [0, 1, 2, 3].map(i => r.uids[i] && !r.gone[i] ? {...pubProfile(r.prof[i]), uid: r.uids[i], away: r.away[i] ? 1 : 0} : (r.uids[i] ? {...pubProfile(r.prof[i]), uid: r.uids[i], gone: 1} : null))};
+}
+function tBroadcast(r) { const m = tPub(r); for (let i = 0; i < 4; i++) if (r.seats[i] && r.uids[i] && !r.gone[i]) wsSend(r.seats[i], m); }
+function tMatchMsg(r) { return {t: "tmatch", room: r.id, code: r.code, seed: r.seed, first: r.first, city: r.city, bots: r.bots, driver: r.driver, seats: tPub(r).seats}; }
+function tClose(r) { for (const x of r.timers) clearTimeout(x); trooms.delete(r.code); for (const w of r.seats) if (w && w.troom === r.code) w.troom = null; }
+function tDrop(r, i, why) {   // the seat is given up: in the waiting room it is empty again, in a running match a bot plays it from now on
+  const w = r.seats[i]; clearTimeout(r.timers[i]); r.timers[i] = null;
+  if (w && w.troom === r.code) w.troom = null;
+  if (r.state === "open") { r.seats[i] = null; r.uids[i] = null; r.prof[i] = null; r.away[i] = 0; r.gone[i] = false; }
+  else { r.gone[i] = true; r.away[i] = 0; r.seats[i] = null; }
+  if (!tHumans(r).length) return tClose(r);
+  if (r.host === i || !tHere(r, r.host)) r.host = tHumans(r)[0];
+  if (r.state === "run" && (r.driver === i || !tHere(r, r.driver))) r.driver = tElect(r);
+  tBroadcast(r);
+}
+function teamDrop(ws) {   // the socket of this phone is gone (a deliberate leave goes through teamLeave)
+  const r = ws.troom && trooms.get(ws.troom); if (!r) return;
+  const i = r.seats.indexOf(ws); if (i < 0) { ws.troom = null; return; }
+  ws.troom = null;
+  if (!tHere(r, i) || r.away[i]) return;
+  r.away[i] = Date.now(); r.seats[i] = ws;
+  if (r.state === "run" && r.driver === i) { const d = tElect(r); if (d !== i && tLive(r, d)) r.driver = d; }
+  tBroadcast(r);
+  clearTimeout(r.timers[i]); r.timers[i] = setTimeout(() => { r.timers[i] = null; if (r.away[i] && trooms.get(r.code) === r) tDrop(r, i, "away"); }, r.state === "run" ? TEAM_GRACE : TEAM_OPEN_GRACE);
+}
+function teamLeave(ws) {
+  const r = ws.troom && trooms.get(ws.troom); ws.troom = null; if (!r) return;
+  const i = r.uids.indexOf(ws.uid); if (i < 0) return;
+  tDrop(r, i, "left");
+}
+function teamAttach(r, i, ws) {   // a seat's (new) socket: the same player comes back
+  const old = r.seats[i]; if (old && old !== ws && old.troom === r.code) old.troom = null;
+  r.seats[i] = ws; ws.troom = r.code; clearTimeout(r.timers[i]); r.timers[i] = null; r.away[i] = 0;
+}
+function teamMessage(ws, m, u) {
+  if (m.t === "tcreate") {
+    if (!bucket(ws, "tcreate", 5, 20000) || (ws.room && !ws.room.over)) return wsSend(ws, {t: "terr", why: "busy"});
+    leaveQueue(ws); if (ws.troom) teamLeave(ws);
+    let code = ""; for (let k = 0; k < 40 && (!code || trooms.has(code)); k++) code = Array.from({length: 4}, () => TCODE_CH[crypto.randomInt(TCODE_CH.length)]).join("");
+    if (trooms.has(code)) return wsSend(ws, {t: "terr", why: "busy"});
+    const r = {code, id: "", state: "open", host: 0, driver: 0, seats: [ws, null, null, null], uids: [ws.uid, null, null, null], prof: [mkProfile(u, m.cue, m.tbl), null, null, null], away: [0, 0, 0, 0], gone: [false, false, false, false], timers: [null, null, null, null], bots: null, seed: 0, first: 0, city: String(m.city || "lon").slice(0, 8), at: Date.now()};
+    trooms.set(code, r); ws.troom = code; ws.pref = {cue: m.cue, tbl: m.tbl};
+    return tBroadcast(r);
+  }
+  if (m.t === "tjoin") {
+    if (!bucket(ws, "tjoin", 8, 10000) || (ws.room && !ws.room.over)) return wsSend(ws, {t: "terr", why: "busy"});
+    const r = trooms.get(tcode(m.code)); if (!r) return wsSend(ws, {t: "terr", why: "none"});
+    const mine = r.uids.indexOf(ws.uid);
+    if (mine >= 0 && !r.gone[mine]) { teamAttach(r, mine, ws); if (r.state === "run") wsSend(ws, tMatchMsg(r)); return tBroadcast(r); }   // (already seated: the phone reconnected in two ways at once)
+    if (r.state === "run") return wsSend(ws, {t: "terr", why: "started"});
+    leaveQueue(ws); if (ws.troom) teamLeave(ws);
+    const free = [1, 2, 3, 0].filter(i => !r.uids[i] || r.gone[i]);
+    if (!free.length) return wsSend(ws, {t: "terr", why: "full"});
+    const i = free[0]; r.uids[i] = ws.uid; r.prof[i] = mkProfile(u, m.cue, m.tbl); r.gone[i] = false; teamAttach(r, i, ws);
+    return tBroadcast(r);
+  }
+  const r = ws.troom && trooms.get(ws.troom);
+  if (m.t === "tresume") {   // the phone lost its connection (or came back from the background): it takes its seat again
+    if (!bucket(ws, "tresume", 8, 10000)) return;
+    const rr = r || (m.code ? trooms.get(tcode(m.code)) : [...trooms.values()].find(x => x.uids.includes(ws.uid)));
+    const i = rr ? rr.uids.indexOf(ws.uid) : -1;
+    if (!rr || i < 0 || rr.gone[i]) return wsSend(ws, {t: "terr", why: "none", resume: 1});
+    teamAttach(rr, i, ws);
+    if (rr.state === "run") wsSend(ws, tMatchMsg(rr));
+    if (rr.state === "run" && !tLive(rr, rr.driver)) rr.driver = tElect(rr);
+    return tBroadcast(rr);
+  }
+  if (!r) return;
+  const seat = r.seats.indexOf(ws); if (seat < 0 || !tHere(r, seat)) return;
+  if (m.t === "tleave") return teamLeave(ws);
+  if (m.t === "tmove") {
+    if (r.state !== "open" || !bucket(ws, "tmove", 6, 5000)) return;
+    const to = int(m.seat, 3); if (to === seat || (r.uids[to] && !r.gone[to])) return;
+    r.uids[to] = r.uids[seat]; r.prof[to] = r.prof[seat]; r.seats[to] = ws; r.gone[to] = false; r.away[to] = 0;
+    r.uids[seat] = null; r.prof[seat] = null; r.seats[seat] = null;
+    if (r.host === seat) r.host = to;
+    return tBroadcast(r);
+  }
+  if (m.t === "tstart") {
+    if (r.host !== seat || r.state !== "open") return;
+    const hs = tHumans(r).filter(i => tLive(r, i));
+    if (hs.length < 2) return wsSend(ws, {t: "terr", why: "min"});
+    const bots = [0, 1, 2, 3].map(i => {
+      const b = Array.isArray(m.bots) ? m.bots[i] : null; if (r.uids[i] || !b || typeof b !== "object") return null;
+      return {name: String(b.name || "Bot").replace(/[\u0000-\u001f<>]/g, "").slice(0, 16), avatar: int(b.avatar, 999), frame: int(b.frame, 999), level: Math.max(1, int(b.level, 99)), country: String(b.country || "").toUpperCase().slice(0, 2), cue: String(b.cue || "start").slice(0, 16)};
+    });
+    r.state = "run"; r.id = crypto.randomUUID(); r.seed = crypto.randomInt(2 ** 31); r.first = crypto.randomInt(2); r.bots = bots;
+    for (let i = 0; i < 4; i++) { r.away[i] = 0; if (r.uids[i] && !tLive(r, i)) { r.away[i] = Date.now(); } }
+    r.driver = tElect(r); r.at = Date.now();
+    for (let i = 0; i < 4; i++) if (r.away[i] && r.seats[i] !== null) { clearTimeout(r.timers[i]); r.timers[i] = setTimeout(() => { r.timers[i] = null; if (r.away[i] && trooms.get(r.code) === r) tDrop(r, i, "away"); }, TEAM_GRACE); }
+    const mm = tMatchMsg(r); for (let i = 0; i < 4; i++) if (r.seats[i] && tHere(r, i)) wsSend(r.seats[i], mm);
+    return;
+  }
+  if (r.state !== "run" || !TEAM_RELAY.has(m.t)) return;
+  if (m.t === "taim") { if (!bucket(ws, "taim", 30, 1000)) return; }
+  else if (m.t === "tchat") {
+    if (!bucket(ws, "tchat", 6, 1500)) return;
+    m = {...m, msg: cleanChat(String(m.msg || "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 40))}; if (!m.msg) return;
+  } else if (m.t === "tneed") { if (!bucket(ws, "tneed", 6, 5000)) return; }
+  else if (m.t === "tend") {   // a phone says the match is over: the room goes back to the waiting room (the same people can play again); a second report of the same match is only relayed
+    if (m.room && String(m.room) !== r.id) return;   // (a report of an older match)
+    const id = r.id; r.state = "open"; r.id = ""; m = {...m, room: id};
+    for (let i = 0; i < 4; i++) if (r.uids[i] && r.gone[i]) { r.uids[i] = null; r.prof[i] = null; r.gone[i] = false; r.seats[i] = null; }   // (a seat a bot played goes back to the free ones)
+  }
+  const out = {...m, from: seat, room: m.t === "tend" ? m.room : r.id};
+  for (let i = 0; i < 4; i++) if (i !== seat && r.seats[i] && tHere(r, i)) wsSend(r.seats[i], out);
+  if (m.t === "tend") tBroadcast(r);
+}
+setInterval(() => { const now = Date.now(); for (const r of [...trooms.values()]) if (now - r.at > 6 * 3600e3 || !r.seats.some((w, i) => w && r.uids[i] && !r.gone[i] && w.readyState === 1) && now - r.at > 5 * 60e3) tClose(r); }, 60e3).unref();
+
 wss.on("connection", (ws, req) => {
   const url = new URL(req.url, "http://x"), u = db.users[url.searchParams.get("id")];
   if (!u || url.searchParams.get("token") !== u.token) return ws.close(4001, "unauthorized");
@@ -2375,6 +2505,8 @@ wss.on("connection", (ws, req) => {
       const ps = L.players.filter(p => p.readyState === 1 && !p.room);
       if (ps.length < 2) return wsSend(ws, {t: "lobbyerr", why: "min"});
       startTournament(L, ps);
+    } else if (TEAM_T.has(m.t)) {   // online 2v2 team rooms (see "online 2v2" above)
+      try { teamMessage(ws, m, u); } catch (e) { console.error("team:", e && e.stack || e); }
     } else if (m.t === "lpub") {   // the host makes his lobby public (listed for everybody) or private again
       const L = ws.lobby && lobbies.get(ws.lobby);
       if (!L || L.host !== ws || !bucket(ws, "lpub", 6, 5000)) return;
@@ -2478,6 +2610,7 @@ wss.on("connection", (ws, req) => {
   ws.on("close", () => {
     leaveLobby(ws, true);
     leaveQueue(ws);
+    try { teamDrop(ws); } catch (e) { console.error("team:", e && e.stack || e); }
     try { cupDrop(ws); } catch (e) { console.error("cup:", e && e.stack || e); }
     if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
     if (clients.get(u.id) === ws) clients.delete(u.id);
