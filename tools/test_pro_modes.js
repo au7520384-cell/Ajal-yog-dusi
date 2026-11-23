@@ -229,8 +229,11 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
 
   // ------------------------------------------------------------------ 10) the screen of the new modes is the owner's picture with five keys over its panels (Nov 23: "put the 3rd picture in place of the 4th, exactly like that")
   await p.evaluate(() => { document.getElementById("modal").classList.remove("on"); toMenu("mini"); }); await sleep(800);
-  const mini = await p.evaluate(() => { const k = document.querySelector("#mini .head .pro-go"), r = k && k.getBoundingClientRect(); return {key: !!k, img: !!(k && k.querySelector("img") && k.querySelector("img").naturalWidth > 0), inside: !!r && r.width > 40 && r.left > 0 && r.right <= innerWidth}; });
-  ok(mini.key && mini.img && mini.inside, "the Minigames screen has the gold 'New modes' key with the 8 ball, inside the screen", mini);
+  const mini = await p.evaluate(() => { const st = document.getElementById("miniStrip"), r = st && st.getBoundingClientRect(), g = document.querySelector("#miniBody").getBoundingClientRect(); return {strip: !!st, keys: st ? st.querySelectorAll(".pro-pan").length : 0, below: !!r && r.top >= g.bottom - 1, wide: !!r && r.width > 300, hdrKey: !!document.querySelector("#mini .head .pro-go")}; });
+  ok(mini.strip && mini.keys === 5 && mini.below && mini.wide && !mini.hdrKey, "the Minigames screen shows the new modes picture (five keys) UNDER its cards, and no gold header key any more", mini);
+  await p.evaluate(() => toMenu("withFrScr")); await sleep(800);
+  const fr = await p.evaluate(() => { const k = document.querySelector("#withFrScr .head .pro-go"), r = k && k.getBoundingClientRect(); return {key: !!k, img: !!(k && k.querySelector("img") && k.querySelector("img").naturalWidth > 0), inside: !!r && r.width > 40 && r.left > 0 && r.right <= innerWidth}; });
+  ok(fr.key && fr.img && fr.inside, "the Play-with-friends screen keeps the gold 'New modes' key with the 8 ball", fr);
   await p.evaluate(() => toMenu("proScr")); await sleep(1500);
   const scr = await p.evaluate(() => { const ban = document.getElementById("proBody"), br = ban.getBoundingClientRect(), im = ban.querySelector("img"), keys = [...ban.querySelectorAll(".pro-pan")];
     const rel = keys.map(k => { const r = k.getBoundingClientRect(); return {act: k.dataset.act, l: +((r.left - br.left) / br.width * 100).toFixed(1), w: +(r.width / br.width * 100).toFixed(1), t: +((r.top - br.top) / br.height * 100).toFixed(1), h: +(r.height / br.height * 100).toFixed(1), title: (k.querySelector("b") || {}).textContent, sub: (k.querySelector("small") || {}).textContent, dot: !!k.querySelector(".dot")}; });

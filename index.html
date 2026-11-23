@@ -16247,7 +16247,7 @@ const toMenuQuiet = () => { try { $("modal").classList.remove("on"); } catch (e)
   const _hud = drawHUD; drawHUD = function (G) { if (G.type === "trick") return proHudTrick(G); _hud.apply(this, arguments); if (G.pro) { try { proHudExtra(G); } catch (e) { console.error("pro hud", e); } } };
   const _fx = drawFx; drawFx = function (G) { _fx.apply(this, arguments); if (G.type === "trick") proTrickMarks(G); else if (G.rule === "nine") proNineMarks(G); };
   const _go = go; go = function (id, o) { const r = _go.apply(this, arguments); if (id === "proScr" && mode === "menu") buildPro(); return r; };
-  const _bm = buildMini; buildMini = function () { _bm.apply(this, arguments); try { proMiniBanner(); } catch (e) { console.error("pro mini", e); } };
+  const _bm = buildMini; buildMini = function () { _bm.apply(this, arguments); try { proMiniStrip(); } catch (e) { console.error("pro mini", e); } };
   const _bw = buildWithFr; buildWithFr = function () { _bw.apply(this, arguments); try { proMiniBanner("#withFrScr .head"); } catch (e) { console.error("pro withfr", e); } };
   MENU_SCREENS.push("proScr"); DEMO_COVER.add("proScr");
 })();
@@ -16772,11 +16772,12 @@ const PRO_PANELS = [   // left edge and width of each panel of the picture, % of
 /* the screen is the picture and five keys. SCALE (the owner: "pay attention to the scale too"): it is the largest picture that fits under the title, at most 1100 px wide (--pro-chrome = what the title row and the
    paddings take of the page's own height; --u-vh = 1% of that height; 2.5993 = 2022 / 778), so it fits every phone, tablet and monitor: nothing is cut off and nothing scrolls. The words on it are in units of the
    picture's own width (cqw), so they grow and shrink with it. */
+#mini .pro-ban.inl{width:min(100%,900px);margin:calc(var(--u-vh,1vh) * 2.2) auto 14px}   /* under the mini-game cards (the owner, Nov 23: the new modes picture below them), as wide as the panel */
 #proScr{--pro-chrome:142px}
 .mh520 #proScr,.mh560 #proScr{--pro-chrome:132px}
 .mh560:not(.mh520) #proScr.screen{padding-top:62px}
-#proScr .pro-ban{position:relative;flex:none;width:min(100%,1100px,calc((100 * var(--u-vh,1vh) - var(--pro-chrome)) * 2.5993));aspect-ratio:2022/778;container-type:inline-size;user-select:none;-webkit-user-select:none}
-#proScr .pro-ban>img{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none;border-radius:1.3cqw;box-shadow:0 .8cqw 2cqw #0009}
+#proScr .pro-ban,.pro-ban.inl{position:relative;flex:none;width:min(100%,1100px,calc((100 * var(--u-vh,1vh) - var(--pro-chrome)) * 2.5993));aspect-ratio:2022/778;container-type:inline-size;user-select:none;-webkit-user-select:none}
+#proScr .pro-ban>img,.pro-ban.inl>img{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none;border-radius:1.3cqw;box-shadow:0 .8cqw 2cqw #0009}
 .pro-pan{position:absolute;top:14%;height:66%;left:var(--l);width:var(--w);padding:0;border:0;background:none;color:#fff;cursor:pointer;border-radius:4.4cqw;-webkit-tap-highlight-color:transparent;font:inherit}
 .pro-pan::after{content:"";position:absolute;inset:0;border-radius:4.4cqw;background:radial-gradient(ellipse at 50% 55%,#ffe9a862,#ffd24d22 50%,transparent 72%);opacity:0;transition:opacity .15s;pointer-events:none}
 .pro-pan:hover::after,.pro-pan:active::after,.pro-pan:focus-visible::after{opacity:1}
@@ -16826,7 +16827,7 @@ html.mh460 #proRep .btn{min-height:34px;padding:2px 10px!important;border-width:
 html.mh460 .pro-ps .pst b{font-size:16px}html.mh460 .pro-shr .nm b{font-size:13px}`;
   document.head.appendChild(st);
   const scr = document.createElement("div"); scr.className = "screen"; scr.id = "proScr";
-  scr.innerHTML = `<div class="head"><button class="back" data-go="mini">‹</button><h2 id="proTitle"></h2></div><div class="pro-ban" id="proBody"><img src="${PRO_BAN}" alt="" draggable="false"><div id="proPans"></div></div>`;
+  scr.innerHTML = `<div class="head"><button class="back" data-go="mini">‹</button><h2 id="proTitle"></h2></div><div class="pro-ban" id="proBody"><img src="${PRO_BAN}" alt="" draggable="false"><div class="pro-pans" id="proPans"></div></div>`;
   document.body.appendChild(scr);
 })();
 function proMiniBanner(sel) {   // the key that leads to the new modes: in the header of the Minigames screen and of the "play with friends" screen (the cards below stay as they were)
@@ -16835,8 +16836,17 @@ function proMiniBanner(sel) {   // the key that leads to the new modes: in the h
   if (!b) { b = document.createElement("button"); b.className = "pro-go"; b.onclick = () => go("proScr"); head.appendChild(b); }
   b.innerHTML = `<img src="${proArt("ball8")}" alt=""><span></span>`; b.querySelector("span").textContent = T("Yangi rejimlar");
 }
-function buildPro() {   // the five keys over the picture: the name of the mode, a line under it (the stars of today's tricks, the lessons done ...), the red dot until the mode was opened once
+function buildPro() {   // the full-screen picture (reached by the key of the friends screen)
   $("proTitle").textContent = T("Yangi rejimlar");
+  proFillBanner($("proBody"));
+}
+function proMiniStrip() {   // the same picture under the cards of the Minigames screen (the owner, Nov 23): rebuilt with the screen, so the stars / dots are current
+  const scr = $("mini"); if (!scr) return;
+  let ban = $("miniStrip");
+  if (!ban) { ban = document.createElement("div"); ban.className = "pro-ban inl"; ban.id = "miniStrip"; ban.innerHTML = `<img src="${PRO_BAN}" alt="" draggable="false"><div class="pro-pans"></div>`; scr.appendChild(ban); }
+  proFillBanner(ban);
+}
+function proFillBanner(ban) {   // the five keys over the picture: the name of the mode, a line under it (the stars of today's tricks, the lessons done ...), the red dot until the mode was opened once
   try { trickPrefetch(); } catch (e) { console.error(e); }
   const st = proStore(), day = dshotDayKey(), d = st.trick && st.trick.day === day ? st.trick : null, ds = d ? d.st : [0, 0, 0, 0, 0], ls = st.lessons || {}, done = LESSONS.filter(x => ls[x.id]).length, seen = st.seen || {};
   const stars = `<span class="pro-st">${ds.map(s => `<span class="${s ? "on" : ""}">★</span>`).join("")}</span>`;
@@ -16846,7 +16856,7 @@ function buildPro() {   // the five keys over the picture: the name of the mode,
     bot: [T("Botga qarshi"), `${T("Oson")} · ${T("O'rta")} · ${T("Qiyin")}`],
     nine: [T("9-ball"), T("1 dan 9 gacha")],
     team: [T("2v2 jamoa"), T("Do'st bilan juft bo'lib")]};
-  const box = $("proPans");
+  const box = ban.querySelector(".pro-pans");
   box.innerHTML = PRO_PANELS.map(([act, l, w]) => `<button class="pro-pan" data-act="${act}" style="--l:${l}%;--w:${w}%" aria-label="${esc(txt[act][0])}">${seen[act] ? "" : '<i class="dot">!</i>'}<span class="pro-cap"><b>${txt[act][0]}</b><small>${txt[act][1]}</small></span></button>`).join("");
   box.querySelectorAll(".pro-pan").forEach(el => el.onclick = () => { const a = el.dataset.act; st.seen = st.seen || {}; if (!st.seen[a]) { st.seen[a] = 1; save(); } ({trick: proPickTrick, lessons: proPickLesson, bot: () => proPickLevel("eight"), nine: proPickNine, team: proPickTeam})[a](); });
 }
