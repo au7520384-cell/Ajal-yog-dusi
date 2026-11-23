@@ -2453,7 +2453,7 @@ setInterval(() => { const now = Date.now(); for (const r of [...trooms.values()]
 // match (a phone that was away gets it back whole: `bsync`) and lets only the seat whose turn it is move; it does not know the rules (the phones check every move they receive). Voice: `bvoice` is relayed between the seats
 // (WebRTC signalling only, the audio never touches the server). Same away / gone idea as the 2v2 rooms: a phone that drops keeps its seat for a while (open room: 3 min, match: BROOM_GRACE_MS, then it forfeits).
 const brooms = new Map();   // code -> {code, game, max, id, state: "open" | "run", host, seats, uids, prof, away, timers, first, turn, moves, rem, at}
-const BG_MAX = {shashka: 2};
+const BG_MAX = {shashka: 2, magic: 2};
 const BROOM_GRACE = +process.env.BROOM_GRACE_MS || 30e3, BROOM_OPEN_GRACE = +process.env.BROOM_OPEN_GRACE_MS || 3 * 60e3;
 const BG_T = new Set(["bcreate", "bjoin", "bleave", "bstart", "bmove", "bover", "boffer", "brematch", "bresume", "bvoice"]);
 const bHere = (r, i) => !!r.uids[i], bLive = (r, i) => bHere(r, i) && !r.away[i] && r.seats[i] && r.seats[i].readyState === 1;
