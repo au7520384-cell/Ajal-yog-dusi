@@ -169,6 +169,10 @@ const SKUS = {
   gems_1000:   {gems: 1000,     vip: 1924,  usd: 19.99, name: "1 000 Diamonds"},
   gems_2500:   {gems: 2500,     vip: 5590,  usd: 49.99, name: "2 500 Diamonds"},
   gems_5000:   {gems: 5000,     vip: 13000, usd: 99.99, name: "5 000 Diamonds"},
+  // 🎲 table coins: the stake coin of the board games (shashka, Magic Chess, Mafia). Virtual: never paid out, never sent to another player. $1 = 2000, flat prices; a player can buy at most $5 (10 000 coins) in 24 hours (tcBuyLeft)
+  tc_2k:       {tc: 2000,       vip: 65,    usd: 1,     name: "2 000 Table Coins"},
+  tc_4k:       {tc: 4000,       vip: 130,   usd: 2,     name: "4 000 Table Coins"},
+  tc_10k:      {tc: 10000,      vip: 325,   usd: 5,     name: "10 000 Table Coins"},
   elite_30:    {items: {elite: 30}, vip: 650, usd: 9.99, name: "Go Elite (30 days)"},
   adfree:      {items: {adfree: 1}, vip: 325, usd: 4.99, name: "Ad-Free Forever", once: true},
   loop_gold_1: {items: {goldShots: 6}, vip: 324, usd: 4.99, name: "Next-Level Loop gold 1"},
@@ -254,7 +258,7 @@ for (const [sku, usd] of Object.entries(ITEM_PRICES)) {
 // order of the prices stays. The game shows the same number (cardUsd in index.html).
 const cardUsd = u => u < 1.99 ? 1.99 : Math.round((u + 0.5) * 100) / 100;
 // These are charged exactly as listed (extra try $0.99, Golden Shot x3 and a Surprise Box $1.99) — the game shows the same numbers.
-const FLAT_USD = new Set(["try_lucky", "try_wheel", "try_scratch", "golden_3", "sbox_1", "gems_100", "gems_250", "gems_500", "gems_1000", "gems_2500", "gems_5000"]);
+const FLAT_USD = new Set(["tc_2k", "tc_4k", "tc_10k", "try_lucky", "try_wheel", "try_scratch", "golden_3", "sbox_1", "gems_100", "gems_250", "gems_500", "gems_1000", "gems_2500", "gems_5000"]);
 for (const k of Object.keys(SKUS)) if (SKUS[k].usd && !FLAT_USD.has(k)) SKUS[k].usd = cardUsd(SKUS[k].usd);
 function claimEdition(u, id) {
   const cap = EDITION_CAP[id]; if (!cap) return {serial: 0};
@@ -1214,7 +1218,7 @@ const routes = {
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
-    return {me: publicUser(u), chest: chestOf(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}, notify: notifyInfo(u), tgOff: !!(u.tg && u.tg.off)};
+    return {me: publicUser(u), tc: tcOf(u), chest: chestOf(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}, notify: notifyInfo(u), tgOff: !!(u.tg && u.tg.off)};
   },
 
   async "POST /api/referral"(req, u) {
@@ -1652,6 +1656,7 @@ const routes = {
     const b = await jsonBody(req), sku = SKUS[b.sku];
     if (!sku || sku.legacy) return [400, {error: "bad_sku"}];
     if (sku.once && (u.bought || {})[b.sku]) return [400, {error: "already_bought"}];
+    if (sku.tc && sku.tc > tcBuyLeft(u)) return [400, {error: "tc_limit"}];
     const tid = sku.items && ((sku.items.tables || sku.items.cues || sku.items.pframes || [])[0]);
     if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return [409, {error: "sold_out"}];
     if (PADDLE_KEY && PADDLE_TOKEN) {
@@ -1748,6 +1753,7 @@ async function playVoidSweep() {
 function starsRefuse(u, skuId) {   // the same checks as the card checkout; returns an error code or ""
   const sku = SKUS[skuId]; if (!u || !sku || sku.legacy) return "bad_sku";
   if (sku.once && (u.bought || {})[skuId]) return "already_bought";
+  if (sku.tc && sku.tc > tcBuyLeft(u)) return "tc_limit";   // (at most $5 of table coins in 24 hours)
   const tid = sku.items && ((sku.items.tables || sku.items.cues || sku.items.pframes || [])[0]);
   if (tid && EDITION_CAP[tid] && !(u.editions || {})[tid] && ((db.meta.editions || {})[tid] | 0) >= EDITION_CAP[tid]) return "sold_out";
   return "";
@@ -1858,6 +1864,7 @@ async function fulfill(payId, userId, skuId, amount) {
   }
   grant(u, {coins: sku.coins || 0, cash, gems: dia + refund, dm: 1, vip: sku.vip || 0, items, kind: "purchase", from: sku.name});   // dm:1 = the gems are today's 💎 diamonds (the game scales an older grant)
   u.bought = {...(u.bought || {}), [skuId]: (u.bought && u.bought[skuId] || 0) + 1};
+  if (sku.tc) { (u.tcBuy = u.tcBuy || []).push({at: Date.now(), c: sku.tc}); tcAdd(u, sku.tc, "buy"); }   // table coins live on the server (the stake of a match is held here), not in the grants the phone applies
   if (saving) await saving;
   await flush();   // money: write it down before telling the provider we got it
   return !dirty;
@@ -1922,7 +1929,7 @@ const server = http.createServer(async (req, res) => {
     const key = `${req.method} ${url.pathname}`, fn = routes[key];
     if (fn) {
       let u = null;
-      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /auth/done", "POST /api/auth/begin", "POST /api/auth/stash", "POST /api/auth/claim", "GET /api/adsgram/reward", "GET /api/src/stats", "POST /api/adstat", "GET /api/adstat", "GET /admin/ads", "GET /admin/world", "GET /api/world/admin", "POST /api/world/mute", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
+      if (!["GET /api/health", "GET /api/skus", "GET /api/online", "GET /api/editions", "GET /api/news", "GET /admin/news", "POST /api/news/post", "POST /api/news/delete", "POST /api/register", "POST /api/recover", "GET /api/auth/config", "POST /api/auth/login", "GET /auth/done", "POST /api/auth/begin", "POST /api/auth/stash", "POST /api/auth/claim", "GET /api/adsgram/reward", "GET /api/src/stats", "POST /api/adstat", "GET /api/adstat", "GET /admin/ads", "GET /admin/world", "GET /api/world/admin", "GET /api/tc/admin", "POST /api/world/mute", "POST /api/p2p/notify", "POST /api/p2p/confirm", "GET /api/p2p/pending"].includes(key)) {
         u = auth(req); if (!u) return send(res, 401, {error: "unauthorized"});
       }
       const out = await fn(req, u);
@@ -2448,6 +2455,57 @@ function teamMessage(ws, m, u) {
 }
 setInterval(() => { const now = Date.now(); for (const r of [...trooms.values()]) if (now - r.at > 6 * 3600e3 || !r.seats.some((w, i) => w && r.uids[i] && !r.gone[i] && w.readyState === 1) && now - r.at > 5 * 60e3) tClose(r); }, 60e3).unref();
 
+// ---------------------------------------------------------------- TABLE COINS (the stake of the board games)
+// The owner (Nov 24): shashka / Magic Chess / Mafia are played for a separate coin, the "stol tangasi": a new player has 12; more come from a rewarded video (1 coin each) or a purchase ($1 = 2000, at most $5 a day).
+// A stake is at least 3 coins, at most 100 000. A 1-on-1 match: both put the stake in, the winner gets 90% of the pool (3 + 3 -> 5: +2 net; the loser loses 3), a draw gives both their stake back.
+// Mafia: a citizen puts in the stake, a mafioso 3 times as much; the winning team shares 90% of the pool.
+// SAFEGUARDS (the owner was told: real-money gambling is illegal in Uzbekistan and against the rules of Telegram, Google Play and the card providers): these coins are VIRTUAL. There is no way to turn them into money
+// or goods, and no way to send them to another player (no gift, no transfer, no market): they only move through the result of a match, and the house keeps 10% of every pool.
+// The coins live on the SERVER (`u.tc`); a stake is HELD (`u.tcHold[matchId]`) when the match starts and settled when it ends; a server restart ends every room, so the holds that are left are given back at boot (tcRecover).
+const TC_START = 12, TC_FEE = 0.10, TC_MAXBET = 100000;
+const TC_TIERS = [3, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000];
+const TC_AD_GAP = +process.env.TC_AD_GAP_MS || 25e3, TC_AD_DAY = +process.env.TC_AD_DAY || 40, TC_BUY_DAY = 10000;
+const BR_RULES = require("./boardrules.js").load();
+const tcStakeOk = (game, s) => TC_TIERS.includes(s) && (game !== "mafia" || s * 3 <= TC_MAXBET) && (game === "mafia" || BR_RULES.ok);   // (shashka / chess stakes need the rules the server judges with)
+const tcPrize = (pool) => Math.floor(pool * (1 - TC_FEE));
+function tcOf(u) { if (!Number.isFinite(u.tc)) { u.tc = TC_START; u.tcLog = [{at: Date.now(), d: TC_START, k: "start", g: ""}]; markDirty(); } return u.tc; }
+const tcHeld = u => Object.values(u.tcHold || {}).reduce((a, x) => a + x, 0);
+function tcNote(u, d, k, g) { const L = u.tcLog = u.tcLog || []; L.push({at: Date.now(), d, k, g: g || ""}); if (L.length > 40) L.splice(0, L.length - 40); }
+function tcPush(u) { const w = clients.get(u.id); if (w && w.readyState === 1) wsSend(w, {t: "wallet", tc: tcOf(u), hold: tcHeld(u)}); }
+function tcAdd(u, n, k, g) { u.tc = tcOf(u) + n; tcNote(u, n, k, g); markDirty(); tcPush(u); return u.tc; }
+function tcHold(u, key, n) { if (!u || !(n > 0) || tcOf(u) < n) return false; u.tc -= n; (u.tcHold = u.tcHold || {})[key] = n; markDirty(); tcPush(u); return true; }
+function tcSettle(u, key, payout, k, g) {   // the hold of a match is over: `payout` goes to the balance; the history says the net result
+  const h = u && u.tcHold && u.tcHold[key]; if (!h) return 0;
+  delete u.tcHold[key]; u.tc = tcOf(u) + payout; if (payout - h) tcNote(u, payout - h, k, g); markDirty(); tcPush(u); return h;
+}
+function tcGiveBack(u, key, n) { const h = u && u.tcHold && u.tcHold[key]; if (!h || n <= 0 || n > h) return; u.tcHold[key] = h - n; u.tc = tcOf(u) + n; markDirty(); tcPush(u); }   // (a part of a hold goes back at once: the citizens of Mafia hold 3 stakes until the roles are dealt)
+function tcRecover() { let n = 0; for (const u of Object.values(db.users)) if (u.tcHold && Object.keys(u.tcHold).length) { for (const h of Object.values(u.tcHold)) { u.tc = tcOf(u) + h; n += h; } u.tcHold = {}; markDirty(); } if (n) console.log(`table coins: ${n} coins held by matches that the restart ended were given back`); }
+function tcBuyLeft(u) { const now = Date.now(); u.tcBuy = (u.tcBuy || []).filter(x => now - x.at < 864e5); return Math.max(0, TC_BUY_DAY - u.tcBuy.reduce((a, x) => a + x.c, 0)); }
+const tcDay = () => new Date().toISOString().slice(0, 10);
+function tcAdState(u) { const a = u.tcAd && u.tcAd.d === tcDay() ? u.tcAd : {d: tcDay(), n: 0, at: (u.tcAd || {}).at || 0}; return a; }
+Object.assign(routes, {
+  "GET /api/tc"(req, u) {
+    const a = tcAdState(u), now = Date.now();
+    return {tc: tcOf(u), hold: tcHeld(u), log: (u.tcLog || []).slice(-20), tiers: TC_TIERS, fee: TC_FEE, min: TC_TIERS[0], max: TC_MAXBET, ads: {left: Math.max(0, TC_AD_DAY - a.n), day: TC_AD_DAY, wait: Math.max(0, TC_AD_GAP - (now - a.at))}, buy: {left: tcBuyLeft(u), day: TC_BUY_DAY, skus: ["tc_2k", "tc_4k", "tc_10k"].map(id => ({id, tc: SKUS[id].tc, usd: SKUS[id].usd}))}, stakes: BR_RULES.ok};
+  },
+  "GET /api/tc/admin"(req) {   // ?key=ADMIN_KEY (or x-admin-key): the table coins in circulation, and who wins / loses most (a pair of accounts that pass coins by losing on purpose shows here)
+    const k = req.headers["x-admin-key"] || new URL(req.url, "http://x").searchParams.get("key") || "";
+    if (!ADMIN_KEY || !safeEq(String(k), ADMIN_KEY)) return [403, {error: "forbidden"}];
+    const us = Object.values(db.users).filter(x => Number.isFinite(x.tc)), net = x => (x.tcLog || []).filter(l => l.k === "win" || l.k === "lose").reduce((a, l) => a + l.d, 0);
+    const row = x => ({id: x.id.slice(0, 8), name: String(x.name || "").slice(0, 20), tc: x.tc, hold: tcHeld(x), net: net(x)});
+    return {players: us.length, coins: us.reduce((a, x) => a + x.tc, 0), held: us.reduce((a, x) => a + tcHeld(x), 0), rooms: [...brooms.values()].filter(r => r.stake).length,
+      top: [...us].sort((a, b) => b.tc - a.tc).slice(0, 10).map(row), winners: [...us].sort((a, b) => net(b) - net(a)).slice(0, 10).map(row), losers: [...us].sort((a, b) => net(a) - net(b)).slice(0, 10).map(row)};
+  },
+  "POST /api/tc/ad"(req, u) {   // the page asks for the coin of a rewarded video it has just shown (1 coin; at most one per TC_AD_GAP, TC_AD_DAY a day: the server cannot see the video, it only limits what a modified page could take)
+    if (limited(req, "tcad", 40)) return [429, {error: "slow down"}];
+    const a = tcAdState(u), now = Date.now();
+    if (a.n >= TC_AD_DAY) return [429, {error: "cap", tc: tcOf(u)}];
+    if (now - a.at < TC_AD_GAP) return [429, {error: "wait", wait: TC_AD_GAP - (now - a.at), tc: tcOf(u)}];
+    a.n++; a.at = now; u.tcAd = a; tcAdd(u, 1, "ad");
+    return {ok: true, tc: u.tc, left: TC_AD_DAY - a.n};
+  },
+});
+
 // ---------------------------------------------------------------- board game rooms (shashka now; chess and mafia use the same room: code, seats, voice)
 // The owner (Nov 23): shashka, chess, mafia with voice. A room has a game, a 4-letter code, `max` seats (2 for the board games, up to 8 for mafia), a host who starts it. For the two-seat games the server also keeps the MOVE LIST of the
 // match (a phone that was away gets it back whole: `bsync`) and lets only the seat whose turn it is move; it does not know the rules (the phones check every move they receive). Voice: `bvoice` is relayed between the seats
@@ -2459,25 +2517,48 @@ const BROOM_GRACE = +process.env.BROOM_GRACE_MS || 30e3, BROOM_OPEN_GRACE = +pro
 const BG_T = new Set(["bcreate", "bjoin", "bleave", "bstart", "bmove", "bover", "boffer", "brematch", "bresume", "bvoice", "mact"]);
 const bHere = (r, i) => !!r.uids[i], bLive = (r, i) => bHere(r, i) && !r.away[i] && r.seats[i] && r.seats[i].readyState === 1;
 const bPresent = r => [...r.uids.keys()].filter(i => bHere(r, i));
-function bPub(r) { return {t: "broom", code: r.code, game: r.game, max: r.max, state: r.state, host: r.host, id: r.state === "run" ? r.id : "", seats: [...r.uids.keys()].map(i => r.uids[i] ? {...pubProfile(r.prof[i]), uid: r.uids[i], away: r.away[i] ? 1 : 0} : null)}; }
+function bPub(r) { return {t: "broom", code: r.code, game: r.game, max: r.max, state: r.state, host: r.host, stake: r.stake | 0, id: r.state === "run" ? r.id : "", seats: [...r.uids.keys()].map(i => r.uids[i] ? {...pubProfile(r.prof[i]), uid: r.uids[i], away: r.away[i] ? 1 : 0} : null)}; }
 function bBroadcast(r) { const m = bPub(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m); }
 function bToAll(r, m, except) { for (let i = 0; i < r.max; i++) if (i !== except && bLive(r, i)) wsSend(r.seats[i], m); }
-const bMatchMsg = r => ({t: "bmatch", room: r.id, code: r.code, game: r.game, first: r.first, seats: bPub(r).seats});
-function bClose(r) { for (const x of r.timers) clearTimeout(x); if (r.mf) mfStop(r); brooms.delete(r.code); for (const w of r.seats) if (w && w.broom === r.code) w.broom = null; }
-function bEnd(r, winner, why) {   // the match is over (a phone reported it, or a player left / timed out): the room is a waiting room again
+const bMatchMsg = r => ({t: "bmatch", room: r.id, code: r.code, game: r.game, first: r.first, stake: r.stake | 0, tl: r.tdl ? Math.max(0, r.tdl - Date.now()) : 0, tlm: r.stake && r.max === 2 ? BROOM_TURN : 0, seats: bPub(r).seats});
+function bGiveBack(r) { if (!r.stake || !r.id) return; for (const uid of new Set([...r.uids, ...Object.keys(r.held || {})])) { const u = uid && db.users[uid]; if (u && u.tcHold && u.tcHold[r.id]) tcSettle(u, r.id, u.tcHold[r.id], "refund", r.game); } }   // (a match that is gone for any reason other than its result: nobody loses a coin)
+function bClose(r) { for (const x of r.timers) clearTimeout(x); clearTimeout(r.tt); if (r.mf) mfStop(r); if (r.state === "run") bGiveBack(r); brooms.delete(r.code); for (const w of r.seats) if (w && w.broom === r.code) w.broom = null; }
+function bEnd(r, winner, why, extra) {   // the match is over (a phone reported it, or a player left / timed out): the room is a waiting room again
   if (r.state !== "run") return;
-  const id = r.id; r.state = "open"; r.id = ""; r.rem = {}; r.lastFirst = r.first;
-  bToAll(r, {t: "bend", room: id, winner, why: String(why || "").slice(0, 12)});
+  const id = r.id; clearTimeout(r.tt); r.tt = null; r.tdl = 0; r.state = "open"; r.id = ""; r.rem = {}; r.lastFirst = r.first; r.g = null; r.drawBy = -1;
+  bToAll(r, {t: "bend", room: id, winner, why: String(why || "").slice(0, 12), ...(extra || {})});
   bBroadcast(r);
+}
+function bSettle(r, winner, why) {   // a 1-on-1 match is decided (winner: a seat, -1 a draw): with a stake the coins move now, then the room is told
+  if (r.state !== "run") return;
+  if (!r.stake) return bEnd(r, winner, why);
+  const S = r.stake, id = r.id, seats = [0, 1], held = seats.map(i => { const u = r.uids[i] && db.users[r.uids[i]]; return u && u.tcHold && u.tcHold[id] ? u : null; });
+  const void_ = winner >= 0 && r.moves.length < 4 && why !== "mate" && why !== "stuck";   // a match that ends by a resignation / leaving / the clock in its first moves moves no coins (a stake cannot be handed over by resigning at once)
+  const pay = {};
+  for (const i of seats) {
+    const u = held[i]; if (!u) { pay[i] = 0; continue; }
+    if (winner < 0 || void_) { tcSettle(u, id, S, "draw", r.game); pay[i] = 0; }
+    else if (i === winner) { const prize = tcPrize(2 * S); tcSettle(u, id, prize, "win", r.game); pay[i] = prize - S; }
+    else { tcSettle(u, id, 0, "lose", r.game); pay[i] = -S; }
+  }
+  bEnd(r, winner, why, {stake: S, pay, void: void_ ? 1 : 0});
+}
+const BROOM_TURN = +process.env.BROOM_TURN_MS || 120e3;
+function bTurnClock(r) {   // a stake match has a clock: the seat that does not move in time loses (a stalling loser cannot keep the coins locked)
+  clearTimeout(r.tt); r.tt = null; r.tdl = 0; if (!r.stake || r.state !== "run" || r.max !== 2) return;
+  const tok = r.id, seat = r.turn; r.tdl = Date.now() + BROOM_TURN;
+  r.tt = setTimeout(() => { if (r.id === tok && r.state === "run" && r.turn === seat && brooms.get(r.code) === r) bSettle(r, 1 - seat, "time"); }, BROOM_TURN);
 }
 function bDrop(r, i, why) {   // the seat is given up
   const w = r.seats[i]; clearTimeout(r.timers[i]); r.timers[i] = null; if (w && w.broom === r.code) w.broom = null;
   const was = r.state === "run";
   if (r.game === "mafia" && was && r.mf) { r.seats[i] = null; r.away[i] = 0; return mfToBot(r, i); }   // (a bot plays the seat from now on)
+  const stakeLeft = was && r.max === 2 && r.stake && bPresent(r).length === 2;   // (a stake match: the one who stays gets the pool, settled before the seat is emptied)
+  if (stakeLeft) bSettle(r, 1 - i, why === "away" ? "away" : "left");
   r.seats[i] = null; r.uids[i] = null; r.prof[i] = null; r.away[i] = 0;
   if (!bPresent(r).length) return bClose(r);
   if (r.host === i) r.host = bPresent(r)[0];
-  if (was && r.max === 2) bEnd(r, bPresent(r)[0], "left"); else bBroadcast(r);
+  if (stakeLeft) bBroadcast(r); else if (was && r.max === 2) bEnd(r, bPresent(r)[0], "left"); else bBroadcast(r);
 }
 function boardDrop(ws) {
   const r = ws.broom && brooms.get(ws.broom); if (!r) return;
@@ -2486,24 +2567,45 @@ function boardDrop(ws) {
   clearTimeout(r.timers[i]); r.timers[i] = setTimeout(() => { r.timers[i] = null; if (r.away[i] && brooms.get(r.code) === r) bDrop(r, i, "away"); }, r.state === "run" ? BROOM_GRACE : BROOM_OPEN_GRACE);
 }
 function bAttach(r, i, ws) { const old = r.seats[i]; if (old && old !== ws && old.broom === r.code) old.broom = null; r.seats[i] = ws; ws.broom = r.code; clearTimeout(r.timers[i]); r.timers[i] = null; r.away[i] = 0; }
+function bHoldStakes(r, id, need) {   // every human in the room puts `need(i)` coins on hold; -1 when all could, else the seat that could not (nothing stays held then)
+  const done = [];
+  for (const i of [...r.uids.keys()].filter(j => r.uids[j] && !String(r.uids[j]).startsWith("bot:"))) {
+    const u = db.users[r.uids[i]], n = need(i);
+    if (!u || !tcHold(u, id, n)) { for (const d of done) tcSettle(db.users[r.uids[d]], id, need(d), "refund", r.game); return i; }
+    done.push(i); (r.held = r.held || {})[r.uids[i]] = n;
+  }
+  return -1;
+}
 function bStartMatch(r) {
-  r.state = "run"; r.id = crypto.randomUUID(); r.moves = []; r.rem = {}; r.at = Date.now();
+  const id = crypto.randomUUID();
+  if (r.stake) {
+    const bad = bHoldStakes(r, id, () => r.stake);
+    if (bad >= 0) { r.rem = {}; bToAll(r, {t: "berr", why: "coins", seat: bad, need: r.stake}); return false; }
+    r.g = r.game === "magic" ? BR_RULES.mcNew() : BR_RULES.shNew(); r.drawBy = -1;
+  }
+  r.state = "run"; r.id = id; r.moves = []; r.rem = {}; r.at = Date.now();
   r.first = r.lastFirst === undefined ? crypto.randomInt(r.max) : (r.lastFirst + 1) % r.max;   // (the colours swap in a rematch)
-  r.turn = r.first;
+  r.turn = r.first; bTurnClock(r);
   const m = bMatchMsg(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m);
-  bBroadcast(r);
+  bBroadcast(r); return true;
 }
 // ---- MAFIA in a board game room (server/mafia.js has the rules; the roles never leave the server except to the seat they belong to)
 // The room has up to 8 seats; a match takes the people in it (the host starts), tops them up with bots to 5, and plays the phases on timers. `mview` is the seat's own view (role, partners, findings, the dead...).
 const MF_NAMES = ["Ali", "Madina", "Jasur", "Dilnoza", "Bobur", "Kamola", "Sardor", "Nigora", "Rustam", "Zarina", "Aziz", "Malika", "Temur", "Laylo", "Farrux", "Sevara"];
 const mfHumans = r => [...r.uids.keys()].filter(i => r.uids[i] && !(r.mf && r.mf.g.bot[i]));
 function mfBotProfile(i) { return {name: MF_NAMES[crypto.randomInt(MF_NAMES.length)], avatar: crypto.randomInt(12), frame: 0, country: "", level: 3 + crypto.randomInt(30), cue: "start", tbl: "", tblNo: 0, code: "", club: "", cb: null}; }
-function mfViewMsg(r, i) { return {t: "mview", room: r.id, v: MAFIA.view(r.mf.g, i, Date.now()), now: Date.now()}; }   // (now: the server's clock, so a phone can count the phase down on its own)
+function mfViewMsg(r, i) { return {t: "mview", room: r.id, v: MAFIA.view(r.mf.g, i, Date.now()), now: Date.now(), stake: r.stake | 0, st: r.mf.st ? r.mf.st[i] | 0 : 0, pay: r.mf.pay || null}; }   // (now: the server's clock, so a phone can count the phase down on its own)
 function mfSendAll(r) { for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], mfViewMsg(r, i)); }
 function mfStop(r) { if (!r.mf) return; clearTimeout(r.mf.timer); for (const x of r.mf.bots) clearTimeout(x); r.mf.bots = []; }
+const MF_STAKE_MIN = 5;   // a stake match of Mafia has no bots: 5 to 8 real players
 function mfStart(r) {
   const hs = [...r.uids.keys()].filter(i => r.uids[i]); if (!hs.length) return;
-  const n = Math.max(5, hs.length), host = r.uids[r.host];
+  if (r.stake) {   // (every player must be able to pay the 3 stakes of a mafioso: the roles are not dealt yet)
+    if (hs.length < MF_STAKE_MIN) return bToAll(r, {t: "berr", why: "min", need: MF_STAKE_MIN});
+    const poor = hs.find(i => !db.users[r.uids[i]] || tcOf(db.users[r.uids[i]]) < 3 * r.stake);
+    if (poor !== undefined) return bToAll(r, {t: "berr", why: "coins", seat: poor, need: 3 * r.stake});
+  }
+  const n = Math.max(r.stake ? 0 : 5, hs.length), host = r.uids[r.host];
   const seats = [], uids = [], prof = [], away = [], timers = [];
   for (const i of hs) { seats.push(r.seats[i]); uids.push(r.uids[i]); prof.push(r.prof[i]); away.push(r.away[i]); timers.push(r.timers[i]); }   // (the people first, in the order they sat)
   const bots = []; for (let i = hs.length; i < n; i++) { seats.push(null); uids.push("bot:" + i); prof.push(mfBotProfile(i)); away.push(0); timers.push(null); bots.push(i); }
@@ -2512,6 +2614,13 @@ function mfStart(r) {
   const sc = k => Math.max(40, Math.round(MAFIA.TIMES[k] * MF_SCALE)), mn = k => Math.max(20, Math.round(MAFIA.MIN[k] * MF_SCALE));
   const g = MAFIA.create(n, Array.from({length: n}, (_, i) => bots.includes(i)), {times: {reveal: sc("reveal"), night: sc("night"), day: sc("day"), vote: sc("vote")}, min: {night: mn("night"), day: mn("day"), vote: mn("vote")}});
   r.mf = {g, timer: null, bots: [], planned: ""}; r.state = "run"; r.id = crypto.randomUUID(); r.at = Date.now();
+  if (r.stake) {   // the roles are dealt: a mafioso puts in 3 stakes, anybody else one; the pool is shared by the winning team at the end
+    r.mf.st = []; r.mf.left = new Set(); r.mf.pay = null; r.mf.settled = false;
+    for (let i = 0; i < n; i++) r.mf.st[i] = g.role[i] === "mafia" ? 3 * r.stake : r.stake;
+    r.mf.part = Array.from({length: hs.length}, (_, i) => ({i, uid: r.uids[i]}));   // (the people are seats 0.. now)
+    const bad = bHoldStakes(r, r.id, i => r.mf.st[i]);
+    if (bad >= 0) { r.mf = null; r.state = "open"; r.id = ""; return bToAll(r, {t: "berr", why: "coins", seat: bad, need: 3 * r.stake}); }
+  }
   MAFIA.start(g, Date.now()); r.max = Math.max(r.max, 8);
   const m = bMatchMsg(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m);
   bBroadcast(r); mfPush(r);
@@ -2525,8 +2634,21 @@ function mfPlan(r) {   // the bots decide: each at its own moment of the night /
     if (r.id !== tok || !r.mf || r.mf.g !== g || g.over) return; const a = MAFIA.bot(g, i); if (a && MAFIA.act(g, i, a, Date.now())) mfPush(r);
   }, 40 + Math.floor(Math.random() * span)));
 }
+function mfSettle(r) {   // the game is over: the winning team (the players who stayed) shares 90% of the pool; nobody on the winning side stayed: those who stayed get their stake back
+  const mf = r.mf; if (!mf || !r.stake || mf.settled) return; mf.settled = true;
+  const g = mf.g, win = g.over.winner, id = r.id, pay = {}, pool = mf.part.reduce((a, x) => a + (mf.st[x.i] | 0), 0);
+  const winners = mf.part.filter(x => !mf.left.has(x.uid) && ((g.role[x.i] === "mafia") === (win === "mafia"))), stayed = mf.part.filter(x => !mf.left.has(x.uid));
+  for (const x of mf.part) {
+    const u = db.users[x.uid], st = mf.st[x.i] | 0; let got = 0;
+    if (winners.length) { if (winners.includes(x)) got = Math.floor(tcPrize(pool) / winners.length); }
+    else if (stayed.includes(x)) got = st;
+    if (u) tcSettle(u, id, got, got > st ? "win" : got === st ? "refund" : "lose", "mafia");
+    pay[x.i] = got - st;
+  }
+  mf.pay = pay;
+}
 function mfPush(r) {   // something changed: everybody gets its view, the next timer is set, the bots plan
-  const g = r.mf.g; mfSendAll(r);
+  const g = r.mf.g; if (g.over) mfSettle(r); mfSendAll(r);
   clearTimeout(r.mf.timer); if (g.over) { r.mf.timer = setTimeout(() => mfEnd(r), 400); return; }
   r.mf.timer = setTimeout(() => { MAFIA.tick(g, Date.now()); mfPush(r); }, Math.max(20, g.until - Date.now()) + 5);
   mfPlan(r);
@@ -2537,7 +2659,7 @@ function mfEnd(r) {   // the match is over (the last view with every role has be
   r.state = "open"; r.id = ""; r.at = Date.now(); bBroadcast(r);
 }
 function mfToBot(r, i) {   // a human gave up his seat in a running match: a bot plays it (the match goes on); with no human left the room is closed
-  const g = r.mf.g; r.uids[i] = "bot:" + i; r.prof[i] = mfBotProfile(i); g.bot[i] = true; if (g.phase === "day" && g.alive[i]) g.ready[i] = true;
+  const g = r.mf.g; if (r.mf.left && r.uids[i]) r.mf.left.add(r.uids[i]); r.uids[i] = "bot:" + i; r.prof[i] = mfBotProfile(i); g.bot[i] = true; if (g.phase === "day" && g.alive[i]) g.ready[i] = true;
   if (!mfHumans(r).length) return bClose(r);
   if (r.host === i) r.host = mfHumans(r)[0];
   r.mf.planned = ""; bBroadcast(r); mfPush(r);
@@ -2551,10 +2673,13 @@ function boardMessage(ws, m, u) {
   if (m.t === "bcreate") {
     const game = String(m.game || ""), max = BG_MAX[game]; if (!max) return;
     if (!bucket(ws, "bcreate", 5, 20000) || (ws.room && !ws.room.over)) return wsSend(ws, {t: "berr", why: "busy"});
+    const stake = Number.isInteger(m.stake) && m.stake > 0 ? m.stake : 0;   // (0: a friendly room, no coins)
+    if (stake && !tcStakeOk(game, stake)) return wsSend(ws, {t: "berr", why: "stake"});
+    if (stake && tcOf(u) < (game === "mafia" ? 3 * stake : stake)) return wsSend(ws, {t: "berr", why: "coins", need: game === "mafia" ? 3 * stake : stake});
     leaveQueue(ws); if (ws.broom) boardLeave(ws);
     let code = ""; for (let k = 0; k < 40 && (!code || brooms.has(code)); k++) code = Array.from({length: 4}, () => TCODE_CH[crypto.randomInt(TCODE_CH.length)]).join("");
     if (brooms.has(code)) return wsSend(ws, {t: "berr", why: "busy"});
-    const n = [...Array(max).keys()], r = {code, game, max, id: "", state: "open", host: 0, seats: n.map(i => i ? null : ws), uids: n.map(i => i ? null : ws.uid), prof: n.map(i => i ? null : mkProfile(u, m.cue, m.tbl)), away: n.map(() => 0), timers: n.map(() => null), first: 0, turn: 0, moves: [], rem: {}, at: Date.now()};
+    const n = [...Array(max).keys()], r = {code, game, max, id: "", state: "open", host: 0, seats: n.map(i => i ? null : ws), uids: n.map(i => i ? null : ws.uid), prof: n.map(i => i ? null : mkProfile(u, m.cue, m.tbl)), away: n.map(() => 0), timers: n.map(() => null), first: 0, turn: 0, moves: [], rem: {}, at: Date.now(), stake, held: {}, g: null, drawBy: -1};
     brooms.set(code, r); ws.broom = code; return bBroadcast(r);
   }
   if (m.t === "bjoin") {
@@ -2563,6 +2688,7 @@ function boardMessage(ws, m, u) {
     const mine = r.uids.indexOf(ws.uid);
     if (mine >= 0) { bAttach(r, mine, ws); if (r.state === "run") { wsSend(ws, bMatchMsg(r)); wsSend(ws, r.game === "mafia" ? mfViewMsg(r, mine) : {t: "bsync", room: r.id, moves: r.moves}); } return bBroadcast(r); }
     if (r.state === "run") return wsSend(ws, {t: "berr", why: "started"});
+    if (r.stake && tcOf(u) < (r.game === "mafia" ? 3 * r.stake : r.stake)) return wsSend(ws, {t: "berr", why: "coins", need: r.game === "mafia" ? 3 * r.stake : r.stake});
     leaveQueue(ws); if (ws.broom) boardLeave(ws);
     const i = r.uids.findIndex(x => !x); if (i < 0) return wsSend(ws, {t: "berr", why: "full"});
     r.uids[i] = ws.uid; r.prof[i] = mkProfile(u, m.cue, m.tbl); bAttach(r, i, ws); return bBroadcast(r);
@@ -2604,15 +2730,31 @@ function boardMessage(ws, m, u) {
   if (r.game === "mafia") return;
   if (m.t === "bmove") {
     if (seat !== r.turn || !Array.isArray(m.path) || m.path.length < 2 || m.path.length > 16 || m.path.some(x => !Number.isInteger(x) || x < 0 || x > 63) || r.moves.length >= 600) return;
-    r.moves.push(m.path.slice()); r.turn = (r.turn + 1) % r.max;
-    return bToAll(r, {t: "bmove", path: m.path.slice(), from: seat, n: r.moves.length, room: r.id}, seat);
+    if (r.stake && r.g) {   // a stake match: the SERVER plays every move on its own copy of the rules; an illegal one is refused (the phone gets the real list back), and the end is the rules' end
+      const magic = r.game === "magic", mv = magic ? BR_RULES.mcFind(r.g, m.path) : BR_RULES.shFind(r.g, m.path);
+      if (!mv) return wsSend(ws, {t: "bsync", room: r.id, moves: r.moves});
+      if (magic) BR_RULES.mcPlay(r.g, mv); else BR_RULES.shPlay(r.g, mv);
+    }
+    r.moves.push(m.path.slice()); r.turn = (r.turn + 1) % r.max; r.drawBy = -1;
+    bToAll(r, {t: "bmove", path: m.path.slice(), from: seat, n: r.moves.length, room: r.id, tl: r.stake ? BROOM_TURN : 0}, seat);
+    if (r.stake && r.g) {
+      if (r.g.over) { const o = r.g.over; return bSettle(r, o.winner === 0 ? -1 : o.winner > 0 ? r.first : 1 - r.first, o.why); }
+      bTurnClock(r);
+    }
+    return;
   }
-  if (m.t === "boffer") {   // a draw offer / answer: relayed
+  if (m.t === "boffer") {   // a draw offer / answer: relayed (in a stake match the server remembers who offered: only an answer "yes" to the OTHER seat's offer is a draw)
     const k = String(m.k || ""); if (!["draw", "yes", "no"].includes(k) || !bucket(ws, "boffer", 6, 5000)) return;
+    if (r.stake) {
+      if (k === "draw") r.drawBy = seat;
+      else if (k === "yes") { if (r.drawBy < 0 || r.drawBy === seat) return; return bSettle(r, -1, "agreed"); }
+      else r.drawBy = -1;
+    }
     return bToAll(r, {t: "boffer", k, from: seat, room: r.id}, seat);
   }
   if (m.t === "bover") {   // a phone says the match is over (by the rules, a resignation, an agreed draw): the first report counts
     if (m.room && String(m.room) !== r.id) return;
+    if (r.stake) { if (String(m.why) === "resign") return bSettle(r, 1 - seat, "resign"); return; }   // (a stake match: only a resignation is taken from a phone - and only against its own sender)
     const w = Number.isInteger(m.winner) && m.winner >= 0 && m.winner < r.max ? m.winner : -1;
     return bEnd(r, w, m.why);
   }
@@ -2847,7 +2989,7 @@ function worldLobbies() {   // the posted lobbies as they are NOW: the seats, wh
     if (w.kind === "board") {   // a board room: the card says the game and the seats; its code is not here either
       const R = broomByWid(wid), hs = R ? R.uids.filter(Boolean).length : 0;
       if (!R || R.state !== "open" || !hs || R.uids[R.host] !== w.uid || now - w.at > 30 * 60e3) { worldPosts.delete(wid); continue; }
-      out.push({wid, kind: "board", game: R.game, uid: w.uid, name: w.name, avatar: w.avatar, frame: w.frame, level: w.level, league: w.league, country: w.country, n: hs, max: R.max, open: hs < R.max && !!broomHost(R), at: w.at});
+      out.push({wid, kind: "board", game: R.game, uid: w.uid, name: w.name, avatar: w.avatar, frame: w.frame, level: w.level, league: w.league, country: w.country, n: hs, max: R.max, stake: R.stake | 0, open: hs < R.max && !!broomHost(R), at: w.at});
       continue;
     }
     const L = lobbyByWid(wid), ps = L ? L.players.filter(p => seatKept(p)) : [];
@@ -2934,6 +3076,7 @@ Object.assign(routes, {
       if (!R || R.state !== "open" || !hw) return {state: "gone"};
       if (R.uids.includes(u.id)) return {state: "in", code: R.code, game: R.game};
       if (!broomFree(R)) return {state: "full"};
+      if (R.stake && tcOf(u) < (R.game === "mafia" ? 3 * R.stake : R.stake)) return {state: "coins", need: R.game === "mafia" ? 3 * R.stake : R.stake};   // (not enough table coins for the stake: the host is not bothered)
       for (const r of worldReq.values()) if (r.uid === u.id && r.wid === wid && r.state === "wait" && Date.now() - r.at < WORLD_REQ_MS) return {state: "wait", rid: r.rid};
       if ([...worldReq.values()].filter(r => r.host === hw.uid && r.state === "wait" && Date.now() - r.at < WORLD_REQ_MS).length >= WORLD_PENDING_MAX) return {state: "busy"};
       const rid = crypto.randomBytes(6).toString("hex");
@@ -3000,6 +3143,7 @@ setInterval(() => { const now = Date.now(); for (const [k, r] of worldReq) if (n
 store.load().then(loaded => {
   if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}}, loaded);
   db.meta = db.meta || {}; db.clubs = db.clubs || {}; db.dms = db.dms || {}; db.p2p = db.p2p || {}; db.replays = db.replays || {};
+  tcRecover();
   setInterval(() => p2pSweep(), 5 * 60e3).unref();
   setInterval(playVoidSweep, +process.env.PLAY_VOID_MS || 30 * 60e3).unref(); setTimeout(playVoidSweep, +process.env.PLAY_VOID_FIRST_MS || 90e3).unref();   // Google Play refunds
   rollWeek();
