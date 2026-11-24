@@ -49,7 +49,7 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     for (let k = 0; k < 900 && !over; k++) {
       const st = await state(A); if (!st) { await sleep(120); continue; } seen.add(st.ph);
       // what the DOM shows about other seats: no role icon on a seat that is not me, not my mate, not dead (and none before the end)
-      if (st.ph !== "over") { const bad = await A.evaluate(ic => [...document.querySelectorAll("#mfScr .mf-p")].filter((t, i) => i !== MFX.v.you && MFX.v.alive[i] && !(MFX.v.mates || []).includes(i) && ic.some(x => t.querySelector("small").textContent.includes(x) && !t.querySelector("small").textContent.includes("🕵️✅"))).length, ROLEI); leak += bad; }
+      if (st.ph !== "over") { const bad = await A.evaluate(ic => [...document.querySelectorAll("#mfScr .mf-p")].filter((t, i) => i !== MFX.v.you && MFX.v.alive[i] && !(MFX.v.mates || []).includes(i) && !(MFX.v.found || []).some(f => f.seat === i) && ic.some(x => t.querySelector("small").textContent.includes(x))).length, ROLEI); leak += bad; }
       if (SHOT && snaps < 3 && (st.ph === "night" || st.ph === "vote")) { snaps++; await A.screenshot({ path: path.join(SHOT, `03_${st.ph}${st.day}.png`) }); }
       const was = done.has(st.ph + ":" + st.day); await act(A, st, done);
       if (!was && (st.ph === "night" || st.ph === "vote") && st.alive[st.you]) { await sleep(120); const pk = await A.evaluate(() => ({ cls: document.querySelectorAll("#mfScr .mf-p.pick").length, pick: MFX.v.pick })); if (pk.cls === 1 || (st.ph === "night" && st.role === "citizen")) picked++; }
@@ -105,7 +105,7 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
       const [gc, gd] = await Promise.all([C, D].map(x => x.evaluate(() => { const s = RV.state(); return s.peers.length ? [s.peers[0].to, s.peers[0].from] : null; })));
       if (sc.ph === "night" && sd.ph === "night" && gc && gd && sc.alive[sc.you] && sd.alive[sd.you]) gateNight.push([gc.join(), gd.join()]);
       if (sc.ph === "day" && sd.ph === "day" && gc && gd && sc.alive[sc.you] && sd.alive[sd.you]) gateDay.push([gc.join(), gd.join()]);
-      for (const [x, s] of [[C, sc], [D, sd]]) { if (s.ph !== "over") leak2 += await x.evaluate(ic => [...document.querySelectorAll("#mfScr .mf-p")].filter((t, i) => i !== MFX.v.you && MFX.v.alive[i] && !(MFX.v.mates || []).includes(i) && ic.some(c => t.querySelector("small").textContent.includes(c) && !t.querySelector("small").textContent.includes("🕵️✅"))).length, ROLEI); }
+      for (const [x, s] of [[C, sc], [D, sd]]) { if (s.ph !== "over") leak2 += await x.evaluate(ic => [...document.querySelectorAll("#mfScr .mf-p")].filter((t, i) => i !== MFX.v.you && MFX.v.alive[i] && !(MFX.v.mates || []).includes(i) && !(MFX.v.found || []).some(f => f.seat === i) && ic.some(c => t.querySelector("small").textContent.includes(c))).length, ROLEI); }
       if (sc.ph === "day" && sd.ph === "day" && !gateDay.length && sc.alive[sc.you] && sd.alive[sd.you]) { await sleep(60); continue; }   // (the day is sampled once before anybody presses "ready": it would end the day sooner than the loop can look)
       await act(C, sc, doneC); await act(D, sd, doneD); await sleep(120);
     }
