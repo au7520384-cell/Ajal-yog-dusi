@@ -12,3 +12,5 @@
   Cache-Control: no-cache
 /
   Cache-Control: no-cache
+/wizard-chess/ok.json
+  Cache-Control: no-store

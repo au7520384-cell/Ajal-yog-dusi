@@ -18287,12 +18287,18 @@ BGLIST.push({id: "magic", name: "Sehrli shaxmat", sub: "Botga qarshi yoki do'st 
 //  - online with a friend (?mode=net) the page only draws and takes MY moves; the game keeps the rules (this phone's MCU / mcPlay, the core of pro_a), the room, the move list, the draw offers, the result window and the voice.
 //    The frame says {wc: 1, t: "move", uci}; a friend's move goes in as {t: "apply", uci}; after a reconnect {t: "load", moves} sets the board again; {t: "lock"} ends it when the game ended outside the rules.
 // Where the page is not there (the Android app, the portals' zips) or there is no WebGL, the flat Magic Chess of pro_b is used: same card, same room, same rules, same voice (WZ.ok decides, asked once in the background).
-const WZ = {ok: null, asking: false, played: false, ready: false};
+const WZ = {ok: null, asking: false, played: false, ready: false, why: "", told: false};   // why: the reason the 3D page is not used (nogl / portal / file / http404 / json / net / fail-webgl ...)
+function wzTell() {   // the flat board opens where a 3D hall was expected: one small note per session names the reason (a portal or the app has no 3D page by design and says nothing), so a phone that shows the flat board can say why
+  if (WZ.told || window.__WZ_OFF || !WZ.why || /^(portal|file)$/.test(WZ.why)) return; WZ.told = true;
+  try { toast("🧙", "3D: " + WZ.why); } catch (e) {}
+}
 function wzCheck() {
   if (WZ.ok !== null || WZ.asking) return; WZ.asking = true;
   let gl = false; try { const c = document.createElement("canvas"), x = c.getContext("webgl2") || c.getContext("webgl"); gl = !!x; try { const e = x && x.getExtension("WEBGL_lose_context"); if (e) e.loseContext(); } catch (e) {} } catch (e) {}
-  if (!gl || ON_PORTAL || !/^https?:$/.test(location.protocol)) { WZ.ok = false; return; }
-  fetch(new URL("wizard-chess/ok.json", location.href).href, {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { WZ.ok = !!(j && j.v === 1); }).catch(() => { WZ.ok = false; });
+  if (!gl) { WZ.ok = false; WZ.why = "nogl"; return; }
+  if (ON_PORTAL) { WZ.ok = false; WZ.why = "portal"; return; }
+  if (!/^https?:$/.test(location.protocol)) { WZ.ok = false; WZ.why = "file"; return; }
+  fetch(new URL("wizard-chess/ok.json", location.href).href, {cache: "no-store"}).then(r => r.ok ? r.json().catch(() => null) : (WZ.why = "http" + r.status, null)).then(j => { WZ.ok = !!(j && j.v === 1); if (!WZ.ok && !WZ.why) WZ.why = "json"; }).catch(() => { WZ.ok = false; WZ.why = "net"; });
 }
 setTimeout(wzCheck, 2500);
 const mcUciOfPath = p => mcName(p[0]) + mcName(p[1]) + (p.length > 2 ? "qrbn"[p[2]] : "");   // a move's path [from, to, (choice)] <-> the page's text "e2e4" / "e7e8q"
@@ -18348,12 +18354,12 @@ function wzRemote(path) {   // a friend's move over the wire: checked, kept, sho
 function wzEndNow(winner, why) {   // a resignation, an agreed draw, the friend left: the board is locked and the result window comes
   const G = MCU.G; if (!G || G.over) return; G.over = {winner, why}; wzPost({t: "lock"}); mcFinish(G.over);
 }
-function wzFail() {   // the page could not draw the hall (the frame's WebGL was refused, or its context was lost): the flat board takes over the same game (an online game keeps its moves); WZ.ok = false: the next games open the flat board at once
+function wzFail(why) {   // the page could not draw the hall (the frame's WebGL was refused, or its context was lost): the flat board takes over the same game (an online game keeps its moves); WZ.ok = false: the next games open the flat board at once
   if (!MCU.on || !MCU.use3d) return;
   const o = {mode: MCU.mode, lv: MCU.lv, my: MCU.my, pl: MCU.pl, net: MCU.net}, moves = MCU.G ? MCU.G.moves.slice() : [];
-  WZ.ok = false; WZ.ready = false; WZ.finSet = false; clearTimeout(WZ.fin);
+  WZ.ok = false; WZ.why = "fail-" + String(why || "x").slice(0, 8); WZ.ready = false; WZ.finSet = false; clearTimeout(WZ.fin);
   const ov = $("wzScr"); if (ov) ov.classList.remove("on"); const f = $("wzFrame"); if (f) f.src = "about:blank";
-  MCU.use3d = false; mcOpen2d(o);
+  MCU.use3d = false; mcOpen2d(o); wzTell();
   if (o.mode === "online") { for (const pth of moves) { const mv = mcFind(MCU.G, pth); if (!mv) break; mcPlay(MCU.G, mv); } mcRender2d(); mcAfter2d(); }
 }
 addEventListener("message", ev => {
@@ -18361,11 +18367,11 @@ addEventListener("message", ev => {
   const d = ev.data; if (!d || d.wc !== 1) return;
   if (d.t === "ready") { WZ.ready = true; WZ.played = true; if (MCU.mode === "online" && MCU.G && MCU.G.moves.length) wzRender(); }
   else if (d.t === "move" && MCU.mode === "online") wzMine(String(d.uci || ""));
-  else if (d.t === "fail") wzFail();
+  else if (d.t === "fail") wzFail(d.why);
 });
 // ---- the way in: the 3D page when it is there, the flat board otherwise
 const mcOpen2d = mcOpen, mcClose2d = mcClose, mcEndNow2d = mcEndNow, mcRemote2d = mcRemote, mcRender2d = mcRender, mcAfter2d = mcAfter;
-mcOpen = function (o) { if (WZ.ok === true && !window.__WZ_OFF) return wzOpen(o); MCU.use3d = false; return mcOpen2d(o); };
+mcOpen = function (o) { if (WZ.ok === true && !window.__WZ_OFF) return wzOpen(o); MCU.use3d = false; wzTell(); return mcOpen2d(o); };
 mcClose = function () { return MCU.use3d ? wzClose() : mcClose2d(); };
 mcEndNow = function (w, why) { return MCU.use3d ? wzEndNow(w, why) : mcEndNow2d(w, why); };
 BGS.magic.open = o => mcOpen(o);

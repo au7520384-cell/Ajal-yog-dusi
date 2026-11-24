@@ -123,6 +123,7 @@ const until = async (fn, to = 15000, step = 250) => { const t0 = Date.now(); whi
     await new Promise(r2 => srv2.listen(0, r2)); const r = await mkPage(`http://localhost:${srv2.address().port}`, "Missing"); await sleep(4500);
     ok((await r.evaluate(() => WZ.ok)) === false, "in a copy of the game without the 3D page (the Android app, a portal's zip) the page is taken as missing (WZ.ok = false)");
     await r.evaluate(() => { toMenu("mini"); mcStartLocal(); }); await sleep(900); ok(await r.evaluate(() => document.getElementById("mcScr").classList.contains("on")), "...and the flat board opens");
+    ok(await r.evaluate(() => WZ.why === "http404" && (window.__toasts || []).filter(t => /^3D: http404$/.test(t)).length === 1), "...and says why, once (3D: http404): a host that has no 3D folder (a static build without it) shows up at once", await r.evaluate(() => [WZ.why, window.__toasts]));
     await r._ctx.close(); await p._ctx.close(); srv.close(); srv2.close();
     if (process.env.PART === "A") { console.log(`pass ${pass}, fail ${fail} (part A only: PART=A)`); await b.close(); process.exit(fail ? 1 : 0); }   // (PART=A skips the two-phone part B: about 5 minutes)
 

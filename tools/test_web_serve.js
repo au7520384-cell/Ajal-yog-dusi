@@ -52,6 +52,10 @@ const get = async (u, h) => { const r = await fetch(u, { headers: h || {} }); re
   ok(errs.length === 0, "no page errors", errs); ok(failed.length === 0, "no failed requests", failed.slice(0, 5));
   await b.close(); srv.kill();
 
+  // the Telegram Mini App's page is Cloudflare's static build of this folder (wrangler.jsonc), not the Render server: the build carries the 3D Wizard Chess page, or the game finds no 3D page there and shows the flat board (the owner's screenshot, Nov 24)
+  { const src = fs.readdirSync(path.join(ROOT, "wizard-chess")).sort(), got = fs.existsSync(path.join(ROOT, "web", "wizard-chess")) ? fs.readdirSync(path.join(ROOT, "web", "wizard-chess")).sort() : [];
+    ok(src.join() === "index.html,ok.json,three.min.js" && got.join() === src.join() && src.every(f => Buffer.compare(fs.readFileSync(path.join(ROOT, "wizard-chess", f)), fs.readFileSync(path.join(ROOT, "web", "wizard-chess", f))) === 0), "the light build carries the 3D Wizard Chess page (web/wizard-chess = wizard-chess, byte for byte: rebuild web/ after changing the page)", [src, got]);
+    ok(/wizard-chess\/ok\.json\n\s+Cache-Control: no-store/.test(fs.readFileSync(path.join(ROOT, "web", "_headers"), "utf8")), "its ok.json is never cached (web/_headers)"); }
   // a stale build is ignored: a copy of the server next to a different index.html
   const t2 = path.join(tmp, "stale"); fs.mkdirSync(path.join(t2, "server"), { recursive: true }); fs.mkdirSync(path.join(t2, "web"));
   fs.cpSync(path.join(ROOT, "server"), path.join(t2, "server"), { recursive: true, filter: f => !/node_modules|[\\/]data([\\/]|$)/.test(f) });

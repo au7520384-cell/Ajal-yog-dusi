@@ -77,8 +77,14 @@ if os.path.isdir(HD_FROM):
     if stale: print("dropped", stale, "HD copies of pictures that are not in the page any more")
 for f in ["sw.js", "manifest.webmanifest", "icon.svg", "favicon-48.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png"]:
     shutil.copy(os.path.join(root, f), os.path.join(out, f))
+# The 3D Wizard Chess page (README "The 3D Wizard Chess in the game"): the Board games row opens wizard-chess/index.html in a frame and looks for wizard-chess/ok.json first. The Telegram Mini App's page does NOT come from the
+# Render server: it is Cloudflare's static build of THIS folder (wrangler.jsonc: python3 tools/build_web.py web_site), so without these three files the game finds no 3D page there and shows the flat board (the owner's screenshot, Nov 24).
+WZ_SRC = os.path.join(root, "wizard-chess")
+if os.path.isdir(WZ_SRC):
+    os.makedirs(os.path.join(out, "wizard-chess"))
+    for f in sorted(os.listdir(WZ_SRC)): shutil.copy(os.path.join(WZ_SRC, f), os.path.join(out, "wizard-chess", f))
 # Cloudflare Pages / Netlify header rules: the hashed pictures never change
-open(os.path.join(out, "_headers"), "w").write("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n/hd/*\n  Cache-Control: public, max-age=31536000, immutable\n  Access-Control-Allow-Origin: *\n/assets.json\n  Cache-Control: no-store\n  Access-Control-Allow-Origin: *\n/a/*\n  Cache-Control: public, max-age=31536000, immutable\n/index.html\n  Cache-Control: no-cache\n/\n  Cache-Control: no-cache\n")
+open(os.path.join(out, "_headers"), "w").write("/img/*\n  Cache-Control: public, max-age=31536000, immutable\n/hd/*\n  Cache-Control: public, max-age=31536000, immutable\n  Access-Control-Allow-Origin: *\n/assets.json\n  Cache-Control: no-store\n  Access-Control-Allow-Origin: *\n/a/*\n  Cache-Control: public, max-age=31536000, immutable\n/index.html\n  Cache-Control: no-cache\n/\n  Cache-Control: no-cache\n/wizard-chess/ok.json\n  Cache-Control: no-store\n")
 # the list of every picture / sound with its size: the page downloads them with a progress bar on the first visit (and only the new ones after an update)
 import json
 files = sorted((n, len(raw)) for n, raw in list(IMGS.items()) + list(AUD.items()))
