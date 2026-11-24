@@ -38,8 +38,8 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     const w1 = await world(B), L = w1.lobbies[0];
     ok(w1.lobbies.length === 1 && L.kind === "board" && L.game === "shashka" && L.n === 1 && L.max === 2 && L.open === true && L.name === "Ann", "the world list has the card: a board room, shashka, 1 of 2, open, Ann's", L);
     ok(!w1.raw.includes(code), "the room's code is NOT in what the world chat sends to everybody");
-    await A.evaluate(() => document.querySelector('#brRoom [data-a="world"]').click()); await sleep(400);
-    ok(await A.evaluate(() => window.__toasts.length >= 2), "a second post right away is asked to wait (no flood)");
+    ok(await A.evaluate(() => document.querySelector('#brRoom [data-a="world"]').disabled), "the key rests for a few seconds after a post");
+    ok(await A.evaluate(() => Net.api("/api/world/lobby", { board: 1 }).then(() => "posted").catch(e => String(e && e.message))) === "wait", "a second post right away is asked to wait by the server (no flood)");
 
     // ------------------------------------------------------------------ Bob sees the card and asks to join; Ann says yes
     await B.evaluate(() => WorldChat.open()); await sleep(900);
@@ -85,6 +85,6 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     ok(errs.length === 0, "no page errors", errs.slice(0, 6));
     for (const x of [A, B, C]) await x._ctx.close();
   } catch (e) { fail++; console.log("EXCEPTION", e && e.stack || e); }
-  srv.kill("SIGTERM"); fs.rmSync(tmp, { recursive: true, force: true });
+  srv.kill("SIGTERM"); await sleep(500); try { fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); } catch (e) {}
   console.log(`pass ${pass}, fail ${fail}`); try { await b.close(); } catch (e) {} process.exit(fail ? 1 : 0);
 })();
