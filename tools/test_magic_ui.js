@@ -37,8 +37,8 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
 
     // ------------------------------------------------------------------ the way in
     await p.evaluate(() => toMenu("mini")); await sleep(1400);
-    const row = await p.evaluate(() => { const r = document.getElementById("miniBoards"); return r ? { cards: [...r.querySelectorAll(".sh-card")].map(c => c.querySelector("b").textContent), imgs: [...r.querySelectorAll(".sh-card img")].every(i => i.src.startsWith("data:")) } : null; });
-    ok(row && row.cards.join() === "Checkers,Magic Chess,Mafia" && row.imgs, "the Board games row has Checkers, Magic Chess (no plain chess) and Mafia", row);
+    const row = await p.evaluate(() => { const r = document.getElementById("miniBoards"); return r ? { cards: [...r.querySelectorAll(".sh-pan")].map(c => c.dataset.g), imgs: !!r.querySelector(".sh-ban img") && r.querySelector(".sh-ban img").naturalWidth >= 1000 } : null; });
+    ok(row && row.cards.join() === "shashka,magic,mafia" && row.imgs, "the Board games row has Checkers, Magic Chess (no plain chess) and Mafia: keys over the owner's picture", row);
     await p.evaluate(() => document.getElementById("mini").scrollTo(0, 99999)); await sleep(500); if (SHOT) await p.screenshot({ path: path.join(SHOT, "00_row.png") });
     await p.evaluate(() => document.querySelector('#miniBoards [data-g="magic"]').click()); await sleep(600);
     const list = await p.evaluate(() => [...document.querySelectorAll("#mExtra .pro-row")].map(r => r.dataset.id));

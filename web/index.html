@@ -17545,10 +17545,14 @@ function shPick() {
     {id: "local", n: 4, avs: [{a: me, c: B}, {a: av[0], c: O}], name: T("Ikki kishi (bitta telefonda)"), right: "›"},
     {id: "online", n: 5, avs: [{a: me, c: B}, {a: av[1], c: O}], name: "🌐 " + T("Do'st bilan (online, ovozli)"), sub: "🎤", right: "›"}], id => id === "local" ? shStartLocal() : id === "online" ? shRoomOpen("shashka") : shStartBot(id));
 }
-function shMiniRow() {   // under the new-modes picture of the mini-games screen: a row of board games (one card for each game of BGLIST)
+// The picture of the Board games row: the owner's own artwork (Nov 24: "put the 1st in place of the 2nd, let it go through in full"), 1500 x 844 px: three cards in a gold frame, left to right
+// Checkers, Chess (Magic Chess), Mafia. The words on it are part of the picture (English); the three keys lie over the cards (SH_PANELS: left edge and width of each card, % of the picture's width).
+const SH_BAN = "img/0fa118e246818f.webp";
+const SH_PANELS = {shashka: [3.3, 29.2], magic: [35.3, 29.6], mafia: [67.9, 29.6]};
+function shMiniRow() {   // under the new-modes picture of the mini-games screen: the board games picture with a key over each game of BGLIST
   const scr = $("mini"); if (!scr) return; let row = $("miniBoards");
   if (!row) { row = document.createElement("div"); row.id = "miniBoards"; row.className = "sh-row"; scr.appendChild(row); }
-  row.innerHTML = `<div class="sh-rt">${T("Stol o'yinlari")}</div><div class="sh-cards">${BGLIST.map(g => `<button class="sh-card g-${g.id}" data-g="${g.id}"><img src="${g.art()}" alt=""><b>${T(g.name)}</b><small>${T(g.sub)}</small></button>`).join("")}</div>`;
+  row.innerHTML = `<div class="sh-rt">${T("Stol o'yinlari")}</div><div class="sh-ban"><img src="${SH_BAN}" alt="" draggable="false">${BGLIST.map(g => { const p = SH_PANELS[g.id] || [0, 0]; return `<button class="sh-pan g-${g.id}" data-g="${g.id}" style="--l:${p[0]}%;--w:${p[1]}%" aria-label="${esc(T(g.name))}"></button>`; }).join("")}</div>`;
   row.querySelectorAll("[data-g]").forEach(b => b.onclick = () => { try { Snd.click(); } catch (e) {} const g = BGLIST.find(x => x.id === b.dataset.g); if (g) g.pick(); });
 }
 function shArt() {   // the card's picture, painted in code: a corner of the board with a few pieces (nothing is added to the page's size)
@@ -17603,6 +17607,12 @@ body:has(#shScr.on,#tnRoom.on,#brRoom.on) #modal{z-index:99990}body:has(#shScr.o
 html.mh460 #shScr .sh-pl{min-height:46px}html.mh460 #shScr .sh-msg{font-size:16px}
 .sh-row{width:min(100%,900px);margin:calc(var(--u-vh,1vh) * 1.6) auto 14px;box-sizing:border-box}
 .sh-rt{font:400 22px/1.1 var(--fh,system-ui);color:#ffe27a;text-shadow:0 2px 0 #000c;margin:0 0 8px 6px}
+.sh-ban{position:relative;width:min(100%,900px,calc((100 * var(--u-vh,1vh) - 80px) * 1.7768));aspect-ratio:1672/941;container-type:inline-size;user-select:none;-webkit-user-select:none;margin:0 auto 14px 0}
+.sh-ban>img{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none;border-radius:1.3cqw;box-shadow:0 .8cqw 2cqw #0009}
+.sh-pan{position:absolute;top:4%;height:88%;left:var(--l);width:var(--w);padding:0;border:0;background:none;cursor:pointer;border-radius:4.4cqw;-webkit-tap-highlight-color:transparent}
+.sh-pan::after{content:"";position:absolute;inset:0;border-radius:4.4cqw;background:radial-gradient(ellipse at 50% 55%,#ffe9a862,#ffd24d22 50%,transparent 72%);opacity:0;transition:opacity .15s;pointer-events:none}
+.sh-pan:hover::after,.sh-pan:active::after,.sh-pan:focus-visible::after{opacity:1}
+.sh-pan:focus-visible{outline:2px solid #ffe27a;outline-offset:-2px}
 .sh-cards{display:flex;gap:12px;flex-wrap:wrap}
 .sh-card{display:flex;flex-direction:column;align-items:center;gap:4px;width:min(46%,230px);border-radius:16px;border:3px solid #d9b04a;background:linear-gradient(#3a2412,#1a0e06);padding:10px;color:#fff;cursor:pointer;box-shadow:0 5px 0 #0008}
 .sh-card.g-magic{background:linear-gradient(#2a1660,#0c0630);border-color:#b9a0ff}.sh-card.g-magic b{color:#e0d4ff}.sh-card img{width:100%;border-radius:10px}.sh-card b{font:400 20px/1.1 var(--fh,system-ui);color:#ffe27a}.sh-card small{font-size:13px;color:#e8d8b0;line-height:1.25}`;

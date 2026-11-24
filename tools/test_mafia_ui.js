@@ -34,8 +34,8 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     // ------------------------------------------------------------------ alone with the bots
     const A = await open("Ann");
     await A.evaluate(() => toMenu("mini")); await sleep(900);
-    const row = await A.evaluate(() => { const r = document.getElementById("miniBoards"); return { cards: [...r.querySelectorAll(".sh-card")].map(c => c.querySelector("b").textContent), imgs: [...r.querySelectorAll(".sh-card img")].every(i => i.src.startsWith("data:")) }; });
-    ok(row.cards.join() === "Checkers,Magic Chess,Mafia" && row.imgs, "the Board games row has the Mafia card (a night picture painted in code)", row);
+    const row = await A.evaluate(() => { const r = document.getElementById("miniBoards"); return { cards: [...r.querySelectorAll(".sh-pan")].map(c => c.dataset.g), imgs: !!r.querySelector(".sh-ban img") && r.querySelector(".sh-ban img").naturalWidth >= 1000 }; });
+    ok(row.cards.join() === "shashka,magic,mafia" && row.imgs, "the Board games row is the owner's picture with a key over each card, Mafia the third", row);
     await A.evaluate(() => document.querySelector('#miniBoards [data-g="mafia"]').click()); await sleep(600);
     ok((await A.evaluate(() => [...document.querySelectorAll("#mExtra .pro-row")].map(r => r.dataset.id))).join() === "solo,online", "the card opens the list: with bots (alone) or friends online");
     if (SHOT) await A.screenshot({ path: path.join(SHOT, "01_pick.png") });
