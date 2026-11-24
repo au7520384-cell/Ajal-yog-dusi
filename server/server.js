@@ -2453,16 +2453,17 @@ setInterval(() => { const now = Date.now(); for (const r of [...trooms.values()]
 // match (a phone that was away gets it back whole: `bsync`) and lets only the seat whose turn it is move; it does not know the rules (the phones check every move they receive). Voice: `bvoice` is relayed between the seats
 // (WebRTC signalling only, the audio never touches the server). Same away / gone idea as the 2v2 rooms: a phone that drops keeps its seat for a while (open room: 3 min, match: BROOM_GRACE_MS, then it forfeits).
 const brooms = new Map();   // code -> {code, game, max, id, state: "open" | "run", host, seats, uids, prof, away, timers, first, turn, moves, rem, at}
-const BG_MAX = {shashka: 2, magic: 2};
+const MAFIA = require("./mafia.js"), MF_SCALE = +process.env.MAFIA_SCALE || 1;   // MAFIA_SCALE: the phases of Mafia last this share of their time (the tests run it at 0.04)
+const BG_MAX = {shashka: 2, magic: 2, mafia: 8};
 const BROOM_GRACE = +process.env.BROOM_GRACE_MS || 30e3, BROOM_OPEN_GRACE = +process.env.BROOM_OPEN_GRACE_MS || 3 * 60e3;
-const BG_T = new Set(["bcreate", "bjoin", "bleave", "bstart", "bmove", "bover", "boffer", "brematch", "bresume", "bvoice"]);
+const BG_T = new Set(["bcreate", "bjoin", "bleave", "bstart", "bmove", "bover", "boffer", "brematch", "bresume", "bvoice", "mact"]);
 const bHere = (r, i) => !!r.uids[i], bLive = (r, i) => bHere(r, i) && !r.away[i] && r.seats[i] && r.seats[i].readyState === 1;
 const bPresent = r => [...r.uids.keys()].filter(i => bHere(r, i));
 function bPub(r) { return {t: "broom", code: r.code, game: r.game, max: r.max, state: r.state, host: r.host, id: r.state === "run" ? r.id : "", seats: [...r.uids.keys()].map(i => r.uids[i] ? {...pubProfile(r.prof[i]), uid: r.uids[i], away: r.away[i] ? 1 : 0} : null)}; }
 function bBroadcast(r) { const m = bPub(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m); }
 function bToAll(r, m, except) { for (let i = 0; i < r.max; i++) if (i !== except && bLive(r, i)) wsSend(r.seats[i], m); }
 const bMatchMsg = r => ({t: "bmatch", room: r.id, code: r.code, game: r.game, first: r.first, seats: bPub(r).seats});
-function bClose(r) { for (const x of r.timers) clearTimeout(x); brooms.delete(r.code); for (const w of r.seats) if (w && w.broom === r.code) w.broom = null; }
+function bClose(r) { for (const x of r.timers) clearTimeout(x); if (r.mf) mfStop(r); brooms.delete(r.code); for (const w of r.seats) if (w && w.broom === r.code) w.broom = null; }
 function bEnd(r, winner, why) {   // the match is over (a phone reported it, or a player left / timed out): the room is a waiting room again
   if (r.state !== "run") return;
   const id = r.id; r.state = "open"; r.id = ""; r.rem = {}; r.lastFirst = r.first;
@@ -2472,6 +2473,7 @@ function bEnd(r, winner, why) {   // the match is over (a phone reported it, or 
 function bDrop(r, i, why) {   // the seat is given up
   const w = r.seats[i]; clearTimeout(r.timers[i]); r.timers[i] = null; if (w && w.broom === r.code) w.broom = null;
   const was = r.state === "run";
+  if (r.game === "mafia" && was && r.mf) { r.seats[i] = null; r.away[i] = 0; return mfToBot(r, i); }   // (a bot plays the seat from now on)
   r.seats[i] = null; r.uids[i] = null; r.prof[i] = null; r.away[i] = 0;
   if (!bPresent(r).length) return bClose(r);
   if (r.host === i) r.host = bPresent(r)[0];
@@ -2491,6 +2493,60 @@ function bStartMatch(r) {
   const m = bMatchMsg(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m);
   bBroadcast(r);
 }
+// ---- MAFIA in a board game room (server/mafia.js has the rules; the roles never leave the server except to the seat they belong to)
+// The room has up to 8 seats; a match takes the people in it (the host starts), tops them up with bots to 5, and plays the phases on timers. `mview` is the seat's own view (role, partners, findings, the dead...).
+const MF_NAMES = ["Ali", "Madina", "Jasur", "Dilnoza", "Bobur", "Kamola", "Sardor", "Nigora", "Rustam", "Zarina", "Aziz", "Malika", "Temur", "Laylo", "Farrux", "Sevara"];
+const mfHumans = r => [...r.uids.keys()].filter(i => r.uids[i] && !(r.mf && r.mf.g.bot[i]));
+function mfBotProfile(i) { return {name: MF_NAMES[crypto.randomInt(MF_NAMES.length)], avatar: crypto.randomInt(12), frame: 0, country: "", level: 3 + crypto.randomInt(30), cue: "start", tbl: "", tblNo: 0, code: "", club: "", cb: null}; }
+function mfViewMsg(r, i) { return {t: "mview", room: r.id, v: MAFIA.view(r.mf.g, i, Date.now())}; }
+function mfSendAll(r) { for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], mfViewMsg(r, i)); }
+function mfStop(r) { if (!r.mf) return; clearTimeout(r.mf.timer); for (const x of r.mf.bots) clearTimeout(x); r.mf.bots = []; }
+function mfStart(r) {
+  const hs = [...r.uids.keys()].filter(i => r.uids[i]); if (!hs.length) return;
+  const n = Math.max(5, hs.length), host = r.uids[r.host];
+  const seats = [], uids = [], prof = [], away = [], timers = [];
+  for (const i of hs) { seats.push(r.seats[i]); uids.push(r.uids[i]); prof.push(r.prof[i]); away.push(r.away[i]); timers.push(r.timers[i]); }   // (the people first, in the order they sat)
+  const bots = []; for (let i = hs.length; i < n; i++) { seats.push(null); uids.push("bot:" + i); prof.push(mfBotProfile(i)); away.push(0); timers.push(null); bots.push(i); }
+  while (seats.length < r.max) { seats.push(null); uids.push(null); prof.push(null); away.push(0); timers.push(null); }
+  r.seats = seats; r.uids = uids; r.prof = prof; r.away = away; r.timers = timers; r.host = uids.indexOf(host);
+  const sc = k => Math.max(40, Math.round(MAFIA.TIMES[k] * MF_SCALE)), mn = k => Math.max(20, Math.round(MAFIA.MIN[k] * MF_SCALE));
+  const g = MAFIA.create(n, Array.from({length: n}, (_, i) => bots.includes(i)), {times: {reveal: sc("reveal"), night: sc("night"), day: sc("day"), vote: sc("vote")}, min: {night: mn("night"), day: mn("day"), vote: mn("vote")}});
+  r.mf = {g, timer: null, bots: [], planned: ""}; r.state = "run"; r.id = crypto.randomUUID(); r.at = Date.now();
+  MAFIA.start(g, Date.now()); r.max = Math.max(r.max, 8);
+  const m = bMatchMsg(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m);
+  bBroadcast(r); mfPush(r);
+}
+function mfPlan(r) {   // the bots decide: each at its own moment of the night / the vote
+  const g = r.mf.g, key = g.phase + ":" + g.day; if (r.mf.planned === key) return; r.mf.planned = key;
+  for (const x of r.mf.bots) clearTimeout(x); r.mf.bots = [];
+  if (g.phase !== "night" && g.phase !== "vote") return;
+  const span = Math.max(60, (g.until - Date.now()) * 0.7), tok = r.id;
+  for (let i = 0; i < g.n; i++) if (g.bot[i] && g.alive[i]) r.mf.bots.push(setTimeout(() => {
+    if (r.id !== tok || !r.mf || r.mf.g !== g || g.over) return; const a = MAFIA.bot(g, i); if (a && MAFIA.act(g, i, a, Date.now())) mfPush(r);
+  }, 40 + Math.floor(Math.random() * span)));
+}
+function mfPush(r) {   // something changed: everybody gets its view, the next timer is set, the bots plan
+  const g = r.mf.g; mfSendAll(r);
+  clearTimeout(r.mf.timer); if (g.over) { r.mf.timer = setTimeout(() => mfEnd(r), 400); return; }
+  r.mf.timer = setTimeout(() => { MAFIA.tick(g, Date.now()); mfPush(r); }, Math.max(20, g.until - Date.now()) + 5);
+  mfPlan(r);
+}
+function mfEnd(r) {   // the match is over (the last view with every role has been sent): the room is a waiting room again, without the bots
+  if (!r.mf || r.state !== "run") return; mfStop(r); const g = r.mf.g; r.mf = null;
+  for (let i = 0; i < r.max; i++) if (r.uids[i] && g.bot[i] && String(r.uids[i]).startsWith("bot:")) { r.uids[i] = null; r.prof[i] = null; r.seats[i] = null; r.away[i] = 0; }
+  r.state = "open"; r.id = ""; r.at = Date.now(); bBroadcast(r);
+}
+function mfToBot(r, i) {   // a human gave up his seat in a running match: a bot plays it (the match goes on); with no human left the room is closed
+  const g = r.mf.g; r.uids[i] = "bot:" + i; r.prof[i] = mfBotProfile(i); g.bot[i] = true; if (g.phase === "day" && g.alive[i]) g.ready[i] = true;
+  if (!mfHumans(r).length) return bClose(r);
+  if (r.host === i) r.host = mfHumans(r)[0];
+  r.mf.planned = ""; bBroadcast(r); mfPush(r);
+}
+function mfAct(r, seat, m) {
+  if (!r.mf || r.mf.g.over || !bucket(r.seats[seat], "mact", 12, 3000)) return;
+  const to = m.to === undefined || m.to === null ? -1 : m.to | 0;
+  if (MAFIA.act(r.mf.g, seat, {k: String(m.k || ""), to}, Date.now())) mfPush(r);
+}
 function boardMessage(ws, m, u) {
   if (m.t === "bcreate") {
     const game = String(m.game || ""), max = BG_MAX[game]; if (!max) return;
@@ -2505,7 +2561,7 @@ function boardMessage(ws, m, u) {
     if (!bucket(ws, "bjoin", 8, 10000) || (ws.room && !ws.room.over)) return wsSend(ws, {t: "berr", why: "busy"});
     const r = brooms.get(tcode(m.code)); if (!r) return wsSend(ws, {t: "berr", why: "none"});
     const mine = r.uids.indexOf(ws.uid);
-    if (mine >= 0) { bAttach(r, mine, ws); if (r.state === "run") { wsSend(ws, bMatchMsg(r)); wsSend(ws, {t: "bsync", room: r.id, moves: r.moves}); } return bBroadcast(r); }
+    if (mine >= 0) { bAttach(r, mine, ws); if (r.state === "run") { wsSend(ws, bMatchMsg(r)); wsSend(ws, r.game === "mafia" ? mfViewMsg(r, mine) : {t: "bsync", room: r.id, moves: r.moves}); } return bBroadcast(r); }
     if (r.state === "run") return wsSend(ws, {t: "berr", why: "started"});
     leaveQueue(ws); if (ws.broom) boardLeave(ws);
     const i = r.uids.findIndex(x => !x); if (i < 0) return wsSend(ws, {t: "berr", why: "full"});
@@ -2518,7 +2574,7 @@ function boardMessage(ws, m, u) {
     const i = rr ? rr.uids.indexOf(ws.uid) : -1;
     if (!rr || i < 0) return wsSend(ws, {t: "berr", why: "none", resume: 1});
     bAttach(rr, i, ws);
-    if (rr.state === "run") { wsSend(ws, bMatchMsg(rr)); wsSend(ws, {t: "bsync", room: rr.id, moves: rr.moves}); }
+    if (rr.state === "run") { wsSend(ws, bMatchMsg(rr)); wsSend(ws, rr.game === "mafia" ? mfViewMsg(rr, i) : {t: "bsync", room: rr.id, moves: rr.moves}); }
     return bBroadcast(rr);
   }
   if (!r) return;
@@ -2526,6 +2582,7 @@ function boardMessage(ws, m, u) {
   if (m.t === "bleave") return boardLeave(ws);
   if (m.t === "bstart") {
     if (r.host !== seat || r.state !== "open") return;
+    if (r.game === "mafia") return mfStart(r);
     if (bPresent(r).filter(i => bLive(r, i)).length < Math.min(2, r.max) || bPresent(r).length < (r.max === 2 ? 2 : 1)) return wsSend(ws, {t: "berr", why: "min"});
     return bStartMatch(r);
   }
@@ -2543,6 +2600,8 @@ function boardMessage(ws, m, u) {
     return;
   }
   if (r.state !== "run") return;
+  if (m.t === "mact") return r.game === "mafia" ? mfAct(r, seat, m) : undefined;
+  if (r.game === "mafia") return;
   if (m.t === "bmove") {
     if (seat !== r.turn || !Array.isArray(m.path) || m.path.length < 2 || m.path.length > 16 || m.path.some(x => !Number.isInteger(x) || x < 0 || x > 63) || r.moves.length >= 600) return;
     r.moves.push(m.path.slice()); r.turn = (r.turn + 1) % r.max;
