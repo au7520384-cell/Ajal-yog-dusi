@@ -104,14 +104,14 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
       if (sc.ph === "over" && sd.ph === "over") { both = true; break; }
       const [gc, gd] = await Promise.all([C, D].map(x => x.evaluate(() => { const s = RV.state(); return s.peers.length ? [s.peers[0].to, s.peers[0].from] : null; })));
       if (sc.ph === "night" && sd.ph === "night" && gc && gd && sc.alive[sc.you] && sd.alive[sd.you]) gateNight.push([gc.join(), gd.join()]);
-      if (sc.ph === "day" && sd.ph === "day" && gc && gd && sc.alive[sc.you] && sd.alive[sd.you]) gateDay.push([gc.join(), gd.join()]);
+      if (sc.ph === "day" && sd.ph === "day" && gc && gd) { const want = (a, b) => [a.alive[a.you] && b.alive[b.you], b.alive[b.you]].join(); gateDay.push({ c: gc.join(), d: gd.join(), wc: want(sc, sd), wd: want(sd, sc) }); }   // (what the gate must be: I may speak to the other phone when we are both alive, I hear it when it is alive)
       for (const [x, s] of [[C, sc], [D, sd]]) { if (s.ph !== "over") leak2 += await x.evaluate(ic => [...document.querySelectorAll("#mfScr .mf-p")].filter((t, i) => i !== MFX.v.you && MFX.v.alive[i] && !(MFX.v.mates || []).includes(i) && !(MFX.v.found || []).some(f => f.seat === i) && ic.some(c => t.querySelector("small").textContent.includes(c))).length, ROLEI); }
-      if (sc.ph === "day" && sd.ph === "day" && !gateDay.length && sc.alive[sc.you] && sd.alive[sd.you]) { await sleep(60); continue; }   // (the day is sampled once before anybody presses "ready": it would end the day sooner than the loop can look)
+      if (sc.ph === "day" && sd.ph === "day" && !gateDay.length) { await sleep(60); continue; }   // (the day is sampled once before anybody presses "ready": it would end the day sooner than the loop can look)
       await act(C, sc, doneC); await act(D, sd, doneD); await sleep(120);
     }
     ok(both, "both phones play the match to the end");
     ok(gateNight.length > 0 && gateNight.every(g => g[0] === "false,false" && g[1] === "false,false"), "the night is silent: nobody's voice goes to the other phone and nobody is heard (no mafia pair here)", gateNight.slice(0, 3));
-    ok(gateDay.length > 0 && gateDay.every(g => g[0] === "true,true" && g[1] === "true,true"), "the day is for everybody who is alive: the voice goes both ways", gateDay.slice(0, 3));
+    ok(gateDay.length > 0 && gateDay.every(g => g.c === g.wc && g.d === g.wd), "the day is for everybody who is alive: the voice goes both ways between two living phones, and a dead one only listens", gateDay.slice(0, 3));
     ok(leak2 === 0, "neither phone ever showed a role it may not know", leak2);
     ok(await until(async () => (await Promise.all([C, D].map(x => x.evaluate(() => document.querySelectorAll(".mf-resl .mf-res").length)))).every(n => n === 5), 8000), "both phones show the same 5-role result window");
     const rl = await Promise.all([C, D].map(x => x.evaluate(() => JSON.stringify(MFX.v.roles)))); ok(rl[0] === rl[1], "...with the same list of roles", rl);
