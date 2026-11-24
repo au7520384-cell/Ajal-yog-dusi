@@ -2830,6 +2830,9 @@ const trCache = new Map(); let trDay = "", trUsed = 0;
 const worldText = s => String(s || "").replace(/[\u0000-\u001f\u007f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, WORLD_LEN);
 const WORLD_CONTACT = /(https?:|www\.|\b[a-z0-9-]{2,}\.(com|net|org|uz|ru|io|me|gg|ly|xyz|info|tk|cc|co)\b|t\.me|telegram\.me|@[a-z0-9_]{4,}|(?:\d[\s().+-]*){9,})/i;   // links, user names, phone numbers: no advertising, no luring players away
 const lobbyByWid = wid => { if (!wid) return null; for (const L of lobbies.values()) if (L.wid === wid) return L; return null; };
+const broomByWid = wid => { if (!wid) return null; for (const r of brooms.values()) if (r.wid === wid) return r; return null; };   // a BOARD room (shashka / chess / mafia) posted to the world chat
+const broomHost = r => { const w = r && r.seats[r.host]; return w && r.uids[r.host] && !r.away[r.host] && w.readyState === 1 ? w : null; };
+const broomFree = r => r.uids.filter(x => !x).length;
 function worldAdd(u, kind, text, extra) {
   const m = {id: ++worldSeq, at: Date.now(), uid: u.id, name: cleanChat(String(u.name || "Player").slice(0, 16)), avatar: u.avatar | 0, frame: u.frame | 0, level: u.level | 0, league: u.league | 0, country: String(u.country || "").slice(0, 3), kind, text, ...extra};
   worldPrune(); WORLD.push(m); if (WORLD.length > WORLD_KEEP) WORLD.shift();
@@ -2841,6 +2844,12 @@ function worldPub(m) {   // a chat line (text or sticker)
 function worldLobbies() {   // the posted lobbies as they are NOW: the seats, whether Join still works; a lobby that is gone or running leaves the list
   const out = [], now = Date.now();
   for (const [wid, w] of worldPosts) {
+    if (w.kind === "board") {   // a board room: the card says the game and the seats; its code is not here either
+      const R = broomByWid(wid), hs = R ? R.uids.filter(Boolean).length : 0;
+      if (!R || R.state !== "open" || !hs || R.uids[R.host] !== w.uid || now - w.at > 30 * 60e3) { worldPosts.delete(wid); continue; }
+      out.push({wid, kind: "board", game: R.game, uid: w.uid, name: w.name, avatar: w.avatar, frame: w.frame, level: w.level, league: w.league, country: w.country, n: hs, max: R.max, open: hs < R.max && !!broomHost(R), at: w.at});
+      continue;
+    }
     const L = lobbyByWid(wid), ps = L ? L.players.filter(p => seatKept(p)) : [];
     if (!L || L.state !== "open" || !ps.length || !L.host || L.host.uid !== w.uid || now - w.at > 30 * 60e3) { worldPosts.delete(wid); continue; }   // (gone, running, empty, or its poster is not the host any more: the card is the host's)
     out.push({wid, uid: w.uid, name: w.name, avatar: w.avatar, frame: w.frame, level: w.level, league: w.league, country: w.country, city: w.city, fee: w.fee, n: ps.length, max: L.max, open: ps.length < L.max && !!L.host && L.host.readyState === 1, at: w.at});
@@ -2895,6 +2904,17 @@ Object.assign(routes, {
   },
   async "POST /api/world/lobby"(req, u) {   // the host posts his open lobby into the room (his phone must be in it: the lobby lives on his socket)
     if (muted(u)) return [403, {error: "muted"}];
+    const b = await jsonBody(req).catch(() => ({}));
+    if (b && b.board) {   // the host of an open BOARD room (shashka / chess / mafia) posts it
+      const wsb = clients.get(u.id), R = wsb && wsb.broom && brooms.get(wsb.broom);
+      if (!R || R.state !== "open" || R.uids[R.host] !== u.id) return [409, {error: "nolobby"}];
+      if (!broomFree(R)) return [409, {error: "full"}];
+      if (R.wpost && Date.now() - R.wpost < 45e3) return [429, {error: "wait", left: Math.ceil((45e3 - (Date.now() - R.wpost)) / 1000)}];
+      if (!ubucket(u.id, "wlobby", 3, 120e3)) return [429, {error: "slow"}];
+      R.wpost = Date.now(); R.wid = R.wid || crypto.randomBytes(5).toString("hex");
+      worldPosts.set(R.wid, {wid: R.wid, kind: "board", game: R.game, uid: u.id, name: cleanChat(String(u.name || "Player").slice(0, 16)), avatar: u.avatar | 0, frame: u.frame | 0, level: u.level | 0, league: u.league | 0, country: String(u.country || "").slice(0, 3), at: Date.now()});
+      return {ok: true, lobbies: worldLobbies()};
+    }
     const ws = clients.get(u.id), L = ws && ws.lobby && lobbies.get(ws.lobby);
     if (!L || L.host !== ws || L.state !== "open") return [409, {error: "nolobby"}];
     if (L.players.filter(p => seatKept(p)).length >= L.max) return [409, {error: "full"}];
@@ -2908,7 +2928,20 @@ Object.assign(routes, {
     const b = await jsonBody(req);
     if (muted(u)) return [403, {error: "muted"}];
     if (!ubucket(u.id, "wjoin", 3, 8000)) return [429, {error: "slow"}];
-    const wid = String(b.wid || "").slice(0, 16), L = worldPosts.has(wid) ? lobbyByWid(wid) : null;
+    const wid = String(b.wid || "").slice(0, 16), post = worldPosts.get(wid);
+    if (post && post.kind === "board") {   // a board room
+      const R = broomByWid(wid), hw = R && broomHost(R);
+      if (!R || R.state !== "open" || !hw) return {state: "gone"};
+      if (R.uids.includes(u.id)) return {state: "in", code: R.code, game: R.game};
+      if (!broomFree(R)) return {state: "full"};
+      for (const r of worldReq.values()) if (r.uid === u.id && r.wid === wid && r.state === "wait" && Date.now() - r.at < WORLD_REQ_MS) return {state: "wait", rid: r.rid};
+      if ([...worldReq.values()].filter(r => r.host === hw.uid && r.state === "wait" && Date.now() - r.at < WORLD_REQ_MS).length >= WORLD_PENDING_MAX) return {state: "busy"};
+      const rid = crypto.randomBytes(6).toString("hex");
+      worldReq.set(rid, {rid, uid: u.id, host: hw.uid, code: R.code, wid, at: Date.now(), state: "wait", board: R.game});
+      wsSend(hw, {t: "wreq", rid, ttl: WORLD_REQ_MS, from: {uid: u.id, name: cleanChat(String(u.name || "Player").slice(0, 16)), avatar: u.avatar | 0, frame: u.frame | 0, level: u.level | 0, league: u.league | 0, country: String(u.country || "").slice(0, 3)}});
+      return {state: "wait", rid};
+    }
+    const L = post ? lobbyByWid(wid) : null;
     if (!L || L.state !== "open" || !L.host || L.host.readyState !== 1) return {state: "gone"};
     if (L.host.uid === u.id || L.players.some(p => p.uid === u.id)) return {state: "in", code: L.code};
     if (L.players.filter(p => seatKept(p)).length >= L.max) return {state: "full"};
@@ -2921,20 +2954,20 @@ Object.assign(routes, {
   },
   "GET /api/world/req"(req, u) {   // ?rid=: the asking player's answer (the code only comes with "yes")
     const r = worldReq.get(String(new URL(req.url, "http://x").searchParams.get("rid") || "")); if (!r || r.uid !== u.id) return {state: "gone"};
-    const L = lobbies.get(r.code);
+    const L = r.board ? brooms.get(r.code) : lobbies.get(r.code);
     if (r.state === "wait" && Date.now() - r.at > WORLD_REQ_MS) r.state = "timeout";   // the host did not answer in time (not the same as "no")
     if (r.state === "yes" && (!L || L.state !== "open")) return {state: "gone"};
-    return r.state === "yes" ? {state: "yes", code: r.code} : {state: r.state};
+    return r.state === "yes" ? {state: "yes", code: r.code, game: r.board || undefined} : {state: r.state};
   },
   async "POST /api/world/answer"(req, u) {   // the host: {rid, ok}
     const b = await jsonBody(req), r = worldReq.get(String(b.rid || ""));
     if (!r || r.host !== u.id) return [404, {error: "none"}];
     if (r.state === "wait" && Date.now() - r.at > WORLD_REQ_MS) r.state = "timeout";
     if (r.state !== "wait") return {ok: true, state: r.state};
-    const L = lobbies.get(r.code);
+    const L = r.board ? brooms.get(r.code) : lobbies.get(r.code);
     if (!b.ok) { r.state = "no"; return {ok: true, state: "no"}; }
     if (!L || L.state !== "open") { r.state = "no"; return {ok: true, state: "gone"}; }
-    if (L.players.filter(p => seatKept(p)).length >= L.max) { r.state = "full"; return {ok: true, state: "full"}; }
+    if (r.board ? !broomFree(L) : L.players.filter(p => seatKept(p)).length >= L.max) { r.state = "full"; return {ok: true, state: "full"}; }
     r.state = "yes"; return {ok: true, state: "yes"};
   },
   async "POST /api/world/report"(req, u) {   // {mid}: a player reports a message; three different players within an hour mute its sender for 30 minutes

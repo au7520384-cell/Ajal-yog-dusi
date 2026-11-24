@@ -13925,7 +13925,8 @@ const el = $("wLobList"); if (!el) return;
 const bl = blocked(), list = lobs.filter(o => !bl.has(o.uid)), sc = el.scrollTop;
 $("wLobT").textContent = `🎱 ${T("Lobbilar")}${list.length ? " · " + list.length : ""}`;
 el.innerHTML = list.length ? list.map(o => { const me = o.uid === mine;
-return `<div class="wlc${o.open ? "" : " off"}"><div class="wlt"><b>${esc(cityName(o.city))}</b><em>${o.n}/${o.max}</em><span>${esc(TT("Kirish to'lovi: {0}", fmt(o.fee)))} 🪙</span></div>
+const G = o.kind === "board" ? ({shashka: ["♟️", "Shashka"], magic: ["✨", "Sehrli shaxmat"], mafia: ["🕵️", "Mafiya"]}[o.game] || ["🎲", "Shashka"]) : null;   // (a BOARD room: the game instead of the table, no entry fee)
+return `<div class="wlc${o.open ? "" : " off"}"><div class="wlt">${G ? `<b>${G[0]} ${esc(T(G[1]))}</b><em>${o.n}/${o.max}</em><span>🌐</span>` : `<b>${esc(cityName(o.city))}</b><em>${o.n}/${o.max}</em><span>${esc(TT("Kirish to'lovi: {0}", fmt(o.fee)))} 🪙</span>`}</div>
 <div class="wlh">${avHTML(normAv(o.avatar | 0), o.frame | 0, 34)}<div class="wln"><b>${esc(pname(o.name))}</b><small>${esc(lgName(o.league))}</small></div>${leagueImg(o.league | 0, 28)}</div>
 ${me ? "" : `<button class="btn green" data-w="${esc(o.wid)}" ${o.open ? "" : "disabled"}>${o.open ? T("Qo'shilish") + " ➜" : T("Yopilgan")}</button>`}</div>`; }).join("") : `<p class="muted">${T("Hozircha ochiq lobbi yo'q")}</p>`;
 el.scrollTop = sc;
@@ -13979,6 +13980,12 @@ try { await Net.ensure(); const r = await Net.api("/api/world/lobby", {}); if (r
 catch (e) { err(e); }
 if (btn) setTimeout(() => { btn.disabled = false; }, 4000);
 }
+async function postBoard(btn) {   // the host of an open BOARD room (shashka / chess / mafia) posts it: the key in the room window
+if (btn) btn.disabled = true;
+try { await Net.ensure(); const r = await Net.api("/api/world/lobby", {board: 1}); if (r.lobbies) { lobs = r.lobbies; if (isOpen()) drawLobs(); } toast("🌐", T("Lobbi dunyo chatiga yuborildi"), T("Dunyo chati")); try { Snd.pop(); } catch (e) {} }
+catch (e) { err(e); }
+if (btn) setTimeout(() => { btn.disabled = false; }, 4000);
+}
 // ---- the banner: requests to MY lobby (✓ / ✗) and my own request to somebody else's lobby (waiting)
 const reqBox = () => $("wReq");
 function reqRow(id, html, cls) { let el = document.getElementById("wrq" + id); if (!el) { el = document.createElement("div"); el.id = "wrq" + id; reqBox().appendChild(el); } el.className = "wrq" + (cls ? " " + cls : ""); el.innerHTML = html; return el; }
@@ -13992,11 +13999,11 @@ el.querySelector(".y").onclick = () => ans(true); el.querySelector(".n").onclick
 setTimeout(() => reqDrop(id), (m.ttl || 40000) + 500);
 }
 async function join(wid, btn) {   // the asking player
-if (LB) return toast("🎱", T("Avval joriy lobbidan chiqing"), T("Dunyo chati"));
+if (LB || BR.code) return toast("🎱", T("Avval joriy lobbidan chiqing"), T("Dunyo chati"));
 if (pendingReq) return;
 if (btn) btn.disabled = true;
 let r; try { await Net.ensure(); r = await Net.api("/api/world/join", {wid}); } catch (e) { if (btn) btn.disabled = false; return err(e); }
-if (r.state === "in" && r.code) { close(); return lobbyJoin(r.code); }
+if (r.state === "in" && r.code) { close(); return r.game ? shRoomOpen(r.game, r.code) : lobbyJoin(r.code); }
 if (r.state === "busy") { if (btn) btn.disabled = false; return toast("⏳", T("Biroz kuting"), T("Dunyo chati")); }
 if (r.state === "gone" || r.state === "full") { toast("🎱", T(r.state === "full" ? "Lobbi to'lgan" : "Lobbi yopilgan"), T("Dunyo chati")); poll(true); return; }
 const id = "o" + r.rid, start = Date.now(); pendingReq = id;
@@ -14007,7 +14014,7 @@ for (;;) {
 await new Promise(r => setTimeout(r, 1500));
 if (stop) return done("", "");
 let q; try { q = await Net.api("/api/world/req?rid=" + encodeURIComponent(r.rid)); } catch (e) { if (Date.now() - start > 45000) return done("⚠️", "Server bilan aloqa yo'q. Internetni tekshiring."); continue; }
-if (q.state === "yes" && q.code) { done("", ""); close(); toast("✅", T("Lobbi egasi qabul qildi"), T("Dunyo chati")); return lobbyJoin(q.code); }
+if (q.state === "yes" && q.code) { done("", ""); close(); toast("✅", T("Lobbi egasi qabul qildi"), T("Dunyo chati")); return q.game ? shRoomOpen(q.game, q.code) : lobbyJoin(q.code); }
 if (q.state === "no") return done("🚫", "Lobbi egasi rad etdi");
 if (q.state === "timeout") return done("⌛", "Lobbi egasi javob bermadi");
 if (q.state === "full") return done("🎱", "Lobbi to'lgan");
@@ -14042,7 +14049,7 @@ $("wLobPost").onclick = () => { if (LB && LB.role === "host" && LB.state === "op
 setInterval(() => { if (isOpen() && (mode === "game" || typeof CRAZY_BUILD !== "undefined")) close(); }, 700);   // the room is a menu thing: a match closes it
 Net.on("wreq", incoming);
 if (typeof CRAZY_BUILD !== "undefined") $("hWorld").style.display = "none";   // the portal builds (CrazyGames / Playgama / GameMonetize) have their own chat rules: no open chat there
-return {open, close, postLobby, incoming, join, state: () => ({open: isOpen(), n: msgs.length, lobs: lobs.length, last, online, mine, muted, blocked: [...blocked()]}), add, draw};
+return {open, close, postLobby, postBoard, incoming, join, state: () => ({open: isOpen(), n: msgs.length, lobs: lobs.length, last, online, mine, muted, blocked: [...blocked()]}), add, draw};
 })();
 // ---- friend requests (the other player accepts or refuses), direct messages between friends, sharing the invite
 const frShown = new Set();   // requests / play invitations already shown as a pop-up in this session (they stay in the Friends screen and behind the red dot)
@@ -17704,6 +17711,7 @@ function brEnsure() {
     else if (a === "create") { if (!BR.busy || Date.now() - BR.busy > 4000) { BR.busy = Date.now(); Net.ensure().then(() => Net.connect()).then(() => Net.send({t: "bcreate", game: BR.want || "shashka", cue: profile.cue, tbl: profile.tableSkin || ""})).catch(() => { BR.busy = 0; toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), ""); }); } }
     else if (a === "join") { const c = String(ov.querySelector(".tn-code").value || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6); if (c.length >= 4) brJoin(c); else toast("⌨️", T("4 belgili kodni kiriting"), ""); }
     else if (a === "share") brShare();
+    else if (a === "world") { try { WorldChat.postBoard(b); } catch (x) {} }
     else if (a === "copy") { const c = BR.code; try { navigator.clipboard.writeText(c).then(() => toast("📋", T("Nusxalandi!"), c)).catch(() => toast("📋", c, "")); } catch (er) { toast("📋", c, ""); } }
     else if (a === "start") Net.send({t: "bstart"});
     else if (a === "mic" || a === "spk") shVoiceBtn(a);
@@ -17711,6 +17719,7 @@ function brEnsure() {
   ov.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.classList.contains("tn-code")) ov.querySelector('[data-a="join"]').click(); });
   return ov;
 }
+const brWorldOk = () => typeof CRAZY_BUILD === "undefined" && !NO_SOCIAL;   // (the world chat is not in the portals' builds)
 function brJoin(code) { Net.ensure().then(() => Net.connect()).then(() => Net.send({t: "bjoin", code, cue: profile.cue, tbl: profile.tableSkin || ""})).catch(() => toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), "")); }
 function brClose() { const ov = $("brRoom"); if (ov) ov.classList.remove("on"); }
 function shRoomOpen(game, code) {   // the key "Online" of the shashka list (or an invite link: code)
@@ -17739,7 +17748,7 @@ function brRender() {
   const slot = i => { const s = R.seats[i];
     return s ? `<div class="tn-seat${i === mySeat ? " me" : ""}${s.away ? " away" : ""}">${avHTML(s.avatar, s.frame, 44)}<div class="tn-nm"><b>${esc(pname(s.name))}${i === R.host ? " 👑" : ""}</b><small>${s.away ? T("aloqa uzildi") : i === mySeat ? T("Siz") : lbStar(s.level)}</small></div></div>`
       : `<div class="tn-seat free"><span class="tn-plus">…</span><div class="tn-nm"><b>${T("Do'st kutilmoqda…")}</b><small>${T("Kodni yuboring")}</small></div></div>`; };
-  body.innerHTML = `<div class="tn-codebar"><span>${T("Xona kodi")}</span><b class="tn-codev">${esc(R.code)}</b><button class="btn blue" data-a="copy">📋</button>${NO_SOCIAL ? "" : `<button class="btn green" data-a="share">📤 ${T("Taklif")}</button>`}</div>
+  body.innerHTML = `<div class="tn-codebar"><span>${T("Xona kodi")}</span><b class="tn-codev">${esc(R.code)}</b><button class="btn blue" data-a="copy">📋</button>${NO_SOCIAL ? "" : `<button class="btn green" data-a="share">📤 ${T("Taklif")}</button>`}${host && brWorldOk() ? `<button class="btn orange" data-a="world">🌐 ${T("Dunyo chati")}</button>` : ""}</div>
     <div class="tn-teams" style="grid-template-columns:1fr auto 1fr"><div class="tn-team a">${slot(0)}</div><div class="tn-vs">VS</div><div class="tn-team b">${slot(1)}</div></div>
     <div class="tn-act" style="margin-top:8px"><button class="sh-b" data-a="mic" style="position:static"></button><button class="sh-b" data-a="spk" style="position:static"></button></div>
     <div class="tn-foot">${host ? `<button class="btn green" data-a="start"${both ? "" : " disabled"}>${T("Boshlash")}</button><small>${both ? T("Rang qur'a bilan tanlanadi") : T("Kamida 2 ta o'yinchi kerak")}</small>` : `<small>${T("Xona egasi boshlashini kuting…")}</small>`}</div>`;
@@ -18533,7 +18542,7 @@ function mfRoomRender(ov, R) {
   const mySeat = R.seats.findIndex(s => s && s.uid === me), host = mySeat === R.host;
   const slot = (s, i) => s ? `<div class="tn-seat mf-seat${i === mySeat ? " me" : ""}${s.away ? " away" : ""}">${avHTML(s.avatar, s.frame, 44)}<div class="tn-nm"><b>${esc(pname(s.name))}${i === R.host ? " 👑" : ""}</b><small>${s.away ? T("aloqa uzildi") : i === mySeat ? T("Siz") : lbStar(s.level)}</small></div></div>`
     : `<div class="tn-seat free mf-seat"><span class="tn-plus">…</span><div class="tn-nm"><b>${T("Do'st kutilmoqda…")}</b></div></div>`;
-  body.innerHTML = `<div class="tn-codebar"><span>${T("Xona kodi")}</span><b class="tn-codev">${esc(R.code)}</b><button class="btn blue" data-a="copy">📋</button>${NO_SOCIAL ? "" : `<button class="btn green" data-a="share">📤 ${T("Taklif")}</button>`}</div>
+  body.innerHTML = `<div class="tn-codebar"><span>${T("Xona kodi")}</span><b class="tn-codev">${esc(R.code)}</b><button class="btn blue" data-a="copy">📋</button>${NO_SOCIAL ? "" : `<button class="btn green" data-a="share">📤 ${T("Taklif")}</button>`}${host && brWorldOk() ? `<button class="btn orange" data-a="world">🌐 ${T("Dunyo chati")}</button>` : ""}</div>
     <div class="mf-rseats">${R.seats.map(slot).join("")}</div>
     <div class="tn-act" style="margin-top:8px"><button class="sh-b" data-a="mic" style="position:static"></button><button class="sh-b" data-a="spk" style="position:static"></button></div>
     <div class="tn-foot">${host ? `<button class="btn green" data-a="start">${T("Boshlash")}</button><small>${T("Odam yetmasa botlar to'ldiradi")}</small>` : `<small>${T("Xona egasi boshlashini kuting…")}</small>`}</div>`;
