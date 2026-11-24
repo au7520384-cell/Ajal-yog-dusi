@@ -59,7 +59,7 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     ok(leak === 0, "a seat that is alive, not me and not my mate never showed a role icon", leak);
     ok(picked >= 2, "a tap on a seat in the night / the vote picks it (the seat is marked)", picked);
     ok(await until(() => modal(A).then(m => m && /win/i.test(m.t)), 6000), "the result window comes", await modal(A));
-    const res = await A.evaluate(() => ({ rows: [...document.querySelectorAll(".mf-resl .mf-res")].map(r => r.querySelector("span").textContent), roles: MFX.v.roles }));
+    const res = await A.evaluate(() => ({ rows: [...document.querySelectorAll(".mf-resl .mf-res")].map(r => r.lastElementChild.textContent), roles: MFX.v.roles }));
     ok(res.rows.length === 5 && res.roles.length === 5 && res.rows.every((r, i) => r.includes({ mafia: "Mafia", doctor: "Doctor", sheriff: "Sheriff", citizen: "Citizen" }[res.roles[i]])), "it lists all 5 roles, the true ones", res);
     if (SHOT) await A.screenshot({ path: path.join(SHOT, "04_over.png") });
     await clickBtn(A, "Play again"); await sleep(500);
