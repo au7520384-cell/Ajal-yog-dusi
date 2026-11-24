@@ -106,6 +106,7 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
       if (sc.ph === "night" && sd.ph === "night" && gc && gd && sc.alive[sc.you] && sd.alive[sd.you]) gateNight.push([gc.join(), gd.join()]);
       if (sc.ph === "day" && sd.ph === "day" && gc && gd && sc.alive[sc.you] && sd.alive[sd.you]) gateDay.push([gc.join(), gd.join()]);
       for (const [x, s] of [[C, sc], [D, sd]]) { if (s.ph !== "over") leak2 += await x.evaluate(ic => [...document.querySelectorAll("#mfScr .mf-p")].filter((t, i) => i !== MFX.v.you && MFX.v.alive[i] && !(MFX.v.mates || []).includes(i) && ic.some(c => t.querySelector("small").textContent.includes(c) && !t.querySelector("small").textContent.includes("🕵️✅"))).length, ROLEI); }
+      if (sc.ph === "day" && sd.ph === "day" && !gateDay.length && sc.alive[sc.you] && sd.alive[sd.you]) { await sleep(60); continue; }   // (the day is sampled once before anybody presses "ready": it would end the day sooner than the loop can look)
       await act(C, sc, doneC); await act(D, sd, doneD); await sleep(120);
     }
     ok(both, "both phones play the match to the end");
