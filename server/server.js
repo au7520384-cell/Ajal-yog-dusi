@@ -2498,7 +2498,7 @@ function bStartMatch(r) {
 const MF_NAMES = ["Ali", "Madina", "Jasur", "Dilnoza", "Bobur", "Kamola", "Sardor", "Nigora", "Rustam", "Zarina", "Aziz", "Malika", "Temur", "Laylo", "Farrux", "Sevara"];
 const mfHumans = r => [...r.uids.keys()].filter(i => r.uids[i] && !(r.mf && r.mf.g.bot[i]));
 function mfBotProfile(i) { return {name: MF_NAMES[crypto.randomInt(MF_NAMES.length)], avatar: crypto.randomInt(12), frame: 0, country: "", level: 3 + crypto.randomInt(30), cue: "start", tbl: "", tblNo: 0, code: "", club: "", cb: null}; }
-function mfViewMsg(r, i) { return {t: "mview", room: r.id, v: MAFIA.view(r.mf.g, i, Date.now())}; }
+function mfViewMsg(r, i) { return {t: "mview", room: r.id, v: MAFIA.view(r.mf.g, i, Date.now()), now: Date.now()}; }   // (now: the server's clock, so a phone can count the phase down on its own)
 function mfSendAll(r) { for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], mfViewMsg(r, i)); }
 function mfStop(r) { if (!r.mf) return; clearTimeout(r.mf.timer); for (const x of r.mf.bots) clearTimeout(x); r.mf.bots = []; }
 function mfStart(r) {

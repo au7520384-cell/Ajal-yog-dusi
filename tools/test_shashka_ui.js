@@ -37,7 +37,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     // ------------------------------------------------------------------ the way in
     await p.evaluate(() => toMenu("mini")); await sleep(1400);
     const row = await p.evaluate(() => { const r = document.getElementById("miniBoards"), m = document.getElementById("miniStrip"); return r ? { title: (r.querySelector(".sh-rt") || {}).textContent, cards: [...r.querySelectorAll(".sh-card")].map(c => c.querySelector("b").textContent), img: !!r.querySelector(".sh-card img").src, below: !!m && r.getBoundingClientRect().top >= m.getBoundingClientRect().bottom - 2 } : null; });
-    ok(row && row.title === "Board games" && row.cards.join() === "Checkers,Magic Chess" && row.img && row.below, "the mini-games screen has the Board games row (the Checkers card first, then Magic Chess), under the new-modes picture", row);
+    ok(row && row.title === "Board games" && row.cards.join() === "Checkers,Magic Chess,Mafia" && row.img && row.below, "the mini-games screen has the Board games row (the Checkers card first, then Magic Chess), under the new-modes picture", row);
     await p.evaluate(() => document.querySelector("#miniBoards .sh-card").click()); await sleep(600);
     const list = await p.evaluate(() => [...document.querySelectorAll("#mExtra .pro-row")].map(r => ({ id: r.dataset.id, txt: r.textContent.replace(/\s+/g, " ").trim() })));
     ok(list.map(x => x.id).join() === "easy,mid,hard,local,online" && /Easy/.test(list[0].txt) && /Medium/.test(list[1].txt) && /Hard/.test(list[2].txt) && /one phone/.test(list[3].txt) && /friend/i.test(list[4].txt), "the card opens the list: three bot levels, two on one phone, online with a friend", list);
