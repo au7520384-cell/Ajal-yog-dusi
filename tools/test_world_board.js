@@ -49,7 +49,7 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     ok(await until(() => A.evaluate(() => !!document.querySelector("#wReq .wrq .y")), 6000), "Ann gets the question (a banner with yes / no) over her room window");
     if (SHOT) await A.screenshot({ path: path.join(SHOT, "03_banner.png") });
     await A.evaluate(() => document.querySelector("#wReq .wrq .y").click());
-    ok(await until(() => B.evaluate(() => document.getElementById("brRoom").classList.contains("on") && BR.code), 10000), "yes: Bob's room window opens");
+    ok(await until(() => B.evaluate(() => !!(document.getElementById("brRoom") && document.getElementById("brRoom").classList.contains("on")) && BR.code), 10000), "yes: Bob's room window opens");
     ok(await until(async () => (await Promise.all([A, B].map(x => x.evaluate(() => document.querySelectorAll("#brRoom .tn-seat:not(.free)").length)))).every(n => n === 2), 8000), "both phones show the two seats taken");
     ok((await B.evaluate(() => BR.code)) === code && !(await B.evaluate(() => document.getElementById("wChat").classList.contains("on"))), "Bob is in Ann's room (the code came only with the yes), the world chat is closed");
     const w2 = await world(C); ok(w2.lobbies.length === 1 && w2.lobbies[0].open === false && w2.lobbies[0].n === 2, "the room is full: its card is closed (2/2)", w2.lobbies[0]);
@@ -73,7 +73,7 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     ok(await until(() => A.evaluate(() => !!document.querySelector("#wReq .wrq .n")), 6000), "Ann is asked again");
     await A.evaluate(() => document.querySelector("#wReq .wrq .n").click());
     ok(await until(() => C.evaluate(() => window.__toasts.some(t => /declined/i.test(t))), 8000), "no: Cat is told 'the lobby owner declined'", await C.evaluate(() => window.__toasts));
-    ok(await C.evaluate(() => !document.getElementById("brRoom").classList.contains("on") && !BR.code), "...and she is not in the room");
+    ok(await C.evaluate(() => !!!(document.getElementById("brRoom") && document.getElementById("brRoom").classList.contains("on")) && !BR.code), "...and she is not in the room");
     await sleep(600);
     // the host leaves: the card is gone
     await A.evaluate(() => { try { shLeaveOnline(); } catch (e) {} brClose(); }); await sleep(800);
