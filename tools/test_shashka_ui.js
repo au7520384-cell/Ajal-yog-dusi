@@ -39,7 +39,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     const row = await p.evaluate(() => { const r = document.getElementById("miniBoards"), m = document.getElementById("miniStrip"); return r ? { title: (r.querySelector(".sh-rt") || {}).textContent, cards: [...r.querySelectorAll(".sh-pan")].map(c => c.dataset.g), img: r.querySelector(".sh-ban img").naturalWidth >= 1000, below: !!m && r.getBoundingClientRect().top >= m.getBoundingClientRect().bottom - 2 } : null; });
     ok(row && row.title === "Board games" && row.cards.join() === "shashka,magic,mafia" && row.img && row.below, "the mini-games screen has the Board games row (the owner's picture: Checkers, Chess, Mafia), under the new-modes picture", row);
     // the picture is shown IN FULL (the owner, Nov 24: "let it go through in full"): all of it fits the screen when the row is scrolled to, its proportions are the picture's (1672 x 941), the three keys lie inside it side by side and a click in the middle of each opens its own list
-    await p.evaluate(() => document.getElementById("mini").scrollTo(0, 99999)); await sleep(400);
+    await p.evaluate(() => document.querySelector("#miniBoards .sh-ban").scrollIntoView({ block: "center" })); await sleep(400);   // (the Arcade row is below it now: the picture is scrolled to, not the end of the screen)
     const fit = await p.evaluate(() => { const b = document.querySelector("#miniBoards .sh-ban").getBoundingClientRect(), ps = [...document.querySelectorAll("#miniBoards .sh-pan")].map(x => x.getBoundingClientRect()); return { fits: b.top >= 0 && b.bottom <= innerHeight + 1 && b.left >= 0 && b.right <= innerWidth + 1, ratio: +(b.width / b.height).toFixed(3), inside: ps.every(q => q.left >= b.left - 1 && q.right <= b.right + 1 && q.top >= b.top - 1 && q.bottom <= b.bottom + 1), apart: ps[0].right <= ps[1].left && ps[1].right <= ps[2].left, b: [b.top, b.bottom, innerHeight].map(Math.round) }; });
     ok(fit.fits && Math.abs(fit.ratio - 1672 / 941) < 0.01 && fit.inside && fit.apart, "the Board games picture is shown in full (it fits the screen, its own proportions), the three keys lie inside it, side by side", fit);
     await p.evaluate(() => document.querySelector('#miniBoards .sh-pan[data-g="shashka"]').click()); await sleep(600);
@@ -58,6 +58,17 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await tap(p, "b4"); await sleep(700); s = await st(p); ok(s.ply === 1 && s.side === -1 && !s.busy && /Black to move/.test(s.msg), "a tap on a landing cell plays the move; Black is to move", s);
     await tap(p, "a3"); s = await st(p); ok(s.sel.length === 0, "a piece of the side that does not move cannot be selected");
     await p.evaluate(() => shUndo()); await sleep(300); s = await st(p); ok(s.ply === 0 && s.side === 1, "undo takes the move back (two on one phone: one move)", s);
+    // the 3D key (the owner, Nov 26: "make it like this, 3D"): the board stands up in a tilted view, a tap on a cell still works through the tilt, the choice is kept; the hint key lights a move (practice only: not in a match with a person)
+    await p.evaluate(() => { profile.sh3d = 0; document.querySelector('#shScr [data-a="tilt"]').click(); }); await sleep(700);
+    const t3 = await p.evaluate(() => ({ cls: document.getElementById("shScr").classList.contains("tilt3d"), kept: profile.sh3d === 1, m3: /matrix3d/.test(getComputedStyle(document.getElementById("shBoard")).transform), on: document.querySelector('#shScr [data-a="tilt"]').classList.contains("on") }));
+    ok(t3.cls && t3.kept && t3.m3 && t3.on, "the 3D key stands the board up in a tilted 3D view and remembers it", t3);
+    await p.click(`#shBoard .sq[data-i="${S("c3")}"]`); s = await st(p); ok(s.sel.join() === String(S("c3")) && s.opts.length === 2, "in the tilted view a tap on a piece still selects it (the cells are where the picture shows them)", s);
+    await p.click(`#shBoard .sq[data-i="${S("c3")}"]`); await p.evaluate(() => { SHU.sel = []; shRender(); });
+    await p.click('#shScr [data-a="hint"]'); await sleep(1500);
+    const hn = await p.evaluate(() => [...document.querySelectorAll("#shBoard .sq.hint")].map(e => +e.dataset.i)), lm = await p.evaluate(() => shGen(SHU.G.b, SHU.G.side).map(m => m.path.slice(0, 2)));
+    ok(hn.length === 2 && lm.some(pp => (pp[0] === hn[0] && pp[1] === hn[1]) || (pp[0] === hn[1] && pp[1] === hn[0])), "the hint key lights a legal move: the piece and the cell it goes to", [hn, lm.length]);
+    await sleep(1100); ok(await p.evaluate(() => document.querySelectorAll("#shBoard .sq.hint").length) === 0, "the hint goes out by itself");
+    await p.evaluate(() => document.querySelector('#shScr [data-a="tilt"]').click()); await sleep(500); ok(await p.evaluate(() => !document.getElementById("shScr").classList.contains("tilt3d") && profile.sh3d === 0), "the 3D key again: back to the view from above");
 
     // ------------------------------------------------------------------ compulsory capture, routes
     await setBoard(p, ["c3", "h2"], [], ["d4"], []);

@@ -82,6 +82,19 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     await B.evaluate(() => shRoomOpen("shashka")); await sleep(600); await B.evaluate(() => document.querySelector('#brRoom [data-a="create"]').click()); await sleep(900);
     ok((await world(C)).lobbies.length === 0, "a room nobody posted is not listed");
     ok(await C.evaluate(() => Net.api("/api/world/lobby", { board: 1 }).then(() => false).catch(e => /nolobby/.test(String(e && e.message)))), "a player who has no room cannot post one");
+    // ------------------------------------------------------------------ a room's code written into the chat (the owner, Nov 26): a message that is only a code gets a Join key under it
+    await A.evaluate(() => { try { shLeaveOnline(); } catch (e) {} brClose(); }); await sleep(400);
+    await A.evaluate(() => shRoomOpen("shashka")); await sleep(600); await A.evaluate(() => { BR.busy = 0; document.querySelector('#brRoom [data-a="create"]').click(); });
+    ok(await until(() => A.evaluate(() => /^[A-Z2-9]{4}$/.test((document.querySelector("#brRoom .tn-codev") || {}).textContent || "")), 8000), "a new shashka room is made for the code test");
+    const code3 = await A.evaluate(() => document.querySelector("#brRoom .tn-codev").textContent);
+    await A.evaluate(c => Net.api("/api/world/send", { text: c }), code3); await A.evaluate(() => Net.api("/api/world/send", { text: "salom hammaga" }));
+    await B.evaluate(() => { try { shLeaveOnline(); } catch (e) {} brClose(); WorldChat.open(); }); await sleep(1500);
+    const chips = await B.evaluate(() => [...document.querySelectorAll("#wChatLog .wcj")].map(x => x.dataset.code));
+    ok(chips.join() === code3, "in the world chat a message that is only a room code has a Join key; an ordinary message does not", chips);
+    if (SHOT) await B.screenshot({ path: path.join(SHOT, "04_code_chip.png") });
+    await B.evaluate(() => document.querySelector("#wChatLog .wcj").click());
+    ok(await until(() => B.evaluate(() => !!BR.R && BR.R.seats.filter(Boolean).length === 2), 8000) && await B.evaluate(() => !document.getElementById("wChat").classList.contains("on")), "tapping it closes the chat and puts Bob in that room (the code is the key)");
+    ok(await B.evaluate(c => BR.code === c, code3), "...it is Ann's room");
     ok(errs.length === 0, "no page errors", errs.slice(0, 6));
     for (const x of [A, B, C]) await x._ctx.close();
   } catch (e) { fail++; console.log("EXCEPTION", e && e.stack || e); }
