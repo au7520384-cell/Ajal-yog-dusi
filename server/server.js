@@ -280,20 +280,28 @@ const CITY_PRIZE = {mad: 2000, bue: 50000, mex: 320000, sin: 1400000, ams: 60000
 const store = createStore({databaseUrl: process.env.DATABASE_URL, dataDir: DATA_DIR});
 let db = {users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}, replays: {}};
 let dirty = false, saving = null;
+// How often a change reaches the database. The free Neon plan counts the hours its compute runs (100 CU-hours a month) and the compute sleeps only after 5 minutes
+// WITHOUT a query: saving 2 s after every change kept it awake day and night, the quota ran out on Nov 26 and no new server could start ("exceeded the quota").
+// So with Postgres the changes go in batches, at most one batch per SAVE_EVERY_MS (default 15 min: the compute sleeps in between); money (fulfill, Google Play refunds)
+// and a shutdown (SIGTERM: a deploy, Render's spin-down) are saved at once (flush(true)). SAVE_EVERY_MS=2000 is the old behaviour (a paid database); a file store keeps 2 s.
+const SAVE_EVERY_MS = process.env.SAVE_EVERY_MS !== undefined && process.env.SAVE_EVERY_MS !== "" ? Math.max(0, +process.env.SAVE_EVERY_MS || 0) : (store.kind === "postgres" ? 15 * 60e3 : 0);
+let lastSave = 0, lastSaveOk = null, lastSaveErr = "", lastSaveAt = 0;
 const markDirty = () => { dirty = true; };
-function flush() {
+function flush(force) {   // force: now, whatever SAVE_EVERY_MS says
   if (!dirty || saving) return saving || Promise.resolve();
-  dirty = false;
+  if (!force && SAVE_EVERY_MS && Date.now() - lastSave < SAVE_EVERY_MS) return Promise.resolve();
+  dirty = false; lastSave = Date.now();
   saving = store.save(db)
-    .catch(e => { dirty = true; console.error("save failed:", e.message); })
+    .then(() => { lastSaveOk = true; lastSaveErr = ""; lastSaveAt = Date.now(); })
+    .catch(e => { dirty = true; lastSaveOk = false; lastSaveErr = String((e && e.message) || e).slice(0, 160); lastSave = Date.now() - Math.max(0, SAVE_EVERY_MS - 60e3); console.error("save failed:", e.message); })   // tried again in about a minute (the next 2 s tick with the old setting)
     .finally(() => { saving = null; });
   return saving;
 }
-setInterval(flush, 2000);
+setInterval(() => flush(), 2000);
 for (const sig of ["SIGINT", "SIGTERM"]) process.on(sig, async () => {
   dirty = true;
   if (saving) await saving;
-  await flush();
+  await flush(true);
   await store.close().catch(() => {});
   process.exit(0);
 });
@@ -906,7 +914,7 @@ function dshotRows(book) { return Object.entries(book).map(([id, r]) => ({id, n:
 const dshotRank = (rows, uid) => { const i = rows.findIndex(r => r.id === uid); return i < 0 ? null : i + 1; };
 
 const routes = {
-  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, web: WEB_OK, node: process.version, memMB: Math.round(process.memoryUsage().rss / 1048576), stakes: BR_RULES.ok, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err,
+  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, web: WEB_OK, node: process.version, memMB: Math.round(process.memoryUsage().rss / 1048576), stakes: BR_RULES.ok, db: {kind: store.kind, everyMs: SAVE_EVERY_MS, pending: dirty, lastOk: lastSaveOk, ageSec: lastSaveAt ? Math.round((Date.now() - lastSaveAt) / 1000) : null, err: lastSaveErr}, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err,
     play: {on: PLAY.configured(), refundChecks: ((db.meta || {}).playvoid || {}).runs | 0, refunded: ((db.meta || {}).playvoid || {}).taken | 0, lastCheck: ((db.meta || {}).playvoid || {}).at || 0, err: ((db.meta || {}).playvoid || {}).err || ""},
     p2p: {cards: P2P_CARDS.length, auto: p2pModes(true).auto, atm: p2pModes(true).atm, key: !!P2P_KEY, admin: P2P_ADMIN, smsCount: ((db.meta || {}).p2pn || {}).n | 0, lastSms: ((db.meta || {}).p2pn || {}).last || 0, open: Object.values(db.p2p || {}).filter(o => o.st === "pending").length}}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)
@@ -1746,7 +1754,7 @@ async function playVoidSweep() {
       page = r.next; if (!page) break;
     }
     st.t = newest; st.runs = (st.runs | 0) + 1; st.at = Date.now(); st.err = "";
-    markDirty(); if (n) await flush();
+    markDirty(); if (n) await flush(true);
   } catch (e) { console.error("play refunds:", e.message); }
   finally { playVoidBusy = false; }
 }
@@ -1866,7 +1874,7 @@ async function fulfill(payId, userId, skuId, amount) {
   u.bought = {...(u.bought || {}), [skuId]: (u.bought && u.bought[skuId] || 0) + 1};
   if (sku.tc) { (u.tcBuy = u.tcBuy || []).push({at: Date.now(), c: sku.tc}); tcAdd(u, sku.tc, "buy"); }   // table coins live on the server (the stake of a match is held here), not in the grants the phone applies
   if (saving) await saving;
-  await flush();   // money: write it down before telling the provider we got it
+  await flush(true);   // money: write it down before telling the provider we got it (at once, not with the next batch)
   return !dirty;
 }
 
@@ -3140,7 +3148,7 @@ Object.assign(routes, {
 });
 setInterval(() => { const now = Date.now(); for (const [k, r] of worldReq) if (now - r.at > 5 * 60e3) worldReq.delete(k); }, 60e3).unref();
 
-store.load().then(loaded => {
+createStore.loadWithRetry(store).then(loaded => {
   if (loaded) db = Object.assign({users: {}, codes: {}, purchases: {}, meta: {}, clubs: {}, dms: {}, p2p: {}}, loaded);
   db.meta = db.meta || {}; db.clubs = db.clubs || {}; db.dms = db.dms || {}; db.p2p = db.p2p || {}; db.replays = db.replays || {};
   tcRecover();
