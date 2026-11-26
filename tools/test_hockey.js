@@ -34,7 +34,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     const { p, close } = await open({ width: 915, height: 412 });
     await p.evaluate(() => toMenu("mini")); await sleep(900);
     const row = await p.evaluate(() => { const r = document.getElementById("miniArcade"); return r ? { title: (r.querySelector(".sh-rt") || {}).textContent, cards: [...r.querySelectorAll(".sh-card")].map(c => c.dataset.hk), name: (r.querySelector(".sh-card b") || {}).textContent, img: !!r.querySelector(".sh-card img").src, below: r.getBoundingClientRect().top >= document.getElementById("miniBoards").getBoundingClientRect().bottom - 2 } : null; });
-    ok(row && row.title === "Arcade games" && row.cards.join() === "air" && row.name === "Air hockey" && row.img && row.below, "the mini-games screen has the Arcade row (Air hockey), under the Board games picture", row);
+    ok(row && row.title === "Arcade games" && row.cards.join() === "air,tt" && row.name === "Air hockey" && row.img && row.below, "the mini-games screen has the Arcade row (Air hockey, Table tennis), under the Board games picture", row);
     await p.evaluate(() => document.getElementById("mini").scrollTo(0, 99999)); await sleep(400); if (SHOT) await p.screenshot({ path: path.join(SHOT, "00_row.png") });
     await p.evaluate(() => document.querySelector("#miniArcade .sh-card").click()); await sleep(600);
     const list = await p.evaluate(() => [...document.querySelectorAll("#mExtra .pro-row")].map(r => r.dataset.id));
