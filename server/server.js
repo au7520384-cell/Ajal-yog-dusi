@@ -906,7 +906,7 @@ function dshotRows(book) { return Object.entries(book).map(([id, r]) => ({id, n:
 const dshotRank = (rows, uid) => { const i = rows.findIndex(r => r.id === uid); return i < 0 ? null : i + 1; };
 
 const routes = {
-  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, web: WEB_OK, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err,
+  "GET /api/health": () => ({ok: true, players: Object.keys(db.users).length, online: clients.size, payments: PAYMENTS, build: BUILD, web: WEB_OK, node: process.version, memMB: Math.round(process.memoryUsage().rss / 1048576), stakes: BR_RULES.ok, turn: !!process.env.TURN_URLS, tg: !!TG_BOT_TOKEN, stars: !!TG_BOT_TOKEN, tgBot: TG_ME.user, tgErr: TG_ME.err,
     play: {on: PLAY.configured(), refundChecks: ((db.meta || {}).playvoid || {}).runs | 0, refunded: ((db.meta || {}).playvoid || {}).taken | 0, lastCheck: ((db.meta || {}).playvoid || {}).at || 0, err: ((db.meta || {}).playvoid || {}).err || ""},
     p2p: {cards: P2P_CARDS.length, auto: p2pModes(true).auto, atm: p2pModes(true).atm, key: !!P2P_KEY, admin: P2P_ADMIN, smsCount: ((db.meta || {}).p2pn || {}).n | 0, lastSms: ((db.meta || {}).p2pn || {}).last || 0, open: Object.values(db.p2p || {}).filter(o => o.st === "pending").length}}),
   // ICE servers for voice chat: public STUN always, plus your own TURN relay when TURN_URLS is set (needed for some mobile networks)

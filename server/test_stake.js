@@ -5,7 +5,7 @@
 const { spawn } = require("child_process"), path = require("path"), fs = require("fs"), os = require("os"), crypto = require("crypto");
 const sleep = ms => new Promise(r => setTimeout(r, ms)), ROOT = process.env.B8_ROOT || path.resolve(__dirname, ".."), P = +process.env.TEST_PORT || 8806, base = `http://localhost:${P}`, STRIPE = "whsec_stake";
 let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; console.log("FAIL:", m, x !== undefined ? JSON.stringify(x).slice(0, 700) : ""); } };
-const R = require(path.join(ROOT, "server", "boardrules.js")).load(path.join(ROOT, "index.html"));
+const R = require(path.join(ROOT, "server", "boardrules.js")).load();
 const api = async (acct, p, body) => { const r = await fetch(base + p, { method: body ? "POST" : "GET", headers: { "Content-Type": "application/json", ...(acct ? { Authorization: `Bearer ${acct.id}:${acct.token}` } : {}) }, body: body ? JSON.stringify(body) : undefined }); return { s: r.status, j: await r.json().catch(() => ({})) }; };
 const pay = async (u, sku, id) => {   // a paid Stripe checkout, signed like Stripe signs it
   const raw = JSON.stringify({ type: "checkout.session.completed", data: { object: { id, payment_status: "paid", amount_total: 100, metadata: { userId: u.id, sku } } } }), t = Math.floor(Date.now() / 1000);
@@ -40,7 +40,7 @@ const MS = a => 8 * (8 - +a[1]) + "abcdefgh".indexOf(a[0]);
   const up = async () => { for (let i = 0; i < 80; i++) { try { if ((await fetch(base + "/api/health")).ok) return true; } catch (e) {} await sleep(300); } return false; };
   await up();
   try {
-    ok(R.ok, "the server's copy of the rules loads from index.html", R.why);
+    ok(R.ok, "the server's copy of the rules loads (server/boardcores.js)", R.why);
     const cs = {}, acc = {}; for (const n of ["Ann", "Bob", "Cat", "Dan", "Eve", "Gus", "Fay"]) { acc[n] = (await api(null, "/api/register", { name: n, avatar: 3 })).j; cs[n] = client(acc[n], n); }
     const { Ann: A, Bob: B, Cat: C, Dan: D, Eve: E, Gus: G, Fay: F } = cs;
     for (const c of Object.values(cs)) await c.open();
