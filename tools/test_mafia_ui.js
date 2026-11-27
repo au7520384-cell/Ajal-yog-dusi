@@ -46,14 +46,14 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     ok(first.tiles === 5 && first.me === 1 && first.bots === 4 && /reveal|night/.test(first.cls) && !first.rolesField && first.card.length > 20, "5 seats: me and 4 bots, my role card, no list of roles", first);
     ok(["mafia", "doctor", "sheriff", "citizen"].includes(first.role), "my role is one of the four", first.role);
     if (SHOT) await A.screenshot({ path: path.join(SHOT, "02_reveal.png") });
-    const seen = new Set(), done = new Set(); let leak = 0, picked = 0, over = false, snaps = 0;
+    const seen = new Set(), done = new Set(); let leak = 0, picked = 0, opps = 0, over = false, snaps = 0;
     for (let k = 0; k < 900 && !over; k++) {
       const st = await state(A); if (!st) { await sleep(120); continue; } seen.add(st.ph);
       // what the DOM shows about other seats: no role icon on a seat that is not me, not my mate, not dead (and none before the end)
       if (st.ph !== "over") { const bad = await A.evaluate(ic => [...document.querySelectorAll("#mfScr .mf-p")].filter((t, i) => i !== MFX.v.you && MFX.v.alive[i] && !(MFX.v.mates || []).includes(i) && !(MFX.v.found || []).some(f => f.seat === i) && ic.some(x => t.querySelector("small").textContent.includes(x))).length, ROLEI); leak += bad; }
       if (SHOT && snaps < 3 && (st.ph === "night" || st.ph === "vote")) { snaps++; await A.screenshot({ path: path.join(SHOT, `03_${st.ph}${st.day}.png`) }); }
       const was = done.has(st.ph + ":" + st.day); await act(A, st, done);
-      if (!was && (st.ph === "night" || st.ph === "vote") && st.alive[st.you]) { await sleep(120); const pk = await A.evaluate(() => ({ cls: document.querySelectorAll("#mfScr .mf-p.pick").length, pick: MFX.v.pick })); if (pk.cls === 1 || (st.ph === "night" && st.role === "citizen")) picked++; }
+      if (!was && (st.ph === "night" || st.ph === "vote") && st.alive[st.you]) { opps++; await sleep(120); const pk = await A.evaluate(() => ({ cls: document.querySelectorAll("#mfScr .mf-p.pick").length, pick: MFX.v.pick })); if (pk.cls === 1 || (st.ph === "night" && st.role === "citizen")) picked++; }
       if (st.ph === "over") over = true; await sleep(120);
     }
     ok(seen.has("night") && seen.has("day") && seen.has("vote") && over, "the phases came one after another: night, day, vote, the end", [...seen]);
@@ -63,7 +63,7 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     ok(sc("reveal") === 1 && sc("night") >= 1 && sc("owl") >= 1 && sc("bell") >= 1 && (sc("day") >= 1) && (sc("win") + sc("lose") === 1), "Mafia has the sounds of play (the owner, Nov 25 / 27): the roles are dealt (1), the night falls (and an owl calls), the day breaks (the morning birds), the bell of the vote, then one win or lose at the end", sfx);
     ok(sc("shot") + sc("heal") >= 1, "every morning has its sound: a rifle shot when somebody was killed, a rescue chime when nobody died", sfx);
     ok(await A.evaluate(() => { const g = document.querySelector('#mfScr [data-a="go"]'); return getComputedStyle(g).display !== "none" && /Play again/.test(g.textContent); }), "at the end the screen has its own 'Play again' key (it never just stands there)");
-    ok(picked >= 2, "a tap on a seat in the night / the vote picks it (the seat is marked)", picked);
+    ok(opps >= 1 && picked >= Math.min(2, opps), "a tap on a seat in the night / the vote picks it (the seat is marked) in every phase where I could (a match can end, or I can be killed, after one)", { picked, opps });
     ok(await until(() => modal(A).then(m => m && /win/i.test(m.t)), 6000), "the result window comes", await modal(A));
     const res = await A.evaluate(() => ({ rows: [...document.querySelectorAll(".mf-resl .mf-res")].map(r => r.lastElementChild.textContent), roles: MFX.v.roles }));
     ok(res.rows.length === 5 && res.roles.length === 5 && res.rows.every((r, i) => r.includes({ mafia: "Mafia", doctor: "Doctor", sheriff: "Sheriff", citizen: "Citizen" }[res.roles[i]])), "it lists all 5 roles, the true ones", res);
@@ -106,9 +106,9 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     ok(await until(async () => (await Promise.all([C, D].map(x => x.evaluate(() => MFX.on && !!MFX.v)))).every(Boolean), 15000), "Start: both phones open the Mafia screen (2 people + 3 bots)");
     const doneC = new Set(), doneD = new Set(); let gateNight = [], gateDay = [], leak2 = 0, both = false;
     for (let k = 0; k < 1200; k++) {
-      const [sc, sd] = await Promise.all([state(C), state(D)]); if (!sc || !sd) { await sleep(120); continue; }
+      const [A1, B1] = await Promise.all([C, D].map(x => x.evaluate(() => { const v = MFX.on && MFX.v, s = RV.state(); return { st: v ? { ph: v.phase, day: v.day, role: v.role, you: v.you, alive: v.alive, n: v.n, pick: v.pick } : null, gate: s.peers.length ? [s.peers[0].to, s.peers[0].from] : null }; })));
+      const sc = A1.st, sd = B1.st, gc = A1.gate, gd = B1.gate; if (!sc || !sd) { await sleep(120); continue; }   // (each phone's phase and gate are read in ONE call: two calls could straddle a phase change and take the day's gate for the night's)
       if (sc.ph === "over" && sd.ph === "over") { both = true; break; }
-      const [gc, gd] = await Promise.all([C, D].map(x => x.evaluate(() => { const s = RV.state(); return s.peers.length ? [s.peers[0].to, s.peers[0].from] : null; })));
       if (sc.ph === "night" && sd.ph === "night" && gc && gd && sc.alive[sc.you] && sd.alive[sd.you]) gateNight.push([gc.join(), gd.join()]);
       if (sc.ph === "day" && sd.ph === "day" && gc && gd) { const want = (a, b) => [a.alive[a.you] && b.alive[b.you], b.alive[b.you]].join(); gateDay.push({ c: gc.join(), d: gd.join(), wc: want(sc, sd), wd: want(sd, sc) }); }   // (what the gate must be: I may speak to the other phone when we are both alive, I hear it when it is alive)
       for (const [x, s] of [[C, sc], [D, sd]]) { if (s.ph !== "over") leak2 += await x.evaluate(ic => [...document.querySelectorAll("#mfScr .mf-p")].filter((t, i) => i !== MFX.v.you && MFX.v.alive[i] && !(MFX.v.mates || []).includes(i) && !(MFX.v.found || []).some(f => f.seat === i) && ic.some(c => t.querySelector("small").textContent.includes(c))).length, ROLEI); }

@@ -102,24 +102,24 @@ const CONTACT_EMAIL = process.env.CONTACT_EMAIL || "";
 function legalPage(res, which) {
   const contact = CONTACT_EMAIL ? `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>` : "the developer through the game (Settings)";
   const css = `body{font:16px/1.55 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:18px;color:#1b2236;background:#fff}h1{font-size:26px}h2{font-size:19px;margin-top:26px}a{color:#1553b3}.u{color:#555;font-size:14px}`;
-  const privacy = `<h1>Privacy Policy — Royal Billiard 8</h1><p class="u">Last updated: October 2026</p>
+  const privacy = `<h1>Privacy Policy — Royal Billiard 8</h1><p class="u">Last updated: November 2026</p>
 <p>Royal Billiard 8 ("the game") is an online pool game. This page explains what information the game uses and why. By playing you agree to it.</p>
 <h2>What we collect</h2><ul>
-<li><b>Account:</b> a random player ID and secret token created on your device. If you sign in with Google or Facebook, we receive the provider's user ID and your first name. We never receive your Google/Facebook password.</li>
+<li><b>Account:</b> a random player ID and secret token created on your device. If you sign in with Google, Facebook or Telegram, we receive the provider's user ID, your first name and, for Google and Telegram, the link to your profile picture. The picture is shown to other players as your avatar only if you choose it (Avatars: My photo); you can go back to any game avatar, or remove the photo, at any time. We never receive your password.</li>
 <li><b>Profile and progress:</b> the name and avatar you choose, country, level, coins, items, friends, club, match results and leaderboard scores.</li>
 <li><b>Messages:</b> chat phrases and messages you send during matches or while spectating are relayed to the other people in that match. We do not keep a permanent chat history; the most recent spectator messages stay in memory only while the match is live.</li>
 <li><b>Voice chat:</b> audio goes directly between players (WebRTC). If a direct connection is not possible it is relayed through a third-party TURN relay service. We do not record or store audio.</li>
 <li><b>Payments:</b> if purchases are enabled they are processed by our payment provider (Stripe or Paddle). We never see or store your card number; we only keep a record of what you bought.</li>
 <li><b>On your device:</b> the game stores settings and a copy of your progress in your browser's local storage.</li></ul>
 <h2>How we use it</h2><p>To run the game: log you in, save progress, show leaderboards, friends, clubs and live matches, match you with opponents, deliver purchases, and prevent cheating and abuse.</p>
-<h2>What other players see</h2><p>Your name, avatar, country, level and club are visible to other players, in leaderboards and in the live-matches list. You can limit who can add you as a friend and whether your online status is shown in Settings.</p>
-<h2>Services we use</h2><p>Hosting (Render), database (Neon), payments (Stripe), voice relay (Metered), and sign-in (Google, Facebook). They process data only to provide their service to us. Hosting providers may keep standard technical server logs. We do not sell your data.</p>
+<h2>What other players see</h2><p>Your name, avatar (your Google / Telegram profile picture, if you chose it), country, level and club are visible to other players, in leaderboards and in the live-matches list. You can limit who can add you as a friend and whether your online status is shown in Settings.</p>
+<h2>Services we use</h2><p>Hosting (Render), database (Neon), payments (Stripe), voice relay (Metered), and sign-in (Google, Facebook, Telegram). They process data only to provide their service to us. Hosting providers may keep standard technical server logs. We do not sell your data.</p>
 <h2>Ads</h2><p>The Android app (and the Telegram / portal versions, through their own ad networks) shows short video ads (optional "watch a video for a reward" buttons and, now and then, a short ad between games), served by the ad network AppLovin (MAX). To show and measure ads, AppLovin and its ad partners process your device's advertising ID, IP address, approximate location and basic device and ad-interaction data under their own privacy policies. Where the law asks for it, the app first shows a consent screen. You can reset or turn off personalised ads in your phone's settings (Google → Ads). Paid items such as "Ad-Free Forever" (where sold) switch the ads off.</p>
 <h2>Keeping and deleting data</h2><p>We keep your account while it is in use. To ask for your data to be deleted, contact ${contact}; we will delete your account and progress.</p>
 <h2>Children</h2><p>The game is not directed to children under 13 and we do not knowingly collect their data.</p>
 <h2>Changes</h2><p>We may update this page; the date above shows the latest version.</p>
 <h2>Contact</h2><p>${contact}</p>
-<hr><p class="u"><b>Maxfiylik siyosati (qisqacha, o'zbekcha):</b> o'yin sizning ismingiz, avatar, davlat, daraja va o'yin natijalaringizni saqlaydi; Google/Facebook orqali kirsangiz faqat foydalanuvchi ID va ismingizni oladi (parolni emas). Karta ma'lumotlari bizda saqlanmaydi (Stripe orqali). Ovozli chat yozib olinmaydi. Ma'lumotlarni o'chirish uchun biz bilan bog'laning. Ma'lumotlaringiz sotilmaydi.</p>`;
+<hr><p class="u"><b>Maxfiylik siyosati (qisqacha, o'zbekcha):</b> o'yin sizning ismingiz, avatar, davlat, daraja va o'yin natijalaringizni saqlaydi; Google/Facebook/Telegram orqali kirsangiz foydalanuvchi ID, ismingiz va (Google, Telegram) profil rasmingiz havolasini oladi, parolni emas; rasm faqat o'zingiz tanlasangiz avatar sifatida ko'rinadi va uni istagan paytda o'chirish mumkin. Karta ma'lumotlari bizda saqlanmaydi (Stripe orqali). Ovozli chat yozib olinmaydi. Ma'lumotlarni o'chirish uchun biz bilan bog'laning. Ma'lumotlaringiz sotilmaydi.</p>`;
   const terms = `<h1>Terms of Service — Royal Billiard 8</h1><p class="u">Last updated: October 2026</p>
 <p>By playing Royal Billiard 8 you agree to these terms.</p>
 <h2>Fair play</h2><p>Do not cheat, use bots or exploits, harass other players or post offensive names, avatars or messages. We may mute, suspend or delete accounts that break these rules.</p>
@@ -462,6 +462,101 @@ function cleanNewsI18n(src) {
   return Object.keys(out).length ? out : undefined;
 }
 // ---------------------------------------------------------------- sign-in with Google / Facebook (tokens are always verified on the server)
+// ---------------------------------------------------------------- profile photos (the owner, Nov 27: "a player must be able to put his own picture: Google sign-in shows the Google photo, Telegram sign-in the Telegram photo")
+// A photo is an AVATAR whose number is >= 1000: u.avatar = u.pid, a random number only the server hands out. Every place that already carries an avatar number (seats, lists, chat, rankings) carries the photo too, and the
+// phone loads it from GET /api/photo/<pid>. The server fetches the picture ITSELF - from the provider's CDN, or through the Bot API for Telegram - and caches it, so the players' phones never talk to the provider's CDN.
+// Safety: only an address that came inside a VERIFIED sign-in (Google's ID token, Telegram's signed initData) and sits on a short list of provider hosts is ever fetched (an arbitrary address would let a player find out the
+// other players' IP addresses or make the server call any host); a redirect is followed only to another host of the list; the answer must be a raster picture (sniffed, never SVG: it would run scripts if opened on its own).
+const PIC_HOSTS = new RegExp(process.env.B8_PIC_HOSTS || "^https://(t\\.me/i/userpic/|lh[0-9]\\.googleusercontent\\.com/|[a-z0-9-]+\\.cdn-telegram\\.org/)");   // (B8_PIC_HOSTS: the tests only)
+const cleanPic = x => { x = String(x || "").slice(0, 600); return /^https?:\/\/[A-Za-z0-9._~:/?#@!$&()*+,;=%-]+$/.test(x) && PIC_HOSTS.test(x) ? x : ""; };   // (PIC_HOSTS itself says https: an http address passes only in the tests)
+const PID_MIN = 1000, pidIndex = new Map(); let pidBuilt = false;   // pid -> user id (built from the database the first time it is asked)
+function pidUser(pid) {
+  if (!pidBuilt) { pidBuilt = true; for (const x of Object.values(db.users)) if (x.pid) pidIndex.set(x.pid, x.id); }
+  const id = pidIndex.get(pid); return id && db.users[id] && db.users[id].pid === pid ? db.users[id] : null;
+}
+function newPid() { pidUser(0); for (;;) { const p = PID_MIN + crypto.randomInt(0x7ffffc00); if (!pidIndex.has(p)) return p; } }   // random, so the photos cannot be collected by counting up; always below 2^31 (the phones read it with |0)
+const hasPic = u => !!(u && u.pid && (u.pic || u.picTg));
+const picInfo = u => hasPic(u) ? {id: u.pid, src: u.picSrc || ""} : null;   // what the phone is told: "you have a photo, its number is ..."
+function givePid(u) { if (!u.pid) { u.pid = newPid(); pidIndex.set(u.pid, u.id); } }
+function notePic(a, v, provider) {   // a verified sign-in carried a photo address: the account keeps it (a changed photo = the cached picture is forgotten)
+  if (!a || !v || !v.pic) return;
+  if (v.pic !== a.pic) { a.pic = v.pic; a.picSrc = provider; if (a.pid) picDrop(a.pid); }
+  givePid(a); markDirty();
+}
+function sniffImg(b) {   // the picture's real kind from its first bytes (what the provider says is not trusted)
+  if (b.length > 12 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "image/jpeg";
+  if (b.length > 12 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "image/png";
+  if (b.length > 12 && b.toString("latin1", 0, 4) === "RIFF" && b.toString("latin1", 8, 12) === "WEBP") return "image/webp";
+  if (b.length > 12 && b.toString("latin1", 0, 3) === "GIF") return "image/gif";
+  return "";
+}
+const PIC_MAX = 160 * 1024;   // a 320 px profile picture is 15 - 60 KB
+async function readCapped(r) {   // the body of a response, at most PIC_MAX bytes
+  const len = +r.headers.get("content-length") || 0; if (len > PIC_MAX) return null;
+  const chunks = []; let n = 0; const rd = r.body && r.body.getReader ? r.body.getReader() : null;
+  if (!rd) { const b = Buffer.from(await r.arrayBuffer()); return b.length <= PIC_MAX ? b : null; }
+  for (;;) { const {done, value} = await rd.read(); if (done) break; n += value.length; if (n > PIC_MAX) { try { await rd.cancel(); } catch (e) {} return null; } chunks.push(Buffer.from(value)); }
+  return Buffer.concat(chunks);
+}
+async function fetchPic(url) {   // -> {buf, type} | null: a provider address, at most 3 redirects (each one on the list too), 6 s, 400 KB, a raster picture
+  for (let hop = 0; hop < 4; hop++) {
+    if (!cleanPic(url)) return null;
+    const ac = new AbortController(), to = setTimeout(() => ac.abort(), 6000);
+    try {
+      const r = await fetch(url, {redirect: "manual", signal: ac.signal, headers: {"User-Agent": "RoyalBilliard8/1"}});
+      if (r.status >= 300 && r.status < 400) { const loc = r.headers.get("location"); if (!loc) return null; url = new URL(loc, url).href; continue; }
+      if (!r.ok) return null;
+      const buf = await readCapped(r), type = buf ? sniffImg(buf) : ""; return type ? {buf, type} : null;
+    } catch (e) { return null; } finally { clearTimeout(to); }
+  }
+  return null;
+}
+const withTimeout = (pr, ms) => Promise.race([pr, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms).unref())]);
+async function tgProfilePhoto(tgId) {   // the file_id of the player's Telegram profile picture (about 320 px) from the Bot API, "" when he has none or hides it
+  try {
+    const r = await withTimeout(tgApi("getUserProfilePhotos", {user_id: +tgId, limit: 1}), 6000), sz = r && r.photos && r.photos[0];
+    if (!sz || !sz.length) return "";
+    return String((sz.find(x => x.width >= 160) || sz[sz.length - 1]).file_id || "").slice(0, 300);
+  } catch (e) { return ""; }
+}
+async function tgFilePic(fid) {   // the bytes of a Bot API file: the bot's token is in the address, so this stays on the server
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 8000);
+  try {
+    const f = await withTimeout(tgApi("getFile", {file_id: fid}), 6000); if (!f || !f.file_path) return null;
+    const r = await fetch(`${process.env.TG_API_BASE || "https://api.telegram.org"}/file/bot${TG_BOT_TOKEN}/${f.file_path}`, {signal: ac.signal});
+    if (!r.ok) return null; const buf = await readCapped(r), type = buf ? sniffImg(buf) : ""; return type ? {buf, type} : null;
+  } catch (e) { return null; } finally { clearTimeout(to); }
+}
+const picCache = new Map(), picBusy = new Map(), PIC_TTL = 6 * 3600e3, PIC_BAD_TTL = 5 * 60e3, PIC_CACHE_MAX = 400, PIC_BYTES_MAX = 24e6; let picBytes = 0;   // pid -> {buf, type, etag, at} (buf null = could not be fetched, not tried again for 5 minutes); at most 400 pictures and 24 MB
+function picDrop(pid) { const o = picCache.get(pid); if (o && o.buf) picBytes -= o.buf.length; picCache.delete(pid); }
+function picPut(pid, e) { picDrop(pid); const n = e.buf ? e.buf.length : 0; while (picCache.size && (picCache.size >= PIC_CACHE_MAX || picBytes + n > PIC_BYTES_MAX)) picDrop(picCache.keys().next().value); picCache.set(pid, e); picBytes += n; }
+async function photoOf(u) {   // the picture of an account: from the cache, else fetched (the provider's address first, then the Bot API)
+  const c = picCache.get(u.pid), now = Date.now();
+  if (c && now - c.at < (c.buf ? PIC_TTL : PIC_BAD_TTL)) return c.buf ? c : null;
+  if (picBusy.has(u.pid)) return picBusy.get(u.pid);
+  const job = (async () => {
+    let got = u.pic ? await fetchPic(u.pic) : null;
+    if (!got && u.picTg && TG_BOT_TOKEN) got = await tgFilePic(u.picTg);
+    const e = got ? {buf: got.buf, type: got.type, etag: '"' + crypto.createHash("sha1").update(got.buf).digest("hex").slice(0, 16) + '"', at: Date.now()} : {buf: null, at: Date.now()};
+    picPut(u.pid, e); return e.buf ? e : null;
+  })().finally(() => picBusy.delete(u.pid));
+  picBusy.set(u.pid, job); return job;
+}
+function ensureTgPic(u) {   // a player who signed in with Telegram (long ago, or now without a photo address): ask the Bot API for his picture in the background, at most every 6 hours
+  if (!TG_BOT_TOKEN || !u || !u.auth || !u.auth.telegram || (u.pid && (u.pic || u.picTg)) || Date.now() - (u.picTry || 0) < 6 * 3600e3) return;
+  u.picTry = Date.now();
+  tgProfilePhoto(u.auth.telegram).then(fid => { if (!fid || !db.users[u.id]) return; u.picTg = fid; if (!u.picSrc) u.picSrc = "telegram"; givePid(u); markDirty(); }).catch(() => {});
+}
+async function photoPage(req, res, url) {   // GET /api/photo/<pid>: no sign-in (an <img> cannot send one); the number is random, the answer is cached by the phone for 6 hours
+  const head = {"Access-Control-Allow-Origin": "*", "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "default-src 'none'; sandbox", "Cross-Origin-Resource-Policy": "cross-origin"};
+  if (limited(req, "photo", 900)) { res.writeHead(429, {...head, "Content-Type": "application/json"}); return res.end('{"error":"slow down"}'); }
+  const pid = +url.pathname.slice("/api/photo/".length), u = Number.isInteger(pid) && pid >= PID_MIN ? pidUser(pid) : null, got = hasPic(u) ? await photoOf(u) : null;
+  if (!got) { res.writeHead(404, {...head, "Content-Type": "application/json", "Cache-Control": "public, max-age=300"}); return res.end('{"error":"no photo"}'); }
+  const h = {...head, "Content-Type": got.type, "Cache-Control": "public, max-age=21600", ETag: got.etag, "Content-Length": got.buf.length};
+  if (req.headers["if-none-match"] === got.etag) { res.writeHead(304, h); return res.end(); }
+  res.writeHead(200, h); res.end(got.buf);
+}
+
 async function verifyProvider(provider, token) {
   token = String(token || "").slice(0, 4096);
   if (!token) return null;
@@ -470,7 +565,7 @@ async function verifyProvider(provider, token) {
       if (!GOOGLE_CLIENT_ID) return null;
       const r = await fetch(GOOGLE_INFO_URL + "?id_token=" + encodeURIComponent(token)), j = await r.json();
       if (!r.ok || j.aud !== GOOGLE_CLIENT_ID || !/^(https:\/\/)?accounts\.google\.com$/.test(j.iss || "") || (+j.exp || 0) * 1000 < Date.now() || !j.sub) return null;
-      return {sub: String(j.sub), name: j.given_name || j.name || "", nonce: String(j.nonce || "")};
+      return {sub: String(j.sub), name: j.given_name || j.name || "", nonce: String(j.nonce || ""), pic: cleanPic(String(j.picture || "").replace(/=s\d+(-c)?$/, "=s192-c"))};
     }
     if (provider === "telegram") {   // Mini App: token = Telegram.WebApp.initData, signed by the bot token (https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app)
       if (!TG_BOT_TOKEN) return null;
@@ -480,7 +575,7 @@ async function verifyProvider(provider, token) {
       if (hash.length !== want.length || !crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(want))) return null;
       if (Date.now() / 1000 - (+sp.get("auth_date") || 0) > 86400) return null;   // a day-old launch is stale
       const u = JSON.parse(sp.get("user") || "{}"); if (!u.id) return null;
-      return {sub: String(u.id), name: u.first_name || u.username || "", wp: !!u.allows_write_to_pm, lang: String(u.language_code || "")};
+      return {sub: String(u.id), name: u.first_name || u.username || "", wp: !!u.allows_write_to_pm, lang: String(u.language_code || ""), pic: cleanPic(u.photo_url)};
     }
     if (provider === "facebook") {
       if (!FB_APP_ID || !FB_APP_SECRET) return null;
@@ -1156,15 +1251,15 @@ const routes = {
     if (found && sw && cur && found.id === cur.id) {
       if (!b.detach) return {sameAcct: true};   // already linked to this account: the client asks before it is detached and a separate account is made
       delete cur.auth[provider]; markDirty();
-    } else if (found) { noteTg(found); return {existing: found.id !== (cur && cur.id), id: found.id, token: found.token, code: found.code, save: found.save || null, savedAt: found.saveAt || 0, name: found.name, provName: cleanName(v.name)}; }
+    } else if (found) { noteTg(found); notePic(found, v, provider); if (provider === "telegram") ensureTgPic(found); return {existing: found.id !== (cur && cur.id), id: found.id, token: found.token, code: found.code, save: found.save || null, savedAt: found.saveAt || 0, name: found.name, provName: cleanName(v.name), pic: picInfo(found)}; }
     if (cur && !sw) { cur.auth = {...(cur.auth || {}), [provider]: v.sub}; if (v.name && /^(O'yinchi\d{4}|Player|Siz)$/.test(cur.name || "")) cur.name = cleanName(v.name);   // a game-given default name becomes the real one
-      noteTg(cur); markDirty(); return {existing: false, linked: true, id: cur.id, token: cur.token, code: cur.code, save: null, savedAt: 0, name: cur.name, provName: cleanName(v.name)}; }
+      noteTg(cur); notePic(cur, v, provider); if (provider === "telegram") ensureTgPic(cur); markDirty(); return {existing: false, linked: true, id: cur.id, token: cur.token, code: cur.code, save: null, savedAt: 0, name: cur.name, provName: cleanName(v.name), pic: picInfo(cur)}; }
     const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16), token = crypto.randomBytes(24).toString("hex"), code = newCode();
     const u = {id, token, code, name: cleanName(v.name || b.name), avatar: int(b.avatar, 999), frame: 0, level: 1, xp: 0, won: 0, wins: 0, games: 0,
       friends: [], referredBy: null, referrals: [], grants: [], inbox: [], gifted: {}, created: Date.now(), lastSeen: Date.now(),
       country: geoCountry(req) || cleanCountry(b.country), league: 0, week: curWeek(), weekWon: 0, auth: {[provider]: v.sub}};
-    db.users[id] = u; db.codes[code] = id; noteTg(u); markDirty();
-    return {existing: false, created: true, id, token, code, save: null, savedAt: 0, name: u.name, provName: u.name};
+    db.users[id] = u; db.codes[code] = id; noteTg(u); notePic(u, v, provider); if (provider === "telegram") ensureTgPic(u); markDirty();
+    return {existing: false, created: true, id, token, code, save: null, savedAt: 0, name: u.name, provName: u.name, pic: picInfo(u)};
   },
   async "POST /api/register"(req) {
     if (limited(req, "reg", 10)) return [429, {error: "slow down"}];
@@ -1201,6 +1296,7 @@ const routes = {
     for (const pu of Object.values(db.purchases || {})) if (pu.user === u.id) pu.user = null;
     for (const o of Object.values(db.p2p || {})) if (o.u === u.id) o.u = null;
     for (const [id, r] of Object.entries(db.replays || {})) if (r.u === u.id) delete db.replays[id];   // the shots he shared
+    if (u.pid) { pidIndex.delete(u.pid); picDrop(u.pid); }
     delete db.codes[u.code]; delete db.users[u.id]; markDirty();
     const w = clients.get(u.id); if (w) { clients.delete(u.id); try { w.close(4002, "deleted"); } catch (e) {} }
     return {ok: true};
@@ -1210,7 +1306,8 @@ const routes = {
     const b = await jsonBody(req);
     rollWeek();   // the week that just ended is closed (ranked, prizes granted) BEFORE this player's fields are moved to the new week; the 60-second timer alone leaves a minute after Monday 00:00 UTC in which a sync wiped last week's result
     if (b.name) u.name = cleanName(b.name);
-    if (b.avatar !== undefined) u.avatar = int(b.avatar, 999);
+    if (b.avatar !== undefined) { const av = int(b.avatar, 0x7fffffff); if (av < PID_MIN) u.avatar = Math.min(av, 999); else if (hasPic(u) && av === u.pid) u.avatar = av; }   // a number from 1000 up is a photo: only the player's own (a made-up one is ignored)
+    ensureTgPic(u);
     if (b.frame !== undefined) u.frame = int(b.frame, 999);   // (was 99: the game has 128 frames, so every frame from #100 on - the scary, VIP and newest ones - was stored as #99 and the other players saw a wrong, oversized frame: the owner's arrow, Nov 16)
     if (cleanCountry(b.country)) u.country = cleanCountry(b.country);
     else if (!u.country) u.country = geoCountry(req);
@@ -1226,7 +1323,14 @@ const routes = {
     if (u.week !== curWeek()) { u.week = curWeek(); u.weekWon = 0; }
     const grants = u.grants || []; u.grants = [];
     markDirty();
-    return {me: publicUser(u), tc: tcOf(u), chest: chestOf(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}, notify: notifyInfo(u), tgOff: !!(u.tg && u.tg.off)};
+    return {me: publicUser(u), tc: tcOf(u), chest: chestOf(u), grants, inbox: u.inbox || [], referredBy: u.referredBy, referrals: u.referrals.length, lastWeek: u.lastWeek || null, bought: u.bought || {}, cheer: u.cheer || {got: {}, sent: 0}, notify: notifyInfo(u), tgOff: !!(u.tg && u.tg.off), pic: picInfo(u)};
+  },
+
+  // my photo is no longer used in the game: the picture, its address and its number are forgotten (the avatar goes back to a game one)
+  async "POST /api/photo/off"(req, u) {
+    if (u.pid) { pidIndex.delete(u.pid); picDrop(u.pid); if (u.avatar === u.pid) u.avatar = 0; }
+    delete u.pid; delete u.pic; delete u.picTg; delete u.picSrc; u.picTry = Date.now() + 30 * 864e5; markDirty();   // (picTry: the Bot API is not asked for it again for a month)
+    return {ok: true};
   },
 
   async "POST /api/referral"(req, u) {
@@ -1931,6 +2035,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/api/tg/webhook") return tgWebhook(req, res);
     if (req.method === "POST" && url.pathname === "/api/stripe/webhook") return stripeWebhook(req, res);
     if (req.method === "POST" && url.pathname === "/api/paddle/webhook") return paddleWebhook(req, res);
+    if (req.method === "GET" && url.pathname.startsWith("/api/photo/")) return photoPage(req, res, url);
     if (req.method === "GET" && url.pathname === "/pay" && PADDLE_TOKEN) return payPage(res);
     if (req.method === "GET" && (url.pathname === "/auth/google/start" || url.pathname === "/auth/facebook/start")) return authStart(req, res, url);
     if (req.method === "GET" && (url.pathname === "/privacy" || url.pathname === "/terms" || url.pathname === "/refund" || url.pathname === "/data-deletion")) return legalPage(res, url.pathname);
