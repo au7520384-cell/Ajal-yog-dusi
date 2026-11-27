@@ -19095,7 +19095,7 @@ setInterval(() => {
 .tcres{text-align:center;font:900 28px system-ui;margin:2px 0 6px;color:#c9d6f5}.tcres.w{color:#7dff9a}.tcres.l{color:#ff8a8a}
 `; document.head.appendChild(st); }
 // ---------------------------------------------------------------- the Arcade row's picture (the owner, Nov 27: "in place of the 1st (the two painted cards) put the 2nd, like this")
-// His own artwork, WebP 1020 x 1024: two tall cards in a gold frame, a crown on each - left AIR HOCKEY (blue), right TABLE TENNIS (green). The words ("Air Hockey", "Table Tennis", "Play with friends and computer") are PART OF THE PICTURE
+// His own artwork, WebP 1020 x 1024: two tall cards in a gold frame, a crown on each - left AIR HOCKEY (blue), right TABLE TENNIS (green). The words ('Air Hockey', 'Table Tennis', 'Play with friends and computer') are PART OF THE PICTURE
 // (English for every language, as in the Board games row). The two keys lie over the cards (HK_PANELS in pro_f_hockey.js: left edge and width of each card, % of the picture's width).
 const HK_BAN = 'img/dd2659aa9d3fef.webp';
 // ---------------------------------------------------------------- AIR HOCKEY (the owner, Nov 26: add the air hockey of his video: a 3D air hockey, Japan vs South Korea, first goal wins)
@@ -19786,7 +19786,7 @@ function mfbScene(kind) {   // kind: night / day / shot (the alley) / dusk (the 
 // ---------------------------------------------------------------- glass windows (the owner, Nov 27: "put the 2nd in place of the 1st, the 4th in place of the 3rd, make the rest as beautiful as the 2nd and the 4th")
 // The lists of the games (shashka, magic chess, mafia, air hockey, table tennis, trick shot, lessons, bots, 9-ball, 2v2): glossy glass rows, the online row in purple, a glass Close key, a sunburst behind the picture, sparkles on the window.
 // The online rooms (#brRoom: shashka, magic chess, mafia; #tnRoom: 2v2): a purple-blue starry window with gold filigree in the corners, glass stake chips, a glowing Create key and code field.
-// Pure CSS + two small generated SVG pictures (the corners, the star field); nothing animates except a slow twinkle (off for "reduce motion").
+// Pure CSS + two small generated SVG pictures (the corners, the star field); the only motion is a short hover / press change of the rows (off for "reduce motion").
 const glamUrl = s => 'url("data:image/svg+xml,' + encodeURIComponent(s).replace(/"/g, "%22") + '")';
 const glamGold = '<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c4"/><stop offset=".45" stop-color="#f4b82e"/><stop offset="1" stop-color="#9a6a14"/></linearGradient>';
 function glamCorner(fx, fy, light) {   // the gold filigree of one corner of a window (drawn for the top-left one, flipped for the others)
@@ -19823,7 +19823,7 @@ html #modal .panel.glam #mBtns .btn{--k1:#9fd8ff;--k2:#3b86ee;--k3:#1d52c8;--k4:
   padding:clamp(4px,calc(1.5 * var(--u-vh,1vh)),9px) clamp(16px,2.4vw,28px)!important;border:3px solid transparent!important;border-image:none!important;border-radius:999px!important;clip-path:none!important;filter:none;
   background:linear-gradient(180deg,var(--k1) 0,var(--k2) 13%,var(--k3) 42%,var(--k4) 53%,var(--k3) 76%,var(--k5) 100%) padding-box,linear-gradient(180deg,#fff6c8,#e0a030 42%,#8a5a10 56%,#ffe08a) border-box!important;
   box-shadow:0 0 0 1px #2e1c04,0 0 14px var(--kg),0 4px 9px #000b,inset 0 0 12px #ffffff40,inset 0 -3px 6px #ffffff33!important;
-  color:#fff8e0;font-family:Philosopher,Georgia,"Times New Roman",serif;font-weight:800;font-size:clamp(15px,calc(3.6 * var(--u-vh,1vh) + 4px),22px);letter-spacing:.02em;text-shadow:0 2px 0 #0a1a50,0 0 10px #ffffff66}
+  color:#fff8e0;font-family:Philosopher,Georgia,'Times New Roman',serif;font-weight:800;font-size:clamp(15px,calc(3.6 * var(--u-vh,1vh) + 4px),22px);letter-spacing:.02em;text-shadow:0 2px 0 #0a1a50,0 0 10px #ffffff66}
 html #modal .panel.glam #mBtns .btn::before{display:block;content:"";position:absolute;z-index:-1;left:5%;right:5%;top:2px;height:46%;border-radius:999px 999px 60% 60%/999px 999px 100% 100%;background:linear-gradient(180deg,#ffffffcc,#ffffff33 70%,#ffffff08)}
 html #modal .panel.glam #mBtns .btn::after{content:"";position:absolute;z-index:-1;left:14%;right:14%;bottom:1px;height:2px;border-radius:2px;background:linear-gradient(90deg,#0000,#dff2ffcc,#0000)}
 html #modal .panel.glam #mBtns .btn:hover{filter:brightness(1.12)}html #modal .panel.glam #mBtns .btn:active{transform:translateY(1px) scale(.99)}
