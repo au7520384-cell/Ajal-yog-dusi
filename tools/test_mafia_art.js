@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// The painted Mafia screen (the owner, Nov 27: "your Mafia is a toy; the doctor, the commissar, the citizen and the mafia each a beautiful animated picture"):  node tools/test_mafia_art.js   (~1 min, no server)
+// The Mafia screen with the owner's role pictures (the owner, Nov 27: "your Mafia is a toy; the doctor, the commissar, the citizen and the mafia each a beautiful animated picture", then his own four illustrations):  node tools/test_mafia_art.js   (~1 min, no server)
 // A made-up match state is put on the real screen (no server needed) and what the player sees is checked:
-//  - two painted villages (night and day) under the screen, the day one shows from the day on; four role portraits; my role chip is the portrait of my role
+//  - two painted villages (night and day) under the screen, the day one shows from the day on; the four role pictures (a card and a face each) decode; my role chip is the face of my role
 //  - the role card at the start (a tap closes it); the shot (cracked glass) and then the role of the one who died; the rescue; the vote-out; a tie
 //  - the seats stand round the village (me at the bottom): inside the page, not on each other, not on the centre circle, not on the right column, at 5 sizes and 5 - 8 seats
 //  - a dead seat has the cross and the face of its role; a seat that is alive and hidden has no face
@@ -32,41 +32,44 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   };
   const p = await open({ width: 915, height: 412 });
   // ---- the pictures
-  const art = await p.evaluate(() => { const o = {}; for (const r of ["mafia", "doctor", "sheriff", "citizen"]) { const d = document.createElement("div"); d.innerHTML = mfaPortrait(r); const s = d.firstChild; o[r] = { cls: s.getAttribute("class"), eyes: s.querySelectorAll(".mfa-eye").length, body: s.querySelectorAll(".mfa-body").length, head: s.querySelectorAll(".mfa-head").length }; } return o; });
-  ok(Object.entries(art).every(([r, a]) => a.cls.includes("mfa-" + r) && a.eyes === 2 && a.body === 1 && a.head === 1), "four role portraits: mafia, doctor, sheriff, citizen, each with a body, a head and two eyes that blink", art);
+  const art = await p.evaluate(async () => { const o = {}; const load = u => new Promise(res => { const i = new Image(); i.onload = () => res([i.naturalWidth, i.naturalHeight]); i.onerror = () => res([0, 0]); i.src = u; });
+    for (const r of ["mafia", "doctor", "sheriff", "citizen"]) o[r] = { card: await load(MFA_IMG[r].card), face: await load(MFA_IMG[r].face), faceHtml: mfaFace(r).includes("f-" + r), artHtml: mfaArt(r).includes("a-" + r) }; return o; });
+  ok(Object.values(art).every(a => a.card[0] === 1100 && a.card[1] === 435 && a.face[0] === 176 && a.faceHtml && a.artHtml), "four role pictures (the owner's illustrations): a card 1100 x 435 and a face 176 x 176 each, they decode", art);
+  const bg = await p.evaluate(() => { const o = {}; for (const r of ["mafia", "doctor", "sheriff", "citizen"]) { const d = document.createElement("div"); d.innerHTML = mfaFace(r) + mfaArt(r); document.body.appendChild(d); o[r] = [...d.children].map(e => getComputedStyle(e).backgroundImage.startsWith("url(")); d.remove(); } return o; });
+  ok(Object.values(bg).every(a => a[0] && a[1]), "the picture classes really carry the pictures (a CSS background each)", bg);
   const sc = await p.evaluate(() => { __mf("night", { role: "mafia", mates: [3] }); return { layers: document.querySelectorAll("#mfScr .mf-bg svg.mfa-scene").length, win: document.querySelectorAll("#mfScr .mfa-win").length, trees: document.querySelectorAll("#mfScr .mfa-sway").length, crows: document.querySelectorAll("#mfScr .mfa-crow").length, stars: document.querySelectorAll("#mfScr .mfa-tw").length }; });
   ok(sc.layers === 2 && sc.win > 8 && sc.trees >= 8 && sc.crows >= 6 && sc.stars >= 40, "two painted villages under the screen: lit windows, swaying trees, crows, stars", sc);
   const op = async () => p.evaluate(() => getComputedStyle(document.querySelector("#mfScr .mf-bg.d")).opacity);
   await sleep(1700); ok(+(await op()) < .05, "the night: the day village is hidden", await op());
   await p.evaluate(() => { __mf("day", { role: "doctor" }); mfSunrise("day"); }); await sleep(1800); ok(+(await op()) > .95, "the day: the day village shows (the sun rises)", await op());
   await p.evaluate(() => __mf("night", { role: "sheriff", found: [{ seat: 2, mafia: false }] }));
-  const chip = await p.evaluate(() => ({ svg: !!document.querySelector("#mfRole .mfa-port.mfa-sheriff"), txt: document.getElementById("mfRole").textContent }));
-  ok(chip.svg && /Sheriff/.test(chip.txt), "my role chip is the painted face of my role", chip);
+  const chip = await p.evaluate(() => ({ face: !!document.querySelector("#mfRole .mfa-face.f-sheriff"), txt: document.getElementById("mfRole").textContent }));
+  ok(chip.face && /Sheriff/.test(chip.txt), "my role chip is the face of my role (the owner's picture)", chip);
   // ---- the events
-  const ovState = () => p.evaluate(() => { const o = document.getElementById("mfOv"); return { on: o.classList.contains("on"), cls: o.className, h2: (o.querySelector("h2") || {}).textContent || "", name: (o.querySelector("b") || {}).textContent || "", port: !!o.querySelector(".mfa-port"), crack: !!o.querySelector(".mf-crack"), heal: !!o.querySelector(".mf-heal"), x: !!o.querySelector(".mf-x"), paths: o.querySelectorAll(".mf-crack path").length }; });
+  const ovState = () => p.evaluate(() => { const o = document.getElementById("mfOv"); return { on: o.classList.contains("on"), cls: o.className, h2: (o.querySelector("h2") || {}).textContent || "", name: (o.querySelector("b") || {}).textContent || "", port: !!o.querySelector(".mfa-art"), role: ((o.querySelector(".mfa-art") || {}).className || "").replace(/.*a-/, ""), crack: !!o.querySelector(".mf-crack"), heal: !!o.querySelector(".mf-heal"), x: !!o.querySelector(".mf-x"), paths: o.querySelectorAll(".mf-crack path").length }; });
   for (const role of ["mafia", "doctor", "sheriff", "citizen"]) {
     await p.evaluate(r => { __mf("reveal", { role: r }); mfEvent(MFX.v); }, role); await sleep(500); const s = await ovState();
-    ok(s.on && s.port && s.h2.toLowerCase() === { mafia: "mafia", doctor: "doctor", sheriff: "sheriff", citizen: "citizen" }[role], `the match opens with the role card of a ${role}: the portrait and the name`, s);
+    ok(s.on && s.port && s.role === role && s.h2.toLowerCase() === role, `the match opens with the role card of a ${role}: his picture over the screen and the name`, s);
   }
   await p.evaluate(() => document.getElementById("mfOv").click()); await sleep(200); ok(!(await ovState()).on, "a tap closes the role card");
   const D = { alive: [true, true, false, true, true, true, true, true], dead: { 2: "citizen" }, role: "doctor", log: [{ d: 1, k: "died", seat: 2, role: "citizen" }] };
   await p.evaluate(d => { __mf("day", d); mfEvent(MFX.v); }, D); await sleep(900); let s = await ovState();
   ok(s.on && s.crack && s.paths >= 3 && /shot in the night/i.test(s.h2) && s.name === "Azamat", "a night kill: the cracked glass over the victim, 'Shot in the night', the name", s);
   await sleep(2400); s = await ovState();
-  ok(s.on && s.port && /citizen/i.test(s.h2) && s.name === "Azamat", "...then the role of the one who died (the citizen's portrait)", s);
+  ok(s.on && s.port && s.role === "citizen" && /citizen/i.test(s.h2) && s.name === "Azamat", "...then the role of the one who died (the citizen's picture)", s);
   await sleep(3400); ok(!(await ovState()).on, "...and the pictures go away by themselves");
   await p.evaluate(() => { __mf("day", { role: "doctor", log: [{ d: 1, k: "none" }] }); mfEvent(MFX.v); }); await sleep(600); s = await ovState();
   ok(s.on && s.heal && /Nobody died/i.test(s.h2), "nobody died: the green cross (the doctor's rescue stays anonymous)", s);
   const O = { day: 2, role: "citizen", log: [{ d: 1, k: "out", seat: 4, role: "mafia" }], alive: [true, true, true, true, false, true, true, true], dead: { 4: "mafia" } };
   await p.evaluate(d => { __mf("night", d); mfEvent(MFX.v); }, O); await sleep(700); s = await ovState();
   ok(s.on && s.x && /voted out/i.test(s.h2) && !s.crack, "voted out: the cross over the player, no glass", s);
-  await sleep(2400); s = await ovState(); ok(s.on && s.port && /mafia/i.test(s.h2) && s.name === "Bahodir", "...then his role (the mafia's portrait)", s);
+  await sleep(2400); s = await ovState(); ok(s.on && s.port && s.role === "mafia" && /mafia/i.test(s.h2) && s.name === "Bahodir", "...then his role (the mafia's picture)", s);
   await p.evaluate(() => { __mf("night", { day: 2, role: "citizen", log: [{ d: 1, k: "tie" }] }); mfEvent(MFX.v); }); await sleep(500); s = await ovState();
   ok(s.on && /tied/i.test(s.h2), "a tie: a short banner", s);
   await p.evaluate(() => { __mf("vote", { role: "citizen" }); mfEvent(MFX.v); }); await sleep(300); ok(!(await ovState()).on, "a phase that has nothing to tell shows no picture");
   // ---- the seats
   await p.evaluate(d => __mf("day", d), D);
-  const seats = await p.evaluate(() => [...document.querySelectorAll("#mfScr .mf-p")].map((e, i) => ({ dead: e.classList.contains("dead"), x: !!e.querySelector(".mf-x"), mini: !!e.querySelector(".mf-mini"), role: (e.className.match(/r-(\w+)/) || [])[1] || "" })));
+  const seats = await p.evaluate(() => [...document.querySelectorAll("#mfScr .mf-p")].map((e, i) => ({ dead: e.classList.contains("dead"), x: !!e.querySelector(".mf-x"), mini: !!e.querySelector(".mf-mini .mfa-face"), role: (e.className.match(/r-(\w+)/) || [])[1] || "" })));
   ok(seats[2].dead && seats[2].x && seats[2].mini && seats[2].role === "citizen", "a dead seat: the cross and the face of its role", seats[2]);
   ok(seats.every((t, i) => i === 2 || i === 0 || !t.mini), "a seat that is alive and hidden shows no face", seats.map(t => t.mini));
   ok(seats[0].mini && seats[0].role === "doctor", "my seat shows my own role", seats[0]);
