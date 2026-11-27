@@ -17696,14 +17696,14 @@ function shRender() {
   // the cells: the last move, the selected piece, the landing cells
   const sel = SHU.sel, cands = sel.length ? legal.filter(m => sel.every((s, k) => m.path[k] === s)) : [], nexts = new Set(cands.filter(m => m.path.length > sel.length).map(m => m.path[sel.length]));
   const last = G.last ? new Set([G.last.path[0], G.last.path[G.last.path.length - 1]]) : new Set(), must = mine && legal.length && legal[0].caps.length ? new Set(legal.map(m => m.path[0])) : new Set();
-  board.querySelectorAll(".sq").forEach(el => { const i = +el.dataset.i, [r, c] = shCell(i); el.style.left = c * 12.5 + "%"; el.style.top = r * 12.5 + "%";
-    el.dataset.l = (r === 7 ? "abcdefgh"[SHU.flip ? 7 - (i & 7) : i & 7] : "") + (c === 0 ? 8 - (SHU.flip ? 7 - (i >> 3) : i >> 3) : ""); el.classList.toggle("last", last.has(i)); el.classList.toggle("sel", sel[0] === i || sel.includes(i)); el.classList.toggle("opt", nexts.has(i)); });
+  board.querySelectorAll(".sq").forEach(el => { const i = +el.dataset.i, [r, c] = shCell(i), lf = c * 12.5 + "%", tp = r * 12.5 + "%"; if (el.style.left !== lf) el.style.left = lf; if (el.style.top !== tp) el.style.top = tp;
+    { const lb = (r === 7 ? "abcdefgh"[SHU.flip ? 7 - (i & 7) : i & 7] : "") + (c === 0 ? 8 - (SHU.flip ? 7 - (i >> 3) : i >> 3) : ""); if (el.dataset.l !== lb) el.dataset.l = lb; } el.classList.toggle("last", last.has(i)); el.classList.toggle("sel", sel[0] === i || sel.includes(i)); el.classList.toggle("opt", nexts.has(i)); });
   let h = "";
   for (let i = 0; i < 64; i++) { const p = G.b[i]; if (!p) continue; const [r, c] = shCell(i);
     h += `<div class="pc ${p > 0 ? "w" : "b"}${Math.abs(p) === 2 ? " k" : ""}${must.has(i) ? " must" : ""}${sel.length && sel[0] === i ? " up" : ""}" data-i="${i}" style="left:${c * 12.5}%;top:${r * 12.5}%"><i>${Math.abs(p) === 2 ? SH_CROWN : ""}</i></div>`; }
-  pcs.innerHTML = h;
+  if (pcs.__h !== h) { pcs.innerHTML = h; pcs.__h = h; }   // (the pictures of a card / the discs are not made again at every tap: on a phone that was a blink)
   const cards = ov.querySelectorAll(".sh-pl"), topI = SHU.flip ? 0 : 1;   // (my colour at the bottom: the opponent's card above the message, mine below it)
-  cards[0].innerHTML = shPlayerCard(topI); cards[1].innerHTML = shPlayerCard(1 - topI);
+  { const c0 = shPlayerCard(topI), c1 = shPlayerCard(1 - topI); if (cards[0].__h !== c0) { cards[0].innerHTML = c0; cards[0].__h = c0; } if (cards[1].__h !== c1) { cards[1].innerHTML = c1; cards[1].__h = c1; } }
   cards[0].classList.toggle("turn", !G.over && G.side === (topI === 0 ? 1 : -1)); cards[1].classList.toggle("turn", !G.over && G.side === (topI === 0 ? -1 : 1));
   let msg = "";
   if (G.over) msg = "";
@@ -17730,6 +17730,7 @@ function shTap(i) {
 }
 function shAnim(mv, done) {   // the piece slides over its route, the pieces it takes fade as it passes them
   const pcs = $("shPcs"), tok = SHU.tok, from = mv.path[0], el = pcs.querySelector(`.pc[data-i="${from}"]`);
+  pcs.__h = null;   // (the discs are changed in place from here on: the next shRender makes them again)
   if (!el) return done();
   el.classList.add("fly"); el.style.zIndex = 5; let k = 1; const hop = () => {
     if (tok !== SHU.tok) return;
