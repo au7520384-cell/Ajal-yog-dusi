@@ -17650,7 +17650,7 @@ const shTurnMine = () => { const G = SHU.G; return !!G && !G.over && !SHU.busy &
 const SH_CROWN = '<svg viewBox="0 0 24 24"><path d="M3 18.5l1.6-10 4.6 4.2L12 5.5l2.8 7.2 4.6-4.2 1.6 10z" fill="#ffe27a" stroke="#8a5a10" stroke-width="1.2" stroke-linejoin="round"/><rect x="3" y="18.5" width="18" height="2.4" rx="1" fill="#ffcf3d" stroke="#8a5a10" stroke-width="1"/></svg>';
 function shEnsure() {
   let ov = $("shScr"); if (ov) return ov;
-  ov = document.createElement("div"); ov.id = "shScr";
+  ov = document.createElement("div"); ov.id = "shScr"; shBitmap(SH_LT, u => ov.style.setProperty("--lt", u)); shBitmap(SH_DK, u => ov.style.setProperty("--dk", u));
   ov.innerHTML = `<div class="sh-wrap"><div class="sh-info"><div class="sh-pl" data-s="opp"></div><div class="sh-msg" id="shMsg"></div><div class="sh-pl" data-s="me"></div></div>
     <div class="sh-board" id="shBoard">${Array.from({length: 64}, (_, i) => `<button class="sq ${((i >> 3) + (i & 7)) % 2 ? "dk" : "lt"}" data-i="${i}" aria-label=""></button>`).join("")}<div class="sh-pcs" id="shPcs"></div></div>
     <div class="sh-btns"><button class="sh-b" data-a="mic" title="" style="display:none"></button><button class="sh-b" data-a="spk" title="" style="display:none"></button><button class="sh-b" data-a="hint" title="">💡</button><button class="sh-b" data-a="tilt" title="">3D</button><button class="sh-b" data-a="undo" title="">↩</button><button class="sh-b" data-a="draw" title="">🤝</button><button class="sh-b" data-a="resign" title="">🏳</button><button class="sh-b red" data-a="exit" title="">✕</button></div></div>`;
@@ -17845,6 +17845,9 @@ function shArt() {   // the card's picture, painted in code: a corner of the boa
 // two grooves on the top. The stone is painted by the browser itself (an SVG noise, no pictures to download); the whole board can stand up in 3D (the 3D key: a tilted view from my side, see .tilt3d).
 const shTex = (fill, r, g, b, a, fx, seed) => 'url("data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='f' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='${fx}' numOctaves='5' seed='${seed}'/><feColorMatrix values='0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0 0 0 1.25 -.42'/></filter><rect width='160' height='160' fill='${fill}'/><rect width='160' height='160' filter='url(#f)' opacity='${a}'/></svg>`) + '")';
 const SH_LT = shTex("#ece1cc", .58, .47, .32, .62, ".011 .019", 3), SH_DK = shTex("#18181c", .9, .9, .95, .1, ".05 .03", 8);
+// (Nov 28, the owner: on his phone the screen blinked off and on at every move) An SVG noise filter (5 octaves) is run by the browser every time a tile of the board is painted, 64 squares of it: on a phone's GPU that is the heaviest thing on this screen.
+// So the two stones are drawn ONCE into a 160 x 160 bitmap (the same picture) and the squares use that; the SVG stays as the picture until the bitmap is ready (or when the browser cannot make it).
+const shBitmap = (svgUrl, done) => { const m = /^url\("(.*)"\)$/.exec(svgUrl); if (!m) return; const im = new Image(); im.onload = () => { try { const cv = document.createElement("canvas"); cv.width = cv.height = 160; cv.getContext("2d").drawImage(im, 0, 0, 160, 160); cv.toBlob(b => { if (b) done("url(" + URL.createObjectURL(b) + ")"); }, "image/png"); } catch (e) {} }; im.src = m[1]; };
 (function shStyle() {
   const st = document.createElement("style");
   st.textContent = `#shScr{position:fixed;inset:0;z-index:99983;background:radial-gradient(circle at 50% 40%,#1c2c6a 0,#0a1030 62%,#04061a);display:none;align-items:center;justify-content:center;zoom:var(--uiz,1);color:#fff;-webkit-user-select:none;user-select:none}
