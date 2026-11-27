@@ -39,7 +39,7 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     await A.evaluate(() => document.querySelector('#miniBoards [data-g="mafia"]').click()); await sleep(600);
     ok((await A.evaluate(() => [...document.querySelectorAll("#mExtra .pro-row")].map(r => r.dataset.id))).join() === "solo,online", "the card opens the list: with bots (alone) or friends online");
     if (SHOT) await A.screenshot({ path: path.join(SHOT, "01_pick.png") });
-    await A.evaluate(() => { window.__sfx = []; for (const k of ["night", "day", "knife", "heal", "bell", "knock", "reveal", "win", "lose", "tick"]) { const f = Snd[k]; Snd[k] = (...a) => { window.__sfx.push(k); return f.apply(Snd, a); }; } });   // (the sounds of the game are counted)
+    await A.evaluate(() => { window.__sfx = []; for (const k of ["night", "owl", "day", "shot", "heal", "bell", "knock", "reveal", "win", "lose", "tick"]) { const f = Snd[k]; Snd[k] = (...a) => { window.__sfx.push(k); return f.apply(Snd, a); }; } });   // (the sounds of the game are counted)
     await A.evaluate(() => document.querySelector('#mExtra [data-id="solo"]').click());
     ok(await until(() => A.evaluate(() => MFX.on && !!MFX.v), 20000), "alone: a room is made and started at once, the Mafia screen opens");
     const first = await A.evaluate(() => ({ cls: document.getElementById("mfScr").className, tiles: document.querySelectorAll("#mfScr .mf-p").length, me: document.querySelectorAll("#mfScr .mf-p.me").length, bots: document.querySelectorAll("#mfScr .mf-p small").length && [...document.querySelectorAll("#mfScr .mf-p small")].filter(s => s.textContent.includes("🤖")).length, role: MFX.v.role, card: document.getElementById("mfRole").textContent, rolesField: MFX.v.roles }));
@@ -60,8 +60,8 @@ const until = async (fn, to = 15000, step = 150) => { const t0 = Date.now(); whi
     ok(leak === 0, "a seat that is alive, not me and not my mate never showed a role icon", leak);
     await until(() => A.evaluate(() => window.__sfx.some(x => x === "win" || x === "lose")), 4000);   // (the end's sound comes a moment after the last view)
     const sfx = await A.evaluate(() => window.__sfx.slice()), sc = k => sfx.filter(x => x === k).length;
-    ok(sc("reveal") === 1 && sc("night") >= 1 && sc("bell") >= 1 && (sc("day") >= 1) && (sc("win") + sc("lose") === 1), "Mafia has the sounds of play (the owner, Nov 25): the roles are dealt (1), the night falls, the day breaks, the bell of the vote, then one win or lose at the end", sfx);
-    ok(sc("knife") + sc("heal") >= 1, "every morning has its sound: a knife when somebody was killed, a rescue chime when nobody died", sfx);
+    ok(sc("reveal") === 1 && sc("night") >= 1 && sc("owl") >= 1 && sc("bell") >= 1 && (sc("day") >= 1) && (sc("win") + sc("lose") === 1), "Mafia has the sounds of play (the owner, Nov 25 / 27): the roles are dealt (1), the night falls (and an owl calls), the day breaks (the morning birds), the bell of the vote, then one win or lose at the end", sfx);
+    ok(sc("shot") + sc("heal") >= 1, "every morning has its sound: a rifle shot when somebody was killed, a rescue chime when nobody died", sfx);
     ok(await A.evaluate(() => { const g = document.querySelector('#mfScr [data-a="go"]'); return getComputedStyle(g).display !== "none" && /Play again/.test(g.textContent); }), "at the end the screen has its own 'Play again' key (it never just stands there)");
     ok(picked >= 2, "a tap on a seat in the night / the vote picks it (the seat is marked)", picked);
     ok(await until(() => modal(A).then(m => m && /win/i.test(m.t)), 6000), "the result window comes", await modal(A));
