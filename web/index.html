@@ -4099,6 +4099,68 @@ function mfMake(k) {   // the buffer of one of them, built the first time it is 
   ch.forEach((c, i) => b.getChannelData(i).set(c));   // (copyToChannel is missing in old Safari)
   return (mfBuf[k] = b);
 }
+// ---- the sounds of the two arcade games (the owner, Nov 27: "the sounds are not like real tennis"): every impact is a struck object = a few decaying sine modes + a click + a thump, filled into an AudioBuffer once (no recordings)
+const arcs = (() => {
+  const rng = seed => { let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; };
+  const dec = (tau, SR) => { let e = 1; const k = Math.exp(-1 / (tau * SR)); return () => { const v = e; e *= k; return v; }; };
+  function bq(x, type, f, Q, SR) {   // RBJ biquad: lp / hp / bp
+    const w = 2 * Math.PI * f / SR, c = Math.cos(w), al = Math.sin(w) / (2 * Q), a0 = 1 + al, a1 = -2 * c / a0, a2 = (1 - al) / a0; let b0, b1, b2;
+    if (type === "lp") { b0 = (1 - c) / 2; b1 = 1 - c; b2 = b0; } else if (type === "hp") { b0 = (1 + c) / 2; b1 = -(1 + c); b2 = b0; } else { b0 = al; b1 = 0; b2 = -al; }
+    b0 /= a0; b1 /= a0; b2 /= a0; const y = new Float32Array(x.length); let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+    for (let i = 0; i < x.length; i++) { const o = b0 * x[i] + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = x[i]; y2 = y1; y1 = o; y[i] = o; }
+    return y;
+  }
+  const peak = x => { let p = 0; for (let i = 0; i < x.length; i++) { const v = Math.abs(x[i]); if (v > p) p = v; } return p || 1; };
+  // a struck thing. modes: [Hz, decay seconds, level]; noises: [filter, Hz, Q, decay, level] (a click or a scrape); jit: how much the pitches differ from one variant to the next
+  function strike(SR, len, R, o) {
+    const N = Math.round(SR * len), y = new Float32Array(N), jit = o.jit === undefined ? 0.025 : o.jit;
+    for (const [f, tau, a] of o.modes) { const w = 2 * Math.PI * f * (1 + (R() * 2 - 1) * jit) / SR, ph = R() * 6.2832, e = dec(tau, SR); for (let i = 0; i < N; i++) { const s = e(); if (s < 1e-4) break; y[i] += Math.sin(ph + w * i) * s * a; } }
+    for (const [type, f, Q, tau, a] of (o.noises || [])) { const z = new Float32Array(N); for (let i = 0; i < N; i++) z[i] = R() * 2 - 1; const b = bq(z, type, f, Q, SR), e = dec(tau, SR); for (let i = 0; i < N; i++) { const s = e(); if (s < 1e-4) break; y[i] += b[i] * s * a; } }
+    const at = Math.round(0.0004 * SR); for (let i = 0; i < at; i++) y[i] *= i / at;   // (no click from the first sample)
+    return y;
+  }
+  const norm = (y, p, soft) => { const k = p / peak(y); for (let i = 0; i < y.length; i++) { const v = y[i] * k; y[i] = soft ? Math.tanh(v * soft) / Math.tanh(soft) * p : v; } return y; };
+  const addAt = (dst, src, at, g) => { for (let i = 0, o = Math.round(at); i < src.length && o + i < dst.length; i++) if (o + i >= 0) dst[o + i] += src[i] * g; };
+  const sound = {
+    // table tennis: the ball (a thin plastic shell: high short rings) on a rubber-covered blade (a woody, softer "pok")
+    ttPaddle: (SR, v) => { const R = rng(1100 + v * 37); return [norm(strike(SR, 0.16, R, {modes: [[2350, 0.0042, 0.66], [3900, 0.0028, 0.42], [5700, 0.002, 0.24], [480, 0.017, 0.46], [950, 0.012, 0.4], [1620, 0.008, 0.28], [190, 0.012, 0.22]],
+      noises: [["bp", 3500, 0.7, 0.0016, 0.9], ["bp", 1800, 0.8, 0.0065, 0.32]]}), 0.9)]; },
+    // the ball on the table: a short hollow "tok" (the table's board rings under the ball's shell)
+    ttBounce: (SR, v) => { const R = rng(2200 + v * 41); return [norm(strike(SR, 0.11, R, {modes: [[2500, 0.0036, 0.6], [4100, 0.0025, 0.4], [7000, 0.0015, 0.12], [980, 0.012, 0.42], [1900, 0.008, 0.28], [310, 0.02, 0.2]],
+      noises: [["hp", 2500, 0.7, 0.001, 0.65]]}), 0.85)]; },
+    // the ball in the net: a soft tick of the cord and a dull flap
+    ttNet: (SR, v) => { const R = rng(3300 + v); return [norm(strike(SR, 0.24, R, {modes: [[620, 0.03, 0.3], [150, 0.04, 0.35]], noises: [["bp", 2300, 0.8, 0.02, 0.5], ["bp", 900, 0.7, 0.06, 0.25]]}), 0.7)]; },
+    // air hockey: the mallet on the puck, hard plastic on plastic: a loud, bright "clack"
+    hkHit: (SR, v) => { const R = rng(4400 + v * 53); return [norm(strike(SR, 0.2, R, {modes: [[1850, 0.014, 0.5], [3250, 0.009, 0.4], [5100, 0.005, 0.25], [900, 0.024, 0.45], [260, 0.02, 0.32]],
+      noises: [["hp", 1800, 0.7, 0.0012, 1.0], ["bp", 2600, 0.8, 0.008, 0.3]]}), 0.95, 1.6)]; },
+    // the puck on a rail: lower and woodier, with a quick second tap (it bounces twice)
+    hkRail: (SR, v) => { const R = rng(5500 + v * 61), a = strike(SR, 0.24, R, {modes: [[760, 0.024, 0.5], [1480, 0.015, 0.4], [2550, 0.009, 0.25], [190, 0.03, 0.4]], noises: [["bp", 2200, 0.8, 0.002, 0.5]]}), y = new Float32Array(a.length);
+      addAt(y, a, 0, 1); addAt(y, a, (0.009 + R() * 0.006) * SR, 0.42); return [norm(y, 0.9)]; },
+    // a goal: the puck drops into the slot (a low whump), rolls and rattles down the tray
+    hkGoal: (SR, v) => { const R = rng(6600), N = Math.round(SR * 0.75), y = new Float32Array(N);
+      { const e = dec(0.09, SR), s = dec(0.07, SR); let ph = 0; for (let i = 0; i < N; i++) { ph += 2 * Math.PI * (68 + 90 * s()) / SR; y[i] += Math.sin(ph) * e() * 0.7; } }
+      addAt(y, bq(Float32Array.from({length: N}, () => R() * 2 - 1), "lp", 700, 0.7, SR).map((x, i) => x * Math.exp(-i / SR / 0.1)), 0, 0.5);
+      for (const [t, g] of [[0.13, 0.5], [0.2, 0.38], [0.255, 0.3], [0.295, 0.22], [0.32, 0.15]]) addAt(y, strike(SR, 0.08, R, {modes: [[520, 0.03, 0.4], [1300, 0.012, 0.3]], noises: [["bp", 1500, 0.9, 0.006, 0.7]]}), t * SR, g);
+      return [norm(y, 0.9, 1.2)]; },
+    // the blower of the table: a loop of airy noise (two bands) and the hum of the fan
+    hkHum: (SR) => { const R = rng(7700), N = Math.round(SR * 2.4), P = N + Math.round(SR * 0.2), z = () => Float32Array.from({length: P}, () => R() * 2 - 1), a = bq(z(), "bp", 1500, 0.5, SR), b = bq(z(), "bp", 4200, 0.6, SR), y = new Float32Array(P);
+      for (let i = 0; i < P; i++) { const t = i / SR; y[i] = a[i] * 0.55 + b[i] * 0.3 + Math.sin(2 * Math.PI * 118 * t) * 0.05 + Math.sin(2 * Math.PI * 236 * t) * 0.03; }
+      const out = new Float32Array(N), X = P - N; for (let i = 0; i < N; i++) { out[i] = y[i]; if (i < X) out[i] = y[i] * (i / X) + y[N + i] * (1 - i / X); }   // (the tail fades into the head: no click where it loops)
+      return [norm(out, 0.5)]; }
+  };
+  return sound;
+})();
+const arcBuf = {}, ARC_N = {ttPaddle: 3, ttBounce: 3, ttNet: 1, hkHit: 3, hkRail: 3, hkGoal: 1, hkHum: 1}, ARC_KEYS = [["ttPaddle", 0], ["ttBounce", 0], ["hkHit", 0], ["hkRail", 0], ["ttPaddle", 1], ["ttBounce", 1], ["hkHit", 1], ["hkRail", 1], ["ttNet", 0], ["hkGoal", 0], ["hkHum", 0], ["ttPaddle", 2], ["ttBounce", 2], ["hkHit", 2], ["hkRail", 2]];
+let arcWarmed = false, airSrc = null;
+function arcMake(k, v) {   // one variant of one of them, built the first time it is needed (arcWarm builds them a little before)
+  const key = k + v; if (arcBuf[key] || !ac) return arcBuf[key];
+  const ch = arcs[k](ac.sampleRate, v), b = ac.createBuffer(ch.length, ch[0].length, ac.sampleRate); ch.forEach((c, i) => b.getChannelData(i).set(c));
+  return (arcBuf[key] = b);
+}
+function arcPlay(k, vol, bright, pan) {   // a random variant, a hair detuned; a soft hit is darker (lowpass), the side of the table is the side of the stereo picture
+  if (!ac) return false; const b = arcMake(k, (Math.random() * ARC_N[k]) | 0); if (!b) return false;
+  play(b, vol, 0.97 + Math.random() * 0.06, 2600 + 15000 * Math.max(0, Math.min(1, bright)), {g: 1, lp: 1, pan: Math.max(-0.5, Math.min(0.5, pan || 0)), wet: 0.07}); return true;
+}
 let mfWarmed = false;
 return {
 init,
@@ -4242,6 +4304,16 @@ mfWarm() {   // build the three buffers a little ahead, one at a time, when the 
   if (mfWarmed || !ac) return; mfWarmed = true;
   ["shot", "owl", "morning"].forEach((k, i) => setTimeout(() => { const go = () => { try { mfMake(k); } catch (e) {} }; if (window.requestIdleCallback) requestIdleCallback(go, {timeout: 4000}); else go(); }, 300 + i * 600));
 },
+arcWarm() {   // build the arcade sounds a little ahead, one at a time, when the browser is idle (not in the middle of a serve)
+  if (arcWarmed || !ac) return; arcWarmed = true;
+  ARC_KEYS.forEach(([k, v], i) => setTimeout(() => { const go = () => { try { arcMake(k, v); } catch (e) {} }; if (window.requestIdleCallback) requestIdleCallback(go, {timeout: 3000}); else go(); }, 200 + i * 120));
+},
+airHum(on) {   // the blower of the air hockey table: a quiet loop for as long as the game is open
+  try { if (airSrc) { const g = airSrc.g; g.gain.setTargetAtTime(0, ac.currentTime, 0.08); airSrc.s.stop(ac.currentTime + 0.5); airSrc = null; } } catch (e) { airSrc = null; }
+  if (!on || !ok()) return; let b = null; try { b = arcMake("hkHum", 0); } catch (e) {} if (!b) return;
+  const s = ac.createBufferSource(); s.buffer = b; s.loop = true; const g = ac.createGain(); g.gain.value = 0; s.connect(g); g.connect(master); s.start(); g.gain.setTargetAtTime(0.045, ac.currentTime, 0.3); airSrc = {s, g};
+},
+airLevel(k) { if (airSrc && ac) try { airSrc.g.gain.setTargetAtTime(0.03 + 0.07 * Math.max(0, Math.min(1, k)), ac.currentTime, 0.15); } catch (e) {} },   // (the faster the puck slides, the louder the air)
 heal() { if (!ok()) return; const t = now(); [880, 1175, 1568].forEach((f, i) => tone(t + i * 0.09, f, 0.5, 0.09, "sine")); },
 bell() { if (!ok()) return; const t = now(); tone(t, 392, 1.6, 0.15, "sine"); tone(t, 784, 1.2, 0.06, "sine"); tone(t + 0.01, 1176, 0.8, 0.035, "sine"); },
 knock() { if (!ok()) return; const t = now(); tone(t, 220, 0.09, 0.25, "square", 120); noise(t, 0.05, 0.12, "bandpass", 900, 1, 1200); },
@@ -4249,12 +4321,12 @@ reveal() { if (!ok()) return; const t = now(); noise(t, 0.35, 0.18, "bandpass", 
 // ---- the board games and the arcade tables (the billiards sounds clack / tick / foul are OFF on the menu screens, where these games run, so they have their own): a wooden piece, a warning, an air hockey puck, a rail, a horn
 piece(cap) { if (!ok()) return; const t = now(); noise(t, 0.04, 0.22, "bandpass", 1800, 1.4, 900); tone(t, 520, 0.07, 0.2, "triangle", 300); tone(t + 0.005, 190, 0.1, 0.14, "sine", 120); if (cap) { noise(t + 0.06, 0.05, 0.16, "bandpass", 2400, 1.2, 1200); tone(t + 0.07, 410, 0.08, 0.14, "triangle", 260); } },
 warn() { if (!ok()) return; const t = now(); tone(t, 250, 0.16, 0.2, "square"); tone(t + 0.18, 185, 0.28, 0.2, "square"); },
-puck(v) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 80) / 260); noise(t, 0.035, 0.1 + 0.2 * k, "bandpass", 2600, 1.6, 1500); tone(t, 760 + 500 * k, 0.06, 0.08 + 0.16 * k, "triangle", 320); },
-wallHit(v) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 60) / 220); tone(t, 300, 0.09, 0.04 + 0.12 * k, "sine", 130); noise(t, 0.03, 0.03 + 0.07 * k, "lowpass", 900, 0.8, 500); },
-paddle(v) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 300) / 800); noise(t, 0.03, 0.12 + 0.12 * k, "bandpass", 3200, 2, 1800); tone(t, 1250 + 500 * k, 0.045, 0.09 + 0.12 * k, "triangle", 700); },
-tbounce(v) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 200) / 420); tone(t, 620 + 200 * k, 0.04, 0.05 + 0.1 * k, "sine", 420); noise(t, 0.015, 0.04 + 0.06 * k, "highpass", 3500); },
-netHit() { if (!ok()) return; const t = now(); tone(t, 180, 0.12, 0.12, "sine", 90); noise(t, 0.08, 0.08, "bandpass", 800, 1, 500); },
-horn() { if (!ok()) return; const t = now(); tone(t, 196, 0.9, 0.12, "sawtooth", 190); tone(t, 294, 0.9, 0.09, "sawtooth", 288); tone(t + 0.02, 392, 0.8, 0.05, "square", 388); noise(t, 0.6, 0.05, "bandpass", 700, 0.8, 2200); },
+puck(v, pan) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 80) / 260); if (arcPlay("hkHit", 0.42 + 0.58 * k, 0.3 + 0.7 * k, pan)) return; noise(t, 0.035, 0.1 + 0.2 * k, "bandpass", 2600, 1.6, 1500); tone(t, 760 + 500 * k, 0.06, 0.08 + 0.16 * k, "triangle", 320); },
+wallHit(v, pan) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 60) / 220); if (arcPlay("hkRail", 0.25 + 0.6 * k, 0.25 + 0.75 * k, pan)) return; tone(t, 300, 0.09, 0.04 + 0.12 * k, "sine", 130); noise(t, 0.03, 0.03 + 0.07 * k, "lowpass", 900, 0.8, 500); },
+paddle(v, pan) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 300) / 800); if (arcPlay("ttPaddle", 0.38 + 0.62 * k, 0.3 + 0.7 * k, pan)) return; noise(t, 0.03, 0.12 + 0.12 * k, "bandpass", 3200, 2, 1800); tone(t, 1250 + 500 * k, 0.045, 0.09 + 0.12 * k, "triangle", 700); },
+tbounce(v, pan) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 200) / 420); if (arcPlay("ttBounce", 0.28 + 0.62 * k, 0.4 + 0.6 * k, pan)) return; tone(t, 620 + 200 * k, 0.04, 0.05 + 0.1 * k, "sine", 420); noise(t, 0.015, 0.04 + 0.06 * k, "highpass", 3500); },
+netHit(pan) { if (!ok()) return; const t = now(); if (arcPlay("ttNet", 0.8, 0.5, pan)) return; tone(t, 180, 0.12, 0.12, "sine", 90); noise(t, 0.08, 0.08, "bandpass", 800, 1, 500); },
+horn() { if (!ok()) return; const t = now() + (arcPlay("hkGoal", 0.9, 1, 0) ? 0.14 : 0); tone(t, 196, 0.9, 0.12, "sawtooth", 190); tone(t, 294, 0.9, 0.09, "sawtooth", 288); tone(t + 0.02, 392, 0.8, 0.05, "square", 388); noise(t, 0.6, 0.05, "bandpass", 700, 0.8, 2200); },
 };
 })();
 for (const k of ["clack", "rail", "pocket", "cue", "roll", "tray", "tableFx", "tick", "foul"]) { const f = Snd[k]; if (f) Snd[k] = (...a) => (mode === "menu" ? undefined : f.apply(Snd, a)); }   // the background demo match behind the menus must never make a sound
@@ -19100,6 +19172,7 @@ setInterval(() => {
 const HK_BAN = 'img/dd2659aa9d3fef.webp';
 // ---------------------------------------------------------------- AIR HOCKEY (the owner, Nov 26: add the air hockey of his video: a 3D air hockey, Japan vs South Korea, first goal wins)
 // A table seen in perspective, a puck, two mallets with the flag of their player, the lamp over each goal, and after a goal the camera zooms to the scorer (Japan SCORES). Against a bot (three levels) or two on one phone.
+// Nov 27 (the owner: the air hockey 'should be played lob ma lob like the tennis', i.e. face to face): the camera stands behind MY end of the table, as in the table tennis - my goal and mallet are the near ones, the other player's are far; the score sits in the free space at the side.
 // The table is a plane (X along the long side, Z across it, in "cm": 200 x 100), the physics is in these units; the picture is a pinhole camera over it (hkProj / hkUnproj) drawn on ONE canvas of 1280 x 720 that is scaled
 // to the screen, so the same code draws on a phone turned 90 degrees (the page's turned frame) and on a monitor. A finger is mapped back to the table with the screen's own corners (hkPoint), so it works under any CSS turn / zoom.
 const HKL = 200, HKW = 100, HKGW = 38, HKPR = 3.8, HKMR = 7.2, HKCW = 1280, HKCH = 720;
@@ -19107,19 +19180,23 @@ const HK_LV = {easy: {sp: 170, rt: 0.28, aim: 26}, mid: {sp: 290, rt: 0.14, aim:
 const HK = {on: false, tok: 0, mode: "bot", lv: "mid", to: 1, sc: [0, 0], pk: {x: 0, z: 0, vx: 0, vz: 0}, ml: [{x: -70, z: 0, vx: 0, vz: 0, tx: -70, tz: 0}, {x: 70, z: 0, vx: 0, vz: 0, tx: 70, tz: 0}], st: "serve", stT: 0, raf: 0, last: 0,
   names: ["", ""], flags: ["", ""], cc: ["", ""], lamp: [0, 0], zoom: {t: 0, side: 0}, ptr: {}, bt: 0, plan: null, slow: 0, sfxAt: 0, cam: null, serving: 0, goalFor: -1, seed: 1};
 const hkRnd = () => { HK.seed = (HK.seed * 1103515245 + 12345) & 0x7fffffff; return HK.seed / 0x7fffffff; };
-// ---- the camera: a pinhole over the table, fitted to the canvas
+// ---- the camera: a pinhole behind MY end of the table, looking up it (face to face, like the table tennis: my goal is the near one, the other player's the far one), fitted to the canvas
 function hkCamBuild() {
-  const cam = {x: 0, y: 118, z: -172}, tgt = {x: 0, y: 0, z: 8}, dx = tgt.x - cam.x, dy = tgt.y - cam.y, dz = tgt.z - cam.z, l = Math.hypot(dx, dy, dz), f = {x: dx / l, y: dy / l, z: dz / l}, u = {x: 0, y: f.z, z: -f.y};   // (right = +X, up = f x right)
-  const raw = (x, y, z) => { const ddx = x - cam.x, ddy = y - cam.y, ddz = z - cam.z, zc = ddx * f.x + ddy * f.y + ddz * f.z; return [ddx / zc, (ddy * u.y + ddz * u.z) / zc]; };
-  const pts = [[-110, -13, -58], [110, -13, -58], [-110, 8, 58], [110, 8, 58], [-110, 0, 0], [110, 0, 0], [0, 22, 0]].map(p => raw(p[0], p[1], p[2]));
+  const cam = {x: -196, y: 134, z: 0}, tgt = {x: 14, y: 0, z: 0};
+  let fx = tgt.x - cam.x, fy = tgt.y - cam.y, fz = tgt.z - cam.z; const fl = Math.hypot(fx, fy, fz); fx /= fl; fy /= fl; fz /= fl;
+  let rx = -fz, rz = fx; const rl = Math.hypot(rx, rz); rx /= rl; rz /= rl;   // right = forward x up(Y): the +Z side of the table is on my right
+  const ux = -rz * fy, uy = rz * fx - rx * fz, uz = rx * fy;   // up = right x forward
+  const raw = (x, y, z) => { const dx = x - cam.x, dy = y - cam.y, dz = z - cam.z, zc = dx * fx + dy * fy + dz * fz; return [(dx * rx + dz * rz) / zc, (dx * ux + dy * uy + dz * uz) / zc]; };
+  const pts = [[-112, -13, -58], [-112, -13, 58], [112, 8, -58], [112, 8, 58], [-106, 7, -57], [-106, 7, 57], [106, 7, -57], [106, 7, 57], [-112, 19, 0], [112, 19, 0]].map(p => raw(p[0], p[1], p[2]));
   const minx = Math.min(...pts.map(p => p[0])), maxx = Math.max(...pts.map(p => p[0])), miny = Math.min(...pts.map(p => p[1])), maxy = Math.max(...pts.map(p => p[1]));
-  const s = Math.min((HKCW * 0.95) / (maxx - minx), (HKCH * 0.84) / (maxy - miny)), X0 = (HKCW - (maxx - minx) * s) / 2, Y0 = HKCH * 0.13 + (HKCH * 0.84 - (maxy - miny) * s) / 2;
-  HK.cam = {cam, f, u, raw, minx, maxy, s, X0, Y0};
+  const s = Math.min((HKCW * 0.95) / (maxx - minx), (HKCH * 0.93) / (maxy - miny)), X0 = (HKCW - (maxx - minx) * s) / 2, Y0 = HKCH * 0.035 + (HKCH * 0.93 - (maxy - miny) * s) / 2;
+  HK.cam = {cam, f: [fx, fy, fz], r: [rx, rz], u: [ux, uy, uz], raw, minx, maxy, s, X0, Y0};
 }
 function hkProj(x, y, z) { const c = HK.cam, r = c.raw(x, y, z); return [c.X0 + (r[0] - c.minx) * c.s, c.Y0 + (c.maxy - r[1]) * c.s]; }
 function hkUnproj(sx, sy) {   // a point of the screen -> the point of the table it shows (the plane y = 0)
-  const c = HK.cam, xn = (sx - c.X0) / c.s + c.minx, yn = c.maxy - (sy - c.Y0) / c.s, dx = xn, dy = yn * c.u.y + c.f.y, dz = yn * c.u.z + c.f.z;
-  const t = -c.cam.y / dy; return {x: c.cam.x + t * dx, z: c.cam.z + t * dz};
+  const c = HK.cam, xn = (sx - c.X0) / c.s + c.minx, yn = c.maxy - (sy - c.Y0) / c.s;
+  const dx = c.f[0] + xn * c.r[0] + yn * c.u[0], dy = c.f[1] + yn * c.u[1], dz = c.f[2] + xn * c.r[1] + yn * c.u[2], t = -c.cam.y / dy;
+  return {x: c.cam.x + t * dx, z: c.cam.z + t * dz};
 }
 // ---- the physics
 function hkReset(serveSide) {   // serveSide: the side that conceded (it serves), -1: the match starts (a coin)
@@ -19141,7 +19218,8 @@ function hkMoveMallets(dt) {   // a mallet follows its target at a limited speed
 }
 function hkSfx(kind, v) {   // the sounds of the table (rate-limited: a puck that rattles in a corner is not a machine gun)
   const now = performance.now(); if (now - HK.sfxAt < 45 && kind !== "horn") return; HK.sfxAt = now;
-  try { if (kind === "hit") Snd.puck(v); else if (kind === "wall") Snd.wallHit(v); else if (kind === "horn") Snd.horn(); } catch (e) {}
+  const pan = Math.max(-1, Math.min(1, HK.pk.z / (HKW / 2))) * 0.45;
+  try { if (kind === "hit") Snd.puck(v, pan); else if (kind === "wall") Snd.wallHit(v, pan); else if (kind === "horn") Snd.horn(); } catch (e) {}
 }
 function hkGoal(side) {   // side: who scored (0 = the left player)
   HK.sc[side]++; HK.st = "goal"; HK.stT = 2.1; HK.goalFor = side; HK.lamp[1 - side] = 1; HK.zoom = {t: 0, side};
@@ -19206,50 +19284,50 @@ function hkCyl(g, x, z, r, y0, y1, top, side, steps) {   // a vertical cylinder:
   hkPoly(g, hkRing(x, z, r, y1), top);
 }
 function hkMallet(g, k) {
-  const m = HK.ml[k], base = k === 0 ? ["#ff5a68", "#9a1424"] : ["#4b8dff", "#123f9a"], c = hkProj(m.x, 9.5, m.z), r0 = hkProj(m.x + HKMR, 9.5, m.z), px = Math.abs(r0[0] - c[0]) || 8;
+  const m = HK.ml[k], base = k === 0 ? ["#ff5a68", "#9a1424"] : ["#4b8dff", "#123f9a"], c = hkProj(m.x, 9.5, m.z), r0 = hkProj(m.x, 9.5, m.z + HKMR), px = Math.abs(r0[0] - c[0]) || 8;
   hkPoly(g, hkRing(m.x + 1.2, m.z + 1.6, HKMR * 1.04, 0.05), "#0006");
   hkCyl(g, m.x, m.z, HKMR, 0, 3.4, base[0], base[1], 3);
   hkCyl(g, m.x, m.z, HKMR * 0.5, 3.4, 9.5, "#f4f7ff", "#aab4c8", 4);
   g.save(); g.font = `${Math.max(10, px * 0.72)}px 'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillStyle = "#000"; g.fillText(HK.flags[k] || "", c[0], c[1] + px * 0.02); g.restore();
 }
 function hkDraw() {
-  const cv = $("hkCv"); if (!cv || !HK.cam) return; const g = cv.getContext("2d");
+  const cv = $("hkCv"); if (!cv || !HK.cam) return; const g = cv.getContext("2d"), P = hkProj, poly = (pts, fill, stroke, lw) => hkPoly(g, pts, fill, stroke, lw), gw = HKGW / 2;
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, HKCW, HKCH);
   const bg = g.createLinearGradient(0, 0, 0, HKCH); bg.addColorStop(0, "#0b0a1c"); bg.addColorStop(1, "#06060f"); g.fillStyle = bg; g.fillRect(0, 0, HKCW, HKCH);
   // the camera zoom after a goal: toward the scorer's mallet and back
   let z = 1, fx = HKCW / 2, fy = HKCH / 2;
-  if (HK.st === "goal") { const t = HK.zoom.t, k = t < 0.5 ? t / 0.5 : t < 1.5 ? 1 : Math.max(0, 1 - (t - 1.5) / 0.5), m = HK.ml[HK.zoom.side], c = hkProj(m.x, 5, m.z); z = 1 + 0.7 * k * k * (3 - 2 * k); fx = c[0]; fy = c[1]; }
+  if (HK.st === "goal") { const t = HK.zoom.t, k = t < 0.5 ? t / 0.5 : t < 1.5 ? 1 : Math.max(0, 1 - (t - 1.5) / 0.5), m = HK.ml[HK.zoom.side], c = P(m.x, 5, m.z); z = 1 + 0.7 * k * k * (3 - 2 * k); fx = c[0]; fy = c[1]; }
   g.save(); if (z !== 1) { g.translate(fx, fy); g.scale(z, z); g.translate(-fx, -fy); }
-  // the slab and the surface
-  hkPoly(g, [hkProj(-112, -13, -58), hkProj(112, -13, -58), hkProj(112, 0, -58), hkProj(-112, 0, -58)], "#0a0c16");
-  const surf = [hkProj(-100, 0, -50), hkProj(100, 0, -50), hkProj(100, 0, 50), hkProj(-100, 0, 50)], sg = g.createLinearGradient(0, surf[3][1], 0, surf[0][1]); sg.addColorStop(0, "#0e2f73"); sg.addColorStop(1, "#08204f");
-  hkPoly(g, surf, sg, "#2a5cc4", 2);
-  g.save(); hkPoly(g, surf, null); g.clip();
-  for (const side of [-1, 1]) { const c = hkProj(side * 100, 0, 0), gl = g.createRadialGradient(c[0], c[1], 4, c[0], c[1], 210); gl.addColorStop(0, side < 0 ? "#fffffff0" : "#9fc8ffb0"); gl.addColorStop(0.25, side < 0 ? "#9cc4ff66" : "#4f88e033"); gl.addColorStop(1, "#0000"); g.fillStyle = gl; g.fillRect(0, 0, HKCW, HKCH); }
-  g.fillStyle = "#4f86e6"; for (let i = 1; i < 40; i++) for (let j = 1; j < 20; j++) { const p = hkProj(-100 + i * 5, 0, -50 + j * 5), q = hkProj(-100 + i * 5 + 0.9, 0, -50 + j * 5), r = Math.max(0.8, Math.abs(q[0] - p[0])); g.globalAlpha = 0.5; g.fillRect(p[0] - r / 2, p[1] - r / 2, r, r); } g.globalAlpha = 1; g.restore();
   const line = (pts, col, lw) => { g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.strokeStyle = col; g.lineWidth = lw; g.stroke(); };
-  for (const x of [-50, 50]) line([hkProj(x, 0, -50), hkProj(x, 0, 50)], "#5fb0ff", 2);   // (the blue lines)
-  line([hkProj(0, 0, -50), hkProj(0, 0, 50)], "#ff4d5e", 3);   // (the centre line and circle: red)
-  line(Array.from({length: 41}, (_, i) => { const a = i / 40 * 6.2832; return hkProj(Math.cos(a) * 15, 0, Math.sin(a) * 15); }), "#ff4d5e", 3);
-  for (const side of [-1, 1]) line(Array.from({length: 25}, (_, i) => { const a = -1.5708 + i / 24 * 3.1416; return hkProj(side * 100 - side * Math.cos(a) * 24, 0, Math.sin(a) * 24); }), "#6bb8ff", 3);   // (the crease in front of each goal)
-  // the far rail (its inner face shows), the end rails with the goal slots, the lamps
-  hkPoly(g, [hkProj(-104, 0, 50), hkProj(104, 0, 50), hkProj(104, 7, 50), hkProj(-104, 7, 50)], "#1a1d2a", "#3d4560", 1);
-  hkPoly(g, [hkProj(-106, 7, 50), hkProj(106, 7, 50), hkProj(106, 7, 57), hkProj(-106, 7, 57)], "#2b3144", "#5a6486", 1);
-  for (const side of [-1, 1]) {
-    const x0 = side * 100, x1 = side * 106, gw = HKGW / 2, seg = [[-50, -gw], [gw, 50]];
-    for (const [a, b] of seg) { hkPoly(g, [hkProj(x0, 0, a), hkProj(x0, 7, a), hkProj(x0, 7, b), hkProj(x0, 0, b)], "#171a27", "#3d4560", 1); hkPoly(g, [hkProj(x0, 7, a), hkProj(x1, 7, a), hkProj(x1, 7, b), hkProj(x0, 7, b)], "#2b3144", "#5a6486", 1); }
-    hkPoly(g, [hkProj(x0, 0, -gw), hkProj(x1 + side * 4, 0, -gw), hkProj(x1 + side * 4, 0, gw), hkProj(x0, 0, gw)], "#02040a");
-    const li = HK.lamp[side < 0 ? 0 : 1], lp = hkProj(side * 112, 12, 0), lr = Math.abs(hkProj(side * 112, 12 + 4.5, 0)[1] - lp[1]) * 1.1 + 6, lg = g.createRadialGradient(lp[0] - lr * 0.25, lp[1] - lr * 0.3, 1, lp[0], lp[1], lr);
+  // the body of the table (its near end face is all that shows of it) and the surface
+  poly([P(-112, -13, -58), P(-112, 7, -58), P(-112, 7, 58), P(-112, -13, 58)], "#0a0c16", "#2a3150", 1);
+  const surf = [P(-100, 0, -50), P(-100, 0, 50), P(100, 0, 50), P(100, 0, -50)], sg = g.createLinearGradient(0, surf[0][1], 0, surf[2][1]); sg.addColorStop(0, "#0e2f73"); sg.addColorStop(1, "#08204f");
+  poly(surf, sg, "#2a5cc4", 2);
+  g.save(); poly(surf, null); g.clip();
+  for (const side of [-1, 1]) { const c = P(side * 100, 0, 0), w = Math.abs(P(side * 100, 0, 50)[0] - P(side * 100, 0, -50)[0]), gl = g.createRadialGradient(c[0], c[1], 4, c[0], c[1], w * 0.95 + 70); gl.addColorStop(0, side < 0 ? "#fffffff0" : "#9fc8ffb0"); gl.addColorStop(0.25, side < 0 ? "#9cc4ff66" : "#4f88e033"); gl.addColorStop(1, "#0000"); g.fillStyle = gl; g.fillRect(0, 0, HKCW, HKCH); }
+  g.fillStyle = "#4f86e6"; for (let i = 1; i < 40; i++) for (let j = 1; j < 20; j++) { const p = P(-100 + i * 5, 0, -50 + j * 5), q = P(-100 + i * 5, 0, -50 + j * 5 + 0.9), r = Math.max(0.8, Math.abs(q[0] - p[0])); g.globalAlpha = 0.5; g.fillRect(p[0] - r / 2, p[1] - r / 2, r, r); } g.globalAlpha = 1; g.restore();
+  for (const x of [-50, 50]) line([P(x, 0, -50), P(x, 0, 50)], "#5fb0ff", 2);   // (the blue lines)
+  line([P(0, 0, -50), P(0, 0, 50)], "#ff4d5e", 3);   // (the centre line and circle: red)
+  line(Array.from({length: 41}, (_, i) => { const a = i / 40 * 6.2832; return P(Math.cos(a) * 15, 0, Math.sin(a) * 15); }), "#ff4d5e", 3);
+  for (const side of [-1, 1]) line(Array.from({length: 25}, (_, i) => { const a = -1.5708 + i / 24 * 3.1416; return P(side * 100 - side * Math.cos(a) * 24, 0, Math.sin(a) * 24); }), "#6bb8ff", 3);   // (the crease in front of each goal)
+  // the two goal trays (dark), the far end rail with its slot (its inner face shows), the two side rails (their inner faces show), the far lamp
+  for (const side of [-1, 1]) poly([P(side * 100, 0, -gw), P(side * 110, 0, -gw), P(side * 110, 0, gw), P(side * 100, 0, gw)], "#02040a");
+  for (const [a, b] of [[-50, -gw], [gw, 50]]) { poly([P(100, 0, a), P(100, 7, a), P(100, 7, b), P(100, 0, b)], "#171a27", "#3d4560", 1); poly([P(100, 7, a), P(106, 7, a), P(106, 7, b), P(100, 7, b)], "#2b3144", "#5a6486", 1); }
+  poly([P(100, 7, -57), P(106, 7, -57), P(106, 7, -50), P(100, 7, -50)], "#2b3144", "#5a6486", 1); poly([P(100, 7, 50), P(106, 7, 50), P(106, 7, 57), P(100, 7, 57)], "#2b3144", "#5a6486", 1);
+  for (const sd of [-1, 1]) { poly([P(-100, 0, sd * 50), P(100, 0, sd * 50), P(100, 7, sd * 50), P(-100, 7, sd * 50)], "#1a1d2a", "#3d4560", 1); poly([P(-100, 7, sd * 50), P(100, 7, sd * 50), P(100, 7, sd * 57), P(-100, 7, sd * 57)], "#2b3144", "#5a6486", 1); }
+  const lamp = side => {   // a lamp over a goal: it lights up when that goal has conceded
+    const li = HK.lamp[side < 0 ? 0 : 1], lp = P(side * 112, 12, 0), lr = Math.abs(P(side * 112, 12 + 4.5, 0)[1] - lp[1]) * 1.1 + 6, lg = g.createRadialGradient(lp[0] - lr * 0.25, lp[1] - lr * 0.3, 1, lp[0], lp[1], lr);
     lg.addColorStop(0, li ? "#fffbe6" : "#ffc4a0"); lg.addColorStop(0.5, li ? "#ff8a2a" : "#e8643c"); lg.addColorStop(1, li ? "#c24a00" : "#9a2f18");
+    line([P(side * 106, 7, 0), P(side * 112, 12, 0)], "#303650", 4);
     if (li) { g.save(); g.shadowColor = "#ffb040"; g.shadowBlur = 36; } g.beginPath(); g.arc(lp[0], lp[1], lr, 0, 7); g.fillStyle = lg; g.fill(); if (li) g.restore();
-    line([hkProj(side * 106, 7, 0), hkProj(side * 112, 12, 0)], "#303650", 4);
-  }
+  };
+  lamp(1);
   // the puck and the mallets, far to near
-  const objs = [{z: HK.pk.z, d: () => { const p = HK.pk; hkPoly(g, hkRing(p.x + 0.8, p.z + 1, HKPR * 1.05, 0.05), "#0007"); hkCyl(g, p.x, p.z, HKPR, 0, 2.4, "#ffe266", "#b98c10", 3); hkPoly(g, hkRing(p.x, p.z, HKPR * 0.62, 2.45, 22), "#ffd23a"); } }, {z: HK.ml[0].z, d: () => hkMallet(g, 0)}, {z: HK.ml[1].z, d: () => hkMallet(g, 1)}].sort((a, b) => b.z - a.z);
+  const objs = [{x: HK.pk.x, d: () => { const p = HK.pk; poly(hkRing(p.x + 0.8, p.z + 1, HKPR * 1.05, 0.05), "#0007"); hkCyl(g, p.x, p.z, HKPR, 0, 2.4, "#ffe266", "#b98c10", 3); poly(hkRing(p.x, p.z, HKPR * 0.62, 2.45, 22), "#ffd23a"); } }, {x: HK.ml[0].x, d: () => hkMallet(g, 0)}, {x: HK.ml[1].x, d: () => hkMallet(g, 1)}].sort((a, b) => b.x - a.x);
   for (const o of objs) o.d();
-  // the near rail over everything that is low
-  hkPoly(g, [hkProj(-106, 7, -50), hkProj(106, 7, -50), hkProj(106, 7, -57), hkProj(-106, 7, -57)], "#2f3548", "#6a759a", 1);
-  hkPoly(g, [hkProj(-106, 7, -57), hkProj(106, 7, -57), hkProj(106, -2, -57), hkProj(-106, -2, -57)], "#1b1f2e", "#3d4560", 1);
+  // my end: the rail in front of everything low (the top, the outer face), with the slot of my goal in it, and my lamp
+  for (const [a, b] of [[-57, -gw], [gw, 57]]) { poly([P(-106, 7, a), P(-100, 7, a), P(-100, 7, b), P(-106, 7, b)], "#2f3548", "#6a759a", 1); poly([P(-106, 7, a), P(-106, 7, b), P(-106, -2, b), P(-106, -2, a)], "#1b1f2e", "#3d4560", 1); }
+  lamp(-1);
   g.restore();
   if (HK.st === "goal") { const t = HK.zoom.t; g.fillStyle = `rgba(0,0,0,${Math.min(0.35, t * 0.5)})`; g.fillRect(0, 0, HKCW, HKCH); }
 }
@@ -19290,17 +19368,17 @@ function hkOpen(o) {   // o: {mode: "bot" | "local", lv, to}
   if (!HK.cam) hkCamBuild();
   ov.classList.add("on"); hkHud(); const b = $("hkBan"); if (b) b.classList.remove("on");
   { const hn = $("hkHint"); if (hn) { hn.textContent = T("Urgichni barmoq bilan suring"); hn.classList.add("on"); setTimeout(() => { if (hn) hn.classList.remove("on"); }, 5000); } }   // (the first seconds of a match: how to play)
-  hkReset(-1); HK.last = 0; cancelAnimationFrame(HK.raf);
+  hkReset(-1); HK.last = 0; cancelAnimationFrame(HK.raf); try { Snd.arcWarm(); Snd.airHum(true); } catch (e) {}
   const tok = HK.tok, loop = ts => {
     if (tok !== HK.tok || !HK.on) return; const dt = HK.last ? Math.min(1 / 30, (ts - HK.last) / 1000) : 1 / 60; HK.last = ts;
-    try { hkStep(dt); hkDraw(); } catch (e) { console.error("hockey", e); }
+    try { hkStep(dt); hkDraw(); if (ts - (HK.airAt || 0) > 120) { HK.airAt = ts; Snd.airLevel(HK.st === "play" ? Math.hypot(HK.pk.vx, HK.pk.vz) / 380 : 0); } } catch (e) { console.error("hockey", e); }
     HK.raf = requestAnimationFrame(loop);
   };
   HK.raf = requestAnimationFrame(loop);
 }
-function hkClose() { HK.tok++; HK.on = false; cancelAnimationFrame(HK.raf); const ov = $("hkScr"); if (ov) ov.classList.remove("on"); }
+function hkClose() { HK.tok++; HK.on = false; cancelAnimationFrame(HK.raf); try { Snd.airHum(false); } catch (e) {} const ov = $("hkScr"); if (ov) ov.classList.remove("on"); }
 function hkFinish() {
-  HK.st = "over"; const tok = HK.tok, w = HK.sc[0] > HK.sc[1] ? 0 : 1, mineWon = HK.mode === "local" ? true : w === 0;
+  HK.st = "over"; try { Snd.airHum(false); } catch (e) {} const tok = HK.tok, w = HK.sc[0] > HK.sc[1] ? 0 : 1, mineWon = HK.mode === "local" ? true : w === 0;
   if (HK.mode === "bot") { const st = proStore(); st.rec = st.rec || {}; const r = st.rec["hk_" + HK.lv] = st.rec["hk_" + HK.lv] || {w: 0, l: 0, d: 0}; if (mineWon) r.w++; else r.l++; save(); }
   try { if (mineWon) { burst(); Snd.win(); } else Snd.lose(); } catch (e) {}
   setTimeout(() => {
@@ -19345,15 +19423,15 @@ body:has(#hkScr.on) #modal{z-index:99990}body:has(#hkScr.on) #toasts{z-index:999
 #hkScr .hk-wrap{position:relative;width:min(100%,calc(100 * var(--u-vh,1vh) * 1.7778));aspect-ratio:16/9;container-type:inline-size;touch-action:none}
 #hkScr canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 #hkScr .hk-m{position:absolute;width:0;height:0;pointer-events:none}#hkScr .hk-m[data-m="0"]{left:0;top:0}#hkScr .hk-m[data-m="1"]{left:100%;top:0}#hkScr .hk-m[data-m="2"]{left:0;top:100%}
-#hkScr .hk-hud{position:absolute;left:50%;top:1.2cqw;transform:translateX(-50%);text-align:center;pointer-events:none;text-shadow:0 .2cqw 0 #000c,0 0 1cqw #000}
-#hkScr .hk-sc{display:flex;align-items:center;justify-content:center;gap:1.6cqw;font:400 5.6cqw/1 var(--fh,system-ui);color:#ffe27a}
+#hkScr .hk-hud{position:absolute;right:2cqw;top:1.2cqw;text-align:right;pointer-events:none;text-shadow:0 .2cqw 0 #000c,0 0 1cqw #000}
+#hkScr .hk-sc{display:flex;align-items:center;justify-content:flex-end;gap:1.6cqw;font:400 5.6cqw/1 var(--fh,system-ui);color:#ffe27a}
 #hkScr .hk-sc>span{display:flex;align-items:center;gap:1.2cqw}#hkScr .hk-sc i{font-style:normal;color:#fff}#hkScr .hk-f{font-size:4.4cqw}
 #hkScr .hk-t{font:800 1.5cqw/1 system-ui;letter-spacing:.5em;color:#ffffffb0;margin-top:.3cqw}
-#hkScr .hk-v{font:700 1.9cqw/1.2 system-ui;color:#fff;margin-top:.5cqw;white-space:nowrap}
+#hkScr .hk-v{font:700 1.9cqw/1.2 system-ui;color:#fff;margin:.5cqw 0 0 auto;max-width:27cqw}
 #hkScr .hk-ban{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%) scale(.6);font:400 7.5cqw/1 var(--fh,system-ui);color:#ffe27a;text-shadow:0 .4cqw 0 #000,0 0 2.5cqw #ff9a2a;opacity:0;pointer-events:none;white-space:nowrap}
 #hkScr .hk-ban.on{animation:hkban 2s ease-out forwards}
 @keyframes hkban{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}30%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
-#hkScr .hk-hint{position:absolute;left:50%;bottom:3.5cqw;transform:translateX(-50%);font:700 2.2cqw/1.2 system-ui;color:#fff;background:#000a;border:1px solid #ffffff44;border-radius:999px;padding:.8cqw 2.2cqw;opacity:0;pointer-events:none;transition:opacity .4s;white-space:nowrap}
+#hkScr .hk-hint{position:absolute;left:2cqw;bottom:3cqw;max-width:27cqw;text-align:center;font:700 2.2cqw/1.2 system-ui;color:#fff;background:#000a;border:1px solid #ffffff44;border-radius:2cqw;padding:.8cqw 2.2cqw;opacity:0;pointer-events:none;transition:opacity .4s}
 #hkScr .hk-hint.on{opacity:1}
 #hkScr .hk-x{position:absolute;left:1.2cqw;top:1.2cqw;width:min(8cqw,52px);height:min(8cqw,52px);min-width:34px;min-height:34px}
 .sh-card.g-hockey{background:linear-gradient(#143070,#06173f);border-color:#6bb8ff}.sh-card.g-hockey b{color:#cfe6ff}
@@ -19464,7 +19542,8 @@ function tbtBall(h) {
 }
 function tbtSfx(kind, v) {
   const now = performance.now(); if (now - TBT.sfxAt < 35 && kind !== "point") return; TBT.sfxAt = now;
-  try { if (kind === "paddle") Snd.paddle(v); else if (kind === "bounce") Snd.tbounce(v); else if (kind === "net") Snd.netHit(); else if (kind === "point") Snd.coin(3); } catch (e) {}
+  const pan = Math.max(-1, Math.min(1, TBT.b.z / (TBT_W / 2))) * 0.45;   // (the ball on the left of the table is heard on the left)
+  try { if (kind === "paddle") Snd.paddle(v, pan); else if (kind === "bounce") Snd.tbounce(v, pan); else if (kind === "net") Snd.netHit(pan); else if (kind === "point") Snd.coin(3); } catch (e) {}
 }
 // ---- the serve (automatic: the ball hovers over the server's paddle for a moment, then it is hit toward the other half) and the match
 function tbtServe() {
@@ -19604,7 +19683,7 @@ function tbtOpen(o) {   // o: {mode: "bot" | "local", lv, to}
   const mine = ctryCode({country: profile.country}) || "UZ", all = COUNTRY_CODES.filter(c => c !== mine), other = all[Math.floor(tbtRnd() * all.length)] || "JP";
   TBT.cc = [mine, other]; TBT.flags = [flagEmoji(mine), flagEmoji(other)]; TBT.names = [countryName(mine), countryName(other)];
   if (!TBT.cam) tbtCamBuild();
-  ov.classList.add("on"); tbtReset(tbtRnd() < 0.5 ? 0 : 1); tbtHud();
+  ov.classList.add("on"); tbtReset(tbtRnd() < 0.5 ? 0 : 1); tbtHud(); try { Snd.arcWarm(); } catch (e) {}
   { const hn = $("tbHint"); if (hn) { hn.textContent = T("Raketkani barmoq bilan suring"); hn.classList.add("on"); setTimeout(() => { if (hn) hn.classList.remove("on"); }, 5500); } }
   cancelAnimationFrame(TBT.raf); TBT.lastTs = 0;
   const tok = TBT.tok, loop = ts => {
