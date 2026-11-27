@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Air hockey, one phone, no server:  node tools/test_hockey.js   (B8_ROOT=<repo copy>; SHOT=dir saves pictures; about 2 minutes)
 // The owner (Nov 26): "Aeroxokkey bor, u videodagi oshaniyam qo'shaylik" (a 3D air hockey, Japan vs South Korea, first goal wins). Here the SCREEN and the PHYSICS (pro_f_hockey.js):
-//  - the mini-games screen has the Arcade row with the Air hockey card; it opens the list (3 bot levels, two on one phone) and the length of the match (the first goal / 3 / 7)
+//  - the mini-games screen has the Arcade row (the owner's picture, Nov 27: Air Hockey and Table Tennis, a key over each card); the Air Hockey key opens the list (3 bot levels, two on one phone) and the length of the match (the first goal / 3 / 7)
 //  - the table is a plane seen by a camera: a point of the table -> the screen -> the same point (the finger is mapped back), also on the turned page; a finger moves the mallet, which cannot leave its half
 //  - the puck bounces off the rails, goes into the goal only through the slot, a mallet hits it with the speed it has; a goal is counted, announced ("... SCORES!"), the lamp lights; the match ends at the goal limit
 //  - the bot: its mallet is as fast as its level says, it defends and it attacks; two on one phone: each finger has its own half
@@ -33,12 +33,17 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     // ------------------------------------------------------------------ the way in
     const { p, close } = await open({ width: 915, height: 412 });
     await p.evaluate(() => toMenu("mini")); await sleep(900);
-    const row = await p.evaluate(() => { const r = document.getElementById("miniArcade"); return r ? { title: (r.querySelector(".sh-rt") || {}).textContent, cards: [...r.querySelectorAll(".sh-card")].map(c => c.dataset.hk), name: (r.querySelector(".sh-card b") || {}).textContent, img: !!r.querySelector(".sh-card img").src, below: r.getBoundingClientRect().top >= document.getElementById("miniBoards").getBoundingClientRect().bottom - 2 } : null; });
-    ok(row && row.title === "Arcade games" && row.cards.join() === "air,tt" && row.name === "Air hockey" && row.img && row.below, "the mini-games screen has the Arcade row (Air hockey, Table tennis), under the Board games picture", row);
-    await p.evaluate(() => document.getElementById("mini").scrollTo(0, 99999)); await sleep(400); if (SHOT) await p.screenshot({ path: path.join(SHOT, "00_row.png") });
-    await p.evaluate(() => document.querySelector("#miniArcade .sh-card").click()); await sleep(600);
+    const row = await p.evaluate(() => { const r = document.getElementById("miniArcade"); return r ? { title: (r.querySelector(".sh-rt") || {}).textContent, cards: [...r.querySelectorAll(".sh-pan")].map(c => c.dataset.hk), name: (r.querySelector(".sh-pan") || {}).getAttribute("aria-label"), img: r.querySelector(".sh-ban img").naturalWidth >= 1000, below: r.getBoundingClientRect().top >= document.getElementById("miniBoards").getBoundingClientRect().bottom - 2 } : null; });
+    ok(row && row.title === "Arcade games" && row.cards.join() === "air,tt" && row.name === "Air hockey" && row.img && row.below, "the mini-games screen has the Arcade row (the owner's picture: Air Hockey, Table Tennis), under the Board games picture", row);
+    // the picture is shown IN FULL (the owner, Nov 27: "in place of the two painted cards put my picture"): it fits the screen when the row is scrolled to, its proportions are the picture's (1020 x 1024), the two keys lie inside it side by side, each over its own card, and a tap in the middle of each reaches its key
+    await p.evaluate(() => document.querySelector("#miniArcade .sh-ban").scrollIntoView({ block: "center" })); await sleep(400);
+    const banFit = await p.evaluate(() => { const b = document.querySelector("#miniArcade .sh-ban").getBoundingClientRect(), ps = [...document.querySelectorAll("#miniArcade .sh-pan")], rs = ps.map(x => x.getBoundingClientRect()), mid = r => document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      return { fits: b.top >= 0 && b.bottom <= innerHeight + 1 && b.left >= 0 && b.right <= innerWidth + 1, ratio: +(b.width / b.height).toFixed(3), inside: rs.every(q => q.left >= b.left - 1 && q.right <= b.right + 1 && q.top >= b.top - 1 && q.bottom <= b.bottom + 1), apart: rs[0].right <= rs[1].left, halves: rs[0].left + rs[0].width / 2 < b.left + b.width / 2 && rs[1].left + rs[1].width / 2 > b.left + b.width / 2, hit: ps.every((x, i) => mid(rs[i]) === x), noOldCards: !document.querySelector("#miniArcade .sh-card"), b: [b.top, b.bottom, innerHeight].map(Math.round) }; });
+    ok(banFit.fits && Math.abs(banFit.ratio - 1020 / 1024) < 0.01 && banFit.inside && banFit.apart && banFit.halves && banFit.hit && banFit.noOldCards, "the Arcade picture is shown in full (it fits the screen, its own proportions), the two keys lie inside it side by side, each over its own card, and are reached by a tap; the painted cards are gone", banFit);
+    if (SHOT) await p.screenshot({ path: path.join(SHOT, "00_row.png") });
+    await p.evaluate(() => document.querySelector('#miniArcade .sh-pan[data-hk="air"]').click()); await sleep(600);
     const list = await p.evaluate(() => [...document.querySelectorAll("#mExtra .pro-row")].map(r => r.dataset.id));
-    ok(list.join() === "easy,mid,hard,local", "the card opens the list: three bot levels and two on one phone", list);
+    ok(list.join() === "easy,mid,hard,local", "the Air Hockey key opens the list: three bot levels and two on one phone", list);
     await p.evaluate(() => document.querySelector('#mExtra [data-id="hard"]').click()); await sleep(600);
     const m1 = await modal(p); ok(m1 && /Air hockey/i.test(m1.t) && m1.btns.length === 4 && /First goal wins/.test(m1.btns[0]) && /First to 3/.test(m1.btns[1]) && /First to 7/.test(m1.btns[2]), "then the length of the match: the first goal (as in the video), 3, 7", m1);
     await clickBtn(p, "First goal wins"); await sleep(900);

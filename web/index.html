@@ -19094,6 +19094,10 @@ setInterval(() => {
 .tcw-note{margin:8px 0 0;font-size:11px;line-height:1.35;color:#ffcf8a}
 .tcres{text-align:center;font:900 28px system-ui;margin:2px 0 6px;color:#c9d6f5}.tcres.w{color:#7dff9a}.tcres.l{color:#ff8a8a}
 `; document.head.appendChild(st); }
+// ---------------------------------------------------------------- the Arcade row's picture (the owner, Nov 27: "in place of the 1st (the two painted cards) put the 2nd, like this")
+// His own artwork, WebP 1020 x 1024: two tall cards in a gold frame, a crown on each - left AIR HOCKEY (blue), right TABLE TENNIS (green). The words ("Air Hockey", "Table Tennis", "Play with friends and computer") are PART OF THE PICTURE
+// (English for every language, as in the Board games row). The two keys lie over the cards (HK_PANELS in pro_f_hockey.js: left edge and width of each card, % of the picture's width).
+const HK_BAN = 'img/dd2659aa9d3fef.webp';
 // ---------------------------------------------------------------- AIR HOCKEY (the owner, Nov 26: add the air hockey of his video: a 3D air hockey, Japan vs South Korea, first goal wins)
 // A table seen in perspective, a puck, two mallets with the flag of their player, the lamp over each goal, and after a goal the camera zooms to the scorer (Japan SCORES). Against a bot (three levels) or two on one phone.
 // The table is a plane (X along the long side, Z across it, in "cm": 200 x 100), the physics is in these units; the picture is a pinhole camera over it (hkProj / hkUnproj) drawn on ONE canvas of 1280 x 720 that is scaled
@@ -19316,10 +19320,11 @@ function hkArt() {
     g.beginPath(); g.arc(w / 2 + 12, h / 2 + 22, 7, 0, 7); g.fillStyle = "#b98c10"; g.fill(); g.beginPath(); g.arc(w / 2 + 12, h / 2 + 20, 7, 0, 7); g.fillStyle = "#ffe266"; g.fill();
   });
 }
-function hkMiniRow() {   // under the board games picture of the mini-games screen: the arcade games (air hockey, table tennis)
+const HK_PANELS = {air: [1, 47.6], tt: [51, 47.6]};   // the two cards of HK_BAN: left edge and width, % of the picture's width (the gold frames run x 10 - 494 and 520 - 1005 of 1020)
+function hkMiniRow() {   // under the board games picture of the mini-games screen: the arcade games picture (the owner's artwork: air hockey, table tennis) with a key over each card
   const scr = $("mini"); if (!scr) return; let row = $("miniArcade");
   if (!row) { row = document.createElement("div"); row.id = "miniArcade"; row.className = "sh-row"; scr.appendChild(row); }
-  row.innerHTML = `<div class="sh-rt">${T("Arkada o'yinlari")}</div><div class="sh-cards"><button class="sh-card g-hockey" data-hk="air"><img src="${hkArt()}" alt=""><b>${T("Aeroxokkey")}</b><small>${T("Botga qarshi yoki do'st bilan")}</small></button><button class="sh-card g-tennis" data-hk="tt"><img src="${tbtArt()}" alt=""><b>${T("Stol tennisi")}</b><small>${T("Botga qarshi yoki do'st bilan")}</small></button></div>`;
+  row.innerHTML = `<div class="sh-rt">${T("Arkada o'yinlari")}</div><div class="sh-ban ar"><img src="${HK_BAN}" alt="" draggable="false">${[["air", "Aeroxokkey"], ["tt", "Stol tennisi"]].map(([k, n]) => `<button class="sh-pan g-${k}" data-hk="${k}" style="--l:${HK_PANELS[k][0]}%;--w:${HK_PANELS[k][1]}%" aria-label="${esc(T(n))}"></button>`).join("")}</div>`;
   row.querySelectorAll("[data-hk]").forEach(b => b.onclick = () => { try { Snd.click(); } catch (e) {} if (b.dataset.hk === "tt") tbtPick(); else hkPick(); });
 }
 function hkPick() {
@@ -19351,7 +19356,8 @@ body:has(#hkScr.on) #modal{z-index:99990}body:has(#hkScr.on) #toasts{z-index:999
 #hkScr .hk-hint{position:absolute;left:50%;bottom:3.5cqw;transform:translateX(-50%);font:700 2.2cqw/1.2 system-ui;color:#fff;background:#000a;border:1px solid #ffffff44;border-radius:999px;padding:.8cqw 2.2cqw;opacity:0;pointer-events:none;transition:opacity .4s;white-space:nowrap}
 #hkScr .hk-hint.on{opacity:1}
 #hkScr .hk-x{position:absolute;left:1.2cqw;top:1.2cqw;width:min(8cqw,52px);height:min(8cqw,52px);min-width:34px;min-height:34px}
-.sh-card.g-hockey{background:linear-gradient(#143070,#06173f);border-color:#6bb8ff}.sh-card.g-hockey b{color:#cfe6ff}`;
+.sh-card.g-hockey{background:linear-gradient(#143070,#06173f);border-color:#6bb8ff}.sh-card.g-hockey b{color:#cfe6ff}
+.sh-ban.ar{width:min(100%,900px,calc((100 * var(--u-vh,1vh) - 80px) * .996));aspect-ratio:1020/1024}.sh-ban.ar .sh-pan{top:3.4%;height:87%;border-radius:5.5cqw}.sh-ban.ar>img{border-radius:1.6cqw}`;
   document.head.appendChild(st);
 })();
 // ---------------------------------------------------------------- TABLE TENNIS (the owner, Nov 26: where is the table tennis? - the next arcade game after the air hockey)

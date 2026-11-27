@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Table tennis, one phone, no server:  node tools/test_tennis.js   (B8_ROOT=<repo copy>; SHOT=dir saves pictures; about 3 minutes)
 // The owner (Nov 26: "Stol tennis qani"): the arcade game after the air hockey (pro_g_tennis.js). Here the SCREEN, the CAMERA, the RULES and the BOT:
-//  - the Arcade row has the Table tennis card; it opens the list (3 bot levels, two on one phone) and the length of the match (3 / 7 / 11 points)
+//  - the Arcade row has the Table tennis key over the owner's picture (Nov 27); it opens the list (3 bot levels, two on one phone) and the length of the match (3 / 7 / 11 points)
 //  - a point of the paddle's plane -> the screen -> the same point (the finger is mapped back, also on the turned page); a finger moves the paddle, which has a speed limit
 //  - the flight a hit gives (tbtShot) clears the net and lands on the other half for every ball and every swipe; the ball bounces on the table, is stopped by the net, is hit only after its bounce and only within reach
 //  - the rules: a double bounce, a ball on your own half, the net, a ball out, a missed ball are points for the other side; the serve changes every 2 points; the match ends at the limit
@@ -35,12 +35,12 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     // ------------------------------------------------------------------ the way in
     const { p, close } = await open({ width: 915, height: 412 });
     await p.evaluate(() => toMenu("mini")); await sleep(900);
-    const row = await p.evaluate(() => { const c = document.querySelector('#miniArcade .sh-card[data-hk="tt"]'); return c ? { name: c.querySelector("b").textContent, sub: c.querySelector("small").textContent, img: !!c.querySelector("img").src } : null; });
-    ok(row && row.name === "Table tennis" && row.img, "the Arcade row has the Table tennis card (a picture painted in code)", row);
+    const row = await p.evaluate(() => { const c = document.querySelector('#miniArcade .sh-pan[data-hk="tt"]'); return c ? { name: c.getAttribute("aria-label"), img: document.querySelector("#miniArcade .sh-ban img").naturalWidth >= 1000 } : null; });
+    ok(row && row.name === "Table tennis" && row.img, "the Arcade row has the Table tennis key over the owner's picture", row);
     await p.evaluate(() => document.querySelector('#miniArcade [data-hk="tt"]').scrollIntoView({ block: "center" })); await sleep(400); if (SHOT) await p.screenshot({ path: path.join(SHOT, "00_row.png") });
     await p.evaluate(() => document.querySelector('#miniArcade [data-hk="tt"]').click()); await sleep(600);
     const list = await p.evaluate(() => [...document.querySelectorAll("#mExtra .pro-row")].map(r => r.dataset.id));
-    ok(list.join() === "easy,mid,hard,local", "the card opens the list: three bot levels and two on one phone", list);
+    ok(list.join() === "easy,mid,hard,local", "the key opens the list: three bot levels and two on one phone", list);
     await p.evaluate(() => document.querySelector('#mExtra [data-id="mid"]').click()); await sleep(600);
     const m1 = await modal(p); ok(m1 && /Table tennis/i.test(m1.t) && m1.btns.length === 4 && /First to 3 points/.test(m1.btns[0]) && /First to 7 points/.test(m1.btns[1]) && /First to 11 points/.test(m1.btns[2]), "then the length of the match: 3, 7 or 11 points", m1);
     await clickBtn(p, "First to 7 points"); await sleep(900);
