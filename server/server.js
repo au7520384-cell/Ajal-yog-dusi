@@ -2449,6 +2449,7 @@ const TEAM_OPEN_GRACE = +process.env.TEAM_OPEN_GRACE_MS || 3 * 60e3;   // ... an
 const TEAM_T = new Set(["tcreate", "tjoin", "tmove", "tleave", "tstart", "tresume", "tend", "taim", "tshot", "tstate", "tchat", "tneed"]);
 const TEAM_RELAY = new Set(["taim", "tshot", "tstate", "tchat", "tneed", "tend"]);
 const tcode = c => String(c || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
+const codeTaken = c => brooms.has(c) || trooms.has(c) || lobbies.has(c);   // (one namespace: a code names ONE room, whatever kind it is - the page's single "enter a code" box asks which)
 const tHere = (r, i) => !!r.uids[i] && !r.gone[i];                        // a human seat that has not been given up
 const tLive = (r, i) => tHere(r, i) && !r.away[i] && r.seats[i] && r.seats[i].readyState === 1;
 const tHumans = r => [0, 1, 2, 3].filter(i => tHere(r, i));
@@ -2496,8 +2497,8 @@ function teamMessage(ws, m, u) {
   if (m.t === "tcreate") {
     if (!bucket(ws, "tcreate", 5, 20000) || (ws.room && !ws.room.over)) return wsSend(ws, {t: "terr", why: "busy"});
     leaveQueue(ws); if (ws.troom) teamLeave(ws);
-    let code = ""; for (let k = 0; k < 40 && (!code || trooms.has(code)); k++) code = Array.from({length: 4}, () => TCODE_CH[crypto.randomInt(TCODE_CH.length)]).join("");
-    if (trooms.has(code)) return wsSend(ws, {t: "terr", why: "busy"});
+    let code = ""; for (let k = 0; k < 40 && (!code || codeTaken(code)); k++) code = Array.from({length: 4}, () => TCODE_CH[crypto.randomInt(TCODE_CH.length)]).join("");
+    if (codeTaken(code)) return wsSend(ws, {t: "terr", why: "busy"});
     const r = {code, id: "", state: "open", host: 0, driver: 0, seats: [ws, null, null, null], uids: [ws.uid, null, null, null], prof: [mkProfile(u, m.cue, m.tbl), null, null, null], away: [0, 0, 0, 0], gone: [false, false, false, false], timers: [null, null, null, null], bots: null, seed: 0, first: 0, city: String(m.city || "lon").slice(0, 8), at: Date.now()};
     trooms.set(code, r); ws.troom = code; ws.pref = {cue: m.cue, tbl: m.tbl};
     return tBroadcast(r);
@@ -2790,8 +2791,8 @@ function boardMessage(ws, m, u) {
     if (stake && !tcStakeOk(game, stake)) return wsSend(ws, {t: "berr", why: "stake"});
     if (stake && tcOf(u) < (game === "mafia" ? 3 * stake : stake)) return wsSend(ws, {t: "berr", why: "coins", need: game === "mafia" ? 3 * stake : stake});
     leaveQueue(ws); if (ws.broom) boardLeave(ws);
-    let code = ""; for (let k = 0; k < 40 && (!code || brooms.has(code)); k++) code = Array.from({length: 4}, () => TCODE_CH[crypto.randomInt(TCODE_CH.length)]).join("");
-    if (brooms.has(code)) return wsSend(ws, {t: "berr", why: "busy"});
+    let code = ""; for (let k = 0; k < 40 && (!code || codeTaken(code)); k++) code = Array.from({length: 4}, () => TCODE_CH[crypto.randomInt(TCODE_CH.length)]).join("");
+    if (codeTaken(code)) return wsSend(ws, {t: "berr", why: "busy"});
     const n = [...Array(max).keys()], r = {code, game, max, id: "", state: "open", host: 0, seats: n.map(i => i ? null : ws), uids: n.map(i => i ? null : ws.uid), prof: n.map(i => i ? null : mkProfile(u, m.cue, m.tbl)), away: n.map(() => 0), timers: n.map(() => null), first: 0, turn: 0, moves: [], rem: {}, at: Date.now(), stake, held: {}, g: null, drawBy: -1};
     brooms.set(code, r); ws.broom = code; return bBroadcast(r);
   }
@@ -2872,6 +2873,19 @@ function boardMessage(ws, m, u) {
     return bEnd(r, w, m.why);
   }
 }
+function jcodeOne(raw) {   // what does this one code name? (broom: a board / arcade room, troom: a 2v2 room, lobby: an 8-ball lobby)
+  const code = String(raw || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8), out = {t: "jcode", code, kind: "none"};
+  if (code.length < 3) return out;
+  const br = brooms.get(code); if (br) return {...out, kind: "broom", game: br.game, state: br.state, stake: br.stake | 0, full: !br.uids.some(x => !x)};
+  const tr = trooms.get(code); if (tr) return {...out, kind: "troom", state: tr.state};
+  const L = lobbies.get(code); if (L && L.players.some(p => seatKept(p))) return {...out, kind: "lobby", state: L.state, full: L.players.length >= L.max};
+  return out;
+}
+function jcodeInfo(m) {   // the page's one "enter a code" box: `codes` are the words of what the player typed or pasted (a whole share message works): the first that names a room wins
+  const list = (Array.isArray(m.codes) ? m.codes : [m.code]).slice(0, 8); let first = null;
+  for (const c of list) { const o = jcodeOne(c); if (!first) first = o; if (o.kind !== "none") return o; }
+  return first || jcodeOne("");
+}
 function boardLeave(ws) {
   const r = ws.broom && brooms.get(ws.broom); ws.broom = null; if (!r) return;
   const i = r.uids.indexOf(ws.uid); if (i < 0) return;
@@ -2936,6 +2950,8 @@ wss.on("connection", (ws, req) => {
       const ps = L.players.filter(p => p.readyState === 1 && !p.room);
       if (ps.length < 2) return wsSend(ws, {t: "lobbyerr", why: "min"});
       startTournament(L, ps);
+    } else if (m.t === "jcode") {   // one box for every code (the owner, Nov 28: "where does the partner enter the code?")
+      if (bucket(ws, "jcode", 10, 10000)) wsSend(ws, jcodeInfo(m));
     } else if (BG_T.has(m.t)) {   // board game rooms (see "board game rooms" above)
       try { boardMessage(ws, m, u); } catch (e) { console.error("board:", e && e.stack || e); }
     } else if (TEAM_T.has(m.t)) {   // online 2v2 team rooms (see "online 2v2" above)
