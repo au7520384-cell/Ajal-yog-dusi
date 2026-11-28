@@ -2580,7 +2580,7 @@ const TC_START = 12, TC_FEE = 0.10, TC_MAXBET = 100000;
 const TC_TIERS = [3, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000];
 const TC_AD_GAP = +process.env.TC_AD_GAP_MS || 25e3, TC_AD_DAY = +process.env.TC_AD_DAY || 40, TC_BUY_DAY = 10000;
 const BR_RULES = require("./boardrules.js").load();
-const tcStakeOk = (game, s) => TC_TIERS.includes(s) && (game !== "mafia" || s * 3 <= TC_MAXBET) && (game === "mafia" || BR_RULES.ok);   // (shashka / chess stakes need the rules the server judges with)
+const tcStakeOk = (game, s) => TC_TIERS.includes(s) && (game !== "mafia" || s * 3 <= TC_MAXBET) && (game === "mafia" || game === "hockey" || game === "tennis" || BR_RULES.ok);   // (shashka / chess stakes need the rules the server judges with; the air hockey / table tennis are judged by the server's own game)
 const tcPrize = (pool) => Math.floor(pool * (1 - TC_FEE));
 function tcOf(u) { if (!Number.isFinite(u.tc)) { u.tc = TC_START; u.tcLog = [{at: Date.now(), d: TC_START, k: "start", g: ""}]; markDirty(); } return u.tc; }
 const tcHeld = u => Object.values(u.tcHold || {}).reduce((a, x) => a + x, 0);
@@ -2626,20 +2626,22 @@ Object.assign(routes, {
 // (WebRTC signalling only, the audio never touches the server). Same away / gone idea as the 2v2 rooms: a phone that drops keeps its seat for a while (open room: 3 min, match: BROOM_GRACE_MS, then it forfeits).
 const brooms = new Map();   // code -> {code, game, max, id, state: "open" | "run", host, seats, uids, prof, away, timers, first, turn, moves, rem, at}
 const MAFIA = require("./mafia.js"), MF_SCALE = +process.env.MAFIA_SCALE || 1;   // MAFIA_SCALE: the phases of Mafia last this share of their time (the tests run it at 0.04)
-const BG_MAX = {shashka: 2, magic: 2, mafia: 8};
+const ARC = require("./arcade.js");   // online air hockey / table tennis: the server plays the match (see server/arcade.js)
+const BG_MAX = {shashka: 2, magic: 2, mafia: 8, hockey: 2, tennis: 2};
+const arcRooms = new Set();   // the rooms whose match is being played right now
 const BROOM_GRACE = +process.env.BROOM_GRACE_MS || 30e3, BROOM_OPEN_GRACE = +process.env.BROOM_OPEN_GRACE_MS || 3 * 60e3;
-const BG_T = new Set(["bcreate", "bjoin", "bleave", "bstart", "bmove", "bover", "boffer", "brematch", "bresume", "bvoice", "mact"]);
+const BG_T = new Set(["bcreate", "bjoin", "bleave", "bstart", "bmove", "bover", "boffer", "brematch", "bresume", "bvoice", "mact", "ainp"]);
 const bHere = (r, i) => !!r.uids[i], bLive = (r, i) => bHere(r, i) && !r.away[i] && r.seats[i] && r.seats[i].readyState === 1;
 const bPresent = r => [...r.uids.keys()].filter(i => bHere(r, i));
-function bPub(r) { return {t: "broom", code: r.code, game: r.game, max: r.max, state: r.state, host: r.host, stake: r.stake | 0, id: r.state === "run" ? r.id : "", seats: [...r.uids.keys()].map(i => r.uids[i] ? {...pubProfile(r.prof[i]), uid: r.uids[i], away: r.away[i] ? 1 : 0} : null)}; }
+function bPub(r) { return {t: "broom", code: r.code, game: r.game, max: r.max, state: r.state, host: r.host, stake: r.stake | 0, to: r.to | 0, id: r.state === "run" ? r.id : "", seats: [...r.uids.keys()].map(i => r.uids[i] ? {...pubProfile(r.prof[i]), uid: r.uids[i], away: r.away[i] ? 1 : 0} : null)}; }
 function bBroadcast(r) { const m = bPub(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m); }
 function bToAll(r, m, except) { for (let i = 0; i < r.max; i++) if (i !== except && bLive(r, i)) wsSend(r.seats[i], m); }
-const bMatchMsg = r => ({t: "bmatch", room: r.id, code: r.code, game: r.game, first: r.first, stake: r.stake | 0, tl: r.tdl ? Math.max(0, r.tdl - Date.now()) : 0, tlm: r.stake && r.max === 2 ? BROOM_TURN : 0, seats: bPub(r).seats});
+const bMatchMsg = r => ({t: "bmatch", room: r.id, code: r.code, game: r.game, first: r.first, stake: r.stake | 0, to: r.to | 0, tl: r.tdl ? Math.max(0, r.tdl - Date.now()) : 0, tlm: r.stake && r.max === 2 ? BROOM_TURN : 0, seats: bPub(r).seats});
 function bGiveBack(r) { if (!r.stake || !r.id) return; for (const uid of new Set([...r.uids, ...Object.keys(r.held || {})])) { const u = uid && db.users[uid]; if (u && u.tcHold && u.tcHold[r.id]) tcSettle(u, r.id, u.tcHold[r.id], "refund", r.game); } }   // (a match that is gone for any reason other than its result: nobody loses a coin)
-function bClose(r) { for (const x of r.timers) clearTimeout(x); clearTimeout(r.tt); if (r.mf) mfStop(r); if (r.state === "run") bGiveBack(r); brooms.delete(r.code); for (const w of r.seats) if (w && w.broom === r.code) w.broom = null; }
+function bClose(r) { for (const x of r.timers) clearTimeout(x); clearTimeout(r.tt); if (r.mf) mfStop(r); arcStop(r); if (r.state === "run") bGiveBack(r); brooms.delete(r.code); for (const w of r.seats) if (w && w.broom === r.code) w.broom = null; }
 function bEnd(r, winner, why, extra) {   // the match is over (a phone reported it, or a player left / timed out): the room is a waiting room again
   if (r.state !== "run") return;
-  const id = r.id; clearTimeout(r.tt); r.tt = null; r.tdl = 0; r.state = "open"; r.id = ""; r.rem = {}; r.lastFirst = r.first; r.g = null; r.drawBy = -1;
+  const id = r.id; clearTimeout(r.tt); r.tt = null; r.tdl = 0; arcStop(r); r.state = "open"; r.id = ""; r.rem = {}; r.lastFirst = r.first; r.g = null; r.drawBy = -1;
   bToAll(r, {t: "bend", room: id, winner, why: String(why || "").slice(0, 12), ...(extra || {})});
   bBroadcast(r);
 }
@@ -2647,7 +2649,8 @@ function bSettle(r, winner, why) {   // a 1-on-1 match is decided (winner: a sea
   if (r.state !== "run") return;
   if (!r.stake) return bEnd(r, winner, why);
   const S = r.stake, id = r.id, seats = [0, 1], held = seats.map(i => { const u = r.uids[i] && db.users[r.uids[i]]; return u && u.tcHold && u.tcHold[id] ? u : null; });
-  const void_ = winner >= 0 && r.moves.length < 4 && why !== "mate" && why !== "stuck";   // a match that ends by a resignation / leaving / the clock in its first moves moves no coins (a stake cannot be handed over by resigning at once)
+  const natural = why === "mate" || why === "stuck" || why === "score", played = r.arc ? r.arc.points() : r.moves.length;
+  const void_ = winner >= 0 && played < (r.arc ? 2 : 4) && !natural;   // a match that ends by a resignation / leaving / the clock in its first moves (arcade: before the second goal / point) moves no coins (a stake cannot be handed over by resigning at once)
   const pay = {};
   for (const i of seats) {
     const u = held[i]; if (!u) { pay[i] = 0; continue; }
@@ -2659,7 +2662,7 @@ function bSettle(r, winner, why) {   // a 1-on-1 match is decided (winner: a sea
 }
 const BROOM_TURN = +process.env.BROOM_TURN_MS || 120e3;
 function bTurnClock(r) {   // a stake match has a clock: the seat that does not move in time loses (a stalling loser cannot keep the coins locked)
-  clearTimeout(r.tt); r.tt = null; r.tdl = 0; if (!r.stake || r.state !== "run" || r.max !== 2) return;
+  clearTimeout(r.tt); r.tt = null; r.tdl = 0; if (!r.stake || r.state !== "run" || r.max !== 2 || ARC.ARC_GAMES.has(r.game)) return;
   const tok = r.id, seat = r.turn; r.tdl = Date.now() + BROOM_TURN;
   r.tt = setTimeout(() => { if (r.id === tok && r.state === "run" && r.turn === seat && brooms.get(r.code) === r) bSettle(r, 1 - seat, "time"); }, BROOM_TURN);
 }
@@ -2668,7 +2671,7 @@ function bDrop(r, i, why) {   // the seat is given up
   const was = r.state === "run";
   if (r.game === "mafia" && was && r.mf) { r.seats[i] = null; r.away[i] = 0; return mfToBot(r, i); }   // (a bot plays the seat from now on)
   const stakeLeft = was && r.max === 2 && r.stake && bPresent(r).length === 2;   // (a stake match: the one who stays gets the pool, settled before the seat is emptied)
-  if (stakeLeft) bSettle(r, 1 - i, why === "away" ? "away" : "left");
+  if (stakeLeft) { r.seats[i] = null; bSettle(r, 1 - i, why === "away" ? "away" : "left"); }   // (the leaver's socket is let go first: the result and the room are told to the one who stays, not to a phone that has already left - its wallet is pushed on its own)
   r.seats[i] = null; r.uids[i] = null; r.prof[i] = null; r.away[i] = 0;
   if (!bPresent(r).length) return bClose(r);
   if (r.host === i) r.host = bPresent(r)[0];
@@ -2690,16 +2693,32 @@ function bHoldStakes(r, id, need) {   // every human in the room puts `need(i)` 
   }
   return -1;
 }
+// ---- the arcade games (air hockey, table tennis) in a room: the server plays the match (server/arcade.js), the phones send their finger (`ainp`) and draw the state (`ast`)
+function arcStart(r) { arcStop(r); r.arc = ARC.create(r.game, r.first, r.to || ARC.ARC_DEF[r.game]); arcRooms.add(r); }
+function arcStop(r) { if (r.arc) { r.arc = null; } arcRooms.delete(r); }
+function arcSend(r, snap) { const m = {t: "ast", room: r.id, ...snap}; for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m); }
+const arcFull = r => ({t: "ast", room: r.id, ...ARC.full(r.arc)});
+function arcTick() {
+  const now = Date.now();
+  for (const r of [...arcRooms]) {
+    const a = r.arc; if (!a || r.state !== "run" || brooms.get(r.code) !== r) { arcRooms.delete(r); continue; }
+    if (r.away.some(x => x)) { a.last = now; a.paused = true; continue; }   // (a seat is away: the match waits for it, it is not played in its absence)
+    a.paused = false; ARC.advance(a, now, snap => arcSend(r, snap));
+    if (a.over) bSettle(r, a.over.winner, "score");
+  }
+}
+setInterval(arcTick, 16).unref();
 function bStartMatch(r) {
   const id = crypto.randomUUID();
   if (r.stake) {
     const bad = bHoldStakes(r, id, () => r.stake);
     if (bad >= 0) { r.rem = {}; bToAll(r, {t: "berr", why: "coins", seat: bad, need: r.stake}); return false; }
-    r.g = r.game === "magic" ? BR_RULES.mcNew() : BR_RULES.shNew(); r.drawBy = -1;
+    if (!ARC.ARC_GAMES.has(r.game)) { r.g = r.game === "magic" ? BR_RULES.mcNew() : BR_RULES.shNew(); r.drawBy = -1; }
   }
   r.state = "run"; r.id = id; r.moves = []; r.rem = {}; r.at = Date.now();
   r.first = r.lastFirst === undefined ? crypto.randomInt(r.max) : (r.lastFirst + 1) % r.max;   // (the colours swap in a rematch)
   r.turn = r.first; bTurnClock(r);
+  if (ARC.ARC_GAMES.has(r.game)) arcStart(r);
   const m = bMatchMsg(r); for (let i = 0; i < r.max; i++) if (bLive(r, i)) wsSend(r.seats[i], m);
   bBroadcast(r); return true;
 }
@@ -2788,19 +2807,20 @@ function boardMessage(ws, m, u) {
     const game = String(m.game || ""), max = BG_MAX[game]; if (!max) return;
     if (!bucket(ws, "bcreate", 5, 20000) || (ws.room && !ws.room.over)) return wsSend(ws, {t: "berr", why: "busy"});
     const stake = Number.isInteger(m.stake) && m.stake > 0 ? m.stake : 0;   // (0: a friendly room, no coins)
+    const to = ARC.ARC_GAMES.has(game) ? ARC.lengthOf(game, m.to) : 0;   // (an arcade match: first to this many goals / points)
     if (stake && !tcStakeOk(game, stake)) return wsSend(ws, {t: "berr", why: "stake"});
     if (stake && tcOf(u) < (game === "mafia" ? 3 * stake : stake)) return wsSend(ws, {t: "berr", why: "coins", need: game === "mafia" ? 3 * stake : stake});
     leaveQueue(ws); if (ws.broom) boardLeave(ws);
     let code = ""; for (let k = 0; k < 40 && (!code || codeTaken(code)); k++) code = Array.from({length: 4}, () => TCODE_CH[crypto.randomInt(TCODE_CH.length)]).join("");
     if (codeTaken(code)) return wsSend(ws, {t: "berr", why: "busy"});
-    const n = [...Array(max).keys()], r = {code, game, max, id: "", state: "open", host: 0, seats: n.map(i => i ? null : ws), uids: n.map(i => i ? null : ws.uid), prof: n.map(i => i ? null : mkProfile(u, m.cue, m.tbl)), away: n.map(() => 0), timers: n.map(() => null), first: 0, turn: 0, moves: [], rem: {}, at: Date.now(), stake, held: {}, g: null, drawBy: -1};
+    const n = [...Array(max).keys()], r = {code, game, max, id: "", state: "open", host: 0, seats: n.map(i => i ? null : ws), uids: n.map(i => i ? null : ws.uid), prof: n.map(i => i ? null : mkProfile(u, m.cue, m.tbl)), away: n.map(() => 0), timers: n.map(() => null), first: 0, turn: 0, moves: [], rem: {}, at: Date.now(), stake, to, held: {}, g: null, drawBy: -1};
     brooms.set(code, r); ws.broom = code; return bBroadcast(r);
   }
   if (m.t === "bjoin") {
     if (!bucket(ws, "bjoin", 8, 10000) || (ws.room && !ws.room.over)) return wsSend(ws, {t: "berr", why: "busy"});
     const r = brooms.get(tcode(m.code)); if (!r) return wsSend(ws, {t: "berr", why: "none"});
     const mine = r.uids.indexOf(ws.uid);
-    if (mine >= 0) { bAttach(r, mine, ws); if (r.state === "run") { wsSend(ws, bMatchMsg(r)); wsSend(ws, r.game === "mafia" ? mfViewMsg(r, mine) : {t: "bsync", room: r.id, moves: r.moves}); } return bBroadcast(r); }
+    if (mine >= 0) { bAttach(r, mine, ws); if (r.state === "run") { wsSend(ws, bMatchMsg(r)); wsSend(ws, r.game === "mafia" ? mfViewMsg(r, mine) : r.arc ? arcFull(r) : {t: "bsync", room: r.id, moves: r.moves}); } return bBroadcast(r); }
     if (r.state === "run") return wsSend(ws, {t: "berr", why: "started"});
     if (r.stake && tcOf(u) < (r.game === "mafia" ? 3 * r.stake : r.stake)) return wsSend(ws, {t: "berr", why: "coins", need: r.game === "mafia" ? 3 * r.stake : r.stake});
     leaveQueue(ws); if (ws.broom) boardLeave(ws);
@@ -2814,7 +2834,7 @@ function boardMessage(ws, m, u) {
     const i = rr ? rr.uids.indexOf(ws.uid) : -1;
     if (!rr || i < 0) return wsSend(ws, {t: "berr", why: "none", resume: 1});
     bAttach(rr, i, ws);
-    if (rr.state === "run") { wsSend(ws, bMatchMsg(rr)); wsSend(ws, rr.game === "mafia" ? mfViewMsg(rr, i) : {t: "bsync", room: rr.id, moves: rr.moves}); }
+    if (rr.state === "run") { wsSend(ws, bMatchMsg(rr)); wsSend(ws, rr.game === "mafia" ? mfViewMsg(rr, i) : rr.arc ? arcFull(rr) : {t: "bsync", room: rr.id, moves: rr.moves}); }
     return bBroadcast(rr);
   }
   if (!r) return;
@@ -2841,7 +2861,14 @@ function boardMessage(ws, m, u) {
   }
   if (r.state !== "run") return;
   if (m.t === "mact") return r.game === "mafia" ? mfAct(r, seat, m) : undefined;
+  if (m.t === "ainp") {   // an arcade match: where the finger wants the mallet / the racket (the server moves it, with the same speed limit as the phone)
+    if (!r.arc || !bucket(ws, "ainp", 100, 1000)) return; r.arc.input(seat, m); return;
+  }
   if (r.game === "mafia") return;
+  if (r.arc) {   // an arcade match has no moves and no draw offers; the only thing a phone may say is that it gives up
+    if (m.t === "bover" && String(m.why) === "resign" && (!m.room || String(m.room) === r.id)) return bSettle(r, 1 - seat, "resign");
+    return;
+  }
   if (m.t === "bmove") {
     if (seat !== r.turn || !Array.isArray(m.path) || m.path.length < 2 || m.path.length > 16 || m.path.some(x => !Number.isInteger(x) || x < 0 || x > 63) || r.moves.length >= 600) return;
     if (r.stake && r.g) {   // a stake match: the SERVER plays every move on its own copy of the rules; an illegal one is refused (the phone gets the real list back), and the end is the rules' end

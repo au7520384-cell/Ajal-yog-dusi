@@ -43,7 +43,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     if (SHOT) await p.screenshot({ path: path.join(SHOT, "00_row.png") });
     await p.evaluate(() => document.querySelector('#miniArcade .sh-pan[data-hk="air"]').click()); await sleep(600);
     const list = await p.evaluate(() => [...document.querySelectorAll("#mExtra .pro-row")].map(r => r.dataset.id));
-    ok(list.join() === "easy,mid,hard,local", "the Air Hockey key opens the list: three bot levels and two on one phone", list);
+    ok(list.join() === "easy,mid,hard,local,online", "the Air Hockey key opens the list: three bot levels, two on one phone and the Online row (a room with a friend)", list);
     await p.evaluate(() => document.querySelector('#mExtra [data-id="hard"]').click()); await sleep(600);
     const m1 = await modal(p); ok(m1 && /Air hockey/i.test(m1.t) && m1.btns.length === 4 && /First goal wins/.test(m1.btns[0]) && /First to 3/.test(m1.btns[1]) && /First to 7/.test(m1.btns[2]), "then the length of the match: the first goal (as in the video), 3, 7", m1);
     await clickBtn(p, "First goal wins"); await sleep(900);

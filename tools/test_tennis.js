@@ -40,7 +40,7 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await p.evaluate(() => document.querySelector('#miniArcade [data-hk="tt"]').scrollIntoView({ block: "center" })); await sleep(400); if (SHOT) await p.screenshot({ path: path.join(SHOT, "00_row.png") });
     await p.evaluate(() => document.querySelector('#miniArcade [data-hk="tt"]').click()); await sleep(600);
     const list = await p.evaluate(() => [...document.querySelectorAll("#mExtra .pro-row")].map(r => r.dataset.id));
-    ok(list.join() === "easy,mid,hard,local", "the key opens the list: three bot levels and two on one phone", list);
+    ok(list.join() === "easy,mid,hard,local,online", "the key opens the list: three bot levels, two on one phone and the Online row (a room with a friend)", list);
     await p.evaluate(() => document.querySelector('#mExtra [data-id="mid"]').click()); await sleep(600);
     const m1 = await modal(p); ok(m1 && /Table tennis/i.test(m1.t) && m1.btns.length === 4 && /First to 3 points/.test(m1.btns[0]) && /First to 7 points/.test(m1.btns[1]) && /First to 11 points/.test(m1.btns[2]), "then the length of the match: 3, 7 or 11 points", m1);
     await clickBtn(p, "First to 7 points"); await sleep(900);
