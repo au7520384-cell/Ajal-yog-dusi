@@ -90,8 +90,8 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
   for (let i = 0; i < 60; i++) { await sleep(200); if (await p.evaluate(() => !!game && game.type === "trick" && !game.moving)) break; }
   const st = await p.evaluate(() => { const G = game; return {type: G.type, balls: G.balls.length, ctl: canControl(), noChat: document.getElementById("gChat").style.display, legal: legalTargets(0).length === G.balls.length - 1, name: G.trick.name}; });
   ok(st.type === "trick" && st.ctl && st.noChat === "none" && st.legal, "a trick shot opens on the table, the player can aim, no chat", st);
-  // a miss first: aim 20 degrees off
-  await p.evaluate(() => { const G = game; G.angle = aimOf(G.trick.layout) + 0.35; requestShot(0.5); });
+  // a miss first: aim about 20 degrees off (the first offset that really misses on THIS day's layout: on 2026-11-28 +0.35 rad pots the 8, which made the test fail that day)
+  await p.evaluate(() => { const G = game, L = G.trick.layout, a0 = aimOf(L); let off = 0.35; for (const o of [0.35, -0.35, 0.7, -0.7, 1]) if (!okShot(L, a0 + o, 0.5, 0, 0)) { off = o; break; } G.angle = a0 + off; requestShot(0.5); });
   for (let i = 0; i < 80; i++) { await sleep(150); if (await p.evaluate(() => game.over && game.reset)) break; }
   const miss = await p.evaluate(() => ({tries: game.trick.tries, over: game.over, reset: game.reset, modal: document.getElementById("modal").classList.contains("on")}));
   ok(miss.tries === 1 && miss.over && miss.reset && !miss.modal, "a miss counts one attempt and shows no result window", miss);

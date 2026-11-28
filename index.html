@@ -17940,12 +17940,17 @@ const SH_DISC_W = "data:image/webp;base64,UklGRrpRAABXRUJQVlA4WAoAAAAQAAAAZwEATQ
 #shScr.flip .sh-bg{transform:rotate(180deg)}
 #shScr .sq,#shScr .sq.dk{background:none;box-shadow:none}
 #shScr .sq::before{content:none}
-/* a disc is its picture (the top and the real ridged side of the wood), centred on the square; the ground shadow is the soft circle under it */
+/* a disc is its picture (the top and the real ridged side of the wood), centred on the square. Its ground shadow is a soft gradient ellipse BEHIND it (.pc::before),
+   not a box-shadow of the round box: a box-shadow is never painted inside its own box, so it left a hole of lit board under the picture (a tan crescent under every disc,
+   a tan plate under the lifted one: the owner's arrows, Nov 28); the old --side bands of the lifted (.up) and the must-take (shglow) pieces are gone too */
 #shScr .pc.w i{--dsp:var(--dw);background:none}#shScr .pc.b i{--dsp:var(--db);background:none}
-#shScr .pc i{width:84%;height:84%;background:none;box-shadow:0 calc(var(--S) * .022) calc(var(--S) * .02) #0008}
+#shScr .pc i,#shScr .pc.up i,#shScr.tilt3d .pc i{width:84%;height:84%;background:none;box-shadow:none}
+#shScr .pc::before{content:"";position:absolute;left:2%;top:38%;width:96%;height:68%;border-radius:50%;background:radial-gradient(closest-side,#000a 0,#0008 55%,#0004 78%,#0000 100%);pointer-events:none;transition:transform .15s}
+#shScr .pc.up::before{transform:translateY(8%) scale(1.1)}
+#shScr.tilt3d .pc::before{top:36%;height:74%}
+@keyframes shglow{50%{box-shadow:0 0 0 3px #ff9a8acc}}
 #shScr .pc i::before,#shScr .pc.b i::before,#shScr .pc.w i::before{content:"";display:block;position:absolute;left:0;top:50%;width:100%;height:94%;border-radius:0;transform:translateY(-50%);background:var(--dsp) center/100% 100% no-repeat;pointer-events:none}
-#shScr .pc.k i svg{margin-top:-9%}#shScr .pc.k i::after{margin-top:-6%}
-#shScr.tilt3d .pc i{box-shadow:0 calc(var(--S) * .03) calc(var(--S) * .024) #000a}`;
+#shScr .pc.k i svg{margin-top:-9%}#shScr .pc.k i::after{margin-top:-6%}`;
   document.head.appendChild(st);
 })();
 
