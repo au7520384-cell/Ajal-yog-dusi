@@ -17927,9 +17927,9 @@ BGLIST.push({id: "shashka", name: "Shashka", sub: "Botga qarshi yoki do'st bilan
 // ---------------------------------------------------------------- the wooden board and the wooden discs of the shashka (the owner, Nov 28: 'put this board into the shashka, with these stones')
 // His two pictures: a walnut-and-maple board seen from an angle (the squares, a gold inlay line, the letters A - H and the numbers 1 - 8 in the frame) and ebony and maple discs with grooves.
 // BOARD: the picture is straightened (a perspective warp of the 8 x 8 squares into a flat square, the grid checked: every line within 2 px of 128) and cropped to the frame: 1160 x 1160, the squares are the middle 1024 x 1024
-// (a margin of 68 px = 5.862 percent of the board on each side). DISCS: the top face of one ebony and one maple disc, flattened from an ellipse to a circle (a projective map, so the grooves are circles again), 192 x 192, transparent corners.
+// (a margin of 68 px = 5.862 percent of the board on each side). DISCS (second picture of the owner, Nov 28, 'put these stones in good quality'): one ebony and one maple disc cut out of his picture of 15 discs seen from above at ~55 degrees (a mask from the colour against the grey ground, the shadow left out, soft 1.4 px edge), the WHOLE disc with its ridged wooden side, 200 px wide, ~93 percent high, transparent background.
 const SH_WOOD = "img/6ff40b07a7d192.webp";
-const SH_DISC_W = "img/f1e7e4212375cb.webp", SH_DISC_B = "img/65cd1944581521.webp";
+const SH_DISC_W = "img/e6900b3e57a436.webp", SH_DISC_B = "img/750b2f08e2e94d.webp";
 
 (function shWoodStyle() {
   const st = document.createElement("style"); st.id = "shWoodStyle";
@@ -17940,12 +17940,12 @@ const SH_DISC_W = "img/f1e7e4212375cb.webp", SH_DISC_B = "img/65cd1944581521.web
 #shScr.flip .sh-bg{transform:rotate(180deg)}
 #shScr .sq,#shScr .sq.dk{background:none;box-shadow:none}
 #shScr .sq::before{content:none}
-/* the thickness of a disc: four thin bands, light to dark (the turned wood of the real discs' side, with its ridges), then the soft shadow on the board */
-#shScr .pc.w i{--side:#b49a62;--s1:#f3e6c6;--s2:#d9c392;--s3:#ead8ac;--s4:#b79a62;background:var(--dw) center/112.3% no-repeat}
-#shScr .pc.b i{--side:#0a0706;--s1:#3a322c;--s2:#17120f;--s3:#2a231e;--s4:#060403;background:var(--db) center/112.3% no-repeat}
-#shScr .pc i::before{display:none}
-#shScr .pc i{box-shadow:0 calc(var(--S) * .0032) 0 var(--s1),0 calc(var(--S) * .0064) 0 var(--s2),0 calc(var(--S) * .0096) 0 var(--s3),0 calc(var(--S) * .0128) 0 var(--s4),0 calc(var(--S) * .028) calc(var(--S) * .022) #000b}
-#shScr.tilt3d .pc i{box-shadow:0 calc(var(--S) * .005) 0 var(--s1),0 calc(var(--S) * .01) 0 var(--s2),0 calc(var(--S) * .015) 0 var(--s3),0 calc(var(--S) * .02) 0 var(--s4),0 calc(var(--S) * .04) calc(var(--S) * .026) #000c}`;
+/* a disc is its picture (the top and the real ridged side of the wood), centred on the square; the ground shadow is the soft circle under it */
+#shScr .pc.w i{--dsp:var(--dw);background:none}#shScr .pc.b i{--dsp:var(--db);background:none}
+#shScr .pc i{width:84%;height:84%;background:none;box-shadow:0 calc(var(--S) * .022) calc(var(--S) * .02) #0008}
+#shScr .pc i::before,#shScr .pc.b i::before,#shScr .pc.w i::before{content:"";display:block;position:absolute;left:0;top:50%;width:100%;height:94%;border-radius:0;transform:translateY(-50%);background:var(--dsp) center/100% 100% no-repeat;pointer-events:none}
+#shScr .pc.k i svg{margin-top:-9%}#shScr .pc.k i::after{margin-top:-6%}
+#shScr.tilt3d .pc i{box-shadow:0 calc(var(--S) * .03) calc(var(--S) * .024) #000a}`;
   document.head.appendChild(st);
 })();
 
