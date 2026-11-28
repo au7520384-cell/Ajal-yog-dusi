@@ -1620,10 +1620,10 @@ Lobbilar‖Lobbies|Лобби|Lobiler|Salas|Salas|الغرف|Lobi|लॉबी|S
 Hozircha ochiq lobbi yo'q‖No open lobbies yet|Пока нет открытых лобби|Henüz açık lobi yok|Aún no hay salas abiertas|Ainda não há salas abertas|لا توجد غرف مفتوحة بعد|Belum ada lobi terbuka|अभी कोई खुली लॉबी नहीं|Aucun salon ouvert pour l'instant|Noch keine offenen Lobbys|아직 열린 로비가 없어요|公開ロビーはまだありません|暂时没有开放的房间|ยังไม่มีล็อบบี้ที่เปิดอยู่|Chưa có sảnh nào đang mở
 Lobbimni yuborish‖Post my lobby|Отправить моё лобби|Lobimi gönder|Enviar mi sala|Enviar minha sala|إرسال غرفتي|Kirim lobi saya|मेरी लॉबी भेजें|Envoyer mon salon|Meine Lobby posten|내 로비 올리기|自分のロビーを送る|发布我的房间|โพสต์ล็อบบี้ของฉัน|Đăng sảnh của tôi
 Lobbi ochish‖Open a lobby|Создать лобби|Lobi aç|Abrir una sala|Abrir uma sala|فتح غرفة|Buka lobi|लॉबी खोलें|Ouvrir un salon|Lobby eröffnen|로비 열기|ロビーを開く|创建房间|เปิดล็อบบี้|Mở sảnh
-5 000 tanga — katta sovg'a‖5 000 เหรียญ — ของขวัญชิ้นใหญ่|5 000 xu — món quà lớn
-Brauzerni ochib bo'lmadi‖เปิดเบราว์เซอร์ไม่ได้|Không thể mở trình duyệt
-Kirish tugallanmadi‖การเข้าสู่ระบบไม่สำเร็จ|Đăng nhập chưa hoàn tất
-Brauzer ochilmoqda…‖กำลังเปิดเบราว์เซอร์…|Đang mở trình duyệt…
+5 000 tanga — katta sovg'a‖5 000 jeton — büyük bir hediye|5 000 monedas — un gran regalo|5 000 moedas — um grande presente|5 000 عملة — هدية كبيرة|5 000 koin — hadiah besar|5 000 सिक्के — बड़ा तोहफ़ा|5 000 pièces — un gros cadeau|5 000 Münzen — ein großes Geschenk|코인 5 000개 — 큰 선물|コイン5 000枚 — 大きなプレゼント|5 000金币 — 大礼包|5 000 เหรียญ — ของขวัญชิ้นใหญ่|5 000 xu — món quà lớn
+Brauzerni ochib bo'lmadi‖Tarayıcı açılamadı|No se pudo abrir el navegador|Não foi possível abrir o navegador|تعذّر فتح المتصفح|Browser tidak dapat dibuka|ब्राउज़र नहीं खुल सका|Impossible d'ouvrir le navigateur|Der Browser konnte nicht geöffnet werden|브라우저를 열 수 없습니다|ブラウザを開けませんでした|无法打开浏览器|เปิดเบราว์เซอร์ไม่ได้|Không thể mở trình duyệt
+Kirish tugallanmadi‖Giriş tamamlanmadı|No se completó el inicio de sesión|O login não foi concluído|لم يكتمل تسجيل الدخول|Login belum selesai|साइन-इन पूरा नहीं हुआ|La connexion n'a pas abouti|Die Anmeldung wurde nicht abgeschlossen|로그인이 완료되지 않았습니다|ログインが完了しませんでした|登录未完成|การเข้าสู่ระบบไม่สำเร็จ|Đăng nhập chưa hoàn tất
+Brauzer ochilmoqda…‖Tarayıcı açılıyor…|Abriendo el navegador…|Abrindo o navegador…|جارٍ فتح المتصفح…|Membuka browser…|ब्राउज़र खुल रहा है…|Ouverture du navigateur…|Browser wird geöffnet…|브라우저를 여는 중…|ブラウザを開いています…|正在打开浏览器…|กำลังเปิดเบราว์เซอร์…|Đang mở trình duyệt…
 USTALAR LIGASI‖มาสเตอร์ส ลีก|GIẢI MASTERS
 1 ga 1‖1 ต่อ 1|1 đấu 1
 O'ynash‖เล่น|Chơi
@@ -1636,7 +1636,7 @@ Bitta qurilmada 2 kishi‖2 ผู้เล่น เครื่องเดี
 Tomosha‖ดู|Xem
 Mashq‖ฝึกซ้อม|Luyện tập
 Do'stlar‖เพื่อน|Bạn bè
-Tavsiya‖แนะนำ|Gợi ý
+Tavsiya‖Önerilenler|Sugeridos|Sugeridos|مقترحون|Disarankan|सुझाए गए|Suggestions|Vorschläge|추천|おすすめ|推荐|แนะนำ|Gợi ý
 Sovg'alar‖รางวัล|Phần thưởng
 Kiylar‖ไม้คิว|Cơ
 Reyting‖อันดับ|Bảng xếp hạng
@@ -1652,16 +1652,16 @@ Yutuq‖รางวัล|Giải thưởng
 Kirish narxi‖ค่าเข้าร่วม|Phí tham gia
 O'yinchilar onlayn‖ผู้เล่นออนไลน์|Người chơi trực tuyến
 O'YNASH‖เล่น|CHƠI
-Rasmiy kanal‖ช่องทางทางการ|Kênh chính thức
-Siz kimsiz?‖คุณคือใคร?|Bạn là ai?
-Bola‖ชาย|Nam
-Qiz‖หญิง|Nữ
-Barchasi‖ทั้งหมด|Tất cả
-Hozirgisi qolsin‖ใช้อันเดิม|Giữ cái hiện tại
-Avatar sizga mos qo'yiladi. Keyin Profilda o'zgartira olasiz.‖อวาตาร์ของคุณจะตรงกับตัวคุณ เปลี่ยนได้ภายหลังในโปรไฟล์|Ảnh đại diện sẽ phù hợp với bạn. Bạn có thể đổi sau trong Hồ sơ.
-Do'st bilan o'ynaymizmi?‖เล่นกับเพื่อนของคุณไหม?|Chơi cùng bạn bè của bạn?
-Lobbiga kirish‖เข้าล็อบบี้|Vào sảnh
-lobbiga taklif qilamiz. O'yin vaqtida 🎤 tugmasi bilan gaplashasiz.‖เราจะเชิญเขาเข้าล็อบบี้ ระหว่างเกมคุณพูดคุยกันได้ด้วยปุ่ม 🎤|chúng tôi sẽ mời họ vào sảnh. Trong lúc chơi, bạn có thể trò chuyện bằng nút 🎤.
+Rasmiy kanal‖Resmî kanal|Canal oficial|Canal oficial|القناة الرسمية|Kanal resmi|आधिकारिक चैनल|Canal officiel|Offizieller Kanal|공식 채널|公式チャンネル|官方频道|ช่องทางทางการ|Kênh chính thức
+Siz kimsiz?‖Sen kimsin?|¿Quién eres?|Quem é você?|من أنت؟|Kamu siapa?|आप कौन हैं?|Qui êtes-vous ?|Wer bist du?|누구신가요?|あなたは？|你是谁？|คุณคือใคร?|Bạn là ai?
+Bola‖Erkek|Chico|Menino|ولد|Laki-laki|लड़का|Garçon|Junge|남자|男の子|男生|ชาย|Nam
+Qiz‖Kız|Chica|Menina|بنت|Perempuan|लड़की|Fille|Mädchen|여자|女の子|女生|หญิง|Nữ
+Barchasi‖Tümü|Todos|Todos|الكل|Semua|सभी|Tous|Alle|전체|すべて|全部|ทั้งหมด|Tất cả
+Hozirgisi qolsin‖Mevcut kalsın|Dejar el actual|Manter o atual|إبقاء الحالي|Pertahankan yang sekarang|मौजूदा ही रहने दें|Garder l'actuel|Aktuellen behalten|현재 것 유지|今のままにする|保持不变|ใช้อันเดิม|Giữ cái hiện tại
+Avatar sizga mos qo'yiladi. Keyin Profilda o'zgartira olasiz.‖Avatarın sana uygun olacak. Daha sonra Profil'den değiştirebilirsin.|Tu avatar se ajustará a ti. Podrás cambiarlo después en Perfil.|Seu avatar será escolhido para combinar com você. Você pode mudá-lo depois no Perfil.|ستُختار الصورة الرمزية المناسبة لك. يمكنك تغييرها لاحقًا من الملف الشخصي.|Avatar akan disesuaikan denganmu. Kamu bisa mengubahnya nanti di Profil.|अवतार आपके अनुसार चुना जाएगा। आप इसे बाद में प्रोफ़ाइल में बदल सकते हैं।|L'avatar sera choisi pour vous correspondre. Vous pourrez le changer plus tard dans Profil.|Dein Avatar wird passend zu dir gewählt. Du kannst ihn später im Profil ändern.|나에게 맞는 아바타가 설정됩니다. 나중에 프로필에서 바꿀 수 있어요.|あなたに合ったアバターが設定されます。あとでプロフィールから変更できます。|头像将与你相匹配，之后可以在个人资料中更改。|อวาตาร์ของคุณจะตรงกับตัวคุณ เปลี่ยนได้ภายหลังในโปรไฟล์|Ảnh đại diện sẽ phù hợp với bạn. Bạn có thể đổi sau trong Hồ sơ.
+Do'st bilan o'ynaymizmi?‖Arkadaşınla oynayalım mı?|¿Jugamos con tu amigo?|Jogamos com seu amigo?|هل نلعب مع صديقك؟|Main bareng temanmu?|क्या अपने दोस्त के साथ खेलें?|On joue avec votre ami ?|Mit deinem Freund spielen?|친구와 플레이할까요?|友達と遊びますか？|和好友一起玩吗？|เล่นกับเพื่อนของคุณไหม?|Chơi cùng bạn bè của bạn?
+Lobbiga kirish‖Lobiye katıl|Entrar al lobby|Entrar no lobby|انضم إلى الردهة|Masuk lobi|लॉबी में जाएँ|Rejoindre le lobby|Lobby beitreten|로비 입장|ロビーに入る|进入大厅|เข้าล็อบบี้|Vào sảnh
+lobbiga taklif qilamiz. O'yin vaqtida 🎤 tugmasi bilan gaplashasiz.‖onu lobiye davet ediyoruz. Oyun sırasında 🎤 düğmesiyle konuşabilirsin.|invitamos a esa persona a un lobby. Durante la partida puedes hablar con el botón 🎤.|convidamos essa pessoa para um lobby. Durante a partida, você pode conversar com o botão 🎤.|ندعو هذا اللاعب إلى ردهة. أثناء اللعب يمكنك التحدث بزر 🎤.|kami undang ke lobi. Saat bermain, kamu bisa mengobrol dengan tombol 🎤.|हम इन्हें लॉबी में आमंत्रित करते हैं। खेल के दौरान 🎤 बटन से बात कर सकते हैं।|nous l'invitons dans un lobby. Pendant la partie, vous pouvez parler avec le bouton 🎤.|wir laden die Person in eine Lobby ein. Während des Spiels kannst du mit der 🎤-Taste sprechen.|로비로 초대합니다. 게임 중에는 🎤 버튼으로 대화할 수 있어요.|ロビーに招待します。ゲーム中は🎤ボタンで会話できます。|邀请对方进入大厅。游戏中可以使用 🎤 按钮语音交流。|เราจะเชิญเขาเข้าล็อบบี้ ระหว่างเกมคุณพูดคุยกันได้ด้วยปุ่ม 🎤|chúng tôi sẽ mời họ vào sảnh. Trong lúc chơi, bạn có thể trò chuyện bằng nút 🎤.
 Pul yetmaydi‖เงินไม่พอ|Không đủ tiền
 Tanga yetmaydi‖เหรียญไม่พอ|Không đủ xu
 Yopish‖ปิด|Đóng
@@ -1676,46 +1676,46 @@ Sizning navbatingiz‖ตาของคุณ|Đến lượt bạn
 Siz sindirasiz — omad!‖คุณเป็นผู้เบรก ขอให้โชคดี!|Bạn phá bi, chúc may mắn!
 QOIDA BUZILDI!‖ฟาวล์!|PHẠM LỖI!
 VAQT TUGADI!‖หมดเวลา!|HẾT GIỜ!
-Raqib javob bermadi‖คู่ต่อสู้ไม่ตอบสนอง|Đối thủ không phản hồi
-Navbat sizda‖ถึงตาคุณแล้ว|Đến lượt bạn rồi
+Raqib javob bermadi‖Rakip yanıt vermiyor|El rival no responde|O adversário não responde|الخصم لا يستجيب|Lawan tidak merespons|प्रतिद्वंद्वी जवाब नहीं दे रहा|L'adversaire ne répond pas|Gegner reagiert nicht|상대가 응답하지 않습니다|相手が応答していません|对手没有响应|คู่ต่อสู้ไม่ตอบสนอง|Đối thủ không phản hồi
+Navbat sizda‖Sıra sende|Es tu turno|É a sua vez|دورك الآن|Giliranmu|आपकी बारी है|C'est votre tour|Du bist dran|당신 차례입니다|あなたの番です|轮到你了|ถึงตาคุณแล้ว|Đến lượt bạn rồi
 G'ALABA!‖ชัยชนะ!|CHIẾN THẮNG!
 MAG'LUBIYAT‖พ่ายแพ้|THẤT BẠI
 Yana o'ynash‖เล่นอีกครั้ง|Chơi lại
-HD grafika paketi‖ชุดกราฟิก HD|Gói đồ họa HD
-Tomosha qilish‖ดู|Xem
-To'ladim — tekshirish‖ฉันจ่ายแล้ว — ตรวจสอบ|Tôi đã trả — kiểm tra
-Hali topilmadi‖ยังไม่พบ|Chưa tìm thấy
-Adminga xabar yuborildi — tasdiqlansa xarid o'zi qo'shiladi‖แจ้งแอดมินแล้ว — เมื่อยืนยันแล้ว รายการซื้อจะถูกเพิ่มเอง|Đã báo cho quản trị viên — khi được xác nhận, giao dịch sẽ tự động được cộng
-Bank xabari 1–2 daqiqada keladi. Keyin yana bosing.‖ข้อความจากธนาคารจะมาใน 1–2 นาที แล้วกดอีกครั้ง|Tin nhắn ngân hàng sẽ đến sau 1–2 phút. Khi đó hãy bấm lại.
-Ochiq to'lov yo'q‖ไม่มีการชำระเงินที่ค้างอยู่|Không có thanh toán đang mở
-To'lovni tekshirish‖ตรวจสอบการชำระเงินของฉัน|Kiểm tra thanh toán của tôi
-Tekshirish‖ตรวจสอบ|Kiểm tra
-Pul o'tkazgan bo'lsangiz «To'ladim — tekshirish» ni bosing‖ถ้าคุณโอนเงินแล้ว ให้กด «ฉันจ่ายแล้ว — ตรวจสอบ»|Nếu bạn đã chuyển tiền, hãy bấm «Tôi đã trả — kiểm tra»
-Hisobni o'chirish‖ลบบัญชีของฉัน|Xóa tài khoản của tôi
-Hisobingiz va unga bog'langan hamma narsa (profil, do'stlar, klub, yutuqlar) butunlay o'chiriladi. Buni qaytarib bo'lmaydi.‖บัญชีของคุณและทุกอย่างที่เชื่อมอยู่ (โปรไฟล์ เพื่อน คลับ ความคืบหน้า) จะถูกลบถาวร ย้อนกลับไม่ได้|Tài khoản của bạn và mọi thứ liên quan (hồ sơ, bạn bè, câu lạc bộ, tiến trình) sẽ bị xóa vĩnh viễn. Không thể hoàn tác.
-Ha, o'chirish‖ใช่ ลบเลย|Có, xóa
-Hisob o'chirilmadi. Internetni tekshiring.‖ลบบัญชีไม่ได้ ตรวจสอบอินเทอร์เน็ตของคุณ|Không thể xóa tài khoản. Hãy kiểm tra mạng của bạn.
-Sharlar, avatarlar va kiyalar aniq ko'rinadi‖ลูก อวาตาร์ และไม้คิวคมชัด|Bi, ảnh đại diện và cơ sắc nét
-Yuklab olish‖ดาวน์โหลด|Tải xuống
-Yuklanmoqda‖กำลังดาวน์โหลด|Đang tải xuống
-Tayyor‖พร้อมแล้ว|Sẵn sàng
-O'chirish‖ปิด|Tắt
-Qo'llash‖ใช้|Áp dụng
-Yoqilgan‖เปิด|Bật
-Keyingi stol‖โต๊ะถัดไป|Bàn tiếp theo
-Kunlik viktorina‖ควิซรายวัน|Câu đố hằng ngày
-Savol‖คำถาม|Câu hỏi
-To'g'ri!‖ถูกต้อง!|Chính xác!
-Noto'g'ri‖ผิด|Sai
-Viktorina‖ควิซ|Câu đố
-To'g'ri javob‖คำตอบที่ถูก|Đáp án đúng
-Kanal viktorinasi‖ควิซช่อง|Câu đố của kênh
-Bu savolga avval javob bergansiz‖คุณตอบข้อนี้ไปแล้ว|Bạn đã trả lời câu này rồi
-Bugungi viktorina tugadi‖ควิซวันนี้เสร็จแล้ว|Câu đố hôm nay đã xong
-Natija‖ผลลัพธ์|Kết quả
-Viktorinani yuklab bo'lmadi. Internetni tekshiring.‖โหลดควิซไม่ได้ ตรวจสอบการเชื่อมต่อของคุณ|Không tải được câu đố. Hãy kiểm tra kết nối của bạn.
-Billiard haqida 5 ta savol‖5 คำถามเกี่ยวกับบิลเลียด|5 câu hỏi về bi-a
-har bir to'g'ri javobga‖สำหรับทุกคำตอบที่ถูก|cho mỗi câu trả lời đúng
+HD grafika paketi‖HD grafik paketi|Paquete de gráficos HD|Pacote de gráficos HD|حزمة الرسومات HD|Paket grafis HD|HD ग्राफ़िक्स पैक|Pack graphique HD|HD-Grafikpaket|HD 그래픽 팩|HDグラフィックパック|高清画质包|ชุดกราฟิก HD|Gói đồ họa HD
+Tomosha qilish‖İzle|Ver|Assistir|شاهد|Tonton|देखें|Regarder|Ansehen|보기|見る|观看|ดู|Xem
+To'ladim — tekshirish‖Ödedim — kontrol et|Ya pagué — comprobar|Já paguei — verificar|تم الدفع — تحقق|Sudah bayar — periksa|मैंने भुगतान कर दिया — जाँचें|J'ai payé — vérifier|Ich habe bezahlt — prüfen|결제했어요 — 확인|支払いました — 確認|我已付款 — 查询|ฉันจ่ายแล้ว — ตรวจสอบ|Tôi đã trả — kiểm tra
+Hali topilmadi‖Henüz bulunamadı|Aún no se encontró|Ainda não encontrado|لم يُعثر عليه بعد|Belum ditemukan|अभी नहीं मिला|Pas encore trouvé|Noch nicht gefunden|아직 찾지 못했습니다|まだ見つかりません|尚未找到|ยังไม่พบ|Chưa tìm thấy
+Adminga xabar yuborildi — tasdiqlansa xarid o'zi qo'shiladi‖Yöneticiye haber verildi — onaylanınca satın alma kendiliğinden eklenir|Se avisó al administrador: al confirmarse, la compra se añade sola|O administrador foi avisado — quando confirmado, a compra é adicionada automaticamente|تم إبلاغ المشرف — عند التأكيد تُضاف عملية الشراء تلقائيًا|Admin sudah diberi tahu — setelah dikonfirmasi, pembelian akan ditambahkan otomatis|एडमिन को सूचित कर दिया गया है — पुष्टि होते ही खरीद अपने आप जुड़ जाएगी|L'administrateur a été prévenu — une fois confirmé, l'achat sera ajouté automatiquement|Der Admin wurde benachrichtigt — nach der Bestätigung wird der Kauf automatisch gutgeschrieben|관리자에게 알렸습니다 — 확인되면 구매가 자동으로 지급됩니다|管理者に通知しました — 確認されると購入分が自動で付与されます|已通知管理员 — 确认后购买内容将自动到账|แจ้งแอดมินแล้ว — เมื่อยืนยันแล้ว รายการซื้อจะถูกเพิ่มเอง|Đã báo cho quản trị viên — khi được xác nhận, giao dịch sẽ tự động được cộng
+Bank xabari 1–2 daqiqada keladi. Keyin yana bosing.‖Banka mesajı 1–2 dakikada gelir. O zaman tekrar bas.|El mensaje del banco llega en 1–2 minutos. Entonces vuelve a pulsar.|A mensagem do banco chega em 1–2 minutos. Aí toque de novo.|تصل رسالة البنك خلال 1–2 دقيقة. اضغط مرة أخرى بعدها.|Pesan dari bank datang dalam 1–2 menit. Setelah itu tekan lagi.|बैंक का संदेश 1–2 मिनट में आता है। तब दोबारा दबाएँ।|Le message de la banque arrive en 1 à 2 minutes. Appuyez ensuite à nouveau.|Die Bankmitteilung kommt in 1–2 Minuten. Dann erneut drücken.|은행 문자는 1~2분 안에 도착합니다. 그때 다시 눌러 주세요.|銀行からの通知は1〜2分で届きます。そのあと、もう一度押してください。|银行通知会在 1–2 分钟内到达，届时请再点一次。|ข้อความจากธนาคารจะมาใน 1–2 นาที แล้วกดอีกครั้ง|Tin nhắn ngân hàng sẽ đến sau 1–2 phút. Khi đó hãy bấm lại.
+Ochiq to'lov yo'q‖Açık ödeme yok|No hay pagos pendientes|Nenhum pagamento em aberto|لا توجد مدفوعات معلّقة|Tidak ada pembayaran yang terbuka|कोई खुला भुगतान नहीं है|Aucun paiement en cours|Keine offene Zahlung|진행 중인 결제가 없습니다|未完了の支払いはありません|没有待处理的付款|ไม่มีการชำระเงินที่ค้างอยู่|Không có thanh toán đang mở
+To'lovni tekshirish‖Ödemeyi kontrol et|Comprobar mi pago|Verificar meu pagamento|تحقق من دفعتي|Periksa pembayaranku|मेरा भुगतान जाँचें|Vérifier mon paiement|Meine Zahlung prüfen|내 결제 확인|支払いを確認|查询我的付款|ตรวจสอบการชำระเงินของฉัน|Kiểm tra thanh toán của tôi
+Tekshirish‖Kontrol et|Comprobar|Verificar|تحقق|Periksa|जाँचें|Vérifier|Prüfen|확인|確認|查询|ตรวจสอบ|Kiểm tra
+Pul o'tkazgan bo'lsangiz «To'ladim — tekshirish» ni bosing‖Parayı gönderdiyseniz «Ödedim — kontrol et» düğmesine basın|Si ya enviaste el dinero, pulsa «Ya pagué — comprobar»|Se você já enviou o dinheiro, toque em «Já paguei — verificar»|إذا حوّلت المبلغ، اضغط «تم الدفع — تحقق»|Jika sudah mengirim uang, tekan «Sudah bayar — periksa»|अगर आपने पैसे भेज दिए हैं, तो «मैंने भुगतान कर दिया — जाँचें» दबाएँ|Si vous avez envoyé l'argent, appuyez sur «J'ai payé — vérifier»|Wenn du das Geld überwiesen hast, tippe auf «Ich habe bezahlt — prüfen»|송금하셨다면 «결제했어요 — 확인»을 눌러 주세요|送金済みの場合は「支払いました — 確認」を押してください|如果已转账，请点击“我已付款 — 查询”|ถ้าคุณโอนเงินแล้ว ให้กด «ฉันจ่ายแล้ว — ตรวจสอบ»|Nếu bạn đã chuyển tiền, hãy bấm «Tôi đã trả — kiểm tra»
+Hisobni o'chirish‖Hesabımı sil|Eliminar mi cuenta|Excluir minha conta|حذف حسابي|Hapus akun saya|मेरा खाता हटाएँ|Supprimer mon compte|Mein Konto löschen|내 계정 삭제|アカウントを削除|删除我的账号|ลบบัญชีของฉัน|Xóa tài khoản của tôi
+Hisobingiz va unga bog'langan hamma narsa (profil, do'stlar, klub, yutuqlar) butunlay o'chiriladi. Buni qaytarib bo'lmaydi.‖Hesabın ve ona bağlı her şey (profil, arkadaşlar, kulüp, ilerleme) kalıcı olarak silinecek. Bu işlem geri alınamaz.|Tu cuenta y todo lo vinculado a ella (perfil, amigos, club, progreso) se eliminarán para siempre. Esta acción no se puede deshacer.|Sua conta e tudo o que está ligado a ela (perfil, amigos, clube, progresso) serão excluídos definitivamente. Isso não pode ser desfeito.|سيُحذف حسابك وكل ما يرتبط به (الملف الشخصي والأصدقاء والنادي والتقدّم) نهائيًا. لا يمكن التراجع عن ذلك.|Akunmu dan semua yang terkait (profil, teman, klub, progres) akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.|आपका खाता और उससे जुड़ी हर चीज़ (प्रोफ़ाइल, दोस्त, क्लब, प्रगति) हमेशा के लिए हटा दी जाएगी। इसे वापस नहीं किया जा सकता।|Votre compte et tout ce qui y est lié (profil, amis, club, progression) seront supprimés définitivement. Cette action est irréversible.|Dein Konto und alles, was daran hängt (Profil, Freunde, Club, Fortschritt), wird endgültig gelöscht. Das lässt sich nicht rückgängig machen.|계정과 연결된 모든 데이터(프로필, 친구, 클럽, 진행 상황)가 영구적으로 삭제됩니다. 되돌릴 수 없습니다.|アカウントと、それに紐づくすべて（プロフィール、フレンド、クラブ、進行状況）が完全に削除されます。元に戻すことはできません。|你的账号及其关联的全部内容（个人资料、好友、俱乐部、进度）将被永久删除，且无法恢复。|บัญชีของคุณและทุกอย่างที่เชื่อมอยู่ (โปรไฟล์ เพื่อน คลับ ความคืบหน้า) จะถูกลบถาวร ย้อนกลับไม่ได้|Tài khoản của bạn và mọi thứ liên quan (hồ sơ, bạn bè, câu lạc bộ, tiến trình) sẽ bị xóa vĩnh viễn. Không thể hoàn tác.
+Ha, o'chirish‖Evet, sil|Sí, eliminar|Sim, excluir|نعم، احذف|Ya, hapus|हाँ, हटाएँ|Oui, supprimer|Ja, löschen|네, 삭제|はい、削除する|是，删除|ใช่ ลบเลย|Có, xóa
+Hisob o'chirilmadi. Internetni tekshiring.‖Hesap silinemedi. İnternetini kontrol et.|No se pudo eliminar la cuenta. Revisa tu conexión a internet.|Não foi possível excluir a conta. Verifique sua internet.|تعذّر حذف الحساب. تحقق من اتصالك بالإنترنت.|Akun tidak bisa dihapus. Periksa internetmu.|खाता हटाया नहीं जा सका। अपना इंटरनेट जाँचें।|Impossible de supprimer le compte. Vérifiez votre connexion internet.|Das Konto konnte nicht gelöscht werden. Prüfe deine Internetverbindung.|계정을 삭제하지 못했습니다. 인터넷 연결을 확인해 주세요.|アカウントを削除できませんでした。インターネット接続を確認してください。|无法删除账号，请检查网络。|ลบบัญชีไม่ได้ ตรวจสอบอินเทอร์เน็ตของคุณ|Không thể xóa tài khoản. Hãy kiểm tra mạng của bạn.
+Sharlar, avatarlar va kiyalar aniq ko'rinadi‖Toplar, avatarlar ve sopalar net görünür|Las bolas, los avatares y los tacos se ven nítidos|Bolas, avatares e tacos ficam nítidos|تظهر الكرات والصور الرمزية والعصي بوضوح|Bola, avatar, dan stik tampil tajam|गेंदें, अवतार और क्यू साफ़ दिखते हैं|Les boules, les avatars et les queues sont nets|Kugeln, Avatare und Queues sind gestochen scharf|공, 아바타, 큐가 선명하게 보입니다|ボール、アバター、キューが鮮明に見えます|球、头像和球杆都清晰锐利|ลูก อวาตาร์ และไม้คิวคมชัด|Bi, ảnh đại diện và cơ sắc nét
+Yuklab olish‖İndir|Descargar|Baixar|تنزيل|Unduh|डाउनलोड करें|Télécharger|Herunterladen|다운로드|ダウンロード|下载|ดาวน์โหลด|Tải xuống
+Yuklanmoqda‖İndiriliyor|Descargando|Baixando|جارٍ التنزيل|Mengunduh|डाउनलोड हो रहा है|Téléchargement|Wird heruntergeladen|다운로드 중|ダウンロード中|下载中|กำลังดาวน์โหลด|Đang tải xuống
+Tayyor‖Hazır|Listo|Pronto|جاهز|Siap|तैयार|Prêt|Bereit|준비 완료|準備完了|已就绪|พร้อมแล้ว|Sẵn sàng
+O'chirish‖Kapat|Desactivar|Desativar|إيقاف|Matikan|बंद करें|Désactiver|Ausschalten|끄기|オフにする|关闭|ปิด|Tắt
+Qo'llash‖Uygula|Aplicar|Aplicar|تطبيق|Terapkan|लागू करें|Appliquer|Anwenden|적용|適用|应用|ใช้|Áp dụng
+Yoqilgan‖Açık|Activado|Ativado|مفعّل|Aktif|चालू|Activé|An|켜짐|オン|已开启|เปิด|Bật
+Keyingi stol‖Sonraki masa|Siguiente mesa|Próxima mesa|الطاولة التالية|Meja berikutnya|अगली टेबल|Table suivante|Nächster Tisch|다음 테이블|次のテーブル|下一张球桌|โต๊ะถัดไป|Bàn tiếp theo
+Kunlik viktorina‖Günlük bilgi yarışması|Quiz diario|Quiz diário|مسابقة اليوم|Kuis harian|दैनिक क्विज़|Quiz du jour|Tagesquiz|오늘의 퀴즈|デイリークイズ|每日答题|ควิซรายวัน|Câu đố hằng ngày
+Savol‖Soru|Pregunta|Pergunta|سؤال|Pertanyaan|प्रश्न|Question|Frage|질문|質問|问题|คำถาม|Câu hỏi
+To'g'ri!‖Doğru!|¡Correcto!|Correto!|صحيح!|Benar!|सही!|Correct !|Richtig!|정답!|正解！|答对了！|ถูกต้อง!|Chính xác!
+Noto'g'ri‖Yanlış|Incorrecto|Errado|خطأ|Salah|गलत|Faux|Falsch|오답|不正解|答错了|ผิด|Sai
+Viktorina‖Bilgi yarışması|Quiz|Quiz|مسابقة|Kuis|क्विज़|Quiz|Quiz|퀴즈|クイズ|答题|ควิซ|Câu đố
+To'g'ri javob‖Doğru cevap|Respuesta correcta|Resposta certa|الإجابة الصحيحة|Jawaban yang benar|सही उत्तर|Bonne réponse|Richtige Antwort|정답|正しい答え|正确答案|คำตอบที่ถูก|Đáp án đúng
+Kanal viktorinasi‖Kanal yarışması|Quiz del canal|Quiz do canal|مسابقة القناة|Kuis kanal|चैनल क्विज़|Quiz du canal|Kanal-Quiz|채널 퀴즈|チャンネルクイズ|频道答题|ควิซช่อง|Câu đố của kênh
+Bu savolga avval javob bergansiz‖Bu soruyu daha önce cevapladın|Ya respondiste esta pregunta|Você já respondeu a esta pergunta|لقد أجبت عن هذا السؤال من قبل|Kamu sudah menjawab pertanyaan ini|आप इस प्रश्न का उत्तर पहले ही दे चुके हैं|Vous avez déjà répondu à cette question|Diese Frage hast du schon beantwortet|이미 답한 질문입니다|この質問にはすでに回答済みです|你已经回答过这个问题了|คุณตอบข้อนี้ไปแล้ว|Bạn đã trả lời câu này rồi
+Bugungi viktorina tugadi‖Bugünkü yarışma bitti|El quiz de hoy ha terminado|O quiz de hoje terminou|انتهت مسابقة اليوم|Kuis hari ini sudah selesai|आज का क्विज़ पूरा हो गया|Le quiz du jour est terminé|Das heutige Quiz ist beendet|오늘의 퀴즈가 끝났습니다|今日のクイズは終了しました|今天的答题已完成|ควิซวันนี้เสร็จแล้ว|Câu đố hôm nay đã xong
+Natija‖Sonuç|Resultado|Resultado|النتيجة|Hasil|परिणाम|Résultat|Ergebnis|결과|結果|结果|ผลลัพธ์|Kết quả
+Viktorinani yuklab bo'lmadi. Internetni tekshiring.‖Yarışma yüklenemedi. Bağlantını kontrol et.|No se pudo cargar el quiz. Revisa tu conexión.|Não foi possível carregar o quiz. Verifique sua conexão.|تعذّر تحميل المسابقة. تحقق من اتصالك.|Kuis tidak bisa dimuat. Periksa koneksimu.|क्विज़ लोड नहीं हो सका। अपना कनेक्शन जाँचें।|Impossible de charger le quiz. Vérifiez votre connexion.|Das Quiz konnte nicht geladen werden. Prüfe deine Verbindung.|퀴즈를 불러오지 못했습니다. 연결 상태를 확인해 주세요.|クイズを読み込めませんでした。接続を確認してください。|无法加载答题，请检查网络连接。|โหลดควิซไม่ได้ ตรวจสอบการเชื่อมต่อของคุณ|Không tải được câu đố. Hãy kiểm tra kết nối của bạn.
+Billiard haqida 5 ta savol‖Bilardo hakkında 5 soru|5 preguntas sobre billar|5 perguntas sobre bilhar|5 أسئلة عن البلياردو|5 pertanyaan tentang biliar|बिलियर्ड्स के बारे में 5 प्रश्न|5 questions sur le billard|5 Fragen zum Billard|당구에 관한 질문 5개|ビリヤードに関する5つの質問|5 个关于台球的问题|5 คำถามเกี่ยวกับบิลเลียด|5 câu hỏi về bi-a
+har bir to'g'ri javobga‖her doğru cevap için|por cada respuesta correcta|por cada resposta certa|عن كل إجابة صحيحة|untuk setiap jawaban benar|हर सही उत्तर के लिए|pour chaque bonne réponse|für jede richtige Antwort|정답 하나당|正解ごとに|每答对一题|สำหรับทุกคำตอบที่ถูก|cho mỗi câu trả lời đúng
 Menyu‖เมนู|Menu
 Davom etish‖ต่อ|Tiếp tục
 Pauza‖หยุดชั่วคราว|Tạm dừng
@@ -1727,7 +1727,7 @@ Onlayn raqib qidirilmoqda…‖กำลังค้นหาคู่ต่อ�
 Raqib topildi!‖พบคู่ต่อสู้แล้ว!|Đã tìm thấy đối thủ!
 Raqib o'yinni tark etdi‖คู่ต่อสู้ของคุณออกจากเกมแล้ว|Đối thủ của bạn đã rời trận
 Do'stlarni taklif qiling‖ชวนเพื่อน|Mời bạn bè
-To'lov tizimi vaqtincha ishlamayapti‖ระบบชำระเงินใช้งานไม่ได้ชั่วคราว|Hệ thống thanh toán tạm thời không khả dụng
+To'lov tizimi vaqtincha ishlamayapti‖Ödeme sistemi geçici olarak kullanılamıyor|El sistema de pago no está disponible temporalmente|O sistema de pagamento está temporariamente indisponível|نظام الدفع غير متاح مؤقتًا|Sistem pembayaran sedang tidak tersedia|भुगतान प्रणाली अभी अस्थायी रूप से उपलब्ध नहीं है|Le système de paiement est temporairement indisponible|Das Zahlungssystem ist vorübergehend nicht verfügbar|결제 시스템을 일시적으로 사용할 수 없습니다|決済システムは一時的にご利用いただけません|支付系统暂时不可用|ระบบชำระเงินใช้งานไม่ได้ชั่วคราว|Hệ thống thanh toán tạm thời không khả dụng
 Til‖ภาษา|Ngôn ngữ
 🎱 Kiylar‖🎱 ไม้คิว|🎱 Cơ
 💱 Almashtirish‖💱 ธนาคาร|💱 Ngân hàng
@@ -1767,44 +1767,44 @@ Meniki‖มีแล้ว|Đã sở hữu
 Syurpriz qutisi‖กล่องเซอร์ไพรส์|Hộp bất ngờ
 Yuqori‖สูง|Cao
 Ekspert‖ผู้เชี่ยวชาญ|Chuyên gia
-Kanalda ismimni ko'rsatish‖แสดงชื่อของฉันในช่อง|Hiện tên của tôi trên kênh
-Haftalik g'oliblar kanalda e'lon qilinganda ismingiz chiqadi. O'chiq bo'lsa «bir o'yinchi» deb yoziladi.‖ชื่อของคุณจะปรากฏเมื่อประกาศผู้ชนะประจำสัปดาห์ในช่อง ถ้าปิดจะแสดงว่า "ผู้เล่นคนหนึ่ง"|Tên của bạn sẽ hiện khi công bố người thắng tuần trên kênh. Nếu tắt, sẽ ghi “một người chơi”.
+Kanalda ismimni ko'rsatish‖Adımı kanalda göster|Mostrar mi nombre en el canal|Mostrar meu nome no canal|إظهار اسمي في القناة|Tampilkan namaku di kanal|चैनल में मेरा नाम दिखाएँ|Afficher mon nom dans le canal|Meinen Namen im Kanal anzeigen|채널에 내 이름 표시|チャンネルに名前を表示|在频道中显示我的名字|แสดงชื่อของฉันในช่อง|Hiện tên của tôi trên kênh
+Haftalik g'oliblar kanalda e'lon qilinganda ismingiz chiqadi. O'chiq bo'lsa «bir o'yinchi» deb yoziladi.‖Haftalık kazananlar kanalda duyurulurken adın görünür. Kapalıysa «bir oyuncu» yazılır.|Tu nombre aparece cuando se publican los ganadores semanales en el canal. Si está desactivado, dirá «un jugador».|Seu nome aparece quando os vencedores da semana são divulgados no canal. Se estiver desativado, aparece «um jogador».|يظهر اسمك عند نشر فائزي الأسبوع في القناة. إذا كان الخيار متوقفًا فستظهر عبارة «لاعب».|Namamu muncul saat pemenang mingguan diumumkan di kanal. Jika dimatikan, akan tertulis «seorang pemain».|साप्ताहिक विजेताओं की घोषणा चैनल में होने पर आपका नाम दिखता है। बंद होने पर «एक खिलाड़ी» लिखा जाता है।|Votre nom apparaît lorsque les gagnants de la semaine sont annoncés dans le canal. Si l'option est désactivée, c'est «un joueur» qui s'affiche.|Dein Name erscheint, wenn die Wochengewinner im Kanal veröffentlicht werden. Ist die Option aus, steht dort «ein Spieler».|주간 우승자가 채널에 공개될 때 내 이름이 표시됩니다. 꺼 두면 «한 플레이어»로 표시됩니다.|週間の勝者がチャンネルで発表されるときに名前が表示されます。オフの場合は「あるプレイヤー」と表示されます。|每周获胜者在频道公布时会显示你的名字。关闭后将显示“某位玩家”。|ชื่อของคุณจะปรากฏเมื่อประกาศผู้ชนะประจำสัปดาห์ในช่อง ถ้าปิดจะแสดงว่า "ผู้เล่นคนหนึ่ง"|Tên của bạn sẽ hiện khi công bố người thắng tuần trên kênh. Nếu tắt, sẽ ghi “một người chơi”.
 Taklif qilish‖เชิญ|Mời
 Quti joyi‖ช่องกล่อง|Ô hộp
 Darajani oshiring!‖เลื่อนอันดับ!|Lên hạng!
 Cheklangan nashr‖รุ่นลิมิเต็ด|Phiên bản giới hạn
 Tadbirlar‖กิจกรรม|Sự kiện
-Ovozli xona‖ห้องเสียง|Phòng thoại
-Ochiq lobbilar‖ล็อบบี้ที่เปิดอยู่|Sảnh đang mở
-Tez qo'shilish‖เข้าร่วมด่วน|Vào nhanh
-Bo'sh joy bor‖ที่ว่าง|Chỗ trống
-Do'stlarim‖เพื่อนของฉัน|Bạn bè của tôi
-Boshlangan‖เริ่มแล้ว|Đã bắt đầu
-To'lgan‖เต็ม|Đầy
-Bu filtrga mos lobbi yo'q‖ไม่มีล็อบบี้ที่ตรงกับตัวกรองนี้|Không có sảnh nào phù hợp với bộ lọc này
-Birinchi bo'ling: ochiq lobbi oching, do'stlar va boshqalar qo'shiladi‖เป็นคนแรก: เปิดล็อบบี้สาธารณะแล้วเพื่อนและผู้เล่นอื่นจะเข้ามาร่วม|Hãy là người đầu tiên: mở sảnh công khai và bạn bè cùng người chơi khác sẽ tham gia
-Ochiq lobbi (hamma ko'radi)‖เปิดล็อบบี้ (ทุกคนเห็น)|Mở sảnh (mọi người đều thấy)
-Ochiq lobbi‖เปิดล็อบบี้|Mở sảnh
-Lobbiga ulanilmoqda…‖กำลังเชื่อมต่อล็อบบี้…|Đang kết nối vào sảnh…
-Ochiq lobbi ochildi‖ล็อบบี้ที่เปิดของคุณพร้อมแล้ว|Sảnh đang mở của bạn đã sẵn sàng
-O'yinchilar kutilmoqda‖กำลังรอผู้เล่น|Đang chờ người chơi
-Boshqa o'yinchilar bilan o'ynang va gaplashing‖เล่นและพูดคุยกับผู้เล่นคนอื่น|Chơi và trò chuyện với người chơi khác
-{0} ta ochiq lobbi‖ล็อบบี้ที่เปิดอยู่ {0} ห้อง|{0} sảnh đang mở
-Ovozli xona yoqildi‖ห้องเสียงเปิดอยู่|Phòng thoại đang bật
-Lobbidagilar sizni eshitadi‖ทุกคนในล็อบบี้ได้ยินคุณ|Mọi người trong sảnh đều nghe thấy bạn
-Mikrofon yoqiq‖ไมค์เปิด|Micro bật
-{0} kishi ovozli xonada‖{0} คนในห้องเสียง|{0} người trong phòng thoại
-Lobbida mikrofonni yoqib gaplashing‖เปิดไมค์แล้วพูดในล็อบบี้|Bật micro và nói chuyện trong sảnh
-Ovozli xonadan chiqdingiz‖คุณออกจากห้องเสียงแล้ว|Bạn đã rời phòng thoại
-Eshitish uchun 🔊 tugmasini bosing‖แตะ 🔊 เพื่อฟังพวกเขา|Chạm 🔊 để nghe họ
-To'lov tasdiqlanmadi‖ยังไม่ยืนยันการชำระเงิน|Thanh toán chưa được xác nhận
-Pul o'tkazmagan bo'lsangiz, to'lamang. Rostan to'lagan bo'lsangiz, birozdan keyin «To'ladim — tekshirish» ni yana bosing.‖ถ้าคุณยังไม่ได้โอนเงิน อย่าชำระ ถ้าชำระแล้วจริง ๆ ให้กด "ฉันจ่ายแล้ว — ตรวจสอบ" อีกครั้งในสักครู่|Nếu bạn chưa chuyển tiền thì đừng thanh toán. Nếu đã thanh toán thật, hãy bấm lại “Tôi đã trả — kiểm tra” sau giây lát.
-Narx {0} so'm + {1} so'm — to'lovingizni aniqlash uchun‖ราคา {0} so'm + {1} so'm — เพื่อระบุการชำระเงินของคุณ|Giá {0} so'm + {1} so'm — để nhận diện thanh toán của bạn
-Boshqalarni eshitasiz. Gapirish uchun 🎤 ni bosing‖คุณได้ยินคนอื่น แตะ 🎤 เพื่อพูด|Bạn nghe được những người khác. Chạm 🎤 để nói
-lobbiga taklif qilamiz. Lobbida 🎤 ovozli xona bilan gaplashasiz.‖เราจะเชิญเขาเข้าล็อบบี้ ในล็อบบี้คุณพูดคุยกันได้ในห้องเสียง 🎤|chúng tôi sẽ mời họ vào sảnh. Trong sảnh bạn có thể trò chuyện ở phòng thoại 🎤.
-Har shaharning o'z chempionati. Bitta kubokni yutsangiz, keyingisi ochiladi.‖แต่ละเมืองมีการแข่งขันชิงแชมป์ของตัวเอง ชนะหนึ่งถ้วยแล้วถ้วยถัดไปจะเปิดในวันรุ่งขึ้น|Mỗi thành phố có giải vô địch riêng. Thắng một cúp thì cúp tiếp theo mở vào ngày hôm sau.
+Ovozli xona‖Sesli oda|Sala de voz|Sala de voz|غرفة صوتية|Ruang suara|वॉइस रूम|Salon vocal|Sprachraum|음성 채팅방|ボイスルーム|语音房间|ห้องเสียง|Phòng thoại
+Ochiq lobbilar‖Açık lobiler|Lobbies abiertos|Lobbies abertos|الردهات المفتوحة|Lobi terbuka|खुली लॉबी|Lobbies ouverts|Offene Lobbys|공개 로비|公開ロビー|公开大厅|ล็อบบี้ที่เปิดอยู่|Sảnh đang mở
+Tez qo'shilish‖Hızlı katıl|Unirse rápido|Entrar rápido|انضمام سريع|Gabung cepat|जल्दी जुड़ें|Rejoindre vite|Schnell beitreten|빠른 입장|クイック参加|快速加入|เข้าร่วมด่วน|Vào nhanh
+Bo'sh joy bor‖Boş yer var|Plazas libres|Vagas livres|توجد أماكن شاغرة|Ada tempat kosong|जगह खाली है|Places libres|Plätze frei|빈자리 있음|空きあり|有空位|ที่ว่าง|Chỗ trống
+Do'stlarim‖Arkadaşlarım|Mis amigos|Meus amigos|أصدقائي|Temanku|मेरे दोस्त|Mes amis|Meine Freunde|내 친구|友達|我的好友|เพื่อนของฉัน|Bạn bè của tôi
+Boshlangan‖Başladı|Iniciado|Iniciado|بدأت|Dimulai|शुरू हो गया|Commencé|Gestartet|시작됨|開始済み|已开始|เริ่มแล้ว|Đã bắt đầu
+To'lgan‖Dolu|Lleno|Cheio|ممتلئ|Penuh|भरा हुआ|Complet|Voll|가득 참|満員|已满|เต็ม|Đầy
+Bu filtrga mos lobbi yo'q‖Bu filtreye uyan lobi yok|Ningún lobby coincide con este filtro|Nenhum lobby corresponde a este filtro|لا توجد ردهة تطابق هذا المرشّح|Tidak ada lobi yang cocok dengan filter ini|इस फ़िल्टर से मेल खाती कोई लॉबी नहीं है|Aucun lobby ne correspond à ce filtre|Keine Lobby passt zu diesem Filter|이 필터에 맞는 로비가 없습니다|このフィルターに一致するロビーはありません|没有符合此筛选条件的大厅|ไม่มีล็อบบี้ที่ตรงกับตัวกรองนี้|Không có sảnh nào phù hợp với bộ lọc này
+Birinchi bo'ling: ochiq lobbi oching, do'stlar va boshqalar qo'shiladi‖İlk sen ol: açık bir lobi aç, arkadaşların ve diğer oyuncular katılsın|Sé el primero: abre un lobby público y se unirán amigos y otros jugadores|Seja o primeiro: abra um lobby público e amigos e outros jogadores entrarão|كن الأول: افتح ردهة عامة وسينضم إليك الأصدقاء ولاعبون آخرون|Jadilah yang pertama: buka lobi publik, lalu teman dan pemain lain akan bergabung|सबसे पहले बनें: सार्वजनिक लॉबी खोलें, दोस्त और दूसरे खिलाड़ी जुड़ जाएँगे|Soyez le premier : ouvrez un lobby public et vos amis et d'autres joueurs vous rejoindront|Sei der Erste: Öffne eine öffentliche Lobby, dann kommen Freunde und andere Spieler dazu|첫 번째가 되어 보세요: 공개 로비를 열면 친구와 다른 플레이어가 참여합니다|最初の一人になろう：公開ロビーを開くと、友達や他のプレイヤーが参加します|做第一个吧：开设公开大厅，好友和其他玩家都会加入|เป็นคนแรก: เปิดล็อบบี้สาธารณะแล้วเพื่อนและผู้เล่นอื่นจะเข้ามาร่วม|Hãy là người đầu tiên: mở sảnh công khai và bạn bè cùng người chơi khác sẽ tham gia
+Ochiq lobbi (hamma ko'radi)‖Açık lobi (herkes görür)|Lobby abierto (lo ve todo el mundo)|Lobby aberto (todos veem)|ردهة مفتوحة (يراها الجميع)|Lobi terbuka (terlihat oleh semua orang)|खुली लॉबी (सभी को दिखती है)|Lobby ouvert (visible par tous)|Offene Lobby (für alle sichtbar)|공개 로비 (모두에게 보임)|公開ロビー（全員に表示）|公开大厅（所有人可见）|เปิดล็อบบี้ (ทุกคนเห็น)|Mở sảnh (mọi người đều thấy)
+Ochiq lobbi‖Açık lobi|Lobby abierto|Lobby aberto|ردهة مفتوحة|Lobi terbuka|खुली लॉबी|Lobby ouvert|Offene Lobby|공개 로비|公開ロビー|公开大厅|เปิดล็อบบี้|Mở sảnh
+Lobbiga ulanilmoqda…‖Lobiye bağlanılıyor…|Conectando al lobby…|Conectando ao lobby…|جارٍ الاتصال بالردهة…|Menghubungkan ke lobi…|लॉबी से कनेक्ट हो रहा है…|Connexion au lobby…|Verbindung zur Lobby wird hergestellt…|로비에 연결하는 중…|ロビーに接続中…|正在连接大厅…|กำลังเชื่อมต่อล็อบบี้…|Đang kết nối vào sảnh…
+Ochiq lobbi ochildi‖Açık lobin hazır|Tu lobby abierto está listo|Seu lobby aberto está pronto|ردهتك المفتوحة جاهزة|Lobi terbukamu sudah siap|आपकी खुली लॉबी तैयार है|Votre lobby ouvert est prêt|Deine offene Lobby ist bereit|공개 로비가 열렸습니다|公開ロビーを開きました|你的公开大厅已创建|ล็อบบี้ที่เปิดของคุณพร้อมแล้ว|Sảnh đang mở của bạn đã sẵn sàng
+O'yinchilar kutilmoqda‖Oyuncular bekleniyor|Esperando jugadores|Aguardando jogadores|في انتظار اللاعبين|Menunggu pemain|खिलाड़ियों का इंतज़ार है|En attente de joueurs|Warte auf Spieler|플레이어를 기다리는 중|プレイヤーを待っています|等待玩家加入|กำลังรอผู้เล่น|Đang chờ người chơi
+Boshqa o'yinchilar bilan o'ynang va gaplashing‖Diğer oyuncularla oyna ve sohbet et|Juega y habla con otros jugadores|Jogue e converse com outros jogadores|العب وتحدّث مع لاعبين آخرين|Main dan ngobrol dengan pemain lain|दूसरे खिलाड़ियों के साथ खेलें और बात करें|Jouez et discutez avec d'autres joueurs|Spiele und sprich mit anderen Spielern|다른 플레이어와 함께 플레이하고 대화하세요|他のプレイヤーと遊んで、話そう|与其他玩家一起玩并聊天|เล่นและพูดคุยกับผู้เล่นคนอื่น|Chơi và trò chuyện với người chơi khác
+{0} ta ochiq lobbi‖{0} açık lobi|{0} lobbies abiertos|{0} lobbies abertos|{0} ردهة مفتوحة|{0} lobi terbuka|{0} खुली लॉबी|{0} lobbies ouverts|{0} offene Lobbys|공개 로비 {0}개|公開ロビー{0}件|{0} 个公开大厅|ล็อบบี้ที่เปิดอยู่ {0} ห้อง|{0} sảnh đang mở
+Ovozli xona yoqildi‖Sesli oda açık|Sala de voz activada|Sala de voz ativada|غرفة الصوت قيد التشغيل|Ruang suara aktif|वॉइस रूम चालू है|Salon vocal activé|Sprachraum ist an|음성 채팅방이 켜졌습니다|ボイスルームがオンになりました|语音房间已开启|ห้องเสียงเปิดอยู่|Phòng thoại đang bật
+Lobbidagilar sizni eshitadi‖Lobideki herkes seni duyabilir|Todos en el lobby pueden oírte|Todos no lobby podem ouvir você|يسمعك جميع من في الردهة|Semua orang di lobi bisa mendengarmu|लॉबी में सभी आपको सुन सकते हैं|Tout le monde dans le lobby vous entend|Alle in der Lobby können dich hören|로비의 모든 사람이 내 목소리를 들을 수 있습니다|ロビーの全員にあなたの声が聞こえます|大厅里的所有人都能听到你|ทุกคนในล็อบบี้ได้ยินคุณ|Mọi người trong sảnh đều nghe thấy bạn
+Mikrofon yoqiq‖Mikrofon açık|Micrófono encendido|Microfone ligado|الميكروفون مفتوح|Mikrofon aktif|माइक चालू है|Micro activé|Mikrofon an|마이크 켜짐|マイクはオンです|麦克风已开启|ไมค์เปิด|Micro bật
+{0} kishi ovozli xonada‖Sesli odada {0} kişi|{0} en la sala de voz|{0} na sala de voz|{0} في الغرفة الصوتية|{0} orang di ruang suara|वॉइस रूम में {0} लोग|{0} dans le salon vocal|{0} im Sprachraum|음성 채팅방에 {0}명|ボイスルームに{0}人|语音房间里有 {0} 人|{0} คนในห้องเสียง|{0} người trong phòng thoại
+Lobbida mikrofonni yoqib gaplashing‖Mikrofonu aç ve lobide konuş|Activa el micrófono y habla en el lobby|Ligue o microfone e converse no lobby|شغّل الميكروفون وتحدّث في الردهة|Aktifkan mikrofon dan bicara di lobi|माइक चालू करें और लॉबी में बात करें|Activez le micro et parlez dans le lobby|Schalte das Mikrofon ein und sprich in der Lobby|마이크를 켜고 로비에서 대화하세요|マイクをオンにしてロビーで話そう|打开麦克风，在大厅中交流|เปิดไมค์แล้วพูดในล็อบบี้|Bật micro và nói chuyện trong sảnh
+Ovozli xonadan chiqdingiz‖Sesli odadan ayrıldın|Saliste de la sala de voz|Você saiu da sala de voz|غادرت الغرفة الصوتية|Kamu keluar dari ruang suara|आप वॉइस रूम से बाहर आ गए|Vous avez quitté le salon vocal|Du hast den Sprachraum verlassen|음성 채팅방에서 나왔습니다|ボイスルームから退出しました|你已离开语音房间|คุณออกจากห้องเสียงแล้ว|Bạn đã rời phòng thoại
+Eshitish uchun 🔊 tugmasini bosing‖Duymak için 🔊 düğmesine dokun|Toca 🔊 para oírlos|Toque em 🔊 para ouvi-los|اضغط 🔊 لتسمعهم|Ketuk 🔊 untuk mendengar mereka|उन्हें सुनने के लिए 🔊 दबाएँ|Appuyez sur 🔊 pour les entendre|Tippe auf 🔊, um sie zu hören|🔊를 눌러 들어 보세요|🔊をタップすると聞こえます|点按 🔊 即可收听|แตะ 🔊 เพื่อฟังพวกเขา|Chạm 🔊 để nghe họ
+To'lov tasdiqlanmadi‖Ödeme onaylanmadı|Pago no confirmado|Pagamento não confirmado|لم يتم تأكيد الدفع|Pembayaran belum dikonfirmasi|भुगतान की पुष्टि नहीं हुई|Paiement non confirmé|Zahlung nicht bestätigt|결제가 확인되지 않았습니다|支払いが確認できませんでした|付款未确认|ยังไม่ยืนยันการชำระเงิน|Thanh toán chưa được xác nhận
+Pul o'tkazmagan bo'lsangiz, to'lamang. Rostan to'lagan bo'lsangiz, birozdan keyin «To'ladim — tekshirish» ni yana bosing.‖Para göndermediysen ödeme yapma. Gerçekten ödediysen, biraz sonra «Ödedim — kontrol et» düğmesine tekrar bas.|Si no has enviado el dinero, no pagues. Si de verdad pagaste, vuelve a pulsar «Ya pagué — comprobar» en un momento.|Se você não enviou o dinheiro, não pague. Se realmente pagou, toque em «Já paguei — verificar» de novo daqui a pouco.|إذا لم تُحوّل المبلغ فلا تدفع. وإذا دفعت فعلًا، فاضغط «تم الدفع — تحقق» مرة أخرى بعد قليل.|Jika belum mengirim uang, jangan bayar. Jika memang sudah membayar, tekan «Sudah bayar — periksa» lagi sebentar lagi.|अगर आपने पैसे नहीं भेजे हैं तो भुगतान न करें। अगर सच में भुगतान किया है, तो थोड़ी देर बाद «मैंने भुगतान कर दिया — जाँचें» फिर से दबाएँ।|Si vous n'avez pas envoyé l'argent, ne payez pas. Si vous avez vraiment payé, appuyez de nouveau sur «J'ai payé — vérifier» dans un instant.|Wenn du das Geld nicht überwiesen hast, zahle nicht. Hast du wirklich bezahlt, tippe in einem Moment erneut auf «Ich habe bezahlt — prüfen».|송금하지 않으셨다면 결제하지 마세요. 실제로 결제하셨다면 잠시 후 «결제했어요 — 확인»을 다시 눌러 주세요.|送金していない場合は支払わないでください。実際に支払った場合は、しばらくしてからもう一度「支払いました — 確認」を押してください。|如果你没有转账，请不要付款。如果确实已付款，请稍后再次点击“我已付款 — 查询”。|ถ้าคุณยังไม่ได้โอนเงิน อย่าชำระ ถ้าชำระแล้วจริง ๆ ให้กด "ฉันจ่ายแล้ว — ตรวจสอบ" อีกครั้งในสักครู่|Nếu bạn chưa chuyển tiền thì đừng thanh toán. Nếu đã thanh toán thật, hãy bấm lại “Tôi đã trả — kiểm tra” sau giây lát.
+Narx {0} so'm + {1} so'm — to'lovingizni aniqlash uchun‖Tutar {0} UZS + {1} UZS — ödemenizi tanımak için|Precio {0} UZS + {1} UZS — para identificar tu pago|Preço {0} UZS + {1} UZS — para identificar o seu pagamento|السعر {0} سوم + {1} سوم — لتمييز دفعتك|Harga {0} UZS + {1} UZS — untuk mengenali pembayaranmu|कीमत {0} UZS + {1} UZS — आपका भुगतान पहचानने के लिए|Prix {0} UZS + {1} UZS — pour identifier votre paiement|Preis {0} UZS + {1} UZS — zur Zuordnung deiner Zahlung|가격 {0}숨 + {1}숨 — 결제 확인용|価格 {0}スム + {1}スム — お支払いの識別用|价格 {0} 索姆 + {1} 索姆 — 用于识别你的付款|ราคา {0} so'm + {1} so'm — เพื่อระบุการชำระเงินของคุณ|Giá {0} so'm + {1} so'm — để nhận diện thanh toán của bạn
+Boshqalarni eshitasiz. Gapirish uchun 🎤 ni bosing‖Diğerlerini duyuyorsun. Konuşmak için 🎤 düğmesine dokun|Oyes a los demás. Toca 🎤 para hablar|Você ouve os outros. Toque em 🎤 para falar|تسمع الآخرين. اضغط 🎤 للتحدث|Kamu bisa mendengar yang lain. Ketuk 🎤 untuk bicara|आप बाकी लोगों को सुन सकते हैं। बोलने के लिए 🎤 दबाएँ|Vous entendez les autres. Appuyez sur 🎤 pour parler|Du hörst die anderen. Tippe auf 🎤, um zu sprechen|다른 사람의 목소리가 들립니다. 말하려면 🎤를 누르세요|他の人の声が聞こえます。話すには🎤をタップ|你可以听到其他人。点按 🎤 即可发言|คุณได้ยินคนอื่น แตะ 🎤 เพื่อพูด|Bạn nghe được những người khác. Chạm 🎤 để nói
+lobbiga taklif qilamiz. Lobbida 🎤 ovozli xona bilan gaplashasiz.‖onu lobiye davet ediyoruz. Lobide 🎤 sesli odada konuşabilirsin.|invitamos a esa persona a un lobby. En el lobby puedes hablar en la sala de voz 🎤.|convidamos essa pessoa para um lobby. No lobby você pode conversar na sala de voz 🎤.|ندعو هذا اللاعب إلى ردهة. في الردهة يمكنك التحدث في الغرفة الصوتية 🎤.|kami undang ke lobi. Di lobi kamu bisa mengobrol di ruang suara 🎤.|हम इन्हें लॉबी में आमंत्रित करते हैं। लॉबी में आप 🎤 वॉइस रूम में बात कर सकते हैं।|nous l'invitons dans un lobby. Dans le lobby, vous pouvez parler dans le salon vocal 🎤.|wir laden die Person in eine Lobby ein. In der Lobby kannst du im Sprachraum 🎤 sprechen.|로비로 초대합니다. 로비에서는 🎤 음성 채팅방에서 대화할 수 있어요.|ロビーに招待します。ロビーでは🎤ボイスルームで会話できます。|邀请对方进入大厅。在大厅中可以通过 🎤 语音房间交流。|เราจะเชิญเขาเข้าล็อบบี้ ในล็อบบี้คุณพูดคุยกันได้ในห้องเสียง 🎤|chúng tôi sẽ mời họ vào sảnh. Trong sảnh bạn có thể trò chuyện ở phòng thoại 🎤.
+Har shaharning o'z chempionati. Bitta kubokni yutsangiz, keyingisi ochiladi.‖Her şehrin kendi şampiyonası var. Bir kupa kazandığında ertesi gün bir sonraki açılır.|Cada ciudad tiene su propio campeonato. Gana una copa y al día siguiente se abre la siguiente.|Cada cidade tem seu próprio campeonato. Ganhe uma taça e, no dia seguinte, a próxima é liberada.|لكل مدينة بطولتها الخاصة. إذا فزت بكأس واحد فسيُفتح التالي في اليوم التالي.|Setiap kota punya kejuaraannya sendiri. Menangkan satu piala dan piala berikutnya terbuka keesokan harinya.|हर शहर की अपनी चैंपियनशिप है। एक कप जीतने पर अगला अगले दिन खुल जाता है।|Chaque ville a son propre championnat. Gagnez une coupe et la suivante s'ouvre le lendemain.|Jede Stadt hat ihre eigene Meisterschaft. Gewinne einen Pokal, und am nächsten Tag wird der nächste freigeschaltet.|도시마다 자체 챔피언십이 있습니다. 컵 하나를 우승하면 다음 날 다음 컵이 열립니다.|街ごとに独自のチャンピオンシップがあります。カップを1つ獲得すると、翌日に次のカップが解放されます。|每座城市都有自己的锦标赛。赢得一个杯赛后，次日将解锁下一个。|แต่ละเมืองมีการแข่งขันชิงแชมป์ของตัวเอง ชนะหนึ่งถ้วยแล้วถ้วยถัดไปจะเปิดในวันรุ่งขึ้น|Mỗi thành phố có giải vô địch riêng. Thắng một cúp thì cúp tiếp theo mở vào ngày hôm sau.
 OLISH!‖รับเลย!|NHẬN!
-Reklama yoki $1.99 bilan yana aylantiring‖หมุนอีกครั้งด้วยโฆษณาหรือ $1.99|Quay lại bằng quảng cáo hoặc $1.99
+Reklama yoki $1.99 bilan yana aylantiring‖Reklamla veya $1.99 ile tekrar çevir|Gira de nuevo con un anuncio o $1.99|Gire de novo com um anúncio ou $1.99|أدر العجلة مجددًا بإعلان أو بـ $1.99|Putar lagi dengan iklan atau $1.99|विज्ञापन या $1.99 से फिर घुमाएँ|Tournez à nouveau avec une pub ou $1.99|Dreh erneut mit Werbung oder $1.99|광고 또는 $1.99로 다시 돌리기|広告または$1.99でもう一度回す|观看广告或支付 $1.99 再转一次|หมุนอีกครั้งด้วยโฆษณาหรือ $1.99|Quay lại bằng quảng cáo hoặc $1.99
 60 o'yinchi, 6 raund. G'olib kubok va katta sovrin oladi. Qatnashing!‖60 players, 6 rounds. The winner gets a cup and a big prize. Join in!|60 игроков, 6 раундов. Победитель получает кубок и крупный приз. Участвуйте!|60 oyuncu, 6 tur. Kazanan kupa ve büyük ödül alır. Katıl!|60 jugadores, 6 rondas. El ganador recibe una copa y un gran premio. ¡Participa!|60 jogadores, 6 rodadas. O vencedor ganha um troféu e um grande prêmio. Participe!|60 لاعبًا، 6 جولات. يحصل الفائز على كأس وجائزة كبرى. شارك!|60 pemain, 6 babak. Pemenang mendapat piala dan hadiah besar. Ikutlah!|60 खिलाड़ी, 6 राउंड। विजेता को कप और बड़ा इनाम मिलता है। हिस्सा लें!|60 joueurs, 6 tours. Le vainqueur reçoit une coupe et un gros prix. Participez !|60 Spieler, 6 Runden. Der Sieger erhält einen Pokal und einen großen Preis. Mach mit!|60명, 6라운드. 우승자는 트로피와 큰 상금을 받습니다. 참가하세요!|60人、6ラウンド。優勝者はカップと大きな賞金を獲得。ぜひ参加を！|60名玩家，6轮。获胜者获得奖杯和丰厚奖金。快来参加！|60 คน 6 รอบ ผู้ชนะรับถ้วยและรางวัลใหญ่ เข้าร่วมเลย!|60 người chơi, 6 vòng. Người thắng nhận cúp và giải thưởng lớn. Hãy tham gia!
 Refund‖Refund|Возврат|İade|Reembolso|Reembolso|الاسترداد|Pengembalian dana|रिफ़ंड|Remboursement|Rückerstattung|환불|返金|退款|การคืนเงิน|Hoàn tiền
 Terms of Service‖Terms of Service|Условия использования|Kullanım Şartları|Términos de servicio|Termos de Serviço|شروط الخدمة|Ketentuan Layanan|सेवा की शर्तें|Conditions d'utilisation|Nutzungsbedingungen|이용약관|利用規約|服务条款|ข้อกำหนดการให้บริการ|Điều khoản dịch vụ
