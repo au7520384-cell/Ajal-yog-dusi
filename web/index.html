@@ -112,6 +112,11 @@ padding:66px 14px 14px;overflow:auto;touch-action:pan-x pan-y}
 .screen.on{display:flex}
 .tapfx{position:fixed;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;pointer-events:none;z-index:9999;border:2px solid #ffe27a;box-shadow:0 0 12px #ffd76a,inset 0 0 10px #fff6;background:radial-gradient(circle,#fff8,#ffd76a33 55%,transparent 70%);animation:tapfx .5s ease-out forwards}
 @keyframes tapfx{0%{transform:scale(.4);opacity:1}100%{transform:scale(4.2);opacity:0;border-width:.5px}}
+/* html.bgm = a board game's own screen (shashka / Magic Chess) lies over the whole page: the menu under it is hidden and its animations are paused, so the phone draws nothing that nobody sees
+   (Nov 28, the owner's phone blinked and showed the menu on a tap: behind the board the cue canvas drew ~1200 times a second, 28 animations ran and every tap added a ring that was drawn under the board) */
+html.bgm #shade{display:none}
+html.bgm #nav,html.bgm .screen:not(#modal){visibility:hidden}
+html.bgm #nav *,html.bgm .screen:not(#modal) *{animation-play-state:paused!important}
 .screen.on{animation:none}   /* the owner: a tap opens the menu AT ONCE. The 0.24 s fade from transparent made every menu start empty, and its end (the big layer is painted again) showed 1-2 dark frames on his phone */
 @keyframes scrIn{from{opacity:0}to{opacity:1}}
 button:active:not(:disabled){filter:brightness(1.15)}
@@ -9588,6 +9593,7 @@ const DEMO_COVER = new Set(["shop", "cities", "tourScr", "mini", "freeScr", "roa
 function frame(now) {
 if (!(now > 0)) now = performance.now();
 let dt = now - lastNow; lastNow = now; adaptRes(dt);
+if (mode === "menu" && bgmOn()) { accum = 0; requestAnimationFrame(frame); return; }   // (a board game's screen lies over the page: the demo match is neither simulated nor drawn)
 if (mode === "menu" && game && game.demo) { const sc = document.querySelector(".screen.on"); if (sc && DEMO_COVER.has(sc.id)) { accum = 0; requestAnimationFrame(frame); return; } }
 const pj0 = PERF ? performance.now() : 0;
 if (!(dt > 0) || dt > 250) dt = STEP_MS;   // first frame / returning from another tab: do not fast-forward
@@ -9693,7 +9699,7 @@ Snd.roll(0);
 go(screen, opt);
 }
 function fitNav() {   // the top menu never overlaps itself: if the buttons and money chips collide, shrink or hide the least important pieces step by step (language, cues banner, ...)
-const nav = $("nav"); if (!nav || !nav.classList.contains("on")) return;
+const nav = $("nav"); if (!nav || !nav.classList.contains("on") || bgmOn()) return;
 const lv = ["nf1", "nf2", "nf3", "nf4", "nf5", "nf6", "nf7", "nf8", "nf9"];
 try { const own = []; for (const c of nav.children) { if (c.classList.contains("navbtns") || c.classList.contains("money")) own.push(...c.children); else own.push(c); }
 if (document.getAnimations().some(a => a.playState === "running" && a.effect && own.includes(a.effect.target))) return; } catch (e) {}   // a money chip is bumping (a coin landed: it is 16% bigger for 0.2 s): its box is no reason to squeeze the bar, the next pass (every 1.2 s) looks again
@@ -12568,8 +12574,10 @@ toMenu(G.type === "lucky" ? "mini" : G.type === "trick" || G.pro ? "proScr" : G.
 ]});
 };
 function toggleMute() { profile.muted = !profile.muted; save(); Snd.setMuted(profile.muted); updateNav(); }
+function bgmOn() { return document.documentElement.classList.contains("bgm"); }   // a board game's screen (shashka / Magic Chess) is on: see html.bgm in the CSS
 document.addEventListener("pointerdown", e => {   // press feedback: a golden ring blooms where the finger lands
 if (!e.target.closest || !e.target.closest("button,.rw.now,.pchip2,.mchip,.card,.mgc,[data-go]") || mode !== "menu") return;
+if (bgmOn() || e.target.closest("#modal,#toasts")) return;   // (the ring is z-index 9999: under a board game's screen and under a pop-up it is never seen, and every tap made the phone build a layer for it)
 try { const r = document.createElement("i"), [lx, ly] = toLocal(e.clientX, e.clientY); r.className = "tapfx"; r.style.left = lx + "px"; r.style.top = ly + "px"; document.body.appendChild(r); setTimeout(() => r.remove(), 520); } catch (er) {}   // position:fixed lives in the turned body's own frame (toLocal), else the ring bloomed far from the finger and looked like another button was pressed
 }, {passive: true});
 document.addEventListener("click", e => {
@@ -14943,7 +14951,7 @@ function horrorShow(i, host, sc = 0.92) {
   const P = HOR_PAL[HORROR[i][2]], art = horrorCueArt(i), W0 = 210 * sc, H0 = 470 * sc, dp = 1.5, cv = document.createElement("canvas"); cv.width = W0 * dp; cv.height = H0 * dp; cv.style.cssText = `width:${W0}px;height:${H0}px`; host.appendChild(cv);
   const g = cv.getContext("2d"), col = P.g, sp = Array.from({length: 34}, () => ({x: 10 + Math.random() * 190, y: Math.random() * 470, v: 0.2 + Math.random() * 0.8, r: 0.8 + Math.random() * 2.2, ph: Math.random() * 6}));
   const loop = () => {
-    if (!cv.isConnected) return; const t = performance.now() / 1000;
+    if (!cv.isConnected) return; if (bgmOn()) return void setTimeout(loop, 300); const t = performance.now() / 1000;
     g.setTransform(dp * sc, 0, 0, dp * sc, 0, 0); g.clearRect(0, 0, 210, 470);
     const pul = 0.5 + 0.3 * Math.sin(t * 2.2), gr = g.createRadialGradient(105, 240, 10, 105, 240, 190); gr.addColorStop(0, col + "aa"); gr.addColorStop(1, col + "00"); g.globalAlpha = pul; g.fillStyle = gr; g.fillRect(0, 0, 210, 470); g.globalAlpha = 1;
     g.save(); g.shadowColor = col; g.shadowBlur = 16 + 10 * Math.sin(t * 3); g.drawImage(art, 0, 0); g.restore();
@@ -15012,7 +15020,7 @@ function vipCueShow(cd, host) {               // tall animated showcase of a VIP
   const mk = (x1, y1, x2, y2, o, d, out) => { if (d === 0) { out.push([x2, y2]); return; } const mx = (x1 + x2) / 2 + (Math.random() - 0.5) * o, my = (y1 + y2) / 2 + (Math.random() - 0.5) * o; mk(x1, y1, mx, my, o / 2, d - 1, out); mk(mx, my, x2, y2, o / 2, d - 1, out); };
   let last = performance.now();
   const loop = () => {
-    if (!cv.isConnected) return; const now = performance.now(), dt = Math.min(0.05, (now - last) / 1000), t = now / 1000; last = now;
+    if (!cv.isConnected) return; if (bgmOn()) return void setTimeout(loop, 300); const now = performance.now(), dt = Math.min(0.05, (now - last) / 1000), t = now / 1000; last = now;
     g.setTransform(dp, 0, 0, dp, 0, 0); g.clearRect(0, 0, W0, H0);
     const pul = 0.55 + 0.25 * Math.sin(t * 2.4) + flash * 0.5, gr = g.createRadialGradient(W0 / 2, H0 / 2, 6, W0 / 2, H0 / 2, 130); gr.addColorStop(0, col + "99"); gr.addColorStop(1, col + "00"); g.globalAlpha = Math.min(1, pul); g.fillStyle = gr; g.fillRect(0, 0, W0, H0); g.globalAlpha = 1;
     g.save(); g.translate(cx, H0 - 6); g.rotate(-Math.PI / 2 + 0.06 * Math.sin(t * 1.3)); g.shadowColor = col; g.shadowBlur = 14 + 8 * Math.sin(t * 3) + flash * 14; if (!offArt && cueArtEl(cd)) { offArt = true; paintOff(); } g.drawImage(off, -6, -30, 330, 60); g.restore();
@@ -17648,13 +17656,17 @@ const shCell = i => { const r = i >> 3, c = i & 7; return SHU.flip ? [7 - r, 7 -
 const shMy = () => SHU.mode === "local" ? SHU.G.side : SHU.my;
 const shTurnMine = () => { const G = SHU.G; return !!G && !G.over && !SHU.busy && (SHU.mode === "local" || (G.side === SHU.my && !(SHU.mode === "online" && SHU.net && SHU.net.wait))); };
 const SH_CROWN = '<svg viewBox="0 0 24 24"><path d="M3 18.5l1.6-10 4.6 4.2L12 5.5l2.8 7.2 4.6-4.2 1.6 10z" fill="#ffe27a" stroke="#8a5a10" stroke-width="1.2" stroke-linejoin="round"/><rect x="3" y="18.5" width="18" height="2.4" rx="1" fill="#ffcf3d" stroke="#8a5a10" stroke-width="1"/></svg>';
+function bgmWatch(ov) {   // html.bgm (see the page's CSS) follows the screen of a board game: on while #shScr or #mcScr is on, whoever turns it on or off (the menu under it is hidden and still, the demo / cue canvases rest)
+  const sync = () => document.documentElement.classList.toggle("bgm", !!document.querySelector("#shScr.on, #mcScr.on"));
+  new MutationObserver(sync).observe(ov, {attributes: true, attributeFilter: ["class"]}); sync();
+}
 function shEnsure() {
   let ov = $("shScr"); if (ov) return ov;
   ov = document.createElement("div"); ov.id = "shScr";
   ov.innerHTML = `<div class="sh-wrap"><div class="sh-info"><div class="sh-pl" data-s="opp"></div><div class="sh-msg" id="shMsg"></div><div class="sh-pl" data-s="me"></div></div>
     <div class="sh-board" id="shBoard"><i class="sh-bg"></i>${Array.from({length: 64}, (_, i) => `<button class="sq ${((i >> 3) + (i & 7)) % 2 ? "dk" : "lt"}" data-i="${i}" aria-label=""></button>`).join("")}<div class="sh-pcs" id="shPcs"></div></div>
     <div class="sh-btns"><button class="sh-b" data-a="mic" title="" style="display:none"></button><button class="sh-b" data-a="spk" title="" style="display:none"></button><button class="sh-b" data-a="hint" title="">💡</button><button class="sh-b" data-a="tilt" title="">3D</button><button class="sh-b" data-a="undo" title="">↩</button><button class="sh-b" data-a="draw" title="">🤝</button><button class="sh-b" data-a="resign" title="">🏳</button><button class="sh-b red" data-a="exit" title="">✕</button></div></div>`;
-  document.body.appendChild(ov);
+  document.body.appendChild(ov); bgmWatch(ov);
   ov.addEventListener("click", e => {
     const sq = e.target.closest(".sq"); if (sq) return shTap(+sq.dataset.i);
     const b = e.target.closest("[data-a]"); if (!b) return; try { Snd.click(); } catch (x) {}
@@ -17695,7 +17707,7 @@ function shRender() {
   const G = SHU.G, board = $("shBoard"), pcs = $("shPcs"), legal = G.over ? [] : shGen(G.b, G.side), mine = shTurnMine();
   // the cells: the last move, the selected piece, the landing cells
   const sel = SHU.sel, cands = sel.length ? legal.filter(m => sel.every((s, k) => m.path[k] === s)) : [], nexts = new Set(cands.filter(m => m.path.length > sel.length).map(m => m.path[sel.length]));
-  const last = G.last ? new Set([G.last.path[0], G.last.path[G.last.path.length - 1]]) : new Set(), must = mine && legal.length && legal[0].caps.length ? new Set(legal.map(m => m.path[0])) : new Set();
+  const last = new Set(), must = mine && legal.length && legal[0].caps.length ? new Set(legal.map(m => m.path[0])) : new Set();
   board.querySelectorAll(".sq").forEach(el => { const i = +el.dataset.i, [r, c] = shCell(i), lf = c * 12.5 + "%", tp = r * 12.5 + "%"; if (el.style.left !== lf) el.style.left = lf; if (el.style.top !== tp) el.style.top = tp;
     { const lb = (r === 7 ? "abcdefgh"[SHU.flip ? 7 - (i & 7) : i & 7] : "") + (c === 0 ? 8 - (SHU.flip ? 7 - (i >> 3) : i >> 3) : ""); if (el.dataset.l !== lb) el.dataset.l = lb; } el.classList.toggle("last", last.has(i)); el.classList.toggle("sel", sel[0] === i || sel.includes(i)); el.classList.toggle("opt", nexts.has(i)); });
   let h = "";
@@ -18413,7 +18425,7 @@ function mcEnsure() {
     <div class="sh-wrap"><div class="sh-info"><div class="sh-pl" data-s="opp"></div><div class="sh-msg" id="mcMsg"></div><div class="sh-pl" data-s="me"></div></div>
     <div class="sh-board mc-board" id="mcBoard">${Array.from({length: 64}, (_, i) => `<button class="sq ${((i >> 3) + (i & 7)) % 2 ? "dk" : "lt"}" data-i="${i}" aria-label=""></button>`).join("")}<div class="sh-pcs" id="mcPcs"></div><div class="mc-fx" id="mcFx"></div></div>
     <div class="sh-btns"><button class="sh-b" data-a="mic" title="" style="display:none"></button><button class="sh-b" data-a="spk" title="" style="display:none"></button><button class="sh-b" data-a="undo" title="">↩</button><button class="sh-b" data-a="draw" title="">🤝</button><button class="sh-b" data-a="resign" title="">🏳</button><button class="sh-b red" data-a="exit" title="">✕</button></div></div>`;
-  document.body.appendChild(ov);
+  document.body.appendChild(ov); bgmWatch(ov);
   ov.addEventListener("click", e => {
     const sq = e.target.closest(".sq"); if (sq) return mcTap(+sq.dataset.i);
     const b = e.target.closest("[data-a]"); if (!b) return; try { Snd.click(); } catch (x) {}

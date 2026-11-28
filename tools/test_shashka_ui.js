@@ -118,6 +118,27 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     ok((await st(p)).my === -my0, "Play again against the bot: the colours are swapped", [my0, (await st(p)).my]);
     await p.evaluate(() => shClose());
 
+    // ------------------------------------------------------------------ quiet behind the board (the owner, Nov 28: "when I tap a piece the screen blinks and the menu shows"). Behind the board the cue showcase drew ~1200 times a second, 28 animations ran,
+    // the demo match went on and every tap built a golden ring (z-index 9999, under the board's 99983) that nobody could see. While the board is on, html.bgm hides the menu and stops all of it; the squares of the last move are not lit
+    await p.evaluate(() => { toMenu("mini"); shStartLocal(); }); await sleep(1500);
+    const q1 = await p.evaluate(() => { const hid = e => !e || getComputedStyle(e).visibility === "hidden" || getComputedStyle(e).display === "none";
+      const under = document.getAnimations().filter(a => a.playState === "running" && a.effect && a.effect.target && a.effect.target.closest && !a.effect.target.closest("#shScr,#modal,#toasts"));
+      return { bgm: document.documentElement.classList.contains("bgm"), menuHidden: hid(document.querySelector(".screen.on")), navHidden: hid(document.getElementById("nav")), shadeOff: hid(document.getElementById("shade")), board: getComputedStyle(document.getElementById("shScr")).visibility, running: under.map(a => a.animationName || a.transitionProperty).slice(0, 5), n: under.length }; });
+    ok(q1.bgm && q1.menuHidden && q1.navHidden && q1.shadeOff && q1.board === "visible" && q1.n === 0, "behind the board the menu is hidden and nothing animates (html.bgm)", q1);
+    const draws = await p.evaluate(() => new Promise(res => { let n = 0; for (const m of ["clearRect", "fillRect", "drawImage", "fill", "stroke"]) { const o = CanvasRenderingContext2D.prototype[m]; CanvasRenderingContext2D.prototype[m] = function () { n++; return o.apply(this, arguments); }; } setTimeout(() => res(n), 1500); }));
+    ok(draws <= 20, "behind the board no canvas is drawn (the demo match and the cue showcase rest)", draws);
+    const pt = await p.evaluate(() => { const e = document.querySelector("#shBoard .pc.w"), r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; });
+    await p.evaluate(() => { window.__fx = 0; new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.classList && n.classList.contains("tapfx")) window.__fx++; }).observe(document.body, { childList: true }); });
+    await p.touchscreen.tap(pt[0], pt[1]); await sleep(350);
+    const fx = await p.evaluate(() => ({ rings: window.__fx, sel: SHU.sel.slice() }));
+    ok(fx.rings === 0 && fx.sel.length === 1, "a real tap on a square builds no ring under the board, and still picks the piece", fx);
+    const mvp = await p.evaluate(() => shGen(SHU.G.b, SHU.G.side)[0].path); await tap(p, mvp); await sleep(1100);
+    const lit = await p.evaluate(() => ({ last: SHU.G.last && SHU.G.last.path.length, lit: document.querySelectorAll("#shBoard .sq.last").length }));
+    ok(lit.last >= 2 && lit.lit === 0, "after a move no square stays lit (the piece slides, so the move is seen)", lit);
+    await p.evaluate(() => shClose()); await sleep(600);
+    const q2 = await p.evaluate(() => ({ bgm: document.documentElement.classList.contains("bgm"), menu: getComputedStyle(document.querySelector(".screen.on")).visibility, nav: getComputedStyle(document.getElementById("nav")).visibility, shade: getComputedStyle(document.getElementById("shade")).display, anims: document.getAnimations().filter(a => a.playState === "running").length }));
+    ok(!q2.bgm && q2.menu === "visible" && q2.nav === "visible" && q2.shade !== "none" && q2.anims > 0, "closing the board brings the menu back (visible and animating again)", q2);
+
     // ------------------------------------------------------------------ it fits every screen
     for (const [name, vp, touch] of [["small landscape", { width: 740, height: 360 }, true], ["upright phone (page turned)", { width: 328, height: 611 }, true], ["computer", { width: 1280, height: 720 }, false], ["tablet", { width: 1024, height: 768 }, true]]) {
       const q = await open(vp, touch);

@@ -121,6 +121,15 @@ let pass = 0, fail = 0; const ok = (c, m, x) => { if (c) pass++; else { fail++; 
     await clickBtn(p, "Play again"); await sleep(1500); ok((await st(p)).my === -my0, "Play again against the bot: the colours are swapped", [my0, (await st(p)).my]);
     await p.evaluate(() => mcClose());
 
+    // ------------------------------------------------------------------ quiet behind the board (html.bgm, see tools/test_shashka_ui.js): the menu under Magic Chess is hidden and still while it is on, back when it is closed
+    await p.evaluate(() => { toMenu("mini"); mcStartLocal(); }); await sleep(1300);
+    const bq1 = await p.evaluate(() => { const hid = e => !e || getComputedStyle(e).visibility === "hidden" || getComputedStyle(e).display === "none";
+      return { bgm: document.documentElement.classList.contains("bgm"), menuHidden: hid(document.querySelector(".screen.on")), n: document.getAnimations().filter(a => a.playState === "running" && a.effect && a.effect.target && a.effect.target.closest && !a.effect.target.closest("#mcScr,#modal,#toasts")).length }; });
+    ok(bq1.bgm && bq1.menuHidden && bq1.n === 0, "behind Magic Chess the menu is hidden and nothing animates (html.bgm)", bq1);
+    await p.evaluate(() => mcClose()); await sleep(500);
+    const bq2 = await p.evaluate(() => ({ bgm: document.documentElement.classList.contains("bgm"), menu: getComputedStyle(document.querySelector(".screen.on")).visibility }));
+    ok(!bq2.bgm && bq2.menu === "visible", "closing Magic Chess brings the menu back", bq2);
+
     // ------------------------------------------------------------------ it fits every screen
     for (const [name, vp, touch] of [["small landscape", { width: 740, height: 360 }, true], ["upright phone (page turned)", { width: 328, height: 611 }, true], ["computer", { width: 1280, height: 720 }, false], ["tablet", { width: 1024, height: 768 }, true]]) {
       const q = await open(vp, touch);
