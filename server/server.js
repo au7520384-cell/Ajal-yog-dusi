@@ -1073,7 +1073,7 @@ const routes = {
       if (!L.pub) continue;
       const ps = L.players.filter(p => seatKept(p, now)); if (!ps.length) continue;
       const h = (L.host && L.host.profile) || {};
-      out.push({code: L.code, city: L.city, fee: L.fee, n: ps.length, max: L.max, state: L.state,
+      out.push({code: L.code, city: L.city, fee: L.fee, n: ps.length, max: L.max, state: L.state, rule: L.rule === "nine" ? "nine" : undefined,
         host: {uid: L.host.uid, name: cleanChat(String(h.name || "Player").slice(0, 16)), avatar: h.avatar | 0, frame: h.frame | 0, country: String(h.country || "").slice(0, 3), level: h.level | 0},
         voice: ps.filter(p => p.lvOn && p.readyState === 1).length});
     }
@@ -2120,7 +2120,7 @@ function sweepLobby(code) {   // drop the players who stayed away too long; an e
   lobbyBroadcast(L);
   if (L.players.some(p => p.readyState !== 1)) L.gc = setTimeout(() => sweepLobby(code), 30e3);
 }
-function lobbyState(L) { return {t: "lobbystate", code: L.code, city: L.city, fee: L.fee, max: L.max, state: L.state, pub: !!L.pub, host: L.host.uid, players: L.players.map(p => pubP(p, L))}; }
+function lobbyState(L) { return {t: "lobbystate", code: L.code, city: L.city, fee: L.fee, max: L.max, state: L.state, pub: !!L.pub, host: L.host.uid, players: L.players.map(p => pubP(p, L)), rule: L.rule === "nine" ? "nine" : undefined}; }   // (rule: "nine" = a 9-ball lobby, the matches of its bracket are 9-ball matches)
 function lobbyBroadcast(L) { const m = lobbyState(L); for (const p of L.players) wsSend(p, m); }
 function leaveLobby(ws, dropped) {   // dropped: the socket just died (not a deliberate leave): while the lobby is open the seat is kept for a while
   const code = ws.lobby; if (!code) return; ws.lobby = null; ws.lvOn = false;
@@ -2140,7 +2140,7 @@ function leaveLobby(ws, dropped) {   // dropped: the socket just died (not a del
 function leaveQueue(ws) { leaveLobby(ws); for (const q of queues.values()) { const i = q.indexOf(ws); if (i >= 0) q.splice(i, 1); } }
 const MATCH_GRACE = +process.env.MATCH_GRACE_MS || 30e3;   // a phone whose connection drops in a match (network change, the app in the background) has this long to come back before it forfeits
 const recentEnd = new Map();   // room id -> {winner, reason, at}: a phone that comes back after its match was decided is told how it ended
-const matchMsg = (room, seat) => ({t: "match", room: room.id, seat, first: room.first, seed: room.seed, city: room.city, opp: room.p[1 - seat].profile, tour: room.tour ? {round: room.tour.round, rounds: room.tour.rounds} : undefined, cup: room.cup ? {sid: room.cup.S.sid, round: room.cup.S.round, n: room.cup.S.n} : undefined});
+const matchMsg = (room, seat) => ({t: "match", room: room.id, seat, first: room.first, seed: room.seed, city: room.city, opp: room.p[1 - seat].profile, tour: room.tour ? {round: room.tour.round, rounds: room.tour.rounds} : undefined, rule: room.rule === "nine" ? "nine" : undefined, cup: room.cup ? {sid: room.cup.S.sid, round: room.cup.S.round, n: room.cup.S.n} : undefined});
 function dropSeat(room, seat) {   // the phone of this seat lost its connection: the match waits for it
   if (room.over || room.away[seat]) return;
   room.away[seat] = Date.now();
@@ -2166,7 +2166,7 @@ function startRoom(a, b, city, T, match, cup) {   // a sits in seat 0, b in seat
   for (const s of [a, b]) if (s && s.pref && db.users[s.uid]) s.profile = mkProfile(db.users[s.uid], s.pref.cue, s.pref.tbl);   // the cue / table / avatar the player has NOW (he may have changed them while sitting in the lobby)
   const first = crypto.randomInt(2);
   const room = {id: crypto.randomUUID(), city, p: [a, b], seed: crypto.randomInt(2 ** 31), over: false, reports: {}, specs: new Set(), startedAt: Date.now(), first, last: null, tour: T || null, tourMatch: match || null, cup: cup || null,
-    rx: [0, 0], sn: [0, 0], log: [[], []], away: [0, 0], timers: [null, null]};   // rx: shot / state / result / resign messages taken from each seat; sn + log: the shots and positions relayed from each seat (numbered, so a phone that was away gets the ones it missed)
+    rx: [0, 0], sn: [0, 0], log: [[], []], away: [0, 0], timers: [null, null], rule: T && T.rule === "nine" ? "nine" : "eight"};   // rule: the game of a lobby match (9-ball or 8-ball). rx: shot / state / result / resign messages taken from each seat; sn + log: the shots and positions relayed from each seat (numbered, so a phone that was away gets the ones it missed)
   rooms.set(room.id, room);
   for (const s of [a, b]) if (s && s.spec) { const r = s.spec; r.specs.delete(s); s.spec = null; specCount(r); }   // a player who was watching another match of the lobby now plays his own
   room.p.forEach((s, seat) => { s.room = room; s.seat = seat; });
@@ -2187,7 +2187,7 @@ function startTournament(L, ps) {
   const slots = new Array(size).fill(null);                        // byes land on different players: the first half takes the even slots, the rest the odd ones
   order.forEach((p, k) => { slots[k < size / 2 ? 2 * k : 2 * (k - size / 2) + 1] = p; });
   const pool = Math.floor(L.fee * n * 0.9);
-  L.T = {code: L.code, city: L.city, fee: L.fee, n, size, rounds: Math.log2(size), round: 0, entries: slots, matches: [], gone: new Set(), pool, prizes: tourPrizes(n, pool), results: {}, startedAt: Date.now(), players: order};
+  L.T = {code: L.code, city: L.city, fee: L.fee, rule: L.rule === "nine" ? "nine" : "eight", n, size, rounds: Math.log2(size), round: 0, entries: slots, matches: [], gone: new Set(), pool, prizes: tourPrizes(n, pool), results: {}, startedAt: Date.now(), players: order};
   const info = {t: "tourstart", n, fee: L.fee, pool, rounds: L.T.rounds, prizes: L.T.prizes, city: L.city};
   for (const p of order) wsSend(p, info);
   lobbyBroadcast(L);
@@ -2905,7 +2905,7 @@ function jcodeOne(raw) {   // what does this one code name? (broom: a board / ar
   if (code.length < 3) return out;
   const br = brooms.get(code); if (br) return {...out, kind: "broom", game: br.game, state: br.state, stake: br.stake | 0, full: !br.uids.some(x => !x)};
   const tr = trooms.get(code); if (tr) return {...out, kind: "troom", state: tr.state};
-  const L = lobbies.get(code); if (L && L.players.some(p => seatKept(p))) return {...out, kind: "lobby", state: L.state, full: L.players.length >= L.max};
+  const L = lobbies.get(code); if (L && L.players.some(p => seatKept(p))) return {...out, kind: "lobby", state: L.state, full: L.players.length >= L.max, rule: L.rule === "nine" ? "nine" : undefined};
   return out;
 }
 function jcodeInfo(m) {   // the page's one "enter a code" box: `codes` are the words of what the player typed or pasted (a whole share message works): the first that names a room wins
@@ -2947,7 +2947,7 @@ wss.on("connection", (ws, req) => {
         if (L && !L.players.some(p => seatKept(p))) { lobbies.delete(code); L = null; }
         if (!L) {
           if (m.join || m.rejoin) return wsSend(ws, {t: "nocode"});
-          L = {code, host: ws, city, fee: FEE_OF(city), players: [ws], max: 8, state: "open", T: null, pub: !!m.pub && !m.join}; lobbies.set(code, L); ws.lobby = code;   // pub: listed in the open lobbies list (GET /api/lobbies)
+          L = {code, host: ws, city, fee: FEE_OF(city), players: [ws], max: 8, state: "open", T: null, pub: !!m.pub && !m.join, rule: m.rule === "nine" ? "nine" : "eight"}; lobbies.set(code, L); ws.lobby = code;   // pub: listed in the open lobbies list (GET /api/lobbies)
           return lobbyBroadcast(L);
         }
         if (L.players.includes(ws)) { lobbyBroadcast(L); return lobbyWelcome(L, ws); }
@@ -2999,7 +2999,7 @@ wss.on("connection", (ws, req) => {
       if (!room || room.over || room.specs.size >= 200) return wsSend(ws, {t: "nospec"});
       room.specs.add(ws); ws.spec = room;
       specCount(room);
-      wsSend(ws, {t: "spec", room: room.id, seed: room.seed, first: room.first, city: room.city, p: room.p.map(s => { const {code, ...r} = s.profile; return r; }), state: room.last, specs: room.specs.size, list: specList(room), log: room.slog || []});
+      wsSend(ws, {t: "spec", room: room.id, seed: room.seed, first: room.first, rule: room.rule === "nine" ? "nine" : undefined, city: room.city, p: room.p.map(s => { const {code, ...r} = s.profile; return r; }), state: room.last, specs: room.specs.size, list: specList(room), log: room.slog || []});
     } else if (m.t === "unspec") {
       if (ws.spec) { const r = ws.spec; r.specs.delete(ws); ws.spec = null; specCount(r); }
     } else if (m.t === "schat" && ws.spec && !ws.spec.over) {   // a spectator writes to the players and the other spectators
@@ -3150,7 +3150,7 @@ function worldLobbies() {   // the posted lobbies as they are NOW: the seats, wh
     }
     const L = lobbyByWid(wid), ps = L ? L.players.filter(p => seatKept(p)) : [];
     if (!L || L.state !== "open" || !ps.length || !L.host || L.host.uid !== w.uid || now - w.at > 30 * 60e3) { worldPosts.delete(wid); continue; }   // (gone, running, empty, or its poster is not the host any more: the card is the host's)
-    out.push({wid, uid: w.uid, name: w.name, avatar: w.avatar, frame: w.frame, level: w.level, league: w.league, country: w.country, city: w.city, fee: w.fee, n: ps.length, max: L.max, open: ps.length < L.max && !!L.host && L.host.readyState === 1, at: w.at});
+    out.push({wid, uid: w.uid, name: w.name, avatar: w.avatar, frame: w.frame, level: w.level, league: w.league, country: w.country, city: w.city, fee: w.fee, rule: L.rule === "nine" ? "nine" : undefined, n: ps.length, max: L.max, open: ps.length < L.max && !!L.host && L.host.readyState === 1, at: w.at});
   }
   return out.sort((a, b) => (b.open - a.open) || b.at - a.at).slice(0, 30);
 }

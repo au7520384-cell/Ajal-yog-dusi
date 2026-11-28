@@ -4697,7 +4697,7 @@ if (type === "watch") G.skill = 0.004;
 if (type === "ai" || type === "tour" || type === "watch") G.cur = Math.random() < 0.5 ? 0 : 1;
 if (net) {
 G.net = {seat: net.seat, room: net.room ? String(net.room) : "", lastAim: 0, sentA: null};
-G.balls = rack(net.seed); G.simSeed0 = (net.seed | 0) || 1;   // the physics "dice" (a ball popping off the cloth in a hard break) come from this seed: both phones throw the same ones
+if (net.rule === "nine") { G.rule = "nine"; G.balls = rack9(net.seed); } else G.balls = rack(net.seed); G.simSeed0 = (net.seed | 0) || 1;   // (net.rule "nine": a match of a 9-ball lobby, pro_1_core.js) the physics "dice" (a ball popping off the cloth in a hard break) come from this seed: both phones throw the same ones
 G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
 G.cur = net.first === net.seat ? 0 : 1;
 }
@@ -12015,7 +12015,7 @@ isAI: false, remote: true, cue: CUES.some(q => q.id === o.cue) ? o.cue : "start"
 const G = baseGame("spec", city, [mk(m.p[0] || {}), mk(m.p[1] || {})]);
 G.net = {seat: 0, spec: true, room: m.room, lastAim: 0, sentA: null}; G.simSeed0 = (m.seed | 0) || 1; G.viewers = m.specs | 0; G.giftTo = 0;
 specInfo.list = Array.isArray(m.list) ? m.list : []; specInfo.log = (m.log || []).map(x => ({name: String(x.name || "").slice(0, 16), avatar: x.avatar | 0, frame: x.frame | 0, msg: String(x.msg || "").slice(0, 60), me: !!(profile && x.name === profile.name)}));
-G.balls = rack(m.seed); G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
+if (m.rule === "nine") { G.rule = "nine"; G.balls = rack9(m.seed); } else G.balls = rack(m.seed); G.angle = Math.atan2(G.balls[1].y - G.balls[0].y, G.balls[1].x - G.balls[0].x);
 G.cur = m.first === 1 ? 1 : 0; G.tbl = G.players[0].tbl || ""; G.tblOwner = 0; G.demo = false;
 setGame(G); enterGameUi("spec"); nextTurn(true);
 if (m.state) applyState(m.state);
@@ -13600,27 +13600,27 @@ const lbName = c => `<div class="lbnm"><small>${esc(T(c.sub))}</small><b>${esc(T
 const lbUpTo = c => Math.floor(c.fee * 8 * 0.9 * 0.55);   // first prize with a full lobby of 8
 const lbMe = () => (Net.acct && Net.acct.id) || "";
 function lbShow() { if (mode !== "menu") toMenu("lbScr"); else go("lbScr"); }
-let LBX = {pub: false, from: ""};   // how the next lobby is opened: public (listed in the open lobbies)? did the player come from that list (the back button returns there)?
-function lbTablesOpen(pub, from) { LBX = {pub: !!pub, from: from || ""}; LB = null; lbShow(); }
+let LBX = {pub: false, from: "", rule: ""};   // how the next lobby is opened (rule "nine": a 9-ball lobby): public (listed in the open lobbies)? did the player come from that list (the back button returns there)?
+function lbTablesOpen(pub, from, rule) { LBX = {pub: !!pub, from: from || "", rule: rule === "nine" ? "nine" : ""}; LB = null; lbShow(); }
 function lbCodeGen() { return Array.from({length: 6}, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.random() * 32 | 0]).join(""); }
 function lobbyCreate(cityId, inviteIds, o) {   // inviteIds: quick duel with one friend; no city given: the best table the player can afford
 const c = cityId ? lbCityOf(cityId) : lobbyCity();
 if (profile.coins < c.fee) return toast("😕", T("Tanga yetmaydi"), c.name);
 const code = lbCodeGen(); lobbyLink = lobbyDefaultLink(code);
-const pubEl = document.getElementById("lbPub"), pub = o && o.pub != null ? !!o.pub : !!(pubEl && pubEl.checked), from = (o && o.from) || (inviteIds && inviteIds.length ? "" : LBX.from);
-LBX = {pub: false, from: ""};
-lbConnect(code, false, c.id, {inviteIds: inviteIds || [], auto: !cityId ? false : !!(document.getElementById("lbAuto") && document.getElementById("lbAuto").checked), pub, from});
+const pubEl = document.getElementById("lbPub"), pub = o && o.pub != null ? !!o.pub : !!(pubEl && pubEl.checked), from = (o && o.from) || (inviteIds && inviteIds.length ? "" : LBX.from), rule = (o && o.rule) || LBX.rule || "";
+LBX = {pub: false, from: "", rule: ""};
+lbConnect(code, false, c.id, {inviteIds: inviteIds || [], auto: !cityId ? false : !!(document.getElementById("lbAuto") && document.getElementById("lbAuto").checked), pub, from, rule});
 lhook("created", code);
 }
 function lobbyJoin(code) { code = parseLobbyCode(code); if (!code || code.length < 3) return; lbConnect(code, true, null, {}); }
 function lbConnect(code, join, cityId, opt) {
 const c = lbCityOf(cityId || lobbyCity().id);
-LB = {code, role: join ? "guest" : "host", city: c.id, fee: c.fee, max: 8, state: "open", host: "", players: [], tour: null, results: null, standings: null, invited: {}, friends: null, pending: true, queued: null, opt: opt || {}};
+LB = {code, role: join ? "guest" : "host", city: c.id, fee: c.fee, max: 8, state: "open", host: "", players: [], tour: null, results: null, standings: null, invited: {}, friends: null, pending: true, queued: null, opt: opt || {}, rule: !join && opt && opt.rule === "nine" ? "nine" : "eight"};   // (rule: the game of this lobby: the host chose it, a guest learns it from the first lobbystate)
 const mine = LB;
 Net.ensure().then(() => Net.connect()).then(() => {
 if (LB !== mine) return;
 lbBind();
-Net.send({t: "queue", city: c.id, code, join: !!join, lobby: true, cue: profile.cue, tbl: profile.tableSkin || "", pub: !join && !!(opt && opt.pub)});
+Net.send({t: "queue", city: c.id, code, join: !!join, lobby: true, cue: profile.cue, tbl: profile.tableSkin || "", pub: !join && !!(opt && opt.pub), rule: !join && opt && opt.rule === "nine" ? "nine" : undefined});
 }).catch(() => { if (LB === mine) lbFail(T("Server bilan aloqa yo'q. Internetni tekshiring.")); });
 setTimeout(() => { if (LB === mine && mine.pending) lbFail(T("Bunday lobbi topilmadi")); }, 30000);   // a sleeping free server needs up to ~50 s to wake: the "no such lobby" answer itself comes at once
 lbShow();
@@ -13648,7 +13648,7 @@ function lbState(m) {
 if (!LB || LB.code !== m.code) return;
 const first = LB.pending; LB.pending = false;
 if (first && m.fee > profile.coins && m.host !== lbMe()) { Net.send({t: "cancel"}); return lbFail(T("Tanga yetmaydi")); }
-Object.assign(LB, {city: m.city, fee: m.fee, max: m.max, state: m.state, pub: !!m.pub, host: m.host, players: m.players, role: m.host === lbMe() ? "host" : "guest"});
+Object.assign(LB, {city: m.city, fee: m.fee, max: m.max, state: m.state, pub: !!m.pub, host: m.host, players: m.players, role: m.host === lbMe() ? "host" : "guest", rule: m.rule === "nine" ? "nine" : "eight"});
 if (m.state === "open") LB.tour = null;
 LobbyVoice.sync(first);
 lhook("open", LB.code, m.state === "open" && m.players.length < m.max);
@@ -13658,6 +13658,7 @@ if (LB.opt.auto) lbInviteAll(); else ids.forEach(id => lbInvite(id));
 }
 if ($("lbScr").classList.contains("on")) lbRender();
 }
+const lbBackScr = f => f === "open" ? "openScr" : f === "pro" ? "proScr" : "withFrScr";
 function lbFail(msg) {
 const o = (LB && LB.opt) || {}, from = o.from || "";
 LobbyVoice.stop();
@@ -13668,13 +13669,13 @@ if (next) return lbConnect(next, true, null, {from, quick: o.quick});
 return lobbyCreate(null, [], {pub: true, from});
 }
 LB = null; try { Net.send({t: "cancel"}); } catch (e) {} lhook("leave"); toast("😕", msg, T("Lobbi"));
-const back = from === "open" ? "openScr" : "withFrScr"; if (mode === "menu") go(back); else toMenu(back);
+const back = lbBackScr(from); if (mode === "menu") go(back); else toMenu(back);
 }
 function lbLeave(force) {
 if (LB && LB.state === "running" && !(LB.results) && !force) return openModal({icon: "🏳️", title: T("Lobbi"), text: T("Turnirni tark etsangiz yutqazasiz. Chiqasizmi?"), buttons: [{label: T("Chiqish"), cls: "red", fn: () => lbLeave(true)}, {label: T("Davom etish"), cls: "green", fn: () => {}}]});
 LobbyVoice.stop();
 try { Net.send({t: "cancel"}); } catch (e) {}
-const back = LB && LB.opt && LB.opt.from === "open" ? "openScr" : "withFrScr";
+const back = lbBackScr(LB && LB.opt && LB.opt.from);
 LB = null; lhook("leave"); go(back);
 }
 function lbDrop() { if (!LB) return; LobbyVoice.stop(); try { Net.send({t: "cancel"}); } catch (e) {} LB = null; lbChip(false); lhook("leave"); }   // leave the lobby I am in (e.g. to take an invitation to another one) without moving to another screen
@@ -13769,7 +13770,7 @@ const b = res && !modal ? document.querySelector("#resBtns button.green") : null
 function lbRender() {
 const body = $("lbBody"), title = $("lbTitle");
 if (!LB) {   // 1) choose a table
-title.textContent = T("Stolni tanlang");
+title.textContent = (LBX.rule === "nine" ? "9-ball · " : "") + T("Stolni tanlang");
 const nf = document.documentElement.classList.contains("mh520") ? fmtS : fmt;   // phone landscape: short numbers (396M) keep each pill on one line
 const cards = CITIES.map(c => { const lock = cityLock(c), poor = profile.coins < c.fee;
 return `<div class="lbt${lock || poor ? " lock" : ""}" data-city="${c.id}" style="--f0:${c.felt[0]};--f1:${c.felt[1]};--fg:${c.felt[0]}88"><div class="lbart"${IMG["lc_" + c.id] ? ` style="background-image:url(${IMG["lc_" + c.id]})"` : ""}></div>${lbName(c)}
@@ -13782,7 +13783,7 @@ return;
 }
 // 2) the lobby / the running tournament
 const c = lbCityOf(LB.city), host = LB.role === "host", T_ = LB.tour, run = LB.state === "running", me = lbMe();
-title.textContent = run ? T("Turnir") : T("Lobbi");
+title.textContent = (LB.rule === "nine" ? "9-ball · " : "") + (run ? T("Turnir") : T("Lobbi"));
 const slots = Array.from({length: LB.max}, (_, i) => { const p = LB.players[i];
 return p ? `<div class="lbslot on${p.host ? " host" : ""}${p.away ? " away" : ""}" data-uid="${esc(String(p.uid))}"><u class="lbvb"></u>${p.host ? `<span class="lbcrown">${SVG_CROWN}</span>` : ""}${avHTML(normAv(p.avatar | 0), p.frame | 0, document.documentElement.classList.contains("mh520") ? 30 : 52)}<b>${esc(pname(p.name))}</b>${p.host ? `<i>${T("Xost")}</i>` : ""}</div>` : `<div class="lbslot"><span class="lbplus">+</span></div>`; }).join("");
 let right;
@@ -13817,7 +13818,7 @@ body.querySelectorAll(".lbw").forEach(b => b.onclick = e => { e.stopPropagation(
 LobbyVoice.bind();
 if ($("lbPubT")) $("lbPubT").onchange = e => Net.send({t: "lpub", on: e.target.checked});
 }
-$("lbBack").onclick = () => { if (LB) lbLeave(); else { const f = LBX.from; LBX = {pub: false, from: ""}; go(f === "open" ? "openScr" : "withFrScr"); } };
+$("lbBack").onclick = () => { if (LB) lbLeave(); else { const f = LBX.from; LBX = {pub: false, from: "", rule: ""}; go(lbBackScr(f)); } };
 // ---- open (public) lobbies: a list with a Join button, "Quick join", the number of friends talking in each voice room
 const OPN = {list: null, err: false, filter: "all", fr: null, busy: false, qbusy: false, sig: ""};
 async function opFriendSet() { if (OPN.fr) return OPN.fr; try { const r = await Net.api("/api/friends"); OPN.fr = new Set((r.friends || []).map(f => String(f.id))); } catch (e) { OPN.fr = new Set(); } return OPN.fr; }
@@ -13831,7 +13832,7 @@ function opRow(x) {
 const c = lbCityOf(x.city), full = x.n >= x.max, run = x.state !== "open", poor = profile.coins < x.fee, fr = OPN.fr && OPN.fr.has(String(x.host.uid)), nf = document.documentElement.classList.contains("mh520") ? fmtS : fmt;
 const seats = Array.from({length: x.max}, (_, i) => `<i class="${i < x.n ? "f" : ""}"></i>`).join("");
 const btn = full ? `<button class="btn gray" disabled>${T("To'lgan")}</button>` : poor ? `<button class="btn gray" disabled>${T("Tanga yetmaydi")}</button>` : run ? `<button class="btn blue" data-op="${esc(x.code)}">👁 ${T("Tomosha qilish")}</button>` : `<button class="btn green" data-op="${esc(x.code)}">${T("Qo'shilish")}</button>`;
-return `<div class="oprow${full || poor ? " off" : ""}${fr ? " fr" : ""}"><div class="opart"${IMG["lc_" + c.id] ? ` style="background-image:url(${IMG["lc_" + c.id]})"` : ""}></div><div class="opcity"><b>${esc(T(c.name))}</b><small>${nf(x.fee)} 🪙</small></div>
+return `<div class="oprow${full || poor ? " off" : ""}${fr ? " fr" : ""}"><div class="opart"${IMG["lc_" + c.id] ? ` style="background-image:url(${IMG["lc_" + c.id]})"` : ""}></div><div class="opcity"><b>${esc(T(c.name))}</b><small>${nf(x.fee)} 🪙${x.rule === "nine" ? " · 9-ball" : ""}</small></div>
 <div class="ophost">${avHTML(normAv(x.host.avatar | 0), x.host.frame | 0, 28)}<span><small>${T("Xost")}</small><b>${flagHTML(x.host.country, 12)} ${esc(pname(x.host.name))}</b></span></div>
 <div class="opseats">${seats}<em>${x.n}/${x.max}</em></div><div class="opvc">${x.voice ? MIC_SPAN() + x.voice : ""}</div>${btn}</div>`;
 }
@@ -13863,7 +13864,7 @@ async function quickJoin(btn) {   // the busiest open lobby I can afford; when t
 if (OPN.qbusy) return; OPN.qbusy = true; if (btn) btn.disabled = true;
 try {
 await Net.ensure(); const r = await Net.api("/api/lobbies");
-const cand = (r.lobbies || []).filter(x => x.state === "open" && x.n < x.max && x.fee <= profile.coins && !cityLock(lbCityOf(x.city))).sort((a, b) => b.n - a.n).map(x => x.code);
+const cand = (r.lobbies || []).filter(x => x.state === "open" && x.rule !== "nine" && x.n < x.max && x.fee <= profile.coins && !cityLock(lbCityOf(x.city))).sort((a, b) => b.n - a.n).map(x => x.code);
 if (cand.length) { toast("⚡", T("Tez qo'shilish"), T("Lobbiga ulanilmoqda…")); lbConnect(cand[0], true, null, {from: "open", quick: cand.slice(1, 4)}); }
 else { lobbyCreate(null, [], {pub: true, from: "open"}); if (LB) toast("🌐", T("Ochiq lobbi ochildi"), T("O'yinchilar kutilmoqda")); }
 } catch (e) { toast("📡", T("Server bilan aloqa yo'q. Internetni tekshiring."), ""); }
@@ -14201,7 +14202,7 @@ const bl = blocked(), list = lobs.filter(o => !bl.has(o.uid)), sc = el.scrollTop
 $("wLobT").textContent = `🎱 ${T("Lobbilar")}${list.length ? " · " + list.length : ""}`;
 el.innerHTML = list.length ? list.map(o => { const me = o.uid === mine;
 const G = o.kind === "board" ? ({shashka: ["♟️", "Shashka"], magic: ["✨", "Sehrli shaxmat"], mafia: ["🕵️", "Mafiya"], hockey: ["🏒", "Aeroxokkey"], tennis: ["🏓", "Stol tennisi"]}[o.game] || ["🎲", "Shashka"]) : null;   // (a BOARD room: the game instead of the table, no entry fee)
-return `<div class="wlc${o.open ? "" : " off"}"><div class="wlt">${G ? `<b>${G[0]} ${esc(T(G[1]))}</b><em>${o.n}/${o.max}</em><span>${o.stake ? "🎲 " + fmt(o.stake) + (o.game === "mafia" ? "/" + fmt(o.stake * 3) : "") : "🌐"}</span>` : `<b>${esc(cityName(o.city))}</b><em>${o.n}/${o.max}</em><span>${esc(TT("Kirish to'lovi: {0}", fmt(o.fee)))} 🪙</span>`}</div>
+return `<div class="wlc${o.open ? "" : " off"}"><div class="wlt">${G ? `<b>${G[0]} ${esc(T(G[1]))}</b><em>${o.n}/${o.max}</em><span>${o.stake ? "🎲 " + fmt(o.stake) + (o.game === "mafia" ? "/" + fmt(o.stake * 3) : "") : "🌐"}</span>` : `<b>${esc(cityName(o.city))}${o.rule === "nine" ? " · 9-ball" : ""}</b><em>${o.n}/${o.max}</em><span>${esc(TT("Kirish to'lovi: {0}", fmt(o.fee)))} 🪙</span>`}</div>
 <div class="wlh">${avHTML(normAv(o.avatar | 0), o.frame | 0, 34)}<div class="wln"><b>${esc(pname(o.name))}</b><small>${esc(lgName(o.league))}</small></div>${leagueImg(o.league | 0, 28)}</div>
 ${me ? "" : `<button class="btn green" data-w="${esc(o.wid)}" ${o.open ? "" : "disabled"}>${o.open ? T("Qo'shilish") + " ➜" : T("Yopilgan")}</button>`}</div>`; }).join("") : `<p class="muted">${T("Hozircha ochiq lobbi yo'q")}</p>`;
 el.scrollTop = sc;
@@ -16539,7 +16540,7 @@ const toMenuQuiet = () => { try { $("modal").classList.remove("on"); } catch (e)
     if (G && G.rule === "nine") { const lo = nineLow(G); return G.balls.filter(b => !b.out && b.n === lo); }
     return _lt.apply(this, arguments);
   };
-  const _hud = drawHUD; drawHUD = function (G) { if (G.type === "trick") return proHudTrick(G); _hud.apply(this, arguments); if (G.pro) { try { proHudExtra(G); } catch (e) { console.error("pro hud", e); } } };
+  const _hud = drawHUD; drawHUD = function (G) { if (G.type === "trick") return proHudTrick(G); _hud.apply(this, arguments); if (G.pro || G.rule === "nine") { try { proHudExtra(G); } catch (e) { console.error("pro hud", e); } } };
   const _fx = drawFx; drawFx = function (G) { _fx.apply(this, arguments); if (G.type === "trick") proTrickMarks(G); else if (G.rule === "nine") proNineMarks(G); };
   const _go = go; go = function (id, o) { const r = _go.apply(this, arguments); if (id === "proScr" && mode === "menu") buildPro(); return r; };
   const _bm = buildMini; buildMini = function () { _bm.apply(this, arguments); try { proMiniStrip(); } catch (e) { console.error("pro mini", e); } try { shMiniRow(); } catch (e) { console.error("board row", e); } try { hkMiniRow(); } catch (e) { console.error("arcade row", e); } };
@@ -17178,7 +17179,8 @@ function proPickLevel(rule) {
 }
 function proPickNine() {
   proPickList("9️⃣", "9-ball", "1 dan 9 gacha tartib bilan: 9-sharni tushirgan yutadi", [
-    {id: "bot", n: 1, glyph: "bot", name: T("Botga qarshi"), right: "›"}, {id: "hot", n: 2, avs: [{a: profile.avatar, c: "#78e6ff"}, {a: proAvPick(1, [profile.avatar])[0], c: "#ffb86b"}], name: T("Ikki kishi (bitta qurilmada)"), right: "›"}], id => { if (id === "bot") proPickLevel("nine"); else proStartNineHot(); });
+    {id: "bot", n: 1, glyph: "bot", name: T("Botga qarshi"), right: "›"}, {id: "hot", n: 2, avs: [{a: profile.avatar, c: "#78e6ff"}, {a: proAvPick(1, [profile.avatar])[0], c: "#ffb86b"}], name: T("Ikki kishi (bitta qurilmada)"), right: "›"},
+    {id: "online", n: 3, avs: [{a: profile.avatar, c: "#78e6ff"}, ...proAvPick(2, [profile.avatar]).map((a, i) => ({a, c: i ? "#ffb86b" : "#78e6ff"}))], name: "🌐 " + T("Online: do'stlar bilan"), sub: T("Har kim o'z telefonida"), right: "›"}], id => { if (id === "bot") proPickLevel("nine"); else if (id === "online") lbTablesOpen(false, "pro", "nine"); else proStartNineHot(); });   // (online: a 9-ball LOBBY, the same room as the 8-ball lobby: pick a table, send the code, up to 8 players, a knockout)
 }
 function proPickTeam() {   // the rows show who is on the table: my avatar and the others' portraits, a team a colour (blue / orange, as in the game)
   const me = profile.avatar, [p1, p2, p3, p4] = proAvPick(4, [me]), B = "#78e6ff", O = "#ffb86b";
