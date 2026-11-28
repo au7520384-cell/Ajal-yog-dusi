@@ -17650,9 +17650,9 @@ const shTurnMine = () => { const G = SHU.G; return !!G && !G.over && !SHU.busy &
 const SH_CROWN = '<svg viewBox="0 0 24 24"><path d="M3 18.5l1.6-10 4.6 4.2L12 5.5l2.8 7.2 4.6-4.2 1.6 10z" fill="#ffe27a" stroke="#8a5a10" stroke-width="1.2" stroke-linejoin="round"/><rect x="3" y="18.5" width="18" height="2.4" rx="1" fill="#ffcf3d" stroke="#8a5a10" stroke-width="1"/></svg>';
 function shEnsure() {
   let ov = $("shScr"); if (ov) return ov;
-  ov = document.createElement("div"); ov.id = "shScr"; shBitmap(SH_LT, u => ov.style.setProperty("--lt", u)); shBitmap(SH_DK, u => ov.style.setProperty("--dk", u));
+  ov = document.createElement("div"); ov.id = "shScr";
   ov.innerHTML = `<div class="sh-wrap"><div class="sh-info"><div class="sh-pl" data-s="opp"></div><div class="sh-msg" id="shMsg"></div><div class="sh-pl" data-s="me"></div></div>
-    <div class="sh-board" id="shBoard">${Array.from({length: 64}, (_, i) => `<button class="sq ${((i >> 3) + (i & 7)) % 2 ? "dk" : "lt"}" data-i="${i}" aria-label=""></button>`).join("")}<div class="sh-pcs" id="shPcs"></div></div>
+    <div class="sh-board" id="shBoard"><i class="sh-bg"></i>${Array.from({length: 64}, (_, i) => `<button class="sq ${((i >> 3) + (i & 7)) % 2 ? "dk" : "lt"}" data-i="${i}" aria-label=""></button>`).join("")}<div class="sh-pcs" id="shPcs"></div></div>
     <div class="sh-btns"><button class="sh-b" data-a="mic" title="" style="display:none"></button><button class="sh-b" data-a="spk" title="" style="display:none"></button><button class="sh-b" data-a="hint" title="">💡</button><button class="sh-b" data-a="tilt" title="">3D</button><button class="sh-b" data-a="undo" title="">↩</button><button class="sh-b" data-a="draw" title="">🤝</button><button class="sh-b" data-a="resign" title="">🏳</button><button class="sh-b red" data-a="exit" title="">✕</button></div></div>`;
   document.body.appendChild(ov);
   ov.addEventListener("click", e => {
@@ -17702,6 +17702,7 @@ function shRender() {
   for (let i = 0; i < 64; i++) { const p = G.b[i]; if (!p) continue; const [r, c] = shCell(i);
     h += `<div class="pc ${p > 0 ? "w" : "b"}${Math.abs(p) === 2 ? " k" : ""}${must.has(i) ? " must" : ""}${sel.length && sel[0] === i ? " up" : ""}" data-i="${i}" style="left:${c * 12.5}%;top:${r * 12.5}%"><i>${Math.abs(p) === 2 ? SH_CROWN : ""}</i></div>`; }
   if (pcs.__h !== h) { pcs.innerHTML = h; pcs.__h = h; }   // (the pictures of a card / the discs are not made again at every tap: on a phone that was a blink)
+  ov.classList.toggle("flip", !!SHU.flip);   // (the board's picture is turned 180 degrees when my colour is at the top of the picture: the squares and the letters stay where the game puts them)
   const cards = ov.querySelectorAll(".sh-pl"), topI = SHU.flip ? 0 : 1;   // (my colour at the bottom: the opponent's card above the message, mine below it)
   { const c0 = shPlayerCard(topI), c1 = shPlayerCard(1 - topI); if (cards[0].__h !== c0) { cards[0].innerHTML = c0; cards[0].__h = c0; } if (cards[1].__h !== c1) { cards[1].innerHTML = c1; cards[1].__h = c1; } }
   cards[0].classList.toggle("turn", !G.over && G.side === (topI === 0 ? 1 : -1)); cards[1].classList.toggle("turn", !G.over && G.side === (topI === 0 ? -1 : 1));
@@ -17844,11 +17845,6 @@ function shArt() {   // the card's picture, painted in code: a corner of the boa
 }
 // The look of the board (the owner, Nov 26, a picture of a shashka he likes: "make it like this, 3D"): a dark ebony frame with a bevel, light squares of pale veined stone, dark squares of black stone, thick ivory and black discs with
 // two grooves on the top. The stone is painted by the browser itself (an SVG noise, no pictures to download); the whole board can stand up in 3D (the 3D key: a tilted view from my side, see .tilt3d).
-const shTex = (fill, r, g, b, a, fx, seed) => 'url("data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='f' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='${fx}' numOctaves='5' seed='${seed}'/><feColorMatrix values='0 0 0 0 ${r} 0 0 0 0 ${g} 0 0 0 0 ${b} 0 0 0 1.25 -.42'/></filter><rect width='160' height='160' fill='${fill}'/><rect width='160' height='160' filter='url(#f)' opacity='${a}'/></svg>`) + '")';
-const SH_LT = shTex("#ece1cc", .58, .47, .32, .62, ".011 .019", 3), SH_DK = shTex("#18181c", .9, .9, .95, .1, ".05 .03", 8);
-// (Nov 28, the owner: on his phone the screen blinked off and on at every move) An SVG noise filter (5 octaves) is run by the browser every time a tile of the board is painted, 64 squares of it: on a phone's GPU that is the heaviest thing on this screen.
-// So the two stones are drawn ONCE into a 160 x 160 bitmap (the same picture) and the squares use that; the SVG stays as the picture until the bitmap is ready (or when the browser cannot make it).
-const shBitmap = (svgUrl, done) => { const m = /^url\("(.*)"\)$/.exec(svgUrl); if (!m) return; const im = new Image(); im.onload = () => { try { const cv = document.createElement("canvas"); cv.width = cv.height = 160; cv.getContext("2d").drawImage(im, 0, 0, 160, 160); cv.toBlob(b => { if (b) done("url(" + URL.createObjectURL(b) + ")"); }, "image/png"); } catch (e) {} }; im.src = m[1]; };
 (function shStyle() {
   const st = document.createElement("style");
   st.textContent = `#shScr{position:fixed;inset:0;z-index:99983;background:radial-gradient(circle at 50% 40%,#1c2c6a 0,#0a1030 62%,#04061a);display:none;align-items:center;justify-content:center;zoom:var(--uiz,1);color:#fff;-webkit-user-select:none;user-select:none}
@@ -17900,7 +17896,7 @@ html.mh460 #shScr .sh-pl{min-height:46px}html.mh460 #shScr .sh-msg{font-size:16p
 .sh-card{display:flex;flex-direction:column;align-items:center;gap:4px;width:min(46%,230px);border-radius:16px;border:3px solid #d9b04a;background:linear-gradient(#3a2412,#1a0e06);padding:10px;color:#fff;cursor:pointer;box-shadow:0 5px 0 #0008}
 .sh-card.g-magic{background:linear-gradient(#2a1660,#0c0630);border-color:#b9a0ff}.sh-card.g-magic b{color:#e0d4ff}.sh-card img{width:100%;border-radius:10px}.sh-card b{font:400 20px/1.1 var(--fh,system-ui);color:#ffe27a}.sh-card small{font-size:13px;color:#e8d8b0;line-height:1.25}
 /* ---- the board of Nov 26 (the owner's picture): the table of dark wood, the ebony frame, stone squares, ivory and black discs; the 3D key tilts the board */
-#shScr{--lt:${SH_LT};--dk:${SH_DK};background:radial-gradient(circle at 50% 38%,#4b3022 0,#2a180e 58%,#130a05),repeating-linear-gradient(90deg,#0000 0 7px,#00000014 7px 8px)}
+#shScr{background:radial-gradient(circle at 50% 38%,#4b3022 0,#2a180e 58%,#130a05),repeating-linear-gradient(90deg,#0000 0 7px,#00000014 7px 8px)}
 #shScr .sh-pl{background:linear-gradient(#2c1b11d0,#160c06d0);border-color:#d9b04a40}
 #shScr .sh-pl.turn{border-color:#ecc860;box-shadow:0 0 14px #ecc86066;background:linear-gradient(#4a3216d0,#25170aD0)}
 #shScr .sh-msg{min-height:0;align-self:center;border:1.5px solid #d9b04a77;border-radius:999px;padding:7px 16px;background:linear-gradient(#2a1a12e0,#110906e0);color:#f1d58a;font-size:16px;letter-spacing:.03em;box-shadow:0 2px 0 #0008}
@@ -17908,8 +17904,8 @@ html.mh460 #shScr .sh-pl{min-height:46px}html.mh460 #shScr .sh-msg{font-size:16p
 @keyframes shdots{0%,100%{opacity:1}50%{opacity:.25}}
 #shScr .sh-board{border-width:calc(var(--S) * .05);border-radius:calc(var(--S) * .034);background:linear-gradient(135deg,#4b392d,#1d1511 38%,#3a2b20 68%,#140e0a) border-box;box-shadow:0 0 0 calc(var(--S) * .006) #7d6653,0 calc(var(--S) * .05) calc(var(--S) * .11) #000e,0 0 0 calc(var(--S) * .014) #0007,inset 0 0 0 calc(var(--S) * .007) #000b;transition:transform .4s ease;transform-origin:50% 62%}
 #shScr .sh-board::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;box-shadow:inset 0 0 calc(var(--S) * .025) #000c,inset 0 calc(var(--S) * .004) 0 #ffffff1c}
-#shScr .sq{background:var(--lt) center/100% 100%,#ece1cc;box-shadow:inset 0 0 0 1px #00000012,inset 0 1px 0 #ffffff55}
-#shScr .sq.dk{background:var(--dk) center/100% 100%,#17171b;box-shadow:inset 0 0 0 1px #000,inset 0 1px 0 #ffffff10}
+#shScr .sq{background:#ece1cc}
+#shScr .sq.dk{background:#17171b}
 #shScr .sq::before{color:#5a4a3a88}#shScr .sq.dk::before{color:#ffffff4d}
 #shScr .sq.last::after{background:#e8c45a55}
 #shScr .sq.sel::after{box-shadow:inset 0 0 0 3px #ecc860;background:#ecc86033}
@@ -17928,6 +17924,29 @@ html.mh460 #shScr .sh-pl{min-height:46px}html.mh460 #shScr .sh-msg{font-size:16p
 // ---- registered as a board game
 BGS.shashka = {id: "shashka", U: SHU, open: shOpen, remote: shRemote, rules: {new: shNew, find: shFind, play: shPlay}, endNow: shEndNow, render: shRender, after: shAfter};
 BGLIST.push({id: "shashka", name: "Shashka", sub: "Botga qarshi yoki do'st bilan, ovoz orqali", art: shArt, pick: shPick});
+// ---------------------------------------------------------------- the wooden board and the wooden discs of the shashka (the owner, Nov 28: 'put this board into the shashka, with these stones')
+// His two pictures: a walnut-and-maple board seen from an angle (the squares, a gold inlay line, the letters A - H and the numbers 1 - 8 in the frame) and ebony and maple discs with grooves.
+// BOARD: the picture is straightened (a perspective warp of the 8 x 8 squares into a flat square, the grid checked: every line within 2 px of 128) and cropped to the frame: 1160 x 1160, the squares are the middle 1024 x 1024
+// (a margin of 68 px = 5.862 percent of the board on each side). DISCS: the top face of one ebony and one maple disc, flattened from an ellipse to a circle (a projective map, so the grooves are circles again), 192 x 192, transparent corners.
+const SH_WOOD = "img/6ff40b07a7d192.webp";
+const SH_DISC_W = "img/f1e7e4212375cb.webp", SH_DISC_B = "img/65cd1944581521.webp";
+
+(function shWoodStyle() {
+  const st = document.createElement("style"); st.id = "shWoodStyle";
+  st.textContent = `#shScr{--wood:url("${SH_WOOD}");--dw:url("${SH_DISC_W}");--db:url("${SH_DISC_B}");--f:.05862}
+#shScr .sh-board{border-width:calc(var(--S) * var(--f));border-radius:calc(var(--S) * .012);background:none;overflow:visible;box-shadow:0 calc(var(--S) * .045) calc(var(--S) * .1) #000d,0 0 0 calc(var(--S) * .004) #0008}
+#shScr .sh-board::before{display:none}
+#shScr .sh-bg{position:absolute;left:calc(var(--S) * var(--f) * -1);top:calc(var(--S) * var(--f) * -1);width:var(--S);height:var(--S);background:var(--wood) center/100% 100% no-repeat;border-radius:calc(var(--S) * .012);pointer-events:none}
+#shScr.flip .sh-bg{transform:rotate(180deg)}
+#shScr .sq,#shScr .sq.dk{background:none;box-shadow:none}
+#shScr .sq::before{content:none}
+#shScr .pc.w i{--side:#b49a62;background:var(--dw) center/112.3% no-repeat}
+#shScr .pc.b i{--side:#0a0706;background:var(--db) center/112.3% no-repeat}
+#shScr .pc i::before{display:none}
+#shScr .pc i{box-shadow:0 calc(var(--S) * .014) 0 var(--side),0 calc(var(--S) * .03) calc(var(--S) * .022) #000b}
+#shScr.tilt3d .pc i{box-shadow:0 calc(var(--S) * .022) 0 var(--side),0 calc(var(--S) * .04) calc(var(--S) * .026) #000c}`;
+  document.head.appendChild(st);
+})();
 
 // ---------------------------------------------------------------- BOARD GAME ROOMS, the client: the room window (code, two seats, voice), the match over the wire, and RoomVoice (talking while you play)
 // The server side is "board game rooms" in server/server.js: it seats the players, keeps the MOVE LIST, lets only the seat whose turn it is move, and relays the voice signalling. The phones check every move they receive
