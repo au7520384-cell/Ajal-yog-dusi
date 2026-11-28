@@ -3835,6 +3835,8 @@ if (typeof y8Achievement === "function") y8Achievement(id);
 // recorded menu sounds from the same CC0 pack: button click, screen change, coins, your turn, opponent found, matchmaking loop
 const REAL_HITS = {"clack": ["a/7f0d9f895e2765.wav", "a/f0f8a2cd15f85a.wav", "a/e7b5f4970b76d2.wav", "a/eea78a32d4b4cb.wav", "a/a9c0a90faeeb6a.wav", "a/79e839b1ba3997.wav", "a/c5edded102dabe.wav", "a/5c1f0b1313a0c4.wav", "a/1fda05441f3629.wav", "a/2405a49c272a08.wav", "a/5ad81eaa21f626.wav", "a/092cf63a0c3a2e.wav", "a/28ad08c3076075.wav", "a/bcc4eaacfd0320.wav", "a/31a200c4244fef.wav", "a/c38482de12afc8.wav", "a/79dbd5d15adfe6.wav", "a/887145aca3f9dd.wav", "a/25d8e15b442eac.wav"], "cue": ["a/5ef63ca9e93e1e.wav", "a/0ff639f633af5f.wav", "a/05411206569a84.wav"], "rail": ["a/87b36297a283f5.wav", "a/28fb103145eec4.wav", "a/a5c1f7d26ddad8.wav", "a/cb879c48860da1.wav", "a/bd482304ec14e7.wav", "a/35dd0e0d40e2e3.wav"], "soft": ["a/3d49aa644186de.wav", "a/dcb309c6a7f268.wav", "a/39fad9a20414da.wav", "a/2d8027e17eb905.wav"], "hard": ["a/e521c8378716dd.wav", "a/869a9a71f69a35.wav"], "pocket": ["a/0a4e5f030092b9.wav", "a/8b0a1ba958a4be.wav"]};   // recorded hits the user approved in the sound lab: 19 ball contacts (dull -> bright) and 3 cue strikes
 const REAL_UI = {"click": "a/f3c4f4d918ef87.wav", "turn": "a/6dc28e3dda3e15.wav", "found": "a/2ddd9d947a918f.wav", "coins": "a/10ae0d30a88650.wav", "search": "a/1ad8cab399ed4f.wav", "roll": "a/fa517633f7c9da.wav"};
+// the owner's own recording of an air hockey table (Nov 28, 32 s): the clicks of the puck on the mallet (hit) and on the rail (rail), 80 ms each, and 3 s of the air of the table as a seamless loop (hum); they replace the synthesised ones once decoded
+const REAL_AIR = {"hit":["a/a886aa3d5b21b7.wav","a/15bd2360fb6882.wav","a/e920d5c14c1a44.wav"],"rail":["a/ab50d3900d5e2f.wav","a/5237f9e040c4b5.wav","a/48c82190cc5225.wav"],"hum":"a/b960177825898d.wav"};
 const Snd = (() => {
 let ac = null, master, room, nb, rollG, rollF, slideG, lastClack = 0, lastRub = 0, bank = null, ui = {}, searchSrc = null;
 const level = () => ({low: 0.55, mid: 1, high: 1.35})[opt("vol")] || 1;
@@ -3868,6 +3870,8 @@ bank = buildBank();
 const dec = u => fetch(u).then(r => r.arrayBuffer()).then(buf => new Promise((res, rej) => ac.decodeAudioData(buf, res, rej)));
 for (const [k, u] of Object.entries(REAL_UI)) dec(u).then(b => { ui[k] = b; }).catch(() => {});
 for (const [k, list] of Object.entries(REAL_HITS)) Promise.all(list.map(u => dec(u))).then(a => { if (a.length) bank["r_" + k] = a; }).catch(() => {});
+// the air hockey: the owner's recording (REAL_AIR) takes the place of the synthesised puck, rail and air (arcMake keeps what is in arcBuf; until it is decoded the synthesised ones play)
+for (const [k, list] of Object.entries({hkHit: REAL_AIR.hit, hkRail: REAL_AIR.rail, hkHum: [REAL_AIR.hum]})) list.forEach((u, i) => dec(u).then(b => { arcBuf[k + i] = b; }).catch(() => {}));
 }
 if (ac.state !== "running") ac.resume();
 }
@@ -20238,6 +20242,7 @@ function glamSky(w, h, seed, n, spark, comets) {   // a field of stars, a few sp
 
 (function glamStyle() {
   const C = [glamCorner(0, 0, 1), glamCorner(1, 0, 1), glamCorner(0, 1), glamCorner(1, 1)], SKY_R = glamSky(640, 280, 7, 120, 9, 7), SKY_L = glamSky(560, 360, 11, 100, 8, 5);
+  const SKY_M = glamSky(560, 420, 23, 110, 9, 3);   // (the stars of the ordinary windows)
   const orn = (sz, ins) => `${C[0]} left ${ins} top ${ins}/${sz} ${sz} no-repeat border-box,${C[1]} right ${ins} top ${ins}/${sz} ${sz} no-repeat border-box,${C[2]} left ${ins} bottom ${ins}/${sz} ${sz} no-repeat border-box,${C[3]} right ${ins} bottom ${ins}/${sz} ${sz} no-repeat border-box`;
   const st = document.createElement("style"); st.id = "glamStyle";
   st.textContent = `
@@ -20317,6 +20322,10 @@ html #brRoom .tcs-c.on::before{background:linear-gradient(180deg,#fff0a066,#ffe0
 html #brRoom .tcs-n{color:#d4e0ff}
 html #brRoom .tcb{background:linear-gradient(#5a4210,#2e2208);border:1.5px solid #ffd76a;box-shadow:0 0 10px #ffb02066,inset 0 1px 0 #ffffff33}
 html.mh460 :is(#tnRoom,#brRoom) .tn-box{padding:5px 10px 6px}
+/* ---- the other windows (the owner, Nov 28, two pictures: "the bottom of the VICTORY window is black and dull, and the same black dull state in the window I marked, everywhere: fix it all"): the near-black fill of every
+   window is a deep blue-violet one with a violet bloom at the bottom, a gold one at the top and a few stars; the pictures, the frames, the buttons and the layouts stay as they are */
+html #modal .panel.achp:not(.glam):not(.scened){background:${SKY_M} center/cover no-repeat,radial-gradient(ellipse 88% 42% at 50% 108%,#9a50ff88,#0000 72%),radial-gradient(ellipse 60% 28% at 50% -2%,#ffd24d34,#0000 74%),linear-gradient(#1a3aa8d4,#26157aea),var(--ach2-bg-g) center/cover,#171d70!important;background-clip:padding-box!important}
+html #modal .panel.scened{background:radial-gradient(ellipse 94% 46% at 50% 106%,#9a50ffa8,#0000 72%),radial-gradient(ellipse 72% 28% at 50% 62%,#4a72f044,#0000 72%),${SKY_M} center bottom/100% calc(100% - var(--shd,120px) + 24px) no-repeat,linear-gradient(180deg,#0000 0,#0000 calc(var(--shd,120px) - 46px),#16286e calc(var(--shd,120px) + 6px)),radial-gradient(ellipse 58% 64% at 50% 88%,#6a4ce6f0,#3a56c8aa 46%,#0000 88%) top center/100% calc(var(--shd,120px) + 8px) no-repeat,var(--scene) top center/100% auto no-repeat,#16286e!important;background-blend-mode:normal,normal,normal,normal,screen,normal,normal!important}   /* (the dark hollow in the middle of the picture, between the two tables, is lit by a violet haze: a black void becomes a glow) */
 @media (prefers-reduced-motion:reduce){html #modal .pro-list .pro-row{transition:none}}
 `;
   document.head.appendChild(st);
