@@ -4146,12 +4146,25 @@ const arcs = (() => {
     // the puck on a rail: lower and woodier, with a quick second tap (it bounces twice)
     hkRail: (SR, v) => { const R = rng(5500 + v * 61), a = strike(SR, 0.24, R, {modes: [[760, 0.024, 0.5], [1480, 0.015, 0.4], [2550, 0.009, 0.25], [190, 0.03, 0.4]], noises: [["bp", 2200, 0.8, 0.002, 0.5]]}), y = new Float32Array(a.length);
       addAt(y, a, 0, 1); addAt(y, a, (0.009 + R() * 0.006) * SR, 0.42); return [norm(y, 0.9)]; },
-    // a goal: the puck drops into the slot (a low whump), rolls and rattles down the tray
-    hkGoal: (SR, v) => { const R = rng(6600), N = Math.round(SR * 0.75), y = new Float32Array(N);
-      { const e = dec(0.09, SR), s = dec(0.07, SR); let ph = 0; for (let i = 0; i < N; i++) { ph += 2 * Math.PI * (68 + 90 * s()) / SR; y[i] += Math.sin(ph) * e() * 0.7; } }
-      addAt(y, bq(Float32Array.from({length: N}, () => R() * 2 - 1), "lp", 700, 0.7, SR).map((x, i) => x * Math.exp(-i / SR / 0.1)), 0, 0.5);
-      for (const [t, g] of [[0.13, 0.5], [0.2, 0.38], [0.255, 0.3], [0.295, 0.22], [0.32, 0.15]]) addAt(y, strike(SR, 0.08, R, {modes: [[520, 0.03, 0.4], [1300, 0.012, 0.3]], noises: [["bp", 1500, 0.9, 0.006, 0.7]]}), t * SR, g);
-      return [norm(y, 0.9, 1.2)]; },
+    // a goal (the owner, Nov 28: "a strange trilling sound comes out when a goal is scored"): the puck drops into the slot - ONE soft low thud, nothing rolling or rattling - and the arena horn blows once.
+    // The old goal was a 5-click rattle + a chord of three saw / square oscillators that each slid down by a DIFFERENT amount, so their harmonics (3 x 196 and 2 x 294, 2 x 196 and 392 ...) drifted
+    // past each other and beat at 6 - 10 Hz (a warble), with a band of noise sweeping up on top. Now: two notes a fifth apart and their octave (2 : 3 : 4 of one pitch, so every partial is an exact multiple of
+    // `f0` and the sound is strictly periodic: nothing can beat), no slide, no noise, no clicks; a soft start, a steady blast, a smooth end; the highest partials are rolled off (no buzz).
+    hkGoal: (SR, v) => {
+      const N = Math.round(SR * 1.08), y = new Float32Array(N), R = rng(6600);
+      { const n = Math.round(SR * 0.2), e = dec(0.05, SR), s = dec(0.04, SR); let ph = 0; for (let i = 0; i < n; i++) { ph += 2 * Math.PI * (60 + 75 * s()) / SR; y[i] += Math.sin(ph) * e() * 0.62; } }   // the thud: a sine that falls from 135 to 60 Hz
+      addAt(y, bq(Float32Array.from({length: Math.round(SR * 0.06)}, () => R() * 2 - 1), "lp", 700, 0.7, SR).map((x, i) => x * Math.exp(-i / SR / 0.012)), 0, 0.3);   // (and its dull tick)
+      const t0 = Math.round(SR * 0.11), L = Math.round(SR * 0.86), a = Math.round(SR * 0.016), r = Math.round(SR * 0.26), f0 = 131, amp = new Float64Array(24);
+      for (let j = 1; j <= 8; j++) amp[2 * j] += 1 / j;                   // the lower note (2 x f0): its partials 2, 4, 6 ... 16
+      for (let j = 1; j <= 6; j++) amp[3 * j] += 0.8 / j;                 // the fifth above (3 x f0): 3, 6, 9 ... 18
+      for (let j = 1; j <= 4; j++) amp[4 * j] += 0.5 / j;                 // and the octave (4 x f0): 4, 8, 12, 16
+      for (let m = 1; m < 24; m++) amp[m] *= 1 / (1 + Math.pow(m * f0 / 1900, 4));   // (a gentle roll-off above ~1.9 kHz: a warm horn, not a buzzer)
+      const ph = new Float64Array(24); for (let m = 1; m < 24; m++) ph[m] = m * 0.7;   // (fixed phases: the same horn every time)
+      const h = new Float32Array(L);
+      for (let i = 0; i < L; i++) { let x = 0; const t = i / SR; for (let m = 1; m < 24; m++) if (amp[m]) x += amp[m] * Math.sin(2 * Math.PI * m * f0 * t + ph[m]); const up = i < a ? 0.5 - 0.5 * Math.cos(Math.PI * i / a) : 1, dn = i > L - r ? 0.5 + 0.5 * Math.cos(Math.PI * (i - (L - r)) / r) : 1; h[i] = x * up * dn; }
+      addAt(y, norm(h, 0.8), t0, 1);
+      return [norm(y, 0.7, 1.1)];   // (the blast is steady: at the speaker its level is about the old goal's first moment (rms 0.2) but it HOLDS, instead of dying away in a quarter of a second)
+    },
     // the blower of the table: a loop of airy noise (two bands) and the hum of the fan
     hkHum: (SR) => { const R = rng(7700), N = Math.round(SR * 2.4), P = N + Math.round(SR * 0.2), z = () => Float32Array.from({length: P}, () => R() * 2 - 1), a = bq(z(), "bp", 1500, 0.5, SR), b = bq(z(), "bp", 4200, 0.6, SR), y = new Float32Array(P);
       for (let i = 0; i < P; i++) { const t = i / SR; y[i] = a[i] * 0.55 + b[i] * 0.3 + Math.sin(2 * Math.PI * 118 * t) * 0.05 + Math.sin(2 * Math.PI * 236 * t) * 0.03; }
@@ -4336,7 +4349,7 @@ wallHit(v, pan) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 60) 
 paddle(v, pan) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 300) / 800); if (arcPlay("ttPaddle", 0.38 + 0.62 * k, 0.3 + 0.7 * k, pan)) return; noise(t, 0.03, 0.12 + 0.12 * k, "bandpass", 3200, 2, 1800); tone(t, 1250 + 500 * k, 0.045, 0.09 + 0.12 * k, "triangle", 700); },
 tbounce(v, pan) { if (!ok()) return; const t = now(), k = Math.min(1, (v || 200) / 420); if (arcPlay("ttBounce", 0.28 + 0.62 * k, 0.4 + 0.6 * k, pan)) return; tone(t, 620 + 200 * k, 0.04, 0.05 + 0.1 * k, "sine", 420); noise(t, 0.015, 0.04 + 0.06 * k, "highpass", 3500); },
 netHit(pan) { if (!ok()) return; const t = now(); if (arcPlay("ttNet", 0.8, 0.5, pan)) return; tone(t, 180, 0.12, 0.12, "sine", 90); noise(t, 0.08, 0.08, "bandpass", 800, 1, 500); },
-horn() { if (!ok()) return; const t = now() + (arcPlay("hkGoal", 0.9, 1, 0) ? 0.14 : 0); tone(t, 196, 0.9, 0.12, "sawtooth", 190); tone(t, 294, 0.9, 0.09, "sawtooth", 288); tone(t + 0.02, 392, 0.8, 0.05, "square", 388); noise(t, 0.6, 0.05, "bandpass", 700, 0.8, 2200); },
+horn() { if (!ok()) return; if (arcPlay("hkGoal", 0.85, 1, 0)) return; const t = now(); tone(t, 262, 0.6, 0.1, "triangle"); tone(t, 392, 0.6, 0.07, "triangle"); },   // (the goal is the buffer hkGoal: a thud and one steady horn; the oscillator chord below is only the fallback, with no slide and no noise)
 };
 })();
 for (const k of ["clack", "rail", "pocket", "cue", "roll", "tray", "tableFx", "tick", "foul"]) { const f = Snd[k]; if (f) Snd[k] = (...a) => (mode === "menu" ? undefined : f.apply(Snd, a)); }   // the background demo match behind the menus must never make a sound
