@@ -17940,11 +17940,12 @@ const SH_DISC_W = "data:image/webp;base64,UklGRhgkAABXRUJQVlA4WAoAAAAQAAAAvwAAvw
 #shScr.flip .sh-bg{transform:rotate(180deg)}
 #shScr .sq,#shScr .sq.dk{background:none;box-shadow:none}
 #shScr .sq::before{content:none}
-#shScr .pc.w i{--side:#b49a62;background:var(--dw) center/112.3% no-repeat}
-#shScr .pc.b i{--side:#0a0706;background:var(--db) center/112.3% no-repeat}
+/* the thickness of a disc: four thin bands, light to dark (the turned wood of the real discs' side, with its ridges), then the soft shadow on the board */
+#shScr .pc.w i{--side:#b49a62;--s1:#f3e6c6;--s2:#d9c392;--s3:#ead8ac;--s4:#b79a62;background:var(--dw) center/112.3% no-repeat}
+#shScr .pc.b i{--side:#0a0706;--s1:#3a322c;--s2:#17120f;--s3:#2a231e;--s4:#060403;background:var(--db) center/112.3% no-repeat}
 #shScr .pc i::before{display:none}
-#shScr .pc i{box-shadow:0 calc(var(--S) * .014) 0 var(--side),0 calc(var(--S) * .03) calc(var(--S) * .022) #000b}
-#shScr.tilt3d .pc i{box-shadow:0 calc(var(--S) * .022) 0 var(--side),0 calc(var(--S) * .04) calc(var(--S) * .026) #000c}`;
+#shScr .pc i{box-shadow:0 calc(var(--S) * .0032) 0 var(--s1),0 calc(var(--S) * .0064) 0 var(--s2),0 calc(var(--S) * .0096) 0 var(--s3),0 calc(var(--S) * .0128) 0 var(--s4),0 calc(var(--S) * .028) calc(var(--S) * .022) #000b}
+#shScr.tilt3d .pc i{box-shadow:0 calc(var(--S) * .005) 0 var(--s1),0 calc(var(--S) * .01) 0 var(--s2),0 calc(var(--S) * .015) 0 var(--s3),0 calc(var(--S) * .02) 0 var(--s4),0 calc(var(--S) * .04) calc(var(--S) * .026) #000c}`;
   document.head.appendChild(st);
 })();
 
